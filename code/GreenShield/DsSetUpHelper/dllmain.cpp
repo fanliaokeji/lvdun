@@ -6,7 +6,6 @@
 // ATL Header Files
 #include <atlbase.h>
 #include <WTL/atlapp.h>
-
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
 #include <Windows.h>
@@ -30,15 +29,16 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 {
 	TSAUTO();
-	TCHAR szUrl[MAX_PATH] = {0};
-	_tcscpy(szUrl,(LPCWSTR)pParameter);
+	CHAR szUrl[MAX_PATH] = {0};
+	strcpy(szUrl,(LPCSTR)pParameter);
+	delete [] pParameter;
 
-	TCHAR szBuffer[MAX_PATH] = {0};
+	CHAR szBuffer[MAX_PATH] = {0};
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
 	__try
 	{
-		hr = ::URLDownloadToCacheFile(NULL, szUrl, szBuffer, MAX_PATH, 0, NULL);
+		hr = ::URLDownloadToCacheFileA(NULL, szUrl, szBuffer, MAX_PATH, 0, NULL);
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -49,56 +49,73 @@ DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
-extern "C" __declspec(dllexport) void SendAnyHttpStat(TCHAR *ec,TCHAR *ea, TCHAR *el,long ev)
+ 
+ BOOL WStringToString(const std::wstring &wstr,std::string &str)
+ {    
+     int nLen = (int)wstr.length();    
+     str.resize(nLen,' ');
+ 
+     int nResult = WideCharToMultiByte(CP_ACP,0,(LPCWSTR)wstr.c_str(),nLen,(LPSTR)str.c_str(),nLen,NULL,NULL);
+ 
+     if (nResult == 0)
+     {
+         return FALSE;
+     }
+ 
+     return TRUE;
+ }
+
+extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *el,long ev)
 {
 	if (ec == NULL || ea == NULL)
 	{
 		return ;
 	}
-
 	TSAUTO();
-	TCHAR szURL[MAX_PATH] = {0};
-	std::wstring strPeerID;
-	GetPeerId_(strPeerID);
-	std::wstring str = L"";
+	CHAR* szURL = new CHAR[MAX_PATH];
+	memset(szURL, 0, MAX_PATH);
+	std::wstring wstrPeerID;
+	GetPeerId_(wstrPeerID);
+	std::string strPeerID;
+	WStringToString(wstrPeerID, strPeerID);
+	std::string str = "";
 	if (el != NULL )
 	{
-		str +=L"&el=";
-		str +=el;
+		str += "&el=";
+		str += el;
 	}
 	if (ev != 0)
 	{
-		TCHAR szev[MAX_PATH] = {0};
-		_stprintf(szev,L"&ev=%ld",ev);
+		CHAR szev[MAX_PATH] = {0};
+		sprintf(szev, "&ev=%ld",ev);
 		str += szev;
 	}
-	_stprintf(szURL, _T("http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s"),strPeerID.c_str(),ec,ea,str.c_str());
+	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s",strPeerID.c_str(),ec,ea,str.c_str());
 
-	CComBSTR bstrUrl(szURL);
 	DWORD dwThreadId = 0;
-	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID) bstrUrl.Detach(),0, &dwThreadId);
+	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
 	CloseHandle(hThread);
 }
 
 
-extern "C" __declspec(dllexport) void GetFileVersionString(TCHAR* pszFileName, TCHAR * pszVersionString)
+extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CHAR * pszVersionString)
 {
 	if(pszFileName == NULL || pszVersionString == NULL)
 		return ;
 
 	BOOL bResult = FALSE;
 	DWORD dwHandle = 0;
-	DWORD dwSize = ::GetFileVersionInfoSize(pszFileName, &dwHandle);
+	DWORD dwSize = ::GetFileVersionInfoSizeA(pszFileName, &dwHandle);
 	if(dwSize > 0)
 	{
-		TCHAR * pVersionInfo = new TCHAR[dwSize+1];
-		if(::GetFileVersionInfo(pszFileName, dwHandle, dwSize, pVersionInfo))
+		CHAR * pVersionInfo = new CHAR[dwSize+1];
+		if(::GetFileVersionInfoA(pszFileName, dwHandle, dwSize, pVersionInfo))
 		{
 			VS_FIXEDFILEINFO * pvi;
 			UINT uLength = 0;
-			if(::VerQueryValue(pVersionInfo, _T("\\"), (void **)&pvi, &uLength))
+			if(::VerQueryValueA(pVersionInfo, "\\", (void **)&pvi, &uLength))
 			{
-				_stprintf(pszVersionString, _T("%d.%d.%d.%d"),
+				sprintf(pszVersionString, "%d.%d.%d.%d",
 					HIWORD(pvi->dwFileVersionMS), LOWORD(pvi->dwFileVersionMS),
 					HIWORD(pvi->dwFileVersionLS), LOWORD(pvi->dwFileVersionLS));
 				bResult = TRUE;
@@ -109,11 +126,13 @@ extern "C" __declspec(dllexport) void GetFileVersionString(TCHAR* pszFileName, T
 }
 
 
-extern "C" __declspec(dllexport) void GetPeerID(TCHAR * pszPeerID)
+extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
-	std::wstring strPeerID;
-	GetPeerId_(strPeerID);
-	_tcscpy(pszPeerID,strPeerID.c_str());
+	std::wstring wstrPeerID;
+	GetPeerId_(wstrPeerID);
+	std::string strPeerID;
+	WStringToString(wstrPeerID, strPeerID);
+	strcpy(pszPeerID,strPeerID.c_str());
 }
 
 extern "C" __declspec(dllexport) void NsisTSLOG(TCHAR* pszInfo)
