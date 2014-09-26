@@ -1,0 +1,26 @@
+<XLUE>
+	<resource>
+		<font id="default.title.font" height="17" facename="微软雅黑" weight="bold"/>  		
+		<font id="default.topic.font" height="12" facename="微软雅黑" weight="bold"/>
+		<font id="default.font" height="12" facename="微软雅黑" />
+		
+		<font id="font.underline" height="12" facename="微软雅黑" underline="1"/>
+		
+		<font id="font.yahei20" height="20" facename="微软雅黑" /> 
+		<font id="font.yahei13" height="13" facename="微软雅黑" /> 
+		<font id="font.yahei14" height="14" facename="微软雅黑" /> 
+		<font id="font.yahei15" height="15" facename="微软雅黑" /> 
+		<font id="font.yahei16" height="16" facename="微软雅黑" /> 
+		
+		<font id="font.Haetten11" height="11" facename="微软雅黑" /> 
+		<font id="font.Haetten12" height="12" facename="微软雅黑" /> 
+		<font id="font.Haetten14" height="14" facename="微软雅黑" /> 
+		<font id="font.Haetten24" height="24" facename="微软雅黑" /> 
+
+		<font id="font.yahei14.bold" height="14" facename="微软雅黑" weight="bold"/>
+		<font id="font.yahei30.bold" height="30" facename="微软雅黑" weight="bold"/>
+		<font id="font.yahei13.underline" height="13" facename="微软雅黑" underline="1"/> 
+		<font id="font.yahei12.underline" height="12" facename="微软雅黑" underline="1"/> 
+		
+	</resource>
+</XLUE>

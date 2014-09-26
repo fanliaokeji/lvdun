@@ -1,0 +1,238 @@
+ DsSetUpHelper
+
+ Timestamp is 542523c8 (Fri Sep 26 16:28:56 2014)
+
+ Preferred load address is 10000000
+
+ Start         Length     Name                   Class
+ 0001:00000000 00001058H .text                   CODE
+ 0001:00001060 00000031H .text$x                 CODE
+ 0002:00000000 00000114H .idata$5                DATA
+ 0002:00000114 00000004H .CRT$XCA                DATA
+ 0002:00000118 00000004H .CRT$XCZ                DATA
+ 0002:0000011c 00000004H .CRT$XIA                DATA
+ 0002:00000120 00000004H .CRT$XIAA               DATA
+ 0002:00000124 00000004H .CRT$XIZ                DATA
+ 0002:00000130 000001d8H .rdata                  DATA
+ 0002:00000308 00000060H .rdata$debug            DATA
+ 0002:00000368 00000048H .rdata$r                DATA
+ 0002:000003b0 00000008H .rdata$sxdata           DATA
+ 0002:000003b8 00000004H .rtc$IAA                DATA
+ 0002:000003bc 00000004H .rtc$IZZ                DATA
+ 0002:000003c0 00000004H .rtc$TAA                DATA
+ 0002:000003c4 00000004H .rtc$TZZ                DATA
+ 0002:000003c8 00000120H .xdata$x                DATA
+ 0002:000004e8 00000000H ATL$__a                 DATA
+ 0002:000004e8 00000000H ATL$__z                 DATA
+ 0002:000004e8 000000b4H .idata$2                DATA
+ 0002:0000059c 00000014H .idata$3                DATA
+ 0002:000005b0 00000114H .idata$4                DATA
+ 0002:000006c4 00000620H .idata$6                DATA
+ 0002:00000cf0 000000adH .edata                  DATA
+ 0003:00000000 00000050H .data                   DATA
+ 0003:00000050 00000350H .bss                    DATA
+
+  Address         Publics by Value              Rva+Base       Lib:Object
+
+ 0000:00000002       ___safe_se_handler_count   00000002     <absolute>
+ 0000:00000000       ___ImageBase               10000000     <linker-defined>
+ 0001:00000000       ?GetMacByGetAdaptersAddresses@@YA_NAAV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z 10001000 f i dllmain.obj
+ 0001:00000220       ?AtlThrowImpl@ATL@@YGXJ@Z  10001220 f i dllmain.obj
+ 0001:00000240       _DllMain@12                10001240 f   dllmain.obj
+ 0001:00000250       ?SendHttpStatThread@@YGKPAX@Z 10001250 f   dllmain.obj
+ 0001:00000370       _SendAnyHttpStat           10001370 f   dllmain.obj
+ 0001:00000500       _GetFileVersionString      10001500 f   dllmain.obj
+ 0001:000005d0       _GetPeerID                 100015d0 f   dllmain.obj
+ 0001:00000640       _NsisTSLOG                 10001640 f   dllmain.obj
+ 0001:00000650       _GetTime                   10001650 f   dllmain.obj
+ 0001:00000676       _GetAdaptersAddresses@20   10001676 f   IPHLPAPI:IPHLPAPI.DLL
+ 0001:0000067c       ??_U@YAPAXI@Z              1000167c f   msvcprt:newaop_s.obj
+ 0001:00000688       _URLDownloadToCacheFileW@24 10001688 f   Urlmon:urlmon.dll
+ 0001:0000068e       _GetFileVersionInfoW@16    1000168e f   Version:VERSION.dll
+ 0001:00000694       _VerQueryValueW@16         10001694 f   Version:VERSION.dll
+ 0001:0000069a       _GetFileVersionInfoSizeW@8 1000169a f   Version:VERSION.dll
+ 0001:000006a0       ??3@YAXPAX@Z               100016a0 f   MSVCRT:MSVCR90.dll
+ 0001:000006a6       @__security_check_cookie@4 100016a6 f   MSVCRT:secchk.obj
+ 0001:000006b5       ?__ArrayUnwind@@YGXPAXIHP6EX0@Z@Z 100016b5 f   MSVCRT:ehvecdtr.obj
+ 0001:00000713       ??_M@YGXPAXIHP6EX0@Z@Z     10001713 f   MSVCRT:ehvecdtr.obj
+ 0001:00000776       ??_Etype_info@@UAEPAXI@Z   10001776 f i MSVCRT:ti_inst.obj
+ 0001:00000811       __CRT_INIT@12              10001811 f   MSVCRT:crtdll.obj
+ 0001:00000b4d       __DllMainCRTStartup@12     10001b4d f   MSVCRT:crtdll.obj
+ 0001:00000b70       ??2@YAPAXI@Z               10001b70 f   MSVCRT:MSVCR90.dll
+ 0001:00000b76       ___report_gsfailure        10001b76 f   MSVCRT:gs_report.obj
+ 0001:00000c7c       ?terminate@@YAXXZ          10001c7c f   MSVCRT:MSVCR90.dll
+ 0001:00000c84       __SEH_prolog4              10001c84 f   MSVCRT:sehprolg4.obj
+ 0001:00000cc9       __SEH_epilog4              10001cc9 f   MSVCRT:sehprolg4.obj
+ 0001:00000cdd       __except_handler4          10001cdd f   MSVCRT:chandler4gs.obj
+ 0001:00000d02       ___clean_type_info_names   10001d02 f   MSVCRT:tncleanup.obj
+ 0001:00000d0e       __onexit                   10001d0e f   MSVCRT:atonexit.obj
+ 0001:00000db3       _atexit                    10001db3 f   MSVCRT:atonexit.obj
+ 0001:00000dca       __RTC_Initialize           10001dca f   MSVCRT:_initsect_.obj
+ 0001:00000df0       __RTC_Terminate            10001df0 f   MSVCRT:_initsect_.obj
+ 0001:00000e20       __ValidateImageBase        10001e20 f   MSVCRT:pesect.obj
+ 0001:00000e60       __FindPESection            10001e60 f   MSVCRT:pesect.obj
+ 0001:00000eb0       __IsNonwritableInCurrentImage 10001eb0 f   MSVCRT:pesect.obj
+ 0001:00000f6e       __initterm                 10001f6e f   MSVCRT:MSVCR90.dll
+ 0001:00000f74       __initterm_e               10001f74 f   MSVCRT:MSVCR90.dll
+ 0001:00000f7a       __amsg_exit                10001f7a f   MSVCRT:MSVCR90.dll
+ 0001:00000f80       ___CppXcptFilter           10001f80 f   MSVCRT:MSVCR90.dll
+ 0001:00000f86       ___security_init_cookie    10001f86 f   MSVCRT:gs_support.obj
+ 0001:0000101c       __crt_debugger_hook        1000201c f   MSVCRT:MSVCR90.dll
+ 0001:00001022       __except_handler4_common   10002022 f   MSVCRT:MSVCR90.dll
+ 0001:00001028       ??1type_info@@UAE@XZ       10002028 f   MSVCRT:MSVCR90.dll
+ 0001:00001028       ?_type_info_dtor_internal_method@type_info@@QAEXXZ 10002028 f   MSVCRT:MSVCR90.dll
+ 0001:0000102e       ___clean_type_info_names_internal 1000202e f   MSVCRT:MSVCR90.dll
+ 0001:00001034       __unlock                   10002034 f   MSVCRT:MSVCR90.dll
+ 0001:0000103a       ___dllonexit               1000203a f   MSVCRT:MSVCR90.dll
+ 0001:00001040       __lock                     10002040 f   MSVCRT:MSVCR90.dll
+ 0001:00001046       _memset                    10002046 f   MSVCRT:MSVCR90.dll
+ 0001:0000104c       __CxxThrowException@8      1000204c f   MSVCRT:MSVCR90.dll
+ 0001:00001052       ___CxxFrameHandler3        10002052 f   MSVCRT:MSVCR90.dll
+ 0002:00000000       __imp__GetAdaptersAddresses@20 10003000     IPHLPAPI:IPHLPAPI.DLL
+ 0002:00000004       \177IPHLPAPI_NULL_THUNK_DATA 10003004     IPHLPAPI:IPHLPAPI.DLL
+ 0002:00000008       __imp__InterlockedExchange@8 10003008     kernel32:KERNEL32.dll
+ 0002:0000000c       __imp__Sleep@4             1000300c     kernel32:KERNEL32.dll
+ 0002:00000010       __imp__GetSystemTimeAsFileTime@4 10003010     kernel32:KERNEL32.dll
+ 0002:00000014       __imp__CreateThread@24     10003014     kernel32:KERNEL32.dll
+ 0002:00000018       __imp__GetCurrentThreadId@0 10003018     kernel32:KERNEL32.dll
+ 0002:0000001c       __imp__GetTickCount@0      1000301c     kernel32:KERNEL32.dll
+ 0002:00000020       __imp__QueryPerformanceCounter@4 10003020     kernel32:KERNEL32.dll
+ 0002:00000024       __imp__IsDebuggerPresent@0 10003024     kernel32:KERNEL32.dll
+ 0002:00000028       __imp__GetCurrentProcessId@0 10003028     kernel32:KERNEL32.dll
+ 0002:0000002c       __imp__CloseHandle@4       1000302c     kernel32:KERNEL32.dll
+ 0002:00000030       __imp__InterlockedCompareExchange@12 10003030     kernel32:KERNEL32.dll
+ 0002:00000034       __imp__TerminateProcess@8  10003034     kernel32:KERNEL32.dll
+ 0002:00000038       __imp__GetCurrentProcess@0 10003038     kernel32:KERNEL32.dll
+ 0002:0000003c       __imp__UnhandledExceptionFilter@4 1000303c     kernel32:KERNEL32.dll
+ 0002:00000040       __imp__SetUnhandledExceptionFilter@4 10003040     kernel32:KERNEL32.dll
+ 0002:00000044       \177KERNEL32_NULL_THUNK_DATA 10003044     kernel32:KERNEL32.dll
+ 0002:00000048       __imp_??1?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAE@XZ 10003048     msvcprt:MSVCP90.dll
+ 0002:0000004c       __imp_??0?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAE@PB_W@Z 1000304c     msvcprt:MSVCP90.dll
+ 0002:00000050       __imp_??0?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAE@XZ 10003050     msvcprt:MSVCP90.dll
+ 0002:00000054       __imp_??4?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAEAAV01@ABV01@@Z 10003054     msvcprt:MSVCP90.dll
+ 0002:00000058       __imp_??4?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAEAAV01@PB_W@Z 10003058     msvcprt:MSVCP90.dll
+ 0002:0000005c       __imp_??Y?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@QAEAAV01@PB_W@Z 1000305c     msvcprt:MSVCP90.dll
+ 0002:00000060       \177MSVCP90_NULL_THUNK_DATA 10003060     msvcprt:MSVCP90.dll
+ 0002:00000064       __imp__memset              10003064     MSVCRT:MSVCR90.dll
+ 0002:00000068       __imp___CxxThrowException@8 10003068     MSVCRT:MSVCR90.dll
+ 0002:0000006c       __imp__free                1000306c     MSVCRT:MSVCR90.dll
+ 0002:00000070       __imp___swprintf           10003070     MSVCRT:MSVCR90.dll
+ 0002:00000074       __imp__malloc              10003074     MSVCRT:MSVCR90.dll
+ 0002:00000078       __imp__rand                10003078     MSVCRT:MSVCR90.dll
+ 0002:0000007c       __imp__srand               1000307c     MSVCRT:MSVCR90.dll
+ 0002:00000080       __imp___time64             10003080     MSVCRT:MSVCR90.dll
+ 0002:00000084       __imp_??2@YAPAXI@Z         10003084     MSVCRT:MSVCR90.dll
+ 0002:00000088       __imp_?terminate@@YAXXZ    10003088     MSVCRT:MSVCR90.dll
+ 0002:0000008c       __imp___encode_pointer     1000308c     MSVCRT:MSVCR90.dll
+ 0002:00000090       __imp___malloc_crt         10003090     MSVCRT:MSVCR90.dll
+ 0002:00000094       __imp___encoded_null       10003094     MSVCRT:MSVCR90.dll
+ 0002:00000098       __imp___decode_pointer     10003098     MSVCRT:MSVCR90.dll
+ 0002:0000009c       __imp___initterm           1000309c     MSVCRT:MSVCR90.dll
+ 0002:000000a0       __imp___initterm_e         100030a0     MSVCRT:MSVCR90.dll
+ 0002:000000a4       __imp___amsg_exit          100030a4     MSVCRT:MSVCR90.dll
+ 0002:000000a8       __imp___adjust_fdiv        100030a8     MSVCRT:MSVCR90.dll
+ 0002:000000ac       __imp____CppXcptFilter     100030ac     MSVCRT:MSVCR90.dll
+ 0002:000000b0       __imp___crt_debugger_hook  100030b0     MSVCRT:MSVCR90.dll
+ 0002:000000b4       __imp___except_handler4_common 100030b4     MSVCRT:MSVCR90.dll
+ 0002:000000b8       __imp_?_type_info_dtor_internal_method@type_info@@QAEXXZ 100030b8     MSVCRT:MSVCR90.dll
+ 0002:000000bc       __imp____clean_type_info_names_internal 100030bc     MSVCRT:MSVCR90.dll
+ 0002:000000c0       __imp___unlock             100030c0     MSVCRT:MSVCR90.dll
+ 0002:000000c4       __imp____dllonexit         100030c4     MSVCRT:MSVCR90.dll
+ 0002:000000c8       __imp___lock               100030c8     MSVCRT:MSVCR90.dll
+ 0002:000000cc       __imp___onexit             100030cc     MSVCRT:MSVCR90.dll
+ 0002:000000d0       __imp_??3@YAXPAX@Z         100030d0     MSVCRT:MSVCR90.dll
+ 0002:000000d4       __imp____CxxFrameHandler3  100030d4     MSVCRT:MSVCR90.dll
+ 0002:000000d8       \177MSVCR90_NULL_THUNK_DATA 100030d8     MSVCRT:MSVCR90.dll
+ 0002:000000dc       __imp__SysAllocString@4    100030dc     oleaut32:OLEAUT32.dll
+ 0002:000000e0       __imp__SysFreeString@4     100030e0     oleaut32:OLEAUT32.dll
+ 0002:000000e4       \177OLEAUT32_NULL_THUNK_DATA 100030e4     oleaut32:OLEAUT32.dll
+ 0002:000000e8       __imp__wsprintfW           100030e8     user32:USER32.dll
+ 0002:000000ec       \177USER32_NULL_THUNK_DATA 100030ec     user32:USER32.dll
+ 0002:000000f0       __imp__GetFileVersionInfoW@16 100030f0     Version:VERSION.dll
+ 0002:000000f4       __imp__VerQueryValueW@16   100030f4     Version:VERSION.dll
+ 0002:000000f8       __imp__GetFileVersionInfoSizeW@8 100030f8     Version:VERSION.dll
+ 0002:000000fc       \177VERSION_NULL_THUNK_DATA 100030fc     Version:VERSION.dll
+ 0002:00000100       __imp__CoUninitialize@0    10003100     ole32:ole32.dll
+ 0002:00000104       __imp__CoInitialize@4      10003104     ole32:ole32.dll
+ 0002:00000108       \177ole32_NULL_THUNK_DATA  10003108     ole32:ole32.dll
+ 0002:0000010c       __imp__URLDownloadToCacheFileW@24 1000310c     Urlmon:urlmon.dll
+ 0002:00000110       \177urlmon_NULL_THUNK_DATA 10003110     Urlmon:urlmon.dll
+ 0002:00000114       ___xc_a                    10003114     MSVCRT:cinitexe.obj
+ 0002:00000118       ___xc_z                    10003118     MSVCRT:cinitexe.obj
+ 0002:0000011c       ___xi_a                    1000311c     MSVCRT:cinitexe.obj
+ 0002:00000124       ___xi_z                    10003124     MSVCRT:cinitexe.obj
+ 0002:00000150       ??_7type_info@@6B@         10003150     MSVCRT:ti_inst.obj
+ 0002:00000154       __pDefaultRawDllMain       10003154     MSVCRT:crtdll.obj
+ 0002:00000154       __pRawDllMain              10003154     MSVCRT:crtdll.obj
+ 0002:00000160       ??_C@_0P@GHFPNOJB@bad?5allocation?$AA@ 10003160     dllmain.obj
+ 0002:00000170       ??_C@_1DC@PLONAMAJ@?$AA?$CF?$AA0?$AA2?$AAX?$AA?$CF?$AA0?$AA2?$AAX?$AA?$CF?$AA0?$AA2?$AAX?$AA?$CF?$AA0?$AA2?$AAX?$AA?$CF?$AA0?$AA2?$AAX?$AA?$CF?$AA0?$AA2?$AAX?$AA?$AA@ 10003170     dllmain.obj
+ 0002:000001a4       ??_C@_1BK@LBGPFNN@?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA0?$AA?$AA@ 100031a4     dllmain.obj
+ 0002:000001c0       ??_C@_15BHOFONJE@?$AA?$CF?$AAX?$AA?$AA@ 100031c0     dllmain.obj
+ 0002:000001c8       ??_C@_11LOCGONAA@?$AA?$AA@ 100031c8     dllmain.obj
+ 0002:000001cc       ??_C@_19LLEKKFJM@?$AA?$CG?$AAe?$AAl?$AA?$DN?$AA?$AA@ 100031cc     dllmain.obj
+ 0002:000001d8       ??_C@_1BA@HDAKKJKM@?$AA?$CG?$AAe?$AAv?$AA?$DN?$AA?$CF?$AAl?$AAd?$AA?$AA@ 100031d8     dllmain.obj
+ 0002:000001e8       ??_C@_1LG@ECBDHOMN@?$AAh?$AAt?$AAt?$AAp?$AA?3?$AA?1?$AA?1?$AAw?$AAw?$AAw?$AA?4?$AAg?$AAo?$AAo?$AAg?$AAl?$AAe?$AA?9?$AAa?$AAn?$AAa?$AAl?$AAy?$AAt?$AAi?$AAc?$AAs?$AA?4?$AAc?$AAo?$AAm?$AA?1@ 100031e8     dllmain.obj
+ 0002:000002a0       ??_C@_13FPGAJAPJ@?$AA?2?$AA?$AA@ 100032a0     dllmain.obj
+ 0002:000002a4       ??_C@_1BI@FCMLLAGN@?$AA?$CF?$AAd?$AA?4?$AA?$CF?$AAd?$AA?4?$AA?$CF?$AAd?$AA?4?$AA?$CF?$AAd?$AA?$AA@ 100032a4     dllmain.obj
+ 0002:000002c0       __load_config_used         100032c0     MSVCRT:loadcfg.obj
+ 0002:00000368       ??_R4type_info@@6B@        10003368     MSVCRT:ti_inst.obj
+ 0002:0000037c       ??_R3type_info@@8          1000337c     MSVCRT:ti_inst.obj
+ 0002:0000038c       ??_R2type_info@@8          1000338c     MSVCRT:ti_inst.obj
+ 0002:00000394       ??_R1A@?0A@EA@type_info@@8 10003394     MSVCRT:ti_inst.obj
+ 0002:000003b0       ___safe_se_handler_table   100033b0     <linker-defined>
+ 0002:000003b8       ___rtc_iaa                 100033b8     MSVCRT:_initsect_.obj
+ 0002:000003bc       ___rtc_izz                 100033bc     MSVCRT:_initsect_.obj
+ 0002:000003c0       ___rtc_taa                 100033c0     MSVCRT:_initsect_.obj
+ 0002:000003c4       ___rtc_tzz                 100033c4     MSVCRT:_initsect_.obj
+ 0002:0000046c       __CT??_R0?AVCAtlException@ATL@@@84 1000346c     dllmain.obj
+ 0002:00000488       __CTA1?AVCAtlException@ATL@@ 10003488     dllmain.obj
+ 0002:00000490       __TI1?AVCAtlException@ATL@@ 10003490     dllmain.obj
+ 0002:000004e8       __IMPORT_DESCRIPTOR_KERNEL32 100034e8     kernel32:KERNEL32.dll
+ 0002:000004fc       __IMPORT_DESCRIPTOR_USER32 100034fc     user32:USER32.dll
+ 0002:00000510       __IMPORT_DESCRIPTOR_ole32  10003510     ole32:ole32.dll
+ 0002:00000524       __IMPORT_DESCRIPTOR_OLEAUT32 10003524     oleaut32:OLEAUT32.dll
+ 0002:00000538       __IMPORT_DESCRIPTOR_IPHLPAPI 10003538     IPHLPAPI:IPHLPAPI.DLL
+ 0002:0000054c       __IMPORT_DESCRIPTOR_MSVCP90 1000354c     msvcprt:MSVCP90.dll
+ 0002:00000560       __IMPORT_DESCRIPTOR_urlmon 10003560     Urlmon:urlmon.dll
+ 0002:00000574       __IMPORT_DESCRIPTOR_VERSION 10003574     Version:VERSION.dll
+ 0002:00000588       __IMPORT_DESCRIPTOR_MSVCR90 10003588     MSVCRT:MSVCR90.dll
+ 0002:0000059c       __NULL_IMPORT_DESCRIPTOR   1000359c     kernel32:KERNEL32.dll
+ 0003:00000004       ??_R0?AVtype_info@@@8      10004004     MSVCRT:ti_inst.obj
+ 0003:0000001c       ___security_cookie         1000401c     MSVCRT:gs_cookie.obj
+ 0003:00000020       ___security_cookie_complement 10004020     MSVCRT:gs_cookie.obj
+ 0003:00000024       ___native_dllmain_reason   10004024     MSVCRT:natstart.obj
+ 0003:00000028       ___native_vcclrit_reason   10004028     MSVCRT:natstart.obj
+ 0003:00000030       ??_R0?AVCAtlException@ATL@@@8 10004030     dllmain.obj
+ 0003:0000037c       ?__type_info_root_node@@3U__type_info_node@@A 1000437c     MSVCRT:tncleanup.obj
+ 0003:00000384       ___@@_PchSym_@00@UoewfmUgifmpUxlwvUtivvmhsrvowUwhhvgfksvokviUivovzhvUhgwzucOlyq@ 10004384     stdafx.obj
+ 0003:00000388       __adjust_fdiv              10004388     <common>
+ 0003:0000038c       ___native_startup_state    1000438c     <common>
+ 0003:00000390       ___native_startup_lock     10004390     <common>
+ 0003:00000394       ___onexitend               10004394     <common>
+ 0003:00000398       ___onexitbegin             10004398     <common>
+ 0003:0000039c       ___dyn_tls_init_callback   1000439c     <common>
+
+ entry point at        0001:00000b4d
+
+ Static symbols
+
+ 0001:00000110       ?GetPeerId_@@YAXAAV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z 10001110 f    CIL library: CIL module
+ 0001:000007c2       _pre_c_init                100017c2 f   MSVCRT:crtdll.obj
+ 0001:00000a37       ___DllMainCRTStartup       10001a37 f   MSVCRT:crtdll.obj
+ 0001:00001060       __unwindfunclet$?GetPeerId_@@YAXAAV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z$0 10002060 f    CIL library: CIL module
+ 0001:00001069       __ehhandler$?GetPeerId_@@YAXAAV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z 10002069 f    CIL library: CIL module
+
+ Exports
+
+  ordinal    name
+
+        1    _GetFileVersionString
+               exported name: GetFileVersionString
+        2    _GetPeerID
+               exported name: GetPeerID
+        3    _GetTime
+               exported name: GetTime
+        4    _NsisTSLOG
+               exported name: NsisTSLOG
+        5    _SendAnyHttpStat
+               exported name: SendAnyHttpStat

@@ -1,0 +1,26 @@
+<xlue>
+	<control class="ChildCtrl_Skin">
+		<attr_def>
+
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_Skin.xml.lua" func="OnShowPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_Skin.MainWnd.Text" class="TextObject">
+					<attr>
+						<left>50</left>
+						<top>50</top>
+						<width>father.width</width>
+						<height>30</height>
+						<text></text>
+					</attr>
+				</obj>	
+			</children>
+		</objtemplate>
+	</control>
+</xlue>

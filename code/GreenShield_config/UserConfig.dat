@@ -1,0 +1,22 @@
+function GetSubTable()
+	local t = {
+		["nFilterCount"] = 1236690, 
+		["tConfig"] = {
+			["AutoUpdate"] = {
+				["bState"] = false, 
+			}, 
+			["BubbleRemind"] = {
+				["bState"] = false, 
+			}, 
+			["AutoStup"] = {
+				["bState"] = false, 
+			}, 
+			["HideMainPage"] = {
+				["bState"] = false, 
+			}, 
+		}, 
+		["nLastBeginFilterUTC"] = 1411788888, 
+		["bFilterOpen"] = false, 
+	}
+	return t
+end

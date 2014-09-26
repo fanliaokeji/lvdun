@@ -1,0 +1,70 @@
+<xlue>
+	<control class="TipMainWndRootCtrl">
+		<attr_def>
+		    <attr name="popanitime" type="int">
+				<default>800</default>
+			</attr>
+			<attr name="hidanitime" type="int">
+				<default>3000</default>
+			</attr>
+			<attr name="holdseconds" type="int">
+				<default>15</default>
+			</attr>
+		</attr_def>
+    	<objtemplate>
+    		<children>
+
+    		</children>
+    	</objtemplate>
+    </control>
+
+	<objtreetemplate id="TipMainWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>-200</left>
+			<top>-200</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+
+		<obj id="root.layout" class="TipMainWndRootCtrl">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>1000</width>
+				<height>500</height>
+			</attr>		
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipMainWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>350</width>
+            <height>350</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <center>1</center>
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipMainWnd.xml.lua" func="OnCreate"/>
+			<event name="OnShowWindow" file="TipMainWnd.xml.lua" func="OnShowWindow"/>
+			<event name="OnDestroy" file="TipMainWnd.xml.lua" func="OnDestroy"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
