@@ -1,0 +1,122 @@
+#pragma once
+#include "stdafx.h"
+
+#define WM_FILTERRESULT WM_USER + 201
+#define WM_FILTERASK WM_USER + 202
+
+
+static void PutVariantToLuaStack(VARIANT* pv, lua_State* luaState)
+{
+	switch(pv->vt)
+	{
+	case VT_I2:
+		// 潜规则:一律认为是VARIANT_BOOL
+		lua_pushboolean(luaState, (pv->iVal == 0)?0:1);
+		break;		
+	case VT_UI1:
+	case VT_I1:
+	case VT_UI2:
+	case VT_UINT:
+	case VT_INT:
+	case VT_UI4:
+	case VT_I4:
+		lua_pushinteger(luaState,pv->intVal);
+		break;
+	case VT_BSTR:
+		{
+			std::string str;
+			BSTRToLuaString(pv->bstrVal,str);
+			lua_pushlstring(luaState, str.c_str(), str.length());
+		}				
+		break;
+	case VT_PTR:
+		lua_pushlightuserdata(luaState, pv->pvRecord);
+		break;
+	case VT_BOOL:
+		lua_pushboolean(luaState, (pv->boolVal == VARIANT_FALSE) ? 0 : 1 );
+		break;
+	default:
+		lua_pushnil(luaState);
+		break;
+	}
+}
+
+static void CallLuaMethod(char* pszFuncName, DISPPARAMS* pParams)
+{
+	XL_LRT_ENV_HANDLE hEnv = XLLRT_GetEnv(NULL);
+	XL_LRT_RUNTIME_HANDLE hRunTime = XLLRT_GetRuntime(hEnv, NULL);
+	lua_State* pLuaState =	XLLRT_GetLuaState(hRunTime);
+	long lnStackTop = lua_gettop(pLuaState);
+	lua_getglobal(pLuaState, "FILTER") ;
+
+	long lnSetting = lua_gettop(pLuaState); // FILTER index
+	ATLASSERT(!lua_isnil(pLuaState, -1));
+
+	if(!lua_isnil(pLuaState, -1))
+	{
+		lua_getfield(pLuaState, -1, pszFuncName);
+		ATLASSERT(lua_isfunction(pLuaState, -1));
+		if(lua_isfunction(pLuaState, -1))
+		{
+			lua_pushvalue(pLuaState, lnSetting); // copy FILTER to stack top
+			int args = 0;
+
+			for (int i = 0; i < (int)pParams->cArgs; i++)
+			{
+				PutVariantToLuaStack(&(pParams->rgvarg[i]), pLuaState);
+			}
+			long lRet = XLLRT_LuaCall(pLuaState, 3, 1, NULL);
+			ATLASSERT(lRet == 0);
+		}
+	}
+	lua_settop(pLuaState, lnStackTop);
+	XLLRT_ReleaseRunTime(hRunTime);
+	XLLRT_ReleaseEnv(hEnv);
+	return ;
+}
+
+
+class CFilterMsgWindow : public CWindowImpl<CFilterMsgWindow>
+{
+public:
+	static CFilterMsgWindow* Instance()
+	{
+		static CFilterMsgWindow s;
+		return &s;
+	}
+
+	CFilterMsgWindow(void){}
+	virtual ~CFilterMsgWindow(void){}
+	DECLARE_WND_CLASS(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsfilterresult")
+	BEGIN_MSG_MAP(CFilterMsgWindow)
+		MESSAGE_HANDLER(WM_FILTERRESULT, HandleFilterResult)
+		MESSAGE_HANDLER(WM_FILTERRESULT, HandleFilterAsk)
+	END_MSG_MAP()
+private:
+	LRESULT HandleFilterResult(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		LPWSTR pUrl = (LPWSTR)lParam;
+
+		CComVariant vParam[2];
+		vParam[0] = (int)wParam;
+		vParam[1] = (LPWSTR)pUrl;
+		delete pUrl;
+
+		DISPPARAMS params = { vParam, NULL, 2, 0 };
+		CallLuaMethod("FilterResult",&params);
+		return 0;
+	}
+	LRESULT HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		LPWSTR pUrl = (LPWSTR)lParam;
+
+		CComVariant vParam[2];
+		vParam[0] = (int)wParam;
+		vParam[1] = (LPWSTR)pUrl;
+		delete pUrl;
+
+		DISPPARAMS params = { vParam, NULL, 2, 0 };
+		CallLuaMethod("FilterASK", &params);
+		return 0;
+	}
+};

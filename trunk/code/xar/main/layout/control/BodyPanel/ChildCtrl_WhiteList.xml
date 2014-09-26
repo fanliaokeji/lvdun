@@ -1,0 +1,334 @@
+<xlue>
+	<control class="ChildCtrl_WhiteList">
+		<attr_def>
+
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_WhiteList.xml.lua" func="OnShowPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_WhiteList.MainPanel" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<visible>true</visible>
+					</attr>
+					<children>
+						<obj id="ChildCtrl_WhiteList.Title" class="TextureObject">
+							<attr>
+								<left>15</left>
+								<top>15</top>
+								<width>289</width>
+								<height>27</height>
+								<texture>Greenwall.AdvFilter.ElemBkg.Normal</texture>
+							</attr>
+							<children>
+								<obj id="ChildCtrl_WhiteList.Text.Name" class="TextObject">
+									<attr>
+										<left>8</left>
+										<top>0</top>
+										<width>68</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>left</halign>
+										<font>font.Haetten11</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>网站</text>
+									</attr>
+								</obj>	
+								
+								<obj id="ChildCtrl_WhiteList.Text.Spliter1" class="TextObject">
+									<attr>
+										<left>8+68-15</left>
+										<top>0</top>
+										<width>2</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.Haetten11</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>|</text>
+									</attr>
+								</obj>	
+								
+								<obj id="ChildCtrl_WhiteList.Text.URL" class="TextObject">
+									<attr>
+										<left>8+68-15</left>
+										<top>0</top>
+										<width>157</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.Haetten11</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>域名</text>
+									</attr>
+								</obj>	
+								
+								<obj id="ChildCtrl_WhiteList.Text.Spliter2" class="TextObject">
+									<attr>
+										<left>8+68+157-15</left>
+										<top>0</top>
+										<width>2</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.Haetten11</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>|</text>
+									</attr>
+								</obj>	
+								
+								<obj id="ChildCtrl_WhiteList.Text.State" class="TextObject">
+									<attr>
+										<left>8+68+164-10</left>
+										<top>0</top>
+										<width>50</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.Haetten11</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>状态</text>
+									</attr>
+								</obj>							
+							</children>
+						</obj><!--ChildCtrl_WhiteList.Title-->
+
+						<obj id="ChildCtrl_WhiteList.MainWnd.List" class="LayoutObject">
+							<attr>
+								<left>15</left>
+								<top>15+27</top>
+								<width>289</width>
+								<height>27*4</height>
+								<limitchild>true</limitchild>
+							</attr>
+						</obj>	
+						
+						<obj id="ChildCtrl_WhiteList.MainWnd.ActionBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width/2-37</left>
+								<top>15+27+27*4+15</top>
+								<width>75</width>
+								<height>24</height>
+								<NormalBkgID>GreenWall.AdvFilter.ActionBtn.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.AdvFilter.ActionBtn.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.AdvFilter.ActionBtn.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.AdvFilter.ActionBtn.Normal</DisableBkgID>
+								<Text>添加</Text>
+								<TextFont>font.Haetten11</TextFont>
+								<TextColor>4D4D4D</TextColor>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_WhiteList.xml.lua" func="OnClickActionBtn" />
+							</eventlist>
+						</obj>
+						
+						<obj id="ChildCtrl_WhiteList.Text.Remind" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>father.height-15-10</top>
+								<width>father.width</width>
+								<height>15</height>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.Haetten11</font>
+								<textcolor>999999</textcolor>
+								<text>如果你不想过滤某个网站的广告，请在此添加域名</text>
+							</attr>
+						</obj>	
+								
+						<obj id="listbox.vscroll" class="TipAddin.ScrollBar">
+							<attr>
+								<Type>1</Type>
+								<ThumbBtn_normal>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_normal>
+								<ThumbBtn_hover>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_hover>
+								<ThumbBtn_down>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_down>
+								<ThumbRightMagrin>0</ThumbRightMagrin>
+								<ThumbBtnWidth>5</ThumbBtnWidth>
+								<ThumbBtnLength>13</ThumbBtnLength>
+								<SideBtnLength>0</SideBtnLength>
+								<left>father.width - 5-2</left>
+								<top>0</top>
+								<width>5</width>
+								<height>221</height>
+								<zorder>0</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnVScroll" file="ChildCtrl_WhiteList.xml.lua" func="CLB__OnVScroll" />
+								<event name="OnScrollBarMouseWheel" file="ChildCtrl_WhiteList.xml.lua" func="CLB__OnScrollBarMouseWheel"/>
+								<event name="OnMousePosEvent" file="ChildCtrl_WhiteList.xml.lua" func="CLB__OnScrollMousePosEvent"/>
+							</eventlist>
+						</obj>	
+					</children>
+					<eventlist>
+						<event name="OnDestroy" file="ChildCtrl_WhiteList.xml.lua" func="OnDestroy" />
+						<event name="OnMouseWheel" file="ChildCtrl_WhiteList.xml.lua" redirect="listbox.vscroll"/>
+					</eventlist>
+				</obj><!--ChildCtrl_WhiteList.MainPanel-->
+				
+				<obj id="ChildCtrl_WhiteList.PopupPanel.Bkg" class="TextureObject">
+					<attr>
+						<left>12</left>
+						<top>15</top>
+						<width>295</width>
+						<height>27+107</height>
+						<texture>Greenwall.AdvFilter.PopupPanel.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="ChildCtrl_WhiteList.PopupPanel.Title" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>27</height>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.Haetten12</font>
+								<textcolor>system.white</textcolor>
+								<text>输入您不想过滤广告的网站域名</text>
+							</attr>
+						</obj>
+						
+						
+						<obj id="ChildCtrl_WhiteList.PopupPanel.List.Name" class="LayoutObject">
+							<attr>
+								<left>20</left>
+								<top>27+10</top>
+								<width>father.width-20</width>
+								<height>20</height>
+							</attr>
+							<children>
+								<obj id="ChildCtrl_WhiteList.PopupPanel.Name" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>30</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>left</halign>
+										<font>font.Haetten12</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>名称 :</text>
+									</attr>
+								</obj>
+								
+								<obj id="ChildCtrl_WhiteList.PopupPanel.Name.Bkg" class="TextureObject">
+									<attr>
+										<left>30+10</left>
+										<top>0</top>
+										<width>215</width>
+										<height>20</height>
+										<texture>Greenwall.AdvFilter.PopupPanel.InputBkg</texture>
+									</attr>
+									<children>
+										<obj id="ChildCtrl_WhiteList.PopupPanel.Name.Input" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>1</top>
+												<width>father.width-2</width>
+												<height>father.height-2</height>
+												<font>font.Haetten11</font>
+												<textcolor>666666</textcolor>
+											</attr>
+										</obj>
+									</children>
+								</obj>
+							</children>
+						</obj>
+						
+						<obj id="ChildCtrl_WhiteList.PopupPanel.List.URL" class="LayoutObject">
+							<attr>
+								<left>20</left>
+								<top>27+10+20+5</top>
+								<width>father.width-20</width>
+								<height>20</height>
+							</attr>
+							<children>
+								<obj id="ChildCtrl_WhiteList.PopupPanel.URL" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>30</width>
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>left</halign>
+										<font>font.Haetten12</font>
+										<textcolor>4D4D4D</textcolor>
+										<text>域名 :</text>
+									</attr>
+								</obj>
+								
+								<obj id="ChildCtrl_WhiteList.PopupPanel.URL.Bkg" class="TextureObject">
+									<attr>
+										<left>30+10</left>
+										<top>0</top>
+										<width>215</width>
+										<height>20</height>
+										<texture>Greenwall.AdvFilter.PopupPanel.InputBkg</texture>
+									</attr>
+									<children>
+										<obj id="ChildCtrl_WhiteList.PopupPanel.URL.Input" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>1</top>
+												<width>father.width-2</width>
+												<height>father.height-2</height>
+												<font>font.Haetten11</font>
+												<textcolor>666666</textcolor>
+											</attr>
+										</obj>
+									</children>
+								</obj>
+							</children>
+						</obj>
+						
+						<obj id="ChildCtrl_WhiteList.PopupPanel.CancleBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-10-75</left>
+								<top>father.height-10-24</top>
+								<width>75</width>
+								<height>24</height>
+								<NormalBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</DisableBkgID>
+								<Text>取消</Text>
+								<TextFont>font.Haetten11</TextFont>
+								<TextColor>4D4D4D</TextColor>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_WhiteList.xml.lua" func="OnClickCancleBtn" />
+							</eventlist>
+						</obj>
+						
+						<obj id="ChildCtrl_WhiteList.PopupPanel.AddBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-10*2-75*2</left>
+								<top>father.height-10-24</top>
+								<width>75</width>
+								<height>24</height>
+								<NormalBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</DisableBkgID>
+								<Text>添加</Text>
+								<TextFont>font.Haetten11</TextFont>
+								<TextColor>4D4D4D</TextColor>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_WhiteList.xml.lua" func="OnClickAddBtn" />
+							</eventlist>
+						</obj>							
+					</children>
+				</obj>
+			</children>
+		</objtemplate>
+	</control>
+</xlue>

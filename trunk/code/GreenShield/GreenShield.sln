@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GreenShield", "GreenShield\GreenShield.vcproj", "{0BFD84F3-EB47-4518-934B-FE003527693E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GSPre", "GSPre\GSPre.vcproj", "{5D8C9EF6-9810-4BDB-A379-C5EEBF14D72B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DsSetUpHelper", "DsSetUpHelper\DsSetUpHelper.vcproj", "{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BFD84F3-EB47-4518-934B-FE003527693E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0BFD84F3-EB47-4518-934B-FE003527693E}.Debug|Win32.Build.0 = Debug|Win32
+		{0BFD84F3-EB47-4518-934B-FE003527693E}.Release|Win32.ActiveCfg = Release|Win32
+		{0BFD84F3-EB47-4518-934B-FE003527693E}.Release|Win32.Build.0 = Release|Win32
+		{5D8C9EF6-9810-4BDB-A379-C5EEBF14D72B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5D8C9EF6-9810-4BDB-A379-C5EEBF14D72B}.Debug|Win32.Build.0 = Debug|Win32
+		{5D8C9EF6-9810-4BDB-A379-C5EEBF14D72B}.Release|Win32.ActiveCfg = Release|Win32
+		{5D8C9EF6-9810-4BDB-A379-C5EEBF14D72B}.Release|Win32.Build.0 = Release|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Debug|Win32.Build.0 = Debug|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.ActiveCfg = Release|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
