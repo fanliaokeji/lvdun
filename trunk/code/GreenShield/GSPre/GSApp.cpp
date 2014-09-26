@@ -78,7 +78,7 @@ BOOL CGSApp::IniEnv()
 	TCHAR szXar[MAX_PATH] = {0};
 	GetModuleFileName((HMODULE)g_hInst, szXar, MAX_PATH);
 	PathRemoveFileSpec(szXar);
-	PathAppend(szXar, _T("..\\..\\Code\\xar\\")); 
+	PathAppend(szXar, _T("..\\xar\\")); 
 	if (!::PathFileExists(szXar) || !::PathIsDirectory(szXar) )
 	{
 		return FALSE;

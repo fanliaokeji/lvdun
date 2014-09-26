@@ -146,11 +146,11 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 	BOOL bFilter = (nFilter == 0) ? FALSE : TRUE;
 	if (bFilter)
 	{
-		MessageBox(NULL,L"开",L"过滤",MB_OK);
+		//MessageBox(NULL,L"开",L"过滤",MB_OK);
 	}
 	else
 	{
-		MessageBox(NULL,L"关",L"过滤",MB_OK);
+		//MessageBox(NULL,L"关",L"过滤",MB_OK);
 	}
 	lua_pushboolean(pLuaState, 1);
 	return 1;
