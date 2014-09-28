@@ -502,7 +502,7 @@ bool TcpProxyConnection::CheckIfIsNonHttpRequestViaMethod(std::string::const_ite
 	for(std::string::const_iterator iter = begin; iter != end && state != 0; ++iter) {
 		switch(state) {
 			case 1:
-				if(*iter == '0') {
+				if(*iter == 'O') {
 					state = 10;
 					continue;
 				}
@@ -650,13 +650,38 @@ bool TcpProxyConnection::CheckIfIsNonHttpRequestViaMethod(std::string::const_ite
 					continue;
 				}
 				break;
+			case 60:
+				if(*iter == 'R') {
+					++state; // 61
+					continue;
+				}
+				break;
+			case 61:
+				if(*iter == 'A') {
+					++state; // 62
+					continue;
+				}
+				break;
+			case 62:
+				if(*iter == 'C') {
+					++state; // 63
+					continue;
+				}
+				break;
+			case 63:
+				if(*iter == 'E') {
+					state = 100; // 100
+					continue;
+				}
+				break;
 			case 100:
 				if(std::isspace(static_cast<unsigned char>(*iter))) {
 					state = 0; // 0
 					continue;
 				}
-			return true;
+				break;
 		}
+		return true;
 	}
 	return false;
 }
