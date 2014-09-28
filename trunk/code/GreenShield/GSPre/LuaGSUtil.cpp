@@ -227,10 +227,10 @@ int LuaGSUtil::FEnableDomain(lua_State* pLuaState)
 		return 0;
 	}
 	BOOL bRet = FALSE;
-	if (lua_isboolean(pLuaState, 3) && lua_isstring(pLuaState,3))
+	if (lua_isstring(pLuaState,2) && lua_isboolean(pLuaState, 3) )
 	{
-		int nEnable = lua_toboolean(pLuaState, 3);
 		const char* utf8Domain = luaL_checkstring(pLuaState, 2);
+		int nEnable = lua_toboolean(pLuaState, 3);
 		CComBSTR bstrDomain;
 		LuaStringToCComBSTR(utf8Domain,bstrDomain);
 		BOOL bEnable = nEnable?TRUE:FALSE;
