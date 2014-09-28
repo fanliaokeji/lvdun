@@ -11,6 +11,7 @@
 #include "GSApp.h"
 #include "PeeIdHelper.h"
 //#include "FilterMsgPrc.h"
+#include "..\GsNetFilter\GsNetFilter.h"
 
 extern CGSApp theApp;
 //extern CFilterMsgWindow gFilterMsgWindow;
@@ -27,7 +28,7 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 {
 	//{"RegisterFilterWnd", RegisterFilterWnd},	
 	//主要函数
-	{"FGSFilter", FGSFilter},
+	{"GSFilter", FGSFilter},
 	{"AddDomain", FAddDomain},
 	{"EnableDomain", FEnableDomain},
 
@@ -142,17 +143,33 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 	{
 		return 0;
 	}
+	BOOL bRet = FALSE;
 	int nFilter = lua_toboolean(pLuaState, 2);
 	BOOL bFilter = (nFilter == 0) ? FALSE : TRUE;
 	if (bFilter)
 	{
-		//MessageBox(NULL,L"开",L"过滤",MB_OK);
+		static BOOL bOnce  = FALSE;
+		if (!bOnce)
+		{
+			if (GsSetHook(L"GsNet32.dll"))
+			{
+				HANDLE hThread = GsStartProxy();
+				if (NULL != hThread)
+				{
+					bRet = GsEnable(TRUE);
+				}
+			}
+		}
+		else
+		{
+			bRet = GsEnable(TRUE);
+		}
 	}
 	else
 	{
-		//MessageBox(NULL,L"关",L"过滤",MB_OK);
+		bRet = GsEnable(FALSE);
 	}
-	lua_pushboolean(pLuaState, 1);
+	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
 
@@ -195,6 +212,7 @@ int LuaGSUtil::FAddDomain(lua_State* pLuaState)
 		lua_pushboolean(pLuaState, 0);
 		return 1;
 	}
+	GsAddDomain(bstrDomain.m_str,v_AdLink);
 	//call
 	lua_pushboolean(pLuaState, 1);
 	return 1;
@@ -207,16 +225,17 @@ int LuaGSUtil::FEnableDomain(lua_State* pLuaState)
 	{
 		return 0;
 	}
-	if (lua_isboolean(pLuaState, 2) && lua_isstring(pLuaState,3))
+	BOOL bRet = FALSE;
+	if (lua_isboolean(pLuaState, 3) && lua_isstring(pLuaState,3))
 	{
-		int nEnable = lua_toboolean(pLuaState, 2);
-		const char* utf8Domain = luaL_checkstring(pLuaState, 3);
+		int nEnable = lua_toboolean(pLuaState, 3);
+		const char* utf8Domain = luaL_checkstring(pLuaState, 2);
 		CComBSTR bstrDomain;
 		LuaStringToCComBSTR(utf8Domain,bstrDomain);
-
-		//MessageBox(NULL,L"过滤域名",bstrDomain.m_str,MB_OK);
+		BOOL bEnable = nEnable?TRUE:FALSE;
+		bRet = GsEnableDomain(bstrDomain.m_str,bEnable);
 	}
-	lua_pushboolean(pLuaState, 1);
+	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
 
@@ -239,14 +258,14 @@ int LuaGSUtil::GetPeerId(lua_State* pLuaState)
 		return 0;
 	}
 
-	HWND  hWnd = FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg",NULL);
+	//HWND  hWnd = FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg",NULL);
 
-	wchar_t * szUrl = new wchar_t[100];
+	//wchar_t * szUrl = new wchar_t[100];
 
-	wcscpy(szUrl,L"youku.com");
+	//wcscpy(szUrl,L"youku.com");
 
-	PostMessage(hWnd,WM_USER + 202,1,(WPARAM)szUrl);
-	getchar();
+	//PostMessage(hWnd,WM_USER + 202,1,(WPARAM)szUrl);
+	//getchar();
 
 
 
