@@ -7,6 +7,8 @@
 #include "TcpProxyServer.h"
 #include <boost/asio.hpp>
 
+#include <process.h>
+
 
 // This is an example of an exported variable
 //GSNETFILTER_API int nGsNetFilter=0;
@@ -41,17 +43,29 @@ GSNETFILTER_API BOOL GsEnable(BOOL bEnable)
 	return HttpRequestFilter::GetInstance().Enable(bEnable == FALSE ? false : true) ? TRUE : FALSE;
 }
 
-GSNETFILTER_API BOOL GsStartProxy()
+namespace {
+	unsigned __stdcall  ProxyWorkingThread(void* arg)
+	{
+		std::auto_ptr<TcpProxyServer> spServer(reinterpret_cast<TcpProxyServer*>(arg));
+		spServer->Run();
+		return 0;
+	}
+}
+
+GSNETFILTER_API HANDLE GsStartProxy()
 {
-	TcpProxyServer server;
+	std::auto_ptr<TcpProxyServer> spServer(new TcpProxyServer());
 	boost::asio::ip::address_v4 ip;
 	ip.from_string("127.0.0.1");
-	bool result = server.Bind(ip, 15868);
+	bool result = spServer->Bind(ip, 15868);
 	if(!result) {
-		return FALSE;
+		return NULL;
 	}
-	server.Run();
-	return TRUE;
+	HANDLE hThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, ProxyWorkingThread, reinterpret_cast<void*>(spServer.get()), 0, NULL));
+	if(hThread == NULL) {
+		spServer.release();
+	}
+	return hThread;
 }
 
 BOOL GsSetHook(const std::wstring& dllPath)
