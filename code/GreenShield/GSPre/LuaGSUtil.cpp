@@ -151,6 +151,7 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 		static BOOL bOnce  = FALSE;
 		if (!bOnce)
 		{
+			bOnce = TRUE;
 			if (GsSetHook(L"GsNet32.dll"))
 			{
 				HANDLE hThread = GsStartProxy();
