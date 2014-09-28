@@ -368,7 +368,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 									// 检查是否全部是十进制数
 									bool convertable = true;
 									for(std::size_t index = 0; index < iter->second.size(); ++index) {
-										if(!std::isdigit(iter->second[index])) {
+										if(!std::isdigit(static_cast<unsigned char>(iter->second[index]))) {
 											convertable = false;
 											break;
 										}
@@ -651,7 +651,7 @@ bool TcpProxyConnection::CheckIfIsNonHttpRequestViaMethod(std::string::const_ite
 				}
 				break;
 			case 100:
-				if(std::isspace(*iter)) {
+				if(std::isspace(static_cast<unsigned char>(*iter))) {
 					state = 0; // 0
 					continue;
 				}
@@ -665,19 +665,19 @@ std::string::const_iterator TcpProxyConnection::SplitRequestLine(std::string::co
 {
 	assert(leftString.empty() && middleString.empty() && rightString.empty());
 	std::string::const_iterator iter = begin;
-	for(;iter != end && !std::isspace(*iter); ++iter) {
+	for(;iter != end && !std::isspace(static_cast<unsigned char>(*iter)); ++iter) {
 		leftString.push_back(*iter);
 	}
-	for(;iter != end && std::isspace(*iter); ++iter)
+	for(;iter != end && std::isspace(static_cast<unsigned char>(*iter)); ++iter)
 		;
 
-	for(;iter != end && !std::isspace(*iter); ++iter) {
+	for(;iter != end && !std::isspace(static_cast<unsigned char>(*iter)); ++iter) {
 		middleString.push_back(*iter);
 	}
-	for(;iter != end && std::isspace(*iter); ++iter)
+	for(;iter != end && std::isspace(static_cast<unsigned char>(*iter)); ++iter)
 		;
 
-	for(;iter != end && !std::isspace(*iter); ++iter) {
+	for(;iter != end && !std::isspace(static_cast<unsigned char>(*iter)); ++iter) {
 		rightString.push_back(*iter);
 	}
 	return iter;
@@ -693,7 +693,7 @@ bool TcpProxyConnection::IsSeperators(char ch)
 		|| ch == '/' || ch == '['
 		|| ch == ']' || ch == '?'
 		|| ch == '=' || ch == '{'
-		|| ch == '}' || std::isspace(ch)
+		|| ch == '}' || std::isspace(static_cast<unsigned char>(ch))
 		|| ch == '\t';
 }
 
@@ -711,7 +711,7 @@ bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator beg
 				else if((0 <= *iter && *iter <= 31) || *iter == 127) {
 					return false;
 				}
-				else if(!std::isspace(*iter)) {
+				else if(!std::isspace(static_cast<unsigned char>(*iter))) {
 					if(this->IsSeperators(*iter)) {
 						return false;
 					}
@@ -720,7 +720,7 @@ bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator beg
 				}
 				break;
 			case 1:
-				if(std::isspace(*iter)) {
+				if(std::isspace(static_cast<unsigned char>(*iter))) {
 					++state; // 2
 				}
 				else if(*iter == ':') {
@@ -737,12 +737,12 @@ bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator beg
 				if(*iter == ':') {
 					++state; // 3
 				}
-				else if(!std::isspace(*iter)) {
+				else if(!std::isspace(static_cast<unsigned char>(*iter))) {
 					return false;
 				}
 				break;
 			case 3:
-				if(!std::isspace(*iter)) {
+				if(!std::isspace(static_cast<unsigned char>(*iter))) {
 					++state; // 4
 					value.push_back(*iter);
 				}
@@ -758,7 +758,7 @@ bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator beg
 			case 5:
 				if(*iter == '\n') {
 					if(!value.empty()) {
-						for(std::size_t index = value.size() - 1; index != 0 && std::isspace(value[index]); --index) {
+						for(std::size_t index = value.size() - 1; index != 0 && std::isspace(static_cast<unsigned char>(value[index])); --index) {
 							value.erase(value.begin() + index);
 						}
 					}
