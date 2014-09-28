@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GSPre", "GSPre\GSPre.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DsSetUpHelper", "DsSetUpHelper\DsSetUpHelper.vcproj", "{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GsNet", "GsNet\GsNet.vcproj", "{D69C1FB9-133F-4095-8806-5C4A4F7F3B41}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GsNetFilter", "GsNetFilter\GsNetFilter.vcproj", "{EB812B70-CC87-4EA9-923C-445F69D8085A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +29,14 @@ Global
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Debug|Win32.Build.0 = Debug|Win32
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.ActiveCfg = Release|Win32
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.Build.0 = Release|Win32
+		{D69C1FB9-133F-4095-8806-5C4A4F7F3B41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D69C1FB9-133F-4095-8806-5C4A4F7F3B41}.Debug|Win32.Build.0 = Debug|Win32
+		{D69C1FB9-133F-4095-8806-5C4A4F7F3B41}.Release|Win32.ActiveCfg = Release|Win32
+		{D69C1FB9-133F-4095-8806-5C4A4F7F3B41}.Release|Win32.Build.0 = Release|Win32
+		{EB812B70-CC87-4EA9-923C-445F69D8085A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EB812B70-CC87-4EA9-923C-445F69D8085A}.Debug|Win32.Build.0 = Debug|Win32
+		{EB812B70-CC87-4EA9-923C-445F69D8085A}.Release|Win32.ActiveCfg = Release|Win32
+		{EB812B70-CC87-4EA9-923C-445F69D8085A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
