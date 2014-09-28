@@ -9,7 +9,7 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="F:\GreenShield\GreenShield\Bin\Debug\GreenShield.exe"
+				Command="F:\lvdun\trunk\code\GreenShield\Debug\GreenShield.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"
@@ -22,7 +22,7 @@
 				SQLDebugging=""
 				Environment=""
 				EnvironmentMerge="true"
-				DebuggerFlavor=""
+				DebuggerFlavor="0"
 				MPIRunCommand=""
 				MPIRunArguments=""
 				MPIRunWorkingDirectory=""

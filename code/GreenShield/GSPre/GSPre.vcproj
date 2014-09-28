@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Wininet.lib Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib detours.lib psapi.lib Winmm.lib"
+				AdditionalDependencies="Wininet.lib Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib detours.lib psapi.lib Winmm.lib GsNetFilter.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib"
+				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib;$(SolutionDir)$(ConfigurationName)"
 				ModuleDefinitionFile="GSPre.def"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
