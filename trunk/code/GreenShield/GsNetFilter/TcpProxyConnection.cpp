@@ -300,18 +300,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								HttpHeadersContainerType::const_iterator iter = requestHeaders.find("Host");
 								
 								if(iter != requestHeaders.end()) {
-									if(this->m_targetServerPort == 80) {
-										this->m_absoluteUrl = "http://" + iter->second + this->m_relativeUrl;
-									}
-									else {
-										std::string portStr;
-										{
-											std::stringstream ss;
-											ss << this->m_targetServerPort;
-											ss >> portStr;
-										}
-										this->m_absoluteUrl = "http://" + iter->second + ":" + portStr + this->m_relativeUrl;
-									}
+									this->m_absoluteUrl = "http://" + iter->second + this->m_relativeUrl;
 								}
 								else {
 									// 找不到host则使用ip作为host
