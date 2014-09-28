@@ -62,7 +62,7 @@ GSNETFILTER_API HANDLE GsStartProxy()
 		return NULL;
 	}
 	HANDLE hThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, ProxyWorkingThread, reinterpret_cast<void*>(spServer.get()), 0, NULL));
-	if(hThread == NULL) {
+	if(hThread != NULL) {
 		spServer.release();
 	}
 	return hThread;
