@@ -328,9 +328,11 @@ end
 function UIAutoEnableDomain(strDomain)
 	if IsRealString(strDomain) then
 		if IsDomainInWhiteList(strDomain) then
-			tipUtil:EnableDomain(false, strDomain)
+			--tipUtil:EnableDomain(false, strDomain)
+			tipUtil:EnableDomain(strDomain,false)
 		elseif IsDomainInBlackList(strDomain) then
-			tipUtil:EnableDomain(true, strDomain)
+			--tipUtil:EnableDomain(true, strDomain)
+			tipUtil:EnableDomain(strDomain, true)
 		end
 	end
 end
@@ -438,7 +440,7 @@ function TipMain()
 	CreateMainTipWnd()
 	CreatePopupTipWnd()
 	StartTimer()
-		tipUtil:GetPeerId();
+		--tipUtil:GetPeerId();
 end
 
 

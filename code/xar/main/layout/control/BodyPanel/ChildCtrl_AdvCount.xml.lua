@@ -84,11 +84,11 @@ function ChangeSwitchFilter(objFilterSwitch)
 	if g_bFilterOpen then
 		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Close")
 		g_bFilterOpen = false
-		tipUtil:FGSFilter(false)
+		tipUtil:GSFilter(false)
 	else
 		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Open")
 		g_bFilterOpen = true
-		tipUtil:FGSFilter(true)
+		tipUtil:GSFilter(true)
 	end
 	
 end
