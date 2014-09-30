@@ -17,7 +17,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			_tcslwr_s(szPath);
 			if (_tcsstr(szPath,  L"firefox.exe")
 				|| _tcsstr(szPath, L"chrome.exe")
-				|| _tcsstr(szPath, L"iexplore.exe")) {
+				|| _tcsstr(szPath, L"iexplore.exe")
+				|| TRUE)
+			{
 				WinsockHooker::AttachHook();	
 			}
 		}

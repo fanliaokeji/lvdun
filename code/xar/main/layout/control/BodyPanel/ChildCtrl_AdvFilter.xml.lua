@@ -694,7 +694,7 @@ function PushBlackList(strName, strDomain, bState)
 	g_tBlackList[nTopIndex]["strName"] = strName or ""
 	g_tBlackList[nTopIndex]["strDomain"] = strDomain
 	g_tBlackList[nTopIndex]["bState"] = bState
-	
+	tipUtil:EnableDomain(strDomain,true)
 	AutoEnableDomain(strDomain)
 end
 

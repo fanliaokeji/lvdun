@@ -31,7 +31,7 @@ BOOL CGSApp::InitInstance(LPWSTR lpCmdLine)
 	//XLLRT_DebugInit("greenshield",XLLRT_DEBUG_TYPE_NOHOOK);
 #endif
 
-	XLLRT_ErrorHandle(CGSApp::LuaErrorHandle);
+	
 
 	return IniEnv();
 }
@@ -60,13 +60,18 @@ int __stdcall CGSApp::LuaErrorHandle(lua_State* luaState,const wchar_t* pExtInfo
 int CGSApp::ExitInstance()
 {
 	TSTRACEAUTO();
+	TSDEBUG4CXX(" TerminateProcess 0");
 
-	XLUE_Uninit(NULL);
+	//XLUE_Uninit(NULL); XP下卡死
+	TSDEBUG4CXX(" TerminateProcess 1");
 	XLUE_UninitLuaHost(NULL);
+	TSDEBUG4CXX(" TerminateProcess 2");
 	XL_UnInitGraphicLib();
+	TSDEBUG4CXX(" TerminateProcess 3");
 	XLUE_UninitHandleMap(NULL);
+	TSDEBUG4CXX(" TerminateProcess 4");
 
-	TSDEBUG4CXX(" TerminateProcess ");
+	TSDEBUG4CXX(" TerminateProcess 5");
 	TerminateProcess(GetCurrentProcess(), 0);
 	return 0;
 }
@@ -89,12 +94,13 @@ BOOL CGSApp::IniEnv()
 	XL_PrepareGraphicParam(&param);
 	param.textType = XLTEXT_TYPE_GDI;
 	XL_InitGraphicLib(&param);
-	XL_SetFreeTypeEnabled(TRUE);
+	//XL_SetFreeTypeEnabled(TRUE);
 
 	// 2)初始化XLUE,这函数是一个符合初始化函数
 	// 完成了初始化Lua环境,标准对象,XLUELoader的工作
-	XLFS_Init();
+	//XLFS_Init();
 	XLUE_InitLoader(NULL);
+	XLLRT_ErrorHandle(CGSApp::LuaErrorHandle);
 
 	if (!m_RegisterLuaAPI.Init())
 	{

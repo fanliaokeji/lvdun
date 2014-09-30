@@ -10,6 +10,12 @@
 #pragma comment(lib, "Urlmon.lib")
 #include <Windows.h>
 #pragma comment(lib, "Version.lib")
+
+#define TSLOG
+#define GS_GROUP "GS_GROUP"	//可选,默认为 "TSLOG"
+#include <tslog/tslog.h>				//如上配置,日志程序将根据 C:\TSLOG_CONFIG\TSLOG.ini 定义的策略打印
+
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -150,4 +156,57 @@ extern "C" __declspec(dllexport) void GetTime(LPDWORD pnTime)
 	time_t t;
 	time( &t );
 	*pnTime = (DWORD)t;
+}
+
+#ifndef FOLDERID_Public
+
+#ifndef DEFINE_KNOWN_FOLDER
+#define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+	EXTERN_C const GUID DECLSPEC_SELECTANY name \
+	= { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+#endif
+
+DEFINE_KNOWN_FOLDER(FOLDERID_Public, 0xDFDF76A2, 0xC82A, 0x4D63, 0x90, 0x6A, 0x56, 0x44, 0xAC, 0x45, 0x73, 0x85);
+#endif
+
+extern "C" typedef HRESULT (__stdcall *PSHGetKnownFolderPath)(  const  GUID& rfid, DWORD dwFlags, HANDLE hToken, PWSTR* pszPath);
+
+
+extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// 失败返回'\0'
+{
+	char szAllUserDir[MAX_PATH] = {0};
+	if(('\0') == szAllUserDir[0])
+	{
+		HMODULE hModule = ::LoadLibraryA("shell32.dll");
+		PSHGetKnownFolderPath SHGetKnownFolderPath = (PSHGetKnownFolderPath)GetProcAddress( hModule, "SHGetKnownFolderPath" );
+		if ( SHGetKnownFolderPath)
+		{
+			PWSTR szPath = NULL;
+			HRESULT hr = SHGetKnownFolderPath( FOLDERID_Public, 0, NULL, &szPath );
+			if ( FAILED( hr ) )
+			{
+				TSERROR4CXX("Failed to get public folder");
+				FreeLibrary(hModule);
+				return false;
+			}
+			if(0 == WideCharToMultiByte(CP_ACP, 0, szPath, -1, szAllUserDir, MAX_PATH, NULL, NULL))
+			{
+				TSERROR4CXX("WideCharToMultiByte failed");
+				return false;
+			}
+			::CoTaskMemFree( szPath );
+			FreeLibrary(hModule);
+		}
+		else
+		{
+			HRESULT hr = SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, szAllUserDir);
+			if ( FAILED( hr ) )
+			{
+				TSERROR4CXX("Failed to get main pusher dir");
+				return false;
+			}
+		}
+	}
+	strcpy(szMainDir, szAllUserDir);
+	return true;
 }
