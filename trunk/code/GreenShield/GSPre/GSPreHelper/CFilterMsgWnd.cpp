@@ -172,8 +172,9 @@ LRESULT CFilterMsgWindow::HandleFilterResult(UINT uiMsg, WPARAM wParam, LPARAM l
 }
 LRESULT CFilterMsgWindow::HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
+	TSAUTO();
 	LPWSTR pUrl = (LPWSTR)lParam;
-
+	TSDEBUG4CXX(" filter ask  domain: "<<pUrl);	
 	CComVariant vParam[2];
 	vParam[0] = (int)wParam;
 	vParam[1] = (LPWSTR)pUrl;
