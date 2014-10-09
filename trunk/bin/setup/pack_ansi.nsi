@@ -44,8 +44,9 @@ Var Btn_FreeUse
 !define MUI_UNICON "images\unis.ico"
 
 !define PRODUCT_NAME "GreenShield"
+!define SHORTCUT_NAME "绿盾"
 !define EM_OUTFILE_NAME "${PRODUCT_NAME}安装包.exe"
-!define PRODUCT_VERSION "3.5.1.910"
+!define PRODUCT_VERSION "1.0.0.1"
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "My company, Inc."
 !define PRODUCT_WEB_SITE "http://www.mycompany.com"
@@ -66,6 +67,7 @@ XPStyle on
 !include "FileFunc.nsh"
 !include "nsWindows.nsh"
 !include "WinMessages.nsh"
+!include "WordFunc.nsh"
 
 !define MUI_CUSTOMFUNCTION_GUIINIT onGUIInit
 !define MUI_CUSTOMFUNCTION_UNGUIINIT un.myGUIInit
@@ -91,249 +93,139 @@ InstallDir "$PROGRAMFILES\GreenShield"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 Function DoInstall
+  ;释放主程序文件到安装目录
   SetOutPath "$INSTDIR"
   SetOverwrite on
   File /r "input_main\*.*"
+  WriteUninstaller "$INSTDIR\uninst.exe"
+  ;释放配置到public目录
+  SetOutPath "$TEMP\${PRODUCT_NAME}"
+  StrCpy $1 ${NSIS_MAX_STRLEN}
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+  SetOutPath "$0"
+  SetOverwrite off
+  File /r "input_config\*.*"
+  
+  
   ;上报统计
-  System::Call 'DsSetUpHelper::SendAnyHttpStat(t "1111", t "22222", t "33333", i 4) '
+  SetOutPath "$TEMP\${PRODUCT_NAME}"
+  ${GetParameters} $R1
+  ${GetOptions} $R1 "/source"  $R0
+  IfErrors 0 +2
+  StrCpy $R0 "cmd_null"
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "$R0", t "22222", t "33333", i 4) '
   ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
-  System::Call 'DsSetUpHelper::GetTime(*l) i(.r0).r1'
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\ADSafe.exe"
-  System::Call 'DsSetUpHelper::GetPeerID(t) i(.r0).r1'
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetPeerID(t) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
   
   ;写入通用的注册表信息
-  WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\${PRODUCT_NAME}.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\${PRODUCT_NAME}.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\program\${PRODUCT_NAME}.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  SetOutPath "$INSTDIR"
-  WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+  ;SetOutPath "$INSTDIR"
+  ;WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
 FunctionEnd
 
-;  Created 1/5/05 by Comperio
-;
-;	Usage:
-;	${VersionCheck} "Version1" "Version2" "outputVar"
-;		Version1 = 1st version number
-;		Version2 = 2nd version number
-;		outputVar = Variable used to store the ouput
-;
-;	Return values:
-;		0 = both versions are equal
-;		1 = Version 1 is NEWER than version 2
-;		2 = Version1 is OLDER than version 2
-;	Rules for Version Numbers:
-;		Version numbers must always be a string of numbers only.  (A dot
-;		in the name is optional). 
-;
-;	[Variables]
-var P1	; file pointer, used to "remember" the position in the Version1 string
-var P2	; file pointer, used to "remember" the position in the Version2 string
-var V1	;version number from Version1
-var V2	;version number from Version2
-Var Reslt	; holds the return flag
- 
- 
-;	[Macros]
-!macro VersionCheck Ver1 Ver2 OutVar
-	;	To make this work, one character must be added to the version string:
-	Push "x${Ver2}"
-	Push "x${Ver1}"
-	Call VersionCheckF
-	Pop ${OutVar}
- 
-!macroend
- 
-;	[Defines]
-!define VersionCheck "!insertmacro VersionCheck"
- 
-;	[Functions]
-Function VersionCheckF
-	Exch $1 ; $1 contains Version 1
-	Exch
-	Exch $2 ; $2 contains Version 2
-	Exch
-	Push $R0
-	;	initialize Variables
-	StrCpy $V1 ""
-	StrCpy $V2 ""
-	StrCpy $P1 ""
-	StrCpy $P2 ""
-	StrCpy $Reslt ""
-	;	Set the file pointers:
-	IntOp $P1 $P1 + 1
-	IntOp $P2 $P2 + 1
-	;  ******************* Get 1st version number for Ver1 **********************
-	V11:
-	;	I use $1 and $2 to help keep identify "Ver1" vs. "Ver2"
-	StrCpy $R0 $1 1 $P1 ;$R0 contains the character at position $P1
-	IntOp $P1 $P1 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V11end 0	;check for empty string
-	strCmp $R0 "." v11end 0
-	strCpy $V1 "$V1$R0"
-	Goto V11
-	V11End:
-	StrCmp $V1 "" 0 +2
-	StrCpy $V1 "0"	
-	;  ******************* Get 1st version number for Ver2 **********************
-	V12:
-	StrCpy $R0 $2 1 $P2 ;$R0 contains the character at position $P1
-	IntOp $P2 $P2 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V12end 0	;check for empty string
-	strCmp $R0 "." v12end 0
-	strCpy $V2 "$V2$R0"
-	Goto V12
-	V12End:
-	StrCmp $V2 "" 0 +2
-	StrCpy $V2 "0"	
-	;	At this point, we can compare the results.  If the numbers are not
-	;		equal, then we can exit
-	IntCmp $V1 $V2 cont1 older1 newer1
-	older1: ; Version 1 is older (less than) than version 2
-	StrCpy $Reslt 2
-	Goto ExitFunction
-	newer1:	; Version 1 is newer (greater than) Version 2
-	StrCpy $Reslt 1
-	Goto ExitFunction
-	Cont1: ;Versions are the same.  Continue searching for differences
-	;	Reset $V1 and $V2
-	StrCpy $V1 ""
-	StrCpy $V2 ""
- 
-	;  ******************* Get 2nd version number for Ver1 **********************	
-	V21:
-	StrCpy $R0 $1 1 $P1 ;$R0 contains the character at position $P1
-	IntOp $P1 $P1 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V21end 0	;check for empty string
-	strCmp $R0 "." v21end 0
-	strCpy $V1 "$V1$R0"
-	Goto V21
-	V21End:
-	StrCmp $V1 "" 0 +2
-	StrCpy $V1 "0"	
-	;  ******************* Get 2nd version number for Ver2 **********************
-	V22:
-	StrCpy $R0 $2 1 $P2 ;$R0 contains the character at position $P1
-	IntOp $P2 $P2 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V22end 0	;check for empty string
-	strCmp $R0 "." V22end 0
-	strCpy $V2 "$V2$R0"
-	Goto V22
-	V22End:
-	StrCmp $V2 "" 0 +2
-	StrCpy $V2 "0"	
-	;	At this point, we can compare the results.  If the numbers are not
-	;		equal, then we can exit
-	IntCmp $V1 $V2 cont2 older2 newer2
-	older2: ; Version 1 is older (less than) than version 2
-	StrCpy $Reslt 2 
-	Goto ExitFunction
-	newer2:	; Version 1 is newer (greater than) Version 2
-	StrCpy $Reslt 1
-	Goto ExitFunction
-	Cont2: ;Versions are the same.  Continue searching for differences
-	;	Reset $V1 and $V2
-	StrCpy $V1 ""
-	StrCpy $V2 ""	
-	;  ******************* Get 3rd version number for Ver1 **********************	
-	V31:
-	StrCpy $R0 $1 1 $P1 ;$R0 contains the character at position $P1
-	IntOp $P1 $P1 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V31end 0	;check for empty string
-	strCmp $R0 "." v31end 0
-	strCpy $V1 "$V1$R0"
-	Goto V31
-	V31End:
-	StrCmp $V1 "" 0 +2
-	StrCpy $V1 "0"	
-	;  ******************* Get 3rd version number for Ver2 **********************
-	V32:
-	StrCpy $R0 $2 1 $P2 ;$R0 contains the character at position $P1
-	IntOp $P2 $P2 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V32end 0	;check for empty string
-	strCmp $R0 "." V32end 0
-	strCpy $V2 "$V2$R0"
-	Goto V32
-	V32End:
-	StrCmp $V2 "" 0 +2
-	StrCpy $V2 "0"	
-	;	At this point, we can compare the results.  If the numbers are not
-	;		equal, then we can exit
-	IntCmp $V1 $V2 cont3 older3 newer3
-	older3: ; Version 1 is older (less than) than version 2
-	StrCpy $Reslt 2
-	Goto ExitFunction
-	newer3:	; Version 1 is newer (greater than) Version 2
-	StrCpy $Reslt 1
-	Goto ExitFunction
-	Cont3: ;Versions are the same.  Continue searching for differences
-	;	Reset $V1 and $V2
-	StrCpy $V1 ""
-	StrCpy $V2 ""
-	;  ******************* Get 4th version number for Ver1 **********************	
-	V41:
-	StrCpy $R0 $1 1 $P1 ;$R0 contains the character at position $P1
-	IntOp $P1 $P1 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V41end 0	;check for empty string
-	strCmp $R0 "." v41end 0
-	strCpy $V1 "$V1$R0"
-	Goto V41
-	V41End:
-	StrCmp $V1 "" 0 +2
-	StrCpy $V1 "0"	
-	;  ******************* Get 4th version number for Ver2 **********************
-	V42:
-	StrCpy $R0 $2 1 $P2 ;$R0 contains the character at position $P1
-	IntOp $P2 $P2 + 1 	;increments the file pointer for the next read
-	StrCmp $R0 "" V42end 0	;check for empty string
-	strCmp $R0 "." V42end 0
-	strCpy $V2 "$V2$R0"
-	Goto V42
-	V42End:
-	StrCmp $V2 "" 0 +2
-	StrCpy $V2 "0"	
-	;	At this point, we can compare the results.  If the numbers are not
-	;		equal, then we can exit
-	IntCmp $V1 $V2 cont4 older4 newer4
-	older4: ; Version 1 is older (less than) than version 2
-	StrCpy $Reslt 2
-	Goto ExitFunction
-	newer4:	; Version 1 is newer (greater than) Version 2
-	StrCpy $Reslt 1
-	Goto ExitFunction
-	Cont4: 
-	;Versions are the same.  We've reached the end of the version
-	;	strings, so set the function to 0 (equal) and exit
-	StrCpy $Reslt 0
-	ExitFunction:
+Function CmdSelentInstall
+	${GetParameters} $R1
+	${GetOptions} $R1 "/silent"  $R0
+	IfErrors FunctionReturn 0
+	SetSilent silent
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
 	Pop $R0
-	Pop $1
-	Pop $2
-	Push $Reslt
+	StrCmp $R0 0 +2
+	Abort
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite on
+	File "bin\DsSetUpHelper.dll"
+	CheckProcessExist:
+	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+	Pop $R0
+    ${If} $R0 != 0
+		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		Goto CheckProcessExist
+	${EndIf}
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 != ""
+		StrCpy $INSTDIR "$0"
+	${EndIf}
+	Call DoInstall
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+	Abort
+	FunctionReturn:
+FunctionEnd
+
+Function CmdUnstall
+	${GetOptions} $R1 "/uninstall"  $R0
+	IfErrors FunctionReturn 0
+	SetSilent silent
+	CheckProcessExist:
+	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+	Pop $R0
+    ${If} $R0 != 0
+		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		Goto CheckProcessExist
+	${EndIf}
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 != ""
+		StrCpy $INSTDIR "$0"
+	${EndIf}
+	
+	;删除不成功则重试3次
+	StrCpy $R0 0
+	BeginRepeatDelete:
+	RMDir /r "$INSTDIR"
+	${If} $R0 == 3
+		Goto EndRepeatDelete
+	${EndIf}
+	IfFileExists "$INSTDIR" 0 +4
+	IntOp $R0 $R0 + 1
+	Sleep 500
+	Goto BeginRepeatDelete
+	EndRepeatDelete:
+	
+	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
+	DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
+	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+	 ;删除自用的注册表信息
+	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	FunctionReturn:
 FunctionEnd
 
 Function .onInit
-    System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
+	Call CmdSelentInstall
+	Call CmdUnstall
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +3
 	MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
 	Abort
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
 	File "license\license.txt"
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
 		;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
 		${GetFileVersion} $0 $1
-		${VersionCheck} $1 ${PRODUCT_VERSION} $2
+		${VersionCompare} $1 ${PRODUCT_VERSION} $2
 		${If} $2 == "2" ;已安装的版本低于该版本
 			Goto StartInstall
 		${ElseIf} $2 == "0" ;版本相同
@@ -347,11 +239,20 @@ Function .onInit
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
     Pop $R0
     ${If} $R0 != 0
-		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES KillExeBeforeInstall
+		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
 		 Abort
-		 KillExeBeforeInstall:
-		 KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		CheckProcessExist:
+		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		Pop $R0
+		${If} $R0 != 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+			Goto CheckProcessExist
+		${EndIf}
     ${EndIf}
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 != ""
+		StrCpy $INSTDIR "$0"
+	${EndIf}
 	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\bg.bmp` `images\bg.bmp`
 	File `/ONAME=$PLUGINSDIR\btn_next.bmp` `images\btn_next.bmp`
@@ -472,6 +373,8 @@ Function OnClick_BrowseButton
 	${EndIf}
 	${If} $0 != ""
 	StrCpy $INSTDIR "$0\$R1"
+	${WordReplace} $INSTDIR  "\\" "\" "+" $0
+	StrCpy $INSTDIR "$0"
 	system::Call `user32::SetWindowText(i $Txt_Browser, t "$INSTDIR")`
 	${EndIf}
 FunctionEnd
@@ -526,7 +429,7 @@ FunctionEnd
 Function OnChange_DirRequest
 	Pop $0
 	System::Call "user32::GetWindowText(i $Txt_Browser, t .r0, i ${NSIS_MAX_STRLEN})"
-	MessageBox MB_ICONINFORMATION|MB_OK $0
+	;MessageBox MB_ICONINFORMATION|MB_OK $0
 	StrCpy $INSTDIR $0
 FunctionEnd
 
@@ -609,10 +512,11 @@ FunctionEnd
 
 Function OnClickQuitOK
 	FindProcDLL::FindProc ${EM_OUTFILE_NAME}
-    Sleep 100
     Pop $R0
     ${If} $R0 != 0
     KillProcDLL::KillProc ${EM_OUTFILE_NAME}
+	${Else}
+	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
     ${EndIf}
 FunctionEnd
 
@@ -673,7 +577,10 @@ Function WelcomePage
 
     ${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变窗体大小
     ${NSW_SetWindowSize} $Hwnd_Welcome 478 320 ;改变Page大小
-  
+
+	System::Call  'User32::GetDesktopWindow() i.R9'
+	${NSW_CenterWindow} $HWNDPARENT $R9
+	
     ;一键安装
 	StrCpy $Bool_IsExtend 0
     ${NSD_CreateButton} 180 222 117 35 ""
@@ -826,41 +733,42 @@ Function NSD_TimerFun
 	ShowWindow $BGImage ${SW_HIDE}
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
-		CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_NAME}.exe"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	${EndIf}
 	; 创建开始菜单快捷方式
-	CreateShortCut "$STARTMENU\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_NAME}.exe"
-	CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_NAME}.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
 FunctionEnd
 
 Function InstallationMainFun
 	call DoInstall
     SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
-	SendMessage $PB_ProgressBar ${PBM_SETPOS} 10 0
-    Sleep 200
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 12 0
+    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 20 0
-    Sleep 200
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 30 0
-    Sleep 200
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 28 0
+    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 40 0
-    Sleep 200
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
-    Sleep 200
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 52 0
+    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 60 0
-    Sleep 200
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 70 0
-    Sleep 200
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 68 0
+    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 80 0
-    Sleep 200
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 90 0
-    Sleep 200
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 92 0
+    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
+	Sleep 1000
 FunctionEnd
 
 Function OnClick_FreeUse
-	SetOutPath "$INSTDIR"
+	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" /x SW_SHOWNORMAL
 	Call OnClickQuitOK
 FunctionEnd
@@ -883,7 +791,9 @@ Function LoadingPage
 
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	${NSW_SetWindowSize} $0 478 320 ;改变自定义Page大小
-
+	
+	System::Call  'User32::GetDesktopWindow() i.R9'
+	${NSW_CenterWindow} $HWNDPARENT $R9
 
 
     ;创建简要说明
@@ -940,7 +850,7 @@ Var Bmp_FinishUnstall
 Var Btn_FinishUnstall
 
 Function un.onInit
-    InitPluginsDir
+	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
 	File `/ONAME=$PLUGINSDIR\un_finishbg.bmp` `images\un_finishbg.bmp`
 	File `/ONAME=$PLUGINSDIR\btn_jixushiyong.bmp` `images\btn_jixushiyong.bmp`
@@ -981,34 +891,51 @@ Function un.myGUIInit
 FunctionEnd
 
 Function un.OnClick_ContinueUse
-	;FindProcDLL::FindProc "绿盾安装包.exe"
-    ;Sleep 200
-    ;Pop $R0
-    ;${If} $R0 != 0
-    ;KillProcDLL::KillProc "绿盾安装包.exe"
-	HideWindow
-	Abort
+	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
 Function un.DoUninstall
+	StrCpy $R0 0
+	BeginRepeatDelete:
 	RMDir /r "$INSTDIR"
+	${If} $R0 == 3
+		Goto EndRepeatDelete
+	${EndIf}
+	IfFileExists "$INSTDIR" 0 +4
+	IntOp $R0 $R0 + 1
+	Sleep 500
+	Goto BeginRepeatDelete
+	EndRepeatDelete:
 FunctionEnd
 
 Function un.UNSD_TimerFun
     GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::KillTimer $0
+	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+    ${If} $R0 != 0
+		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
+		 SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+		 Goto EndTimerFunction
+		 CheckProcessExist:
+		 FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		 ${If} $R0 != 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+			Sleep 100
+			Goto CheckProcessExist
+		 ${EndIf}
+    ${EndIf}
     GetFunctionAddress $0 un.DoUninstall
     BgWorker::CallAndWait
 	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 	DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-	IfFileExists "$DESKTOP\绿盾.lnk" 0 +2
-		Delete "$DESKTOP\绿盾.lnk"
-	IfFileExists "$STARTMENU\绿盾.lnk" 0 +2
-		Delete "$STARTMENU\绿盾.lnk"
+	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
 	;IfFileExists "$SMPROGRAMS\绿盾\*.*" 0 +2
 		;Delete "$SMPROGRAMS\绿盾\绿盾.lnk"
 		;Delete "$SMPROGRAMS\绿盾\Uninstall.lnk"
-		RMDir /r "$SMPROGRAMS\绿盾"
+		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 	 ;删除自用的注册表信息
 	 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 	
@@ -1017,6 +944,7 @@ Function un.UNSD_TimerFun
 	ShowWindow $Btn_CruelRefused ${SW_HIDE}
 	ShowWindow $Bmp_FinishUnstall 1
 	ShowWindow $Btn_FinishUnstall 1
+	EndTimerFunction:
 FunctionEnd
 
 Function un.OnClick_CruelRefused
@@ -1025,13 +953,7 @@ Function un.OnClick_CruelRefused
 FunctionEnd
 
 Function un.OnClick_FinishUnstall
-	;FindProcDLL::FindProc "绿盾安装包.exe"
-    ;Sleep 200
-    ;Pop $R0
-    ;${If} $R0 != 0
-    ;KillProcDLL::KillProc "绿盾安装包.exe"
-	HideWindow
-	Abort
+	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
 Function un.MyUnstall
@@ -1053,7 +975,9 @@ Function un.MyUnstall
 
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	${NSW_SetWindowSize} $0 478 320 ;改变自定义Page大小
-
+	
+	System::Call 'user32::GetDesktopWindow()i.R9'
+	${NSW_CenterWindow} $HWNDPARENT $R9
 
 	;继续使用
 	${NSD_CreateBrowseButton} 246 235 95 30 ""
