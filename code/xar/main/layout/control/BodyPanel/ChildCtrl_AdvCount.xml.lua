@@ -90,7 +90,6 @@ function ChangeSwitchFilter(objFilterSwitch)
 		g_bFilterOpen = true
 		tipUtil:GSFilter(true)
 	end
-	
 end
 
 function LoadAdvCountCfg(objRootCtrl)
