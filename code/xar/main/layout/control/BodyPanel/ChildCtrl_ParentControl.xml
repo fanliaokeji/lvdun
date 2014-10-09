@@ -11,13 +11,37 @@
 		</event_def>
 		<objtemplate>
 			<children>
-				<obj id="ChildCtrl_ParentControl.MainWnd.Text" class="TextObject">
+				<obj id="ParentControl.Image" class="ImageObject">
 					<attr>
-						<left>50</left>
-						<top>50</top>
-						<width>father.width</width>
+						<left>66</left>
+						<top>60</top>
+						<width>26</width>
+						<height>46</height>
+						<image>GreenWall.Bulb</image>
+					</attr>
+				</obj>	
+			
+				<obj id="ParentControl.Text.Remind" class="TextObject">
+					<attr>
+						<left>66+36</left>
+						<top>60</top>
+						<width>100</width>
 						<height>30</height>
-						<text></text>
+						<text>温馨提示</text>
+						<font>font.yahei14</font>
+						<textcolor>6BA306</textcolor>
+					</attr>
+				</obj>	
+				
+				<obj id="ParentControl.Text.Context" class="TextObject">
+					<attr>
+						<left>66+36</left>
+						<top>60+30</top>
+						<width>160</width>
+						<height>30</height>
+						<text>此功能暂未开发，敬请期待！</text>
+						<font>font.yahei12</font>
+						<textcolor>4D4D4D</textcolor>
 					</attr>
 				</obj>	
 			</children>
