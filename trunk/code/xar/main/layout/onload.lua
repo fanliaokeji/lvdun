@@ -2,7 +2,9 @@ local gTipInfoTab = {}
 local gFilterConfigInfo = {}
 local gRuleInfo = {}
 
+
 local gbLoadCfgSucc = false
+local g_tipNotifyIcon = nil
 local tipUtil = XLGetObject("GS.Util")
 -----------------
 
@@ -82,10 +84,10 @@ function SaveAllConfig()
 	end
 end
 
-
 function ExitTipWnd(statInfo)
 	SaveAllConfig()
 
+	HideTray()
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
 end
@@ -145,6 +147,12 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
+function HideTray()
+	if g_tipNotifyIcon then
+		g_tipNotifyIcon:Hide()
+	end
+end
+
 
 function InitTrayTipWnd(objHostWnd)
     if not objHostWnd then
@@ -165,65 +173,25 @@ function InitTrayTipWnd(objHostWnd)
 	
 	----托盘事件响应
 	function OnTrayEvent(event1,event2,event3,event4)
-		local newWnd = hostwndManager:GetHostWnd("GSTrayMenuHostWnd.MainFrame")	
-		if event3 ~= 512 then
-			-- -- 传来其他消息时，删除窗口
-			if newWnd then
-				local tree = newWnd:GetBindUIObjectTree()
-				local status_ctrl = tree:GetUIObject("TrayMenu.Main")
-				status_ctrl:SetVisible(false)
-				status_ctrl:SetChildrenVisible(false)
-			end
-		end
-		
-		--mousemove
-		-- if event3 == 512 then
-			-- if newWnd then
-				-- local tree = newWnd:GetBindUIObjectTree()
-				-- local status_ctrl = tree:GetUIObject("TrayMenu.Main")
-				-- status_ctrl:SetVisible(true)
-				-- status_ctrl:SetChildrenVisible(true)
-			-- end
-		-- end	
-
-		-- 失去焦点
-		if event3 == 8 then
-		XLMessageBox(11)
-			if newWnd then
-				local tree = newWnd:GetBindUIObjectTree()
-				local status_ctrl = tree:GetUIObject("TrayMenu.Main")
-				status_ctrl:SetVisible(false)
-				status_ctrl:SetChildrenVisible(false)
-			end
-		end
-		
+		local strHostWndName = "GSTrayMenuHostWnd.MainFrame"
+		local strObjTreeName = "GSTrayMenuWnd.MainObjectTree"
+		local newWnd = hostwndManager:GetHostWnd(strHostWndName)	
+				
 		--单击右键,创建并显示菜单
 		if event3 == 517 then
-		local bRet = objHostWnd:GetEnable()
-			if bRet then
-				-- _G["gShowMenu"] = true
-				-- _G["NotShowStatusTip"] = true
-
-				-- local obj = XLGetGlobal("xunlei.LuaHostWndHelper")
-				-- XLSetGlobal("Thunder.ShowTrayMenu", 1)
-				--obj:ShowPlatformMenu("single.menu", "tree.tray.menu.context", "context_menu", 0)
-				--objHostWnd:BringWindowToTop(true)
+			if not newWnd then
         		CreateTrayTipWnd(objHostWnd)
-			else
-				-- objHostWnd:SetVisible(true)
-				objHostWnd:BringWindowToTop(true)
-	            XLMessageBox(tostring("objHostWnd:GetEnable() not "))			
 			end
 		end
 		
 		--双击左键
 		if event3 == 0x0203 then
-			-- objHostWnd:SetVisiable(true)
 			objHostWnd:BringWindowToTop(true)
 		end
 	end
 
 	tipNotifyIcon:Attach(OnTrayEvent)
+	g_tipNotifyIcon = tipNotifyIcon
 end
 
 
@@ -270,12 +238,16 @@ function CreateTrayTipWnd(objHostWnd)
 			local nMenuScreenLeft = nPosCursorX
 			local nMenuScreenTop = nPosCursorY - nMenuContainerHeight
 			TipLog("[ShowTrayCtrlPanel] about to popup menu")
+			uHostWnd:SetFocus(true)
 			--函数会阻塞
 			local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
 			TipLog("[CreateTrayTipWnd] end menu")
 
-			uObjTreeMgr:DestroyTree(strObjTreeName)
-			uHostWndMgr:RemoveHostWnd(strHostWndName)
+			
+			if uHostWnd:GetMenuMode() == "manual" then
+				uObjTreeMgr:DestroyTree(strObjTreeName)
+				uHostWndMgr:RemoveHostWnd(strHostWndName)
+			end
 		end
 	end
 end
@@ -431,7 +403,6 @@ function SendFileDateToFilterThread()
 	if not bSucc then
 		return false
 	end
-	
 	
 	return true
 end

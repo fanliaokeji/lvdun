@@ -1,10 +1,10 @@
 <xlue>
 	<objtreetemplate id="TipPopupWndTree" class="ObjectTreeTemplate">
 		<attr>
-			<left>-200</left>
-			<top>-200</top>
-			<width>2000</width>
-			<height>2000</height>
+			<left>0</left>
+			<top>0</top>
+			<width>400</width>
+			<height>200</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
@@ -105,8 +105,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>1000</width>
-            <height>500</height>
+            <width>400</width>
+            <height>200</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

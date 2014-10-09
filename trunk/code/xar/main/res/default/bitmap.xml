@@ -9,6 +9,8 @@
 		<texture id="GreenWall.PopupWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />
 		<texture id="GreenWall.PopupWnd.EnterBtn.Hover" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.png" />
 	
+		<texture id="GreenWall.TrayMenu.Select" image="bitmap\GreenWall.TrayMenu.Select.png" />
+	
 		<texture id="GreenWall.MainWndLow.Bkg" image="bitmap\GreenWall.MainWndLow.Bkg.png" />
 		<texture id="GreenWall.MainWndLow.Splitter" image="bitmap\GreenWall.MainWndLow.Splitter.png" />
 		<texture id="GreenWall.MainWndBottom.Bkg" image="bitmap\GreenWall.MainWndBottom.Bkg.png" />
@@ -49,6 +51,8 @@
 		<bitmap id="Number_7" path="bitmap\number_7.png"/>
 		<bitmap id="Number_8" path="bitmap\number_8.png"/>
 		<bitmap id="Number_9" path="bitmap\number_9.png"/>
+		
+		<bitmap id="GreenWall.Bulb" path="bitmap\GreenWall.Bulb.png"/>
 		
 		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
 		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
