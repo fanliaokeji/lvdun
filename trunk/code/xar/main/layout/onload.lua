@@ -59,7 +59,7 @@ function TipLog(strLog)
 end
 
 
-function QueryAllUsersDir()	--��ȡAllUser·��
+function QueryAllUsersDir()	--获取AllUser路径
 	local bRet = false
 	local strPublicEnv = "%PUBLIC%"
 	local strRet = tipUtil:ExpandEnvironmentStrings(strPublicEnv)
@@ -110,8 +110,9 @@ function PopTipWnd(OnCreateFunc)
 	local bSuccess = false
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
 	local frameHostWndTemplate = templateMananger:GetTemplate("TipMainWnd", "HostWndTemplate" )
+	local frameHostWnd = nil
 	if frameHostWndTemplate then
-		local frameHostWnd = frameHostWndTemplate:CreateInstance("GreenWallTipWnd.MainFrame")
+		frameHostWnd = frameHostWndTemplate:CreateInstance("GreenWallTipWnd.MainFrame")
 		if frameHostWnd then
 			local objectTreeTemplate = nil
 			objectTreeTemplate = templateMananger:GetTemplate("TipPanelTree", "ObjectTreeTemplate")
@@ -137,8 +138,149 @@ function PopTipWnd(OnCreateFunc)
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 		FunctionObj:FailExitTipWnd(7)
 	end
+	
+	---初始化托盘
+    if frameHostWnd then
+	    InitTrayTipWnd(frameHostWnd)
+	end
 end
 
+
+function InitTrayTipWnd(objHostWnd)
+    if not objHostWnd then
+	    TipLog("[InitTrayTipWnd] para error")
+	    return
+	end
+
+	--创建托盘
+    local tipNotifyIcon = XLGetObject("GS.NotifyIcon")
+	if not tipNotifyIcon then
+		TipLog("[InitTrayTipWnd] not support NotifyIcon")
+	    return
+	end
+    tipNotifyIcon:SetIcon(nil,"绿盾广告管家")
+	tipNotifyIcon:Show()
+	
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	
+	----托盘事件响应
+	function OnTrayEvent(event1,event2,event3,event4)
+		local newWnd = hostwndManager:GetHostWnd("GSTrayMenuHostWnd.MainFrame")	
+		if event3 ~= 512 then
+			-- -- 传来其他消息时，删除窗口
+			if newWnd then
+				local tree = newWnd:GetBindUIObjectTree()
+				local status_ctrl = tree:GetUIObject("TrayMenu.Main")
+				status_ctrl:SetVisible(false)
+				status_ctrl:SetChildrenVisible(false)
+			end
+		end
+		
+		--mousemove
+		-- if event3 == 512 then
+			-- if newWnd then
+				-- local tree = newWnd:GetBindUIObjectTree()
+				-- local status_ctrl = tree:GetUIObject("TrayMenu.Main")
+				-- status_ctrl:SetVisible(true)
+				-- status_ctrl:SetChildrenVisible(true)
+			-- end
+		-- end	
+
+		-- 失去焦点
+		if event3 == 8 then
+		XLMessageBox(11)
+			if newWnd then
+				local tree = newWnd:GetBindUIObjectTree()
+				local status_ctrl = tree:GetUIObject("TrayMenu.Main")
+				status_ctrl:SetVisible(false)
+				status_ctrl:SetChildrenVisible(false)
+			end
+		end
+		
+		--单击右键,创建并显示菜单
+		if event3 == 517 then
+		local bRet = objHostWnd:GetEnable()
+			if bRet then
+				-- _G["gShowMenu"] = true
+				-- _G["NotShowStatusTip"] = true
+
+				-- local obj = XLGetGlobal("xunlei.LuaHostWndHelper")
+				-- XLSetGlobal("Thunder.ShowTrayMenu", 1)
+				--obj:ShowPlatformMenu("single.menu", "tree.tray.menu.context", "context_menu", 0)
+				--objHostWnd:BringWindowToTop(true)
+        		CreateTrayTipWnd(objHostWnd)
+			else
+				-- objHostWnd:SetVisible(true)
+				objHostWnd:BringWindowToTop(true)
+	            XLMessageBox(tostring("objHostWnd:GetEnable() not "))			
+			end
+		end
+		
+		--双击左键
+		if event3 == 0x0203 then
+			-- objHostWnd:SetVisiable(true)
+			objHostWnd:BringWindowToTop(true)
+		end
+	end
+
+	tipNotifyIcon:Attach(OnTrayEvent)
+end
+
+
+function CreateTrayTipWnd(objHostWnd)
+	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+
+	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
+		local uHostWnd = nil
+		local strHostWndTempltName = "TipTrayWnd"
+		local strHostWndTempltClass = "HostWndTemplate"
+		local strHostWndName = "GSTrayMenuHostWnd.MainFrame"
+		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
+		if uHostWndTemplt then
+			uHostWnd = uHostWndTemplt:CreateInstance(strHostWndName)
+		end
+
+		local uObjTree = nil
+		local strObjTreeTempltName = "TrayMenuTree"
+		local strObjTreeTempltClass = "ObjectTreeTemplate"
+		local strObjTreeName = "GSTrayMenuWnd.MainObjectTree"
+		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
+		if uObjTreeTemplt then
+			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
+		end
+
+		if uHostWnd and uObjTree then
+			uHostWnd:BindUIObjectTree(uObjTree)
+							
+			local nPosCursorX, nPosCursorY = tipUtil:GetCursorPos()
+			if type(nPosCursorX) ~= "number" or type(nPosCursorY) ~= "number" then
+				return 
+			end
+			
+			local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
+			if not objMainLayout then
+			    return
+			end	
+				
+			local nL, nT, nR, nB = objMainLayout:GetObjPos()				
+			local nMenuContainerWidth = nR - nL
+			local nMenuContainerHeight = nB - nT
+			local nMenuScreenLeft = nPosCursorX
+			local nMenuScreenTop = nPosCursorY - nMenuContainerHeight
+			TipLog("[ShowTrayCtrlPanel] about to popup menu")
+			--函数会阻塞
+			local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
+			TipLog("[CreateTrayTipWnd] end menu")
+
+			uObjTreeMgr:DestroyTree(strObjTreeName)
+			uHostWndMgr:RemoveHostWnd(strHostWndName)
+		end
+	end
+end
+
+-------------------------------
 
 function FetchValueByPath(obj, path)
 	local cursor = obj
@@ -325,14 +467,23 @@ function SendEnableListToFilterThread()
 	return true
 end
 
-function UIAutoEnableDomain(strDomain)
+function UIAutoEnableDomain(strDomain, bForceDisable)
 	if IsRealString(strDomain) then
+		if bForceDisable then
+			tipUtil:EnableDomain(strDomain, false)
+			return
+		end
+	
 		if IsDomainInWhiteList(strDomain) then
-			--tipUtil:EnableDomain(false, strDomain)
 			tipUtil:EnableDomain(strDomain,false)
-		elseif IsDomainInBlackList(strDomain) then
-			--tipUtil:EnableDomain(true, strDomain)
+			return
+		end
+		
+		local bBlackState = GetDomainBlackState(strDomain)
+		if bBlackState == 1 then
 			tipUtil:EnableDomain(strDomain, true)
+		elseif bBlackState == 2 then
+			tipUtil:EnableDomain(strDomain, false)
 		end
 	end
 end
@@ -353,20 +504,24 @@ function IsDomainInWhiteList(strDomain)
 	return false
 end
 
-
-function IsDomainInBlackList(strDomain)
+--0 不在黑名单
+--1 在黑名单，且开启过滤
+--2 在黑名单，且关闭过滤
+function GetDomainBlackState(strDomain)
 	local tBlackList = GetSpecifyFilterTableFromMem("tBlackList")
 	for key, tBlackElem in pairs(tBlackList) do
 		local strBlackDomain = tBlackElem["strDomain"]
 		local bStateOpen = tBlackElem["bState"]
-		if IsRealString(strBlackDomain) and bStateOpen
-			and string.find(strBlackDomain, strDomain) then
-			
-			return true
+		if IsRealString(strBlackDomain) and string.find(strBlackDomain, strDomain) then
+			if bStateOpen then
+				return 1
+			else
+				return 2
+			end
 		end
-		
 	end
-	return false
+	
+	return 0
 end
 
 

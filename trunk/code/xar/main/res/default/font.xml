@@ -7,6 +7,7 @@
 		<font id="font.underline" height="12" facename="微软雅黑" underline="1"/>
 		
 		<font id="font.yahei20" height="20" facename="微软雅黑" /> 
+		<font id="font.yahei12" height="12" facename="微软雅黑" /> 
 		<font id="font.yahei13" height="13" facename="微软雅黑" /> 
 		<font id="font.yahei14" height="14" facename="微软雅黑" /> 
 		<font id="font.yahei15" height="15" facename="微软雅黑" /> 

@@ -16,6 +16,7 @@ local g_nIDToDelete = 0
 local g_tBlackList = {}
 local g_tRuleList = {}
 
+
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
 		InitAdvFilter(self)
@@ -43,8 +44,6 @@ function OnClickActionBtn(self)
 		g_nIDToDelete = 0
 		SetAddBtnStyle(self, true)
 	end
-	
-	SaveConfig()
 end
 
 
@@ -104,18 +103,6 @@ function OnClick_StateButton(self)
 	self:RouteToFather()
 end
 
----鼠标移入显示过滤信息的那一行
-function OnMouseEnter_Layout(self)
-	local bHover = true
-	SetFilterLayoutStyle(self, bHover)
-	self:SetZorder(2000)
-end
-
-function OnMouseLeave_Layout(self)
-	local bHover = false
-	SetFilterLayoutStyle(self, bHover)
-	self:SetZorder(0)
-end
 
 --切换删除\添加
 function OnClick_Layout(self)
@@ -130,11 +117,6 @@ function OnClick_Layout(self)
 	
 	local bAdd = false
 	SetAddBtnStyle(objAddBtn, bAdd)
-	
-	-- local objRemindText = objRootCtrl:GetControlObject("ChildCtrl_AdvFilter.Text.Remind")
-	-- if objRemindText then
-		-- objRemindText:SetVisible(bAdd)
-	-- end
 	
 	local bHover = true
 	SetFilterLayoutStyle(self, bHover)
@@ -164,11 +146,6 @@ function OnFocus_Layout(self, bFocus)
 		local bAdd = true
 		SetAddBtnStyle(objActionBtn, bAdd)
 		
-		-- local objRemindText = objRootCtrl:GetControlObject("ChildCtrl_AdvFilter.Text.Remind")
-		-- if objRemindText then
-			-- objRemindText:SetVisible(bAdd)
-		-- end
-	
 		local bHover = false
 		SetFilterLayoutStyle(self, bHover)
 		self:SetZorder(0)
@@ -261,9 +238,7 @@ end
 
 --------------------------
 function OnDestroy(self)
-	if g_bHasInit then
-		SaveConfig()
-	end
+
 end
 
 
@@ -341,7 +316,6 @@ end
 
 function AddBlackList(strName, strDomain)
 	LoadConfig()
-	g_bHasLoadCfg = true
 	PushBlackList(strName, strDomain, true)
 	if g_bHasInit then
 		UpdateBlackListPanel()
@@ -355,8 +329,6 @@ function InitAdvFilter(self)
 	if not bSucc then
 		return false
 	end
-	
-	g_bHasLoadCfg = true
 	
 	local objBlackList = self:GetControlObject("ChildCtrl_AdvFilter.MainWnd.List")
 	if nil == objBlackList then
@@ -377,7 +349,7 @@ end
 --滚动条
 function ResetScrollBar(objRootCtrl)
 	if objRootCtrl == nil then
-		--return false
+		return false
 	end
 	local objScrollBar = objRootCtrl:GetControlObject("listbox.vscroll")
 	if objScrollBar == nil then
@@ -417,46 +389,13 @@ function LoadConfig()
 	end
 	
 	---规则文件
-	g_tRuleList = tFunctionHelper.GetRuleListFromMem()
+	g_tRuleList = tFunctionHelper.GetRuleListFromMem() or {}
 	
 	---黑名单
-	local tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList")
-	if type(tBlackList) ~= "table" then
-		TipLog("[LoadConfig] GetSpecifyFilterTableFromMem failed, maybe no table in config")
-		return true
-	end
-
-	local tTempBlackList = {}
-	local tTempIndex = 1
-	for key, tBlackElem in pairs(tBlackList) do
-		tTempBlackList[tTempIndex] = {}
-		tTempBlackList[tTempIndex]["strName"] = tBlackElem["strName"]
-		tTempBlackList[tTempIndex]["strDomain"] = tBlackElem["strDomain"]
-		tTempBlackList[tTempIndex]["bState"] = tBlackElem["bState"]
-		tTempIndex = tTempIndex+1
-	end
+	g_tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList") or {}
 	
-	for key, tBlackElem in pairs(tTempBlackList) do
-	
-		local strName = tBlackElem["strName"]
-		local strDomain = tBlackElem["strDomain"]
-		local bState = tBlackElem["bState"]
-			
-		PushBlackList(strName, strDomain, bState)
-	end
-	
+	g_bHasLoadCfg = true
 	return true
-end
-
-function SaveConfig()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.SaveSpecifyFilterTableToMem) == "function" and g_bHasInit then
-		tFunctionHelper.SaveSpecifyFilterTableToMem(g_tBlackList, "tBlackList")
-	end
-
-	if type(tFunctionHelper.SaveRuleListToMem) == "function" then
-		tFunctionHelper.SaveRuleListToMem(g_tRuleList)
-	end
 end
 
 
@@ -593,8 +532,6 @@ function CreateLine(objBlackList)
 	objStateBtn:AttachListener("OnMouseWheel", false, EventRouteToFather)
 	objStateBtn:AttachListener("OnFocusChange", false, EventRouteToFather)
 
-	--objLayout:AttachListener("OnMouseEnter", false, OnMouseEnter_Layout)
-	--objLayout:AttachListener("OnMouseLeave", false, OnMouseLeave_Layout)
 	objLayout:AttachListener("OnLButtonUp", false, OnClick_Layout)
 	objLayout:AttachListener("OnMouseWheel", false, EventRouteToFather)
 	objLayout:AttachListener("OnFocusChange", false, OnFocus_Layout)
@@ -694,7 +631,7 @@ function PushBlackList(strName, strDomain, bState)
 	g_tBlackList[nTopIndex]["strName"] = strName or ""
 	g_tBlackList[nTopIndex]["strDomain"] = strDomain
 	g_tBlackList[nTopIndex]["bState"] = bState
-	tipUtil:EnableDomain(strDomain,true)
+	
 	AutoEnableDomain(strDomain)
 end
 
@@ -702,17 +639,18 @@ end
 function RemoveBlackList(nIDToDelete)
 	if type(g_tBlackList[nIDToDelete]) == "table" then
 		local strDomain = FetchValueByPath(g_tBlackList, {nIDToDelete, "strDomain"})
+		local strName = FetchValueByPath(g_tBlackList, {nIDToDelete, "strName"})
 		table.remove(g_tBlackList, nIDToDelete)
-		AutoEnableDomain(strDomain)
+		SaveUserRefuseList(strName, strDomain)
+		AutoEnableDomain(strDomain, true)
 	end	
 end
 
 
-function AutoEnableDomain(strDomain)
-	SaveConfig()
+function AutoEnableDomain(strDomain, bForceDisable)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.UIAutoEnableDomain) == "function" then
-		tFunctionHelper.UIAutoEnableDomain(strDomain)
+		tFunctionHelper.UIAutoEnableDomain(strDomain, bForceDisable)
 	end
 end
 

@@ -13,7 +13,6 @@
 		<texture id="GreenWall.MainWndLow.Splitter" image="bitmap\GreenWall.MainWndLow.Splitter.png" />
 		<texture id="GreenWall.MainWndBottom.Bkg" image="bitmap\GreenWall.MainWndBottom.Bkg.png" />
 		
-		
 		<texture id="GreenWall.Caption.Bkg" image="bitmap\GreenWall.Caption.Bkg.png" />
 		<texture id="GreenWall.AdvCount.Bkg" image="bitmap\GreenWall.AdvCount.Bkg.png" />
 		<texture id="GreenWall.AdvCountElem.Bkg" image="bitmap\GreenWall.AdvCount.NumberBkg.png" />
@@ -37,7 +36,6 @@
 		<texture id="GreenWall.AdvFilter.PopupPanel.AddBtn.Hover" image="bitmap\GreenWall.AdvFilter.PopupPanel.AddBtn.Hover.png" />
 		<texture id="GreenWall.AdvFilter.Vscroll.Bkg.Normal" image="bitmap\GreenWall.AdvFilter.Vscroll.Bkg.Normal.png" />
 		<texture id="GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal" image="bitmap\GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal.png" />
-				
 				
 				
 		<bitmap id="GreenWall.Logo" path="bitmap\GreenWall.Logo.png"/>
