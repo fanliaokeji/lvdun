@@ -6,6 +6,18 @@
 		<texture id="GreenWall.FilterRemind.Bkg" image="bitmap\GreenWall.FilterRemind.Bkg.png" />
 		<texture id="GreenWall.ExitRemind.Bkg" image="bitmap\GreenWall.ExitRemind.Bkg.png" />
 		<texture id="GreenWall.AboutWnd.Bkg" image="bitmap\GreenWall.AboutWnd.Bkg.png" />
+		<texture id="GreenWall.UpdateWnd.Bkg" image="bitmap\GreenWall.UpdateWnd.Bkg.png" />
+		
+		<texture id="GreenWall.UpdateWnd.EnterBtn.Hover" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Hover.png" />
+		<texture id="GreenWall.UpdateWnd.EnterBtn.Normal" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Normal.png" />
+		<texture id="GreenWall.UpdateWnd.CloseBtn.Normal" image="bitmap\GreenWall.UpdateWnd.CloseBtn.Normal.png" />
+		<texture id="GreenWall.UpdateWnd.CloseBtn.Hover" image="bitmap\GreenWall.UpdateWnd.CloseBtn.Hover.png" />
+		<texture id="GreenWall.UpdateWnd.MinBtn.Normal" image="bitmap\GreenWall.UpdateWnd.MinBtn.Normal.png" />
+		<texture id="GreenWall.UpdateWnd.MinBtn.Hover" image="bitmap\GreenWall.UpdateWnd.MinBtn.Hover.png" />
+		<texture id="GreenWall.UpdateWnd.ProgressBar.Bkg" image="bitmap\GreenWall.UpdateWnd.ProgressBar.Bkg.png" />
+		<texture id="GreenWall.UpdateWnd.ProgressBar" type="ThreeInOneH" image="bitmap\GreenWall.UpdateWnd.ProgressBar.png" />
+		<texture id="GreenWall.UpdateWnd.ProgressBar.Light" image="bitmap\GreenWall.UpdateWnd.ProgressBar.Light.png" />
+		
 		<texture id="GreenWall.PopupWnd.CancleBtn.Normal" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.png" />
 		<texture id="GreenWall.PopupWnd.CancleBtn.Hover" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.png" />
 		<texture id="GreenWall.PopupWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />

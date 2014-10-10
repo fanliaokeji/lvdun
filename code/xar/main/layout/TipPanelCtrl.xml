@@ -225,8 +225,7 @@
 										<text>应用</text>
 									</attr>
 								</obj>	
-								
-								
+										
 								<obj id="TipCtrl.MainWndLow.FilterConfig.Img" class="TipAddin.Button">
 									<attr>
 										<left>father.width-45-25</left>
