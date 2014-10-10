@@ -816,8 +816,8 @@ Function LoadingPage
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	${NSW_SetWindowSize} $0 478 320 ;改变自定义Page大小
 	
-	System::Call  'User32::GetDesktopWindow() i.R9'
-	${NSW_CenterWindow} $HWNDPARENT $R9
+	;System::Call  'User32::GetDesktopWindow() i.R9'
+	;${NSW_CenterWindow} $HWNDPARENT $R9
 
 
     ;创建简要说明
