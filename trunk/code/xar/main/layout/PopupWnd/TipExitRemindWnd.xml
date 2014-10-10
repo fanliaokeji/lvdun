@@ -1,0 +1,140 @@
+<xlue>
+	<objtreetemplate id="TipExitRemindTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>400</width>
+			<height>200</height>
+		</attr>
+
+		<obj id="root.layout" class="TextureObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>319</width>
+				<height>145</height>
+				<texture>GreenWall.ExitRemind.Bkg</texture>
+			</attr>		
+			<children>					
+				<obj id="ExitRemind.Caption" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>	
+				</obj>
+				
+				<obj id="ExitRemind.Title" class="TextObject">
+					<attr>
+						<left>30</left>
+						<top>0</top>
+						<width>father.width-30</width>
+						<height>29</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.yahei12</font>
+						<textcolor>system.white</textcolor>
+						<text>绿盾广告管家-退出程序</text>
+					</attr>
+				</obj>	
+			
+				<obj id="ExitRemind.Text1" class="TextObject">
+					<attr>
+						<left>32</left>
+						<top>29+20</top>
+						<width>father.width-32</width>
+						<height>20</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.yahei12</font>
+						<textcolor>4D4D4D</textcolor>
+						<text>退出绿盾广告管家后，您的电脑将不能过滤广告，</text>
+					</attr>
+				</obj>		
+				
+				<obj id="ExitRemind.Text2" class="TextObject">
+					<attr>
+						<left>32</left>
+						<top>29+20+25</top>
+						<width>father.width-32</width>
+						<height>20</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.yahei12</font>
+						<textcolor>4D4D4D</textcolor>
+						<text>您确定要退出吗？</text>
+					</attr>
+				</obj>	
+
+				<obj id="ExitRemind.CancleBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-13-71</left>
+						<top>father.height-13-23</top>
+						<width>71</width>
+						<height>23</height>
+						<NormalBkgID>GreenWall.PopupWnd.EnterBtn.Normal.Little</NormalBkgID>
+						<DownBkgID>GreenWall.PopupWnd.EnterBtn.Hover.Little</DownBkgID>
+						<HoverBkgID>GreenWall.PopupWnd.EnterBtn.Hover.Little</HoverBkgID>
+						<DisableBkgID>GreenWall.PopupWnd.EnterBtn.Normal.Little</DisableBkgID>
+						<Text>继续过滤</Text>
+						<TextFont>font.yahei11</TextFont>
+						<TextColor>system.white</TextColor>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickContinue" />
+					</eventlist>
+				</obj>		
+				
+				<obj id="ExitRemind.EnterBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-13*2-71*2</left>
+						<top>father.height-13-23</top>
+						<width>71</width>
+						<height>23</height>
+						<NormalBkgID>GreenWall.PopupWnd.CancleBtn.Normal.Little</NormalBkgID>
+						<DownBkgID>GreenWall.PopupWnd.CancleBtn.Hover.Little</DownBkgID>
+						<HoverBkgID>GreenWall.PopupWnd.CancleBtn.Hover.Little</HoverBkgID>
+						<DisableBkgID>GreenWall.PopupWnd.CancleBtn.Normal.Little</DisableBkgID>
+						<Text>退出程序</Text>
+						<TextFont>font.yahei11</TextFont>
+						<TextColor>999999</TextColor>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickQuit" />
+					</eventlist>
+				</obj>		
+				
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipExitRemindWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>400</width>
+            <height>200</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipExitRemindWnd.xml.lua" func="OnCreate"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
