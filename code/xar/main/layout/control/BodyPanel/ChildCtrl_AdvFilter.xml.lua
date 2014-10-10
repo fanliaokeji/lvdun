@@ -252,8 +252,8 @@ function OnClickPopupCancle(self)
 		return
 	end
 	
-	local objTextName = objRootLayout:GetObject("PopupWnd.Record.Name")
-	local objTextDomain = objRootLayout:GetObject("PopupWnd.Record.Domain")
+	local objTextName = objRootLayout:GetObject("FilterRemind.Record.Name")
+	local objTextDomain = objRootLayout:GetObject("FilterRemind.Record.Domain")
 	if objTextName == nil or objTextDomain == nil then
 		TipLog("[OnClickPopupCancle] get objTextName failed")
 		return
@@ -278,8 +278,8 @@ function OnClickPopupEnter(self)
 		return
 	end
 	
-	local objTextName = objRootLayout:GetObject("PopupWnd.Record.Name")
-	local objTextDomain = objRootLayout:GetObject("PopupWnd.Record.Domain")
+	local objTextName = objRootLayout:GetObject("FilterRemind.Record.Name")
+	local objTextDomain = objRootLayout:GetObject("FilterRemind.Record.Domain")
 	if objTextName == nil or objTextDomain == nil then
 		TipLog("[OnClickPopupCancle] get objTextName failed")
 		return

@@ -1,12 +1,9 @@
 <XLUE>
 	<resource>
 		<font id="default.title.font" height="17" facename="微软雅黑" weight="bold"/>  		
-		<font id="default.topic.font" height="12" facename="微软雅黑" weight="bold"/>
 		<font id="default.font" height="12" facename="微软雅黑" />
 		
-		<font id="font.underline" height="12" facename="微软雅黑" underline="1"/>
-		
-		<font id="font.yahei20" height="20" facename="微软雅黑" /> 
+		<font id="font.yahei11" height="11" facename="微软雅黑" /> 
 		<font id="font.yahei12" height="12" facename="微软雅黑" /> 
 		<font id="font.yahei13" height="13" facename="微软雅黑" /> 
 		<font id="font.yahei14" height="14" facename="微软雅黑" /> 

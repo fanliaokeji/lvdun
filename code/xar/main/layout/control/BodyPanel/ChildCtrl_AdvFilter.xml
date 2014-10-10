@@ -192,7 +192,7 @@
 								<halign>center</halign>
 								<font>font.Haetten12</font>
 								<textcolor>system.white</textcolor>
-								<text>输入您不想过滤广告的网站域名</text>
+								<text>输入您想过滤广告的网站域名</text>
 							</attr>
 						</obj>
 						

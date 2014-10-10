@@ -3,11 +3,17 @@
 		<texture id="GreenWall.MainWnd.TopShadow" image="bitmap\GreenWall.MainWnd.TopShadow.png" />
 		<texture id="GreenWall.MainWndCenter.Bkg" type="NineInOne" image="bitmap\GreenWall.MainWndCenter.Bkg.png" />
 		
-		<texture id="GreenWall.PopupWnd.Bkg" image="bitmap\GreenWall.PopupWnd.Bkg.png" />
+		<texture id="GreenWall.FilterRemind.Bkg" image="bitmap\GreenWall.FilterRemind.Bkg.png" />
+		<texture id="GreenWall.ExitRemind.Bkg" image="bitmap\GreenWall.ExitRemind.Bkg.png" />
 		<texture id="GreenWall.PopupWnd.CancleBtn.Normal" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.png" />
 		<texture id="GreenWall.PopupWnd.CancleBtn.Hover" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.png" />
 		<texture id="GreenWall.PopupWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />
 		<texture id="GreenWall.PopupWnd.EnterBtn.Hover" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.png" />
+	
+		<texture id="GreenWall.PopupWnd.CancleBtn.Normal.Little" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.Little.png" />
+		<texture id="GreenWall.PopupWnd.CancleBtn.Hover.Little" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.Little.png" />
+		<texture id="GreenWall.PopupWnd.EnterBtn.Normal.Little" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.Little.png" />
+		<texture id="GreenWall.PopupWnd.EnterBtn.Hover.Little" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.Little.png" />
 	
 		<texture id="GreenWall.TrayMenu.Select" image="bitmap\GreenWall.TrayMenu.Select.png" />
 	

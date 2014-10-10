@@ -20,7 +20,7 @@ function RegisterFunctionObject(self)
 	end
 	
 	local function TipConvStatistic(tStatInfo)
-		ExitTipWnd()
+		ShowExitRemindWnd()
 	end
 	
 	local obj = {}
@@ -37,6 +37,7 @@ function RegisterFunctionObject(self)
 	obj.GetRuleListFromMem = GetRuleListFromMem
 	obj.SaveRuleListToMem = SaveRuleListToMem
 	obj.UIAutoEnableDomain = UIAutoEnableDomain
+	obj.ExitTipWnd = ExitTipWnd
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -58,6 +59,14 @@ function TipLog(strLog)
 	if type(tipUtil.Log) == "function" then
 		tipUtil:Log("@@greenwall_Template MainTipLog: " .. tostring(strLog))
 	end
+end
+
+function IsUserFullScreen()
+	local bRet = false
+	if type(tipUtil.IsNowFullScreen) == "function" then
+		bRet = tipUtil:IsNowFullScreen()
+	end
+	return bRet
 end
 
 
@@ -146,6 +155,27 @@ function PopTipWnd(OnCreateFunc)
 	    InitTrayTipWnd(frameHostWnd)
 	end
 end
+
+function ShowExitRemindWnd()
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd("TipExitRemindWnd.Instance")
+	if frameHostWnd == nil then
+		TipLog("[ShowPopupWindow] GetHostWnd failed")
+		return
+	end
+
+	if not IsUserFullScreen() then
+		frameHostWnd:SetTopMost(true)
+	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
+		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
+		if hFrontHandle ~= nil then
+			frameHostWnd:BringWindowToBack(hFrontHandle)
+		end
+	end
+	
+	frameHostWnd:Show(4)
+end
+
 
 function HideTray()
 	if g_tipNotifyIcon then
@@ -512,16 +542,42 @@ end
 
 
 function CreatePopupTipWnd()
+	local tNameList = {
+		[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
+		[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+	}
+
+	for key, tItem in pairs(tNameList) do
+		local strHostWndName = tItem[1]
+		local strTreeName = tItem[2]
+		local bSucc = CreateWndByName(strHostWndName, strTreeName)
+		
+		if not bSucc then
+			TipLog("[CreatePopupTipWnd] create wnd failed: "..tostring(strHostWndName))
+			local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+			FunctionObj:FailExitTipWnd()
+			return false
+		end
+	end
+	
+	return true
+end
+
+
+function CreateWndByName(strHostWndName, strTreeName)
 	local bSuccess = false
+	local strInstWndName = strHostWndName..".Instance"
+	local strInstTreeName = strTreeName..".Instance"
+	
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
-	local frameHostWndTemplate = templateMananger:GetTemplate("TipPopupWnd", "HostWndTemplate" )
+	local frameHostWndTemplate = templateMananger:GetTemplate(strHostWndName, "HostWndTemplate" )
 	if frameHostWndTemplate then
-		local frameHostWnd = frameHostWndTemplate:CreateInstance("GreenWallPopupWnd.MainFrame")
+		local frameHostWnd = frameHostWndTemplate:CreateInstance(strInstWndName)
 		if frameHostWnd then
 			local objectTreeTemplate = nil
-			objectTreeTemplate = templateMananger:GetTemplate("TipPopupWndTree", "ObjectTreeTemplate")
+			objectTreeTemplate = templateMananger:GetTemplate(strTreeName, "ObjectTreeTemplate")
 			if objectTreeTemplate then
-				local uiObjectTree = objectTreeTemplate:CreateInstance("GreenWallPopupWnd.MainObjectTree")
+				local uiObjectTree = objectTreeTemplate:CreateInstance(strInstTreeName)
 				if uiObjectTree then
 					frameHostWnd:BindUIObjectTree(uiObjectTree)
 					local iRet = frameHostWnd:Create()
@@ -532,10 +588,8 @@ function CreatePopupTipWnd()
 			end
 		end
 	end
-	if not bSuccess then
-		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-		FunctionObj:FailExitTipWnd()
-	end
+
+	return bSuccess
 end
 
 function StartTimer()

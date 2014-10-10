@@ -21,12 +21,13 @@ end
 
 
 function OnSelect_About(self)
-
+	
 end
 
 
 function OnSelect_Exit(self)
-
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	tFunctionHelper:TipConvStatistic()
 end
 
 -------

@@ -44,7 +44,7 @@ end
 
 ---------事件---------
 function OnClickCloseBtn(self)
-	ExitTipWnd()
+	HideWndToTray(self)
 end
 
 function OnClickMinBtn(self)
@@ -146,7 +146,7 @@ end
 
 function ShowPopupWindow(strName, strDomain)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local frameHostWnd = hostwndManager:GetHostWnd("GreenWallPopupWnd.MainFrame")
+	local frameHostWnd = hostwndManager:GetHostWnd("TipFilterRemindWnd.Instance")
 	if frameHostWnd == nil then
 		TipLog("[ShowPopupWindow] GetHostWnd failed")
 		return
@@ -164,8 +164,8 @@ function ShowPopupWindow(strName, strDomain)
 		return
 	end
 	
-	local objTextName = objRootLayout:GetObject("PopupWnd.Record.Name")
-	local objTextDomain = objRootLayout:GetObject("PopupWnd.Record.Domain")
+	local objTextName = objRootLayout:GetObject("FilterRemind.Record.Name")
+	local objTextDomain = objRootLayout:GetObject("FilterRemind.Record.Domain")
 	if objTextName == nil or objTextDomain == nil then
 		TipLog("[ShowPopupWindow] get objTextName failed")
 		return
@@ -276,10 +276,11 @@ function FetchValueByPath(obj, path)
 	return cursor
 end
 
-
-function ExitTipWnd(statInfo)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	FunctionObj:TipConvStatistic(statInfo)
+function HideWndToTray(objUIElement)
+	local objTree = objUIElement:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	objHostWnd:Show(0)
 end
+
 
 
