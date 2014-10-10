@@ -7,6 +7,7 @@
 			<OnShowPanel file="ChildCtrl_AdvCount.xml.lua" func="OnShowPanel"/>
 			<SetAdvCount file="ChildCtrl_AdvCount.xml.lua" func="SetAdvCount"/>
 			<AddAdvCount file="ChildCtrl_AdvCount.xml.lua" func="AddAdvCount"/>
+			<ChangeSwitchFilter file="ChildCtrl_AdvCount.xml.lua" func="ChangeSwitchFilter"/>
 		</method_def>
 		<event_def>
 			

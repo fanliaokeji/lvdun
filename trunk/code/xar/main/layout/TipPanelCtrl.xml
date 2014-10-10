@@ -278,10 +278,10 @@
 
 	<objtreetemplate id="TipPanelTree" class="ObjectTreeTemplate" templateid="TipMainWndTree">
 		<attr>
-			<left>-200</left>
-			<top>-200</top>
-			<width>2000</width>
-			<height>2000</height>
+			<left>0</left>
+			<top>0</top>
+			<width>350</width>
+			<height>350</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>

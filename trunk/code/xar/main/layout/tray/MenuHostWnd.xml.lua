@@ -1,10 +1,5 @@
-
 function OnPopupMenu(self)
-	-- _G["gMenu"] = self
-	-- local menuTree = self:GetBindUIObjectTree()
-	-- local objMainLayout = menuTree:GetUIObject("TrayMenu.Main")
-	-- local context = objMainLayout:GetObject("context_menu")
-	-- context:AnimateShow()
+	SetTitleText(self)	
 end
 
 function OnEndMenu(self)
@@ -25,4 +20,24 @@ function OnBindObjectTree(self, menuTree)
 	local objTitle = objMainLayout:GetObject("TrayMenu.Title")
 	local left, top, right, bottom = objTitle:GetObjPos()
 	objTitle:SetObjPos(left, top, right, bottom)
+end
+
+------------------
+function SetTitleText(self)
+	local menuTree = self:GetBindUIObjectTree()
+	local objMainLayout = menuTree:GetUIObject("TrayMenu.Main")
+	local objTitleText = objMainLayout:GetObject("TrayMenu.Title:TrayMenu.Title.Text")
+	if objTitleText == nil then
+		return
+	end
+	
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
+		return
+	end
+
+	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
+	local nFilterCount = tonumber(tUserConfig["nFilterCount"]) or 0
+	local strText = "今天为您过滤广告"..tostring(nFilterCount).."次"
+	objTitleText:SetText(strText)	
 end

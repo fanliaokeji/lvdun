@@ -26,6 +26,7 @@
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Filter" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Filter" />
 				</eventlist>
 			</obj>
 			<obj id="contact" class="MenuItemObject" templateid="menu.context.item">

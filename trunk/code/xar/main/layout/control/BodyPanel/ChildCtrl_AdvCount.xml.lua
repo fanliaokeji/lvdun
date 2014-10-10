@@ -22,10 +22,15 @@ function AddAdvCount(self, nAddCount)
 	UpdateAdvShow(self)
 end
 
+function ChangeSwitchFilter(objRootCtrl)
+	local objFilterSwitch = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.Switch.Filter")
+	Inner_ChangeSwitchFilter(objFilterSwitch)
+	SaveAdvOpenState()
+end
 
 ---事件---
 function OnClickSwitchFilter(self)
-	ChangeSwitchFilter(self)
+	Inner_ChangeSwitchFilter(self)
 	SaveAdvOpenState()
 end
 
@@ -76,7 +81,7 @@ function UpdateAdvShow(objRootCtrl)
 end
 
 
-function ChangeSwitchFilter(objFilterSwitch)
+function Inner_ChangeSwitchFilter(objFilterSwitch)
 	if objFilterSwitch == nil or type(objFilterSwitch.SetTextureID) ~= "function" then
 		return
 	end
@@ -110,8 +115,8 @@ function LoadAdvCountCfg(objRootCtrl)
 
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 	if type(bFilterOpen) == "boolean" then
-		g_bFilterOpen = not bFilterOpen  --注意这里用not，在ChangeSwitchFilter时会还原
-		ChangeSwitchFilter(objRootCtrl:GetControlObject("ChildCtrl_AdvCount.Switch.Filter"))
+		g_bFilterOpen = not bFilterOpen  --注意这里用not，在Inner_ChangeSwitchFilter时会还原
+		objRootCtrl:ChangeSwitchFilter()
 	end
 	
 	g_nLastBeginFilterUTC = tUserConfig["nLastBeginFilterUTC"]

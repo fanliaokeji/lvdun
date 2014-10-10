@@ -12,12 +12,6 @@ function RegisterFunctionObject(self)
 	local function FailExitTipWnd(self, iExitCode)
 		ExitTipWnd()
 	end
-	local function ShowTipWnd(self,iShow)
-		local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-		local frameHostWnd = hostwndManager:GetHostWnd("GreenWallTipWnd.MainFrame")
-	
-		frameHostWnd:Show(4)
-	end
 	
 	local function TipConvStatistic(tStatInfo)
 		ShowExitRemindWnd()
@@ -26,7 +20,6 @@ function RegisterFunctionObject(self)
 	local obj = {}
 	obj.FailExitTipWnd = FailExitTipWnd
 	obj.GetFailExitCode = GetFailExitCode
-	obj.ShowTipWnd = ShowTipWnd
 	obj.TipConvStatistic = TipConvStatistic
 	obj.SaveUserConfigToFile = SaveUserConfigToFile
 	obj.GetUserConfigFromFile = GetUserConfigFromFile
@@ -38,6 +31,7 @@ function RegisterFunctionObject(self)
 	obj.SaveRuleListToMem = SaveRuleListToMem
 	obj.UIAutoEnableDomain = UIAutoEnableDomain
 	obj.ExitTipWnd = ExitTipWnd
+	obj.ShowPopupWndByName = ShowPopupWndByName
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -137,8 +131,7 @@ function PopTipWnd(OnCreateFunc)
 						local iRet = frameHostWnd:Create()
 						if iRet ~= nil and iRet ~= 0 then
 							bSuccess = true
-							local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-							FunctionObj:ShowTipWnd(1)
+							ShowMainTipWnd(frameHostWnd)
 						end
 					end
 				end
@@ -156,11 +149,22 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
-function ShowExitRemindWnd()
+function ShowMainTipWnd(objMainWnd)
+	local tUserConfig = GetUserConfigFromMem() or {}
+	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
+	if bHideMainPage then
+		objMainWnd:Show(0)
+	else
+		objMainWnd:Show(4)
+	end
+end
+
+
+function ShowPopupWndByName(strWndName)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local frameHostWnd = hostwndManager:GetHostWnd("TipExitRemindWnd.Instance")
+	local frameHostWnd = hostwndManager:GetHostWnd(tostring(strWndName))
 	if frameHostWnd == nil then
-		TipLog("[ShowPopupWindow] GetHostWnd failed")
+		TipLog("[ShowPopupWindow] GetHostWnd failed: "..tostring(strWndName))
 		return
 	end
 
@@ -174,6 +178,11 @@ function ShowExitRemindWnd()
 	end
 	
 	frameHostWnd:Show(4)
+end
+
+
+function ShowExitRemindWnd()
+	ShowPopupWndByName("TipExitRemindWnd.Instance")
 end
 
 
@@ -545,6 +554,7 @@ function CreatePopupTipWnd()
 	local tNameList = {
 		[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
 		[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+		[3] = {"TipAboutWnd", "TipAboutTree"},
 	}
 
 	for key, tItem in pairs(tNameList) do
