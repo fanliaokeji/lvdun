@@ -2,7 +2,7 @@ local tipUtil = XLGetObject("GS.Util")
 
 -------事件---
 function OnSelect_Update(self)
-
+	ShowUpdateWnd()
 end
 
 
@@ -43,6 +43,12 @@ function ShowAboutWnd()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	tFunctionHelper.ShowPopupWndByName("TipAboutWnd.Instance")
 end
+
+function ShowUpdateWnd()
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
+end
+
 
 function OpenIndexURL()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")

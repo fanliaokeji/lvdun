@@ -555,6 +555,7 @@ function CreatePopupTipWnd()
 		[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
 		[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 		[3] = {"TipAboutWnd", "TipAboutTree"},
+		[4] = {"TipUpdateWnd", "TipUpdateTree"},
 	}
 
 	for key, tItem in pairs(tNameList) do
