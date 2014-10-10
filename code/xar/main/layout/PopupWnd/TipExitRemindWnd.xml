@@ -25,9 +25,19 @@
 					</attr>	
 				</obj>
 				
+				<obj id="TipCtrl.Caption.ImgLogo" class="ImageObject">
+					<attr>
+						<left>10</left>
+						<top>5</top>
+						<width>19</width>
+						<height>22</height>
+						<image>GreenWall.Logo</image>
+					</attr>
+				</obj>
+				
 				<obj id="ExitRemind.Title" class="TextObject">
 					<attr>
-						<left>30</left>
+						<left>35</left>
 						<top>0</top>
 						<width>father.width-30</width>
 						<height>29</height>

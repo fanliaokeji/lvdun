@@ -20,18 +20,18 @@
 
 	<objtreetemplate id="TipMainWndTree" class="ObjectTreeTemplate">
 		<attr>
-			<left>-200</left>
-			<top>-200</top>
-			<width>2000</width>
-			<height>2000</height>
+			<left>0</left>
+			<top>0</top>
+			<width>350</width>
+			<height>350</height>
 		</attr>
 
 		<obj id="root.layout" class="TipMainWndRootCtrl">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>1000</width>
-				<height>500</height>
+				<width>350</width>
+				<height>350</height>
 			</attr>		
 		</obj>
 	</objtreetemplate>

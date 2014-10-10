@@ -5,6 +5,7 @@
 		
 		<texture id="GreenWall.FilterRemind.Bkg" image="bitmap\GreenWall.FilterRemind.Bkg.png" />
 		<texture id="GreenWall.ExitRemind.Bkg" image="bitmap\GreenWall.ExitRemind.Bkg.png" />
+		<texture id="GreenWall.AboutWnd.Bkg" image="bitmap\GreenWall.AboutWnd.Bkg.png" />
 		<texture id="GreenWall.PopupWnd.CancleBtn.Normal" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.png" />
 		<texture id="GreenWall.PopupWnd.CancleBtn.Hover" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.png" />
 		<texture id="GreenWall.PopupWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />
