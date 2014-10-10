@@ -1,4 +1,5 @@
 Var MSG
+Var Dialog
 Var BGImage        
 Var ImageHandle
 Var Btn_Next
@@ -29,6 +30,8 @@ Var Btn_Install
 Var Btn_Return
 
 Var WarningForm
+Var Handle_Font
+Var Int_FontOffset
 
 ;进度条界面
 Var Lbl_Sumary
@@ -210,6 +213,12 @@ Function CmdUnstall
 FunctionEnd
 
 Function .onInit
+	StrCpy $Int_FontOffset 4
+	CreateFont $Handle_Font "宋体" 10 0
+	IfFileExists "$FONTS\msyh.ttf" 0 +3
+	CreateFont $Handle_Font "微软雅黑" 10 0
+	StrCpy $Int_FontOffset 0
+	
 	Call CmdSelentInstall
 	Call CmdUnstall
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
@@ -512,11 +521,11 @@ FunctionEnd
 
 Function OnClickQuitOK
 	FindProcDLL::FindProc ${EM_OUTFILE_NAME}
-    Pop $R0
+    ;Pop $R0
     ${If} $R0 != 0
-    KillProcDLL::KillProc ${EM_OUTFILE_NAME}
+		KillProcDLL::KillProc ${EM_OUTFILE_NAME}
 	${Else}
-	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+		SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
     ${EndIf}
 FunctionEnd
 
@@ -567,7 +576,7 @@ Function WelcomePage
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 3
     ShowWindow $0 ${SW_HIDE}
-
+	
     nsDialogs::Create 1044
     Pop $Hwnd_Welcome
     ${If} $Hwnd_Welcome == error
@@ -598,9 +607,13 @@ Function WelcomePage
 	GetFunctionAddress $3 OnClick_CheckXieyi
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_Xieyi 1
-    ${NSD_CreateLabel} 30 283 180 20 "我已阅读并同意绿盾广告管家"
+	
+	StrCpy $3 283
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 30 $3 180 20 "我已阅读并同意绿盾广告管家"
     Pop $Lbl_Xieyi
     SetCtlColors $Lbl_Xieyi "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $Lbl_Xieyi ${WM_SETFONT} $Handle_Font 0
 	
     ;用户协议
 	${NSD_CreateButton} 201 286 68 15 ""
@@ -637,6 +650,7 @@ Function WelcomePage
 	;目录选择框
 	${NSD_CreateDirRequest} 17 241 382 23 "$INSTDIR"
  	Pop	$Txt_Browser
+	SendMessage $Txt_Browser ${WM_SETFONT} $Handle_Font 0
  	${NSD_OnChange} $Txt_Browser OnChange_DirRequest
 	ShowWindow $Txt_Browser ${SW_HIDE}
 	;目录选择按钮
@@ -653,10 +667,13 @@ Function WelcomePage
     ${NSD_SetImage} $Edit_BrowserBg $PLUGINSDIR\edit_bg.bmp $ImageHandle
 	ShowWindow $Edit_BrowserBg ${SW_HIDE}
 	;路径选择文字描述
-	 ${NSD_CreateLabel} 16 218 80 18 "安装位置："
+	StrCpy $3 218
+	IntOp $3 $3 + $Int_FontOffset
+	 ${NSD_CreateLabel} 16 $3 80 18 "安装位置："
     Pop $Lbl_Path
     SetCtlColors $Lbl_Path "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $Lbl_Path ${SW_HIDE}
+	SendMessage $Lbl_Path ${WM_SETFONT} $Handle_Font 0
 	
 	;添加桌面快捷方式
 	${NSD_CreateButton} 16 278 15 15 ""
@@ -666,11 +683,15 @@ Function WelcomePage
 	GetFunctionAddress $3 OnClick_CheckDeskTopLink
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_DeskTopLink 1
-    ${NSD_CreateLabel} 36 276 120 18 "添加桌面快捷方式"
+	
+	StrCpy $3 276
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 36 $3 120 18 "添加桌面快捷方式"
     Pop $Lbl_DeskTopLink
     SetCtlColors $Lbl_DeskTopLink "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $ck_DeskTopLink ${SW_HIDE}
 	ShowWindow $Lbl_DeskTopLink ${SW_HIDE}
+	SendMessage $Lbl_DeskTopLink ${WM_SETFONT} $Handle_Font 0
 	
 	;开启实时过滤
 	${NSD_CreateButton} 166 278 15 15 ""
@@ -680,14 +701,18 @@ Function WelcomePage
 	GetFunctionAddress $3 OnClick_CheckStartTimeDo
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_StartTimeDo 1
-    ${NSD_CreateLabel} 186 276 100 18 "开启实时监控"
+	
+	StrCpy $3 276
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 186 $3 100 18 "开启实时监控"
     Pop $Lbl_StartTimeDo
     SetCtlColors $Lbl_StartTimeDo "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $ck_StartTimeDo ${SW_HIDE}
 	ShowWindow $Lbl_StartTimeDo ${SW_HIDE}
+	SendMessage $Lbl_StartTimeDo ${WM_SETFONT} $Handle_Font 0
 	
 	;立即安装
-	${NSD_CreateBrowseButton} 316 286 76 26 ""
+	${NSD_CreateButton} 316 286 76 26 ""
  	Pop	$Btn_Install
  	StrCpy $1 $Btn_Install
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_install.bmp $1
@@ -696,7 +721,7 @@ Function WelcomePage
 	ShowWindow $Btn_Install ${SW_HIDE}
 	
 	;返回
-	${NSD_CreateBrowseButton} 401 286 61 26 ""
+	${NSD_CreateButton} 401 286 61 26 ""
  	Pop	$Btn_Return
  	StrCpy $1 $Btn_Return
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_return.bmp $1
@@ -710,7 +735,6 @@ Function WelcomePage
     ${NSD_CreateBitmap} 0 0 100% 100% ""
     Pop $BGImage
     ${NSD_SetImage} $BGImage $PLUGINSDIR\bg.bmp $ImageHandle
-
 	
 	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
 	nsDialogs::Show
@@ -797,9 +821,12 @@ Function LoadingPage
 
 
     ;创建简要说明
-    ${NSD_CreateLabel} 24 253 57 20 "正在安装"
+	StrCpy $3 253
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 24 $3 57 20 "正在安装"
     Pop $Lbl_Sumary
     SetCtlColors $Lbl_Sumary "${TEXTCOLOR}"  transparent ;背景设成透明
+	SendMessage $Lbl_Sumary ${WM_SETFONT} $Handle_Font 0
 
     ${NSD_CreateProgressBar} 24 275 430 16 ""
     Pop $PB_ProgressBar
@@ -809,7 +836,7 @@ Function LoadingPage
     
 	
 	;完成时"免费使用"按钮
-	${NSD_CreateBrowseButton} 180 245 117 37 ""
+	${NSD_CreateButton} 180 245 117 37 ""
  	Pop	$Btn_FreeUse
  	StrCpy $1 $Btn_FreeUse
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_freeuse.bmp $1
@@ -891,6 +918,8 @@ Function un.myGUIInit
 FunctionEnd
 
 Function un.OnClick_ContinueUse
+	EnableWindow $Btn_CruelRefused 0
+	EnableWindow $Btn_ContinueUse 0
 	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
@@ -948,6 +977,8 @@ Function un.UNSD_TimerFun
 FunctionEnd
 
 Function un.OnClick_CruelRefused
+	EnableWindow $Btn_CruelRefused 0
+	EnableWindow $Btn_ContinueUse 0
 	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::CreateTimer $0 1
 FunctionEnd
@@ -980,7 +1011,7 @@ Function un.MyUnstall
 	${NSW_CenterWindow} $HWNDPARENT $R9
 
 	;继续使用
-	${NSD_CreateBrowseButton} 246 235 95 30 ""
+	${NSD_CreateButton} 246 235 95 30 ""
  	Pop	$Btn_ContinueUse
  	StrCpy $1 $Btn_ContinueUse
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_jixushiyong.bmp $1
@@ -988,7 +1019,7 @@ Function un.MyUnstall
     SkinBtn::onClick $1 $3
 	
 	;残忍拒绝
-	${NSD_CreateBrowseButton} 355 235 95 30 ""
+	${NSD_CreateButton} 355 235 95 30 ""
  	Pop	$Btn_CruelRefused
  	StrCpy $1 $Btn_CruelRefused
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_canrenxiezai.bmp $1
@@ -996,7 +1027,7 @@ Function un.MyUnstall
     SkinBtn::onClick $1 $3
 	
 	;卸载完成
-	${NSD_CreateBrowseButton} 190 263 95 30 ""
+	${NSD_CreateButton} 190 263 95 30 ""
  	Pop	$Btn_FinishUnstall
  	StrCpy $1 $Btn_FinishUnstall
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_xiezaiwancheng.bmp $1
