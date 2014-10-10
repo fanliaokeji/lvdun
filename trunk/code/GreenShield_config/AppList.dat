@@ -1,0 +1,77 @@
+function GetSubTable()
+	local t = {
+		[1] = {
+			["strAppName"] = "大天使之剑",
+			["strImageName"] = "datianshi.png",
+			["bOpenBrowser"] = true,
+			["strOpenLink"] = "http://p.ali37.net/s/1/720/20987.html?uid=915687",
+		},
+		[2] = {
+			["strAppName"] = "风云无双",
+			["strImageName"] = "fengyunwushuang.png",
+			["bOpenBrowser"] = true,
+			["strOpenLink"] = "http://p.ali37.net/s/1/720/19934.html?uid=915687",
+		},
+		[3] = {
+			["strAppName"] = "斩龙传奇",
+			["strImageName"] = "zhanlongchuanqi.png",
+			["bOpenBrowser"] = true,
+			["strOpenLink"] = "http://p.ali37.net/s/1/720/13682.html?uid=915687",
+		},
+		[4] = {
+			["strAppName"] = "万世",
+			["strImageName"] = "wanshi.png",
+			["bOpenBrowser"] = true,
+			["strOpenLink"] = "http://p.ali37.net/s/1/720/19742.html?uid=915687",
+		},
+		[5] = {
+			["strAppName"] = "360安全套装",
+			["strImageName"] = "360Safe.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://dl.360safe.com/p/Setup_oemasdf021.exe",
+		},
+		[6] = {
+			["strAppName"] = "360浏览器",
+			["strImageName"] = "360Chrome.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://down.360safe.com/p/360se_oemasdf013.exe",
+		},	
+		[7] = {
+			["strAppName"] = "QQ管家",
+			["strImageName"] = "QQManager.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://dlied6.qq.com/invc/xfspeed/qqpcmgr/versetup/gjstat_platform/qqpcmgr_124581_n_v8.9.10958.231_Silence.exe",
+		},		
+		[8] = {
+			["strAppName"] = "搜狐影音",
+			["strImageName"] = "SohuPlayer.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://p2p.hd.sohu.com/dcs.do?f=1&s=2093006&append=-ng-nti-s",
+		},
+		[9] = {
+			["strAppName"] = "PPS",
+			["strImageName"] = "PPSPlayer.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://download.ppstream.com/hz/ppstreamsetup_zxH@xp001.exe",
+		},
+		[10] = {
+			["strAppName"] = "酷狗音乐",
+			["strImageName"] = "KugouMusic.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://xiazai.kugou.com/Corp/kugou7_3442.exe",
+		},		
+		[11] = {
+			["strAppName"] = "酷我音乐",
+			["strImageName"] = "KuwoMusic.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://down.kuwo.cn/mbox/kuwo_jm416.exe",
+		},
+		[12] = {
+			["strAppName"] = "百度杀毒",
+			["strImageName"] = "BaiduSD.png",
+			["bOpenBrowser"] = false,
+			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		},
+	}
+	return t
+end
