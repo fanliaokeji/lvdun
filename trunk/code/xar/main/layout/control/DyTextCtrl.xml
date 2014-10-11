@@ -1,0 +1,50 @@
+<xlue>
+	<control class="DyTextCtrl">
+		<attr_def>
+			<attr name="timespanms" type="int">
+				<default>500</default>
+			</attr>
+			<attr name="Text" type="string"/>
+			<attr name="Font" type="string"/>
+			<attr name="FontUnderline" type="string"/>
+			<attr name="Textcolor" type="string"/>
+			<attr name="Timer" type="int"/>
+		</attr_def>
+		<method_def>
+			<SetText file="DyTextCtrl.xml.lua" func="SetText"/>
+			<SetTextColor file="DyTextCtrl.xml.lua" func="SetTextColor"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="dylayout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>0</limitchild>
+					</attr>
+					<children>
+						<obj id="dynamictext" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<endellipsis>1</endellipsis>
+							</attr>
+						</obj>	
+					</children>		
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="DyTextCtrl.xml.lua" func="OnInitControl" />
+				<event name="OnMouseEnter" file="DyTextCtrl.xml.lua" func="OnMouseEnter" />
+				<event name="OnMouseLeave" file="DyTextCtrl.xml.lua" func="OnMouseLeave" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

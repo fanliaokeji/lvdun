@@ -40,14 +40,14 @@ function InitAppCtrl(self)
 		local strImagePath = strImageBaseDir.."\\"..strImageName
 	
 		local objAppItemCtrl = CreateAppItemCtrl(nIndex)
-		if objAppItemCtrl then
+		if objAppItemCtrl then		
+			objAppContainer:AddChild(objAppItemCtrl)
+			SetAppItemPos(objAppItemCtrl, nIndex)
+			
 			objAppItemCtrl:SetAppName(strAppName)
 			objAppItemCtrl:SetAppImageByPath(strImagePath)
 			objAppItemCtrl:SetAppOpenType(nOpenType)
 			objAppItemCtrl:SetAppOpenLink(strOpenLink)
-		
-			objAppContainer:AddChild(objAppItemCtrl)
-			SetAppItemPos(objAppItemCtrl, nIndex)
 		end
 	end
 	
@@ -109,6 +109,7 @@ function SetAppName(self, strText)
 	if not objText then
 		return
 	end	
+	
 	objText:SetText(strText)
 end
 
@@ -163,8 +164,23 @@ end
 function OnClickAppImage(objAppImage)
 	local objRootCtrl = objAppImage:GetOwnerControl()
 	local attr = objRootCtrl:GetAttribute()
+	local nOpenType = attr.nOpenType
+	local strOpenLink = attr.strOpenLink
+	
+	if not IsRealString(strOpenLink) then
+		return
+	end
+	
+	if nOpenType == 1 then
+		tipUtil:OpenURL(strOpenLink)
+	elseif nOpenType == 2 then
+		OpenSoftware(strOpenLink)
+	end	
 end
 
+function OpenSoftware(strOpenLink)
+
+end
 
 
 function IsRealString(str)
