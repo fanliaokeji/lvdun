@@ -16,6 +16,11 @@ local g_nIDToDelete = 0
 local g_tBlackList = {}
 local g_tRuleList = {}
 
+local g_nReportELEnable = 1
+local g_nReportELDisable = 2
+local g_nReportELAdd = 3
+local g_nReportELDelete = 4
+
 
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
@@ -38,11 +43,13 @@ function OnClickActionBtn(self)
 			return 
 		end
 		
+		ReportDomainStateByID(g_nIDToDelete, g_nReportELDelete)
+		
 		RemoveBlackList(g_nIDToDelete)
 		UpdateBlackListPanel()
 		ResetScrollBar(objRootCtrl)
 		g_nIDToDelete = 0
-		SetAddBtnStyle(self, true)
+		SetAddBtnStyle(self, true)		
 	end
 end
 
@@ -72,6 +79,8 @@ function OnClickAddBtn(self)
 	AddToUserDefineList(strName, strDomain)
 	
 	PushBlackList(strName, strDomain, true)
+	ReportDomainState(strDomain, g_nReportELAdd)
+	
 	UpdateBlackListPanel()
 	ResetScrollBar(objRootCtrl)
 	ShowPopupPanel(objRootCtrl, false)	
@@ -100,7 +109,13 @@ function OnClick_StateButton(self)
 	
 	local strDomain = FetchValueByPath(g_tBlackList, {nUrlID, "strDomain"})
 	AutoEnableDomain(strDomain)
-	self:RouteToFather()
+	
+	if bNewState then
+		ReportDomainState(strDomain, g_nReportELEnable)
+	else
+		ReportDomainState(strDomain, g_nReportELDisable)
+	end
+	
 end
 
 
@@ -267,6 +282,7 @@ function OnClickPopupCancle(self)
 	end
 	
 	objHostWnd:Show(0)
+	ReportPopupState(strDomain, 2)
 end
 
 function OnClickPopupEnter(self)
@@ -290,9 +306,20 @@ function OnClickPopupEnter(self)
 	
 	if IsRealString(strName) and IsRealString(strDomain) then
 		AddBlackList(strName, strDomain)
+		ReportPopupState(strDomain, 1)
 	end
 	
 	objHostWnd:Show(0)
+end
+
+--nState: 1 免费过滤， 2 取消
+function ReportPopupState(strDomain, nState)
+	local tStatInfo = {}
+	tStatInfo.strEA = strDomain
+	tStatInfo.strEL = tostring(nState)
+	tStatInfo.strEC = "FilterRemindWnd"
+	
+	SendReport(tStatInfo)
 end
 
 
@@ -317,6 +344,7 @@ end
 function AddBlackList(strName, strDomain)
 	LoadConfig()
 	PushBlackList(strName, strDomain, true)
+		
 	if g_bHasInit then
 		UpdateBlackListPanel()
 		ResetScrollBar(g_selfRootCtrl)
@@ -526,8 +554,6 @@ function CreateLine(objBlackList)
 	objStateBtn:SetTextureID("GreenWall.Common.SwitchButton.Open")
 	objStateBtn:SetCursorID("IDC_HAND")
 	
-	objStateBtn:AttachListener("OnMouseEnter", false, EventRouteToFather)
-	objStateBtn:AttachListener("OnMouseLeave", false, EventRouteToFather)
 	objStateBtn:AttachListener("OnLButtonUp", false, OnClick_StateButton)
 	objStateBtn:AttachListener("OnMouseWheel", false, EventRouteToFather)
 	objStateBtn:AttachListener("OnFocusChange", false, EventRouteToFather)
@@ -671,6 +697,32 @@ function AddToUserDefineList(strName, strDomain)
 	g_tRuleList[nNewRuleCount]["strDomain"] = strDomain
 	g_tRuleList[nNewRuleCount]["tExtraPath"] = {}
 	g_tRuleList[nNewRuleCount]["bUserDefine"] = true
+end
+
+
+function ReportDomainStateByID(nDomianID, nEL)
+	local strDomain = ""
+	if type(g_tBlackList[nDomianID]) == "table" then
+		strDomain = FetchValueByPath(g_tBlackList, {nDomianID, "strDomain"})
+	end
+	
+	ReportDomainState(strDomain, nEL)
+end
+
+function ReportDomainState(strDomain, nEL)
+	local tStatInfo = {}
+	tStatInfo.strEA = strDomain
+	tStatInfo.strEL = tostring(nEL)
+	tStatInfo.strEC = "AdvFilterPanel"
+	
+	SendReport(tStatInfo)
+end
+
+function SendReport(tStatInfo)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
 end
 
 
