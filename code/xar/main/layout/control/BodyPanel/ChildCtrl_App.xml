@@ -87,6 +87,9 @@
 								<FontUnderline>font.yahei11.underline</FontUnderline>
 								<cursor>IDC_HAND</cursor>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_App.xml.lua" func="OnClickAppText" />
+							</eventlist>
 						</obj>	
 					</children>
 				</obj>	

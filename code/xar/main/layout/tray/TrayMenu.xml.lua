@@ -34,7 +34,7 @@ end
 
 function OnSelect_Exit(self)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	tFunctionHelper.TipConvStatistic()
+	tFunctionHelper.ShowExitRemindWnd()
 end
 
 -------

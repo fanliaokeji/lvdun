@@ -162,7 +162,16 @@ end
 
 
 function OnClickAppImage(objAppImage)
-	local objRootCtrl = objAppImage:GetOwnerControl()
+	OpenLinkAfterClick(objAppImage)
+end
+
+function OnClickAppText(objAppText)
+	OpenLinkAfterClick(objAppText)
+end
+
+
+function OpenLinkAfterClick(objUIItem)
+	local objRootCtrl = objUIItem:GetOwnerControl()
 	local attr = objRootCtrl:GetAttribute()
 	local nOpenType = attr.nOpenType
 	local strOpenLink = attr.strOpenLink
@@ -177,6 +186,7 @@ function OnClickAppImage(objAppImage)
 		OpenSoftware(strOpenLink)
 	end	
 end
+
 
 function OpenSoftware(strOpenLink)
 
