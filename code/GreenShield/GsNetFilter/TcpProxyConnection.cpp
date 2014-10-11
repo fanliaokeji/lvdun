@@ -242,8 +242,8 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 							if(!parseRequestLineFailed) {
 								bool isAbsoluteUrl = true;
 								const char* absoluteUrlPrefix = "http:";
-								for(std::size_t index = 0; 0 < 5; ++index) {
-									if(std::tolower(middleString[index]) != absoluteUrlPrefix[index]) {
+								for(std::size_t index = 0; index < 5; ++index) {
+									if(std::tolower(static_cast<unsigned char>(middleString[index])) != absoluteUrlPrefix[index]) {
 										isAbsoluteUrl = false;
 										break;
 									}
