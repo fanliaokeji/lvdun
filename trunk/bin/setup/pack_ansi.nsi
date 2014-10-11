@@ -166,7 +166,7 @@ Function CmdSelentInstall
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -196,7 +196,7 @@ Function CmdUnstall
 	${EndIf}
 	IfFileExists "$INSTDIR" 0 +4
 	IntOp $R0 $R0 + 1
-	Sleep 500
+	Sleep 100
 	Goto BeginRepeatDelete
 	EndRepeatDelete:
 	
@@ -763,23 +763,23 @@ Function NSD_TimerFun
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 FunctionEnd
 
 Function InstallationMainFun
 	call DoInstall
     SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
-	SendMessage $PB_ProgressBar ${PBM_SETPOS} 12 0
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 5 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 20 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 28 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 10 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 40 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 15 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 52 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 22 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 60 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 32 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 68 0
     Sleep 100
@@ -788,7 +788,7 @@ Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 92 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
-	Sleep 1000
+	Sleep 200
 FunctionEnd
 
 Function OnClick_FreeUse
@@ -932,7 +932,7 @@ Function un.DoUninstall
 	${EndIf}
 	IfFileExists "$INSTDIR" 0 +4
 	IntOp $R0 $R0 + 1
-	Sleep 500
+	Sleep 100
 	Goto BeginRepeatDelete
 	EndRepeatDelete:
 FunctionEnd
@@ -948,6 +948,7 @@ Function un.UNSD_TimerFun
 		 CheckProcessExist:
 		 FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 		 ${If} $R0 != 0
+			SendMessage $R0 ${WM_CLOSE} 0 0
 			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
 			Sleep 100
 			Goto CheckProcessExist
@@ -963,7 +964,7 @@ Function un.UNSD_TimerFun
 		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
 	;IfFileExists "$SMPROGRAMS\绿盾\*.*" 0 +2
 		;Delete "$SMPROGRAMS\绿盾\绿盾.lnk"
-		;Delete "$SMPROGRAMS\绿盾\Uninstall.lnk"
+		;Delete "$SMPROGRAMS\绿盾\卸载${SHORTCUT_NAME}.lnk"
 		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 	 ;删除自用的注册表信息
 	 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
@@ -984,6 +985,7 @@ Function un.OnClick_CruelRefused
 FunctionEnd
 
 Function un.OnClick_FinishUnstall
+	RMDir /r "$INSTDIR"
 	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
