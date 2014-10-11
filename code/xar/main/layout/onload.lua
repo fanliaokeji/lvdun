@@ -2,7 +2,6 @@ local gTipInfoTab = {}
 local gFilterConfigInfo = {}
 local gRuleInfo = {}
 
-
 local gbLoadCfgSucc = false
 local g_tipNotifyIcon = nil
 local tipUtil = XLGetObject("GS.Util")
@@ -368,19 +367,6 @@ function GetCfgPathWithName(strCfgName)
 end
 
 
-function GetUserCfgPath()
-	return GetCfgPathWithName("UserConfig.dat")
-end
-
-function GetFilterCfgPath()
-	return GetCfgPathWithName("FilterConfig.dat")
-end
-
-function GetRuleListCfgPath()
-	return GetCfgPathWithName("RuleList.dat")
-end
-
-
 function GetSpecifyFilterTableFromMem(strTableName)
 	if not IsRealString(strTableName) then
 		return gFilterConfigInfo
@@ -398,40 +384,40 @@ function SaveSpecifyFilterTableToMem(tNewTable, strTableName)
 end
 
 function SaveUserConfigToFile()
-	local strUserCfgPath = GetUserCfgPath()
+	local strUserCfgPath = GetCfgPathWithName("UserConfig.dat")
 	if IsRealString(strUserCfgPath) then
 		tipUtil:SaveLuaTableToLuaFile(gTipInfoTab, strUserCfgPath)
 	end
 end
 
 function GetUserConfigFromFile()
-	local strUserCfgPath = GetUserCfgPath()
+	local strUserCfgPath = GetCfgPathWithName("UserConfig.dat")
 	local infoTable = LoadTableFromFile(strUserCfgPath)
 	return infoTable
 end
 
 
 function GetFilterConfigFromFile()
-	local strFilterCfgPath = GetFilterCfgPath()
+	local strFilterCfgPath = GetCfgPathWithName("FilterConfig.dat")
 	local infoTable = LoadTableFromFile(strFilterCfgPath)
 	return infoTable
 end
 
 function SaveFilterConfigToFile()
-	local strFilterCfgPath = GetFilterCfgPath()
+	local strFilterCfgPath = GetCfgPathWithName("FilterConfig.dat")
 	if IsRealString(strFilterCfgPath) then
 		tipUtil:SaveLuaTableToLuaFile(gFilterConfigInfo, strFilterCfgPath)
 	end
 end
 
 function GetRuleListFromFile()
-	local strRuleListPath = GetRuleListCfgPath()
+	local strRuleListPath = GetCfgPathWithName("RuleList.dat")
 	local tRuleList = LoadTableFromFile(strRuleListPath)
 	return tRuleList
 end
 
 function SaveRuleListToFile()
-	local strRuleListPath = GetRuleListCfgPath()
+	local strRuleListPath = GetCfgPathWithName("RuleList.dat")
 	if IsRealString(strRuleListPath) then
 		tipUtil:SaveLuaTableToLuaFile(gRuleInfo, strRuleListPath)
 	end
@@ -673,9 +659,9 @@ function SendStartupReport(bShowWnd)
 	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
 	if bShowWnd then
-		tStatInfo.strEL = 1
+		tStatInfo.strEL = 0   --进入上报
 	else
-		tStatInfo.strEL = 2
+		tStatInfo.strEL = 1   --展示上报
 	end
 		
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
@@ -689,14 +675,24 @@ function SendExitReport()
 	
 	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
 	local nFilterCount = tonumber(tUserConfig["nFilterCount"])
+		
+	local iLastTime = 0	--失败认为展示时长为0
+	local nCurTime = tipUtil:GetCurrentUTCTime()
+	local fnGetTipStartTime = XLGetGlobal("GreenWall.GetTipStartTime")
+	if type(fnGetTipStartTime) == "function" then
+		local iTimeStart = fnGetTipStartTime()
+		if type(iTimeStart) == "number" then
+			iLastTime = nCurTime - iTimeStart
+		end
+	end
 	
 	tStatInfo.strEC = "exit"
 	tStatInfo.strEA = "filtercount"
 	tStatInfo.strEL = nFilterCount or ""
+	tStatInfo.strEV = iLastTime
 		
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
-
 
 
 function TipMain() 

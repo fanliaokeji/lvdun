@@ -1,45 +1,13 @@
 local tipUtil = XLGetObject("GS.Util")
 local gRootCtrl = nil
 
--- function EndTimer()
-	-- if gRootCtrl ~= nil then
-		-- local attr = gRootCtrl:GetAttribute()
-		-- if type(attr) == "table" and attr.holdtimer then
-			-- local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-			-- timerManager:KillTimer(attr.holdtimer)
-			-- attr.holdtimer = nil
-		-- end
-	-- end
--- end
-
--- function StartTimer()
-	-- EndTimer()
-	-- if gRootCtrl ~= nil then
-		-- local attr = gRootCtrl:GetAttribute()
-		-- if type(attr) == "table" then
-			-- local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-			-- attr.holdtime = 0
-			-- attr.holdtimer = timerManager:SetTimer(function(item, id)
-				-- attr.holdtime = attr.holdtime + 1
-				-- if attr.holdtime >= attr.holdseconds and attr.holdseconds > 0 then
-					-- item:KillTimer(id)
-					-- local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-					-- local frameHostWnd = hostwndManager:GetHostWnd("XmpTipWnd.MainFrame")
-					-- if frameHostWnd then
-						-- frameHostWnd:Destroy()
-					-- end
-				-- end
-			-- end, 1000)
-		-- end
-	-- end
--- end
 
 function OnMouseMove( self )
---	EndTimer()
+
 end
 
 function OnMouseLeave(self, x, y)
---	StartTimer()
+
 end
 
 local gTipStartTime = nil
@@ -51,7 +19,7 @@ XLSetGlobal("GreenWall.GetTipStartTime", GetTipStartTime)
 function OnShowWindow(self, bShow)
 	if bShow then
 		gTipStartTime = tipUtil:GetCurrentUTCTime()
-		--StartTimer()
+
 	end
 end
 
@@ -72,7 +40,6 @@ end
 function OnDestroy( self )
 	local objtree = self:GetBindUIObjectTree()
 	if objtree ~= nil then
-		--EndTimer()
 		self:UnbindUIObjectTree()
 		local objtreeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
 		objtreeManager:DestroyTree(objtree)

@@ -14,6 +14,11 @@ local g_nIDToDelete = 0
 local g_tWhiteList = {}
 local g_tRuleList = {}
 
+local g_nReportELEnable = 1
+local g_nReportELDisable = 2
+local g_nReportELAdd = 3
+local g_nReportELDelete = 4
+
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
 		InitWhiteList(self)
@@ -34,6 +39,8 @@ function OnClickActionBtn(self)
 		if g_nIDToDelete == 0 then
 			return 
 		end
+		
+		ReportDomainStateByID(g_nIDToDelete, g_nReportELDelete)
 		
 		RemoveWhiteList(g_nIDToDelete)
 		UpdateWhiteListPanel()
@@ -71,6 +78,8 @@ function OnClickAddBtn(self)
 	AddToUserDefineList(strName, strDomain)
 	
 	PushWhiteList(strName, strDomain, true)
+	ReportDomainState(strDomain, g_nReportELAdd)
+	
 	UpdateWhiteListPanel()
 	ResetScrollBar(objRootCtrl)
 	ShowPopupPanel(objRootCtrl, false)	
@@ -99,7 +108,12 @@ function OnClick_StateButton(self)
 	
 	local strDomain = FetchValueByPath(g_tWhiteList, {nUrlID, "strDomain"})
 	AutoEnableDomain(strDomain)
-	self:RouteToFather()
+	
+	if bNewState then
+		ReportDomainState(strDomain, g_nReportELEnable)
+	else
+		ReportDomainState(strDomain, g_nReportELDisable)
+	end
 end
 
 ---鼠标移入显示过滤信息的那一行
@@ -394,7 +408,7 @@ function UpdateWhiteListPanel()
 end
 
 
-function ShowFilterInfo(tBlackItemWithID, nIndex)
+function ShowFilterInfo(tWhiteItemWithID, nIndex)
 	local objLayout = g_tObjLineList[nIndex]
 	local objTextName = objLayout:GetChildByIndex(0)
 	local objTextURL = objLayout:GetChildByIndex(1)
@@ -406,12 +420,12 @@ function ShowFilterInfo(tBlackItemWithID, nIndex)
 		return false
 	end
 	
-	local strName = tBlackItemWithID["strName"]
-	local strDomain = tBlackItemWithID["strDomain"]
+	local strName = tWhiteItemWithID["strName"]
+	local strDomain = tWhiteItemWithID["strDomain"]
 	objTextName:SetText(strName)
 	objTextURL:SetText(strDomain)
 	
-	local nID = tBlackItemWithID["nID"]
+	local nID = tWhiteItemWithID["nID"]
 	objTextID:SetText(tostring(nID))
 	
 	local bState = GetStateByID(nID)
@@ -616,6 +630,32 @@ function AddToUserDefineList(strName, strDomain)
 	g_tRuleList[nNewRuleCount]["strDomain"] = strDomain
 	g_tRuleList[nNewRuleCount]["tExtraPath"] = {}
 	g_tRuleList[nNewRuleCount]["bUserDefine"] = true
+end
+
+function ReportDomainStateByID(nDomianID, nEL)
+	local strDomain = ""
+	if type(g_tWhiteList[nDomianID]) == "table" then
+		strDomain = FetchValueByPath(g_tWhiteList, {nDomianID, "strDomain"})
+	end
+	
+	ReportDomainState(strDomain, nEL)
+end
+
+
+function ReportDomainState(strDomain, nEL)
+	local tStatInfo = {}
+	tStatInfo.strEA = strDomain
+	tStatInfo.strEL = tostring(nEL)
+	tStatInfo.strEC = "WhiteListPanel"
+	
+	SendReport(tStatInfo)
+end
+
+function SendReport(tStatInfo)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
 end
 
 
