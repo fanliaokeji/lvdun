@@ -60,7 +60,7 @@
 						<left>0</left>
 						<top>0</top>
 						<width>48</width>
-						<height>48+9+10</height>
+						<height>48+7+12</height>
 					</attr>
 					<children>
 						<obj id="AppItemCtrl.Image" class="ImageObject">
@@ -76,16 +76,16 @@
 							</eventlist>
 						</obj>
 						
-						<obj id="AppItemCtrl.Text" class="TextObject">
+						<obj id="AppItemCtrl.Text" class="DyTextCtrl">
 							<attr>
 								<left>0</left>
-								<top>48+9</top>
+								<top>48+7</top>
 								<width>father.width</width>
-								<height>10</height>
-								<textcolor>4D4D4D</textcolor>
-								<font>font.yahei11</font>
-								<valign>center</valign>
-								<halign>center</halign>
+								<height>12</height>
+								<Textcolor>4D4D4D</Textcolor>
+								<Font>font.yahei11</Font>
+								<FontUnderline>font.yahei11.underline</FontUnderline>
+								<cursor>IDC_HAND</cursor>
 							</attr>
 						</obj>	
 					</children>
