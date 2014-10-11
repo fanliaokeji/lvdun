@@ -6,6 +6,8 @@ local gRuleInfo = {}
 local gbLoadCfgSucc = false
 local g_tipNotifyIcon = nil
 local tipUtil = XLGetObject("GS.Util")
+local tipAsynUtil = XLGetObject("GS.AsynUtil")
+
 -----------------
 
 function RegisterFunctionObject(self)
@@ -13,8 +15,22 @@ function RegisterFunctionObject(self)
 		ExitTipWnd()
 	end
 	
-	local function TipConvStatistic(tStatInfo)
-		ShowExitRemindWnd()
+	local function TipConvStatistic(tStat)
+		local rdRandom = tipUtil:GetCurrentUTCTime()
+		local tStatInfo = tStat or {}
+
+		local strCID = tipUtil:GetPeerId()
+		local strEC = tStatInfo.strEC or ""
+		local strEA = tStatInfo.strEA or ""
+		local strEL = tStatInfo.strEL or ""
+		local strEV = tStatInfo.strEV or ""
+
+		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid="..tostring(strCID)
+						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
+						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
+		TipLog("TipConvStatistic: " .. tostring(strUrl))
+		
+		tipAsynUtil:AsynSendHttpStat(strUrl)
 	end
 	
 	local obj = {}
@@ -34,6 +50,7 @@ function RegisterFunctionObject(self)
 	obj.ShowPopupWndByName = ShowPopupWndByName
 	obj.GetCfgPathWithName = GetCfgPathWithName
 	obj.LoadTableFromFile = LoadTableFromFile
+	obj.ShowExitRemindWnd = ShowExitRemindWnd
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -91,7 +108,8 @@ end
 
 function ExitTipWnd(statInfo)
 	SaveAllConfig()
-
+	SendExitReport()
+	
 	HideTray()
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
@@ -215,7 +233,6 @@ function InitTrayTipWnd(objHostWnd)
 	----托盘事件响应
 	function OnTrayEvent(event1,event2,event3,event4)
 		local strHostWndName = "GSTrayMenuHostWnd.MainFrame"
-		local strObjTreeName = "GSTrayMenuWnd.MainObjectTree"
 		local newWnd = hostwndManager:GetHostWnd(strHostWndName)	
 				
 		--单击右键,创建并显示菜单
@@ -450,7 +467,7 @@ function ReadAllConfigInfo()
 end
 
 
-function SendFileDateToFilterThread()
+function SendFileDataToFilterThread()
 	local bSucc = SendRuleListToFilterThread()
 	if not bSucc then
 		return false
@@ -527,7 +544,6 @@ function IsDomainInWhiteList(strDomain)
 			
 			return true
 		end
-		
 	end
 	return false
 end
@@ -621,8 +637,8 @@ function CreateWndByName(strHostWndName, strTreeName)
 	return bSuccess
 end
 
-function StartTimer()
-	local nTimeSpanInMs = 3600 * 1000
+function SaveConfigInTimer()
+	local nTimeSpanInMs = 10 * 60 * 1000
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
 		SaveAllConfig()
@@ -630,8 +646,63 @@ function StartTimer()
 end
 
 
+function GetCommandStrValue(self, strKey)
+	local bRet, strValue = false, nil
+	local cmdString = tipUtil:GetCommandLine()
+	if string.find(cmdString, strKey .. " ") then
+		local cmdList = tipUtil:GetCommandList()
+		if cmdList ~= nil then	
+			for i = 1, #cmdList, 2 do
+				local strTmp = tostring(cmdList[i])
+				if strTmp == strKey then
+					bRet = true
+					strValue = tostring(cmdList[i + 1])
+					break
+				end
+			end
+		end
+	end
+	return bRet, strValue
+end
+
+
+function SendStartupReport(bShowWnd)
+	local tStatInfo = {}
+	local bRet, strSource = tipUtil:GetCommandLine("/StartFrom")
+	
+	tStatInfo.strEC = "startup"
+	tStatInfo.strEA = strSource or ""
+	if bShowWnd then
+		tStatInfo.strEL = 1
+	else
+		tStatInfo.strEL = 2
+	end
+		
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+
+function SendExitReport()
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tStatInfo = {}
+	
+	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
+	local nFilterCount = tonumber(tUserConfig["nFilterCount"])
+	
+	tStatInfo.strEC = "exit"
+	tStatInfo.strEA = "filtercount"
+	tStatInfo.strEL = nFilterCount or ""
+		
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+
+
 function TipMain() 
 	RegisterFunctionObject()
+	SendStartupReport(false)
+	
 	local bSuccess = ReadAllConfigInfo()	
 	if not bSuccess then
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
@@ -639,17 +710,18 @@ function TipMain()
 		return
 	end
 
-	local bSucc = SendFileDateToFilterThread()
+	local bSucc = SendFileDataToFilterThread()
 	if not bSucc then
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 		FunctionObj:FailExitTipWnd()
 		return
 	end
 	
-	CreateMainTipWnd()
 	CreatePopupTipWnd()
-	StartTimer()
-		--tipUtil:GetPeerId();
+	CreateMainTipWnd()
+	SaveConfigInTimer()
+	
+	SendStartupReport(true)
 end
 
 

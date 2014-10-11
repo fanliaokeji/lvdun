@@ -63,19 +63,23 @@ end
 
 function OnClickConfigBtn(self)
 	OpenPanel(self, "ChildCtrl_Config")
+	SetCaptionText(self, "设置")
 end
 
 
 function OnClickMainPage(self)
 	OpenPanel(self, "ChildCtrl_AdvCount")
+	SetCaptionText(self, "绿盾广告管家")
 end
 
 function OnClickApp(self)
 	OpenPanel(self, "ChildCtrl_App")
+	SetCaptionText(self, "应用")
 end
 
 function OnClickFilterConfig(self)
 	OpenPanel(self, "ChildCtrl_FilterConfig")
+	SetCaptionText(self, "过滤设置")
 end
 
 
@@ -227,6 +231,20 @@ function OpenPanel(objButton, strNewCtrlName)
 	if strCurCtrlName ~= strNewCtrlName then
 		objMainBodyCtrl:ChangePanel(strNewCtrlName)
 	end
+end
+
+function SetCaptionText(objUIItem, strTitle)
+	if not IsRealString(strTitle) then
+		return
+	end
+
+	local objRootCtrl = objUIItem:GetOwnerControl()
+	local objCaptionText = objRootCtrl:GetControlObject("TipCtrl.Caption.Text")
+	if not objCaptionText then
+		return
+	end
+
+	objCaptionText:SetText(strTitle)
 end
 
 
