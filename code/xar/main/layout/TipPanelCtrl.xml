@@ -96,22 +96,6 @@
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickConfigBtn" />
 									</eventlist>
 								</obj>
-								
-								<!--换肤obj id="TipCtrl.Caption.Skin" class="TipAddin.Button">
-									<attr>
-										<left>father.width-(26 + 24 * 3)</left>
-										<top>10</top>
-										<width>20</width>
-										<height>20</height>
-										<NormalBkgID>GreenWall.Skin.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.Skin.Down</DownBkgID>
-										<HoverBkgID>GreenWall.Skin.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.Skin.Normal</DisableBkgID>
-									</attr>
-									<eventlist>
-										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickSkinBtn" />
-									</eventlist>
-								</obj-->
 							</children>				
 						</obj>
 						<!--顶部阴影背景-->

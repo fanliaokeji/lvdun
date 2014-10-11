@@ -1,0 +1,97 @@
+<xlue>
+	<control class="ChildCtrl_App">
+		<attr_def>
+
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_App.xml.lua" func="OnShowPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_App.MainWnd" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="ChildCtrl_App.MainWnd.Container" class="LayoutObject">
+							<attr>
+								<left>27</left>
+								<top>13</top>
+								<width>father.width-27*2</width>
+								<height></height>
+							</attr>					
+						</obj>	
+					</children>
+				</obj>	
+			</children>
+		</objtemplate>
+	</control>
+	
+	
+	<control class="AppItemCtrl">
+		<attr_def>
+			<attr name="strOpenLink" type="string" ></attr>
+			<attr name="nOpenType" type="int" ></attr> <!--1:浏览器打开;2:直接下载或运行-->
+			<attr name="nItemHeight" type="int" ><default>67</default></attr>
+			<attr name="nItemWidth" type="int" ><default>48</default></attr>
+			<attr name="nItemSpaceH" type="int" ><default>9</default></attr>
+			<attr name="nItemSpaceW" type="int" ><default>25</default></attr>
+		</attr_def>
+		<method_def>
+			<SetAppName file="ChildCtrl_App.xml.lua" func="SetAppName"/>
+			<SetAppImageByPath file="ChildCtrl_App.xml.lua" func="SetAppImageByPath"/>
+			<SetAppOpenLink file="ChildCtrl_App.xml.lua" func="SetAppOpenLink"/>
+			<SetAppOpenType file="ChildCtrl_App.xml.lua" func="SetAppOpenType"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="AppItemCtrl.Body" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>48</width>
+						<height>48+9+10</height>
+					</attr>
+					<children>
+						<obj id="AppItemCtrl.Image" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>48</width>
+								<height>48</height>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_App.xml.lua" func="OnClickAppImage" />
+							</eventlist>
+						</obj>
+						
+						<obj id="AppItemCtrl.Text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>48+9</top>
+								<width>father.width</width>
+								<height>10</height>
+								<textcolor>4D4D4D</textcolor>
+								<font>font.yahei11</font>
+								<valign>center</valign>
+								<halign>center</halign>
+							</attr>
+						</obj>	
+					</children>
+				</obj>	
+			</children>
+		</objtemplate>
+	</control>
+	
+</xlue>
