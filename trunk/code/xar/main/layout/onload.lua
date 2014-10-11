@@ -32,6 +32,8 @@ function RegisterFunctionObject(self)
 	obj.UIAutoEnableDomain = UIAutoEnableDomain
 	obj.ExitTipWnd = ExitTipWnd
 	obj.ShowPopupWndByName = ShowPopupWndByName
+	obj.GetCfgPathWithName = GetCfgPathWithName
+	obj.LoadTableFromFile = LoadTableFromFile
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -259,36 +261,52 @@ function CreateTrayTipWnd(objHostWnd)
 		end
 
 		if uHostWnd and uObjTree then
-			uHostWnd:BindUIObjectTree(uObjTree)
-							
-			local nPosCursorX, nPosCursorY = tipUtil:GetCursorPos()
-			if type(nPosCursorX) ~= "number" or type(nPosCursorY) ~= "number" then
-				return 
-			end
-			
-			local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
-			if not objMainLayout then
-			    return
-			end	
-				
-			local nL, nT, nR, nB = objMainLayout:GetObjPos()				
-			local nMenuContainerWidth = nR - nL
-			local nMenuContainerHeight = nB - nT
-			local nMenuScreenLeft = nPosCursorX
-			local nMenuScreenTop = nPosCursorY - nMenuContainerHeight
-			TipLog("[ShowTrayCtrlPanel] about to popup menu")
-			uHostWnd:SetFocus(true)
 			--函数会阻塞
-			local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
-			TipLog("[CreateTrayTipWnd] end menu")
-
+			local bSucc = ShowPopupMenu(uHostWnd, uObjTree)
 			
-			if uHostWnd:GetMenuMode() == "manual" then
+			if bSucc and uHostWnd:GetMenuMode() == "manual" then
 				uObjTreeMgr:DestroyTree(strObjTreeName)
 				uHostWndMgr:RemoveHostWnd(strHostWndName)
 			end
 		end
 	end
+end
+
+
+function ShowPopupMenu(uHostWnd, uObjTree)
+	uHostWnd:BindUIObjectTree(uObjTree)
+					
+	local nPosCursorX, nPosCursorY = tipUtil:GetCursorPos()
+	if type(nPosCursorX) ~= "number" or type(nPosCursorY) ~= "number" then
+		return false
+	end
+	
+	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetScreenArea()
+	
+	
+	local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
+	if not objMainLayout then
+	    return false
+	end	
+		
+	local nL, nT, nR, nB = objMainLayout:GetObjPos()				
+	local nMenuContainerWidth = nR - nL
+	local nMenuContainerHeight = nB - nT
+	local nMenuScreenLeft = nPosCursorX
+	local nMenuScreenTop = nPosCursorY - nMenuContainerHeight
+	TipLog("[ShowTrayCtrlPanel] about to popup menu")
+	
+	if nMenuScreenLeft+nMenuContainerWidth > nScrnRight - 10 then
+		nMenuScreenLeft = nPosCursorX - nMenuContainerWidth
+	end
+	
+	uHostWnd:SetFocus(false) --先失去焦点，否则存在菜单不会消失的bug
+	
+	--函数会阻塞
+	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
+	TipLog("[CreateTrayTipWnd] end menu")
+	
+	return bOk
 end
 
 -------------------------------

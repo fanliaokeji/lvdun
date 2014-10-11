@@ -2,7 +2,7 @@ local tipUtil = XLGetObject("GS.Util")
 local g_tPanelCtrlList = {
 	"ChildCtrl_AdvCount",
 	"ChildCtrl_Config",
-	"ChildCtrl_Skin",
+	"ChildCtrl_App",
 	"ChildCtrl_FilterConfig",
 }
 
@@ -66,20 +66,12 @@ function OnClickConfigBtn(self)
 end
 
 
-function OnClickSkinBtn(self)
-	OpenPanel(self, "ChildCtrl_Skin")
-end
-
-
 function OnClickMainPage(self)
 	OpenPanel(self, "ChildCtrl_AdvCount")
 end
 
 function OnClickApp(self)
-	--OpenPanel(self, "Child_SkinCtrl")
-	------debug XLMessageBox()
-	--	ShowPopupWindow("优酷frompoupu", "www.popup.com" )
-	----debug
+	OpenPanel(self, "ChildCtrl_App")
 end
 
 function OnClickFilterConfig(self)

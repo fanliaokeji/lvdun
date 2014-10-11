@@ -34,7 +34,7 @@ end
 function OnClickMinBtn(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0)
+	objHostWnd:Min()
 end
 
 
@@ -49,7 +49,6 @@ function OnClickEnterBtn(self)
 	objProgBarLayout:SetChildrenVisible(true)
 	
 	SetProgBar(objProgBarLayout)
-	
 end
 
 
@@ -66,8 +65,16 @@ function InitMainWnd(objHostWnd)
 		return
 	end
 	
+	local objEnterBtn = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.EnterBtn")
+	if not objEnterBtn then
+		return
+	end
+	
 	objProgBarLayout:SetVisible(false)
 	objProgBarLayout:SetChildrenVisible(false)
+	objEnterBtn:SetVisible(true)
+	objEnterBtn:SetChildrenVisible(true)
+	
 end
 
 function SetProgBar(objProgBarLayout)

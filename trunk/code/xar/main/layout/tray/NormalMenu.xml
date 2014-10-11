@@ -100,7 +100,7 @@
 	
 	<objtemplate class="MenuItemObject" id="menu.context.item">
 		<attr>
-			<height>28</height>
+			<height>27</height>
 			<width>father.width</width>
 			<TextPos>18</TextPos>
 			<Font>font.yahei12</Font>
