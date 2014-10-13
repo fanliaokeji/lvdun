@@ -1,0 +1,57 @@
+上报示例：
+http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=FC4DD4F733785ABE&t=event&ec=exit&ea=filtercount&el=29&ev=80
+
+cid 为 pid
+
+1. 程序启动后立即上报
+ec = startup
+ea = openfrom   (从本进程的命令行获取来源)
+el = 0
+
+2. 主界面展示后上报
+ec = startup
+ea = openfrom   (从本进程的命令行获取来源)
+el = 1
+
+3. 程序退出上报
+ec = exit
+ea = filtercount
+el = 29           (当天过滤广告的次数)
+ev = 80			  (程序运行时间，秒)
+
+
+4. 过滤提示窗口上报
+ec = FilterRemindWnd  (窗口名)
+ea = youku.com		  (检测到需要过滤的域名)
+el = 1 | 2            (1 点击免费过滤， 2 点击取消)
+
+5. 广告过滤面版上报
+ec = AdvFilterPanel   	(面版名)
+ea = youku.com		    (状态被用户改变的域名)
+el = 1 | 2 | 3 | 4      (1 开启过滤， 2 停止过滤， 3 添加域名， 4 删除域名)
+
+6. 白名单面版上报
+ec = WhiteListPanel   	(面版名)
+ea = youku.com		    (状态被用户改变的域名)
+el = 1 | 2 | 3 | 4      (1 开启过滤， 2 停止过滤， 3 添加域名， 4 删除域名)
+
+7. 主面板上报
+ec = MainPanel   		(面版名)
+ea = filteropen	    	(过滤按钮)
+el = 1 | 2		        (1 开启过滤， 2 停止过滤)
+
+
+7. 托盘菜单上报
+ec = TrayMenu   		(面版名)
+ea = filteropen	    	(过滤按钮)
+el = 1 | 2		        (1 开启过滤， 2 停止过滤)
+
+
+
+
+
+
+
+
+
+
