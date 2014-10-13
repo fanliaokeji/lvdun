@@ -32,6 +32,18 @@ end
 function OnClickSwitchFilter(self)
 	Inner_ChangeSwitchFilter(self)
 	SaveAdvOpenState()
+	
+	local tStatInfo = {}
+	tStatInfo.strEC = "MainPanel"
+	tStatInfo.strEA = "filteropen"
+	
+	if g_bFilterOpen then
+		tStatInfo.strEL = "1"
+	else
+		tStatInfo.strEL = "2"
+	end
+	
+	SendReport(tStatInfo)
 end
 
 
@@ -143,7 +155,6 @@ function SaveAdvCfgSepcifyKey(strKey, strValue)
 end
 
 
-
 function SaveAdvCountCfg()
 	SaveAdvCfgSepcifyKey("nFilterCount", g_nAdvCount)
 end
@@ -183,7 +194,6 @@ function InitAdvCount(objRootCtrl)
 		local nWhiteSpace = (nFatherWidth - g_nElemCount*nElemWidth)/2 + 1
 		local nNewLeft = nFatherWidth - (nWhiteSpace + nIndex*nElemWidth)
 		objElem:SetObjPos(nNewLeft, 0, nNewLeft+nElemWidth, "father.height")
-		
 		
 		g_tCountElemList[#g_tCountElemList+1] = objElem		
 	end
@@ -225,6 +235,12 @@ function ClearCountInRightTime(objRootCtrl)
 	end, nTimeSpanInMs)
 end
 
+function SendReport(tStatInfo)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
+end
 
 
 function IsRealString(AString)

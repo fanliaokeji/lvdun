@@ -251,17 +251,8 @@ function FetchValueByPath(obj, path)
 end
 
 
-
 function IsRealString(AString)
     return type(AString) == "string" and AString ~= ""
 end
-
-
-
-
-
-
-
-
 
 

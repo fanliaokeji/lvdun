@@ -107,7 +107,7 @@
 								<top>15+27</top>
 								<width>289</width>
 								<height>27*4</height>
-								<limitchild>true</limitchild>
+								<limitchild>1</limitchild>
 							</attr>
 						</obj>	
 						
