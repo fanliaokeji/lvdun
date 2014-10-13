@@ -1,6 +1,6 @@
 local tipUtil = XLGetObject("GS.Util")
 local g_bHasInit = false
-local g_nCountPerLine = 4
+local g_nCurTopIndex = 1
 
 
 function OnShowPanel(self, bShow)
@@ -23,12 +23,13 @@ function InitAppCtrl(self)
 		return
 	end
 
-	local objAppContainer = self:GetControlObject("ChildCtrl_App.MainWnd.Container")
+	local objAppContainer = self:GetControlObject("ChildCtrl_App.ItemList.Container")
 	if not objAppContainer then
 		TipLog("[InitAppCtrl] get objAppContainer failed")
 		return
 	end
 	
+	local nShowCount = 0
 	--顺序创建
 	for nIndex, tItem in ipairs(tAppList) do
 		local tAppItem = tItem or {}
@@ -48,10 +49,20 @@ function InitAppCtrl(self)
 			objAppItemCtrl:SetAppImageByPath(strImagePath)
 			objAppItemCtrl:SetAppOpenType(nOpenType)
 			objAppItemCtrl:SetAppOpenLink(strOpenLink)
+			objAppItemCtrl:SetRedirect("OnMouseWheel", "control:listbox.vscroll")
+
+			nShowCount = nShowCount+1
 		end
 	end
 	
+	SetTotalLineCount(self, nShowCount)
+	ResetScrollBar(self)
 	g_bHasInit = true
+end
+
+
+function EventRouteToFather(self)
+	self:RouteToFather()
 end
 
 
@@ -79,9 +90,17 @@ end
 
 
 function SetAppItemPos(objAppItemCtrl, nIndex)
+	local objRootCtrl = objAppItemCtrl:GetOwnerControl()
+	if not objRootCtrl then
+		return
+	end
+
+	local attr = objRootCtrl:GetAttribute()
+	local nColumPerLine = attr.nColumPerLine
+	
 	local nIndexWithFix = nIndex - 1
-	local nLine = math.floor(nIndexWithFix/g_nCountPerLine) + 1
-	local nColum = math.mod(nIndexWithFix, g_nCountPerLine) + 1
+	local nLine = math.floor(nIndexWithFix/nColumPerLine) + 1
+	local nColum = math.mod(nIndexWithFix, nColumPerLine) + 1
 	
 	local attr = objAppItemCtrl:GetAttribute()
 	local nItemHeight = attr.nItemHeight
@@ -96,8 +115,111 @@ function SetAppItemPos(objAppItemCtrl, nIndex)
 end
 
 
+function SetTotalLineCount(objRootCtrl, nShowCount)
+	local nShowCountWithFix = nShowCount - 1
+	local attr = objRootCtrl:GetAttribute()
+	local nColumPerLine = attr.nColumPerLine
+	attr.nTotalLineCount = math.floor(nShowCountWithFix/nColumPerLine) + 1
+end
+
+function GetItemHeight(objRootCtrl)
+	local objContainer = objRootCtrl:GetControlObject("ChildCtrl_App.ItemList.Container")
+	if not objContainer then
+		return 0
+	end
+	
+	local objItem = objContainer:GetChildByIndex(1)
+	if not objItem then
+		return 0
+	end
+
+	local attr = objItem:GetAttribute()
+	local nItemHeight = attr.nItemHeight
+	local nItemSpaceH = attr.nItemSpaceH
+	
+	return nItemHeight+nItemSpaceH
+end
 
 
+--滚动条
+function ResetScrollBar(objRootCtrl)
+	if objRootCtrl == nil then
+		return false
+	end
+	local objScrollBar = objRootCtrl:GetControlObject("listbox.vscroll")
+	if objScrollBar == nil then
+		return false
+	end
+	
+	local attr = objRootCtrl:GetAttribute()
+	local nTotalLineCount = attr.nTotalLineCount
+	local nLinePerPage = attr.nLinePerPage
+	
+	if nLinePerPage >= nTotalLineCount then
+		objScrollBar:SetVisible(false)
+		objScrollBar:SetChildrenVisible(false)
+		return true
+	end
+		
+	local nItemHeight = GetItemHeight(objRootCtrl)
+	local nMaxHeight = nItemHeight * nTotalLineCount
+	local nPageSize = nItemHeight * nLinePerPage
+	
+	objScrollBar:SetVisible(true)
+	objScrollBar:SetChildrenVisible(true)
+	objScrollBar:SetScrollRange( 0, nMaxHeight - nPageSize, true )
+	objScrollBar:SetPageSize(nPageSize, true)	
+	objScrollBar:SetScrollPos((g_nCurTopIndex-1) * nItemHeight, true )
+	objScrollBar:Show(true)
+	
+	return true
+end
+
+
+function CLB__OnScrollBarMouseWheel(self, name, x, y, distance)
+	local objRootCtrl = self:GetOwnerControl()
+	local nScrollPos = self:GetScrollPos()
+
+	local nItemHeight = GetItemHeight(objRootCtrl)
+		
+    if distance > 0 then
+		self:SetScrollPos( nScrollPos - nItemHeight, true )
+    else		
+		self:SetScrollPos( nScrollPos + nItemHeight, true )
+    end
+
+	local nNewScrollPos = self:GetScrollPos()
+	MoveItemListPanel(objRootCtrl, nNewScrollPos)
+	return true	
+end
+
+
+function CLB__OnScrollMousePosEvent(self, name, x, y)
+	local objRootCtrl = self:GetOwnerControl()
+	local nScrollPos = self:GetScrollPos()
+	
+	MoveItemListPanel(objRootCtrl, nScrollPos)
+end
+
+
+function MoveItemListPanel(objRootCtrl, nScrollPos)
+	if not objRootCtrl then
+		return
+	end
+	
+	local objContainer = objRootCtrl:GetControlObject("ChildCtrl_App.ItemList.Container")
+	if not objContainer then
+		return
+	end
+	
+	local nL, nT, nR, nB = objContainer:GetObjPos()
+	local nHeight = nB-nT
+	local nNewT = 0-nScrollPos
+	
+	objContainer:SetObjPos(nL, nNewT, nR, nNewT+nHeight)
+end
+
+----
 
 --------AppItemCtrl----
 function SetAppName(self, strText)
@@ -193,6 +315,7 @@ function OpenSoftware(strOpenLink)
 end
 
 
+----------------------------------------------------
 function IsRealString(str)
 	return type(str) == "string" and str~=nil
 end

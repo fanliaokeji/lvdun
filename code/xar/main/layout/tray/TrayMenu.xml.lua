@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("GS.Util")
+local g_bFilterOpen = false
 
 -------事件---
 function OnSelect_Update(self)
@@ -14,6 +15,18 @@ end
 function OnSelect_Filter(self)
 	ChangeFilterState()
 	SetFilterText(self)
+	
+	local tStatInfo = {}
+	tStatInfo.strEC = "TrayMenu"
+	tStatInfo.strEA = "filteropen"
+	
+	if g_bFilterOpen then
+		tStatInfo.strEL = "1"
+	else
+		tStatInfo.strEL = "2"
+	end
+	
+	SendReport(tStatInfo)
 end
 
 
@@ -77,6 +90,8 @@ function SetFilterText(self)
 	else
 		self:SetText("过滤已关闭")
 	end	
+	
+	g_bFilterOpen = bFilterOpen
 end
 
 
@@ -107,6 +122,14 @@ function ChangeFilterState()
 		return
 	end
 	objAdvCntCtrl:ChangeSwitchFilter()
+end
+
+
+function SendReport(tStatInfo)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
 end
 
 
