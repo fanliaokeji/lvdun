@@ -109,6 +109,16 @@
 								<height>27*4</height>
 								<limitchild>1</limitchild>
 							</attr>
+							<children>
+								<obj id="ChildCtrl_AdvFilter.MainWnd.List.Container" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+								</obj>	
+							</children>
 						</obj>	
 						
 						<obj id="ChildCtrl_AdvFilter.MainWnd.ActionBtn" class="TipAddin.Button">
