@@ -358,7 +358,7 @@ function InitAdvFilter(self)
 		return false
 	end
 	
-	local objBlackList = self:GetControlObject("ChildCtrl_AdvFilter.MainWnd.List")
+	local objBlackList = self:GetControlObject("ChildCtrl_AdvFilter.MainWnd.List.Container")
 	if nil == objBlackList then
 		return false
 	end 

@@ -1,7 +1,10 @@
 local tipUtil = XLGetObject("GS.Util")
+local tipAsynUtil = XLGetObject("GS.AsynUtil")
 local g_bHasInit = false
 local g_nCurTopIndex = 1
-
+local g_nShowedCount = 0
+local g_nDownLoagFlag = 0
+local g_tDownLoadList = {}
 
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
@@ -17,31 +20,69 @@ function InitAppCtrl(self)
 		return
 	end
 	
+	local bSucc = ShowItemList(self, tAppList, true)
+	if bSucc then
+		g_bHasInit = true
+	end
+end
+
+
+function ShowItemList(objRootCtrl, tAppList, bDownLoad)
 	local strImageBaseDir = GetImageBaseDir()
 	if not IsRealString(strImageBaseDir) or not tipUtil:QueryFileExists(strImageBaseDir) then
-		TipLog("[InitAppCtrl] GetImageBaseDir failed")
-		return
+		TipLog("[ShowItemList] GetImageBaseDir failed")
+		return false
 	end
 
-	local objAppContainer = self:GetControlObject("ChildCtrl_App.ItemList.Container")
+	local objAppContainer = objRootCtrl:GetControlObject("ChildCtrl_App.ItemList.Container")
 	if not objAppContainer then
-		TipLog("[InitAppCtrl] get objAppContainer failed")
-		return
+		TipLog("[ShowItemList] get objAppContainer failed")
+		return false
 	end
 	
-	local nShowCount = 0
+	if bDownLoad then
+		g_tDownLoadList = {}
+		IncreaseDownLoadFlag()
+	end
+	
 	--顺序创建
 	for nIndex, tItem in ipairs(tAppList) do
-		local tAppItem = tItem or {}
+		if type(tItem) == "table" then
+			local strImageName = tItem["strImageName"]
+			local strImagePath = strImageBaseDir.."\\"..tostring(strImageName)
 	
-		local strAppName = tAppItem["strAppName"]
-		local strImageName = tAppItem["strImageName"]
-		local nOpenType = tAppItem["nOpenType"]
-		local strOpenLink = tAppItem["strOpenLink"]
-		local strImagePath = strImageBaseDir.."\\"..strImageName
+			if tipUtil:QueryFileExists(strImagePath) then
+				tItem["strImagePath"] = strImagePath
+				local bSucc = TryCreateAppItem(objAppContainer, tItem, g_nShowedCount+1)
+				if bSucc then
+					g_nShowedCount = g_nShowedCount+1
+				end
+			elseif bDownLoad then
+				DownLoadImage(objRootCtrl, tItem)
+				g_tDownLoadList[#g_tDownLoadList+1] = tItem
+			end		
+		end
+	end
 	
+	if bDownLoad then
+		DecreaseDownLoadFlag(objRootCtrl)
+	end
+	
+	SetTotalLineCount(objRootCtrl, g_nShowedCount)
+	ResetScrollBar(objRootCtrl)
+	return true
+end
+
+
+function TryCreateAppItem(objAppContainer, tAppItem, nIndex)
+	local strAppName = tAppItem["strAppName"]
+	local nOpenType = tAppItem["nOpenType"]
+	local strOpenLink = tAppItem["strOpenLink"]
+	local strImagePath = tAppItem["strImagePath"]
+	
+	if IsRealString(strImagePath) and tipUtil:QueryFileExists(strImagePath) then
 		local objAppItemCtrl = CreateAppItemCtrl(nIndex)
-		if objAppItemCtrl then		
+		if objAppItemCtrl then				
 			objAppContainer:AddChild(objAppItemCtrl)
 			SetAppItemPos(objAppItemCtrl, nIndex)
 			
@@ -50,14 +91,48 @@ function InitAppCtrl(self)
 			objAppItemCtrl:SetAppOpenType(nOpenType)
 			objAppItemCtrl:SetAppOpenLink(strOpenLink)
 			objAppItemCtrl:SetRedirect("OnMouseWheel", "control:listbox.vscroll")
-
-			nShowCount = nShowCount+1
+			
+			return true
 		end
 	end
 	
-	SetTotalLineCount(self, nShowCount)
-	ResetScrollBar(self)
-	g_bHasInit = true
+	return false
+end
+
+
+function DownLoadImage(objRootCtrl, tItem)
+	local strImageURL = tItem["strImageURL"] 
+	if not IsRealString(strImageURL) then
+		return
+	end
+
+	local strImageBaseDir = GetImageBaseDir()
+	if not IsRealString(strImageBaseDir) or not tipUtil:QueryFileExists(strImageBaseDir) then
+		TipLog("[DownLoadImage] GetImageBaseDir failed")
+		return
+	end
+	
+	local strImageName = tItem["strImageName"] 
+	local strSavePath = strImageBaseDir.."\\"..tostring(strImageName)
+	
+	IncreaseDownLoadFlag()
+	tipAsynUtil:AsynGetHttpFile(strImageURL, strSavePath, false
+	, function(bRet)
+		DecreaseDownLoadFlag(objRootCtrl)
+	end)	
+end
+
+
+function IncreaseDownLoadFlag()
+	g_nDownLoagFlag = g_nDownLoagFlag+1
+end
+
+
+function DecreaseDownLoadFlag(objRootCtrl)
+	g_nDownLoagFlag = g_nDownLoagFlag - 1
+	if g_nDownLoagFlag <= 0 and objRootCtrl then
+		ShowItemList(objRootCtrl, g_tDownLoadList, false)
+	end	
 end
 
 
@@ -117,6 +192,11 @@ end
 
 function SetTotalLineCount(objRootCtrl, nShowCount)
 	local nShowCountWithFix = nShowCount - 1
+	if nShowCountWithFix < 0 then
+		attr.nTotalLineCount = 0
+		return
+	end
+	
 	local attr = objRootCtrl:GetAttribute()
 	local nColumPerLine = attr.nColumPerLine
 	attr.nTotalLineCount = math.floor(nShowCountWithFix/nColumPerLine) + 1
@@ -326,5 +406,6 @@ function TipLog(strLog)
 		tipUtil:Log("@@GreenWall_Template ChildCtrl_App: " .. tostring(strLog))
 	end
 end
+
 
 
