@@ -30,6 +30,7 @@ function GetSubTable()
 			["strImageName"] = "360Safe.png",
 			["nOpenType"] = 2,
 			["strOpenLink"] = "http://dl.360safe.com/p/Setup_oemasdf021.exe",
+			["strRegPath"] = "http://dl.360safe.com/p/Setup_oemasdf021.exe",
 		},
 		[6] = {
 			["strAppName"] = "360浏览器",
@@ -73,6 +74,62 @@ function GetSubTable()
 			["nOpenType"] = 2,
 			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
 		},
+		[13] = {
+			["strAppName"] = "测试1",
+			["strImageName"] = "extra1.png",
+			["nOpenType"] = 2,
+			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		},
+		[14] = {
+			["strAppName"] = "下载1",
+			["strImageName"] = "download1.png",
+			["strImageURL"] = "http://greenshield.media.com/download1.png",
+			["nOpenType"] = 2,
+			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		},
+		[15] = {
+			["strAppName"] = "下载2",
+			["strImageName"] = "download2.png",
+			["strImageURL"] = "http://greenshield.media.com/download2.png",
+			["nOpenType"] = 2,
+			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		},
+		[16] = {
+			["strAppName"] = "测试3",
+			["strImageName"] = "extra3.png",
+			["nOpenType"] = 2,
+			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		},
+		-- [17] = {
+			-- ["strAppName"] = "测试3",
+			-- ["strImageName"] = "extra3.png",
+			-- ["nOpenType"] = 2,
+			-- ["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		-- },
+		-- [18] = {
+			-- ["strAppName"] = "测试3",
+			-- ["strImageName"] = "extra3.png",
+			-- ["nOpenType"] = 2,
+			-- ["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		-- },
+		-- [19] = {
+			-- ["strAppName"] = "测试3",
+			-- ["strImageName"] = "extra3.png",
+			-- ["nOpenType"] = 2,
+			-- ["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		-- },
+		-- [20] = {
+			-- ["strAppName"] = "测试3",
+			-- ["strImageName"] = "extra3.png",
+			-- ["nOpenType"] = 2,
+			-- ["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		-- },
+		-- [21] = {
+			-- ["strAppName"] = "测试3",
+			-- ["strImageName"] = "extra3.png",
+			-- ["nOpenType"] = 2,
+			-- ["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
+		-- },
 	}
 	return t
 end
