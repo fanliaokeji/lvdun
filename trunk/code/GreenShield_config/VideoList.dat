@@ -1,112 +1,90 @@
 function GetSubTable()
 	local t = {
-		[1] = {
+		["youku.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "优酷", 
-			["strDomain"] = "youku.com", 
+			["nLastPopupUTC"] = 0,
 		}, 
-		[2] = {
+		["tudou.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "土豆", 
-			["strDomain"] = "tudou.com", 
 		}, 
-		[3] = {
+		["iqiyi.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "爱奇艺", 
-			["strDomain"] = "iqiyi.com", 
 		}, 
-		[4] = {
+		["qq.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "腾讯视频", 
-			["strDomain"] = "qq.com", 
 		}, 
-		[5] = {
+		["sohu.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "搜狐视频", 
-			["strDomain"] = "sohu.com", 
 		}, 
-		[6] = {
+		["kankan.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "迅雷看看", 
-			["strDomain"] = "kankan.com", 
 		}, 
-		[7] = {
+		["56.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "56视频", 
-			["strDomain"] = "56.com", 
 		}, 
-		[8] = {
+		["6.cn"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "六间房", 
-			["strDomain"] = "6.cn", 
 		}, 
-		[9] = {
+		["cntv.cn"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "央视网", 
-			["strDomain"] = "cntv.cn", 
 		}, 
-		[10] = {
+		["letv.cn"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "乐视", 
-			["strDomain"] = "letv.cn", 
 		}, 
-		[11] = {
+		["ku6.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "酷6", 
-			["strDomain"] = "ku6.com", 
 		}, 
-		[12] = {
+		["pptv.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "pptv", 
-			["strDomain"] = "pptv.com", 
-		},
-		[13] = {
+		}, 
+		["pps.tv"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "pps", 
-			["strDomain"] = "pps.tv", 
-		},
-		[14] = {
+		}, 
+		["baofeng.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "暴风", 
-			["strDomain"] = "baofeng.com", 
-		},
-		[15] = {
+		}, 
+		["ifeng.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "凤凰网", 
-			["strDomain"] = "ifeng.com", 
-		},
-		[16] = {
+		}, 
+		["aipai.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "爱拍", 
-			["strDomain"] = "aipai.com", 
-		},
-		[17] = {
+		}, 
+		["kankannews.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "看看新闻网", 
-			["strDomain"] = "kankannews.com", 
-		},
-		[18] = {
+		}, 
+		["baomihua.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "爆米花", 
-			["strDomain"] = "baomihua.com", 
 		}, 
-		[19] = {
+		["v1.cn"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "第一视频", 
-			["strDomain"] = "v1.cn", 
 		}, 
-		[20] = {
+		["m1905.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "1905电影网", 
-			["strDomain"] = "m1905.com", 
-		},
-		[21] = {
+		}, 
+		["funshion.com"] = {
 			["bUserDefine"] = false, 
 			["strTitle"] = "风行", 
-			["strDomain"] = "funshion.com", 
 		}, 
 	}
 	return t
 end
-		
-
