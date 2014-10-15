@@ -2,55 +2,124 @@ function GetSubTable()
 	local t = {
 		["tWhiteList"] = {
 			[1] = {
-				["strName"] = "优酷111", 
+				["strName"] = "百度", 
 				["bState"] = true, 
-				["strDomain"] = "www.youku111.com", 
+				["strDomain"] = "baidu.com", 
 			}, 
 			[2] = {
-				["strName"] = "优酷222", 
+				["strName"] = "360搜索", 
 				["bState"] = true, 
-				["strDomain"] = "www.youku222.com", 
+				["strDomain"] = "so.com", 
 			}, 
 			[3] = {
-				["strName"] = "iqiyi", 
+				["strName"] = "腾讯", 
 				["bState"] = true, 
-				["strDomain"] = "www.iqiyi.com", 
+				["strDomain"] = "qq.com", 
 			}, 
 			[4] = {
-				["strName"] = "优酷", 
-				["bState"] = false, 
-				["strDomain"] = "www.youku.com", 
+				["strName"] = "搜狐", 
+				["bState"] = true, 
+				["strDomain"] = "sohu.com", 
+			}, 
+			[5] = {
+				["strName"] = "cctv", 
+				["bState"] = true, 
+				["strDomain"] = "cctv.com", 
+			},
+			[6] = {
+				["strName"] = "新浪", 
+				["bState"] = true, 
+				["strDomain"] = "sina.com", 
+			}, 
+			[7] = {
+				["strName"] = "网易", 
+				["bState"] = true, 
+				["strDomain"] = "163.com", 
+			}, 
+			[8] = {
+				["strName"] = "微博", 
+				["bState"] = true, 
+				["strDomain"] = "weibo.com", 
+			},
+			[9] = {
+				["strName"] = "淘宝", 
+				["bState"] = true, 
+				["strDomain"] = "taobao.com", 
+			}, 	
+			[10] = {
+				["strName"] = "天猫", 
+				["bState"] = true, 
+				["strDomain"] = "tmall.com", 
+			},	
+			[11] = {
+				["strName"] = "央视网", 
+				["bState"] = true, 
+				["strDomain"] = "cntv.com", 
+			},
+			[12] = {
+				["strName"] = "人民网", 
+				["bState"] = true, 
+				["strDomain"] = "people.com.cn", 
+			},
+			[13] = {
+				["strName"] = "新华网", 
+				["bState"] = true, 
+				["strDomain"] = "xinhuanet.com", 
+			},				
+			[14] = {
+				["strName"] = "hao123", 
+				["bState"] = true, 
+				["strDomain"] = "hao123.com", 
+			},	
+			[15] = {
+				["strName"] = "360", 
+				["bState"] = true, 
+				["strDomain"] = "360.cn", 
+			},	
+		}, 
+		["tRefuseList"] = {
+			["1"] = {
+				["strName"] = "1", 
+				["nLastUTC"] = 1413281258, 
+			}, 
+			["4"] = {
+				["strName"] = "4", 
+				["nLastUTC"] = 1413168345, 
+			}, 
+			["3"] = {
+				["strName"] = "3", 
+				["nLastUTC"] = 1413168342, 
+			}, 
+			["2"] = {
+				["strName"] = "22", 
+				["nLastUTC"] = 1413168344, 
 			}, 
 		}, 
 		["tBlackList"] = {
 			[1] = {
-				["strName"] = "baidu", 
+				["strName"] = "1", 
 				["bState"] = true, 
-				["strDomain"] = "ww.w.baidu.com", 
+				["strDomain"] = "youku.com", 
 			}, 
 			[2] = {
-				["strName"] = "111", 
+				["strName"] = "1", 
 				["bState"] = true, 
-				["strDomain"] = "222", 
+				["strDomain"] = "1", 
 			}, 
 			[3] = {
-				["strName"] = "33", 
+				["strName"] = "1", 
 				["bState"] = true, 
-				["strDomain"] = "333", 
+				["strDomain"] = "1", 
 			}, 
-		}, 
-		["tRefuseList"] = {
-			["www.aiqiyi.com"] = {
-				["strName"] = "爱奇艺22", 
-				["nLastUTC"] = 1411650120, 
+			[4] = {
+				["strName"] = "1", 
+				["bState"] = true, 
+				["strDomain"] = "1", 
 			}, 
-			["www.baidu.com"] = {
-				["strName"] = "百度", 
-				["nLastUTC"] = 19200121, 
-			}, 
-			["www.popup.com"] = {
-				["strName"] = "优酷frompoupu", 
-				["nLastUTC"] = 1411711331, 
+			[5] = {
+				["strName"] = "1", 
+				["bState"] = true, 
+				["strDomain"] = "iqiyi.com", 
 			}, 
 		}, 
 	}

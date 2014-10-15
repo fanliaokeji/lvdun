@@ -1,0 +1,112 @@
+function GetSubTable()
+	local t = {
+		[1] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "优酷", 
+			["strDomain"] = "youku.com", 
+		}, 
+		[2] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "土豆", 
+			["strDomain"] = "tudou.com", 
+		}, 
+		[3] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "爱奇艺", 
+			["strDomain"] = "iqiyi.com", 
+		}, 
+		[4] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "腾讯视频", 
+			["strDomain"] = "qq.com", 
+		}, 
+		[5] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "搜狐视频", 
+			["strDomain"] = "sohu.com", 
+		}, 
+		[6] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "迅雷看看", 
+			["strDomain"] = "kankan.com", 
+		}, 
+		[7] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "56视频", 
+			["strDomain"] = "56.com", 
+		}, 
+		[8] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "六间房", 
+			["strDomain"] = "6.cn", 
+		}, 
+		[9] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "央视网", 
+			["strDomain"] = "cntv.cn", 
+		}, 
+		[10] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "乐视", 
+			["strDomain"] = "letv.cn", 
+		}, 
+		[11] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "酷6", 
+			["strDomain"] = "ku6.com", 
+		}, 
+		[12] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "pptv", 
+			["strDomain"] = "pptv.com", 
+		},
+		[13] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "pps", 
+			["strDomain"] = "pps.tv", 
+		},
+		[14] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "暴风", 
+			["strDomain"] = "baofeng.com", 
+		},
+		[15] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "凤凰网", 
+			["strDomain"] = "ifeng.com", 
+		},
+		[16] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "爱拍", 
+			["strDomain"] = "aipai.com", 
+		},
+		[17] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "看看新闻网", 
+			["strDomain"] = "kankannews.com", 
+		},
+		[18] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "爆米花", 
+			["strDomain"] = "baomihua.com", 
+		}, 
+		[19] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "第一视频", 
+			["strDomain"] = "v1.cn", 
+		}, 
+		[20] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "1905电影网", 
+			["strDomain"] = "m1905.com", 
+		},
+		[21] = {
+			["bUserDefine"] = false, 
+			["strTitle"] = "风行", 
+			["strDomain"] = "funshion.com", 
+		}, 
+	}
+	return t
+end
+		
+
