@@ -25,18 +25,6 @@
 //{
 //	return;
 //}
-GSNETFILTER_API void GsAddDomain(const std::wstring& domain, const std::vector<std::wstring> rules)
-{
-	HttpRequestFilter::GetInstance().AddDomain(domain) ? TRUE : FALSE;
-	for(std::vector<std::wstring>::const_iterator iter = rules.begin(); iter != rules.end(); ++iter) {
-		HttpRequestFilter::GetInstance().AddFilterRule(domain, *iter);
-	}
-}
-
-GSNETFILTER_API BOOL GsEnableDomain(const std::wstring& domain, BOOL bEnable)
-{
-	return HttpRequestFilter::GetInstance().EnableDomain(domain, bEnable == FALSE ? false : true) ? TRUE : FALSE;
-}
 
 GSNETFILTER_API BOOL GsEnable(BOOL bEnable)
 {
@@ -55,8 +43,7 @@ namespace {
 GSNETFILTER_API HANDLE GsStartProxy()
 {
 	std::auto_ptr<TcpProxyServer> spServer(new TcpProxyServer());
-	boost::asio::ip::address_v4 ip;
-	ip.from_string("127.0.0.1");
+	boost::asio::ip::address_v4 ip = boost::asio::ip::address_v4::from_string("127.0.0.1");
 	bool result = spServer->Bind(ip, 15868);
 	if(!result) {
 		return NULL;

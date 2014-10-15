@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream> // std::cerr
 #include <cassert>
 #include <limits>
 
@@ -15,16 +16,24 @@
 
 #include "ScopeResourceHandle.h"
 #include "HttpRequestFilter.h"
+#include "Decompress.h"
+#include "ABPRuleHelper.h"
+// #include "FilterManager.h"
+
+#define POPT_LOG_USE_CLOG
 
 #ifdef POPT_LOG_USE_CLOG
-#include <iostream>
-#define SOCKET_ERROR_MSG_LOG(MSG) std::clog << MSG << std::endl
-#define IPC_ERROR_MSG_LOG(MSG) std::clog << MSG << std::endl
-#define CON_MSG_LOG(MSG) std::clog << MSG << std::endl;
+#define SOCKET_ERROR_MSG_LOG(MSG) // std::clog << MSG << std::endl
+#define IPC_ERROR_MSG_LOG(MSG) // std::clog << MSG << std::endl
+#define CON_MSG_LOG(MSG) // std::clog << MSG << std::endl
+#define FILTER_MSG_LOG(MSG) // std::clog << MSG << std::endl
+#define ERROR_MSG_LOG(MSG) // std::clog << "Error: " << MSG << std::endl
+#define INFO_LOG(MSG) // std::clog << "Info: " << MSG << std::endl;
 #elif POPT_LOG_USE_TSLOG
 #define SOCKET_ERROR_MSG_LOG(MSG) TSLOG(MSG)
 #define IPC_ERROR_MSG_LOG(MSG) TSLOG(MSG)
 #define CON_MSG_LOG TSLOG(MSG) TSLOG(MSG)
+#define ERROR_MSG_LOG(MSG) TSLOG(MSG)
 #else
 #define SOCKET_ERROR_MSG_LOG(MSG)
 #define IPC_ERROR_MSG_LOG(MSG)
@@ -37,9 +46,13 @@ TcpProxyConnection::TcpProxyConnection(boost::asio::io_service& io_service) :
 	m_state(CS_ESTABLISHING),
 	m_targetServerPort(80),
 	m_httpRequestMethod(HTTP_UNKNOWN),
-	m_isRequestHasContentLength(false),
+	m_responseStateCode(0),
 	m_bytesOfRequestContentHasRead(0),
-	m_bytesOfRequestContent(0)
+	m_bytesOfResponseContentHasRead(0),
+	m_requestTransferEncoding(TE_NONE),
+	m_responseTransferEncoding(TE_NONE),
+	m_responseContentEncoding(CE_NONE),
+	m_isThisRequestNeedModifyResponse(false)
 {
 }
 
@@ -76,7 +89,7 @@ bool SetObjectToLowIntegrity(HANDLE hObject, SE_OBJECT_TYPE type = SE_KERNEL_OBJ
 
 }
 
-void TcpProxyConnection::AsyncStart()
+void TcpProxyConnection::AsyncStart(unsigned short listen_port)
 {
 	boost::asio::ip::tcp::socket::endpoint_type userAgentEnpoint = this->m_userAgentSocket.remote_endpoint();
     unsigned short userAgentPort = userAgentEnpoint.port();
@@ -141,7 +154,15 @@ void TcpProxyConnection::AsyncStart()
     unsigned long remoteIP = *reinterpret_cast<unsigned long*>((sharedMemoryBuffer));
     unsigned short remotePort = *reinterpret_cast<unsigned short*>(sharedMemoryBuffer + 4);
 
+	
     boost::asio::ip::address_v4 remoteIPAddr(htonl(remoteIP));
+	if(remoteIPAddr == boost::asio::ip::address_v4::from_string("127.0.0.1") && remotePort == listen_port)
+	{
+		// 防止放大攻击
+		boost::system::error_code ec;
+		this->m_userAgentSocket.close(ec);
+		return;
+	}
 	this->m_targetServerAddress = remoteIPAddr.to_string();
 	this->m_targetServerPort = remotePort;
 
@@ -173,22 +194,50 @@ void TcpProxyConnection::AsyncReadDataFromTargetServer()
 void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
 	if(!error) {
-		if(this->m_state != CS_TUNNELLING) {
-			if(this->m_state == CS_ESTABLISHED || this->m_state == CS_WAITFORNEXTQUERY || this->m_state == CS_TRANSFERHTTPREQUESTLINE || this->m_state == CS_TRANSFERHTTPREQUESTHEADER) {
+		if(this->m_state == CS_TUNNELLING) {
+			if(this->m_bufferedRequestData.empty()) {
+				boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_upstreamBuffer, bytes_transferred),
+					boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, false));
+			}
+			else {
+				this->m_bufferedRequestData.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
+				boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_bufferedRequestData),
+					boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, true));
+			}
+		}
+		else {
+			if(this->m_state == CS_WRITE_HTTP_RESPONSE_CONTENT) {
+				if(this->m_responseContentLength) {
+					if(this->m_bytesOfResponseContentHasRead == *this->m_responseContentLength ) {
+						this->PrepareForNextHttpQuery();
+						this->m_state = CS_WAIT_FOR_NEXT_HTTP_QUERY;
+					}
+				}
+				else if(this->m_responseTransferEncoding == TE_CHUNKED) {
+					if(this->m_responseChunkChecker.IsAllChunkRead()) {
+						this->PrepareForNextHttpQuery();
+						this->m_state = CS_WAIT_FOR_NEXT_HTTP_QUERY;
+					}
+				}
+			}
+
+			if(this->m_state == CS_ESTABLISHED || this->m_state == CS_WAIT_FOR_NEXT_HTTP_QUERY || this->m_state == CS_READ_HTTP_REQUEST_LINE || this->m_state == CS_READ_HTTP_REQUEST_HEADER) {
 				this->m_requestString.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
-				if(this->m_state == CS_ESTABLISHED || this->m_state == CS_WAITFORNEXTQUERY) {
+				if(this->m_state == CS_ESTABLISHED || this->m_state == CS_WAIT_FOR_NEXT_HTTP_QUERY) {
 					if(this->CheckIfIsNonHttpRequestViaMethod(this->m_requestString.begin(), this->m_requestString.end())) {
+						ERROR_MSG_LOG("Non-Http request");
 						// 非HTTP请求 进入隧道传输模式
 						this->m_state = CS_TUNNELLING;
 					}
 					else {
 						// 将状态转换为读取请求行
-						this->m_state = CS_TRANSFERHTTPREQUESTLINE;
+						this->m_state = CS_READ_HTTP_REQUEST_LINE;
 					}
 				}
 
-				if(this->m_state == CS_TRANSFERHTTPREQUESTLINE) {
+				if(this->m_state == CS_READ_HTTP_REQUEST_LINE) {
 					if(this->CheckIfIsNonHttpRequestViaMethod(this->m_requestString.begin(), this->m_requestString.end())) {
+						ERROR_MSG_LOG("Non-Http request");
 						// 非HTTP请求 进入隧道传输模式
 						this->m_state = CS_TUNNELLING;
 					}
@@ -197,6 +246,8 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 						std::size_t crlfPos = this->m_requestString.find("\r\n");
 						if(crlfPos == std::string::npos) {
 							if(this->m_requestString.size() > MAXIMUM_REQUEST_HEADER_LENGTH) {
+								ERROR_MSG_LOG("Request header is too large");
+								// 读取的请求行(头)长度超过MAXIMUM_REQUEST_HEADER_LENGTH
 								this->m_state = CS_TUNNELLING;
 							}
 						}
@@ -226,7 +277,8 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								}
 								else if(methodString == "DELETE") {
 									this->m_httpRequestMethod = HTTP_DELETE;
-								}else if(methodString == "TRACE") {
+								}
+								else if(methodString == "TRACE") {
 									this->m_httpRequestMethod = HTTP_TRACE;
 								}
 								else {
@@ -269,37 +321,113 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								parseRequestLineFailed = true;
 							}
 
-							this->m_state = parseRequestLineFailed ? CS_TUNNELLING : CS_TRANSFERHTTPREQUESTHEADER;
+							if(parseRequestLineFailed) {
+								// 解析请求行失败或者不不支持的HTTP版本
+								ERROR_MSG_LOG("Faile to parse request line");
+								this->m_state = CS_TUNNELLING;
+							}
+							else {
+								this->m_state = CS_READ_HTTP_REQUEST_HEADER;
+							}
 						}
 					}
 				}
 
-				if(this->m_state == CS_TRANSFERHTTPREQUESTHEADER) {
+				if(this->m_state == CS_READ_HTTP_REQUEST_HEADER) {
 					// 读取请求头
 					std::size_t crlfPos = this->m_requestString.find("\r\n");
-					// 状态为CS_TRANSFERHTTPREQUESTHEADER不可能找不到crlf除非代码逻辑有问题
+					// 状态为CS_READHTTPREQUESTHEADER不可能找不到crlf除非代码逻辑有问题
 					assert(crlfPos != std::string::npos);
 					std::size_t doubleCrlfPos = this->m_requestString.find("\r\n\r\n");
 					if(doubleCrlfPos == std::string::npos) {
 						if(this->m_requestString.size() > MAXIMUM_REQUEST_HEADER_LENGTH) {
+							ERROR_MSG_LOG("Request header is too large");
+							// 读取的请求头长度超过MAXIMUM_REQUEST_HEADER_LENGTH
 							this->m_state = CS_TUNNELLING;
 						}
 					}
 					else {
-						HttpHeadersContainerType requestHeaders;
+						assert(this->m_requestHeader.empty());
 						bool parseRequestHeaderSuccess = true;
 						if(doubleCrlfPos != crlfPos) {
-							parseRequestHeaderSuccess = this->ParseHttpRequestHeaders(this->m_requestString.begin() + crlfPos + 2, this->m_requestString.begin() + doubleCrlfPos + 4, requestHeaders);
+							parseRequestHeaderSuccess = this->ParseHttpRequestHeader(this->m_requestString.begin() + crlfPos + 2, this->m_requestString.begin() + doubleCrlfPos + 4, this->m_requestHeader);
 						}
 
 						if(!parseRequestHeaderSuccess) {
+							ERROR_MSG_LOG("Failed to parse http request header");
 							this->m_state = CS_TUNNELLING;
 						}
 						else {
+							this->m_requestContentLength = this->GetRequestContentLength();
+							this->m_requestTransferEncoding = this->GetRequestTransferEncoding();
+							do {
+								if(this->IsRequestHeaderHasContentLength() && !this->m_requestContentLength || this->m_requestTransferEncoding == TE_UNKNOWN) {
+									// 请求头存在ContentLength但是不是有效的十进制数
+									// 或未知的传输编码
+									this->m_state = CS_TUNNELLING;
+									break;
+								}
+
+								if(this->m_httpRequestMethod == HTTP_HEAD || this->m_httpRequestMethod == HTTP_GET || this->m_httpRequestMethod == HTTP_DELETE) {
+									this->m_requestContentLength = 0;
+									this->m_bytesOfRequestContentHasRead = this->m_requestString.size() - (doubleCrlfPos + 4);
+									if(this->m_bytesOfRequestContentHasRead > *this->m_requestContentLength) {
+										// HEAD GET DELETE不允许携带消息主体但却读到了消息主体
+										ERROR_MSG_LOG("The request content data is larger than the Content-Length value");
+										this->m_state = CS_TUNNELLING;
+										break;
+									}
+								}
+								else if(this->m_httpRequestMethod == HTTP_PUT || this->m_httpRequestMethod == HTTP_POST || this->m_httpRequestMethod == HTTP_OPTIONS) {
+									if(!this->m_requestContentLength && this->m_requestTransferEncoding == TE_NONE
+										&& this->m_httpRequestMethod == HTTP_OPTIONS) {
+											// OPTIONS的消息主体是可选的
+											this->m_requestContentLength = 0;
+									}
+
+									if(this->m_requestContentLength) {
+										this->m_bytesOfRequestContentHasRead = this->m_requestString.size() - (doubleCrlfPos + 4);
+										if(this->m_bytesOfRequestContentHasRead > *this->m_requestContentLength) {
+											// 读取到的消息主体大于 Content-Length所指定的大小
+											ERROR_MSG_LOG("The request content data is larger than the Content-Length value");
+											this->m_state = CS_TUNNELLING;
+											break;
+										}
+									}
+									else if(this->m_requestTransferEncoding == TE_CHUNKED) {
+										if(this->m_requestChunkChecker.Check(this->m_requestString.begin() + doubleCrlfPos + 4, this->m_requestString.end())) {
+											// Chunked数据校验失败
+											ERROR_MSG_LOG("Failed to check request chunked data");
+											this->m_state = CS_TUNNELLING;
+											break;
+										}
+									}
+									else {
+										// 没有Content-Length或没有指定传输编码
+										assert(this->m_httpRequestMethod != HTTP_OPTIONS);
+										ERROR_MSG_LOG("Content-Length or Transfer-Encoding is needed in request header");
+										this->m_state = CS_TUNNELLING;
+										break;
+									}
+
+									if(this->m_requestHeader.find("Expect") != this->m_requestHeader.end()) {
+										// 带Expect的一个请求会产生两个响应 不处理
+										this->m_state = CS_TUNNELLING;
+										break;
+									}
+								}
+								else {
+									assert(this->m_httpRequestMethod == HTTP_TRACE);
+									ERROR_MSG_LOG("The request method is TRACE");
+									this->m_state = CS_TUNNELLING;
+									break;
+								}
+							} while(false);
+
 							if(this->m_absoluteUrl.empty()) {
-								HttpHeadersContainerType::const_iterator iter = requestHeaders.find("Host");
-								
-								if(iter != requestHeaders.end()) {
+								HttpHeaderContainerType::const_iterator iter = this->m_requestHeader.find("Host");
+
+								if(iter != this->m_requestHeader.end()) {
 									this->m_absoluteUrl = "http://" + iter->second + this->m_relativeUrl;
 								}
 								else {
@@ -318,97 +446,101 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 									}
 								}
 							}
+
 							if(!this->m_absoluteUrl.empty()) {
-								// test
-								if(HttpRequestFilter::GetInstance().FilterUrl(this->m_absoluteUrl)) {
-									if(this->m_targetServerSocket.is_open()) {
-										this->m_targetServerSocket.close();
-									}
-									if(this->m_userAgentSocket.is_open()) {
-										this->m_userAgentSocket.close();
-									}
+
+								std::string referer = this->GetRequestReferer();
+
+								if(this->ShouldBlockRequest(this->m_absoluteUrl, referer)) {
+									FILTER_MSG_LOG(this->m_absoluteUrl);
+									// this->m_requestString.clear();
+									this->m_requestString = "HTTP/1.1 403 Blocking\r\n";
+									this->m_requestString += "Content-Length: 0\r\n";
+									this->m_requestString += "Connection: close\r\n\r\n";
+									this->m_state = CS_WRITE_BLOCK_RESPONSE;
+									boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
+										boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
 									return;
 								}
-								CON_MSG_LOG(this->m_absoluteUrl);
+								
+								if(this->m_httpRequestMethod == HTTP_GET && this->NeedInsertCSSCode(this->m_absoluteUrl)) {
+									this->m_isThisRequestNeedModifyResponse = true;
+								}
+								else if(this->m_httpRequestMethod == HTTP_GET && this->NeedReplaceContent(this->m_absoluteUrl)) {
+									this->m_isThisRequestNeedModifyResponse = true;
+								}
+
+								// INFO_LOG(this->m_absoluteUrl);
 							}
 
-							if(this->m_httpRequestMethod == HTTP_GET || this->m_httpRequestMethod == HTTP_HEAD || this->m_httpRequestMethod == HTTP_DELETE) {
-								// 这几个方法是没有消息主体的
-								if(this->m_requestString.size() - 4 == doubleCrlfPos) {
-									this->m_state = CS_WAITFORNEXTQUERY;
-								}
-								else {
-									this->m_state = CS_TUNNELLING;
-								}
-							}
-							else if(this->m_httpRequestMethod == HTTP_POST || this->m_httpRequestMethod == HTTP_PUT) {
-								// POST和PUT带有消息主体
-								// 第一个版本不支持chuncked传输编码
-								HttpHeadersContainerType::const_iterator iter = requestHeaders.find("Content-Length");
-								bool hasContentLength = true;
-#ifdef max
-#undef max
-#endif
-								std::size_t contentLength = std::numeric_limits<std::size_t>::max();
-								if(iter == requestHeaders.end()) {
-									hasContentLength = false;
-								}
-								else {
-									// 检查是否全部是十进制数
-									bool convertable = true;
-									for(std::size_t index = 0; index < iter->second.size(); ++index) {
-										if(!std::isdigit(static_cast<unsigned char>(iter->second[index]))) {
-											convertable = false;
-											break;
-										}
-									}
-									if(convertable) {
-										std::stringstream ss;
-										ss << iter->second;
-										ss >> contentLength;
-										if(ss.fail()) {
-											contentLength = std::numeric_limits<std::size_t>::max();
-										}
-									}
-								}
-								if(hasContentLength && contentLength != std::numeric_limits<std::size_t>::max()) {
-									this->m_isRequestHasContentLength = true;
-									this->m_bytesOfRequestContent = contentLength;
-									this->m_bytesOfRequestContentHasRead = this->m_requestString.size() - (doubleCrlfPos + 4);
-									if(this->m_bytesOfRequestContentHasRead == this->m_bytesOfRequestContent) {
-										this->PrepareForNextHttpQuery();
-										this->m_state = CS_WAITFORNEXTQUERY;
-									}
-									else if (this->m_bytesOfRequestContentHasRead > this->m_bytesOfRequestContent){
-										this->m_state = CS_TUNNELLING;
-									}
-								}
-								else {
-									this->m_state = CS_TUNNELLING;
-								}
-							}
-							else {
-								// OPTIONS和TRACE进入隧道模式
-								this->m_state = CS_TUNNELLING;
-							}
+							// 如果需要在这里修改请求头
+							
+							// 请求的数据发往服务端
+							this->m_state = CS_WRITE_HTTP_REQUEST_HEADER;
+							// 清除缓存数据
+							this->m_bufferedRequestData.clear();
+							boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_requestString), 
+								boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, false));
+							return;
 						}
 					}
 				}
+
+				if(this->m_state != CS_TUNNELLING && this->m_state != CS_WRITE_HTTP_REQUEST_HEADER) {
+					// 缓存读取到的数据
+					this->m_bufferedRequestData.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
+				}
 			}
-			else if(this->m_state == CS_TRANSFERHTTPREQUESTCONTENT) {
-				assert(this->m_isRequestHasContentLength);
-				this->m_bytesOfRequestContentHasRead += bytes_transferred;
-				if(this->m_bytesOfRequestContentHasRead == this->m_bytesOfRequestContent) {
-					this->PrepareForNextHttpQuery();
-					this->m_state = CS_WAITFORNEXTQUERY;
+			else if(this->m_state == CS_TRANSFER_HTTP_REQUEST_CONTENT) {
+				if(this->m_requestContentLength) {
+					this->m_bytesOfRequestContentHasRead += bytes_transferred;
+					if(this->m_bytesOfRequestContentHasRead > *this->m_requestContentLength) {
+						// 读取到的消息主体大于 Content-Length所指定的大小
+						ERROR_MSG_LOG("The request content data is larger than the Content-Length value");
+						this->m_bufferedRequestData.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
+						this->m_state = CS_TUNNELLING;
+					}
 				}
-				else if (this->m_bytesOfRequestContentHasRead > this->m_bytesOfRequestContent){
-					this->m_state = CS_TUNNELLING;
+				else if(this->m_requestTransferEncoding == TE_CHUNKED) {
+					if(!this->m_requestChunkChecker.Check(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred)) {
+						// chunk数据校验失败
+						ERROR_MSG_LOG("Failed to check request chunked data");
+						this->m_state = CS_TUNNELLING;
+					}
 				}
+				else {
+					// 前面已经判断过了 所以不应该进入此分支
+					assert(false);
+				}
+
+				if(this->m_state != CS_TUNNELLING) {
+					// 转发数据到服务端
+					boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_upstreamBuffer, bytes_transferred), 
+						boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, false));
+					return;
+				}
+			}
+			else {
+				ERROR_MSG_LOG("Read unexpected data from user-agent");
+				// 收到意料之外的数据
+				this->m_state = CS_TUNNELLING;
+			}
+
+			if(this->m_state == CS_TUNNELLING) {
+				if(!this->m_bufferedRequestData.empty()) {
+					this->m_bufferedRequestData.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
+					boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_bufferedRequestData), 
+						boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, true));
+				}
+				else {
+					boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_upstreamBuffer, bytes_transferred), 
+						boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2, false));
+				}
+			}
+			else {
+				this->AsyncReadDataFromUserAgent();
 			}
 		}
-		boost::asio::async_write(this->m_targetServerSocket, boost::asio::buffer(this->m_upstreamBuffer, bytes_transferred),
-			boost::bind(&TcpProxyConnection::HandleWriteDataToTargetServer, this->shared_from_this(), _1, _2));
 	}
 	else {
 		if(this->m_targetServerSocket.is_open()) {
@@ -427,11 +559,449 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
 	if(!error) {
-		if(this->m_state == CS_ESTABLISHED) {
-			this->m_state = CS_TUNNELLING;
+		if(this->m_state == CS_TUNNELLING) {
+			if(this->m_bufferedResponseData.empty()) {
+				boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_downstreamBuffer, bytes_transferred),
+					boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
+			}
+			else {
+				this->m_bufferedResponseData.append(&this->m_downstreamBuffer[0], &this->m_downstreamBuffer[0] + bytes_transferred);
+				boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_downstreamBuffer, bytes_transferred),
+					boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
+			}
 		}
-		boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_downstreamBuffer, bytes_transferred),
-			boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2));
+		else {
+			if(this->m_state == CS_READ_HTTP_RESPONSE_LINE || this->m_state == CS_READ_HTTP_RESPONSE_HEADER) {
+				this->m_responseString.append(&this->m_downstreamBuffer[0], &this->m_downstreamBuffer[0] + bytes_transferred);
+				if(this->CheckIfIsNonHttpResponseViaResponseLine(this->m_responseString.begin(), this->m_responseString.end())) {
+					ERROR_MSG_LOG("Invalid Http Response");
+					this->m_state = CS_TUNNELLING;
+				}
+
+				if(this->m_state == CS_READ_HTTP_RESPONSE_LINE) {
+					// 通过寻找crlf判断响应行是否读取完毕
+					std::size_t crlfPos = this->m_responseString.find("\r\n");
+					if(crlfPos == std::string::npos) {
+						if(this->m_responseString.size() > MAXIMUM_RESPONSE_HEADER_LENGTH) {
+							ERROR_MSG_LOG("Response header is too large");
+							// 读取的响应行(头)长度超过MAXIMUM_RESPONSE_HEADER_LENGTH
+							this->m_state = CS_TUNNELLING;
+						}
+					}
+					else {
+						// 处理HTTP响应行
+						std::vector<std::pair<std::string::const_iterator, std::string::const_iterator> > splitedResponseLine = this->SplitHttpResponseLine(this->m_responseString.begin(), this->m_responseString.begin() + crlfPos);
+						bool parseResponseLineSuccess = true;
+						if(splitedResponseLine.size() < 2) {
+							ERROR_MSG_LOG("Failed to split response line");
+							parseResponseLineSuccess = false;
+						}
+
+						if(parseResponseLineSuccess) {
+							std::string responseHttpVersion(splitedResponseLine[0].first, splitedResponseLine[0].second);
+							if(responseHttpVersion != "HTTP/1.0" && responseHttpVersion != "HTTP/1.1") {
+								ERROR_MSG_LOG("Unsupported http version of response");
+								parseResponseLineSuccess = false;
+							}
+						}
+
+						if(parseResponseLineSuccess) {
+							std::string responseStateCode(splitedResponseLine[1].first, splitedResponseLine[1].second);
+							if(responseStateCode.size() != 3) {
+								ERROR_MSG_LOG("The Response state code length is invalid");
+								parseResponseLineSuccess = false;
+							}
+							else {
+								this->m_responseStateCode = 0;
+								for(std::size_t i = 0; i < responseStateCode.size(); ++i) {
+									if(std::isdigit(static_cast<unsigned char>(responseStateCode[i]))) {
+										this->m_responseStateCode *= 10;
+										this->m_responseStateCode += (responseStateCode[i] - '0');
+									}
+									else {
+										parseResponseLineSuccess = false;
+										break;
+									}
+								}
+								if(parseResponseLineSuccess) {
+									if((this->m_responseStateCode / 100) < 1 || (this->m_responseStateCode / 100) > 6) {
+										parseResponseLineSuccess = false;
+									}
+								}
+							}
+						}
+
+						if(!parseResponseLineSuccess) {
+							ERROR_MSG_LOG("Failed to parse response line");
+							this->m_state = CS_TUNNELLING;
+						}
+						else {
+							// 只修改状态码为200的响应
+							if(this->m_isThisRequestNeedModifyResponse && this->m_responseStateCode != 200) {
+								this->m_isThisRequestNeedModifyResponse = false;
+							}
+							// 状态变更为读取请求头
+							this->m_state = CS_READ_HTTP_RESPONSE_HEADER;
+						}
+					}
+				}
+
+				if(this->m_state == CS_READ_HTTP_RESPONSE_HEADER) {
+					// 寻找换行
+					std::size_t crlfPos = this->m_responseString.find("\r\n");
+					assert(crlfPos != std::string::npos);
+					std::size_t doubleCrlfPos = this->m_responseString.find("\r\n\r\n", crlfPos);
+					if(doubleCrlfPos == std::string::npos) {
+						if(this->m_responseString.size() > MAXIMUM_RESPONSE_HEADER_LENGTH) {
+							ERROR_MSG_LOG("Response header is too large");
+							// 读取的响应行(头)长度超过MAXIMUM_RESPONSE_HEADER_LENGTH
+							this->m_state = CS_TUNNELLING;
+						}
+					}
+					else {
+						// 处理响应头
+						assert(this->m_responseHeader.empty());
+						this->m_responseHeader.clear();
+						bool parseResponseHeaderSuccess = true;
+						if(doubleCrlfPos != crlfPos) {
+							parseResponseHeaderSuccess = this->ParseHttpResponseHeader(this->m_responseString.begin() + crlfPos + 2, this->m_responseString.begin() + doubleCrlfPos + 4, this->m_responseHeader);
+						}
+
+						if(!parseResponseHeaderSuccess) {
+							ERROR_MSG_LOG("Failed to parse http resonse header");
+							this->m_state = CS_TUNNELLING;
+						}
+						else {
+							this->m_responseContentLength = this->GetResponseContentLength();
+							this->m_responseTransferEncoding = this->GetResponseTransferEncoding();
+							this->m_responseContentEncoding = this->GetResponseContentEncoding();
+							
+							do {
+								if(this->IsResponseHeaderHasContentLength() && !this->m_responseContentLength
+									|| this->m_responseContentEncoding == TE_UNKNOWN) {
+										ERROR_MSG_LOG("Invalid Content-Length value or unknown Content-Encoding in response header");
+										this->m_state = CS_TUNNELLING;
+										break;
+								}
+
+								if(this->m_httpRequestMethod == HTTP_HEAD) {
+									this->m_responseContentLength = 0;
+								}
+
+								if(!this->m_responseContentLength) {
+									// 204 No Content
+									// 205 Reset Content
+									// 304 Not Modified
+									if(this->m_responseStateCode == 204
+										|| this->m_responseStateCode == 205
+										|| this->m_responseStateCode == 304) {
+										this->m_responseContentLength = 0;
+									}
+								}
+
+								if(this->m_responseContentLength) {
+									this->m_bytesOfResponseContentHasRead = this->m_responseString.size() - (doubleCrlfPos + 4);
+									if(this->m_bytesOfResponseContentHasRead > *this->m_responseContentLength) {
+										ERROR_MSG_LOG("The reponse content size is larger than the Content-Length value");
+										this->m_state = CS_TUNNELLING;
+										break;
+									}
+								}
+								else if(this->m_responseTransferEncoding == TE_CHUNKED) {
+									if(!this->m_responseChunkChecker.Check(this->m_responseString.begin() + doubleCrlfPos + 4, this->m_responseString.end())) {
+										// 校验失败
+										ERROR_MSG_LOG("Failed to check response chunked data");
+										this->m_state = CS_TUNNELLING;
+										break;
+									}
+								}
+								else {
+									// 既没有Content-Length也没有Transfer-Encoding
+									// 可能Connection为false
+									// 暂时不处理 进隧道
+									this->m_state = CS_TUNNELLING;
+									break;
+								}
+
+								this->m_state = CS_READ_HTTP_RESPONSE_CONTENT;
+								
+								if(this->m_isThisRequestNeedModifyResponse) {
+									do {
+										// 响应大于4MB的不修改
+										if(this->m_responseContentLength && *this->m_responseContentLength > 4 * 1024 * 1024) {
+											this->m_isThisRequestNeedModifyResponse = false;
+											break;
+										}
+
+										// 响应非text/html text/xml的不修改
+										ContentType responseCntentType = this->GetResponseContentType();
+										if(!(responseCntentType == CT_TEXT_HTML ||
+											responseCntentType == CT_TEXT_XML)) {
+											this->m_isThisRequestNeedModifyResponse = false;
+											break;
+										}
+									} while(false);
+								}
+							} while(false);
+						}
+					}
+				}
+			}
+			else if(this->m_state == CS_READ_HTTP_RESPONSE_CONTENT) {
+				if(this->m_responseContentLength) {
+					this->m_bytesOfResponseContentHasRead += bytes_transferred;
+					if(this->m_bytesOfResponseContentHasRead > *this->m_responseContentLength) {
+						ERROR_MSG_LOG("The reponse content size is larger than the Content-Length value");
+						this->m_state = CS_TUNNELLING;
+					}
+				}
+				else if(this->m_responseTransferEncoding == TE_CHUNKED) {
+					if(!this->m_responseChunkChecker.Check(&this->m_downstreamBuffer[0], &this->m_downstreamBuffer[0] + bytes_transferred)) {
+						ERROR_MSG_LOG("Failed to check response chunked data");
+						this->m_state = CS_TUNNELLING;
+					}
+				}
+				else {
+					// 暂时不支持 不会到这个分支
+					assert(false);
+					this->m_state = CS_TUNNELLING;
+				}
+			}
+
+			if(!this->m_bufferedResponseData.empty()) {
+				// 缓冲区不为空 将新读到的数据加到缓冲区之后
+				this->m_bufferedResponseData.append(&this->m_downstreamBuffer[0], &this->m_downstreamBuffer[0] + bytes_transferred);
+				// 如果缓冲区大小太大则不修改内容
+				if(this->m_bufferedResponseData.size() > 4 * 1024 * 1024) {
+					this->m_isThisRequestNeedModifyResponse = false;
+				}
+			}
+
+			if(this->m_state != CS_TUNNELLING && this->m_isThisRequestNeedModifyResponse) {
+				if(this->m_bufferedResponseData.empty()) {
+					// 缓冲区为空 将新读到的数据加到缓冲区
+					this->m_bufferedResponseData.append(&this->m_downstreamBuffer[0], &this->m_downstreamBuffer[0] + bytes_transferred);
+				}
+				
+				if(this->m_state == CS_READ_HTTP_RESPONSE_CONTENT) {
+					if((this->m_responseContentLength && this->m_bytesOfResponseContentHasRead == *this->m_responseContentLength)
+						|| (this->m_responseTransferEncoding == TE_CHUNKED && this->m_responseChunkChecker.IsAllChunkRead())) {
+							do {
+								std::size_t doubleCrlfPos = this->m_bufferedResponseData.find("\r\n\r\n");
+								if(doubleCrlfPos == std::string::npos) {
+									assert(false);
+									this->m_isThisRequestNeedModifyResponse = false;
+									break;
+								}
+
+								std::string decodedResponseContent;
+								if(this->m_responseContentLength) {
+									if(this->m_responseContentEncoding == CE_GZIP || this->m_responseContentEncoding == CE_DEFLATE) {
+										bool decompressResult = false;
+										decodedResponseContent;
+										if(this->m_responseContentEncoding == CE_GZIP) {
+											GZipDecompressor gzipDecompressor;
+											decompressResult = gzipDecompressor.Decompress(&this->m_bufferedResponseData[0] + doubleCrlfPos + 4, this->m_bufferedResponseData.size() - (doubleCrlfPos + 4), decodedResponseContent, false) == Z_STREAM_END;
+										}
+										else {
+											assert(this->m_responseContentEncoding == CE_DEFLATE);
+											DeflateDecompressor deflateDecompressor;
+											decompressResult = deflateDecompressor.Decompress(&this->m_bufferedResponseData[0] + doubleCrlfPos + 4, this->m_bufferedResponseData.size() - (doubleCrlfPos + 4), decodedResponseContent, false) == Z_STREAM_END;
+										}
+										if(!decompressResult) {
+											ERROR_MSG_LOG("Failed to decompress compressed data");
+											this->m_isThisRequestNeedModifyResponse = false;
+											break;
+										}
+									}
+									else if(this->m_responseContentEncoding == CE_NONE) {
+										decodedResponseContent.append(this->m_bufferedResponseData.begin() + doubleCrlfPos + 4, this->m_bufferedResponseData.end());
+									}
+									else {
+										assert(false);
+										this->m_isThisRequestNeedModifyResponse = false;
+										break;
+									}
+								}
+								else {
+									assert(this->m_responseTransferEncoding == TE_CHUNKED);
+									std::list<std::pair<std::string::iterator, std::string::iterator> > lst;
+									if(!ChunkChecker::GetChunksRangeList(this->m_bufferedResponseData.begin() + doubleCrlfPos + 4, this->m_bufferedResponseData.end(), lst)
+										|| lst.empty()) {
+											ERROR_MSG_LOG("Failed to get chunked list");
+											this->m_isThisRequestNeedModifyResponse = false;
+											break;
+									}
+									if(this->m_responseContentEncoding == CE_GZIP || this->m_responseContentEncoding == CE_DEFLATE) {
+										bool decompressResult = false;
+										if(this->m_responseContentEncoding == CE_GZIP) {
+											GZipDecompressor gzipDecompressor;
+											int ret = Z_OK;
+											std::list<std::pair<std::string::iterator, std::string::iterator> >::const_iterator iter = lst.begin();
+											for(; iter != lst.end(); ++iter) {
+												std::string::const_iterator begin = iter->first;
+												std::string::const_iterator end = iter->second;
+												std::size_t chunk_length = std::distance(begin, end);
+												ret = gzipDecompressor.Decompress(&(*begin), chunk_length, decodedResponseContent, true);
+												if(ret != Z_OK || ret == Z_STREAM_END) {
+													break;
+												}
+											}
+
+											decompressResult = ret == Z_STREAM_END && iter != lst.end() && ++iter == lst.end();
+										}
+										else {
+											assert(this->m_responseContentEncoding == CE_DEFLATE);
+											DeflateDecompressor deflateDecompressor;
+											int ret = Z_OK;
+											std::list<std::pair<std::string::iterator, std::string::iterator> >::const_iterator iter = lst.begin();
+											for(; iter != lst.end(); ++iter) {
+												std::string::const_iterator begin = iter->first;
+												std::string::const_iterator end = iter->second;
+												std::size_t chunk_length = std::distance(begin, end);
+												ret = deflateDecompressor.Decompress(&(*begin), chunk_length, decodedResponseContent, true);
+												if(ret != Z_OK || ret == Z_STREAM_END) {
+													break;
+												}
+											}
+											decompressResult = ret == Z_STREAM_END && iter != lst.end() && ++iter == lst.end();
+										}
+										if(!decompressResult) {
+											ERROR_MSG_LOG("Failed to decompress compressed data");
+											this->m_isThisRequestNeedModifyResponse = false;
+											break;
+										}
+									}
+									else {
+										for(std::list<std::pair<std::string::iterator, std::string::iterator> >::const_iterator iter = lst.begin(); iter != lst.end(); ++iter) {
+											decodedResponseContent.append(iter->first, iter->second);
+										}
+									}
+								}
+								std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> > content_list;
+								content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin(), decodedResponseContent.end()), true));
+								// 在</head>前面添加CSS代码
+								std::size_t endHeadPos = this->GetHideElementCodeInsertPos(decodedResponseContent);
+								std::string style;
+								if(endHeadPos != std::string::npos) {
+									std::string insertCode = this->GetInsertCSSCode(this->m_absoluteUrl);
+									if(!insertCode.empty()) {
+										style = "<style>";
+										style += insertCode;
+										style += "</style>";
+										assert(content_list.size() == 1);
+										content_list.clear();
+										if(endHeadPos != 0) {
+											content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin(), decodedResponseContent.begin() + endHeadPos), true));
+										}
+										content_list.push_back(std::make_pair(std::make_pair(style.begin(), style.end()), false));
+										content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin() + endHeadPos, decodedResponseContent.end()), true));
+									}
+								}
+
+								// 正则匹配替换
+								std::vector<std::string> raw_rules = this->GetReplaceRule(this->m_absoluteUrl);
+								std::vector<std::pair<std::pair<std::string, std::string>, bool> > rules;
+								for(std::vector<std::string>::const_iterator raw_rules_iter = raw_rules.begin(); raw_rules_iter != raw_rules.end(); ++raw_rules_iter) {
+									std::string pattern, replace;
+									bool icase = false;
+									if(ReplaceRuleToECMAScriptRegex(*raw_rules_iter, pattern, replace, icase)) {
+										rules.push_back(std::make_pair(std::make_pair(pattern, replace), icase));
+									}
+								}
+
+								for(std::vector<std::pair<std::pair<std::string, std::string>, bool> >::const_iterator rule_iter = rules.begin(); rule_iter != rules.end(); ++rule_iter) {
+									try {
+										boost::regex re(rule_iter->first.first);
+										for(std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> >::const_iterator content_list_iter = content_list.begin(); content_list_iter != content_list.end();) {
+											if(!content_list_iter->second) {
+												++content_list_iter;
+												continue;
+											}
+											boost::match_results<std::string::const_iterator> match_results;
+											if(!boost::regex_search(content_list_iter->first.first, content_list_iter->first.second, match_results, re)) {
+												++content_list_iter;
+												continue;
+											}
+
+											std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> >::const_iterator insert_pos = content_list.erase(content_list_iter);
+											if(match_results.suffix().matched) {
+												insert_pos = content_list.insert(insert_pos, std::make_pair(std::make_pair(match_results.suffix().first, match_results.suffix().second), true));
+											}
+											content_list_iter = insert_pos;
+											if(!rule_iter->first.second.empty()) {
+												insert_pos = content_list.insert(insert_pos, std::make_pair(std::make_pair(rule_iter->first.second.begin(), rule_iter->first.second.end()), false));
+											}
+											if(match_results.prefix().matched) {
+												content_list.insert(insert_pos, std::make_pair(std::make_pair(match_results.prefix().first, match_results.prefix().second), true));
+											}
+										}
+									}
+									catch(const boost::regex_error&) {
+									}
+								}
+
+								if(content_list.size() == 1) {
+									this->m_isThisRequestNeedModifyResponse = false;
+									break;
+								}
+								this->m_bufferedResponseData.resize(this->m_bufferedResponseData.find("\r\n") + 2);
+								HttpHeaderContainerType header = this->m_responseHeader;
+								header.erase("Transfer-Encoding");
+								header.erase("Content-Encoding");
+								header.erase("Content-Length");
+								std::size_t modifiedContentLength = 0;
+								for(std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> >::const_iterator content_list_iter = content_list.begin(); content_list_iter != content_list.end(); ++ content_list_iter) {
+									modifiedContentLength += std::distance(content_list_iter->first.first, content_list_iter->first.second);
+								}
+								std::string contentLengthValue;
+								{
+									std::stringstream ss;
+									ss << modifiedContentLength;
+									ss >> contentLengthValue;
+								}
+								header.insert(std::make_pair(std::string("Content-Length"), contentLengthValue));
+								for(HttpHeaderContainerType::const_iterator iter = header.begin(); iter != header.end(); ++iter) {
+									this->m_bufferedResponseData += iter->first;
+									this->m_bufferedResponseData += ": ";
+									this->m_bufferedResponseData += iter->second;
+									this->m_bufferedResponseData += "\r\n";
+								}
+								this->m_bufferedResponseData += "\r\n";
+								for(std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> >::const_iterator content_list_iter = content_list.begin(); content_list_iter != content_list.end(); ++ content_list_iter) {
+									this->m_bufferedResponseData.append(content_list_iter->first.first, content_list_iter->first.second);
+								}
+
+								// 修改属性
+								this->m_bytesOfResponseContentHasRead = decodedResponseContent.size() + style.size();
+								this->m_responseTransferEncoding = TE_NONE;
+								this->m_responseContentEncoding = CE_NONE;
+								this->m_responseContentLength = this->m_bytesOfResponseContentHasRead;
+								this->m_isThisRequestNeedModifyResponse = false;
+							} while(false);
+					}
+				}
+			}
+
+			if(!this->m_isThisRequestNeedModifyResponse || this->m_state == CS_TUNNELLING) {
+				if(this->m_state == CS_READ_HTTP_RESPONSE_CONTENT) {
+					this->m_state = CS_WRITE_HTTP_RESPONSE_CONTENT;
+				}
+				if(!this->m_bufferedResponseData.empty()) {
+					// 缓存的数据不为空 转发缓冲区的数据(含当前新读到的数据)
+					boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_bufferedResponseData),
+						boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, true));
+				}
+				else {
+					// 转发当前新读到的数据
+					boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_downstreamBuffer, bytes_transferred),
+						boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
+				}
+			}
+			else {
+				this->AsyncReadDataFromTargetServer();
+			}
+		}
 	}
 	else {
 		if(this->m_userAgentSocket.is_open()) {
@@ -447,9 +1017,35 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 	}
 }
 
-void TcpProxyConnection::HandleWriteDataToUserAgent(const boost::system::error_code& error, std::size_t bytes_transferred)
+void TcpProxyConnection::HandleWriteDataToUserAgent(const boost::system::error_code& error, std::size_t bytes_transferred, bool clearBuffer)
 {
 	if(!error) {
+		if(clearBuffer) {
+			this->m_bufferedResponseData.clear();
+		}
+		if(this->m_state == CS_WRITE_HTTP_RESPONSE_CONTENT) {
+			if(this->m_responseContentLength) {
+				if(this->m_bytesOfResponseContentHasRead == *this->m_responseContentLength ) {
+					this->PrepareForNextHttpQuery();
+					this->m_state = CS_WAIT_FOR_NEXT_HTTP_QUERY;
+				}
+				else {
+					this->m_state = CS_READ_HTTP_RESPONSE_CONTENT;
+				}
+			}
+			else if(this->m_responseTransferEncoding == TE_CHUNKED) {
+				if(this->m_responseChunkChecker.IsAllChunkRead()) {
+					this->PrepareForNextHttpQuery();
+					this->m_state = CS_WAIT_FOR_NEXT_HTTP_QUERY;
+				}
+				else {
+					this->m_state = CS_READ_HTTP_RESPONSE_CONTENT;
+				}
+			}
+			else {
+				this->m_state = CS_READ_HTTP_RESPONSE_CONTENT;
+			}
+		}
 		this->AsyncReadDataFromTargetServer();
 	}
 	else {
@@ -466,9 +1062,46 @@ void TcpProxyConnection::HandleWriteDataToUserAgent(const boost::system::error_c
 	}
 }
 
-void TcpProxyConnection::HandleWriteDataToTargetServer(const boost::system::error_code& error, std::size_t bytes_transferred)
+void TcpProxyConnection::HandleWriteDataToTargetServer(const boost::system::error_code& error, std::size_t bytes_transferred, bool clearBuffer)
 {
 	if(!error) {
+		if(clearBuffer) {
+			this->m_bufferedRequestData.clear();
+		}
+		if(this->m_state == CS_WRITE_HTTP_REQUEST_HEADER) {
+			// 更新状态
+			if(this->m_requestContentLength) {
+				if(this->m_bytesOfRequestContentHasRead == *this->m_requestContentLength) {
+					this->m_state = CS_READ_HTTP_RESPONSE_LINE;
+				}
+				else {
+					this->m_state = CS_TRANSFER_HTTP_REQUEST_CONTENT;
+				}
+			}
+			else if(this->m_requestTransferEncoding == TE_CHUNKED) {
+				if(this->m_requestChunkChecker.IsAllChunkRead()) {
+					this->m_state = CS_READ_HTTP_RESPONSE_LINE;
+				}
+				else {
+					this->m_state = CS_TRANSFER_HTTP_REQUEST_CONTENT;
+				}
+			}
+			else {
+				assert(false);
+			}
+		}
+		else if(this->m_state == CS_WRITE_BLOCK_RESPONSE) {
+			boost::system::error_code ec;
+			if(this->m_targetServerSocket.is_open()) {
+				this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+				this->m_targetServerSocket.close(ec);
+			}
+			if(this->m_userAgentSocket.is_open()) {
+				this->m_userAgentSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+				this->m_userAgentSocket.close(ec);
+			}
+			return;
+		}
 		this->AsyncReadDataFromUserAgent();
 	}
 	else {
@@ -675,6 +1308,56 @@ bool TcpProxyConnection::CheckIfIsNonHttpRequestViaMethod(std::string::const_ite
 	return false;
 }
 
+bool TcpProxyConnection::CheckIfIsNonHttpResponseViaResponseLine(std::string::const_iterator begin, std::string::const_iterator end)
+{
+	int state = 1;
+	for(std::string::const_iterator iter = begin; iter != end && state != 0; ++iter) {
+		switch(state) {
+			case 1:
+				if(*iter == 'H') {
+					state = 2;
+				}
+				else {
+					return true;
+				}
+				break;
+			case 2:
+				if(*iter == 'T') {
+					state = 3;
+				}
+				else {
+					return true;
+				}
+				break;
+			case 3:
+				if(*iter == 'T') {
+					state = 4;
+				}
+				else {
+					return true;
+				}
+				break;
+			case 4:
+				if(*iter == 'P') {
+					state = 5;
+				}
+				else {
+					return true;
+				}
+				break;
+			case 5:
+				if(*iter == '/') {
+					state = 0;
+				}
+				else {
+					return true;
+				}
+				break;
+		}
+	}
+	return false;
+}
+
 std::string::const_iterator TcpProxyConnection::SplitRequestLine(std::string::const_iterator begin, std::string::const_iterator end, std::string& leftString, std::string& middleString, std::string& rightString)
 {
 	assert(leftString.empty() && middleString.empty() && rightString.empty());
@@ -697,7 +1380,26 @@ std::string::const_iterator TcpProxyConnection::SplitRequestLine(std::string::co
 	return iter;
 }
 
-bool TcpProxyConnection::IsSeperators(char ch)
+std::vector<std::pair<std::string::const_iterator, std::string::const_iterator> > TcpProxyConnection::SplitHttpResponseLine(std::string::const_iterator begin, std::string::const_iterator end)
+{
+	std::vector<std::pair<std::string::const_iterator, std::string::const_iterator> > result;
+	std::string::const_iterator iter = begin;
+	for(;;) {
+		for(;iter != end && std::isspace(static_cast<unsigned char>(*iter)); ++iter)
+			;
+		std::string::const_iterator range_begin = iter;
+		for(;iter != end && !std::isspace(static_cast<unsigned char>(*iter)); ++iter)
+			;
+		std::string::const_iterator range_end = iter;
+		if(range_begin == range_end) {
+			break;
+		}
+		result.push_back(std::make_pair(range_begin, range_end));
+	}
+	return result;
+}
+
+bool TcpProxyConnection::IsSeperators(char ch) const
 {
 	return ch == '(' || ch == ')'
 		|| ch == '<' || ch == '>'
@@ -711,7 +1413,7 @@ bool TcpProxyConnection::IsSeperators(char ch)
 		|| ch == '\t';
 }
 
-bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator begin, std::string::const_iterator end, HttpHeadersContainerType& requestHeaders)
+bool TcpProxyConnection::ParseHttpRequestHeader(std::string::const_iterator begin, std::string::const_iterator end, HttpHeaderContainerType& requestHeaders) const
 {
 	int state = 0;
 	std::string key;
@@ -802,14 +1504,333 @@ bool TcpProxyConnection::ParseHttpRequestHeaders(std::string::const_iterator beg
 	return state == 7;
 }
 
+bool TcpProxyConnection::ParseHttpResponseHeader(std::string::const_iterator begin, std::string::const_iterator end, HttpHeaderContainerType& resonseHeader) const
+{
+	return this->ParseHttpRequestHeader(begin, end, resonseHeader);
+}
+
 void TcpProxyConnection::PrepareForNextHttpQuery()
 {
-	this->m_state = CS_WAITFORNEXTQUERY;
-	this->m_httpRequestMethod = HTTP_UNKNOWN;
+	this->m_state = CS_WAIT_FOR_NEXT_HTTP_QUERY;
 	this->m_requestString.clear();
+	this->m_responseString.clear();
+	this->m_bufferedRequestData.clear();
+	this->m_httpRequestMethod = HTTP_UNKNOWN;
+	this->m_responseStateCode = 0;
 	this->m_relativeUrl.clear();
 	this->m_absoluteUrl.clear();
-	this->m_isRequestHasContentLength = false;
+	this->m_requestHeader.clear();
+	this->m_responseHeader.clear();
+	this->m_requestContentLength = boost::optional<std::size_t>();
+	this->m_responseContentLength = boost::optional<std::size_t>();
 	this->m_bytesOfRequestContentHasRead = 0;
-	this->m_bytesOfRequestContent = 0;
+	this->m_bytesOfResponseContentHasRead = 0;
+	this->m_requestTransferEncoding = TE_NONE;
+	this->m_responseTransferEncoding = TE_NONE;
+	this->m_responseContentEncoding = CE_NONE;
+	this->m_requestChunkChecker.Reset();
+	this->m_responseChunkChecker.Reset();
+	this->m_isThisRequestNeedModifyResponse = false;
+}
+
+bool TcpProxyConnection::IsCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) const
+{
+	if(lhs.size() != rhs.size()) {
+		return false;
+	}
+	for(std::size_t index = 0; index < lhs.size(); ++index) {
+		if(std::tolower(static_cast<unsigned char>(lhs[index])) != std::tolower(static_cast<unsigned char>(rhs[index]))) {
+			return false;
+		}
+	}
+	return true;
+}
+
+TransferEncoding TcpProxyConnection::GetTransferEncoding(const HttpHeaderContainerType& httpHeader) const
+{
+	HttpHeaderContainerType::const_iterator iter = httpHeader.find("Transfer-Encoding");
+	if(iter == httpHeader.end()) {
+		return TE_NONE;
+	}
+	else {
+		std::size_t pos = iter->second.find(';');
+		if(pos == std::string::npos) {
+			pos = iter->second.size();
+		}
+		if(pos != 7) {
+			return TE_UNKNOWN;
+		}
+		const char* szChunked = "chunked";
+		for(std::size_t index = 0; index < 7; ++index) {
+			if(std::tolower(static_cast<unsigned char>(iter->second[index])) != szChunked[index]) {
+				return TE_UNKNOWN;
+			}
+		}
+		return TE_CHUNKED;
+	}
+}
+
+TransferEncoding TcpProxyConnection::GetRequestTransferEncoding() const
+{
+	return this->GetTransferEncoding(this->m_requestHeader);
+}
+
+TransferEncoding TcpProxyConnection::GetResponseTransferEncoding() const
+{
+	return this->GetTransferEncoding(this->m_responseHeader);
+}
+
+bool TcpProxyConnection::HasContentLength(const HttpHeaderContainerType& httpHeader) const
+{
+	HttpHeaderContainerType::const_iterator iter = httpHeader.find("Content-Length");
+	return iter != httpHeader.end();
+}
+
+bool TcpProxyConnection::IsRequestHeaderHasContentLength() const
+{
+	return this->HasContentLength(this->m_requestHeader);
+}
+
+bool TcpProxyConnection::IsResponseHeaderHasContentLength() const
+{
+	return this->HasContentLength(this->m_responseHeader);
+}
+
+boost::optional<std::size_t> TcpProxyConnection::GetContentLength(const HttpHeaderContainerType& httpHeader) const
+{
+	boost::optional<std::size_t> result;
+	HttpHeaderContainerType::const_iterator iter = httpHeader.find("Content-Length");
+	if(iter != httpHeader.end()) {
+		// 检查是否全部是十进制数
+		bool convertable = true;
+		for(std::size_t index = 0; index < iter->second.size(); ++index) {
+			if(!std::isdigit(static_cast<unsigned char>(iter->second[index]))) {
+				convertable = false;
+				break;
+			}
+		}
+		if(convertable) {
+			std::size_t contentLength = 0;
+			std::stringstream ss;
+			ss << iter->second;
+			ss >> contentLength;
+			if(!ss.fail()) {
+				result = contentLength;
+			}
+		}
+	}
+	return result;
+}
+
+boost::optional<std::size_t> TcpProxyConnection::GetRequestContentLength() const
+{
+	return this->GetContentLength(this->m_requestHeader);
+}
+
+boost::optional<std::size_t> TcpProxyConnection::GetResponseContentLength() const
+{
+	return this->GetContentLength(this->m_responseHeader);
+}
+
+ContentEncoding TcpProxyConnection::GetContentEncoding(const HttpHeaderContainerType& httpHeader) const
+{
+	HttpHeaderContainerType::const_iterator iter = httpHeader.find("Content-Encoding");
+	if(iter == httpHeader.end()) {
+		return CE_NONE;
+	}
+	else if(this->IsCaseInsensitiveEqual(iter->second, "gzip")) {
+		return CE_GZIP;
+	}
+	else if(this->IsCaseInsensitiveEqual(iter->second, "deflate")) {
+		return CE_DEFLATE;
+	}
+	else {
+		return CE_UNKNOWN;
+	}
+}
+
+ContentEncoding TcpProxyConnection::GetResponseContentEncoding() const
+{
+	return this->GetContentEncoding(this->m_responseHeader);
+}
+
+ContentType TcpProxyConnection::GetResponseContentType() const
+{
+	HttpHeaderContainerType::const_iterator iter = this->m_responseHeader.find("Content-Type");
+	if(iter == this->m_responseHeader.end()) {
+		return CT_NONE;
+	}
+	std::size_t semicolonPos = iter->second.find(';');
+	if(semicolonPos == std::string::npos) {
+		semicolonPos = iter->second.size();
+	}
+	std::string lower_type;
+	for(std::size_t index = 0; index < semicolonPos; ++index) {
+		lower_type.push_back(std::tolower(static_cast<unsigned char>(iter->second[index])));
+	}
+
+	if(lower_type == "text/html") {
+		return CT_TEXT_HTML;
+	}
+	else if(lower_type == "text/xml"){
+		return CT_TEXT_XML;
+	}
+
+	return CT_UNKNOWN;
+}
+
+std::size_t TcpProxyConnection::GetHideElementCodeInsertPos(const std::string& decodedContentData) const
+{
+	int state = 0;
+	std::size_t insert_pos = 0;
+	const std::string& data = decodedContentData;
+	for(std::size_t index = 0; index < data.size() && state != 7; ++index) {
+		switch(state) {
+			case 0:
+				if(data[index] == '<') {
+					insert_pos = index;
+					state = 1;
+				}
+				break;
+			case 1:
+				if(data[index] == ' ') {
+					continue;
+				}
+				else if(data[index] == '/') {
+					state = 2;
+				}
+				else {
+					state = 0;
+				}
+				break;
+			case 2:
+				if(data[index] == ' ') {
+					continue;
+				}
+				else if(std::tolower(static_cast<unsigned char>(data[index])) == 'h') {
+					state = 3;
+				}
+				else {
+					state = 0;
+				}
+				break;
+			case 3:
+				if(std::tolower(static_cast<unsigned char>(data[index])) == 'e') {
+					state = 4;
+				}
+				else {
+					state = 0;
+				}
+				break;
+			case 4:
+				if(std::tolower(static_cast<unsigned char>(data[index])) == 'a') {
+					state = 5;
+				}
+				else {
+					state = 0;
+				}
+				break;
+			case 5:
+				if(std::tolower(static_cast<unsigned char>(data[index])) == 'd') {
+					state = 6;
+				}
+				else {
+					state = 0;
+				}
+				break;
+			case 6:
+				if(data[index] == ' ') {
+					continue;
+				}
+				else if(data[index] == '>') {
+					state = 7;
+				}
+				else {
+					state = 0;
+				}
+				break;
+		}
+	}
+	if(state == 7) {
+		return insert_pos;
+	}
+	else {
+		return std::string::npos;
+	}
+}
+
+std::string TcpProxyConnection::GetRequestReferer() const
+{
+	HttpHeaderContainerType::const_iterator iter = this->m_requestHeader.find("Referer");
+	if(iter == this->m_requestHeader.end()) {
+		return std::string();
+	}
+	else {
+		return iter->second;
+	}
+}
+
+bool TcpProxyConnection::ShouldBlockRequest(const std::string& url, const std::string& referer) const
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	else {
+		Url requestUrl(url.c_str()), refererUrl(referer.c_str());
+		return m->shouldFilter(refererUrl, requestUrl);
+	}
+}
+
+bool TcpProxyConnection::NeedInsertCSSCode(const std::string& url) const
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	else {
+		Url requestUrl(url.c_str());
+		std::string csscode = m->getcssRules(requestUrl);
+		return !csscode.empty();
+	}
+}
+
+std::string TcpProxyConnection::GetInsertCSSCode(const std::string& url) const
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return "";
+	}
+	else {
+		Url requestUrl(url.c_str());
+		return m->getcssRules(requestUrl);
+	}
+}
+
+bool TcpProxyConnection::NeedReplaceContent(const std::string& url) const
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	else {
+		Url requestUrl(url.c_str());
+		std::vector<std::string> v;
+		m->getreplaceRules(requestUrl, v);
+		return !v.empty();
+	}
+}
+
+std::vector<std::string> TcpProxyConnection::GetReplaceRule(const std::string& url) const
+{
+	FilterManager* m = FilterManager::getManager();
+	std::vector<std::string> v;
+	if(m == NULL) {
+		return v;
+	}
+	else {
+		Url requestUrl(url.c_str());
+		m->getreplaceRules(requestUrl, v);
+		return v;
+	}
 }
