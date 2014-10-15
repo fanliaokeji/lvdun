@@ -22,8 +22,6 @@
 //extern GSNETFILTER_API int nGsNetFilter;
 //
 //GSNETFILTER_API int fnGsNetFilter(void);
-GSNETFILTER_API void GsAddDomain(const std::wstring& domain, const std::vector<std::wstring> rules);
-GSNETFILTER_API BOOL GsEnableDomain(const std::wstring& domain, BOOL bEnable);
 GSNETFILTER_API BOOL GsEnable(BOOL bEnable);
 GSNETFILTER_API HANDLE GsStartProxy();
 GSNETFILTER_API BOOL GsSetHook(const std::wstring& dllPath);

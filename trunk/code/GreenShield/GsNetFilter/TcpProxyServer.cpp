@@ -3,13 +3,15 @@
 #include <boost/bind.hpp>
 
 TcpProxyServer::TcpProxyServer()
-	: acceptor(io_service)
+	: acceptor(io_service),
+	listen_port(0)
 {
 }
 
 bool TcpProxyServer::Bind(boost::asio::ip::address address, unsigned short listen_port)
 {
 	boost::system::error_code ec;
+	this->listen_port = listen_port;
 	boost::asio::ip::tcp::acceptor::endpoint_type endpoint(address, listen_port);
 	if(!this->acceptor.is_open()) {
 		this->acceptor.open(endpoint.protocol(), ec);
@@ -41,7 +43,7 @@ void TcpProxyServer::AsyncAccept()
 void TcpProxyServer::HandleAccept(boost::shared_ptr<TcpProxyConnection> connection_ptr, const boost::system::error_code& error)
 {
 	if(!error) {
-        connection_ptr->AsyncStart();
+        connection_ptr->AsyncStart(this->listen_port);
         this->AsyncAccept();
     }
 }

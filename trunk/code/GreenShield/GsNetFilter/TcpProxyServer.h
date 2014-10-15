@@ -7,6 +7,7 @@
 class TcpProxyServer {
 	boost::asio::io_service io_service;
     boost::asio::ip::tcp::acceptor acceptor;
+	unsigned short listen_port;
 public:
 	TcpProxyServer();
 	bool Bind(boost::asio::ip::address address, unsigned short listen_port);
