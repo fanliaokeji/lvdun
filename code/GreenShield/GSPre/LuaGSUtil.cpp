@@ -12,6 +12,12 @@
 #include "PeeIdHelper.h"
 //#include "FilterMsgPrc.h"
 #include "..\GsNetFilter\GsNetFilter.h"
+#include "commonshare\md5.h"
+#include <openssl/rsa.h>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#pragma comment(lib,"libeay32.lib")
+#pragma comment(lib,"ssleay32.lib")
 
 extern CGSApp theApp;
 //extern CFilterMsgWindow gFilterMsgWindow;
@@ -24,14 +30,19 @@ LuaGSUtil::~LuaGSUtil(void)
 {
 }
 
+FilterManager * LuaGSUtil::m_Filter = NULL;
 XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] = 
 {
 	//{"RegisterFilterWnd", RegisterFilterWnd},	
 	//主要函数
+	{"LoadConfig",LoadConfig},
+	
+	{"AddVideoHost",AddVideoHost},
+	{"AddWhiteHost",AddWhiteHost},
+	{"UpdateVideoHost",UpdateVideoHost},
+	{"UpdateWhiteHost",UpdateWhiteHost},
+	
 	{"GSFilter", FGSFilter},
-	{"AddDomain", FAddDomain},
-	{"EnableDomain", FEnableDomain},
-
 	{"Exit", Exit},	
 	{"GetPeerId", GetPeerId},
 	{"Log", Log},
@@ -62,7 +73,9 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"SendMessageByHwnd", SendMessageByHwnd},
 	{"IsNowFullScreen", IsNowFullScreen},
 
-
+	//文件
+	{"GetMD5Value", GetMD5Value},
+	{"GetFileVersionString", GetFileVersionString},
 	{"GetSystemTempPath", GetSystemTempPath},
 	{"GetFileSize", GetFileSize},
 	{"GetFileCreateTime", GetFileCreateTime},
@@ -120,21 +133,167 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"OpenURL", OpenURL},
 	{"OpenURLIE", OpenURLIE},
 	{"ShellExecute", ShellExecuteEX},
+
+
+	{"EncryptAESToFile", EncryptAESToFile},
+	{"DecryptFileAES", DecryptFileAES},
 	
 	{NULL, NULL}
 };
 
-//int LuaGSUtil::RegisterFilterWnd(lua_State* pLuaState)
-//{
-//	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
-//	if (ppGSUtil == NULL)
-//	{
-//		return 0;
-//	}
-//	if (gFilterMsgWindow.m_hWnd == NULL)
-//		gFilterMsgWindow.Create(HWND_MESSAGE);
-//	return 0;
-//}
+int LuaGSUtil::LoadConfig(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	BOOL bRet = FALSE;
+	const char* utf8CfgPath = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrPath;
+	LuaStringToCComBSTR(utf8CfgPath,bstrPath);
+	if (::PathFileExists(bstrPath.m_str))
+	{
+		m_Filter = FilterManager::getManager(bstrPath.m_str); 
+		if (m_Filter)
+		{
+			bRet = TRUE;
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaGSUtil::AddVideoHost(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+	const char* utf8VideoHost = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrVideoHost;
+	LuaStringToCComBSTR(utf8VideoHost,bstrVideoHost);
+	std::string strAnsi;
+	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
+	int istate = 0;
+	if (!lua_isnoneornil( pLuaState, 3 ))
+	{
+		istate = lua_tointeger(pLuaState, 3);
+	}
+	m_Filter->updateConfigVideoHost(strAnsi.c_str(),istate);
+	return 0;
+}
+
+int LuaGSUtil::AddWhiteHost(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+	const char* utf8WhiteHost = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrWhiteHost;
+	LuaStringToCComBSTR(utf8WhiteHost,bstrWhiteHost);
+	std::string strAnsi;
+	WideStringToAnsiString(bstrWhiteHost.m_str,strAnsi);
+	m_Filter->updateConfigWhiteHost(strAnsi.c_str(),TRUE);
+	return 0;
+}
+#define UPDATE_CFG_VIDEO 0x0001
+#define UPDATE_CFG_WHITE 0x0002
+
+typedef struct _UPADTE_CFG_PARAM 
+{
+	FilterManager * Filter;
+	std::string host;
+	int istate;
+	bool bEnable;
+	int flag;
+}UPADTE_CFG_PARAM,*PUPADTE_CFG_PARAM;
+
+UINT WINAPI UpdateCfgProc(PVOID pArg)
+{
+	PUPADTE_CFG_PARAM pData = (PUPADTE_CFG_PARAM) pArg;
+	FilterManager * Filter = pData->Filter;
+	std::string host = pData->host;
+	int flag = pData->flag;
+	if (flag & UPDATE_CFG_VIDEO)
+	{
+		pData->Filter->updateConfigVideoHost(host.c_str(),pData->istate);
+	}
+	else if (flag & UPDATE_CFG_WHITE)
+	{
+		pData->Filter->updateConfigWhiteHost(host.c_str(),pData->bEnable);
+	}
+	return 0;
+}
+
+int LuaGSUtil::UpdateVideoHost(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	const char* utf8VideoHost = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrVideoHost;
+	LuaStringToCComBSTR(utf8VideoHost,bstrVideoHost);
+	std::string strAnsi;
+	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
+	int istate = 0;
+	if (!lua_isnoneornil( pLuaState, 3 ))
+	{
+		istate = lua_tointeger(pLuaState, 3);
+	}
+	UPADTE_CFG_PARAM v = {m_Filter,strAnsi,istate,0,UPDATE_CFG_VIDEO};
+	_beginthreadex(NULL, 0, UpdateCfgProc, &v, 0, NULL);
+	return 0;
+}
+
+int LuaGSUtil::UpdateWhiteHost(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	const char* utf8VideoHost = luaL_checkstring(pLuaState, 2);
+	int nEnable = lua_toboolean(pLuaState, 3);
+	bool bEnable = nEnable?true:false;
+	CComBSTR bstrVideoHost;
+	LuaStringToCComBSTR(utf8VideoHost,bstrVideoHost);
+	std::string strAnsi;
+	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
+
+	UPADTE_CFG_PARAM w = {m_Filter,strAnsi,0,bEnable,UPDATE_CFG_WHITE};
+	_beginthreadex(NULL, 0, UpdateCfgProc, &w, 0, NULL);
+	return 1;
+}
+
 
 int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 {
@@ -169,72 +328,6 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 	else
 	{
 		bRet = GsEnable(FALSE);
-	}
-	lua_pushboolean(pLuaState, bRet);
-	return 1;
-}
-
-typedef std::map<std::wstring, std::vector<std::wstring>> mapFilterInfo;
-
-int LuaGSUtil::FAddDomain(lua_State* pLuaState)
-{
-	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
-	if (ppGSUtil == NULL)
-	{
-		return 0;
-	}
-	if (!lua_isstring(pLuaState,2) || !lua_istable(pLuaState,3))
-	{
-		return 0;
-	}
-	std::vector<std::wstring> v_AdLink;
-	const char* utf8Domain = luaL_checkstring(pLuaState, 2);
-	CComBSTR bstrDomain;
-	LuaStringToCComBSTR(utf8Domain,bstrDomain);
-	lua_pushnil(pLuaState);
-	while (lua_next(pLuaState, 3)) 
-	{
-		if (!lua_isnumber(pLuaState, -2))
-		{
-			TSDEBUG4CXX(L"FAddDomian table key only support number.");
-			continue;
-		}
-		if (lua_isstring(pLuaState, -1))
-		{
-			const char* utf8Link =  (const char*)lua_tostring(pLuaState, -1);
-			CComBSTR bstrLink;
-			LuaStringToCComBSTR(utf8Link,bstrLink);
-			v_AdLink.push_back(bstrLink.m_str);
-			lua_pop(pLuaState, 1);
-		}
-	}
-	if (v_AdLink.empty())
-	{
-		lua_pushboolean(pLuaState, 0);
-		return 1;
-	}
-	GsAddDomain(bstrDomain.m_str,v_AdLink);
-	//call
-	lua_pushboolean(pLuaState, 1);
-	return 1;
-}
-
-int LuaGSUtil::FEnableDomain(lua_State* pLuaState)
-{
-	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
-	if (ppGSUtil == NULL)
-	{
-		return 0;
-	}
-	BOOL bRet = FALSE;
-	if (lua_isstring(pLuaState,2) && lua_isboolean(pLuaState, 3) )
-	{
-		const char* utf8Domain = luaL_checkstring(pLuaState, 2);
-		int nEnable = lua_toboolean(pLuaState, 3);
-		CComBSTR bstrDomain;
-		LuaStringToCComBSTR(utf8Domain,bstrDomain);
-		BOOL bEnable = nEnable?TRUE:FALSE;
-		bRet = GsEnableDomain(bstrDomain.m_str,bEnable);
 	}
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
@@ -399,6 +492,86 @@ int LuaGSUtil::GetCommandLine(lua_State* pLuaState)
 	}
 
 	lua_pushstring(pLuaState, strUtf8.c_str());
+	return 1;
+}
+
+int LuaGSUtil::GetFileVersionString(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* utf8FilePath = luaL_checkstring(pLuaState, 2);
+		if (utf8FilePath == NULL) 
+		{
+			return 0;
+		}
+		long nfileExist = QueryFileExistsHelper(utf8FilePath);
+		if(nfileExist == 0)
+		{
+			return 0;
+		}
+		
+		CComBSTR bstr;
+
+		if(utf8FilePath)
+		{
+			LuaStringToCComBSTR(utf8FilePath,bstr);
+		}
+
+		DWORD dwHandle = 0;
+		DWORD dwSize = ::GetFileVersionInfoSizeW(bstr.m_str, &dwHandle);
+		std::string utf8Version;
+		if(dwSize > 0)
+		{
+			TCHAR * pVersionInfo = new TCHAR[dwSize+1];
+			if(::GetFileVersionInfo(bstr.m_str, dwHandle, dwSize, pVersionInfo))
+			{
+				VS_FIXEDFILEINFO * pvi;
+				UINT uLength = 0;
+				if(::VerQueryValueA(pVersionInfo, "\\", (void **)&pvi, &uLength))
+				{
+					TCHAR szVer[MAX_PATH] = {0};
+					swprintf(szVer, L"%d.%d.%d.%d",
+						HIWORD(pvi->dwFileVersionMS), LOWORD(pvi->dwFileVersionMS),
+						HIWORD(pvi->dwFileVersionLS), LOWORD(pvi->dwFileVersionLS));
+					BSTRToLuaString(szVer, utf8Version);
+				}
+			}
+			delete pVersionInfo;
+		}
+		lua_pushstring(pLuaState, utf8Version.c_str());
+		return 1;
+	}
+
+	lua_pushnil(pLuaState);
+	return 1;
+}
+
+
+int LuaGSUtil::GetMD5Value(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* utf8FilePath = lua_tostring(pLuaState,2);
+		if (utf8FilePath != NULL)
+		{
+			CComBSTR bstrFilePath;
+			LuaStringToCComBSTR(utf8FilePath,bstrFilePath);
+
+			wchar_t pszMD5[MAX_PATH] = {0};
+			std::wstring wstrPath = bstrFilePath.m_str;
+			if (GetMd5(wstrPath,pszMD5))
+			{
+
+				std::string utf8MD5;
+				BSTRToLuaString(pszMD5, utf8MD5);
+				lua_pushstring(pLuaState, utf8MD5.c_str());
+			}
+			return 1;
+		}
+	}
+	lua_pushnil(pLuaState);
 	return 1;
 }
 
@@ -3223,8 +3396,8 @@ int LuaGSUtil::PostWndMessageByHandle( lua_State *pLuaState )
 {
 	BOOL bSuccess = FALSE;
 
-	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
-	if (ppTipWndUtil && *ppTipWndUtil)
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil && *ppGSUtil)
 	{
 		HWND hWnd = (HWND)lua_touserdata(pLuaState, 2);
 		DWORD dwMsg = (DWORD)lua_tointeger(pLuaState, 3);
@@ -3290,4 +3463,172 @@ void LuaGSUtil::RegisterObj(XL_LRT_ENV_HANDLE hEnv)
 	object.pfnGetObject = (fnGetObject)LuaGSUtil::Instance;
 
 	XLLRT_RegisterGlobalObj(hEnv, object);
+}
+
+
+
+void LuaGSUtil::EncryptAESToFileHelper(const unsigned char* pszKey, const char* pszMsg, unsigned char* out_str, int& nlen)
+{
+	EVP_CIPHER_CTX ctx;
+	// init
+	EVP_CIPHER_CTX_init(&ctx);
+	EVP_CIPHER_CTX_set_padding(&ctx, 1);
+
+	EVP_EncryptInit_ex(&ctx, EVP_aes_128_ecb(), NULL, (const unsigned char*)pszKey, NULL);
+
+	//这个EVP_EncryptUpdate的实现实际就是将in按照inl的长度去加密，实现会取得该cipher的块大小（对aes_128来说是16字节）并将block-size的整数倍去加密。
+	//如果输入为50字节，则此处仅加密48字节，outl也为48字节。输入in中的最后两字节拷贝到ctx->buf缓存起来。  
+	//对于inl为block_size整数倍的情形，且ctx->buf并没有以前遗留的数据时则直接加解密操作，省去很多后续工作。  
+	int msglen = strlen(pszMsg);
+	EVP_EncryptUpdate(&ctx, out_str, &nlen, (const unsigned char*)pszMsg, msglen);
+	//余下最后n字节。此处进行处理。
+	//如果不支持pading，且还有数据的话就出错，否则，将block_size-待处理字节数个数个字节设置为此个数的值，如block_size=16,数据长度为4，则将后面的12字节设置为16-4=12，补齐为一个分组后加密 
+	//对于前面为整分组时，如输入数据为16字节，最后再调用此Final时，不过是对16个0进行加密，此密文不用即可，也根本用不着调一下这Final。
+	int outl = 0;
+	EVP_EncryptFinal_ex(&ctx, out_str + nlen, &outl);  
+	nlen += outl;
+	EVP_CIPHER_CTX_cleanup(&ctx);
+}
+
+void LuaGSUtil::DecryptFileAESHelper(const unsigned char* pszKey, const unsigned char* pszMsg, int nlen, unsigned char* out_str)
+{
+	EVP_CIPHER_CTX ctx;
+	// init
+	EVP_CIPHER_CTX_init(&ctx);
+
+	EVP_DecryptInit_ex(&ctx, EVP_aes_128_ecb(), NULL, pszKey, NULL); 
+
+	int outl = 0;
+	EVP_DecryptUpdate(&ctx, out_str, &outl, pszMsg, nlen);
+	int len = outl;
+
+	outl = 0;
+	EVP_DecryptFinal_ex(&ctx, out_str + len, &outl);  
+	len += outl;
+	out_str[len]=0;
+
+	EVP_CIPHER_CTX_cleanup(&ctx);
+}
+
+int LuaGSUtil::EncryptAESToFile(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* pszFile = lua_tostring(pLuaState, 2);
+		const char* pszData = lua_tostring(pLuaState, 3);
+		const char* pszKey = lua_tostring(pLuaState, 4);
+		if (pszFile == NULL || pszKey == NULL || pszData == NULL)
+		{
+			return 0;
+		}
+		
+		CComBSTR bstrFilePath;
+		LuaStringToCComBSTR(pszFile,bstrFilePath);
+
+		int msglen = strlen(pszData);
+		int flen = ((msglen >> 4) + 1) << 4;
+		unsigned char* out_str = (unsigned char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+
+		int nlen = 0;
+		EncryptAESToFileHelper((const unsigned char*)pszKey, pszData, out_str, nlen);
+
+		TCHAR tszSaveDir[MAX_PATH] = {0};
+		_tcsncpy(tszSaveDir, bstrFilePath.m_str, MAX_PATH);
+		::PathRemoveFileSpec(tszSaveDir);
+		if (!::PathFileExists(tszSaveDir))
+			::SHCreateDirectory(NULL, tszSaveDir);
+
+		std::ofstream of(bstrFilePath.m_str, std::ios_base::out|std::ios_base::binary);
+		of.write((const char*)out_str, nlen);
+
+		free(out_str);
+		return 0;
+	}
+	lua_pushnil(pLuaState);
+	return 1;
+}
+
+int LuaGSUtil::DecryptFileAES(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* pszFile = lua_tostring(pLuaState, 2);
+		const char* pszKey = lua_tostring(pLuaState, 3);
+		int nMaxSize = 10 * 1024;
+		if (lua_gettop(pLuaState) >= 4)
+		{
+			nMaxSize = (int)lua_tonumber(pLuaState, 4);
+			if (nMaxSize <= 0)
+			{
+				nMaxSize = 10 * 1024;
+			}
+		}
+		if (pszFile == NULL || pszKey == NULL)
+		{
+			return 0;
+		}
+
+		CComBSTR bstrFilePath;
+		LuaStringToCComBSTR(pszFile,bstrFilePath);
+
+
+		int iFileSize = (int)GetFileSizeHelper(pszFile);
+		if (iFileSize <= 0)
+		{
+			lua_pushboolean(pLuaState, 1);
+			return 1;
+		}
+
+		char* data = new char[iFileSize + 1];
+		if (NULL == data)
+		{
+			return 0;
+		}
+		ZeroMemory(data, iFileSize + 1);
+		std::ifstream pf(bstrFilePath.m_str, std::ios_base::in|std::ios_base::binary);
+		pf.read(data, iFileSize);
+		int curPosEnd = pf.tellg();
+		if (-1 != curPosEnd && curPosEnd != iFileSize)
+		{
+			delete[] data;
+			return 0;
+		}
+		char* pdata = data;
+		if (iFileSize >= 3 && (byte)pdata[0] == 0xEF && (byte)pdata[1] == 0xBB && (byte)pdata[2] == 0xBF)
+		{
+			// 去掉 BOM 头
+			pdata += 3;
+			iFileSize -= 3;
+		}
+		BOOL bIsPlaintext = TRUE;
+		for (int i = 0; i < iFileSize && i < 4; i++)
+		{
+			if (!isprint((byte)pdata[i]))
+			{
+				bIsPlaintext = FALSE;
+				break;
+			}
+		}
+		if (bIsPlaintext)
+		{
+			lua_pushstring(pLuaState, pdata);
+			delete[] data;
+			return 1;
+		}
+		int flen = ((iFileSize >> 4) + 1) << 4;
+		unsigned char* out_str = (unsigned char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+
+		DecryptFileAESHelper((const unsigned char*)pszKey, (const unsigned char*)pdata, iFileSize, out_str);
+
+		lua_pushstring(pLuaState, (const char*)out_str);
+		free(out_str);
+		free(data);
+		return 1;
+	}
+	lua_pushnil(pLuaState);
+	return 1;
 }
