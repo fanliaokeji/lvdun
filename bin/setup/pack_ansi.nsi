@@ -219,6 +219,10 @@ Function .onInit
 	CreateFont $Handle_Font "Î¢ÈíÑÅºÚ" 10 0
 	StrCpy $Int_FontOffset 0
 	
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite on
+	File "bin\DsSetUpHelper.dll"
+	File "license\license.txt"
 	Call CmdSelentInstall
 	Call CmdUnstall
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
@@ -226,10 +230,6 @@ Function .onInit
 	StrCmp $R0 0 +3
 	MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
 	Abort
-	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	SetOverwrite on
-	File "bin\DsSetUpHelper.dll"
-	File "license\license.txt"
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
 		;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
