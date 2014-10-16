@@ -54,8 +54,105 @@ enum ContentEncoding {
 
 enum ContentType {
 	CT_NONE,	// 没有指明
-	CT_TEXT_HTML,	// text/html
-	CT_TEXT_XML,	// text/xml
+	// application
+	CT_APPLICATION_ATOM_XML, // application/atom+xml
+	CT_APPLICATION_DART, // application/dart
+	CT_APPLICATION_ECMASCRIPT, // application/ecmascript
+	CT_APPLICATION_EDI_X12, // application/EDI-X12
+	CT_APPLICATION_EDIFACT, // application/EDIFACT
+	CT_APPLICATION_JSON, // application/json
+	CT_APPLICATION_JAVASCRIPT, // application/javascript
+	CT_APPLICATION_OCTET_STREAM, // application/octet-stream
+	CT_APPLICATION_OGG, // application/ogg
+	CT_APPLICATION_PDF, // application/pdf
+	CT_APPLICATION_POSTSCRIPT, // application/postscript
+	CT_APPLICATION_RDF_XML, // application/rdf+xml
+	CT_APPLICATION_RSS_XML, // application/rss+xml
+	CT_APPLICATION_SOAP_XML, // application/soap+xml
+	CT_APPLICATION_FONT_WOFF, // application/font-woff
+	CT_APPLICATION_XHTML_XML, // application/xhtml+xml
+	CT_APPLICATION_XML, // application/xml
+	CT_APPLICATION_XML_DTD, // application/xml-dtd
+	CT_APPLICATION_XOP_XML, // application/xop+xml
+	CT_APPLICATION_ZIP, // application/zip
+	CT_APPLICATION_GZIP, // application/gzip
+	CT_APPLICATION_EXAMPLE, // application/example
+	CT_APPLICATION_X_NACL, // application/x-nacl
+	CT_APPLICATION_X_PNACL, // application/x-pnacl
+
+	// audio
+	CT_AUDIO_BASIC, // audio/basic
+	CT_AUDIO_L24, // audio/L24
+	CT_AUDIO_MP4, // audio/mp4
+	CT_AUDIO_MPEG, // audio/mpeg
+	CT_AUDIO_OGG, // audio/ogg
+	CT_AUDIO_OPUS, // audio/opus
+	CT_AUDIO_VORBIS, // audio/vorbis
+	CT_AUDIO_VND_RN_REALAUDIO, // audio/vnd.rn-realaudio
+	CT_AUDIO_VND_WAVE, // audio/vnd.wave
+	CT_AUDIO_WEBM, // audio/webm
+	CT_AUDIO_EXAMPLE, // audio/example
+
+	// image
+	CT_IMAGE_GIF, // image/gif
+	CT_IMAGE_JPEG, // image/jpeg
+	CT_IMAGE_PJPEG, // image/pjpeg
+	CT_IMAGE_PNG, // image/png
+	CT_IMAGE_SVG_XML, // image/svg+xml
+	CT_IMAGE_VND_DJVU, // image/vnd.djvu
+	CT_IMAGE_EXAMPLE, // image/example
+
+	// message
+	CT_MESSAGE_HTTP, // message/http
+	CT_MESSAGE_IMDN_XML, // message/imdn+xml
+	CT_MESSAGE_PARTIAL, // message/partial
+	CT_MESSAGE_RFC822, // message/rfc822
+	CT_MESSAGE_EXAMPLE, // message/example
+
+	// model
+	CT_MODEL_IGES, // model/iges
+	CT_MODEL_MESH, // model/mesh
+	CT_MODEL_VRML, // model/vrml
+	CT_MODEL_X3D_BINARY, // model/x3d+binary
+	CT_MODEL_X3D_FASTINFOSET, // model/x3d+fastinfoset
+	CT_MODEL_X3D_VRML, // model/x3d-vrml
+	CT_MODEL_X3D_XML, // model/x3d+xml
+	CT_MODEL_EXAMPLE, // model/example
+
+	// multipart
+	CT_MULTIPART_MIXED, // multipart/mixed
+	CT_MULTIPART_ALTERNATIVE, // multipart/alternative
+	CT_MULTIPART_RELATED, // multipart/related
+	CT_MULTIPART_FORM_DATA, // multipart/form-data
+	CT_MULTIPART_SIGNED, // multipart/signed
+	CT_MULTIPART_ENCRYPTED, // multipart/encrypted
+	CT_MULTIPART_EXAMPLE, // multipart/example
+
+	// text
+	CT_TEXT_CMD, // text/cmd
+	CT_TEXT_CSS, // text/css
+	CT_TEXT_CSV, // text/csv
+	CT_TEXT_EXAMPLE, // text/example
+	CT_TEXT_HTML, // text/html
+	CT_TEXT_JAVASCRIPT, // text/javascript
+	CT_TEXT_PLAIN, // text/plain
+	CT_TEXT_RTF, // text/rtf
+	CT_TEXT_VCARD, // text/vcard
+	CT_TEXT_VND_ABC, // text/vnd.abc
+	CT_TEXT_XML, // text/xml
+
+	// video
+	CT_VIDEO_AVI, // video/avi
+	CT_VIDEO_EXAMPLE, // video/example
+	CT_VIDEO_MPEG, // video/mpeg
+	CT_VIDEO_MP4, // video/mp4
+	CT_VIDEO_OGG, // video/ogg
+	CT_VIDEO_QUICKTIME, // video/quicktime
+	CT_VIDEO_WEBM, // video/webm
+	CT_VIDEO_X_MATROSKA, // video/x-matroska
+	CT_VIDEO_X_MS_WMV, // video/x-ms-wmv
+	CT_VIDEO_X_FLV, // video/x-flv
+
 	CT_UNKNOWN	// 其他
 };
 
@@ -138,6 +235,7 @@ private:
 	ContentEncoding GetContentEncoding(const HttpHeaderContainerType& httpHeader) const;
 	ContentEncoding GetResponseContentEncoding() const;
 	ContentType GetResponseContentType() const;
+	bool ResponseContentTypeIsText() const;
 	std::size_t GetHideElementCodeInsertPos(const std::string& decodedContentData) const;
 	std::string GetRequestReferer() const;
 	// 重置状态等待下一次请求

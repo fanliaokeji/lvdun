@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TcpProxyConnection.h"
 
 #include <string>
@@ -447,7 +446,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								}
 							}
 
-							if(!this->m_absoluteUrl.empty()) {
+							if(!this->m_absoluteUrl.empty() && HttpRequestFilter::GetInstance().IsEnable()) {
 
 								std::string referer = this->GetRequestReferer();
 
@@ -733,10 +732,8 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 											break;
 										}
 
-										// 响应非text/html text/xml的不修改
-										ContentType responseCntentType = this->GetResponseContentType();
-										if(!(responseCntentType == CT_TEXT_HTML ||
-											responseCntentType == CT_TEXT_XML)) {
+										// 只修改文本类的响应
+										if(!this->ResponseContentTypeIsText()) {
 											this->m_isThisRequestNeedModifyResponse = false;
 											break;
 										}
@@ -1409,7 +1406,7 @@ bool TcpProxyConnection::IsSeperators(char ch) const
 		|| ch == '/' || ch == '['
 		|| ch == ']' || ch == '?'
 		|| ch == '=' || ch == '{'
-		|| ch == '}' || std::isspace(static_cast<unsigned char>(ch))
+		|| ch == '}' || ch == ' '
 		|| ch == '\t';
 }
 
@@ -1669,14 +1666,349 @@ ContentType TcpProxyConnection::GetResponseContentType() const
 		lower_type.push_back(std::tolower(static_cast<unsigned char>(iter->second[index])));
 	}
 
-	if(lower_type == "text/html") {
+	if(lower_type == "application/atom+xml") {
+		return CT_APPLICATION_ATOM_XML;
+	}
+	else if(lower_type == "application/dart") {
+		return CT_APPLICATION_DART;
+	}
+	else if(lower_type == "application/ecmascript") {
+		return CT_APPLICATION_ECMASCRIPT;
+	}
+	else if(lower_type == "application/EDI-X12") {
+		return CT_APPLICATION_EDI_X12;
+	}
+	else if(lower_type == "application/EDIFACT") {
+		return CT_APPLICATION_EDIFACT;
+	}
+	else if(lower_type == "application/json") {
+		return CT_APPLICATION_JSON;
+	}
+	else if(lower_type == "application/javascript") {
+		return CT_APPLICATION_JAVASCRIPT;
+	}
+	else if(lower_type == "application/octet-stream") {
+		return CT_APPLICATION_OCTET_STREAM;
+	}
+	else if(lower_type == "application/ogg") {
+		return CT_APPLICATION_OGG;
+	}
+	else if(lower_type == "application/pdf") {
+		return CT_APPLICATION_PDF;
+	}
+	else if(lower_type == "application/postscript") {
+		return CT_APPLICATION_POSTSCRIPT;
+	}
+	else if(lower_type == "application/rdf+xml") {
+		return CT_APPLICATION_RDF_XML;
+	}
+	else if(lower_type == "application/rss+xml") {
+		return CT_APPLICATION_RSS_XML;
+	}
+	else if(lower_type == "application/soap+xml") {
+		return CT_APPLICATION_SOAP_XML;
+	}
+	else if(lower_type == "application/font-woff") {
+		return CT_APPLICATION_FONT_WOFF;
+	}
+	else if(lower_type == "application/xhtml+xml") {
+		return CT_APPLICATION_XHTML_XML;
+	}
+	else if(lower_type == "application/xml") {
+		return CT_APPLICATION_XML;
+	}
+	else if(lower_type == "application/xml-dtd") {
+		return CT_APPLICATION_XML_DTD;
+	}
+	else if(lower_type == "application/xop+xml") {
+		return CT_APPLICATION_XOP_XML;
+	}
+	else if(lower_type == "application/zip") {
+		return CT_APPLICATION_ZIP;
+	}
+	else if(lower_type == "application/gzip") {
+		return CT_APPLICATION_GZIP;
+	}
+	else if(lower_type == "application/example") {
+		return CT_APPLICATION_EXAMPLE;
+	}
+	else if(lower_type == "application/x-nacl") {
+		return CT_APPLICATION_X_NACL;
+	}
+	else if(lower_type == "application/x-pnacl") {
+		return CT_APPLICATION_X_PNACL;
+	}
+	else if(lower_type == "audio/basic") {
+		return CT_AUDIO_BASIC;
+	}
+	else if(lower_type == "audio/L24") {
+		return CT_AUDIO_L24;
+	}
+	else if(lower_type == "audio/mp4") {
+		return CT_AUDIO_MP4;
+	}
+	else if(lower_type == "audio/mpeg") {
+		return CT_AUDIO_MPEG;
+	}
+	else if(lower_type == "audio/ogg") {
+		return CT_AUDIO_OGG;
+	}
+	else if(lower_type == "audio/opus") {
+		return CT_AUDIO_OPUS;
+	}
+	else if(lower_type == "audio/vorbis") {
+		return CT_AUDIO_VORBIS;
+	}
+	else if(lower_type == "audio/vnd.rn-realaudio") {
+		return CT_AUDIO_VND_RN_REALAUDIO;
+	}
+	else if(lower_type == "audio/vnd.wave") {
+		return CT_AUDIO_VND_WAVE;
+	}
+	else if(lower_type == "audio/webm") {
+		return CT_AUDIO_WEBM;
+	}
+	else if(lower_type == "audio/example") {
+		return CT_AUDIO_EXAMPLE;
+	}
+	else if(lower_type == "image/gif") {
+		return CT_IMAGE_GIF;
+	}
+	else if(lower_type == "image/jpeg") {
+		return CT_IMAGE_JPEG;
+	}
+	else if(lower_type == "image/pjpeg") {
+		return CT_IMAGE_PJPEG;
+	}
+	else if(lower_type == "image/png") {
+		return CT_IMAGE_PNG;
+	}
+	else if(lower_type == "image/svg+xml") {
+		return CT_IMAGE_SVG_XML;
+	}
+	else if(lower_type == "image/vnd.djvu") {
+		return CT_IMAGE_VND_DJVU;
+	}
+	else if(lower_type == "image/example") {
+		return CT_IMAGE_EXAMPLE;
+	}
+	else if(lower_type == "message/http") {
+		return CT_MESSAGE_HTTP;
+	}
+	else if(lower_type == "message/imdn+xml") {
+		return CT_MESSAGE_IMDN_XML;
+	}
+	else if(lower_type == "message/partial") {
+		return CT_MESSAGE_PARTIAL;
+	}
+	else if(lower_type == "message/rfc822") {
+		return CT_MESSAGE_RFC822;
+	}
+	else if(lower_type == "message/example") {
+		return CT_MESSAGE_EXAMPLE;
+	}
+	else if(lower_type == "model/iges") {
+		return CT_MODEL_IGES;
+	}
+	else if(lower_type == "model/mesh") {
+		return CT_MODEL_MESH;
+	}
+	else if(lower_type == "model/vrml") {
+		return CT_MODEL_VRML;
+	}
+	else if(lower_type == "model/x3d+binary") {
+		return CT_MODEL_X3D_BINARY;
+	}
+	else if(lower_type == "model/x3d+fastinfoset") {
+		return CT_MODEL_X3D_FASTINFOSET;
+	}
+	else if(lower_type == "model/x3d-vrml") {
+		return CT_MODEL_X3D_VRML;
+	}
+	else if(lower_type == "model/x3d+xml") {
+		return CT_MODEL_X3D_XML;
+	}
+	else if(lower_type == "model/example") {
+		return CT_MODEL_EXAMPLE;
+	}
+	else if(lower_type == "multipart/mixed") {
+		return CT_MULTIPART_MIXED;
+	}
+	else if(lower_type == "multipart/alternative") {
+		return CT_MULTIPART_ALTERNATIVE;
+	}
+	else if(lower_type == "multipart/related") {
+		return CT_MULTIPART_RELATED;
+	}
+	else if(lower_type == "multipart/form-data") {
+		return CT_MULTIPART_FORM_DATA;
+	}
+	else if(lower_type == "multipart/signed") {
+		return CT_MULTIPART_SIGNED;
+	}
+	else if(lower_type == "multipart/encrypted") {
+		return CT_MULTIPART_ENCRYPTED;
+	}
+	else if(lower_type == "multipart/example") {
+		return CT_MULTIPART_EXAMPLE;
+	}
+	else if(lower_type == "text/cmd") {
+		return CT_TEXT_CMD;
+	}
+	else if(lower_type == "text/css") {
+		return CT_TEXT_CSS;
+	}
+	else if(lower_type == "text/csv") {
+		return CT_TEXT_CSV;
+	}
+	else if(lower_type == "text/example") {
+		return CT_TEXT_EXAMPLE;
+	}
+	else if(lower_type == "text/html") {
 		return CT_TEXT_HTML;
 	}
-	else if(lower_type == "text/xml"){
+	else if(lower_type == "text/javascript") {
+		return CT_TEXT_JAVASCRIPT;
+	}
+	else if(lower_type == "text/plain") {
+		return CT_TEXT_PLAIN;
+	}
+	else if(lower_type == "text/rtf") {
+		return CT_TEXT_RTF;
+	}
+	else if(lower_type == "text/vcard") {
+		return CT_TEXT_VCARD;
+	}
+	else if(lower_type == "text/vnd.abc") {
+		return CT_TEXT_VND_ABC;
+	}
+	else if(lower_type == "text/xml") {
 		return CT_TEXT_XML;
+	}
+	else if(lower_type == "video/avi") {
+		return CT_VIDEO_AVI;
+	}
+	else if(lower_type == "video/example") {
+		return CT_VIDEO_EXAMPLE;
+	}
+	else if(lower_type == "video/mpeg") {
+		return CT_VIDEO_MPEG;
+	}
+	else if(lower_type == "video/mp4") {
+		return CT_VIDEO_MP4;
+	}
+	else if(lower_type == "video/ogg") {
+		return CT_VIDEO_OGG;
+	}
+	else if(lower_type == "video/quicktime") {
+		return CT_VIDEO_QUICKTIME;
+	}
+	else if(lower_type == "video/webm") {
+		return CT_VIDEO_WEBM;
+	}
+	else if(lower_type == "video/x-matroska") {
+		return CT_VIDEO_X_MATROSKA;
+	}
+	else if(lower_type == "video/x-ms-wmv") {
+		return CT_VIDEO_X_MS_WMV;
+	}
+	else if(lower_type == "video/x-flv") {
+		return CT_VIDEO_X_FLV;
 	}
 
 	return CT_UNKNOWN;
+}
+
+bool TcpProxyConnection::ResponseContentTypeIsText() const
+{
+	switch(this->GetResponseContentType()) {
+		case CT_APPLICATION_ATOM_XML:
+		case CT_APPLICATION_DART:
+		case CT_APPLICATION_ECMASCRIPT:
+		// case CT_APPLICATION_EDI_X12:
+		// case CT_APPLICATION_EDIFACT:
+		case CT_APPLICATION_JSON:
+		case CT_APPLICATION_JAVASCRIPT:
+		// case CT_APPLICATION_OCTET_STREAM:
+		// case CT_APPLICATION_OGG:
+		// case CT_APPLICATION_PDF:
+		case CT_APPLICATION_POSTSCRIPT:
+		case CT_APPLICATION_RDF_XML:
+		case CT_APPLICATION_RSS_XML:
+		case CT_APPLICATION_SOAP_XML:
+		// case CT_APPLICATION_FONT_WOFF:
+		case CT_APPLICATION_XHTML_XML:
+		case CT_APPLICATION_XML:
+		case CT_APPLICATION_XML_DTD:
+		case CT_APPLICATION_XOP_XML:
+		// case CT_APPLICATION_ZIP:
+		// case CT_APPLICATION_GZIP:
+		// case CT_APPLICATION_EXAMPLE:
+		// case CT_APPLICATION_X_NACL:
+		// case CT_APPLICATION_X_PNACL:
+		// case CT_AUDIO_BASIC:
+		// case CT_AUDIO_L24:
+		// case CT_AUDIO_MP4:
+		// case CT_AUDIO_MPEG:
+		// case CT_AUDIO_OGG:
+		// case CT_AUDIO_OPUS:
+		// case CT_AUDIO_VORBIS:
+		// case CT_AUDIO_VND_RN_REALAUDIO:
+		// case CT_AUDIO_VND_WAVE:
+		// case CT_AUDIO_WEBM:
+		// case CT_AUDIO_EXAMPLE:
+		// case CT_IMAGE_GIF:
+		// case CT_IMAGE_JPEG:
+		// case CT_IMAGE_PJPEG:
+		// case CT_IMAGE_PNG:
+		// case CT_IMAGE_SVG_XML:
+		// case CT_IMAGE_VND_DJVU:
+		// case CT_IMAGE_EXAMPLE:
+		// case CT_MESSAGE_HTTP:
+		// case CT_MESSAGE_IMDN_XML:
+		// case CT_MESSAGE_PARTIAL:
+		// case CT_MESSAGE_RFC822:
+		// case CT_MESSAGE_EXAMPLE:
+		// case CT_MODEL_IGES:
+		// case CT_MODEL_MESH:
+		// case CT_MODEL_VRML:
+		// case CT_MODEL_X3D_BINARY:
+		// case CT_MODEL_X3D_FASTINFOSET:
+		// case CT_MODEL_X3D_VRML:
+		// case CT_MODEL_X3D_XML:
+		// case CT_MODEL_EXAMPLE:
+		// case CT_MULTIPART_MIXED:
+		// case CT_MULTIPART_ALTERNATIVE:
+		// case CT_MULTIPART_RELATED:
+		// case CT_MULTIPART_FORM_DATA:
+		// case CT_MULTIPART_SIGNED:
+		// case CT_MULTIPART_ENCRYPTED:
+		// case CT_MULTIPART_EXAMPLE:
+		case CT_TEXT_CMD:
+		case CT_TEXT_CSS:
+		case CT_TEXT_CSV:
+		case CT_TEXT_EXAMPLE:
+		case CT_TEXT_HTML:
+		case CT_TEXT_JAVASCRIPT:
+		case CT_TEXT_PLAIN:
+		case CT_TEXT_RTF:
+		case CT_TEXT_VCARD:
+		case CT_TEXT_VND_ABC:
+		case CT_TEXT_XML:
+		// case CT_VIDEO_AVI:
+		// case CT_VIDEO_EXAMPLE:
+		// case CT_VIDEO_MPEG:
+		// case CT_VIDEO_MP4:
+		// case CT_VIDEO_OGG:
+		// case CT_VIDEO_QUICKTIME:
+		// case CT_VIDEO_WEBM:
+		// case CT_VIDEO_X_MATROSKA:
+		// case CT_VIDEO_X_MS_WMV:
+		// case CT_VIDEO_X_FLV:
+			return true;
+		default:
+			return false;
+	}
 }
 
 std::size_t TcpProxyConnection::GetHideElementCodeInsertPos(const std::string& decodedContentData) const
