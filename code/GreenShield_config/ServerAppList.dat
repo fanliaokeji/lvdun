@@ -109,8 +109,9 @@ function GetSubTable()
 		},
 		[15] = {
 			["strAppName"] = "酷狗音乐",
-			["strKeyName"] = "KugouMusic",
+			["strKeyName"] = "KugouMusicNoImage",
 			["nOpenType"] = 2,
+			["strImageURL"] = "http://greenshield.media.com/greenshield/download1.png",
 			["strOpenLink"] = "http://xiazai.kugou.com/Corp/kugou7_3442.exe",
 			["strRegPath"] = "HKEY_CURRENT_USER\\Software\\KuGou\\AppPath",
 			["strCommand"] = "/verysilent",
