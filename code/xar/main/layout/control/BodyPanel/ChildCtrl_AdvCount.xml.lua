@@ -1,10 +1,11 @@
 local tipUtil = XLGetObject("GS.Util")
-local g_nAdvCount = 0
+local g_nFilterCountOneDay = 0
+local g_nFilterCountTotal = 0
 local g_tCountElemList = {}
 local g_nElemCount = 6
 local g_bHasInit = false
 local g_bFilterOpen = true
-local g_nLastBeginFilterUTC = 0
+local g_nLastClearUTC = 0
 
 ---方法---
 function SetAdvCount(self, nCount)
@@ -12,13 +13,14 @@ function SetAdvCount(self, nCount)
 		return false
 	end
 	
-	g_nAdvCount = nCount
+	g_nFilterCountOneDay = nCount
 	UpdateAdvShow(self)
 end
 
 function AddAdvCount(self, nAddCount)
 	local nAdd = nAddCount or 1
-	g_nAdvCount = g_nAdvCount + nAdd
+	g_nFilterCountOneDay = g_nFilterCountOneDay + nAdd
+	g_nFilterCountTotal = g_nFilterCountTotal + nAdd
 	UpdateAdvShow(self)
 end
 
@@ -77,7 +79,7 @@ function UpdateAdvShow(objRootCtrl)
 		return false
 	end
 
-	local nTempAdvCnt = g_nAdvCount
+	local nTempAdvCnt = g_nFilterCountOneDay
 	for i=1, g_nElemCount do
 		local objElem = g_tCountElemList[i]
 		if objElem == nil then
@@ -120,10 +122,11 @@ function LoadAdvCountCfg(objRootCtrl)
 		return nil
 	end
 	
-	local nFilterCount = tonumber(tUserConfig["nFilterCount"])
-	if nFilterCount ~= nil then
-		SetAdvCount(objRootCtrl, nFilterCount)
-	end
+	local nFilterCountTotal = tonumber(tUserConfig["nFilterCountTotal"]) or 0
+	g_nFilterCountTotal = nFilterCountTotal
+	
+	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
+	SetAdvCount(objRootCtrl, nFilterCount)
 
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 	if type(bFilterOpen) == "boolean" then
@@ -131,7 +134,7 @@ function LoadAdvCountCfg(objRootCtrl)
 		objRootCtrl:ChangeSwitchFilter()
 	end
 	
-	g_nLastBeginFilterUTC = tUserConfig["nLastBeginFilterUTC"]
+	g_nLastClearUTC = tUserConfig["nLastClearUTC"]
 end
 
 
@@ -156,11 +159,12 @@ end
 
 
 function SaveAdvCountCfg()
-	SaveAdvCfgSepcifyKey("nFilterCount", g_nAdvCount)
+	SaveAdvCfgSepcifyKey("nFilterCountOneDay", g_nFilterCountOneDay)
+	SaveAdvCfgSepcifyKey("nFilterCountTotal", g_nFilterCountTotal)
 end
 
 function SaveAdvLastUTC(nLastUTC)
-	SaveAdvCfgSepcifyKey("nLastBeginFilterUTC", nLastUTC)
+	SaveAdvCfgSepcifyKey("nLastClearUTC", nLastUTC)
 end
 
 function SaveAdvOpenState()
@@ -201,39 +205,57 @@ function InitAdvCount(objRootCtrl)
 	g_bHasInit = true
 	
 	LoadAdvCountCfg(objRootCtrl)
-	ClearCountInRightTime(objRootCtrl)
+	BeginAnotherDayEvent(objRootCtrl)
 end
 
 
 function ClearAdvCount(objRootCtrl)
-	local nCheckSpanInSec = 24*3600
-	local nLastUTC = tonumber(g_nLastBeginFilterUTC)
-	local nCurUTC = tipUtil:GetCurrentUTCTime()
-	if nLastUTC == nil or nCurUTC == nil then
-		return
-	end
-	
-	TipLog("[ClearAdvCount] nCurUTC: "..tostring(nCurUTC).."  nLastUTC:"..tostring(nLastUTC))
-	local nDiff = nCurUTC-nLastUTC
-	if nDiff > nCheckSpanInSec then
-		objRootCtrl:SetAdvCount(0)
-		SaveAdvCountCfg()
-		SaveAdvLastUTC(nCurUTC)
-		g_nLastBeginFilterUTC = nCurUTC
-	end
+	objRootCtrl:SetAdvCount(0)
+	SaveAdvCountCfg()
 end
 
 
-function ClearCountInRightTime(objRootCtrl)
+function ReportAdvCountInfo()
+	local tStatInfo = {}
+	tStatInfo.strEC = "MainPanel"
+	tStatInfo.strEA = "countoneday"
+	tStatInfo.strEL = g_nFilterCountOneDay
+	SendReport(tStatInfo)
+	
+	tStatInfo.strEA = "counttotal"
+	tStatInfo.strEL = g_nFilterCountTotal
+	SendReport(tStatInfo)
+end
+
+
+function DoSthAnotherDay(objRootCtrl)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if not FunctionObj.CheckTimeIsAnotherDay(g_nLastClearUTC) then
+		return 
+	end
+	
+	ReportAdvCountInfo()
+	ClearAdvCount(objRootCtrl)
+	
+	local nCurUTC = tipUtil:GetCurrentUTCTime()
+	SaveAdvLastUTC(nCurUTC)
+	g_nLastClearUTC = nCurUTC
+end
+
+
+function BeginAnotherDayEvent(objRootCtrl)
 	local nTimeSpanInMs = 1800 * 1000
 	
-	ClearAdvCount(objRootCtrl)
+	DoSthAnotherDay(objRootCtrl)	
 	
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
-		ClearAdvCount(objRootCtrl)
-	end, nTimeSpanInMs)
+		
+			DoSthAnotherDay(objRootCtrl)	
+		
+		end, nTimeSpanInMs)
 end
+
 
 function SendReport(tStatInfo)
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")

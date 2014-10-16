@@ -127,7 +127,7 @@ function CreateFilterListener(objRootCtrl)
 
 
 	function OnFilterASK(p1, p2)
-		local strName = p1
+		-- local strName = p1
 		local strDomain = p2
 		if not IsRealString(strDomain) then
 			return
@@ -135,12 +135,12 @@ function CreateFilterListener(objRootCtrl)
 		
 		local bCheckSucc = CheckPopupCond(strDomain)
 		if bCheckSucc then
-			ShowPopupWindow(strName, strDomain)
+			ShowPopupWindow(strDomain)
 		end
 	end
 end
 
-function ShowPopupWindow(strName, strDomain)
+function ShowPopupWindow(strDomain)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local frameHostWnd = hostwndManager:GetHostWnd("TipFilterRemindWnd.Instance")
 	if frameHostWnd == nil then
@@ -168,6 +168,7 @@ function ShowPopupWindow(strName, strDomain)
 	end 
 	
 	--记录名称和域名，准备传给过滤面版
+	local strName = GetDomainDefName(strDomain)
 	objTextName:SetText(tostring(strName))
 	objTextDomain:SetText(tostring(strDomain))
 	
@@ -181,30 +182,57 @@ function ShowPopupWindow(strName, strDomain)
 	end
 	
 	frameHostWnd:Show(4)
+	RecordPopupTime(strDomain)
 end
 
 
-function CheckPopupCond(strDomain)
-	local nCheckSpanInSec = 24*3600
+function GetDomainDefName(strDomain)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetSpecifyFilterTableFromMem) ~= "function" then
+	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoElem = tVideoList[strDomain]
+	if type(tVideoElem) ~= "table" then
+		return ""
+	end
+	
+	return tVideoElem["strTitle"] or ""
+end
+
+
+function RecordPopupTime(strDomain)
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	if type(tVideoList[strDomain]) ~= "table" then
+		tVideoList[strDomain] = {}
+	end
+	
+	tVideoList[strDomain]["nLastPopupUTC"] = tipUtil:GetCurrentUTCTime()
+end 
+
+
+function CheckPopupCond(strDomain)
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+
+	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
+		TipLog("[CheckPopupCond] domain in white list: "..tostring(strDomain))
 		return false
 	end
 	
-	local tRefuseList = tFunctionHelper.GetSpecifyFilterTableFromMem("tRefuseList") or {}
-	if type(tRefuseList[strDomain]) ~= "table" then
-		return true
-	end	
-	
-	local nLastUTC = tonumber(tRefuseList[strDomain]["nLastUTC"])
-	local nCurUTC = tipUtil:GetCurrentUTCTime()
-	if nLastUTC == nil or nCurUTC == nil then
+	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoElem = tVideoList[strDomain]
+	if type(tVideoElem) ~= "table" then
+		TipLog("[CheckPopupCond] not video website: "..tostring(strDomain))
 		return false
 	end
 	
-	TipLog("[CheckPopupCond] nCurUTC: "..tostring(nCurUTC).."  nLastUTC:"..tostring(nLastUTC))
-	local nDiff = nCurUTC-nLastUTC
-	if nDiff < nCheckSpanInSec then
+	local nLastPopupUTC = tVideoElem["nLastPopupUTC"] 
+	if not IsNilString(nLastPopupUTC) and not tFunctionHelper.CheckTimeIsAnotherDay(nLastPopupUTC) then
+		TipLog("[CheckPopupCond] has popup today: "..tostring(strDomain))
+		return false
+	end
+	
+	local bState = tFunctionHelper.GetVideoDomainState(strDomain)
+	if bState == 1 then
+		TipLog("[CheckPopupCond] fiter has opened: "..tostring(strDomain))
 		return false
 	end
 	

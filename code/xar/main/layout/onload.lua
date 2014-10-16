@@ -1,6 +1,6 @@
 local gTipInfoTab = {}
 local gFilterConfigInfo = {}
-local gRuleInfo = {}
+local gVideoList = {}
 
 local gbLoadCfgSucc = false
 local g_tipNotifyIcon = nil
@@ -42,14 +42,20 @@ function RegisterFunctionObject(self)
 	obj.GetUserConfigFromMem = GetUserConfigFromMem
 	obj.GetSpecifyFilterTableFromMem = GetSpecifyFilterTableFromMem
 	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
-	obj.GetRuleListFromMem = GetRuleListFromMem
-	obj.SaveRuleListToMem = SaveRuleListToMem
-	obj.UIAutoEnableDomain = UIAutoEnableDomain
+	obj.GetVideoListFromMem = GetVideoListFromMem
+	obj.SaveVideoListToMem = SaveVideoListToMem
 	obj.ExitTipWnd = ExitTipWnd
 	obj.ShowPopupWndByName = ShowPopupWndByName
 	obj.GetCfgPathWithName = GetCfgPathWithName
 	obj.LoadTableFromFile = LoadTableFromFile
 	obj.ShowExitRemindWnd = ShowExitRemindWnd
+	obj.RegQueryValue = RegQueryValue
+	obj.GetGSVersion = GetGSVersion
+	obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
+	obj.IsDomainInWhiteList = IsDomainInWhiteList
+	obj.GetVideoDomainState = GetVideoDomainState
+	obj.EnableWhiteDomain = EnableWhiteDomain
+	obj.EnableVideoDomain = EnableVideoDomain
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -82,6 +88,18 @@ function IsUserFullScreen()
 end
 
 
+function CheckTimeIsAnotherDay(LastTime)
+	local bRet = false
+	local LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(LastTime)
+	local curTime = tipUtil:GetCurrentUTCTime()
+	local CYear, CMonth, CDay, CHour, CMinute, CSecond = tipUtil:FormatCrtTime(curTime)
+	if LYear ~= CYear or LMonth ~= CMonth or LDay ~= CDay then
+		bRet = true
+	end
+	return bRet
+end
+
+
 function QueryAllUsersDir()	--获取AllUser路径
 	local bRet = false
 	local strPublicEnv = "%PUBLIC%"
@@ -101,18 +119,47 @@ function SaveAllConfig()
 	if gbLoadCfgSucc then
 		SaveUserConfigToFile()
 		SaveFilterConfigToFile()
-		SaveRuleListToFile()
+		SaveVideoListToFile()
 	end
 end
 
 function ExitTipWnd(statInfo)
-	SaveAllConfig()
+	SaveAllConfig()	
+	HideTray()
+	DestroyMainWnd()
 	SendExitReport()
 	
-	HideTray()
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
 end
+
+
+function DestroyMainWnd()
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local strHostWndName = "GreenWallTipWnd.MainFrame"
+	hostwndManager:RemoveHostWnd(strHostWndName)
+end
+
+
+function GetGSVersion()
+	local strGreenShieldPath = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
+	if not IsRealString(strGreenShieldPath) or not tipUtil:QueryFileExists(strGreenShieldPath) then
+		return ""
+	end
+
+	return tipUitl:GetVersionString(strGreenShieldPath)
+end
+
+function RegQueryValue(sPath)
+	if IsRealString(sPath) then
+		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
+		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
+			return tipUtil:QueryRegValue(sRegRoot, sRegPath, sRegKey or "") or ""
+		end
+	end
+	return ""
+end
+
 
 function LoadTableFromFile(strDatFilePath)
 	local tResult = nil
@@ -299,7 +346,6 @@ function ShowPopupMenu(uHostWnd, uObjTree)
 	
 	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetScreenArea()
 	
-	
 	local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
 	if not objMainLayout then
 	    return false
@@ -347,12 +393,12 @@ function GetUserConfigFromMem()
 	return gTipInfoTab
 end
 
-function GetRuleListFromMem()
-	return gRuleInfo
+function GetVideoListFromMem()
+	return gVideoList
 end
 
-function SaveRuleListToMem(tNewRuleList)
-	gRuleInfo = tNewRuleList
+function SaveVideoListToMem(tNewVideoList)
+	gVideoList = tNewVideoList
 end
 
 
@@ -410,16 +456,16 @@ function SaveFilterConfigToFile()
 	end
 end
 
-function GetRuleListFromFile()
-	local strRuleListPath = GetCfgPathWithName("RuleList.dat")
-	local tRuleList = LoadTableFromFile(strRuleListPath)
-	return tRuleList
+function GetVideoListFromFile()
+	local strVideoListPath = GetCfgPathWithName("VideoList.dat")
+	local tVideoList = LoadTableFromFile(strVideoListPath)
+	return tVideoList
 end
 
-function SaveRuleListToFile()
-	local strRuleListPath = GetCfgPathWithName("RuleList.dat")
-	if IsRealString(strRuleListPath) then
-		tipUtil:SaveLuaTableToLuaFile(gRuleInfo, strRuleListPath)
+function SaveVideoListToFile()
+	local strVideoListPath = GetCfgPathWithName("VideoList.dat")
+	if IsRealString(strVideoListPath) then
+		tipUtil:SaveLuaTableToLuaFile(gVideoList, strVideoListPath)
 	end
 end
 
@@ -437,15 +483,15 @@ function ReadAllConfigInfo()
 		return false
 	end
 	
-	local tRuleListTable = GetRuleListFromFile()
+	local tVideoListTable = GetVideoListFromFile()
 	if type(tFilterTable) ~= "table" then
-		TipLog("[ReadAllConfigInfo] GetRuleListFromFile failed! ")
+		TipLog("[ReadAllConfigInfo] GetVideoListFromFile failed! ")
 		return false
 	end
 			
 	gTipInfoTab = infoTable
 	gFilterConfigInfo = tFilterTable
-	gRuleInfo = tRuleListTable
+	gVideoList = tVideoListTable
 	
 	gbLoadCfgSucc = true	
 	TipLog("[ReadAllConfigInfo] success!")
@@ -454,12 +500,12 @@ end
 
 
 function SendFileDataToFilterThread()
-	local bSucc = SendRuleListToFilterThread()
+	local bSucc = SendWhiteListToFilterThread()
 	if not bSucc then
 		return false
 	end
-	
-	local bSucc = SendEnableListToFilterThread()
+
+	local bSucc = SendVideoListToFilterThread()
 	if not bSucc then
 		return false
 	end
@@ -468,15 +514,30 @@ function SendFileDataToFilterThread()
 end
 
 
-function SendRuleListToFilterThread()
-	local tRuleList = gRuleInfo
+function SendVideoListToFilterThread()
+	local tVideoList = GetVideoListFromMem()
 	
-	for key, tRuleElem in pairs(tRuleList) do
-		if type(tRuleElem) == "table" then
-			local strDomain = tRuleElem["strDomain"]
-			local tExtraPath = tRuleElem["tExtraPath"]
-			if IsRealString(strDomain) and type(tExtraPath) == "table" then
-				tipUtil:AddDomain(strDomain, tExtraPath)
+	for strDomain, tVideoElem in pairs(tVideoList) do
+		if IsRealString(strDomain) and type(tVideoElem) == "table" then
+			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
+			
+			if IsDomainInWhiteList(strDomain) then
+				EnableVideoDomain(strDomain, 2)
+			else
+				local bBlackState = GetVideoDomainState(strDomain)
+				
+				if bBlackState == 0 then
+					EnableVideoDomain(strDomain, 0)
+				elseif bBlackState == 1 then
+					EnableVideoDomain(strDomain, 1)
+					
+				elseif bBlackState == 2 then
+					if not IsNilString(nLastPopupUTC) and CheckTimeIsAnotherDay(nLastPopupUTC) then
+						EnableVideoDomain(strDomain, 0)
+					else
+						EnableVideoDomain(strDomain, 2)
+					end
+				end	
 			end
 		end
 	end
@@ -485,43 +546,49 @@ function SendRuleListToFilterThread()
 end
 
 
-function SendEnableListToFilterThread()
-	local tRuleList = gRuleInfo
-	
-	for key, tRuleElem in pairs(tRuleList) do 
-		if type(tRuleElem) == "table" then
-			local strDomain = tRuleElem["strDomain"]
-			UIAutoEnableDomain(strDomain)
-		end
+function EnableWhiteDomain(strDomain, bSetWite)
+	if not IsRealString(strDomain) or type(bSetWite) ~= "boolean" then
+		return
 	end
 
-	return true
+	-- tipUtil:AddWhiteDomain(strDomain, bSetWite)
 end
 
-function UIAutoEnableDomain(strDomain, bForceDisable)
-	if IsRealString(strDomain) then
-		if bForceDisable then
-			tipUtil:EnableDomain(strDomain, false)
-			return
-		end
-	
-		if IsDomainInWhiteList(strDomain) then
-			tipUtil:EnableDomain(strDomain,false)
-			return
-		end
+
+--针对视频网站
+--0 弹过滤提醒窗口
+--1 过滤
+--2 不过滤
+function EnableVideoDomain(strDomain, nState)
+	if not IsRealString(strDomain) or type(nState) ~= "number" then
+		return
+	end
+
+	tipUtil:AddDomain(strDomain, nState)
+end
+
+
+function SendWhiteListToFilterThread()
+	local tWhiteList = GetSpecifyFilterTableFromMem("tWhiteList") or {}
 		
-		local bBlackState = GetDomainBlackState(strDomain)
-		if bBlackState == 1 then
-			tipUtil:EnableDomain(strDomain, true)
-		elseif bBlackState == 2 then
-			tipUtil:EnableDomain(strDomain, false)
+	for key, tWhiteElem in pairs(tWhiteList) do
+		local strWhiteDomain = tWhiteElem["strDomain"]
+		local bStateOpen = tWhiteElem["bState"]
+		if IsRealString(strWhiteDomain) and bStateOpen then
+			EnableWhiteDomain(strWhiteDomain, bStateOpen)
 		end
 	end
+	
+	return true
 end
 
 
 function IsDomainInWhiteList(strDomain)
-	local tWhiteList = GetSpecifyFilterTableFromMem("tWhiteList")
+	if not IsRealString(strDomain) then
+		return false
+	end
+
+	local tWhiteList = GetSpecifyFilterTableFromMem("tWhiteList") or {}
 	for key, tWhiteElem in pairs(tWhiteList) do
 		local strWhiteDomain = tWhiteElem["strDomain"]
 		local bStateOpen = tWhiteElem["bState"]
@@ -537,7 +604,7 @@ end
 --0 不在黑名单
 --1 在黑名单，且开启过滤
 --2 在黑名单，且关闭过滤
-function GetDomainBlackState(strDomain)
+function GetVideoDomainState(strDomain)
 	local tBlackList = GetSpecifyFilterTableFromMem("tBlackList")
 	for key, tBlackElem in pairs(tBlackList) do
 		local strBlackDomain = tBlackElem["strDomain"]
@@ -632,11 +699,12 @@ function SaveConfigInTimer()
 end
 
 
-function GetCommandStrValue(self, strKey)
+function GetCommandStrValue(strKey)
 	local bRet, strValue = false, nil
 	local cmdString = tipUtil:GetCommandLine()
+
 	if string.find(cmdString, strKey .. " ") then
-		local cmdList = tipUtil:GetCommandList()
+		local cmdList = tipUtil:CommandLineToList(cmdString)
 		if cmdList ~= nil then	
 			for i = 1, #cmdList, 2 do
 				local strTmp = tostring(cmdList[i])
@@ -654,8 +722,8 @@ end
 
 function SendStartupReport(bShowWnd)
 	local tStatInfo = {}
-	local bRet, strSource = tipUtil:GetCommandLine("/StartFrom")
 	
+	local bRet, strSource = GetCommandStrValue("/sstartfrom")
 	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
 	if bShowWnd then
@@ -674,7 +742,7 @@ function SendExitReport()
 	local tStatInfo = {}
 	
 	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
-	local nFilterCount = tonumber(tUserConfig["nFilterCount"])
+	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"])
 		
 	local iLastTime = 0	--失败认为展示时长为0
 	local nCurTime = tipUtil:GetCurrentUTCTime()
@@ -687,8 +755,8 @@ function SendExitReport()
 	end
 	
 	tStatInfo.strEC = "exit"
-	tStatInfo.strEA = "filtercount"
-	tStatInfo.strEL = nFilterCount or ""
+	-- tStatInfo.strEA = "filtercount"
+	-- tStatInfo.strEL = nFilterCount or ""
 	tStatInfo.strEV = iLastTime
 		
 	FunctionObj.TipConvStatistic(tStatInfo)

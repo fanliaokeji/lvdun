@@ -38,7 +38,7 @@
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten12</font>
+								<font>font.yahei12</font>
 								<textcolor>system.white</textcolor>
 								<text>广告过滤</text>
 								<cursor>IDC_HAND</cursor>
@@ -58,7 +58,7 @@
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten12</font>
+								<font>font.yahei12</font>
 								<textcolor>system.white</textcolor>
 								<text>白名单</text>
 								<cursor>IDC_HAND</cursor>
@@ -77,7 +77,7 @@
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten12</font>
+								<font>font.yahei12</font>
 								<textcolor>system.white</textcolor>
 								<text>家长管理</text>
 								<cursor>IDC_HAND</cursor>

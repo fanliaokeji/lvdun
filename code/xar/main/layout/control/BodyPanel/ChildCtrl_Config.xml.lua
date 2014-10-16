@@ -7,6 +7,8 @@ local g_tConfigElemList = {
 	[4] = {"BubbleRemind", "使用气泡提示", function(self,eventname) StateChange_Bubble(self,eventname) end},
 }
 
+local g_tReportState = {}
+
 ---方法---
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
@@ -35,6 +37,30 @@ function OnMouseLeaveBtn(self)
 end
 
 
+function OnInitControl(self)
+	InitConfitCtrl(self)
+end
+
+
+function OnDestroy(self)
+	local tState = {}
+	
+	for nIndex, bState in ipairs(g_tReportState) do
+		if bState then
+			tState[nIndex] = 1
+		else
+			tState[nIndex] = 0
+		end	
+	end
+	
+	local tStatInfo = {}
+	local strStateList = table.concat(tState, "")
+	tStatInfo.strEC = "ConfigPanel"
+	tStatInfo.strEL = strStateList
+
+	SendReport(tStatInfo)
+end
+
 ----------
 function InitConfitCtrl(objRootCtrl)
 	objFather = objRootCtrl:GetControlObject("ChildCtrl_Config.MainWnd.Container")
@@ -53,11 +79,9 @@ function InitConfitCtrl(objRootCtrl)
 	local nElemSpace = 12
 	local nExtraSpace = 14
 
-	local tUserCfg = GetConfigTable()
-	if type(tUserCfg) ~= "table" then
-		return 
-	end	
+	local tUserCfg = GetConfigTable() or {}
 	
+	--依序创建
 	for nIndex, tElemInfo in ipairs(g_tConfigElemList) do
 		local strElemKey = tElemInfo[1]
 		local strElemText = tElemInfo[2]
@@ -68,12 +92,13 @@ function InitConfitCtrl(objRootCtrl)
 			return false
 		end
 		
-		local bState = FetchValueByPath(tUserCfg, {"tConfig", strElemKey, "bState"})
+		local bState = FetchValueByPath(tUserCfg, {"tConfig", strElemKey, "bState"}) or false
 		objFather:AddChild(objElem)
 		objElem:SetElemText(strElemText)
 		objElem:AttachListener("OnStateChange", false, fnElemEvent)
 		objElem:SetSwitchState(bState)
-
+		g_tReportState[nIndex] = bState
+		
 		local nNewTop = nElemSpace + (nIndex-1)*(nElemHeight+nElemSpace) + nExtraSpace
 		objElem:SetObjPos(0, nNewTop, "father.width", nNewTop+nElemHeight)
 	end
@@ -86,16 +111,18 @@ end
 function StateChange_AutoStup(self, eventname)
 	local bState = self:GetSwitchState()
 	SaveStateToCfg("AutoStup", bState)
+	g_tReportState[1] = bState
 	
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local bHasAutoStup = false
-	local strGreenShieldPath = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
-	local szCmdLine = RegQueryValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield") or ""
+	local strGreenShieldPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
+	local szCmdLine = FunctionObj.RegQueryValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield") or ""
 	if IsRealString(szCmdLine) and string.find(string.lower(szCmdLine), "\"" .. string.lower(tostring(strGreenShieldPath)) .. "\"") then
 		bHasAutoStup = true  -- 已经开机启动
 	end
 	
 	if bState and not bHasAutoStup then   --bState == true 表示开机启动
-		if IsRealString(strGreenShieldPath) then--and tipUtil:QueryFileExists(strGreenShieldPath) then
+		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
 			local sCommandline = "\""..strGreenShieldPath.."\""
 			bRetCode = RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
 		end
@@ -104,16 +131,6 @@ function StateChange_AutoStup(self, eventname)
 	end
 end
 
-
-function RegQueryValue(sPath)
-	if IsRealString(sPath) then
-		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
-		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
-			return tipUtil:QueryRegValue(sRegRoot, sRegPath, sRegKey or "") or ""
-		end
-	end
-	return ""
-end
 
 function RegSetValue(sPath, value)
 	if IsRealString(sPath) then
@@ -140,18 +157,21 @@ end
 function StateChange_AutoUpdate(self, eventname)
 	local bState = self:GetSwitchState()
 	SaveStateToCfg("AutoUpdate", bState)
+	g_tReportState[2] = bState
 end
 
 --启动后隐藏主界面
 function StateChange_HideMain(self, eventname)
 	local bState = self:GetSwitchState()
 	SaveStateToCfg("HideMainPage", bState)
+	g_tReportState[3] = bState
 end
 
 --使用气泡提示
 function StateChange_Bubble(self, eventname)
 	local bState = self:GetSwitchState()
 	SaveStateToCfg("BubbleRemind", bState)
+	g_tReportState[4] = bState
 end
 ---------------
 
@@ -204,6 +224,12 @@ function SetElemText(self, strText)
 end
 
 -------------辅助函数------------
+function SendReport(tStatInfo)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+
 function GetConfigTable()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then

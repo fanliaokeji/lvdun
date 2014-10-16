@@ -37,7 +37,7 @@ function SetTitleText(self)
 	end
 
 	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
-	local nFilterCount = tonumber(tUserConfig["nFilterCount"]) or 0
+	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
 	local strText = "今天为您过滤广告"..tostring(nFilterCount).."次"
 	objTitleText:SetText(strText)	
 end

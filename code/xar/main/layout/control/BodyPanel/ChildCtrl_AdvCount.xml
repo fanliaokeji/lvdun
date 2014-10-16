@@ -42,7 +42,7 @@
 								<text>当天累计过滤广告次数</text>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten24</font>
+								<font>font.yahei24</font>
 								<textcolor>system.white</textcolor>
 							</attr>
 						</obj>							
@@ -64,7 +64,7 @@
 								<width>father.width/2</width>
 								<height>father.height</height>
 								<text>广告过滤</text>
-								<font>font.Haetten14</font>
+								<font>font.yahei14</font>
 								<valign>center</valign>
 								<textcolor>filter.green</textcolor>
 							</attr>

@@ -20,6 +20,10 @@
 					</attr>
 				</obj>	
 			</children>
+			<eventlist>
+				<event name="OnDestroy" file="ChildCtrl_Config.xml.lua" func="OnDestroy" />
+				<event name="OnInitControl" file="ChildCtrl_Config.xml.lua" func="OnInitControl" />
+			</eventlist>
 		</objtemplate>
 	</control>
 	
@@ -55,7 +59,7 @@
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>left</halign>
-								<font>font.Haetten12</font>
+								<font>font.yahei12</font>
 								<textcolor>4D4D4D</textcolor>
 							</attr>
 						</obj>	

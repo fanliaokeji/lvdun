@@ -75,6 +75,7 @@ function InitMainWnd(objHostWnd)
 	objEnterBtn:SetVisible(true)
 	objEnterBtn:SetChildrenVisible(true)
 	
+	SetVersionText(objRootCtrl)
 end
 
 function SetProgBar(objProgBarLayout)
@@ -94,6 +95,18 @@ function SetProgBar(objProgBarLayout)
 end
 
 
+function SetVersionText(objRootCtrl)
+	-- local objVersion = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.Title.Text")
+	-- if not objVersion then
+		-- return
+	-- end
+	
+	-- local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	-- local strVersion = FunctionObj.GetNextGSVersion()
+	-- strVersion = "V1.1"
+	-- local strText = "发现新版本绿盾广告管家"..tostring(strVersion)
+	-- objVersion:SetText(strText)
+end
 
 
 
