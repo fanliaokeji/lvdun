@@ -3,7 +3,6 @@
 #include "XLUE.h"
 #include "XLGraphicPlus.h"
 
-//#include ".\LuaXLYYPre.h"
 
 #include ".\CFilterMsgWnd.h"
 
@@ -15,13 +14,7 @@
 #include <fstream>
 #pragma comment(lib, "Wininet.lib")
 
- 
-//STDAPI HandleXLYYSingleton()
-//{
-//	TSAUTO();
-//	bool b = XLYYPre::Instance()->HandleXLYYSingleton();
-//	return b ? S_OK : E_FAIL;
-//}
+
 
 
 CFilterMsgWindow::CFilterMsgWindow(void)

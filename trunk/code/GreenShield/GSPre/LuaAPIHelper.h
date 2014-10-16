@@ -58,6 +58,27 @@ static BOOL UnicodeToMultiByte(const std::basic_string<WCHAR> &strSrc, std::stri
 	return TRUE;
 }
 
+static bool WideStringToAnsiString(const std::wstring &strWide, std::string &strAnsi)
+{
+	bool bSuc = false;
+
+	int cchAnsi = ::WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), -1, NULL, 0, NULL, NULL);
+	if (cchAnsi)
+	{
+		char *pszAnsi = new (std::nothrow) char[cchAnsi];
+		if (pszAnsi)
+		{
+			::WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), -1, pszAnsi, cchAnsi, NULL, NULL);
+			strAnsi = pszAnsi;
+			bSuc = true;
+
+			delete [] pszAnsi;
+			pszAnsi = NULL;
+		}
+	}
+
+	return bSuc;
+}
 
 static DWORD gPriorityArray[6] = {IDLE_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS};
 

@@ -23,11 +23,12 @@ XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] =
 	{"AsynSendHttpStat", AsynSendHttpStat},
 	{"AsynGetHttpContent", GetHttpContent},
 	{"AsynGetHttpFile", GetHttpFile},
+	{"AsynGetHttpFileWithProgress", GetHttpFileWithProgress},
+
 	{"SoftExit", SoftExit},
 	{"SetTimer", StartTimerEx},
 	{"KillTimer", StopTimerEx},
 	{"KillAllTimer", StopAllTimerEx},
-	//2011-10-20Ìí¼Ó
 	
 	{"NewAsynGetHttpFile", NewAsynGetHttpFile},
 
@@ -36,16 +37,14 @@ XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] =
 	{"AjaxSendHttpStat", AjaxSendHttpStat},
 	{"AjaxGetHttpContent", AjaxGetHttpContent},
 	{"AjaxGetHttpFile", AjaxGetHttpFile},
-	//2012-2-24
 	{"AsynCreateProcess", AsynCreateProcess},
-
-
+	
+	
 
 
 	{NULL, NULL}
 };
 
-//AsynSendHttpStat
 
 HttpStatData::HttpStatData(const char* pUrl, bool bAsync, lua_State* pState, LONG lRefFn) : m_bAsync(bAsync), m_callInfo(pState, lRefFn)
 {
@@ -191,6 +190,70 @@ int LuaAsynUtil::GetHttpFile(lua_State* pLuaState)
 	return 0;
 }
 
+//GetHttpFileWithProgress
+void SGetHttpFileDataWithProgress::Work()
+{
+	::CoInitialize(NULL);
+	TCallback tStatus(this);
+	HRESULT hr = ::URLDownloadToFile(NULL, m_strUrl.c_str(), m_strSavePath.c_str(), 0, &tStatus);
+	int nRetCode = -1;
+	if (SUCCEEDED(hr))
+	{
+		nRetCode = 0;
+	}
+	g_wndMsg.PostMessage(WM_HTTPFILEGOT, nRetCode, (LPARAM) this);
+
+	::CoUninitialize();
+}
+
+STDMETHODIMP TCallback::OnProgress(ULONG ulProgress, ULONG ulProgressMax,  ULONG ulStatusCode, LPCWSTR szStatusText)
+{
+	if (ulProgress > 0 && ulProgressMax > ulProgress)
+	{
+		double percent=(ulProgress*1.0f)/(ulProgressMax);
+		//TSDEBUG(L"ulProgress = %ul,ulProgressMax = %ul, percent = %lf, m_percent = %lf",ulProgress,ulProgressMax,percent,m_percent);
+		if (percent < m_percent+0.01f)
+		{
+			return S_OK;
+		}
+		m_percent = percent;
+		PDOWNLOAD_PROGRESS pdp = new DOWNLOAD_PROGRESS;
+		pdp->ulProgress = ulProgress;
+		pdp->ulProgressMax = ulProgressMax;
+		g_wndMsg.PostMessage(WM_HTTPFILEGOTPROGRESS, (WPARAM)pdp, (LPARAM)this->m_pGetHttpFileData);
+	}
+	return S_OK;
+}
+
+UINT WINAPI GetHttpFileWithProgressProc(PVOID pArg)
+{
+	SGetHttpFileDataWithProgress* pData = (SGetHttpFileDataWithProgress*) pArg;
+	pData->Work();
+	return 0;
+}
+
+int LuaAsynUtil::GetHttpFileWithProgress(lua_State* pLuaState)
+{
+	LuaAsynUtil** ppAsynUtil = (LuaAsynUtil **)luaL_checkudata(pLuaState, 1, XMPTIPWND_ASYNCUTIL_CLASS);
+	if (ppAsynUtil != NULL)
+	{
+		const char *pszUrlUTF8 = lua_tostring(pLuaState, 2);
+		const char *pszSavePathUTF8 = lua_tostring(pLuaState, 3);
+		int bDel = lua_toboolean(pLuaState, 4);
+		if (pszUrlUTF8 && pszSavePathUTF8 && lua_isfunction(pLuaState, 5))
+		{
+			CComBSTR bstrUrl,bstrSavePath;
+			LuaStringToCComBSTR(pszUrlUTF8,bstrUrl);
+			LuaStringToCComBSTR(pszSavePathUTF8,bstrSavePath);
+
+			SGetHttpFileDataWithProgress *pData = new SGetHttpFileDataWithProgress(bstrUrl.m_str, bstrSavePath.m_str, pLuaState, luaL_ref(pLuaState, LUA_REGISTRYINDEX));
+			_beginthreadex(NULL, 0, GetHttpFileWithProgressProc, pData, 0, NULL);
+		}
+	}
+
+	return 0;
+}
+
 //SoftExit
 int LuaAsynUtil::SoftExit(lua_State* pLuaState)
 {
@@ -286,7 +349,6 @@ int LuaAsynUtil::NewAsynGetHttpFile(lua_State* pLuaState)
 	}
 	return 0;
 }
-
 
 //NewAsynSendHttpStat
 NewAsynHttpStatData::NewAsynHttpStatData(CAsynCallbackTaskData *pCallbackData, const char* pUrl, int iCoroutineRef) : 

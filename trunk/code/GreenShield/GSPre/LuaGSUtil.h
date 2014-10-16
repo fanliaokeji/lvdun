@@ -2,7 +2,7 @@
 
 #define GS_UTIL_CLASS	"GS.Util.Class"
 #define GS_UTIL_OBJ		"GS.Util"
-
+#include "PraseABP\FilterManager.h"
 
 class LuaGSUtil
 {
@@ -28,6 +28,9 @@ private:
 	static BOOL IsFullScreenHelper();
 	static long ShellExecHelper(HWND hWnd, const char* lpOperation, const char* lpFile, const char* lpParameters, const char* lpDirectory, const char* lpShowCmd, int iShowCmd = -1);
 	static long CopyPathFileHelper(const char* utf8ExistingFileName, const char* utf8NewFileName, BOOL bFailedIfExists);
+	
+	static void EncryptAESToFileHelper(const unsigned char* pszKey, const char* pszMsg, unsigned char* out_str, int& nlen);
+	static void DecryptFileAESHelper(const unsigned char* pszKey, const unsigned char* pszMsg, int nlen, unsigned char* out_str);
 
 	enum ShortCutPosition
 	{
@@ -51,10 +54,14 @@ public:
 
 public:
 	//static int RegisterFilterWnd(lua_State* pLuaState);
+	static int LoadConfig(lua_State* pLuaState);
+	static int AddVideoHost(lua_State* pLuaState);
+	static int AddWhiteHost(lua_State* pLuaState);
 	
+	static int UpdateVideoHost(lua_State* pLuaState);
+	static int UpdateWhiteHost(lua_State* pLuaState);
+
 	static int FGSFilter(lua_State* pLuaState);
-	static int FAddDomain(lua_State* pLuaState);
-	static int FEnableDomain(lua_State* pLuaState);
 
 	static int Exit(lua_State* pLuaState);
 	static int GetPeerId(lua_State* pLuaState);
@@ -89,6 +96,8 @@ public:
 	static int IsNowFullScreen(lua_State* pLuaState);
 
 	//нд╪Ч
+	static int GetMD5Value(lua_State* pLuaState);
+	static int GetFileVersionString(lua_State* pLuaState);
 	static int GetSystemTempPath(lua_State* pLuaState);
 	static int GetFileSize(lua_State* pLuaState);
 	static int GetFileCreateTime(lua_State* pLuaState);
@@ -151,7 +160,11 @@ public:
 	static int OpenURLIE(lua_State* pLuaState);	
 	static int ShellExecuteEX(lua_State* pLuaState);
 
+	static int EncryptAESToFile(lua_State* pLuaState);
+	static int DecryptFileAES(lua_State* pLuaState);
 
+public:
+	static FilterManager * m_Filter;
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

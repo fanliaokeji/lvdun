@@ -14,6 +14,7 @@
 #define WM_AJAXDOWNLOADFILESUCCESS		WM_USER + 2020
 #define WM_AJAXDOWNLOADFILEFAILED		WM_USER + 2021
 
+#define WM_HTTPFILEGOTPROGRESS		WM_USER + 2023
 
 enum AjaxTaskFlag
 {
@@ -43,6 +44,7 @@ public:
 
 	static int AsynSendHttpStat(lua_State* pLuaState);
 	static int GetHttpFile(lua_State* pLuaState);
+	static int GetHttpFileWithProgress(lua_State* pLuaState);
 	static int GetHttpContent(lua_State* pState);
 	static int SoftExit(lua_State* pLuaState);
 	static int StartTimerEx(lua_State* pLuaState);
@@ -58,6 +60,8 @@ public:
 
 
 	static int AsynCreateProcess(lua_State* pLuaState);
+
+	static int NewAsynGetHttpFileWithProgress(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI  s_functionlist[];
 };
@@ -158,6 +162,142 @@ struct SGetHttpFileData
 	void Work();
 };
 
+typedef struct _DOWNLOAD_PROGRESS
+{
+	ULONG ulProgress;
+	ULONG ulProgressMax;
+}DOWNLOAD_PROGRESS,*PDOWNLOAD_PROGRESS;
+
+class SGetHttpFileDataWithProgress
+{
+public:
+	LuaCallInfo m_callInfo;
+	std::wstring m_strUrl;
+	std::wstring m_strSavePath;
+
+	SGetHttpFileDataWithProgress(LPCTSTR pszUrl, LPCTSTR pszSavePath, lua_State *pState, LONG lRefFn) 
+		: m_strUrl(pszUrl)
+		, m_strSavePath(pszSavePath)
+		, m_callInfo(pState, lRefFn)
+	{
+		TSTRACEAUTO();
+	}
+
+	~SGetHttpFileDataWithProgress()
+	{
+		TSTRACEAUTO();
+	}
+
+	void Notify(int nRetCode)
+	{
+		lua_rawgeti(m_callInfo.GetLuaState(), LUA_REGISTRYINDEX, m_callInfo.GetRefFn());
+
+		int iRetCount = 0;
+		lua_pushinteger(m_callInfo.GetLuaState(), nRetCode);
+		++iRetCount;
+
+		std::string strSavePathUTF8;
+		WCHAR szSavePath[MAX_PATH] = {0};
+		wcsncpy(szSavePath,m_strSavePath.c_str(),m_strSavePath.size());
+		BSTRToLuaString(szSavePath,strSavePathUTF8);
+		lua_pushstring(m_callInfo.GetLuaState(), strSavePathUTF8.c_str());
+		++iRetCount;
+
+		XLLRT_LuaCall(m_callInfo.GetLuaState(), iRetCount, 0, L"GetHttpFile Callback");
+	}
+	
+	void Notify(int nRetCode,ULONG ulProgress,ULONG ulProgressMax)
+	{
+		lua_rawgeti(m_callInfo.GetLuaState(), LUA_REGISTRYINDEX, m_callInfo.GetRefFn());
+		int iRetCount = 0;
+		lua_pushinteger(m_callInfo.GetLuaState(), nRetCode);
+		++iRetCount;
+
+		std::string strSavePathUTF8;
+		WCHAR szSavePath[MAX_PATH] = {0};
+		wcsncpy(szSavePath,m_strSavePath.c_str(),m_strSavePath.size());
+		BSTRToLuaString(szSavePath,strSavePathUTF8);
+		lua_pushstring(m_callInfo.GetLuaState(), strSavePathUTF8.c_str());
+		++iRetCount;
+
+		lua_pushinteger(m_callInfo.GetLuaState(), ulProgress);
+		++iRetCount;
+		lua_pushinteger(m_callInfo.GetLuaState(), ulProgressMax);
+		++iRetCount;
+
+		XLLRT_LuaCall(m_callInfo.GetLuaState(), iRetCount, 0, L"GetHttpFile Callback Progress");
+	}
+	void Work();
+};
+
+class TCallback : public IBindStatusCallback  
+{
+public:
+	TCallback(SGetHttpFileDataWithProgress * pData) 
+	{
+		m_cRef = 1;
+		m_percent = 0;
+		m_pGetHttpFileData = pData;
+	}
+private:
+	STDMETHODIMP QueryInterface(REFIID riid,void **ppv)
+	{
+		*ppv = NULL;  
+		if (riid==IID_IUnknown || riid==IID_IBindStatusCallback) {  
+			*ppv = this;  
+			AddRef();  
+			return S_OK;  
+		}  
+		return E_NOINTERFACE;  
+	}  
+	STDMETHODIMP_(ULONG) AddRef()
+	{
+		return m_cRef++; 
+	}
+	STDMETHODIMP_(ULONG) Release()
+	{
+		if(--m_cRef==0) {  
+			delete this;  
+			return 0;  
+		}  
+		return m_cRef;  
+	}
+	STDMETHODIMP GetBindInfo(DWORD *grfBINDF,BINDINFO *bindinfo)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP GetPriority(LONG *nPriority)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnDataAvailable(DWORD grfBSCF,DWORD dwSize,  FORMATETC *formatetc,STGMEDIUM *stgmed)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnLowResource(DWORD reserved)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnObjectAvailable(REFIID iid,IUnknown *punk)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnStartBinding(DWORD dwReserved,IBinding *pib)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnStopBinding(HRESULT hresult,LPCWSTR szError)
+	{  
+		return E_NOTIMPL;  
+	}  
+	STDMETHODIMP OnProgress(ULONG ulProgress, ULONG ulProgressMax,  ULONG ulStatusCode, LPCWSTR szStatusText);
+public:
+	DWORD m_cRef; 
+	SGetHttpFileDataWithProgress * m_pGetHttpFileData;
+	double m_percent;
+};
+
+
 class CTimerCallBackProcMgr
 {
 public:
@@ -178,7 +318,7 @@ private:
 	LuaCallInfo m_callInfo;
 };
 
-
+//
 class CAsynCallbackTaskData
 {
 public:
@@ -211,7 +351,7 @@ public:
 		lua_pushstring(m_callInfo.GetLuaState(), utf8FileName.c_str());
 		lua_rawgeti(m_callInfo.GetLuaState(), LUA_REGISTRYINDEX, iCoroutineRef);
 		TSDEBUG4CXX(L"***** Notify lua_rawgeti = " << iCoroutineRef);
-		XLLRT_LuaCall(m_callInfo.GetLuaState(), 3, 0, L"AsynTaskData Callback");
+		XLLRT_LuaCall(m_callInfo.GetLuaState(), 3, 0, L"AsynTaskData Callback1");
 		lua_settop(m_callInfo.GetLuaState(), nowTop);
 	}
 private:
@@ -219,7 +359,7 @@ private:
 	int			m_iCoroutineRef;
 };
 
-class CNewAsynGetHttpFileTaskData
+class CNewAsynGetHttpFileTaskData 
 {
 public:
 	CNewAsynGetHttpFileTaskData(CAsynCallbackTaskData* pAsynCallbackData, const char* pUrl, const char* pFilePath, int iCoroutineRef);
@@ -236,7 +376,7 @@ private:
 	int			 m_iCoroutineRef;
 };
 
-
+//
 class NewAsynHttpStatData
 {
 public:
@@ -445,6 +585,7 @@ public:
 		MESSAGE_HANDLER(WM_AJAXDOWNLOADFILEFAILED, OnAjaxDownloadFailed)
 		MESSAGE_HANDLER(WM_AJAXDOWNLOADFILESUCCESS, OnAjaxDownloadSucess)
 		MESSAGE_HANDLER(WM_CREATEPROCESSFINISH, OnCreateProcessFinish)
+		MESSAGE_HANDLER(WM_HTTPFILEGOTPROGRESS, OnHttpFileGotProgress)
 
 		CHAIN_MSG_MAP(CMsgWindow)
 	END_MSG_MAP()
@@ -526,6 +667,16 @@ protected:
 		return 0;
 	}
 
+	LRESULT OnHttpFileGotProgress(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		SGetHttpFileDataWithProgress * pData = (SGetHttpFileDataWithProgress*) lParam;
+		PDOWNLOAD_PROGRESS pdp = PDOWNLOAD_PROGRESS(wParam);
+		ULONG ulProgress = pdp->ulProgress;
+		ULONG ulProgressMax = pdp->ulProgressMax;
+		pData->Notify(-2,ulProgress,ulProgressMax);
+		//delete pData;
+		return 0;
+	}
 
 private:
 	typedef std::map<UINT_PTR, CTimerCallBackProcMgr*> TimerIDCallbackMap;
