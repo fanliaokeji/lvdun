@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TcpProxyConnection.h"
 
 #include <string>
