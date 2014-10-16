@@ -8,17 +8,16 @@ ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
 el = 0
 
+
 2. 主界面展示后上报
 ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
 el = 1
 
-3. 程序退出上报
-ec = exit
-ea = filtercount
-el = 29           (当天过滤广告的次数)
-ev = 80			  (程序运行时间，秒)
-
+3. 应用界面上报
+ec = AppPanel   		(面版名)
+ea = KugouMusic	    	(软件名)
+el = 1 | 2 | 3	        (1 浏览器打开链接, 2 激活软件 , 3 下载软件)
 
 4. 过滤提示窗口上报
 ec = FilterRemindWnd  (窗口名)
@@ -36,18 +35,36 @@ ea = youku.com		    (状态被用户改变的域名)
 el = 1 | 2 | 3 | 4      (1 开启过滤， 2 停止过滤， 3 添加域名， 4 删除域名)
 
 7. 主面板上报
-ec = MainPanel   		(面版名)
-ea = filteropen	    	(过滤按钮)
-el = 1 | 2		        (1 开启过滤， 2 停止过滤)
+	ec = MainPanel   		(面版名)
+	ea = filteropen	    	(过滤按钮)
+	el = 1 | 2		        (1 开启过滤， 2 停止过滤)
 
+	跨天上报1
+	ec = MainPanel   		(面版名)
+	ea = countoneday	    (前一天过滤次数)
+	el = 29		       
+	
+	跨天上报2
+	ec = MainPanel   		(面版名)
+	ea = counttotal	   		(至今累计过滤次数)
+	el = 39		 
+	
 
-7. 托盘菜单上报
+8. 托盘菜单上报
 ec = TrayMenu   		(面版名)
 ea = filteropen	    	(过滤按钮)
 el = 1 | 2		        (1 开启过滤， 2 停止过滤)
 
 
-
+9. 设置界面上报
+程序退出时上报
+ec = ConfigPanel   		(面版名)
+el = 0110		    	(依次为: 开机启动,自动检查更新,隐藏主界面,使用气泡;
+						         1 打开开关， 0 关闭开关)
+								 
+10. 程序退出上报
+ec = exit
+ev = 80			  (程序运行时间，秒)
 
 
 
