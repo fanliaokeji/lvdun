@@ -69,6 +69,11 @@
 		<bitmap id="Number_7" path="bitmap\number_7.png"/>
 		<bitmap id="Number_8" path="bitmap\number_8.png"/>
 		<bitmap id="Number_9" path="bitmap\number_9.png"/>
+
+		<bitmap id="GreenWall.UpdateWnd.Checking_1" path="bitmap\GreenWall.UpdateWnd.Checking_1.png"/>
+		<bitmap id="GreenWall.UpdateWnd.Checking_2" path="bitmap\GreenWall.UpdateWnd.Checking_2.png"/>
+		<bitmap id="GreenWall.UpdateWnd.Checking_3" path="bitmap\GreenWall.UpdateWnd.Checking_3.png"/>
+		<bitmap id="GreenWall.UpdateWnd.Checking_4" path="bitmap\GreenWall.UpdateWnd.Checking_4.png"/>
 		
 		<bitmap id="GreenWall.Bulb" path="bitmap\GreenWall.Bulb.png"/>
 		

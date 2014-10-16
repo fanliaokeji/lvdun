@@ -1,5 +1,6 @@
 local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
+local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 
 local g_bHasInit = false
 local g_bAppListDownLoading = false
@@ -39,7 +40,6 @@ end
 
 
 function DownLoadAppList(fnCallBack)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
 	
 	local strAppListURL = tUserConfig["strServerAppListURL"]
@@ -71,7 +71,6 @@ function DownLoadAppList(fnCallBack)
 		g_bAppListDownLoading = false
 	end, nTimeInMs)
 end
-
 
 
 function ShowItemList(objRootCtrl, tAppList, bDownLoad)
@@ -161,8 +160,9 @@ function DownLoadImage(objRootCtrl, tItem)
 	local strSavePath = strImageBaseDir.."\\"..tostring(strImageName)
 	
 	IncreaseDownLoadFlag()
-	tipAsynUtil:AsynGetHttpFile(strImageURL, strSavePath, false
-	, function(bRet)
+	FunctionObj.NewAsynGetHttpFile(strImageURL, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[DownLoadImage] bRet:"..tostring(bRet).." strRealPath:"..tostring(strRealPath))
 		DecreaseDownLoadFlag(objRootCtrl)
 	end)	
 end
@@ -187,7 +187,6 @@ end
 
 
 function LoadAppList(strAppListName)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local strCfgPath = FunctionObj.GetCfgPathWithName(strAppListName)
 	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath)
 	return infoTable
@@ -470,7 +469,8 @@ function DownLoadSoftware(objUIItem, tItemInfo)
 		strFileName = strFileName..".exe"
 	end
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	tipAsynUtil:AsynGetHttpFile(strOpenLink, strSavePath, false
+	
+	FunctionObj.NewAsynGetHttpFile(strOpenLink, strSavePath, false
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadSoftware] strOpenLink:"..tostring(strOpenLink)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
@@ -493,7 +493,6 @@ function SendAppReport(strKeyName, nType)
 	tStatInfo.strEA = strKeyName
 	tStatInfo.strEL = tostring(nType)
 	
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(FunctionObj.TipConvStatistic) == "function" then
 		FunctionObj.TipConvStatistic(tStatInfo)
 	end

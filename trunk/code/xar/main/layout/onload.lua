@@ -193,7 +193,7 @@ end
 function GetGSVersion()
 	local strGreenShieldPath = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
 	if not IsRealString(strGreenShieldPath) or not tipUtil:QueryFileExists(strGreenShieldPath) then
-		return ""
+		return "1.0.0.1"
 	end
 
 	return tipUitl:GetVersionString(strGreenShieldPath)
