@@ -1,0 +1,15 @@
+--nOpenType 1:浏览器打开;2:直接下载或运行
+function GetSubTable()
+	local t = {
+		["tNewVersionInfo"] = {
+			["strVersion"] = "1.1",
+			["strPacketURL"] = "http://greenshield.media.com/greenshield/greenshield_pak.exe",
+			["strInroduce"] = {
+				"1.开发家庭控制功能",
+				"2.视频过滤优化",
+				"3.修复部分bug",
+			},
+		},
+	}
+	return t
+end
