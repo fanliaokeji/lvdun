@@ -77,24 +77,6 @@ function GetSubTable()
 				["strDomain"] = "360.cn", 
 			},	
 		}, 
-		["tRefuseList"] = {
-			["1"] = {
-				["strName"] = "1", 
-				["nLastUTC"] = 1413281258, 
-			}, 
-			["4"] = {
-				["strName"] = "4", 
-				["nLastUTC"] = 1413168345, 
-			}, 
-			["3"] = {
-				["strName"] = "3", 
-				["nLastUTC"] = 1413168342, 
-			}, 
-			["2"] = {
-				["strName"] = "22", 
-				["nLastUTC"] = 1413168344, 
-			}, 
-		}, 
 		["tBlackList"] = {
 			[1] = {
 				["strName"] = "1", 
