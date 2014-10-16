@@ -24,15 +24,12 @@ function OnClickParentControl(self)
 end
 
 
-
-
 ---方法---
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
 		InitFilterConfig(self)
 	end		
 end
-
 
 
 -------------------------

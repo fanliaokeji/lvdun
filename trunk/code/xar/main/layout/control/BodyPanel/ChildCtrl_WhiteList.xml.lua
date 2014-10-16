@@ -12,7 +12,6 @@ local g_nLayoutGap = 0
 local g_nIDToDelete = 0
 
 local g_tWhiteList = {}
-local g_tRuleList = {}
 
 local g_nReportELEnable = 1
 local g_nReportELDisable = 2
@@ -48,8 +47,6 @@ function OnClickActionBtn(self)
 		g_nIDToDelete = 0
 		SetAddBtnStyle(self, true)
 	end
-	
-	SaveConfig()
 end
 
 
@@ -75,7 +72,6 @@ function OnClickAddBtn(self)
 		return
 	end
 	
-	AddToUserDefineList(strName, strDomain)
 	
 	PushWhiteList(strName, strDomain, true)
 	ReportDomainState(strDomain, g_nReportELAdd)
@@ -263,9 +259,7 @@ end
 
 --------------------------
 function OnDestroy(self)
-	if g_bHasInit then
-		SaveConfig()
-	end
+
 end
 
 
@@ -297,7 +291,7 @@ function ResetScrollBar(objRootCtrl)
 	if objScrollBar == nil then
 		return false
 	end
-	
+
 	if g_nPageSize >= #g_tWhiteList then
 		objScrollBar:SetVisible(false)
 		objScrollBar:SetChildrenVisible(false)
@@ -321,40 +315,9 @@ end
 
 function LoadConfig()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetSpecifyFilterTableFromMem) ~= "function" 
-		or type(tFunctionHelper.GetRuleListFromMem) ~= "function" then
-		return false
-	end
+	g_tWhiteList = tFunctionHelper.GetSpecifyFilterTableFromMem("tWhiteList") or {}
 	
-	---规则文件
-	g_tRuleList = tFunctionHelper.GetRuleListFromMem()
-	
-	---白名单
-	local tWhiteList = tFunctionHelper.GetSpecifyFilterTableFromMem("tWhiteList")
-	if type(tWhiteList) ~= "table" then
-		TipLog("[LoadConfig] GetSpecifyFilterTableFromMem failed")
-		return true
-	end
-
-	for key, tWhiteElem in pairs(tWhiteList) do
-		local strName = tWhiteElem["strName"]
-		local strDomain = tWhiteElem["strDomain"]
-		local bState = tWhiteElem["bState"]
-			
-		PushWhiteList(strName, strDomain, bState)
-	end
 	return true
-end
-
-function SaveConfig()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.SaveSpecifyFilterTableToMem) == "function" then
-		tFunctionHelper.SaveSpecifyFilterTableToMem(g_tWhiteList, "tWhiteList")
-	end
-
-	if type(tFunctionHelper.SaveRuleListToMem) == "function" then
-		tFunctionHelper.SaveRuleListToMem(g_tRuleList)
-	end
 end
 
 
@@ -471,13 +434,13 @@ function CreateLine(objWhiteList)
 	
 	objTextName:SetObjPos(8, 0, 8+68-15, "father.height")	
 	objTextName:SetTextColorResID("4D4D4D")
-	objTextName:SetTextFontResID("font.Haetten11")
+	objTextName:SetTextFontResID("font.yahei11")
 	objTextName:SetVAlign("center")
 	objTextName:SetHAlign("left")
 	
 	objTextURL:SetObjPos(8+68-5, 0, 8+68-15+157, "father.height")	
 	objTextURL:SetTextColorResID("4D4D4D")
-	objTextURL:SetTextFontResID("font.Haetten11")
+	objTextURL:SetTextFontResID("font.yahei11")
 	objTextURL:SetVAlign("center")
 	objTextURL:SetHAlign("left")
 	
@@ -607,30 +570,18 @@ end
 
 
 function AutoEnableDomain(strDomain)
-	SaveConfig()
+	if not IsRealString(strDomain) then
+		return
+	end
+
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.UIAutoEnableDomain) == "function" then
-		tFunctionHelper.UIAutoEnableDomain(strDomain)
+	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
+		tFunctionHelper.EnableWhiteDomain(strWhiteDomain, true)
+	else
+		tFunctionHelper.EnableWhiteDomain(strWhiteDomain, false)
 	end
 end
 
-function AddToUserDefineList(strName, strDomain)
-	local tRuleList = g_tRuleList
-	for key, tRuleElem in pairs(tRuleList) do 
-		local strRuleDomain = tRuleElem["strDomain"]
-		if IsRealString(strRuleDomain) 
-			and string.find(strDomain, strRuleDomain) then
-			return		
-		end
-	end
-	
-	local nNewRuleCount = #g_tRuleList+1
-	g_tRuleList[nNewRuleCount] = {}
-	g_tRuleList[nNewRuleCount]["strTitle"] = strName
-	g_tRuleList[nNewRuleCount]["strDomain"] = strDomain
-	g_tRuleList[nNewRuleCount]["tExtraPath"] = {}
-	g_tRuleList[nNewRuleCount]["bUserDefine"] = true
-end
 
 function ReportDomainStateByID(nDomianID, nEL)
 	local strDomain = ""

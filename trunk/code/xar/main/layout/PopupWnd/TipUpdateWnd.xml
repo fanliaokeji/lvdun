@@ -3,8 +3,8 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>500</width>
-			<height>400</height>
+			<width>478</width>
+			<height>320</height>
 		</attr>
 
 		<obj id="root.layout" class="CaptionObject">
@@ -62,7 +62,7 @@
 								<top>97</top>
 								<width>father.width</width>
 								<height>20</height>
-								<text>发现新版本绿盾广告管家</text>
+								<text>发现新版本绿盾广告管家V1.1</text>
 								<textcolor>system.white</textcolor>
 								<font>font.yahei12.bold</font>
 								<valign>top</valign>
@@ -214,8 +214,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>500</width>
-            <height>400</height>
+            <width>478</width>
+            <height>320</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

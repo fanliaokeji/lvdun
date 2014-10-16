@@ -44,7 +44,7 @@
 										<height>father.height</height>
 										<text>绿盾广告管家</text>
 										<textcolor>caption.black</textcolor>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<valign>center</valign>
 									</attr>
 								</obj>
@@ -175,7 +175,7 @@
 										<height>20</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>主界面</text>
 									</attr>
@@ -204,7 +204,7 @@
 										<height>20</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>应用</text>
 									</attr>
@@ -233,7 +233,7 @@
 										<height>20</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>过滤设置</text>
 									</attr>

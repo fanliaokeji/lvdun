@@ -37,7 +37,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>left</halign>
-										<font>font.Haetten11</font>
+										<font>font.yahei11</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>网站</text>
 									</attr>
@@ -51,7 +51,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten11</font>
+										<font>font.yahei11</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>|</text>
 									</attr>
@@ -65,7 +65,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten11</font>
+										<font>font.yahei11</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>域名</text>
 									</attr>
@@ -79,7 +79,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten11</font>
+										<font>font.yahei11</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>|</text>
 									</attr>
@@ -93,7 +93,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.Haetten11</font>
+										<font>font.yahei11</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>状态</text>
 									</attr>
@@ -122,7 +122,7 @@
 								<HoverBkgID>GreenWall.AdvFilter.ActionBtn.Hover</HoverBkgID>
 								<DisableBkgID>GreenWall.AdvFilter.ActionBtn.Normal</DisableBkgID>
 								<Text>添加</Text>
-								<TextFont>font.Haetten11</TextFont>
+								<TextFont>font.yahei11</TextFont>
 								<TextColor>4D4D4D</TextColor>
 							</attr>
 							<eventlist>
@@ -138,7 +138,7 @@
 								<height>15</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten11</font>
+								<font>font.yahei11</font>
 								<textcolor>999999</textcolor>
 								<text>如果你不想过滤某个网站的广告，请在此添加域名</text>
 							</attr>
@@ -190,7 +190,7 @@
 								<height>27</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.Haetten12</font>
+								<font>font.yahei12</font>
 								<textcolor>system.white</textcolor>
 								<text>输入您不想过滤广告的网站域名</text>
 							</attr>
@@ -213,7 +213,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>left</halign>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>名称 :</text>
 									</attr>
@@ -234,7 +234,7 @@
 												<top>1</top>
 												<width>father.width-2</width>
 												<height>father.height-2</height>
-												<font>font.Haetten11</font>
+												<font>font.yahei11</font>
 												<textcolor>666666</textcolor>
 											</attr>
 										</obj>
@@ -259,7 +259,7 @@
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>left</halign>
-										<font>font.Haetten12</font>
+										<font>font.yahei12</font>
 										<textcolor>4D4D4D</textcolor>
 										<text>域名 :</text>
 									</attr>
@@ -280,7 +280,7 @@
 												<top>1</top>
 												<width>father.width-2</width>
 												<height>father.height-2</height>
-												<font>font.Haetten11</font>
+												<font>font.yahei11</font>
 												<textcolor>666666</textcolor>
 											</attr>
 										</obj>
@@ -300,7 +300,7 @@
 								<HoverBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</HoverBkgID>
 								<DisableBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</DisableBkgID>
 								<Text>取消</Text>
-								<TextFont>font.Haetten11</TextFont>
+								<TextFont>font.yahei11</TextFont>
 								<TextColor>4D4D4D</TextColor>
 							</attr>
 							<eventlist>
@@ -319,7 +319,7 @@
 								<HoverBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Hover</HoverBkgID>
 								<DisableBkgID>GreenWall.AdvFilter.PopupPanel.AddBtn.Normal</DisableBkgID>
 								<Text>添加</Text>
-								<TextFont>font.Haetten11</TextFont>
+								<TextFont>font.yahei11</TextFont>
 								<TextColor>4D4D4D</TextColor>
 							</attr>
 							<eventlist>

@@ -14,7 +14,7 @@ local g_nLayoutGap = 0
 local g_nIDToDelete = 0
 
 local g_tBlackList = {}
-local g_tRuleList = {}
+local g_tVideoList = {}
 
 local g_nReportELEnable = 1
 local g_nReportELDisable = 2
@@ -76,7 +76,7 @@ function OnClickAddBtn(self)
 		return
 	end
 	
-	AddToUserDefineList(strName, strDomain)
+	-- AddToUserDefineList(strName, strDomain)
 	
 	PushBlackList(strName, strDomain, true)
 	ReportDomainState(strDomain, g_nReportELAdd)
@@ -277,10 +277,6 @@ function OnClickPopupCancle(self)
 	local strName = objTextName:GetText()
 	local strDomain = objTextDomain:GetText()
 
-	if IsRealString(strName) and IsRealString(strDomain) then
-		SaveUserRefuseList(strName, strDomain)
-	end
-	
 	objHostWnd:Show(0)
 	ReportPopupState(strDomain, 2)
 end
@@ -322,24 +318,6 @@ function ReportPopupState(strDomain, nState)
 	SendReport(tStatInfo)
 end
 
-
-function SaveUserRefuseList(strName, strDomain)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetSpecifyFilterTableFromMem) ~= "function" 
-		or type(tFunctionHelper.SaveSpecifyFilterTableToMem) ~= "function" then
-		return
-	end
-	
-	local tRefuseList = tFunctionHelper.GetSpecifyFilterTableFromMem("tRefuseList") or {}
-	if type(tRefuseList[strDomain]) ~= "table" then
-		tRefuseList[strDomain] = {}
-	end	
-	
-	tRefuseList[strDomain]["strName"] = strName
-	tRefuseList[strDomain]["nLastUTC"] = tipUtil:GetCurrentUTCTime()
-	
-	tFunctionHelper.SaveSpecifyFilterTableToMem(tRefuseList, "tRefuseList")
-end
 
 function AddBlackList(strName, strDomain)
 	LoadConfig()
@@ -411,13 +389,9 @@ function LoadConfig()
 	end
 
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetSpecifyFilterTableFromMem) ~= "function" 
-		or type(tFunctionHelper.GetRuleListFromMem) ~= "function" then
-		return false
-	end
 	
-	---规则文件
-	g_tRuleList = tFunctionHelper.GetRuleListFromMem() or {}
+	---视频网站列表
+	g_tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	
 	---黑名单
 	g_tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList") or {}
@@ -540,13 +514,13 @@ function CreateLine(objBlackList)
 	
 	objTextName:SetObjPos(8, 0, 8+68-15, "father.height")	
 	objTextName:SetTextColorResID("4D4D4D")
-	objTextName:SetTextFontResID("font.Haetten11")
+	objTextName:SetTextFontResID("font.yahei11")
 	objTextName:SetVAlign("center")
 	objTextName:SetHAlign("left")
 	
 	objTextURL:SetObjPos(8+68-5, 0, 8+68-15+157, "father.height")	
 	objTextURL:SetTextColorResID("4D4D4D")
-	objTextURL:SetTextFontResID("font.Haetten11")
+	objTextURL:SetTextFontResID("font.yahei11")
 	objTextURL:SetVAlign("center")
 	objTextURL:SetHAlign("left")
 	
@@ -667,7 +641,6 @@ function RemoveBlackList(nIDToDelete)
 		local strDomain = FetchValueByPath(g_tBlackList, {nIDToDelete, "strDomain"})
 		local strName = FetchValueByPath(g_tBlackList, {nIDToDelete, "strName"})
 		table.remove(g_tBlackList, nIDToDelete)
-		SaveUserRefuseList(strName, strDomain)
 		AutoEnableDomain(strDomain, true)
 	end	
 end
@@ -675,28 +648,40 @@ end
 
 function AutoEnableDomain(strDomain, bForceDisable)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.UIAutoEnableDomain) == "function" then
-		tFunctionHelper.UIAutoEnableDomain(strDomain, bForceDisable)
+	if not IsRealString(strDomain) then
+		return
+	end
+	
+	if bForceDisable then
+		tFunctionHelper.EnableVideoDomain(strDomain, 2)
+		return
+	end
+	
+	local nState = tFunctionHelper.GetVideoDomainState(strDomain)
+	if nState == 1 then
+		tFunctionHelper.EnableVideoDomain(strDomain, 1)
+	elseif nState == 2 then
+		tFunctionHelper.EnableVideoDomain(strDomain, 2)
 	end
 end
 
 
+--用户自行添加的视频列表
 function AddToUserDefineList(strName, strDomain)
-	local tRuleList = g_tRuleList
-	for key, tRuleElem in pairs(tRuleList) do 
-		local strRuleDomain = tRuleElem["strDomain"]
-		if IsRealString(strRuleDomain) 
-			and string.find(strDomain, strRuleDomain) then
-			return		
-		end
-	end
+	-- local tRuleList = g_tVideoList
+	-- for key, tRuleElem in pairs(tRuleList) do 
+		-- local strRuleDomain = tRuleElem["strDomain"]
+		-- if IsRealString(strRuleDomain) 
+			-- and string.find(strDomain, strRuleDomain) then
+			-- return		
+		-- end
+	-- end
 	
-	local nNewRuleCount = #g_tRuleList+1
-	g_tRuleList[nNewRuleCount] = {}
-	g_tRuleList[nNewRuleCount]["strTitle"] = strName
-	g_tRuleList[nNewRuleCount]["strDomain"] = strDomain
-	g_tRuleList[nNewRuleCount]["tExtraPath"] = {}
-	g_tRuleList[nNewRuleCount]["bUserDefine"] = true
+	-- local nNewRuleCount = #g_tVideoList+1
+	-- g_tVideoList[nNewRuleCount] = {}
+	-- g_tVideoList[nNewRuleCount]["strTitle"] = strName
+	-- g_tVideoList[nNewRuleCount]["strDomain"] = strDomain
+	-- g_tVideoList[nNewRuleCount]["bUserDefine"] = true
 end
 
 
