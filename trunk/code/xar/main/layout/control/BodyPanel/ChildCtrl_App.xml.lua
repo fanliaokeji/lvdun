@@ -48,7 +48,7 @@ function ShowItemList(objRootCtrl, tAppList, bDownLoad)
 	--顺序创建
 	for nIndex, tItem in ipairs(tAppList) do
 		if type(tItem) == "table" then
-			local strImageName = tItem["strImageName"]
+			local strImageName = tostring(tItem["strKeyName"])..".png"
 			local strImagePath = strImageBaseDir.."\\"..tostring(strImageName)
 	
 			if tipUtil:QueryFileExists(strImagePath) then
@@ -110,7 +110,7 @@ function DownLoadImage(objRootCtrl, tItem)
 		return
 	end
 	
-	local strImageName = tItem["strImageName"] 
+	local strImageName = tostring(tItem["strKeyName"])..".png"
 	local strSavePath = strImageBaseDir.."\\"..tostring(strImageName)
 	
 	IncreaseDownLoadFlag()
@@ -367,6 +367,7 @@ function OpenLinkAfterClick(objUIItem)
 	local tItemInfo = attr.tItemInfo
 	local nOpenType = tItemInfo.nOpenType
 	local strOpenLink = tItemInfo.strOpenLink
+	local strKeyName = tItemInfo.strKeyName or ""
 	
 	if not IsRealString(strOpenLink) then
 		return
@@ -374,6 +375,7 @@ function OpenLinkAfterClick(objUIItem)
 	
 	if nOpenType == 1 then
 		tipUtil:OpenURL(strOpenLink)
+		SendAppReport(strKeyName, 1)
 	elseif nOpenType == 2 then
 		OpenSoftware(objUIItem, tItemInfo)
 	end	
@@ -383,6 +385,7 @@ end
 function OpenSoftware(objUIItem, tItemInfo)
 	local strRegPath = tItemInfo.strRegPath or ""
 	local strExeName = tItemInfo.strExeName or ""
+	local strKeyName = tItemInfo.strKeyName or ""
 	
 	local strInstallDir = RegQueryValue(strRegPath)
 	if string.lower(strExeName) == "baidusd.exe" then
@@ -390,15 +393,18 @@ function OpenSoftware(objUIItem, tItemInfo)
 		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
 	end
 	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
-	
+	XLMessageBox(tostring(strInstallPath))
 	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strInstallPath) then
 		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
+		SendAppReport(strKeyName, 2)
 	else
-		DownSoftwareSilently(objUIItem, tItemInfo)
+		DownLoadSoftware(objUIItem, tItemInfo)
+		SendAppReport(strKeyName, 3)
 	end
 end
 
-function DownSoftwareSilently(objUIItem, tItemInfo)
+
+function DownLoadSoftware(objUIItem, tItemInfo)
 	local objRootCtrl = objUIItem:GetOwnerControl()
 	local attr = objRootCtrl:GetAttribute()
 	if attr.bIsDownLoading then
@@ -420,7 +426,7 @@ function DownSoftwareSilently(objUIItem, tItemInfo)
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 	tipAsynUtil:AsynGetHttpFile(strOpenLink, strSavePath, false
 	, function(bRet, strRealPath)
-		TipLog("[DownSoftwareSilently] strOpenLink:"..tostring(strOpenLink)
+		TipLog("[DownLoadSoftware] strOpenLink:"..tostring(strOpenLink)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
 				
 		attr.bIsDownLoading = false
@@ -430,6 +436,21 @@ function DownSoftwareSilently(objUIItem, tItemInfo)
 		
 		tipUtil:ShellExecute(0, "open", strRealPath, strCommand, 0, "SW_HIDE")
 	end)	
+end
+
+-- 1 浏览器打开链接
+-- 2 激活软件
+-- 3 下载软件 
+function SendAppReport(strKeyName, nType)
+	local tStatInfo = {}
+	tStatInfo.strEC = "AppPanel"
+	tStatInfo.strEA = strKeyName
+	tStatInfo.strEL = tostring(nType)
+	
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
 end
 
 

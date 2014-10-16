@@ -110,6 +110,9 @@ function CreateFilterListener(objRootCtrl)
 			return
 		end
 		
+		local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+		tFunctionHelper.PopupBubbleOneDay()
+		
 		local objMainBodyCtrl = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
 		if objMainBodyCtrl == nil then
 			TipLog("[OnFilterResult] get objMainBodyCtrl failed")
@@ -139,6 +142,7 @@ function CreateFilterListener(objRootCtrl)
 		end
 	end
 end
+
 
 function ShowPopupWindow(strDomain)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")

@@ -2,6 +2,9 @@ local gTipInfoTab = {}
 local gFilterConfigInfo = {}
 local gVideoList = {}
 
+local gStatCount = 0
+local gTimeoutTimerId = nil
+
 local gbLoadCfgSucc = false
 local g_tipNotifyIcon = nil
 local tipUtil = XLGetObject("GS.Util")
@@ -29,7 +32,25 @@ function RegisterFunctionObject(self)
 						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 		TipLog("TipConvStatistic: " .. tostring(strUrl))
 		
-		tipAsynUtil:AsynSendHttpStat(strUrl)
+		gStatCount = gStatCount + 1
+		if not gForceExit and tStat.Exit then
+			gForceExit = true
+		end
+		tipAsynUtil:AsynSendHttpStat(strUrl, function()
+			gStatCount = gStatCount - 1
+			if gStatCount == 0 and gForceExit then
+				ExitTipWnd()
+			end
+		end)
+		
+		local iStatCount = gStatCount
+		if gForceExit and iStatCount > 0 and gTimeoutTimerId == nil then	--开启定时退出定时器
+			local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
+			gTimeoutTimerId = timeMgr:SetTimer(function(Itm, id)
+				Itm:KillTimer(id)
+				ExitTipWnd()
+			end, 15000 * iStatCount)
+		end
 	end
 	
 	local obj = {}
@@ -44,7 +65,7 @@ function RegisterFunctionObject(self)
 	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
 	obj.GetVideoListFromMem = GetVideoListFromMem
 	obj.SaveVideoListToMem = SaveVideoListToMem
-	obj.ExitTipWnd = ExitTipWnd
+	obj.ReportAndExit = ReportAndExit
 	obj.ShowPopupWndByName = ShowPopupWndByName
 	obj.GetCfgPathWithName = GetCfgPathWithName
 	obj.LoadTableFromFile = LoadTableFromFile
@@ -56,6 +77,7 @@ function RegisterFunctionObject(self)
 	obj.GetVideoDomainState = GetVideoDomainState
 	obj.EnableWhiteDomain = EnableWhiteDomain
 	obj.EnableVideoDomain = EnableVideoDomain
+	obj.PopupBubbleOneDay = PopupBubbleOneDay
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -126,8 +148,6 @@ end
 function ExitTipWnd(statInfo)
 	SaveAllConfig()	
 	HideTray()
-	DestroyMainWnd()
-	SendExitReport()
 	
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
@@ -299,6 +319,26 @@ function InitTrayTipWnd(objHostWnd)
 end
 
 
+function PopupBubbleOneDay()
+	local tUserConfig = GetUserConfigFromMem() or {}
+	local nLastBubbleUTC = tonumber(tUserConfig["nLastBubbleUTC"]) 
+	local bBubbleRemind = FetchValueByPath(tUserConfig, {"tConfig", "BubbleRemind", "bState"})
+	
+	if not bBubbleRemind then
+		return
+	end
+
+	if not IsNilString(nLastBubbleUTC) and not CheckTimeIsAnotherDay(nLastBubbleUTC) then
+		return
+	end
+	
+	if g_tipNotifyIcon then
+		g_tipNotifyIcon:ShowNotifyIconTip(true, "绿盾广告管家\r\n已为您屏蔽骚扰广告")
+		tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
+	end
+end
+
+
 function CreateTrayTipWnd(objHostWnd)
 	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
 	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
@@ -366,7 +406,7 @@ function ShowPopupMenu(uHostWnd, uObjTree)
 	
 	--函数会阻塞
 	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
-	TipLog("[CreateTrayTipWnd] end menu")
+	TipLog("[ShowPopupMenu] end menu")
 	
 	return bOk
 end
@@ -737,7 +777,9 @@ function SendStartupReport(bShowWnd)
 end
 
 
-function SendExitReport()
+function ReportAndExit()
+	DestroyMainWnd()
+	
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
 	
@@ -753,11 +795,10 @@ function SendExitReport()
 			iLastTime = nCurTime - iTimeStart
 		end
 	end
-	
+
 	tStatInfo.strEC = "exit"
-	-- tStatInfo.strEA = "filtercount"
-	-- tStatInfo.strEL = nFilterCount or ""
 	tStatInfo.strEV = iLastTime
+	tStatInfo.Exit = true
 		
 	FunctionObj.TipConvStatistic(tStatInfo)
 end

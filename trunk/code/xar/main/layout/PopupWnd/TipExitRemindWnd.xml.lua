@@ -22,6 +22,6 @@ end
 
 function OnClickQuit(self)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	tFunctionHelper.ExitTipWnd()
+	tFunctionHelper.ReportAndExit()
 end
 
