@@ -2,9 +2,9 @@
 function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
-			["strVersion"] = "1.1",
+			["strVersion"] = "1.0.0.2",
 			["strPacketURL"] = "http://greenshield.media.com/greenshield/greenshield_pak.exe",
-			["strInroduce"] = {
+			["tInroduce"] = {
 				"1.开发家庭控制功能",
 				"2.视频过滤优化",
 				"3.修复部分bug",

@@ -1,5 +1,32 @@
 function GetSubTable()
 	local t = {
+		["tBlackList"] = {
+			[1] = {
+				["strName"] = "1", 
+				["bState"] = true, 
+				["strDomain"] = "youku.com", 
+			}, 
+			[2] = {
+				["strName"] = "1", 
+				["bState"] = true, 
+				["strDomain"] = "iqiyi.com", 
+			}, 
+			[3] = {
+				["strName"] = "1", 
+				["bState"] = true, 
+				["strDomain"] = "1", 
+			}, 
+			[4] = {
+				["strName"] = "2", 
+				["bState"] = true, 
+				["strDomain"] = "1", 
+			}, 
+			[5] = {
+				["strName"] = "3", 
+				["bState"] = true, 
+				["strDomain"] = "3", 
+			}, 
+		}, 
 		["tWhiteList"] = {
 			[1] = {
 				["strName"] = "百度", 
@@ -22,86 +49,54 @@ function GetSubTable()
 				["strDomain"] = "sohu.com", 
 			}, 
 			[5] = {
-				["strName"] = "cctv", 
-				["bState"] = true, 
-				["strDomain"] = "cctv.com", 
-			},
-			[6] = {
 				["strName"] = "新浪", 
 				["bState"] = true, 
 				["strDomain"] = "sina.com", 
 			}, 
-			[7] = {
+			[6] = {
 				["strName"] = "网易", 
 				["bState"] = true, 
 				["strDomain"] = "163.com", 
 			}, 
-			[8] = {
+			[7] = {
 				["strName"] = "微博", 
 				["bState"] = true, 
 				["strDomain"] = "weibo.com", 
-			},
-			[9] = {
+			}, 
+			[8] = {
 				["strName"] = "淘宝", 
 				["bState"] = true, 
 				["strDomain"] = "taobao.com", 
-			}, 	
-			[10] = {
+			}, 
+			[9] = {
 				["strName"] = "天猫", 
 				["bState"] = true, 
 				["strDomain"] = "tmall.com", 
-			},	
-			[11] = {
+			}, 
+			[10] = {
 				["strName"] = "央视网", 
 				["bState"] = true, 
 				["strDomain"] = "cntv.com", 
-			},
-			[12] = {
+			}, 
+			[11] = {
 				["strName"] = "人民网", 
 				["bState"] = true, 
 				["strDomain"] = "people.com.cn", 
-			},
-			[13] = {
+			}, 
+			[12] = {
 				["strName"] = "新华网", 
 				["bState"] = true, 
 				["strDomain"] = "xinhuanet.com", 
-			},				
-			[14] = {
-				["strName"] = "hao123", 
+			}, 
+			[13] = {
+				["strName"] = "好123", 
 				["bState"] = true, 
 				["strDomain"] = "hao123.com", 
-			},	
-			[15] = {
+			}, 
+			[14] = {
 				["strName"] = "360", 
 				["bState"] = true, 
 				["strDomain"] = "360.cn", 
-			},	
-		}, 
-		["tBlackList"] = {
-			[1] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "youku.com", 
-			}, 
-			[2] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "1", 
-			}, 
-			[3] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "1", 
-			}, 
-			[4] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "1", 
-			}, 
-			[5] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "iqiyi.com", 
 			}, 
 		}, 
 	}
