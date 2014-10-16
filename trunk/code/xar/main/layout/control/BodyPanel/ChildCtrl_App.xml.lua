@@ -1,30 +1,77 @@
 local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
+
 local g_bHasInit = false
+local g_bAppListDownLoading = false
+
 local g_nCurTopIndex = 1
 local g_nShowedCount = 0
 local g_nDownLoagFlag = 0
 local g_tDownLoadList = {}
 
+function OnInitControl(self)
+	InitAppCtrl(self)
+end
+
 function OnShowPanel(self, bShow)
-	if not g_bHasInit then
+	if not g_bHasInit and not g_bAppListDownLoading then
 		InitAppCtrl(self)
 	end
 end
 
 
 function InitAppCtrl(self)
-	local tAppList = LoadAppList()
-	if type(tAppList) ~= "table" then
-		TipLog("[InitAppCtrl] LoadAppList failed")
+	local function ShowAppPanel(strAppListName)
+		local tAppList = LoadAppList(strAppListName)
+		if type(tAppList) ~= "table" then
+			TipLog("[InitAppCtrl] LoadDefaultAppList failed")
+			return
+		end
+		
+		local bSucc = ShowItemList(self, tAppList, true)
+		if bSucc then
+			g_bHasInit = true
+		end
+	end
+
+	DownLoadAppList(ShowAppPanel)
+end
+
+
+function DownLoadAppList(fnCallBack)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
+	
+	local strAppListURL = tUserConfig["strServerAppListURL"]
+	if not IsRealString(strAppListURL) then
+		fnCallBack("AppList.dat")
 		return
 	end
 	
-	local bSucc = ShowItemList(self, tAppList, true)
-	if bSucc then
-		g_bHasInit = true
+	local strSavePath = FunctionObj.GetCfgPathWithName("ServerAppList.dat")
+	if not IsRealString(strSavePath) then
+		fnCallBack("AppList.dat")
+		return
 	end
+	
+	local nTimeInMs = 10*1000
+	g_bAppListDownLoading = true
+	
+	FunctionObj.NewAsynGetHttpFile(strAppListURL, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[InitAppCtrl] bRet:"..tostring(bRet)
+				.." strRealPath:"..tostring(strRealPath))
+		
+		if 0 == bRet then
+			fnCallBack("ServerAppList.dat")
+		else
+			fnCallBack("AppList.dat")
+		end
+		
+		g_bAppListDownLoading = false
+	end, nTimeInMs)
 end
+
 
 
 function ShowItemList(objRootCtrl, tAppList, bDownLoad)
@@ -139,9 +186,9 @@ function EventRouteToFather(self)
 end
 
 
-function LoadAppList()
+function LoadAppList(strAppListName)
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	local strCfgPath = FunctionObj.GetCfgPathWithName("AppList.dat")
+	local strCfgPath = FunctionObj.GetCfgPathWithName(strAppListName)
 	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath)
 	return infoTable
 end
@@ -393,7 +440,6 @@ function OpenSoftware(objUIItem, tItemInfo)
 		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
 	end
 	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
-	XLMessageBox(tostring(strInstallPath))
 	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strInstallPath) then
 		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
 		SendAppReport(strKeyName, 2)

@@ -8,7 +8,7 @@ end
 
 
 function OnSelect_Website(self)
-	OpenIndexURL()
+	OpenConfigURL("strIndexURL")
 end
 
 
@@ -36,7 +36,7 @@ end
 
 
 function OnSelect_Contact(self)
-	OpenIndexURL()
+	OpenConfigURL("strContactURL")
 end
 
 
@@ -63,14 +63,14 @@ function ShowUpdateWnd()
 end
 
 
-function OpenIndexURL()
+function OpenConfigURL(strUrlKey)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
 		return
 	end
 	
 	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
-	local strIndexURL = tUserConfig["strIndexURL"]
+	local strIndexURL = tUserConfig[strUrlKey]
 	if IsRealString(strIndexURL) then
 		tipUtil:OpenURL(strIndexURL)
 	end	

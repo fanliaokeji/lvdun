@@ -78,6 +78,7 @@ function RegisterFunctionObject(self)
 	obj.EnableWhiteDomain = EnableWhiteDomain
 	obj.EnableVideoDomain = EnableVideoDomain
 	obj.PopupBubbleOneDay = PopupBubbleOneDay
+	obj.NewAsynGetHttpFile = NewAsynGetHttpFile
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -135,6 +136,34 @@ function QueryAllUsersDir()	--获取AllUser路径
 	end
 	return bRet, strRet
 end
+
+
+function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutInMS)
+	local bHasAlreadyCallback = false
+	local timerID = nil
+	
+	tipAsynUtil:AsynGetHttpFile(strUrl, strSavePath, bDelete, 
+		function (nRet, strTargetFilePath, strHeaders)
+			if timerID ~= nil then
+				tipAsynUtil:KillTimer(timerID)
+			end
+			if not bHasAlreadyCallback then
+				bHasAlreadyCallback = true
+				funCallback(nRet, strTargetFilePath, strHeaders)
+			end
+		end)
+	
+	timerID = tipAsynUtil:SetTimer(nTimeoutInMS or 2 * 60 * 1000,
+		function (nTimerId)
+			tipAsynUtil:KillTimer(nTimerId)
+			timerID = nil
+			if not bHasAlreadyCallback then
+				bHasAlreadyCallback = true
+				funCallback(-2)
+			end
+		end)
+end
+
 
 
 function SaveAllConfig()
@@ -783,7 +812,7 @@ function ReportAndExit()
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
 	
-	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
+	local tUserConfig = GetUserConfigFromMem() or {}
 	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"])
 		
 	local iLastTime = 0	--失败认为展示时长为0

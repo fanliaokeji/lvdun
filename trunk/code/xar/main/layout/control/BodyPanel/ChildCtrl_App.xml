@@ -68,6 +68,9 @@
 					</eventlist>
 				</obj>	
 			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ChildCtrl_App.xml.lua" func="OnInitControl"/>
+			</eventlist>
 		</objtemplate>
 	</control>
 	
