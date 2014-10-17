@@ -29,41 +29,43 @@ bool Url::Init(const char* url)
     tmpstr = strchr(curstr, ':');
     if ( NULL == tmpstr ) {
         /* Not found the character */
-        return false;
+       // return false;
     }
-    /* Get the scheme length */
-    len = tmpstr - curstr;
-    /* Check restrictions */
-    for ( i = 0; i < len; i++ ) {
-        if ( !IsSchemeChar(curstr[i]) ) {
-            /* Invalid format */
-            return false;
-        }
-    }
-    /* Copy the scheme to the storage */
-    m_scheme.assign(curstr, len);
+	else
+	{
+		/* Get the scheme length */
+		len = tmpstr - curstr;
+		/* Check restrictions */
+		for ( i = 0; i < len; i++ ) {
+			if ( !IsSchemeChar(curstr[i]) ) {
+				/* Invalid format */
+				return false;
+			}
+		}
+		/* Copy the scheme to the storage */
+		m_scheme.assign(curstr, len);
 
-    /* Make the character to lower if it is upper case. */
-    for ( i = 0; i < len; i++ ) {
-        m_scheme[i] = tolower(m_scheme[i]);
-    }
+		/* Make the character to lower if it is upper case. */
+		for ( i = 0; i < len; i++ ) {
+			m_scheme[i] = tolower(m_scheme[i]);
+		}
 
-    /* Skip ':' */
-    tmpstr++;
-    curstr = tmpstr;
+		/* Skip ':' */
+		tmpstr++;
+		curstr = tmpstr;
 
-    /*
-     * //<user>:<password>@<host>:<port>/<url-path>
-     * Any ":", "@" and "/" must be encoded.
-     */
-    /* Eat "//" */
-    for ( i = 0; i < 2; i++ ) {
-        if ( '/' != *curstr ) {
-            return false;
-        }
-        curstr++;
-    }
-
+		/*
+		 * //<user>:<password>@<host>:<port>/<url-path>
+		 * Any ":", "@" and "/" must be encoded.
+		 */
+		/* Eat "//" */
+		for ( i = 0; i < 2; i++ ) {
+			if ( '/' != *curstr ) {
+				return false;
+			}
+			curstr++;
+		}
+	}
     /* Check if the user (and password) are specified. */
     userpass_flag = 0;
     tmpstr = curstr;
