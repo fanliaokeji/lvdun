@@ -964,6 +964,8 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 									this->m_bufferedResponseData += "\r\n";
 								}
 								this->m_bufferedResponseData += "\r\n";
+								// Ô¤ÁôÄÚ´æ
+								this->m_bufferedResponseData.reserve(this->m_bufferedResponseData.size() + modifiedContentLength);
 								for(std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> >::const_iterator content_list_iter = content_list.begin(); content_list_iter != content_list.end(); ++ content_list_iter) {
 									this->m_bufferedResponseData.append(content_list_iter->first.first, content_list_iter->first.second);
 								}
