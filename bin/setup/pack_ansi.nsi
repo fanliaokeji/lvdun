@@ -138,7 +138,7 @@ Function DoInstall
   ;WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
 FunctionEnd
 
-Function CmdSelentInstall
+Function CmdSilentInstall
 	${GetParameters} $R1
 	${GetOptions} $R1 "/silent"  $R0
 	IfErrors FunctionReturn 0
@@ -147,9 +147,29 @@ Function CmdSelentInstall
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
-	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	SetOverwrite on
-	File "bin\DsSetUpHelper.dll"
+	;SetOutPath "$TEMP\${PRODUCT_NAME}"
+	;SetOverwrite on
+	;File "bin\DsSetUpHelper.dll"
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 != ""
+		StrCpy $INSTDIR "$0"
+	${EndIf}
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
+	IfFileExists $0 0 StartInstall
+		;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
+		${GetFileVersion} $0 $1
+		${VersionCompare} $1 ${PRODUCT_VERSION} $2
+		${If} $2 == "2" ;已安装的版本低于该版本
+			Goto StartInstall
+		${Else}
+			${GetParameters} $R1
+			${GetOptions} $R1 "/write"  $R0
+			IfErrors 0 +2
+			Abort
+			Goto StartInstall
+		${EndIf}
+	StartInstall:
+	
 	CheckProcessExist:
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 	Pop $R0
@@ -157,10 +177,7 @@ Function CmdSelentInstall
 		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
 		Goto CheckProcessExist
 	${EndIf}
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	${If} $0 != ""
-		StrCpy $INSTDIR "$0"
-	${EndIf}
+	
 	Call DoInstall
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -209,6 +226,7 @@ Function CmdUnstall
 	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 	 ;删除自用的注册表信息
 	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	Abort
 	FunctionReturn:
 FunctionEnd
 
@@ -223,7 +241,7 @@ Function .onInit
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
 	File "license\license.txt"
-	Call CmdSelentInstall
+	Call CmdSilentInstall
 	Call CmdUnstall
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
 	Pop $R0
@@ -235,12 +253,19 @@ Function .onInit
 		;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
 		${GetFileVersion} $0 $1
 		${VersionCompare} $1 ${PRODUCT_VERSION} $2
+		${GetParameters} $R1
+		${GetOptions} $R1 "/write"  $R0
+		IfErrors 0 +3
+		push "false"
+		pop $R0
 		${If} $2 == "2" ;已安装的版本低于该版本
 			Goto StartInstall
 		${ElseIf} $2 == "0" ;版本相同
+			 StrCmp $R0 "false" 0 StartInstall
 			 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
 			 Abort
 		${ElseIf} $2 == "1"	;已安装的版本高于该版本
+			StrCmp $R0 "false" 0 StartInstall
 			MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
 			Abort
 		${EndIf}
