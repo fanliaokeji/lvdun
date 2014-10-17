@@ -56,6 +56,10 @@ TcpProxyConnection::TcpProxyConnection(boost::asio::io_service& io_service) :
 {
 }
 
+TcpProxyConnection::~TcpProxyConnection()
+{
+}
+
 boost::shared_ptr<TcpProxyConnection> TcpProxyConnection::CreateConnection(boost::asio::io_service& io_service)
 {
 	return boost::shared_ptr<TcpProxyConnection>(new TcpProxyConnection(io_service));
@@ -556,6 +560,9 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 
 void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
+	if(this->m_state == CS_WRITE_BLOCK_RESPONSE) {
+		return;
+	}
 	if(!error) {
 		if(this->m_state == CS_TUNNELLING) {
 			if(this->m_bufferedResponseData.empty()) {
@@ -1054,6 +1061,18 @@ void TcpProxyConnection::HandleWriteDataToUserAgent(const boost::system::error_c
 				this->m_state = CS_READ_HTTP_RESPONSE_CONTENT;
 			}
 		}
+		else if(this->m_state == CS_WRITE_BLOCK_RESPONSE) {
+			boost::system::error_code ec;
+			if(this->m_targetServerSocket.is_open()) {
+				this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+				this->m_targetServerSocket.close(ec);
+			}
+			if(this->m_userAgentSocket.is_open()) {
+				this->m_userAgentSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+				this->m_userAgentSocket.close(ec);
+			}
+			return;
+		}
 		this->AsyncReadDataFromTargetServer();
 	}
 	else {
@@ -1097,18 +1116,6 @@ void TcpProxyConnection::HandleWriteDataToTargetServer(const boost::system::erro
 			else {
 				assert(false);
 			}
-		}
-		else if(this->m_state == CS_WRITE_BLOCK_RESPONSE) {
-			boost::system::error_code ec;
-			if(this->m_targetServerSocket.is_open()) {
-				this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-				this->m_targetServerSocket.close(ec);
-			}
-			if(this->m_userAgentSocket.is_open()) {
-				this->m_userAgentSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-				this->m_userAgentSocket.close(ec);
-			}
-			return;
 		}
 		this->AsyncReadDataFromUserAgent();
 	}

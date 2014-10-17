@@ -203,6 +203,7 @@ private:
 	TcpProxyConnection(boost::asio::io_service& io_service);
 public:
 	static boost::shared_ptr<TcpProxyConnection> CreateConnection(boost::asio::io_service& io_service);
+	~TcpProxyConnection();
 	boost::asio::ip::tcp::socket& GetUserAgentSocketRef();
 	void AsyncStart(unsigned short listen_port);
 private:
