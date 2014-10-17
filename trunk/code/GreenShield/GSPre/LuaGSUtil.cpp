@@ -292,13 +292,13 @@ int LuaGSUtil::UpdateWhiteHost(lua_State* pLuaState)
 	std::string strAnsi;
 	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
 
-	PUPADTE_CFG_PARAM pw = new UPADTE_CFG_PARAM;
+	UPADTE_CFG_PARAM *pw = new UPADTE_CFG_PARAM;
 	pw->host = strAnsi;
 	pw->istate = 0;
 	pw->bEnable = bEnable;
 	pw->flag = UPDATE_CFG_WHITE;
 
-	_beginthreadex(NULL, 0, UpdateCfgProc, &pw, 0, NULL);
+	_beginthreadex(NULL, 0, UpdateCfgProc, (LPVOID)pw, 0, NULL);
 	return 1;
 }
 
