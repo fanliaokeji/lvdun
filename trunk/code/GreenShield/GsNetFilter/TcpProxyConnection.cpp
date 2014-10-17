@@ -138,7 +138,7 @@ void TcpProxyConnection::AsyncStart(unsigned short listen_port)
 	ScopeResourceHandle<HANDLE, BOOL(WINAPI*)(HANDLE)> autoCloseAckEvent(hAckEvent, ::CloseHandle);
 
     ::SetEvent(hEvent);
-    DWORD dwWaitResult = ::WaitForSingleObject(hAckEvent, 5000);
+    DWORD dwWaitResult = ::WaitForSingleObject(hAckEvent, 2000);
     if(dwWaitResult != WAIT_OBJECT_0) {
         IPC_ERROR_MSG_LOG("Failed to wait AckEvent Error:" << ::GetLastError());
         return;
@@ -497,7 +497,6 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 					if(this->m_bytesOfRequestContentHasRead > *this->m_requestContentLength) {
 						// 读取到的消息主体大于 Content-Length所指定的大小
 						ERROR_MSG_LOG("The request content data is larger than the Content-Length value");
-						this->m_bufferedRequestData.append(&this->m_upstreamBuffer[0], &this->m_upstreamBuffer[0] + bytes_transferred);
 						this->m_state = CS_TUNNELLING;
 					}
 				}
