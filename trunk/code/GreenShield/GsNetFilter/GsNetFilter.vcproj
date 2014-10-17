@@ -315,6 +315,34 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<Filter
+			Name="ParseABP"
+			>
+			<File
+				RelativePath=".\ParseABP\ADBFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParseABP\ADBFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParseABP\CParseUrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParseABP\CParseUrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParseABP\FilterManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParseABP\FilterManager.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

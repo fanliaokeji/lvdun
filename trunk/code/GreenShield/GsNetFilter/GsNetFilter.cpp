@@ -5,6 +5,7 @@
 #include "GsNetFilter.h"
 #include "HttpRequestFilter.h"
 #include "TcpProxyServer.h"
+#include "./ParseABP/FilterManager.h"
 #include <boost/asio.hpp>
 
 #include <process.h>
@@ -66,4 +67,27 @@ BOOL GsSetHook(const std::wstring& dllPath)
 		return false;
 	}
 	return ::SetWindowsHookEx(WH_CALLWNDPROC, hookProc, hinstDLL, 0) == NULL ? FALSE : TRUE;
+}
+
+FilterManager* GsGetFilterManager(const std::wstring & filename)
+{
+	return FilterManager::getManager(filename);
+}
+
+bool GsUpdateConfigVideoHost(const Url & url,int istate)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->updateConfigVideoHost(url, istate);
+}
+
+bool GsUpdateConfigWhiteHost(const Url & url,bool bEnable)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->updateConfigWhiteHost(url, bEnable);
 }

@@ -22,6 +22,14 @@
 //extern GSNETFILTER_API int nGsNetFilter;
 //
 //GSNETFILTER_API int fnGsNetFilter(void);
+
 GSNETFILTER_API BOOL GsEnable(BOOL bEnable);
 GSNETFILTER_API HANDLE GsStartProxy();
 GSNETFILTER_API BOOL GsSetHook(const std::wstring& dllPath);
+
+class GSNETFILTER_API Url;
+#include "./CParseUrl.h"
+class FilterManager;
+GSNETFILTER_API FilterManager* GsGetFilterManager(const std::wstring & filename);
+GSNETFILTER_API bool GsUpdateConfigVideoHost(const Url & url,int istate = 0);
+GSNETFILTER_API bool GsUpdateConfigWhiteHost(const Url & url,bool bEnable);
