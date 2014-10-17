@@ -2175,7 +2175,7 @@ void TcpProxyConnection::SendNotify(const std::string& url) const
 		char* szUrl = new char[url.size() + 1];
 		std::copy(url.begin(), url.end(), szUrl);
 		szUrl[url.size()] = '\0';
-		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(szUrl)) {
+		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(szUrl))) {
 			delete szUrl;
 		}
 	}
