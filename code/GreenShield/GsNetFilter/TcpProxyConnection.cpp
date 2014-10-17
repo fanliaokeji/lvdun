@@ -18,7 +18,7 @@
 #include "HttpRequestFilter.h"
 #include "Decompress.h"
 #include "ABPRuleHelper.h"
-#include "../GSPre/PraseABP/FilterManager.h"
+#include "./ParseABP/FilterManager.h"
 
 #define POPT_LOG_USE_CLOG
 
