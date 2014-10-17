@@ -143,7 +143,7 @@ Function CmdSilentInstall
 	${GetOptions} $R1 "/silent"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
@@ -192,6 +192,11 @@ Function CmdUnstall
 	${GetOptions} $R1 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
+	
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_UNINSTALL_MUTEX") i .r1 ?e'
+	Pop $R0
+	StrCmp $R0 0 +2
+	Abort
 	CheckProcessExist:
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 	Pop $R0
@@ -243,10 +248,10 @@ Function .onInit
 	File "license\license.txt"
 	Call CmdSilentInstall
 	Call CmdUnstall
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
-	StrCmp $R0 0 +3
-	MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
+	StrCmp $R0 0 +2
+	;MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
 	Abort
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
@@ -902,6 +907,23 @@ Var Bmp_FinishUnstall
 Var Btn_FinishUnstall
 
 Function un.onInit
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_UNINSTALL_MUTEX") i .r1 ?e'
+	Pop $R0
+	StrCmp $R0 0 +2
+	Abort
+	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+    ${If} $R0 != 0
+		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
+		 Abort
+		 CheckProcessExist:
+		 FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		 ${If} $R0 != 0
+			SendMessage $R0 ${WM_CLOSE} 0 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+			Sleep 100
+			Goto CheckProcessExist
+		 ${EndIf}
+    ${EndIf}
 	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
 	File `/ONAME=$PLUGINSDIR\un_finishbg.bmp` `images\un_finishbg.bmp`
@@ -965,20 +987,6 @@ FunctionEnd
 Function un.UNSD_TimerFun
     GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::KillTimer $0
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-    ${If} $R0 != 0
-		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
-		 SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
-		 Goto EndTimerFunction
-		 CheckProcessExist:
-		 FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		 ${If} $R0 != 0
-			SendMessage $R0 ${WM_CLOSE} 0 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 100
-			Goto CheckProcessExist
-		 ${EndIf}
-    ${EndIf}
     GetFunctionAddress $0 un.DoUninstall
     BgWorker::CallAndWait
 	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
