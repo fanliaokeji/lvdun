@@ -129,6 +129,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			if(pos == std::string::npos) {
 				return S_FALSE;
 			}
+			filename = filename.substr(pos + 1);
 			for(std::size_t index = 0; index < filename.size(); ++index) {
 				filename[index] = std::towlower(filename[index]);
 			}
