@@ -18,21 +18,24 @@ md %pdbdir%
 echo about create commit_setup_log.txt
 copy /y nul %pdbdir%\commit_setup_log.txt
 set sln="%basedir:~1,-1%GreenShield.sln"
-set outdir="%basedir:~1,-1%Release"
 echo rebuilding %sln%
 %vc% %sln% /Rebuild Release
 if not %errorlevel%==0 (
 	echo rebuild %sln% failed
 	goto done
 )
-cd /d %outdir%
+cd /d "%basedir:~1,-1%\Release"
 for /r %%i in (*.dll *.exe) do (
    call :printversion "%%i" %%~nxi
 )
-cd /d %basedir%
-for %%i in (.dll,.map,.exe,pdb) do (
-	copy /y %outdir%\*%%i %pdbdir%
+for %%b in (GreenShield,GsNet,GsNetFilter,GSPre) do (
+	for %%i in (.dll,.map,.exe,.pdb) do (
+		copy /y "%basedir:~1,-1%\Release\*%%i" %pdbdir%
+	)
+	md %pdbdir%\%%b_cod
+	copy /y "%basedir:~1,-1%%%b\Release\*.cod" %pdbdir%\%%b_cod\
 )
+echo ±‡“ÎÕÍ≥…
 goto done
 
 :printversion
