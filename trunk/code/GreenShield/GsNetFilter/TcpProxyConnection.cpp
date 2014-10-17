@@ -794,7 +794,8 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 								if(this->m_responseContentLength) {
 									if(this->m_responseContentEncoding == CE_GZIP || this->m_responseContentEncoding == CE_DEFLATE) {
 										bool decompressResult = false;
-										decodedResponseContent;
+										// 预留内存 gzip对web页面的平均压缩率为25%(1/4)左右 预留5倍的大小
+										decodedResponseContent.reserve((this->m_bufferedResponseData.size() - (doubleCrlfPos + 4)) * 5);
 										if(this->m_responseContentEncoding == CE_GZIP) {
 											GZipDecompressor gzipDecompressor;
 											decompressResult = gzipDecompressor.Decompress(&this->m_bufferedResponseData[0] + doubleCrlfPos + 4, this->m_bufferedResponseData.size() - (doubleCrlfPos + 4), decodedResponseContent, false) == Z_STREAM_END;
@@ -828,8 +829,14 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 											this->m_isThisRequestNeedModifyResponse = false;
 											break;
 									}
+									std::size_t total_chunk_size = 0;
+									for(std::list<std::pair<std::string::iterator, std::string::iterator> >::const_iterator iter = lst.begin(); iter != lst.end(); ++iter) {
+										total_chunk_size += std::distance(iter->first, iter->second);
+									}
 									if(this->m_responseContentEncoding == CE_GZIP || this->m_responseContentEncoding == CE_DEFLATE) {
 										bool decompressResult = false;
+										// 预留内存 gzip对web页面的平均压缩率为25%(1/4)左右 预留5倍的大小
+										decodedResponseContent.reserve(total_chunk_size * 5);
 										if(this->m_responseContentEncoding == CE_GZIP) {
 											GZipDecompressor gzipDecompressor;
 											int ret = Z_OK;
@@ -869,6 +876,8 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 										}
 									}
 									else {
+										// 预留内存
+										 decodedResponseContent.reserve(total_chunk_size);
 										for(std::list<std::pair<std::string::iterator, std::string::iterator> >::const_iterator iter = lst.begin(); iter != lst.end(); ++iter) {
 											decodedResponseContent.append(iter->first, iter->second);
 										}
