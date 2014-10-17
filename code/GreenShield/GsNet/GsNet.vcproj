@@ -46,6 +46,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				AssemblerOutput="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -65,6 +66,7 @@
 				LinkIncremental="2"
 				ModuleDefinitionFile="GsNet.def"
 				GenerateDebugInformation="true"
+				GenerateMapFile="true"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -121,6 +123,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				AssemblerOutput="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -140,6 +143,7 @@
 				LinkIncremental="1"
 				ModuleDefinitionFile="GsNet.def"
 				GenerateDebugInformation="true"
+				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
