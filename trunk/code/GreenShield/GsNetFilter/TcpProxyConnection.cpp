@@ -2172,11 +2172,10 @@ void TcpProxyConnection::SendNotify(const std::string& url) const
 	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
 	if(hNotifyWnd != NULL) 
 	{
-		std::auto_ptr<std::string> pUrl(new std::string(url));
 		char* szUrl = new char[url.size() + 1];
 		std::copy(url.begin(), url.end(), szUrl);
 		szUrl[url.size()] = '\0';
-		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(pUrl.get()) == FALSE)) {
+		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(szUrl)) {
 			delete szUrl;
 		}
 	}
