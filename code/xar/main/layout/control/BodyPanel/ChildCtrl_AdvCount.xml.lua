@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("GS.Util")
+local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_nFilterCountOneDay = 0
 local g_nFilterCountTotal = 0
 local g_tCountElemList = {}
@@ -112,7 +113,6 @@ function Inner_ChangeSwitchFilter(objFilterSwitch)
 end
 
 function LoadAdvCountCfg(objRootCtrl)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
 		return
 	end
@@ -139,7 +139,6 @@ end
 
 
 function SaveAdvCfgSepcifyKey(strKey, strValue)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.SaveUserConfigToMem) ~= "function" then
 		return
 	end
@@ -229,13 +228,14 @@ end
 
 
 function DoSthAnotherDay(objRootCtrl)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if not FunctionObj.CheckTimeIsAnotherDay(g_nLastClearUTC) then
+	if not tFunctionHelper.CheckTimeIsAnotherDay(g_nLastClearUTC) then
 		return 
 	end
+	TipLog("[DoSthAnotherDay] begin, lastutc:"..tostring(g_nLastClearUTC))
 	
 	ReportAdvCountInfo()
 	ClearAdvCount(objRootCtrl)
+	CheckUpdateVersion()
 	
 	local nCurUTC = tipUtil:GetCurrentUTCTime()
 	SaveAdvLastUTC(nCurUTC)
@@ -258,12 +258,46 @@ end
 
 
 function SendReport(tStatInfo)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(FunctionObj.TipConvStatistic) == "function" then
-		FunctionObj.TipConvStatistic(tStatInfo)
+	if type(tFunctionHelper.TipConvStatistic) == "function" then
+		tFunctionHelper.TipConvStatistic(tStatInfo)
 	end
 end
 
+
+--每天自动检查更新
+function CheckUpdateVersion()
+	local tUserCfg = tFunctionHelper.GetUserConfigFromMem() or {}
+	local bState = FetchValueByPath(tUserCfg, {"tConfig", "AutoUpdate", "bState"}) or false
+	if not bState then
+		return
+	end
+	
+	function TryShowUpdateWnd(bRet, strCfgPath)
+		if bRet ~= 0 or not tipUtil:QueryFileExists(strCfgPath) then
+			return
+		end
+		
+		local tServerConfig = tFunctionHelper.LoadTableFromFile(strCfgPath) or {}
+		local tNewVersionInfo = tServerConfig["tNewVersionInfo"]
+		if(type(tNewVersionInfo)) ~= "table" then
+			return 
+		end
+		
+		local strCurVersion = tFunctionHelper.GetGSVersion()
+		local strNewVersion = tNewVersionInfo.strVersion		
+		
+		if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
+			or not tFunctionHelper.CheckIsNewVersion(strNewVersion, strCurVersion) then
+			return
+		end
+	
+		tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
+	end	
+	
+	tFunctionHelper.DownLoadServerConfig(TryShowUpdateWnd)
+end
+
+----------------------------------
 
 function IsRealString(AString)
     return type(AString) == "string" and AString ~= ""
@@ -273,4 +307,15 @@ function TipLog(strLog)
 	if type(tipUtil.Log) == "function" then
 		tipUtil:Log("@@ChildCtrl_AdvCount: " .. tostring(strLog))
 	end
+end
+
+function FetchValueByPath(obj, path)
+	local cursor = obj
+	for i = 1, #path do
+		cursor = cursor[path[i]]
+		if cursor == nil then
+			return nil
+		end
+	end
+	return cursor
 end

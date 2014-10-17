@@ -1,6 +1,6 @@
 local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 local tipUtil = XLGetObject( "GS.Util" )
-local g_bAppListDownLoading = false
+local g_tNewVersionInfo = {}
 
 
 function OnCreate( self )
@@ -35,7 +35,7 @@ function OnShowWindow(self, bVisible)
 			ShowNoUpdate(objRootCtrl)
 			return
 		end	
-		
+
 		local tServerConfig = FunctionObj.LoadTableFromFile(strCfgPath) or {}
 		local tNewVersionInfo = tServerConfig["tNewVersionInfo"]
 		if(type(tNewVersionInfo)) ~= "table" then
@@ -46,16 +46,17 @@ function OnShowWindow(self, bVisible)
 		local strCurVersion = FunctionObj.GetGSVersion()
 		local strNewVersion = tNewVersionInfo.strVersion
 		if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
-			or string.lower(strCurVersion) == string.lower(strNewVersion) then
+			or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
 			ShowNoUpdate(objRootCtrl)
 			return
 		end
 		
 		ShowReadyUpdate(objRootCtrl, tNewVersionInfo)
+		g_tNewVersionInfo = tNewVersionInfo
 	end
 	
 	ShowCheckingImage(objRootCtrl)
-	DownLoadServerConfig(InitMainWnd)
+	FunctionObj.DownLoadServerConfig(InitMainWnd)
 end
 
 ----------------------------------------------------------------
@@ -89,41 +90,6 @@ end
 
 
 -----------
-function DownLoadServerConfig(fnCallBack)
-	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
-	
-	local strConfigURL = tUserConfig["strServerConfigURL"]
-	if not IsRealString(strConfigURL) then
-		fnCallBack(-1)
-		return
-	end
-	
-	local strSavePath = FunctionObj.GetCfgPathWithName("ServerConfig.dat")
-	if not IsRealString(strSavePath) then
-		fnCallBack(-1)
-		return
-	end
-	
-	local nTimeInMs = 30*1000
-	g_bAppListDownLoading = true
-	
-	FunctionObj.NewAsynGetHttpFile(strConfigURL, strSavePath, false
-	, function(bRet, strRealPath)
-		TipLog("[DownLoadServerConfig] bRet:"..tostring(bRet)
-				.." strRealPath:"..tostring(strRealPath))
-		
-		g_bAppListDownLoading = false
-		
-		if 0 == bRet then
-			fnCallBack(0, strSavePath)
-		else
-			fnCallBack(bRet)
-		end		
-	end, nTimeInMs)
-
-end
-
-
 function ShowCheckingImage(objRootCtrl)
 	local objBkg = objRootCtrl:GetObject("TipUpdate.Bkg")
 	if not objBkg then
@@ -149,20 +115,18 @@ function ShowCheckingImage(objRootCtrl)
 	objProgressBar:SetChildrenVisible(false)
 	
 	objTitle:SetText("正在为您检查更新......")
-	
+
 	local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 	local nIndex = 0
 	gCheckTimerId = timeMgr:SetTimer(function(Itm, id)
 		local nTempIdx = math.mod(nIndex, 4)+1
 		local strImageID = "GreenWall.UpdateWnd.Checking_"..tostring(nTempIdx)
 		objCheckingImage:SetResID(strImageID)
-		
 		nIndex = nIndex+1
 		if nIndex >= 100 then
 			nIndex = 0
 		end		
 	end, 200)
-	
 end
 
 
@@ -212,18 +176,41 @@ end
 
 function SetProgBar(objProgBarLayout)
 	local objProgBar = objProgBarLayout:GetObject("TipUpdate.ProgressBar")
-	if not objProgBar then
+	local objOutText = objProgBarLayout:GetObject("TipUpdate.ProgressBar.Text")
+	if not objProgBar or not objOutText then
 		return
 	end
-	local l_nProgress = 0
 	
-
-	function DownLoadNewVersion()
-
-		objProgBar:SetProgress(l_nProgress)
+	local objInnerText = objProgBar:GetObject("TipUpdate.ProgressBar.InnerText")
+	if not objInnerText then
+		return
+	end
+	
+	function SetProgState(bRet, strPacketPath, nProcess)
+		if bRet == -2 then
+			objProgBar:SetProgress(nProcess)
+			local strInnerText = tostring(nProcess) .. "%"
+			local strOutText = "正在下载（"..strInnerText.."）"
+			objOutText:SetText(strOutText)
+			objInnerText:SetText(strInnerText)
+		end
+		
+		if bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
+			tipUtil:ShellExecute(0, "open", strPacketPath, 0, 0, "SW_SHOWNORMAL")
+		end
 	end
 
-	DownLoadNewVersion()
+	DownLoadNewVersion(SetProgState)
+end
+
+
+function DownLoadNewVersion(fnCallBack)
+	local strUrl = g_tNewVersionInfo["strPacketURL"]
+	if not IsRealString(strUrl) then
+		fnCallBack()
+	end
+	local strSavePath = tipUtil:GetSystemTempPath()
+	
 end
 
 

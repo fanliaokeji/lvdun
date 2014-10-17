@@ -10,6 +10,12 @@ local g_tipNotifyIcon = nil
 local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
 
+local g_tPopupWndList = {
+	[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
+	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+	[3] = {"TipAboutWnd", "TipAboutTree"},
+	[4] = {"TipUpdateWnd", "TipUpdateTree"},
+}
 -----------------
 
 function RegisterFunctionObject(self)
@@ -79,6 +85,8 @@ function RegisterFunctionObject(self)
 	obj.EnableVideoDomain = EnableVideoDomain
 	obj.PopupBubbleOneDay = PopupBubbleOneDay
 	obj.NewAsynGetHttpFile = NewAsynGetHttpFile
+	obj.DownLoadServerConfig = DownLoadServerConfig
+	obj.CheckIsNewVersion = CheckIsNewVersion
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -138,6 +146,17 @@ function QueryAllUsersDir()	--获取AllUser路径
 end
 
 
+function CheckIsNewVersion(strNewVer, strCurVer)
+	if not IsRealString(strNewVer) or not IsRealString(strCurVer) then
+		return false
+	end
+
+	local a,b,c,d = string.match(strNewVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	local A,B,C,D = string.match(strCurVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>=D)))))
+end
+
+
 function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutInMS)
 	local bHasAlreadyCallback = false
 	local timerID = nil
@@ -165,6 +184,37 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 end
 
 
+function DownLoadServerConfig(fnCallBack)
+	local tUserConfig = GetUserConfigFromMem() or {}
+	
+	local strConfigURL = tUserConfig["strServerConfigURL"]
+	if not IsRealString(strConfigURL) then
+		fnCallBack(-1)
+		return
+	end
+	
+	local strSavePath = GetCfgPathWithName("ServerConfig.dat")
+	if not IsRealString(strSavePath) then
+		fnCallBack(-1)
+		return
+	end
+	
+	local nTimeInMs = 30*1000
+		
+	NewAsynGetHttpFile(strConfigURL, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[DownLoadServerConfig] bRet:"..tostring(bRet)
+				.." strRealPath:"..tostring(strRealPath))
+				
+		if 0 == bRet then
+			fnCallBack(0, strSavePath)
+		else
+			fnCallBack(bRet)
+		end		
+	end, nTimeInMs)
+
+end
+
 
 function SaveAllConfig()
 	if gbLoadCfgSucc then
@@ -186,17 +236,35 @@ end
 function DestroyMainWnd()
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local strHostWndName = "GreenWallTipWnd.MainFrame"
-	hostwndManager:RemoveHostWnd(strHostWndName)
+	local objHostWnd = hostwndManager:GetHostWnd(strHostWndName)
+	if objHostWnd then
+		hostwndManager:RemoveHostWnd(strHostWndName)
+	end
+end
+
+
+function DestroyPopupWnd()
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+
+	for key, tItem in pairs(g_tPopupWndList) do
+		local strPopupWndName = tItem[1]
+		local strPopupInst = strPopupWndName..".Instance"
+		
+		local objPopupWnd = hostwndManager:GetHostWnd(strPopupInst)
+		if objPopupWnd then
+			hostwndManager:RemoveHostWnd(strPopupInst)
+		end
+	end
 end
 
 
 function GetGSVersion()
 	local strGreenShieldPath = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
 	if not IsRealString(strGreenShieldPath) or not tipUtil:QueryFileExists(strGreenShieldPath) then
-		return "1.0.0.1"
+		return ""
 	end
 
-	return tipUitl:GetVersionString(strGreenShieldPath)
+	return tipUtil:GetFileVersionString(strGreenShieldPath)
 end
 
 function RegQueryValue(sPath)
@@ -569,6 +637,11 @@ end
 
 
 function SendFileDataToFilterThread()
+	local bSucc = SendLazyListToFilterThread()
+	if not bSucc then
+		return false
+	end	
+
 	local bSucc = SendWhiteListToFilterThread()
 	if not bSucc then
 		return false
@@ -583,6 +656,17 @@ function SendFileDataToFilterThread()
 end
 
 
+function SendLazyListToFilterThread()
+	local strLazyListPath = GetCfgPathWithName("Lazy.dat")
+	if not IsRealString(strLazyListPath) or not tipUtil:QueryFileExists(strLazyListPath) then
+		return false
+	end
+
+	tipUtil:LoadConfig(strLazyListPath)
+	return true
+end
+
+
 function SendVideoListToFilterThread()
 	local tVideoList = GetVideoListFromMem()
 	
@@ -591,20 +675,20 @@ function SendVideoListToFilterThread()
 			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
 			
 			if IsDomainInWhiteList(strDomain) then
-				EnableVideoDomain(strDomain, 2)
+				AddVideoDomain(strDomain, 2)
 			else
 				local bBlackState = GetVideoDomainState(strDomain)
 				
 				if bBlackState == 0 then
-					EnableVideoDomain(strDomain, 0)
+					AddVideoDomain(strDomain, 0)
 				elseif bBlackState == 1 then
-					EnableVideoDomain(strDomain, 1)
+					AddVideoDomain(strDomain, 1)
 					
 				elseif bBlackState == 2 then
 					if not IsNilString(nLastPopupUTC) and CheckTimeIsAnotherDay(nLastPopupUTC) then
-						EnableVideoDomain(strDomain, 0)
+						AddVideoDomain(strDomain, 0)
 					else
-						EnableVideoDomain(strDomain, 2)
+						AddVideoDomain(strDomain, 2)
 					end
 				end	
 			end
@@ -612,15 +696,6 @@ function SendVideoListToFilterThread()
 	end
 	
 	return true
-end
-
-
-function EnableWhiteDomain(strDomain, bSetWite)
-	if not IsRealString(strDomain) or type(bSetWite) ~= "boolean" then
-		return
-	end
-
-	-- tipUtil:AddWhiteDomain(strDomain, bSetWite)
 end
 
 
@@ -633,7 +708,34 @@ function EnableVideoDomain(strDomain, nState)
 		return
 	end
 
-	tipUtil:AddDomain(strDomain, nState)
+	tipUtil:UpdateVideoHost(strDomain, nState)
+end
+
+
+function AddVideoDomain(strDomain, nState)
+	if not IsRealString(strDomain) or type(nState) ~= "number" then
+		return
+	end
+
+	tipUtil:AddVideoHost(strDomain, nState)
+end
+
+
+function EnableWhiteDomain(strDomain, bSetWite)
+	if not IsRealString(strDomain) or type(bSetWite) ~= "boolean" then
+		return
+	end
+
+	tipUtil:UpdateWhiteHost(strDomain, bSetWite)
+end
+
+
+function AddWhiteDomain(strDomain)
+	if not IsRealString(strDomain) then
+		return
+	end
+
+	tipUtil:AddWhiteHost(strDomain)
 end
 
 
@@ -644,7 +746,7 @@ function SendWhiteListToFilterThread()
 		local strWhiteDomain = tWhiteElem["strDomain"]
 		local bStateOpen = tWhiteElem["bState"]
 		if IsRealString(strWhiteDomain) and bStateOpen then
-			EnableWhiteDomain(strWhiteDomain, bStateOpen)
+			AddWhiteDomain(strWhiteDomain)
 		end
 	end
 	
@@ -707,14 +809,7 @@ end
 
 
 function CreatePopupTipWnd()
-	local tNameList = {
-		[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
-		[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
-		[3] = {"TipAboutWnd", "TipAboutTree"},
-		[4] = {"TipUpdateWnd", "TipUpdateTree"},
-	}
-
-	for key, tItem in pairs(tNameList) do
+	for key, tItem in pairs(g_tPopupWndList) do
 		local strHostWndName = tItem[1]
 		local strTreeName = tItem[2]
 		local bSucc = CreateWndByName(strHostWndName, strTreeName)
@@ -808,6 +903,7 @@ end
 
 function ReportAndExit()
 	DestroyMainWnd()
+	DestroyPopupWnd()
 	
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}

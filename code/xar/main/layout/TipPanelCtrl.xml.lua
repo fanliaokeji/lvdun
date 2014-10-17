@@ -96,7 +96,7 @@ function CreateFilterListener(objRootCtrl)
 		function(key,p1,p2)		
 			TipLog("[CreateFilterListener] key: " .. tostring(key)
 					.. "  p1: "..tostring(p1) .. " p2: "..tostring(p2))
-
+			
 			if tostring(key) == "OnFilterResult" then
 				OnFilterResult(p1, p2)
 			elseif tostring(key) == "OnFilterASK" then

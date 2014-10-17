@@ -201,11 +201,12 @@
 												<top>0</top>
 												<width>father.width</width>
 												<height>father.height</height>
-												<text></text>
-												<textcolor>system.white</textcolor>
+												<textcolor>4D4D4D</textcolor>
 												<font>font.yahei10</font>
+												<text>100</text>
 												<valign>center</valign>
 												<halign>center</halign>
+												<zorder>2000</zorder>
 											</attr>
 										</obj>	
 									</children>

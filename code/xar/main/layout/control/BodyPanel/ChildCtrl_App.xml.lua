@@ -5,7 +5,6 @@ local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_bHasInit = false
 local g_bAppListDownLoading = false
 
-local g_nCurTopIndex = 1
 local g_nShowedCount = 0
 local g_nDownLoagFlag = 0
 local g_tDownLoadList = {}
@@ -22,6 +21,12 @@ end
 
 
 function InitAppCtrl(self)
+	local objScroolBar = self:GetControlObject("listbox.vscroll")
+	if objScroolBar then
+		objScroolBar:SetVisible(false)
+		objScroolBar:SetChildrenVisible(false)
+	end
+
 	local function ShowAppPanel(strAppListName)
 		local tAppList = LoadAppList(strAppListName)
 		if type(tAppList) ~= "table" then
@@ -34,7 +39,7 @@ function InitAppCtrl(self)
 			g_bHasInit = true
 		end
 	end
-
+	
 	DownLoadAppList(ShowAppPanel)
 end
 
@@ -113,7 +118,7 @@ function ShowItemList(objRootCtrl, tAppList, bDownLoad)
 	if bDownLoad then
 		DecreaseDownLoadFlag(objRootCtrl)
 	end
-	
+
 	SetTotalLineCount(objRootCtrl, g_nShowedCount)
 	ResetScrollBar(objRootCtrl)
 	return true
@@ -276,25 +281,26 @@ function ResetScrollBar(objRootCtrl)
 	end
 	
 	local attr = objRootCtrl:GetAttribute()
-	local nTotalLineCount = attr.nTotalLineCount
 	local nLinePerPage = attr.nLinePerPage
+	local nTotalLineCount = attr.nTotalLineCount
 	
+	local nItemHeight = GetItemHeight(objRootCtrl)
+	local nMaxHeight = nItemHeight * nTotalLineCount
+	local nPageSize = nItemHeight * nLinePerPage
+
+	objScrollBar:SetScrollRange( 0, nMaxHeight - nPageSize, true )
+	objScrollBar:SetPageSize(nPageSize, true)	
+	-- objScrollBar:SetScrollPos((g_nCurTopIndex-1) * nItemHeight, true )
+
 	if nLinePerPage >= nTotalLineCount then
 		objScrollBar:SetVisible(false)
 		objScrollBar:SetChildrenVisible(false)
 		return true
+	else
+		objScrollBar:SetVisible(true)
+		objScrollBar:SetChildrenVisible(true)
+		objScrollBar:Show(true)
 	end
-		
-	local nItemHeight = GetItemHeight(objRootCtrl)
-	local nMaxHeight = nItemHeight * nTotalLineCount
-	local nPageSize = nItemHeight * nLinePerPage
-	
-	objScrollBar:SetVisible(true)
-	objScrollBar:SetChildrenVisible(true)
-	objScrollBar:SetScrollRange( 0, nMaxHeight - nPageSize, true )
-	objScrollBar:SetPageSize(nPageSize, true)	
-	objScrollBar:SetScrollPos((g_nCurTopIndex-1) * nItemHeight, true )
-	objScrollBar:Show(true)
 	
 	return true
 end
