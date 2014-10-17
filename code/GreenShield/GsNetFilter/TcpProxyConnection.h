@@ -246,6 +246,7 @@ private:
 	std::string GetInsertCSSCode(const std::string& url) const;
 	bool NeedReplaceContent(const std::string& url) const;
 	std::vector<std::string> GetReplaceRule(const std::string& url) const;
+	void SendNotify(const std::string& url) const;
 private:
 	static const std::size_t MAXIMUM_REQUEST_HEADER_LENGTH = 1048576;
 	static const std::size_t MAXIMUM_RESPONSE_HEADER_LENGTH = 1048576;

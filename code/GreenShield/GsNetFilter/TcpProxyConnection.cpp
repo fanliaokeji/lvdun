@@ -452,8 +452,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								std::string referer = this->GetRequestReferer();
 
 								if(this->ShouldBlockRequest(this->m_absoluteUrl, referer)) {
-									FILTER_MSG_LOG(this->m_absoluteUrl);
-									// this->m_requestString.clear();
+									this->SendNotify(this->m_absoluteUrl);
 									this->m_requestString = "HTTP/1.1 403 Blocking\r\n";
 									this->m_requestString += "Content-Length: 0\r\n";
 									this->m_requestString += "Connection: close\r\n\r\n";
@@ -975,6 +974,7 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 								this->m_responseContentEncoding = CE_NONE;
 								this->m_responseContentLength = this->m_bytesOfResponseContentHasRead;
 								this->m_isThisRequestNeedModifyResponse = false;
+								this->SendNotify(this->m_absoluteUrl);
 							} while(false);
 					}
 				}
@@ -1675,10 +1675,10 @@ ContentType TcpProxyConnection::GetResponseContentType() const
 	else if(lower_type == "application/ecmascript") {
 		return CT_APPLICATION_ECMASCRIPT;
 	}
-	else if(lower_type == "application/EDI-X12") {
+	else if(lower_type == "application/edi-x12") {
 		return CT_APPLICATION_EDI_X12;
 	}
-	else if(lower_type == "application/EDIFACT") {
+	else if(lower_type == "application/edifact") {
 		return CT_APPLICATION_EDIFACT;
 	}
 	else if(lower_type == "application/json") {
@@ -1741,7 +1741,7 @@ ContentType TcpProxyConnection::GetResponseContentType() const
 	else if(lower_type == "audio/basic") {
 		return CT_AUDIO_BASIC;
 	}
-	else if(lower_type == "audio/L24") {
+	else if(lower_type == "audio/l24") {
 		return CT_AUDIO_L24;
 	}
 	else if(lower_type == "audio/mp4") {
@@ -2164,5 +2164,20 @@ std::vector<std::string> TcpProxyConnection::GetReplaceRule(const std::string& u
 		Url requestUrl(url.c_str());
 		m->getreplaceRules(requestUrl, v);
 		return v;
+	}
+}
+
+void TcpProxyConnection::SendNotify(const std::string& url) const
+{
+	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
+	if(hNotifyWnd != NULL) 
+	{
+		std::auto_ptr<std::string> pUrl(new std::string(url));
+		char* szUrl = new char[url.size() + 1];
+		std::copy(url.begin(), url.end(), szUrl);
+		szUrl[url.size()] = '\0';
+		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(pUrl.get()) == FALSE)) {
+			delete szUrl;
+		}
 	}
 }
