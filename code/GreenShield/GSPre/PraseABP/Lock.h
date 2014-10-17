@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace FliterLib {
+namespace XMLib {
 
 	class CriticalSection {
 		CRITICAL_SECTION cs;

@@ -2,7 +2,7 @@
 #include "Lock.h"
 #include <Windows.h>
 
-using namespace FliterLib;
+using namespace XMLib;
 
 CriticalSection::CriticalSection()
 {
