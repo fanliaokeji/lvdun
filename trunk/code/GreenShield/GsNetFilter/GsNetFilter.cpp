@@ -74,20 +74,20 @@ FilterManager* GsGetFilterManager(const std::wstring & filename)
 	return FilterManager::getManager(filename);
 }
 
-bool GsUpdateConfigVideoHost(const Url & url,int istate)
+bool GsUpdateConfigVideoHost(const std::string& url,int istate)
 {
 	FilterManager* m = FilterManager::getManager();
 	if(m == NULL) {
 		return false;
 	}
-	return m->updateConfigVideoHost(url, istate);
+	return m->updateConfigVideoHost(url.c_str(), istate);
 }
 
-bool GsUpdateConfigWhiteHost(const Url & url,bool bEnable)
+bool GsUpdateConfigWhiteHost(const std::string& url,bool bEnable)
 {
 	FilterManager* m = FilterManager::getManager();
 	if(m == NULL) {
 		return false;
 	}
-	return m->updateConfigWhiteHost(url, bEnable);
+	return m->updateConfigWhiteHost(url.c_str(), bEnable);
 }
