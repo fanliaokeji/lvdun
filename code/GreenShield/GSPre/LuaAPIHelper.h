@@ -80,6 +80,29 @@ static bool WideStringToAnsiString(const std::wstring &strWide, std::string &str
 	return bSuc;
 }
 
+static bool AnsiStringToWideString(const std::string &strAnsi, std::wstring &strWide)
+{
+	bool bSuc = false;
+
+	int cchWide = ::MultiByteToWideChar(CP_ACP, 0, strAnsi.c_str(), -1, NULL, 0);
+	if (cchWide)
+	{
+		WCHAR *pszWide = new (std::nothrow) WCHAR[cchWide];
+		if (pszWide)
+		{
+			::MultiByteToWideChar(CP_ACP, 0, strAnsi.c_str(), -1, pszWide, cchWide);
+			strWide = pszWide;
+			bSuc = true;
+
+			delete [] pszWide;
+			pszWide = NULL;
+		}
+	}
+
+	return bSuc;
+}
+
+
 static DWORD gPriorityArray[6] = {IDLE_PRIORITY_CLASS, BELOW_NORMAL_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS};
 
 inline DWORD GetPriorityFromFlag(DWORD dwFlag)
