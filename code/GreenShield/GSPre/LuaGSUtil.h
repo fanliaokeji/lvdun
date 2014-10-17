@@ -2,7 +2,6 @@
 
 #define GS_UTIL_CLASS	"GS.Util.Class"
 #define GS_UTIL_OBJ		"GS.Util"
-#include "PraseABP\FilterManager.h"
 
 class LuaGSUtil
 {
@@ -162,9 +161,6 @@ public:
 
 	static int EncryptAESToFile(lua_State* pLuaState);
 	static int DecryptFileAES(lua_State* pLuaState);
-
-public:
-	static FilterManager * m_Filter;
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

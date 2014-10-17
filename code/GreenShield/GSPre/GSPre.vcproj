@@ -419,42 +419,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="PraseABP"
-			>
-			<File
-				RelativePath=".\PraseABP\ADBFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\ADBFilter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\CParseUrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\CParseUrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\FilterManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\FilterManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\Lock.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PraseABP\Lock.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

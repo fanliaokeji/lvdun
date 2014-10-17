@@ -10,7 +10,6 @@
 #include "LuaAPIHelper.h"
 #include "GSApp.h"
 #include "PeeIdHelper.h"
-//#include "FilterMsgPrc.h"
 #include "..\GsNetFilter\GsNetFilter.h"
 #include "commonshare\md5.h"
 #include <openssl/rsa.h>
@@ -30,7 +29,6 @@ LuaGSUtil::~LuaGSUtil(void)
 {
 }
 
-FilterManager * LuaGSUtil::m_Filter = NULL;
 XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] = 
 {
 	//{"RegisterFilterWnd", RegisterFilterWnd},	
@@ -159,7 +157,7 @@ int LuaGSUtil::LoadConfig(lua_State* pLuaState)
 	LuaStringToCComBSTR(utf8CfgPath,bstrPath);
 	if (::PathFileExists(bstrPath.m_str))
 	{
-		m_Filter = FilterManager::getManager(bstrPath.m_str); 
+		 FilterManager* m_Filter = GsGetFilterManager(bstrPath.m_str);
 		if (m_Filter)
 		{
 			bRet = TRUE;
@@ -190,7 +188,7 @@ int LuaGSUtil::AddVideoHost(lua_State* pLuaState)
 	{
 		istate = lua_tointeger(pLuaState, 3);
 	}
-	m_Filter->updateConfigVideoHost(strAnsi.c_str(),istate);
+	GsUpdateConfigVideoHost(strAnsi.c_str(),istate);
 	return 0;
 }
 
@@ -210,7 +208,7 @@ int LuaGSUtil::AddWhiteHost(lua_State* pLuaState)
 	LuaStringToCComBSTR(utf8WhiteHost,bstrWhiteHost);
 	std::string strAnsi;
 	WideStringToAnsiString(bstrWhiteHost.m_str,strAnsi);
-	m_Filter->updateConfigWhiteHost(strAnsi.c_str(),TRUE);
+	GsUpdateConfigWhiteHost(strAnsi.c_str(),TRUE);
 	return 0;
 }
 #define UPDATE_CFG_VIDEO 0x0001
@@ -218,7 +216,6 @@ int LuaGSUtil::AddWhiteHost(lua_State* pLuaState)
 
 typedef struct _UPADTE_CFG_PARAM 
 {
-	FilterManager * Filter;
 	std::string host;
 	int istate;
 	bool bEnable;
@@ -228,16 +225,15 @@ typedef struct _UPADTE_CFG_PARAM
 UINT WINAPI UpdateCfgProc(PVOID pArg)
 {
 	PUPADTE_CFG_PARAM pData = (PUPADTE_CFG_PARAM) pArg;
-	FilterManager * Filter = pData->Filter;
 	std::string host = pData->host;
 	int flag = pData->flag;
 	if (flag & UPDATE_CFG_VIDEO)
 	{
-		pData->Filter->updateConfigVideoHost(host.c_str(),pData->istate);
+		GsUpdateConfigVideoHost(host.c_str(),pData->istate);
 	}
 	else if (flag & UPDATE_CFG_WHITE)
 	{
-		pData->Filter->updateConfigWhiteHost(host.c_str(),pData->bEnable);
+		GsUpdateConfigWhiteHost(host.c_str(),pData->bEnable);
 	}
 	return 0;
 }
@@ -264,7 +260,7 @@ int LuaGSUtil::UpdateVideoHost(lua_State* pLuaState)
 	{
 		istate = lua_tointeger(pLuaState, 3);
 	}
-	UPADTE_CFG_PARAM v = {m_Filter,strAnsi,istate,0,UPDATE_CFG_VIDEO};
+	UPADTE_CFG_PARAM v = {strAnsi,istate,0,UPDATE_CFG_VIDEO};
 	_beginthreadex(NULL, 0, UpdateCfgProc, &v, 0, NULL);
 	return 0;
 }
@@ -289,7 +285,7 @@ int LuaGSUtil::UpdateWhiteHost(lua_State* pLuaState)
 	std::string strAnsi;
 	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
 
-	UPADTE_CFG_PARAM w = {m_Filter,strAnsi,0,bEnable,UPDATE_CFG_WHITE};
+	UPADTE_CFG_PARAM w = {strAnsi,0,bEnable,UPDATE_CFG_WHITE};
 	_beginthreadex(NULL, 0, UpdateCfgProc, &w, 0, NULL);
 	return 1;
 }
