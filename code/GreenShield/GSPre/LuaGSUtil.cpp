@@ -227,13 +227,16 @@ UINT WINAPI UpdateCfgProc(PVOID pArg)
 	PUPADTE_CFG_PARAM pData = (PUPADTE_CFG_PARAM) pArg;
 	std::string host = pData->host;
 	int flag = pData->flag;
+	int istate = pData->istate;
+	bool bEnable = pData->bEnable;
+	delete pData;
 	if (flag & UPDATE_CFG_VIDEO)
 	{
-		GsUpdateConfigVideoHost(host.c_str(),pData->istate);
+		GsUpdateConfigVideoHost(host.c_str(),istate);
 	}
 	else if (flag & UPDATE_CFG_WHITE)
 	{
-		GsUpdateConfigWhiteHost(host.c_str(),pData->bEnable);
+		GsUpdateConfigWhiteHost(host.c_str(),bEnable);
 	}
 	return 0;
 }
@@ -260,8 +263,12 @@ int LuaGSUtil::UpdateVideoHost(lua_State* pLuaState)
 	{
 		istate = lua_tointeger(pLuaState, 3);
 	}
-	UPADTE_CFG_PARAM v = {strAnsi,istate,0,UPDATE_CFG_VIDEO};
-	_beginthreadex(NULL, 0, UpdateCfgProc, &v, 0, NULL);
+	UPADTE_CFG_PARAM * pv = new UPADTE_CFG_PARAM;//{strAnsi,istate,0,UPDATE_CFG_VIDEO};
+	pv->host = strAnsi;
+	pv->istate = istate;
+	pv->bEnable = 0;
+	pv->flag = UPDATE_CFG_VIDEO;
+	_beginthreadex(NULL, 0, UpdateCfgProc, (LPVOID)pv, 0, NULL);
 	return 0;
 }
 
@@ -285,8 +292,13 @@ int LuaGSUtil::UpdateWhiteHost(lua_State* pLuaState)
 	std::string strAnsi;
 	WideStringToAnsiString(bstrVideoHost.m_str,strAnsi);
 
-	UPADTE_CFG_PARAM w = {strAnsi,0,bEnable,UPDATE_CFG_WHITE};
-	_beginthreadex(NULL, 0, UpdateCfgProc, &w, 0, NULL);
+	PUPADTE_CFG_PARAM pw = new UPADTE_CFG_PARAM;
+	pw->host = strAnsi;
+	pw->istate = 0;
+	pw->bEnable = bEnable;
+	pw->flag = UPDATE_CFG_WHITE;
+
+	_beginthreadex(NULL, 0, UpdateCfgProc, &pw, 0, NULL);
 	return 1;
 }
 
