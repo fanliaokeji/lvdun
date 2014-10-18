@@ -124,7 +124,6 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				AssemblerOutput="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -293,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScopeResourceHandle.h"
 				>
 			</File>
@@ -318,6 +321,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\GsNetFilter.rc"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="ParseABP"
