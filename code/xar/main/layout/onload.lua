@@ -88,6 +88,7 @@ function RegisterFunctionObject(self)
 	obj.NewAsynGetHttpFile = NewAsynGetHttpFile
 	obj.DownLoadServerConfig = DownLoadServerConfig
 	obj.CheckIsNewVersion = CheckIsNewVersion
+	obj.IsVideoDomain = IsVideoDomain
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -662,6 +663,20 @@ function ReadAllConfigInfo()
 end
 
 
+function IsVideoDomain(strDomain)
+	if not IsRealString(strDomain) then
+		return false
+	end
+	
+	local tVideoList = GetVideoListFromMem() or {}
+	if tVideoList[strDomain] then
+		return true
+	else
+		return false
+	end
+end
+
+
 function SendFileDataToFilterThread()
 	local bSucc = SendLazyListToFilterThread()
 	if not bSucc then
@@ -695,11 +710,8 @@ end
 
 function SendVideoListToFilterThread()
 	local tVideoList = GetVideoListFromMem() or {}
-	if type(tVideoList["tDefaultList"]) ~= "table" then
-		return false
-	end
 	
-	for strDomain, tVideoElem in pairs(tVideoList["tDefaultList"]) do
+	for strDomain, tVideoElem in pairs(tVideoList) do
 		if IsRealString(strDomain) and type(tVideoElem) == "table" then
 			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
 			
@@ -708,19 +720,6 @@ function SendVideoListToFilterThread()
 			end
 		end
 	end
-	
-	if type(tVideoList["tUserList"]) == "table" then
-		for strDomain, tVideoElem in pairs(tVideoList["tUserList"]) do
-			if IsRealString(strDomain) and type(tVideoElem) == "table" then
-				local bState = tVideoElem["bState"]
-				if bState then
-					AddVideoDomain(strDomain, 1)
-				else
-					AddVideoDomain(strDomain, 2)
-				end			
-			end
-		end
-	end	
 
 	return true
 end
@@ -737,7 +736,7 @@ end
 
 
 function CheckVideoList(strDomain, nLastPopupUTC) 
-	local bBlackState = GetVideoDomainState(strDomain)
+	local bBlackState, bStateOpen = GetVideoDomainState(strDomain)
 	
 	if bBlackState == 0 then
 		AddVideoDomain(strDomain, 0)
@@ -750,7 +749,13 @@ function CheckVideoList(strDomain, nLastPopupUTC)
 		else
 			AddVideoDomain(strDomain, 2)
 		end
-	end	
+	elseif bBlackState == 3 then
+		if bStateOpen then
+			AddVideoDomain(strDomain, 1)
+		else
+			AddVideoDomain(strDomain, 2)
+		end
+	end
 end
 
 
@@ -831,19 +836,26 @@ function IsDomainInWhiteList(strDomain)
 	return false
 end
 
---0 不在黑名单
---1 在黑名单，且开启过滤
---2 在黑名单，且关闭过滤
+--0 不在视频列表且不是用户添加的域名
+--1 在视频列表，且开启过滤
+--2 在视频列表，且关闭过滤
+--3 非视频(用户执行添加的域名)
 function GetVideoDomainState(strDomain)
 	local tBlackList = GetSpecifyFilterTableFromMem("tBlackList")
 	for key, tBlackElem in pairs(tBlackList) do
 		local strBlackDomain = tBlackElem["strDomain"]
 		local bStateOpen = tBlackElem["bState"]
-		if IsRealString(strBlackDomain) and string.find(strBlackDomain, strDomain) then
-			if bStateOpen then
-				return 1
-			else
-				return 2
+		local bIsVideo = IsVideoDomain(strDomain)
+		if IsRealString(strBlackDomain) then
+			if not bIsVideo then
+				return 3, bStateOpen
+			
+			elseif string.find(strBlackDomain, strDomain) then
+				if bStateOpen then
+					return 1, bStateOpen
+				else
+					return 2, bStateOpen
+				end
 			end
 		end
 	end
