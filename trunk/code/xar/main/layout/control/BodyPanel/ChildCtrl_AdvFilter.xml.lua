@@ -296,10 +296,10 @@ function OnClickPopupEnter(self)
 		return
 	end  
 	
-	local strName = objTextName:GetText()
+	local strName = objTextName:GetText() or ""
 	local strDomain = objTextDomain:GetText()
 	
-	if IsRealString(strName) and IsRealString(strDomain) then
+	if IsRealString(strDomain) then
 		AddBlackList(strName, strDomain)
 		ReportPopupState(strDomain, 1)
 	end

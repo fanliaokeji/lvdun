@@ -26,8 +26,8 @@ function RegisterFunctionObject(self)
 	local function TipConvStatistic(tStat)
 		local rdRandom = tipUtil:GetCurrentUTCTime()
 		local tStatInfo = tStat or {}
-
-		local strCID = tipUtil:GetPeerId()
+		
+		local strCID = GetPeerID()
 		local strEC = tStatInfo.strEC or ""
 		local strEA = tStatInfo.strEA or ""
 		local strEL = tStatInfo.strEL or ""
@@ -78,6 +78,7 @@ function RegisterFunctionObject(self)
 	obj.LoadTableFromFile = LoadTableFromFile
 	obj.ShowExitRemindWnd = ShowExitRemindWnd
 	obj.RegQueryValue = RegQueryValue
+	obj.RegSetValue = RegSetValue
 	obj.GetGSVersion = GetGSVersion
 	obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 	obj.IsDomainInWhiteList = IsDomainInWhiteList
@@ -155,7 +156,23 @@ function CheckIsNewVersion(strNewVer, strCurVer)
 
 	local a,b,c,d = string.match(strNewVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
 	local A,B,C,D = string.match(strCurVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
-	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>=D)))))
+	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>D)))))
+end
+
+
+function GetPeerID()
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\PeerId")
+	if IsRealString(strPeerID) then
+		return strPeerID
+	end
+
+	local strRandPeerID = tipUtil:GetPeerId()
+	if not IsRealString(strRandPeerID) then
+		return ""
+	end
+	
+	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\PeerId", strRandPeerID)
+	return strRandPeerID
 end
 
 
@@ -228,8 +245,7 @@ end
 
 function ExitTipWnd(statInfo)
 	SaveAllConfig()	
-	HideTray()
-	
+		
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
 end
@@ -269,6 +285,18 @@ function GetGSVersion()
 	return tipUtil:GetFileVersionString(strGreenShieldPath)
 end
 
+
+function GetGSMinorVer()
+	local strVersion = GetGSVersion()
+	if not IsRealString(strVersion) then
+		return ""
+	end
+	
+	local _, _, strMinorVer = string.find(strVersion, "%d+%.%d+%.%d+%.(%d+)")
+	return strMinorVer
+end
+
+
 function RegQueryValue(sPath)
 	if IsRealString(sPath) then
 		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
@@ -277,6 +305,17 @@ function RegQueryValue(sPath)
 		end
 	end
 	return ""
+end
+
+
+function RegSetValue(sPath, value)
+	if IsRealString(sPath) then
+		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
+		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
+			return tipUtil:SetRegValue(sRegRoot, sRegPath, sRegKey or "", value or "")
+		end
+	end
+	return false
 end
 
 
@@ -337,7 +376,14 @@ end
 function ShowMainTipWnd(objMainWnd)
 	local tUserConfig = GetUserConfigFromMem() or {}
 	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
-	if bHideMainPage then
+	
+	local bAutoStup = false
+	local bRet, strSource = GetCommandStrValue("/embedding")
+	if bRet then
+		bAutoStup = true
+	end
+	
+	if bHideMainPage or bAutoStup then
 		objMainWnd:Show(0)
 	else
 		objMainWnd:Show(4)
@@ -368,13 +414,6 @@ end
 
 function ShowExitRemindWnd()
 	ShowPopupWndByName("TipExitRemindWnd.Instance")
-end
-
-
-function HideTray()
-	if g_tipNotifyIcon then
-		g_tipNotifyIcon:Hide()
-	end
 end
 
 
@@ -420,6 +459,7 @@ function InitTrayTipWnd(objHostWnd)
 		
 		--mousemove
 		if event3 == 512 then
+			g_tipNotifyIcon:ShowNotifyIconTip(false)
 			SetNotifyIconText(tipNotifyIcon)
 		end
 	end
@@ -703,7 +743,36 @@ function SendLazyListToFilterThread()
 		return false
 	end
 
-	tipUtil:LoadConfig(strLazyListPath)
+	local strAESString = tipUtil:ReadFileToString(strLazyListPath)
+	if not strAESString then
+		TipLog("[SendLazyListToFilterThread] ReadFileToString failed : "..tostring(strLazyListPath))
+		return false
+	end
+	
+	local strKey = "fvSem9Rt6wvhxmzs"
+	local strDecString = tipUtil:DecryptFileAES(strLazyListPath, strKey)
+	if type(strDecString) ~= "string" then
+		TipLog("[SendLazyListToFilterThread] DecryptFileAES failed : "..tostring(strLazyListPath))
+		return false
+	end
+	
+	local strTmpDir = tipUtil:GetSystemTempPath()
+	if not tipUtil:QueryFileExists(strTmpDir) then
+		TipLog("[SendLazyListToFilterThread] GetSystemTempPath failed strTmpDir: "..tostring(strTmpDir))
+		return false
+	end
+	
+	local strCfgName = tipUtil:GetTmpFileName() or "rule.dat"
+	local strCfgPath = tipUtil:PathCombine(strTmpDir, strCfgName)
+	tipUtil:WriteStringToFile(strCfgPath, strDecString)
+	
+	local bSucc = tipUtil:LoadConfig(strCfgPath) 
+	if not bSucc then
+		TipLog("[SendLazyListToFilterThread] LoadConfig failed strCfgPath: "..tostring(strCfgPath))
+		return false
+	end
+	
+	tipUtil:DeletePathFile(strCfgPath)
 	return true
 end
 
@@ -961,6 +1030,8 @@ function SendStartupReport(bShowWnd)
 	local bRet, strSource = GetCommandStrValue("/sstartfrom")
 	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
+	tStatInfo.strEV = GetGSMinorVer() or ""
+	
 	if bShowWnd then
 		tStatInfo.strEL = 0   --进入上报
 	else
