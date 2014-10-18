@@ -187,17 +187,41 @@ function SetProgBar(objProgBarLayout)
 		return
 	end
 	
-	function SetProgState(bRet, strPacketPath, nProcess)
+	local l_bHasFinish = false
+	local l_nLastProg = 0
+	function SetProgState(bRet, strPacketPath, nCurSize, nMaxSize)
+		TipLog("[SetProgState] bRet: "..tostring(bRet).." nProcess:"..tostring(nProcess))
+		if l_bHasFinish then
+			return
+		end
+		
 		if bRet == -2 then
-			objProgBar:SetProgress(nProcess)
-			local strInnerText = tostring(nProcess) .. "%"
+			local nCurProg = math.floor(nCurSize*100/nMaxSize)
+			if nCurProg < l_nLastProg then
+				return
+			end
+			
+			objProgBar:SetProgress(nCurProg)
+			local strInnerText = tostring(nCurProg) .. "%"
 			local strOutText = "正在下载（"..strInnerText.."）"
 			objOutText:SetText(strOutText)
 			objInnerText:SetText(strInnerText)
-		end
-		
-		if bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
+			
+			l_nLastProg = nCurProg
+			
+		elseif bRet == -1 then
+			l_bHasFinish = true
+			
+		elseif bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
+			l_bHasFinish = true
+			
+			objProgBar:SetProgress(120)
+			local strInnerText = "完成"
+			objOutText:SetText("")
+			objInnerText:SetText(strInnerText)
+			
 			tipUtil:ShellExecute(0, "open", strPacketPath, 0, 0, "SW_SHOWNORMAL")
+			HideCurrentWnd(objProgBarLayout)
 		end
 	end
 
@@ -208,11 +232,23 @@ end
 function DownLoadNewVersion(fnCallBack)
 	local strUrl = g_tNewVersionInfo["strPacketURL"]
 	if not IsRealString(strUrl) then
-		fnCallBack()
+		fnCallBack(-1)
 	end
-	local strSavePath = tipUtil:GetSystemTempPath()
 	
+	local strFileName = GetFileSaveNameFromUrl(strUrl)
+	if not string.find(strFileName, "%.exe$") then
+		strFileName = strFileName..".exe"
+	end
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 	tipAsynUtil:AsynGetHttpFileWithProgress(strUrl, strSavePath, false, fnCallBack)
+end
+
+
+function HideCurrentWnd(objUIItem)
+	local objTree = objUIItem:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	objHostWnd:Show(0) 
 end
 
 
@@ -254,3 +290,11 @@ function TipLog(strLog)
 	end
 end
 
+function GetFileSaveNameFromUrl(url)
+	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
+	local npos = string.find(strFileName, "?", 1, true)
+	if npos ~= nil then
+		strFileName = string.sub(strFileName, 1, npos-1)
+	end
+	return strFileName
+end

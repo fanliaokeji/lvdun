@@ -194,6 +194,12 @@ end
 function LoadAppList(strAppListName)
 	local strCfgPath = FunctionObj.GetCfgPathWithName(strAppListName)
 	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath)
+	if type(infoTable) == "table" then
+		return infoTable
+	end
+	
+	local strCfgPath = FunctionObj.GetCfgPathWithName("AppList.dat")
+	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath)
 	return infoTable
 end
 
@@ -439,9 +445,9 @@ function OpenSoftware(objUIItem, tItemInfo)
 	local strExeName = tItemInfo.strExeName or ""
 	local strKeyName = tItemInfo.strKeyName or ""
 	
-	local strInstallDir = RegQueryValue(strRegPath)
+	local strInstallDir = FunctionObj.RegQueryValue(strRegPath)
 	if string.lower(strExeName) == "baidusd.exe" then
-		local strVersion = RegQueryValue(tItemInfo.strRegVersion)
+		local strVersion = FunctionObj.RegQueryValue(tItemInfo.strRegVersion)
 		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
 	end
 	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
@@ -517,15 +523,6 @@ function TipLog(strLog)
 	end
 end
 
-function RegQueryValue(sPath)
-	if IsRealString(sPath) then
-		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
-		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
-			return tipUtil:QueryRegValue(sRegRoot, sRegPath, sRegKey or "") or ""
-		end
-	end
-	return ""
-end
 
 function GetFileSaveNameFromUrl(url)
 	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")

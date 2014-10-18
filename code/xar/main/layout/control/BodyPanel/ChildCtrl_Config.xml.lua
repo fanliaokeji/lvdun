@@ -124,23 +124,13 @@ function StateChange_AutoStup(self, eventname)
 	if bState and not bHasAutoStup then   --bState == true 表示开机启动
 		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
 			local sCommandline = "\""..strGreenShieldPath.."\""
-			bRetCode = RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
+			bRetCode = FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
 		end
 	elseif bHasAutoStup then
 		RegDeleteValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield")
 	end
 end
 
-
-function RegSetValue(sPath, value)
-	if IsRealString(sPath) then
-		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
-		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
-			return tipUtil:SetRegValue(sRegRoot, sRegPath, sRegKey or "", value or "")
-		end
-	end
-	return false
-end
 
 function RegDeleteValue(sPath)
 	if IsRealString(sPath) then
