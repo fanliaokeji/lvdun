@@ -20,7 +20,7 @@ function GetSubTable()
 			}, 
 			[4] = {
 				["strName"] = "搜狐", 
-				["bState"] = false, 
+				["bState"] = true, 
 				["strDomain"] = "tv.sohu.com", 
 			}, 
 			[5] = {
