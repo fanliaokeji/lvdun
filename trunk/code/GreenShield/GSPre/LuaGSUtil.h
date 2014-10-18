@@ -53,6 +53,7 @@ public:
 
 public:
 	//static int RegisterFilterWnd(lua_State* pLuaState);
+	static int MsgBox(lua_State* pLuaState);
 	static int LoadConfig(lua_State* pLuaState);
 	static int AddVideoHost(lua_State* pLuaState);
 	static int AddWhiteHost(lua_State* pLuaState);
