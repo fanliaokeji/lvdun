@@ -50,6 +50,7 @@ Var Btn_FreeUse
 !define SHORTCUT_NAME "绿盾"
 !define EM_OUTFILE_NAME "${PRODUCT_NAME}安装包.exe"
 !define PRODUCT_VERSION "1.0.0.1"
+!define VERSION_LASTNUMBER 1
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "My company, Inc."
 !define PRODUCT_WEB_SITE "http://www.mycompany.com"
@@ -80,6 +81,14 @@ SetFont 微软雅黑 10
 !define TEXTCOLOR "4D4D4D"
 RequestExecutionLevel highest
 
+VIProductVersion ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}广告管家"
+VIAddVersionKey /LANG=2052 "Comments" ""
+VIAddVersionKey /LANG=2052 "CompanyName" ""
+VIAddVersionKey /LANG=2052 "LegalTrademarks" ""
+VIAddVersionKey /LANG=2052 "LegalCopyright" "GreenShield"
+VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}广告管家安装程序"
+VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 
 ;自定义页面
 Page custom WelcomePage
@@ -96,6 +105,15 @@ InstallDir "$PROGRAMFILES\GreenShield"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 Function DoInstall
+  ;文件被占用则改一下名字
+  StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
+  IfFileExists $R4 0 RenameOK
+  Delete $R4
+  IfFileExists $R4 0 RenameOK
+  Rename $R4 "$R4.del"
+  RenameOK:
+  
+  
   ;释放主程序文件到安装目录
   SetOutPath "$INSTDIR"
   SetOverwrite on
@@ -116,15 +134,26 @@ Function DoInstall
   ${GetOptions} $R1 "/source"  $R0
   IfErrors 0 +2
   StrCpy $R0 "cmd_null"
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "$R0", t "22222", t "33333", i 4) '
+  ;是否静默安装
+  ${GetParameters} $R1
+  ${GetOptions} $R1 "/silent"  $R2
+  StrCpy $R3 "0"
+  IfErrors 0 +2
+  StrCpy $R3 "1"
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "$R0", t "$R3", i ${VERSION_LASTNUMBER}) '
   ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetPeerID(t) i(.r0).r1'
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
+  
+  ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
+  ${If} $0 == ""
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetPeerID(t) i(.r0).r1'
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
+  ${EndIf}
+  
   
   ;写入通用的注册表信息
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -170,6 +199,11 @@ Function CmdSilentInstall
 		${EndIf}
 	StartInstall:
 	
+	;发退出消息
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		SendMessage $R0 1324 0 0
+	${EndIf}
 	CheckProcessExist:
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 	Pop $R0
@@ -193,10 +227,15 @@ Function CmdUnstall
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_UNINSTALL_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
+	;发退出消息
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		SendMessage $R0 1324 0 0
+	${EndIf}
 	CheckProcessExist:
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 	Pop $R0
@@ -204,15 +243,11 @@ Function CmdUnstall
 		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
 		Goto CheckProcessExist
 	${EndIf}
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	${If} $0 != ""
-		StrCpy $INSTDIR "$0"
-	${EndIf}
 	
 	;删除不成功则重试3次
 	StrCpy $R0 0
 	BeginRepeatDelete:
-	RMDir /r "$INSTDIR"
+	RMDir /r /REBOOTOK "$INSTDIR"
 	${If} $R0 == 3
 		Goto EndRepeatDelete
 	${EndIf}
@@ -221,16 +256,21 @@ Function CmdUnstall
 	Sleep 100
 	Goto BeginRepeatDelete
 	EndRepeatDelete:
-	
-	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-	DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
-	 ;删除自用的注册表信息
-	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "0", i ${VERSION_LASTNUMBER}) '
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 == "$INSTDIR"
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
+		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+		IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+			Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+			Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
+		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+		 ;删除自用的注册表信息
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	${EndIf}
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -253,28 +293,37 @@ Function .onInit
 	StrCmp $R0 0 +2
 	;MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
 	Abort
+	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
-		;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
-		${GetFileVersion} $0 $1
-		${VersionCompare} $1 ${PRODUCT_VERSION} $2
-		${GetParameters} $R1
-		${GetOptions} $R1 "/write"  $R0
-		IfErrors 0 +3
-		push "false"
-		pop $R0
-		${If} $2 == "2" ;已安装的版本低于该版本
-			Goto StartInstall
-		${ElseIf} $2 == "0" ;版本相同
-			 StrCmp $R0 "false" 0 StartInstall
-			 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
-			 Abort
-		${ElseIf} $2 == "1"	;已安装的版本高于该版本
-			StrCmp $R0 "false" 0 StartInstall
-			MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
-			Abort
-		${EndIf}
+	;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
+	${GetFileVersion} $0 $1
+	${VersionCompare} $1 ${PRODUCT_VERSION} $2
+	${GetParameters} $R1
+	${GetOptions} $R1 "/write"  $R0
+	IfErrors 0 +3
+	push "false"
+	pop $R0
+	${If} $2 == "2" ;已安装的版本低于该版本
+		Goto StartInstall
+	${ElseIf} $2 == "0" ;版本相同
+		 StrCmp $R0 "false" 0 StartInstall
+		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
+		 Abort
+	${ElseIf} $2 == "1"	;已安装的版本高于该版本
+		StrCmp $R0 "false" 0 StartInstall
+		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
+		Abort
+	${EndIf}
+	
 	StartInstall:
+	;发退出消息
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES +2
+		Abort
+		SendMessage $R0 1324 0 0
+	${EndIf}
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
     Pop $R0
     ${If} $R0 != 0
@@ -907,10 +956,17 @@ Var Bmp_FinishUnstall
 Var Btn_FinishUnstall
 
 Function un.onInit
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_UNINSTALL_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
+	;发退出消息
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES +2
+		Abort
+		SendMessage $R0 1324 0 0
+	${EndIf}
 	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
     ${If} $R0 != 0
 		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
@@ -973,7 +1029,7 @@ FunctionEnd
 Function un.DoUninstall
 	StrCpy $R0 0
 	BeginRepeatDelete:
-	RMDir /r "$INSTDIR"
+	RMDir /r /REBOOTOK "$INSTDIR"
 	${If} $R0 == 3
 		Goto EndRepeatDelete
 	${EndIf}
@@ -989,18 +1045,22 @@ Function un.UNSD_TimerFun
     nsDialogs::KillTimer $0
     GetFunctionAddress $0 un.DoUninstall
     BgWorker::CallAndWait
-	DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-	DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-	;IfFileExists "$SMPROGRAMS\绿盾\*.*" 0 +2
-		;Delete "$SMPROGRAMS\绿盾\绿盾.lnk"
-		;Delete "$SMPROGRAMS\绿盾\卸载${SHORTCUT_NAME}.lnk"
-		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
-	 ;删除自用的注册表信息
-	 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${If} $0 == "$INSTDIR"
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
+		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+		IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+			Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+			Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
+		;IfFileExists "$SMPROGRAMS\绿盾\*.*" 0 +2
+			;Delete "$SMPROGRAMS\绿盾\绿盾.lnk"
+			;Delete "$SMPROGRAMS\绿盾\卸载${SHORTCUT_NAME}.lnk"
+			RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+		 ;删除自用的注册表信息
+		 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	${EndIf}
 	
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
 	ShowWindow $Btn_ContinueUse ${SW_HIDE}
@@ -1013,12 +1073,17 @@ FunctionEnd
 Function un.OnClick_CruelRefused
 	EnableWindow $Btn_CruelRefused 0
 	EnableWindow $Btn_ContinueUse 0
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite on
+	File "bin\DsSetUpHelper.dll"
+	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "1", i ${VERSION_LASTNUMBER}) '
 	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::CreateTimer $0 1
 FunctionEnd
 
 Function un.OnClick_FinishUnstall
-	RMDir /r "$INSTDIR"
+	RMDir /r /REBOOTOK "$INSTDIR"
 	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
