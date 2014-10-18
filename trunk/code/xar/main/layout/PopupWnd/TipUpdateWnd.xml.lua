@@ -1,5 +1,6 @@
 local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 local tipUtil = XLGetObject( "GS.Util" )
+local tipAsynUtil = XLGetObject( "GS.AsynUtil" )
 local g_tNewVersionInfo = {}
 
 
@@ -211,6 +212,7 @@ function DownLoadNewVersion(fnCallBack)
 	end
 	local strSavePath = tipUtil:GetSystemTempPath()
 	
+	tipAsynUtil:AsynGetHttpFileWithProgress(strUrl, strSavePath, false, fnCallBack)
 end
 
 

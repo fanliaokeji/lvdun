@@ -76,7 +76,7 @@ function OnClickAddBtn(self)
 		return
 	end
 	
-	-- AddToUserDefineList(strName, strDomain)
+	AddToUserDefineList(strName, strDomain)
 	
 	PushBlackList(strName, strDomain, true)
 	ReportDomainState(strDomain, g_nReportELAdd)
@@ -633,27 +633,29 @@ function PushBlackList(strName, strDomain, bState)
 	g_tBlackList[nTopIndex]["bState"] = bState
 	
 	AutoEnableDomain(strDomain)
+	SaveConfigToFile()
 end
 
 
 function RemoveBlackList(nIDToDelete)
 	if type(g_tBlackList[nIDToDelete]) == "table" then
 		local strDomain = FetchValueByPath(g_tBlackList, {nIDToDelete, "strDomain"})
-		local strName = FetchValueByPath(g_tBlackList, {nIDToDelete, "strName"})
 		table.remove(g_tBlackList, nIDToDelete)
+		
 		AutoEnableDomain(strDomain, true)
+		SaveConfigToFile()
 	end	
 end
 
 
-function AutoEnableDomain(strDomain, bForceDisable)
+function AutoEnableDomain(strDomain, bDelete)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if not IsRealString(strDomain) then
 		return
 	end
 	
-	if bForceDisable then
-		tFunctionHelper.EnableVideoDomain(strDomain, 2)
+	if bDelete then
+		tFunctionHelper.EnableVideoDomain(strDomain, 0)
 		return
 	end
 	
@@ -681,7 +683,13 @@ function AddToUserDefineList(strName, strDomain)
 	-- g_tVideoList[nNewRuleCount] = {}
 	-- g_tVideoList[nNewRuleCount]["strTitle"] = strName
 	-- g_tVideoList[nNewRuleCount]["strDomain"] = strDomain
-	-- g_tVideoList[nNewRuleCount]["bUserDefine"] = true
+	
+end
+
+
+function SaveConfigToFile()
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	FunctionObj.SaveFilterConfigToFile()
 end
 
 

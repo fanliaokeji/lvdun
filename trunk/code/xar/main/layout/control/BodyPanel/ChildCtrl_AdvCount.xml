@@ -1,7 +1,7 @@
 <xlue>
 	<control class="ChildCtrl_AdvCount">
 		<attr_def>
-
+			<attr name="bHasInit" type="bool"/>
 		</attr_def>
 		<method_def>
 			<OnShowPanel file="ChildCtrl_AdvCount.xml.lua" func="OnShowPanel"/>

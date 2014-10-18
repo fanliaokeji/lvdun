@@ -315,8 +315,6 @@ function AnimateHide(self)
 	menuTree:AddAnimation(posChange)
 
 	posChange:Resume()	
-	
-	--XLMessageBox("hide")
 end
 
 function InsertItem( self, index, item )

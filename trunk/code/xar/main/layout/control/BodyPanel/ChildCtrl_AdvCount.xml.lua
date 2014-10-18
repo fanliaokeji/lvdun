@@ -4,7 +4,6 @@ local g_nFilterCountOneDay = 0
 local g_nFilterCountTotal = 0
 local g_tCountElemList = {}
 local g_nElemCount = 6
-local g_bHasInit = false
 local g_bFilterOpen = true
 local g_nLastClearUTC = 0
 
@@ -51,7 +50,10 @@ end
 
 
 function OnShowPanel(self, bShow)
-	if not g_bHasInit then
+	local attr = self:GetAttribute()
+	local bHasInit = attr.bHasInit
+
+	if not bHasInit then
 		InitAdvCount(self)
 	elseif bShow then
 		UpdateAdvShow(self)
@@ -75,7 +77,10 @@ function SetElemCount(self, nCount)
 end
 
 function UpdateAdvShow(objRootCtrl)
-	if not g_bHasInit then
+	local attr = objRootCtrl:GetAttribute()
+	local bHasInit = attr.bHasInit
+
+	if not bHasInit then
 		TipLog("[UpdateAdvShow] has not init")
 		return false
 	end
@@ -201,7 +206,8 @@ function InitAdvCount(objRootCtrl)
 		g_tCountElemList[#g_tCountElemList+1] = objElem		
 	end
 	
-	g_bHasInit = true
+	local attr = objRootCtrl:GetAttribute()
+	attr.bHasInit = true
 	
 	LoadAdvCountCfg(objRootCtrl)
 	BeginAnotherDayEvent(objRootCtrl)

@@ -381,7 +381,6 @@ function OnLButtonUp(self, x, y)
 	local width,height = right - left, bottom - top
 		
 	if (x >= 0) and (x < width) and (y >= 0) and (y < height) then
-		--XLMessageBox("Sel")
 		self:SelectItem()
 	else 
 		self:CancelItem()
