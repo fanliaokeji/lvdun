@@ -157,8 +157,8 @@ int LuaGSUtil::MsgBox(lua_State* pLuaState)
 	}
 
 	BOOL bRet = FALSE;
-	const char* utf8Title = luaL_checkstring(pLuaState, 2);
-	const char* utf8Text = luaL_checkstring(pLuaState, 3);
+	const char* utf8Text = luaL_checkstring(pLuaState, 2);
+	const char* utf8Title = luaL_checkstring(pLuaState, 3);
 
 	CComBSTR bstrTitle,bstrText;
 	LuaStringToCComBSTR(utf8Title,bstrTitle);
