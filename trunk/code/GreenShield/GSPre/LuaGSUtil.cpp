@@ -19,6 +19,9 @@
 #pragma comment(lib,"ssleay32.lib")
 
 extern CGSApp theApp;
+
+#include "GSPreHelper\CFilterMsgWnd.h"
+#include "GSNotifyIcon.h"
 //extern CFilterMsgWindow gFilterMsgWindow;
 
 LuaGSUtil::LuaGSUtil(void)
@@ -348,6 +351,7 @@ int LuaGSUtil::Exit(lua_State* pLuaState)
 	{
 		return 0;
 	}
+	gsNotifyIcon.Hide();
 	theApp.ExitInstance();
 	return 0;
 }
@@ -359,17 +363,6 @@ int LuaGSUtil::GetPeerId(lua_State* pLuaState)
 	{
 		return 0;
 	}
-
-	//HWND  hWnd = FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg",NULL);
-
-	//wchar_t * szUrl = new wchar_t[100];
-
-	//wcscpy(szUrl,L"youku.com");
-
-	//PostMessage(hWnd,WM_USER + 202,1,(WPARAM)szUrl);
-	//getchar();
-
-
 
 	std::wstring strPeerId=L"";
 	GetPeerId_(strPeerId);
