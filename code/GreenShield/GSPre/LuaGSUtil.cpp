@@ -36,6 +36,8 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 {
 	//{"RegisterFilterWnd", RegisterFilterWnd},	
 	//Ö÷Òªº¯Êý
+	{"MsgBox",MsgBox},
+
 	{"LoadConfig",LoadConfig},
 	
 	{"AddVideoHost",AddVideoHost},
@@ -141,6 +143,36 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	
 	{NULL, NULL}
 };
+
+int LuaGSUtil::MsgBox(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2) && !lua_isstring(pLuaState,3))
+	{
+		return 0;
+	}
+
+	BOOL bRet = FALSE;
+	const char* utf8Title = luaL_checkstring(pLuaState, 2);
+	const char* utf8Text = luaL_checkstring(pLuaState, 3);
+
+	CComBSTR bstrTitle,bstrText;
+	LuaStringToCComBSTR(utf8Title,bstrTitle);
+	LuaStringToCComBSTR(utf8Text,bstrText);
+	
+	UINT uType = MB_OK;
+	if ( !lua_isnoneornil( pLuaState, 4 ))
+	{
+		uType = (int)lua_tointeger( pLuaState, 4);
+	}
+	MessageBox(NULL,bstrText.m_str,bstrTitle.m_str,uType);
+	return 1;
+}
+
 
 int LuaGSUtil::LoadConfig(lua_State* pLuaState)
 {
