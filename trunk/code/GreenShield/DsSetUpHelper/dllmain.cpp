@@ -98,9 +98,10 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	}
 	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s",strPeerID.c_str(),ec,ea,str.c_str());
 
-	DWORD dwThreadId = 0;
-	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
-	CloseHandle(hThread);
+	//DWORD dwThreadId = 0;
+	//HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
+	//CloseHandle(hThread);
+	SendHttpStatThread((LPVOID)szURL);
 }
 
 
