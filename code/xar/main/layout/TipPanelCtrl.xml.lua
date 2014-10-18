@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("GS.Util")
+local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_tPanelCtrlList = {
 	"ChildCtrl_AdvCount",
 	"ChildCtrl_Config",
@@ -110,7 +111,6 @@ function CreateFilterListener(objRootCtrl)
 			return
 		end
 		
-		local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 		tFunctionHelper.PopupBubbleOneDay()
 		
 		local objMainBodyCtrl = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
@@ -130,8 +130,10 @@ function CreateFilterListener(objRootCtrl)
 
 
 	function OnFilterASK(p1, p2)
-		-- local strName = p1
-		local strDomain = p2
+		local strURL = p2
+		TipLog("[OnFilterASK] strURL:"..tostring(strURL))
+		
+		local strDomain = ExractRuleDomain(strURL)
 		if not IsRealString(strDomain) then
 			return
 		end
@@ -141,6 +143,27 @@ function CreateFilterListener(objRootCtrl)
 			ShowPopupWindow(strDomain)
 		end
 	end
+end
+
+
+function ExractRuleDomain(strURL)
+	if not IsRealString(strURL) then
+		return nil
+	end
+
+	local _, _, strHost = string.find(strURL, "^.*://([^/]*)/.*")
+	if not IsRealString(strHost) then
+		return nil
+	end
+		
+	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	for strDomain, tVideoElem in pairs(tVideoList) do
+		if string.find(strHost, strDomain.."$") then
+			return strDomain
+		end
+	end	
+	
+	return nil
 end
 
 
@@ -191,7 +214,6 @@ end
 
 
 function GetDomainDefName(strDomain)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	local tVideoElem = tVideoList[strDomain]
 	if type(tVideoElem) ~= "table" then
@@ -203,7 +225,6 @@ end
 
 
 function RecordPopupTime(strDomain)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	if type(tVideoList[strDomain]) ~= "table" then
 		tVideoList[strDomain] = {}
@@ -214,8 +235,6 @@ end
 
 
 function CheckPopupCond(strDomain)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-
 	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
 		TipLog("[CheckPopupCond] domain in white list: "..tostring(strDomain))
 		return false

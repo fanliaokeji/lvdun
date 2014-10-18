@@ -203,7 +203,6 @@
 												<height>father.height</height>
 												<textcolor>4D4D4D</textcolor>
 												<font>font.yahei10</font>
-												<text>100</text>
 												<valign>center</valign>
 												<halign>center</halign>
 												<zorder>2000</zorder>

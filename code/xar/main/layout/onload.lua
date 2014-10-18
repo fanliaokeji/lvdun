@@ -69,6 +69,7 @@ function RegisterFunctionObject(self)
 	obj.GetUserConfigFromMem = GetUserConfigFromMem
 	obj.GetSpecifyFilterTableFromMem = GetSpecifyFilterTableFromMem
 	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
+	obj.SaveFilterConfigToFile = SaveFilterConfigToFile
 	obj.GetVideoListFromMem = GetVideoListFromMem
 	obj.SaveVideoListToMem = SaveVideoListToMem
 	obj.ReportAndExit = ReportAndExit
@@ -308,8 +309,8 @@ function PopTipWnd(OnCreateFunc)
 				local uiObjectTree = objectTreeTemplate:CreateInstance("GreenWallTipWnd.MainObjectTree")
 				if uiObjectTree then
 					frameHostWnd:BindUIObjectTree(uiObjectTree)
+					
 					local ret = OnCreateFunc(uiObjectTree)
-	
 					if ret then
 						local iRet = frameHostWnd:Create()
 						if iRet ~= nil and iRet ~= 0 then
@@ -327,7 +328,7 @@ function PopTipWnd(OnCreateFunc)
 	end
 	
 	---初始化托盘
-    if frameHostWnd then
+    if frameHostWnd and not g_tipNotifyIcon then
 	    InitTrayTipWnd(frameHostWnd)
 	end
 end
@@ -388,7 +389,8 @@ function InitTrayTipWnd(objHostWnd)
 		TipLog("[InitTrayTipWnd] not support NotifyIcon")
 	    return
 	end
-    tipNotifyIcon:SetIcon(nil,"绿盾广告管家")
+	
+	SetNotifyIconText(tipNotifyIcon)
 	tipNotifyIcon:Show()
 	
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
@@ -407,12 +409,36 @@ function InitTrayTipWnd(objHostWnd)
 		
 		--双击左键
 		if event3 == 0x0203 then
+			local strHostWndName = "GreenWallTipWnd.MainFrame"
+			local objHostWnd = hostwndManager:GetHostWnd(strHostWndName)
+			if not objHostWnd then
+				CreateMainTipWnd()
+			end
 			objHostWnd:BringWindowToTop(true)
+		end
+		
+		--mousemove
+		if event3 == 512 then
+			SetNotifyIconText(tipNotifyIcon)
 		end
 	end
 
 	tipNotifyIcon:Attach(OnTrayEvent)
 	g_tipNotifyIcon = tipNotifyIcon
+end
+
+
+function SetNotifyIconText(tipNotifyIcon)
+	local tUserConfig = GetUserConfigFromMem() or {}
+	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
+	local bFilterOpen = tUserConfig["bFilterOpen"] or false
+	local strState = "正常过滤"
+	if not bFilterOpen then
+		strState = "停止过滤"
+	end
+	
+	local strText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计屏蔽："..tostring(nFilterCount).."次"
+    tipNotifyIcon:SetIcon(nil,strText)
 end
 
 
@@ -668,34 +694,63 @@ end
 
 
 function SendVideoListToFilterThread()
-	local tVideoList = GetVideoListFromMem()
+	local tVideoList = GetVideoListFromMem() or {}
+	if type(tVideoList["tDefaultList"]) ~= "table" then
+		return false
+	end
 	
-	for strDomain, tVideoElem in pairs(tVideoList) do
+	for strDomain, tVideoElem in pairs(tVideoList["tDefaultList"]) do
 		if IsRealString(strDomain) and type(tVideoElem) == "table" then
 			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
 			
-			if IsDomainInWhiteList(strDomain) then
-				AddVideoDomain(strDomain, 2)
-			else
-				local bBlackState = GetVideoDomainState(strDomain)
-				
-				if bBlackState == 0 then
-					AddVideoDomain(strDomain, 0)
-				elseif bBlackState == 1 then
-					AddVideoDomain(strDomain, 1)
-					
-				elseif bBlackState == 2 then
-					if not IsNilString(nLastPopupUTC) and CheckTimeIsAnotherDay(nLastPopupUTC) then
-						AddVideoDomain(strDomain, 0)
-					else
-						AddVideoDomain(strDomain, 2)
-					end
-				end	
+			if not CheckWhiteList(strDomain) then
+				CheckVideoList(strDomain, nLastPopupUTC)
 			end
 		end
 	end
 	
+	if type(tVideoList["tUserList"]) == "table" then
+		for strDomain, tVideoElem in pairs(tVideoList["tUserList"]) do
+			if IsRealString(strDomain) and type(tVideoElem) == "table" then
+				local bState = tVideoElem["bState"]
+				if bState then
+					AddVideoDomain(strDomain, 1)
+				else
+					AddVideoDomain(strDomain, 2)
+				end			
+			end
+		end
+	end	
+
 	return true
+end
+
+
+function CheckWhiteList(strDomain) 
+	if IsDomainInWhiteList(strDomain) then
+		AddVideoDomain(strDomain, 2)
+		return true
+	end
+	
+	return false
+end
+
+
+function CheckVideoList(strDomain, nLastPopupUTC) 
+	local bBlackState = GetVideoDomainState(strDomain)
+	
+	if bBlackState == 0 then
+		AddVideoDomain(strDomain, 0)
+	elseif bBlackState == 1 then
+		AddVideoDomain(strDomain, 1)
+		
+	elseif bBlackState == 2 then
+		if not IsNilString(nLastPopupUTC) and CheckTimeIsAnotherDay(nLastPopupUTC) then
+			AddVideoDomain(strDomain, 0)
+		else
+			AddVideoDomain(strDomain, 2)
+		end
+	end	
 end
 
 
@@ -709,6 +764,7 @@ function EnableVideoDomain(strDomain, nState)
 	end
 
 	tipUtil:UpdateVideoHost(strDomain, nState)
+	TipLog("[UpdateVideoHost] strDomain: "..tostring(strDomain).." nState: "..tostring(nState))
 end
 
 
@@ -718,6 +774,7 @@ function AddVideoDomain(strDomain, nState)
 	end
 
 	tipUtil:AddVideoHost(strDomain, nState)
+	TipLog("[AddVideoDomain] strDomain: "..tostring(strDomain).." nState: "..tostring(nState))
 end
 
 
@@ -727,6 +784,7 @@ function EnableWhiteDomain(strDomain, bSetWite)
 	end
 
 	tipUtil:UpdateWhiteHost(strDomain, bSetWite)
+	TipLog("[UpdateWhiteHost] strDomain: "..tostring(strDomain).." nState: "..tostring(bSetWite))
 end
 
 
@@ -736,6 +794,7 @@ function AddWhiteDomain(strDomain)
 	end
 
 	tipUtil:AddWhiteHost(strDomain)
+	TipLog("[AddWhiteDomain] strDomain: "..tostring(strDomain))
 end
 
 
@@ -907,10 +966,7 @@ function ReportAndExit()
 	
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
-	
-	local tUserConfig = GetUserConfigFromMem() or {}
-	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"])
-		
+			
 	local iLastTime = 0	--失败认为展示时长为0
 	local nCurTime = tipUtil:GetCurrentUTCTime()
 	local fnGetTipStartTime = XLGetGlobal("GreenWall.GetTipStartTime")

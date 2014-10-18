@@ -576,9 +576,9 @@ function AutoEnableDomain(strDomain)
 
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
-		tFunctionHelper.EnableWhiteDomain(strWhiteDomain, true)
+		tFunctionHelper.EnableWhiteDomain(strDomain, true)
 	else
-		tFunctionHelper.EnableWhiteDomain(strWhiteDomain, false)
+		tFunctionHelper.EnableWhiteDomain(strDomain, false)
 	end
 end
 
