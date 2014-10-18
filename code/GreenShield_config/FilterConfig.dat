@@ -1,31 +1,6 @@
 function GetSubTable()
 	local t = {
-		["tBlackList"] = {
-			[1] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "youku.com", 
-			}, 
-			[2] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "iqiyi.com", 
-			}, 
-			[3] = {
-				["strName"] = "1", 
-				["bState"] = true, 
-				["strDomain"] = "1", 
-			}, 
-			[4] = {
-				["strName"] = "2", 
-				["bState"] = true, 
-				["strDomain"] = "1", 
-			}, 
-			[5] = {
-				["strName"] = "3", 
-				["bState"] = true, 
-				["strDomain"] = "3", 
-			}, 
+		["tBlackList"] = { 
 		}, 
 		["tWhiteList"] = {
 			[1] = {
@@ -45,8 +20,8 @@ function GetSubTable()
 			}, 
 			[4] = {
 				["strName"] = "搜狐", 
-				["bState"] = true, 
-				["strDomain"] = "sohu.com", 
+				["bState"] = false, 
+				["strDomain"] = "tv.sohu.com", 
 			}, 
 			[5] = {
 				["strName"] = "新浪", 
@@ -76,7 +51,7 @@ function GetSubTable()
 			[10] = {
 				["strName"] = "央视网", 
 				["bState"] = true, 
-				["strDomain"] = "cntv.com", 
+				["strDomain"] = "cntv.cn", 
 			}, 
 			[11] = {
 				["strName"] = "人民网", 

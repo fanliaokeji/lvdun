@@ -1,88 +1,68 @@
 function GetSubTable()
 	local t = {
 		["youku.com"] = {
-			["bUserDefine"] = false, 
-			["nLastPopupUTC"] = 0, 
 			["strTitle"] = "优酷", 
 		}, 
 		["baomihua.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "爆米花", 
 		}, 
 		["kankan.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "迅雷看看", 
 		}, 
 		["tv.sohu.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "搜狐视频", 
+			["nLastPopupUTC"] = 1413713620, 
 		}, 
 		["tudou.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "土豆", 
 		}, 
 		["pptv.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "pptv", 
 		}, 
 		["kankannews.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "看看新闻网", 
 		}, 
-		["letv.cn"] = {
-			["bUserDefine"] = false, 
-			["strTitle"] = "乐视", 
-		}, 
 		["cntv.cn"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "央视网", 
 		}, 
+		["letv.cn"] = {
+			["strTitle"] = "乐视", 
+		}, 
 		["v.qq.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "腾讯视频", 
 		}, 
-		["aipai.com"] = {
-			["bUserDefine"] = false, 
-			["strTitle"] = "爱拍", 
-		}, 
 		["56.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "56视频", 
 		}, 
-		["ifeng.com"] = {
-			["bUserDefine"] = false, 
-			["strTitle"] = "凤凰网", 
+		["aipai.com"] = {
+			["strTitle"] = "爱拍", 
+		}, 
+		["6.cn"] = {
+			["strTitle"] = "六间房", 
 		}, 
 		["ku6.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "酷6", 
 		}, 
 		["v1.cn"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "第一视频网", 
 		}, 
 		["pps.tv"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "pps", 
 		}, 
 		["m1905.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "1905电影网", 
 		}, 
-		["6.cn"] = {
-			["bUserDefine"] = false, 
-			["strTitle"] = "六间房", 
+		["ifeng.com"] = {
+			["strTitle"] = "凤凰网", 
 		}, 
 		["funshion.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "风行", 
+			["nLastPopupUTC"] = 1413699443, 
 		}, 
 		["baofeng.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "暴风", 
 		}, 
 		["iqiyi.com"] = {
-			["bUserDefine"] = false, 
 			["strTitle"] = "爱奇艺", 
 		}, 
 	}
