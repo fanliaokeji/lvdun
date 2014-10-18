@@ -1,14 +1,12 @@
 function GetSubTable()
 	local t = {
-		["strServerAppListURL"] = "http://greenshield.media.com/greenshield/ServerAppList.dat", 
-		["nFilterCountTotal"] = 20, 
+		["strServerAppListURL"] = "", 
+		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
 		["bFilterOpen"] = true, 
-		["nLastBubbleUTC"] = 1413527702, 
+		["nLastBubbleUTC"] = 0, 
 		["strContactURL"] = "www.baidu.com", 
-		["strServerConfigURL"] = "http://greenshield.media.com/greenshield/ServerConfig.dat", 
-		["nLastClearUTC"] = 1413526836, 
-		["strIndexURL"] = "www.kankan.com", 
+		["strServerConfigURL"] = "", 
 		["tConfig"] = {
 			["HideMainPage"] = {
 				["bState"] = false, 
@@ -17,12 +15,14 @@ function GetSubTable()
 				["bState"] = true, 
 			}, 
 			["AutoStup"] = {
-				["bState"] = false, 
+				["bState"] = true, 
 			}, 
 			["AutoUpdate"] = {
 				["bState"] = true, 
 			}, 
 		}, 
+		["strIndexURL"] = "www.baidu.com", 
+		["nLastClearUTC"] = 0, 
 	}
 	return t
 end
