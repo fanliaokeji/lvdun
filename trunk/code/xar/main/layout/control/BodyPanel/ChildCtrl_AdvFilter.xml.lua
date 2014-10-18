@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("GS.Util")
+local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 
 local g_bHasLoadCfg = false
 local g_selfRootCtrl = nil
@@ -14,7 +15,6 @@ local g_nLayoutGap = 0
 local g_nIDToDelete = 0
 
 local g_tBlackList = {}
-local g_tVideoList = {}
 
 local g_nReportELEnable = 1
 local g_nReportELDisable = 2
@@ -76,8 +76,6 @@ function OnClickAddBtn(self)
 		return
 	end
 	
-	AddToUserDefineList(strName, strDomain)
-	
 	PushBlackList(strName, strDomain, true)
 	ReportDomainState(strDomain, g_nReportELAdd)
 	
@@ -115,7 +113,6 @@ function OnClick_StateButton(self)
 	else
 		ReportDomainState(strDomain, g_nReportELDisable)
 	end
-	
 end
 
 
@@ -277,6 +274,8 @@ function OnClickPopupCancle(self)
 	local strName = objTextName:GetText()
 	local strDomain = objTextDomain:GetText()
 
+	TipLog("[OnClickPopupCancle] user cancle video filter")
+	tFunctionHelper.EnableVideoDomain(strDomain, 2)
 	objHostWnd:Show(0)
 	ReportPopupState(strDomain, 2)
 end
@@ -387,11 +386,6 @@ function LoadConfig()
 	if g_bHasLoadCfg then
 		return true
 	end
-
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	
-	---视频网站列表
-	g_tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	
 	---黑名单
 	g_tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList") or {}
@@ -640,22 +634,27 @@ end
 function RemoveBlackList(nIDToDelete)
 	if type(g_tBlackList[nIDToDelete]) == "table" then
 		local strDomain = FetchValueByPath(g_tBlackList, {nIDToDelete, "strDomain"})
+		local bIsVideo = tFunctionHelper.IsVideoDomain(strDomain)
 		table.remove(g_tBlackList, nIDToDelete)
 		
-		AutoEnableDomain(strDomain, true)
+		AutoEnableDomain(strDomain, true, bIsVideo)
 		SaveConfigToFile()
 	end	
 end
 
 
-function AutoEnableDomain(strDomain, bDelete)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+function AutoEnableDomain(strDomain, bDelete, bIsVideo)
 	if not IsRealString(strDomain) then
 		return
 	end
 	
+	--删除时，不是视频则设置为过滤
 	if bDelete then
-		tFunctionHelper.EnableVideoDomain(strDomain, 0)
+		if bIsVideo then
+			tFunctionHelper.EnableVideoDomain(strDomain, 0)
+		else
+			tFunctionHelper.EnableVideoDomain(strDomain, 1)
+		end
 		return
 	end
 	
@@ -665,25 +664,6 @@ function AutoEnableDomain(strDomain, bDelete)
 	elseif nState == 2 then
 		tFunctionHelper.EnableVideoDomain(strDomain, 2)
 	end
-end
-
-
---用户自行添加的视频列表
-function AddToUserDefineList(strName, strDomain)
-	-- local tRuleList = g_tVideoList
-	-- for key, tRuleElem in pairs(tRuleList) do 
-		-- local strRuleDomain = tRuleElem["strDomain"]
-		-- if IsRealString(strRuleDomain) 
-			-- and string.find(strDomain, strRuleDomain) then
-			-- return		
-		-- end
-	-- end
-	
-	-- local nNewRuleCount = #g_tVideoList+1
-	-- g_tVideoList[nNewRuleCount] = {}
-	-- g_tVideoList[nNewRuleCount]["strTitle"] = strName
-	-- g_tVideoList[nNewRuleCount]["strDomain"] = strDomain
-	
 end
 
 

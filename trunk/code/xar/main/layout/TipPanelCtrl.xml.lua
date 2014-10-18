@@ -135,6 +135,7 @@ function CreateFilterListener(objRootCtrl)
 		
 		local strDomain = ExractRuleDomain(strURL)
 		if not IsRealString(strDomain) then
+			TipLog("[OnFilterASK] ExractRuleDomain failed")
 			return
 		end
 		
@@ -155,7 +156,7 @@ function ExractRuleDomain(strURL)
 	if not IsRealString(strHost) then
 		return nil
 	end
-		
+	
 	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	for strDomain, tVideoElem in pairs(tVideoList) do
 		if string.find(strHost, strDomain.."$") then
