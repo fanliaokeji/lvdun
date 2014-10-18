@@ -13,8 +13,9 @@
 #include "Wininet.h"
 #include <fstream>
 #pragma comment(lib, "Wininet.lib")
-
-
+#include "..\GSNotifyIcon.h"
+#include "..\GSApp.h"
+extern CGSApp theApp;
 
 
 CFilterMsgWindow::CFilterMsgWindow(void)
@@ -158,7 +159,6 @@ LRESULT CFilterMsgWindow::HandleFilterResult(UINT uiMsg, WPARAM wParam, LPARAM l
 	CComVariant vParam[2];
 	vParam[0] = (int)wParam;
 	vParam[1] = (LPWSTR)wstrUrl.c_str();
-	//delete pUrl;
 
 	DISPPARAMS params = { vParam, NULL, 2, 0 };
 	//CallLuaMethod("OnFilterResult",&params);
@@ -175,10 +175,17 @@ LRESULT CFilterMsgWindow::HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lPar
 	CComVariant vParam[2];
 	vParam[0] = (int)wParam;
 	vParam[1] = (LPWSTR)wstrUrl.c_str();
-	//delete pUrl;
 
 	DISPPARAMS params = { vParam, NULL, 2, 0 };
 	//CallLuaMethod("OnFilterASK", &params);
 	Fire_LuaEvent("OnFilterASK", &params);
+	return 0;
+}
+
+
+LRESULT CFilterMsgWindow::HandleFilterExit(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+{
+	gsNotifyIcon.Hide();
+	theApp.ExitInstance();
 	return 0;
 }

@@ -8,6 +8,8 @@ typedef void (*funResultCallBack) (DWORD userdata1,DWORD userdata2, const char* 
 #define WM_FILTERRESULT WM_USER + 201
 #define WM_FILTERASK WM_USER + 202
 
+#define WM_FILTEREXIT WM_USER + 300
+
 struct CallbackNode
 {
 	funResultCallBack pCallBack;
@@ -35,7 +37,8 @@ public:
 		MESSAGE_HANDLER(WM_COPYDATA,		OnCopyData)
 		MESSAGE_HANDLER(WM_FILTERRESULT, HandleFilterResult)
 		MESSAGE_HANDLER(WM_FILTERASK, HandleFilterAsk)
-
+		
+		MESSAGE_HANDLER(WM_FILTEREXIT, HandleFilterExit)
 	END_MSG_MAP()
 private:
 	CFilterMsgWindow(void);
@@ -60,4 +63,6 @@ public:
 	LRESULT OnCopyData(UINT , WPARAM , LPARAM , BOOL& );
 	LRESULT HandleFilterResult(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 	LRESULT HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
+
+	LRESULT HandleFilterExit(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 };
