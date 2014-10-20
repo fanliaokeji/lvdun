@@ -3,8 +3,8 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>400</width>
-			<height>300</height>
+			<width>320</width>
+			<height>243</height>
 		</attr>
 
 		<obj id="root.layout" class="CaptionObject">
@@ -127,8 +127,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>400</width>
-            <height>300</height>
+            <width>320</width>
+            <height>243</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

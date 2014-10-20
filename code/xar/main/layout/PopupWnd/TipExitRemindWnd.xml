@@ -3,8 +3,8 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>400</width>
-			<height>200</height>
+			<width>319</width>
+			<height>145</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
@@ -124,8 +124,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>400</width>
-            <height>200</height>
+            <width>319</width>
+            <height>145</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
