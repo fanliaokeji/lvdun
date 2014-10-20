@@ -58,7 +58,7 @@ SOCKET WSAAPI WinsockHooker::Hooked_WSASocket(int af, int type, int protocol, LP
 }
 
 static unsigned int proxy_port = 15868;
-struct LocalPortToRemoveAddress {
+struct LocalPortToRemoteAddress {
 	USHORT local_port;
 	USHORT remote_port;
 	ULONG remote_ip;
@@ -67,7 +67,7 @@ struct LocalPortToRemoveAddress {
 
 unsigned __stdcall WaitForQueryRemoteAddressThreadProc(void *arg)
 {
-	std::auto_ptr<LocalPortToRemoveAddress> sp_arg(reinterpret_cast<LocalPortToRemoveAddress*>(arg));
+	std::auto_ptr<LocalPortToRemoteAddress> sp_arg(reinterpret_cast<LocalPortToRemoteAddress*>(arg));
 	DWORD dwWaitResult = ::WaitForSingleObject(sp_arg->hWaitForQueryEvent, 5000);
 	::CloseHandle(sp_arg->hWaitForQueryEvent);
 	sp_arg->hWaitForQueryEvent = NULL;
@@ -174,7 +174,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 				if(connect_result != 0 &&  dwLastError == 0) {
 					dwLastError = WSAEWOULDBLOCK;
 				}
-				LocalPortToRemoveAddress* args = new LocalPortToRemoveAddress();
+				LocalPortToRemoteAddress* args = new LocalPortToRemoteAddress();
 				args->hWaitForQueryEvent = hEvent;
 				args->local_port = local_port;
 				args->remote_ip = remote_ip;
@@ -182,7 +182,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 				HANDLE hThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, WaitForQueryRemoteAddressThreadProc, reinterpret_cast<void*>(args), 0, NULL));
 				if(hThread == NULL) {
 					::CloseHandle(args->hWaitForQueryEvent);
-					delete hThread;
+					delete args;
 				}
 				else {
 					::CloseHandle(hThread);
