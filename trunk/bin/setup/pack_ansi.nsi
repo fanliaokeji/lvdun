@@ -48,9 +48,10 @@ Var Btn_FreeUse
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "ÂÌ¶Ü"
-!define EM_OUTFILE_NAME "${PRODUCT_NAME}°²×°°ü.exe"
 !define PRODUCT_VERSION "1.0.0.1"
 !define VERSION_LASTNUMBER 1
+!define EM_OUTFILE_NAME "GsSetup_${PRODUCT_VERSION}.exe"
+
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "My company, Inc."
 !define PRODUCT_WEB_SITE "http://www.mycompany.com"
