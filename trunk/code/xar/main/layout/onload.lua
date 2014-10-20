@@ -1093,7 +1093,7 @@ end
 function SetIERegValue(strNewRegValue)
 	local nMajVer, nMinVer = tipUtil:GetOSVersion()
 	if IsNilString(nMajVer) or IsNilString(nMinVer) 
-		or nMajVer ~= 6 or nMinVer < 2 then
+		or nMajVer < 6 or nMinVer < 2 then
 		return
 	end
 	
@@ -1101,10 +1101,12 @@ function SetIERegValue(strNewRegValue)
 	
 	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation"
 	local strRegValue = RegQueryValue(strRegPath)
-	if IsRealString(strRegValue) then
-		TipLog("[SetIERegValue] strNewRegValue:"..tostring(strNewRegValue))
-		RegSetValue(strRegPath, strNewRegValue)
+	if not IsRealString(strRegValue) then
+		tipUtil:CreateRegKey("HKEY_CURRENT_USER", "Software\\Microsoft\\Internet Explorer\\Main\\Isolation")
 	end
+	
+	TipLog("[SetIERegValue] strNewRegValue:"..tostring())
+	RegSetValue(strRegPath, strNewRegValue)
 end
 
 
