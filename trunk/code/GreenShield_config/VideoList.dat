@@ -11,7 +11,6 @@ function GetSubTable()
 		}, 
 		["tv.sohu.com"] = {
 			["strTitle"] = "搜狐视频", 
-			["nLastPopupUTC"] = 1413713620, 
 		}, 
 		["tudou.com"] = {
 			["strTitle"] = "土豆", 
@@ -57,7 +56,6 @@ function GetSubTable()
 		}, 
 		["funshion.com"] = {
 			["strTitle"] = "风行", 
-			["nLastPopupUTC"] = 1413699443, 
 		}, 
 		["baofeng.com"] = {
 			["strTitle"] = "暴风", 
