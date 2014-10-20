@@ -422,6 +422,12 @@ function ShowPopupWndByName(strWndName)
 
 	if not IsUserFullScreen() then
 		frameHostWnd:SetTopMost(true)
+		if type(tipUtil.SetWndPos) == "function" then
+			local hWnd = frameHostWnd:GetWndHandle()
+			if hWnd ~= nil then
+				tipUtil:SetWndPos(hWnd,-2, 0, 0, 0, 0,0x0053)
+			end
+		end
 	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
 		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
 		if hFrontHandle ~= nil then
