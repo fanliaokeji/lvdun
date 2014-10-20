@@ -134,15 +134,14 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
-
 	HKEY hKEY;
-	LPCSTR data_Set= "/Software//GreenShield";
-	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER,data_Set,0,KEY_READ,&hKEY))
+	LPCSTR data_Set= "Software\\GreenShield";
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
 		DWORD dwSize = sizeof(szValue);
 		DWORD dwType = REG_SZ;
-		if (::RegQueryValueExA(hKEY,"PeerId", 0, &dwType, (LPBYTE)&szValue, &dwSize) == ERROR_SUCCESS)
+		if (::RegQueryValueExA(hKEY,"PeerId", 0, &dwType, (LPBYTE)szValue, &dwSize) == ERROR_SUCCESS)
 		{
 			strcpy(pszPeerID, szValue);
 			return;
@@ -154,6 +153,17 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	std::string strPeerID;
 	WStringToString(wstrPeerID, strPeerID);
 	strcpy(pszPeerID,strPeerID.c_str());
+
+	HKEY hKey, hTempKey;
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
+	{
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "GreenShield", &hTempKey))
+		{
+			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
+		}
+		RegCloseKey(hKey);
+	}
+
 }
 
 extern "C" __declspec(dllexport) void NsisTSLOG(TCHAR* pszInfo)
