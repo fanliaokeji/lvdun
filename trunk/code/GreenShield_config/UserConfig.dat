@@ -5,7 +5,7 @@ function GetSubTable()
 		["nFilterCountOneDay"] = 0, 
 		["bFilterOpen"] = true, 
 		["nLastBubbleUTC"] = 0, 
-		["strContactURL"] = "www.baidu.com", 
+		["strContactURL"] = "http://www.lvdun123.com/", 
 		["strServerConfigURL"] = "", 
 		["tConfig"] = {
 			["HideMainPage"] = {
@@ -21,8 +21,9 @@ function GetSubTable()
 				["bState"] = true, 
 			}, 
 		}, 
-		["strIndexURL"] = "www.baidu.com", 
+		["strIndexURL"] = "www.lvdun123.com", 
 		["nLastClearUTC"] = 0, 
+		["strContactQQ"] = "67542242",
 	}
 	return t
 end
