@@ -838,6 +838,10 @@ Function NSD_TimerFun
 	${If} $Bool_DeskTopLink == 1
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	${EndIf}
+	${If} $Bool_StartTimeDo == 1
+		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
+	${EndIf}
+	
 	; 创建开始菜单快捷方式
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
