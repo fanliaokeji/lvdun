@@ -255,7 +255,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #define MAX_LOGFILE_INDEX		999		//日志文件名使用的索引
 #define MAX_HEX_DUMP_SIZE  		512
 //no config, default
-#define DEFAULT_LOGFILE_PATH				"C:\\TSLOG\\"
+#define DEFAULT_LOGFILE_PATH				"C:\\GSLOG\\"
 #define __TDEFAULT_LOGFILE_PATH				_T(DEFAULT_LOGFILE_PATH)
 #define DEFAULT_MAX_LOGFILE_SIZE			20480
 #define MAX_MAX_LOGFILE_SIZE				(DEFAULT_MAX_LOGFILE_SIZE * 100)
