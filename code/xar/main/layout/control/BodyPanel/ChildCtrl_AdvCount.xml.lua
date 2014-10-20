@@ -315,8 +315,8 @@ function InitVideoState()
 	for key, tBlackItem in pairs(tBlackList) do
 		if type(tBlackItem) == "table" then
 			local strDomain = tBlackItem["strDomain"] or ""
-			local bState = tBlackItem["bState"] or true
-			TipLog("[InitVideoState] strDomain :"..tostring(strDomain).." bState"..tostring(bState))
+			local bState = tBlackItem["bState"]
+			TipLog("[InitVideoState] strDomain :"..tostring(strDomain).." bState: "..tostring(bState))
 			if not bState and tFunctionHelper.IsVideoDomain(strDomain) then	
 				tFunctionHelper.EnableVideoDomain(strDomain, 0)
 			end		
