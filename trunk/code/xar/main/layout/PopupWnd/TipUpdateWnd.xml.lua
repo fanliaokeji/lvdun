@@ -125,6 +125,7 @@ function OnClickEnterBtn(self)
 		local strInstallPath = attr.strInstallPath 
 		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
 		HideCurrentWnd(self)
+		SendUpdateReport(1)
 	else
 		self:SetVisible(false)
 		self:SetChildrenVisible(false)
@@ -136,6 +137,7 @@ function OnClickEnterBtn(self)
 		objProgBarLayout:SetChildrenVisible(true)
 		
 		SetProgBar(objProgBarLayout)
+		SendUpdateReport(2)
 	end
 end
 
@@ -327,6 +329,18 @@ function SetVersionText(objRootCtrl, tNewVersionInfo)
 	objText2:SetText(tostring(tInroduce[2]))
 	objText3:SetText(tostring(tInroduce[3]))	
 end
+
+--1 表示立即安装， 2表示立即更新
+function SendUpdateReport(nState)
+	local tStatInfo = {}
+	tStatInfo.strEC = "UpdateWnd"
+	tStatInfo.strEL = tostring(nState)
+	
+	if type(FunctionObj.TipConvStatistic) == "function" then
+		FunctionObj.TipConvStatistic(tStatInfo)
+	end
+end
+
 
 --------------------------
 function IsRealString(str)

@@ -12,7 +12,7 @@ function OnCreate( self )
 	local wndtop = ((workbottom-worktop)-webheight)/2-webtop
 	self:Move(wndleft, wndtop, wndwidth, wndheight)
 	
-	SetVersionText(objRootCtrl)
+	SetShowText(objRootCtrl)
 end
 
 function OnClickCloseBtn(self)
@@ -21,9 +21,10 @@ function OnClickCloseBtn(self)
 	objHostWnd:Show(0)
 end
 
-function SetVersionText(objRootCtrl)
+function SetShowText(objRootCtrl)
 	local objVersion = objRootCtrl:GetObject("TipAbout.MainWndCenter.Bkg:TipAbout.MainWndCenter.Version")
-	if not objVersion then
+	local objContact = objRootCtrl:GetObject("TipAbout.MainWndCenter.Bkg:TipAbout.MainWndCenter.Contact")
+	if not objVersion or not objContact then
 		return
 	end
 	
@@ -31,4 +32,12 @@ function SetVersionText(objRootCtrl)
 	local strVersion = FunctionObj.GetGSVersion()
 	local strText = "版本号 ："..tostring(strVersion).." 正式版本"
 	objVersion:SetText(strText)
+	
+	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
+	local strQQ = tUserConfig["strContactQQ"]
+	local strContact = "QQ群 : "..tostring(strQQ)
+	objContact:SetText(strContact)
 end
+
+
+

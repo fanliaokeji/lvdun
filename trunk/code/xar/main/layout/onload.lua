@@ -466,8 +466,8 @@ function InitTrayTipWnd(objHostWnd)
 			end
 		end
 		
-		--双击左键
-		if event3 == 0x0203 then
+		--单击左键
+		if event3 == 0x0202 then
 			local strHostWndName = "GreenWallTipWnd.MainFrame"
 			local objHostWnd = hostwndManager:GetHostWnd(strHostWndName)
 			if not objHostWnd then
