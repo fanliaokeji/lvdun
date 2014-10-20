@@ -127,6 +127,8 @@ function OnClickEnterBtn(self)
 		HideCurrentWnd(self)
 		SendUpdateReport(1)
 	else
+		ShowReadyUpdate(objRootCtrl, g_tNewVersionInfo)
+	
 		self:SetVisible(false)
 		self:SetChildrenVisible(false)
 
@@ -296,7 +298,6 @@ function SetProgBar(objProgBarLayout)
 			local strInnerText = "完成"
 			objOutText:SetText("")
 			objInnerText:SetText(strInnerText)
-			
 			tipUtil:ShellExecute(0, "open", strPacketPath, 0, 0, "SW_SHOWNORMAL")
 		end
 	end
@@ -317,6 +318,8 @@ function DownLoadNewVersion(fnCallBack)
 	end
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	
+	TipLog("[DownLoadNewVersion] strUrl: "..tostring(strUrl).." strSavePath: "..tostring(strSavePath))
 	tipAsynUtil:AsynGetHttpFileWithProgress(strUrl, strSavePath, false, fnCallBack)
 end
 
@@ -329,6 +332,10 @@ end
 
 
 function SetVersionText(objRootCtrl, tNewVersionInfo)
+	if type(tNewVersionInfo) ~= "table" then
+		return
+	end
+
 	local objVersion = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.Title.Text")
 	local objContent = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.Content.Layout")
 	if not objVersion or not objContent then
