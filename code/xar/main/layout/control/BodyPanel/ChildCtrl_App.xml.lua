@@ -455,6 +455,12 @@ function OpenSoftware(objUIItem, tItemInfo)
 		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
 		SendAppReport(strKeyName, 2)
 	else
+		local objRootCtrl = objUIItem:GetOwnerControl()
+		local attr = objRootCtrl:GetAttribute()
+		if attr.bIsDownLoading then
+			return
+		end
+	
 		DownLoadSoftware(objUIItem, tItemInfo)
 		SendAppReport(strKeyName, 3)
 	end

@@ -296,12 +296,59 @@ function CheckUpdateVersion()
 			or not tFunctionHelper.CheckIsNewVersion(strNewVersion, strCurVersion) then
 			return
 		end
-	
-		tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
+		
+		DownLoadNewVersion(tNewVersionInfo)
+		-- tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
 	end	
 	
 	tFunctionHelper.DownLoadServerConfig(TryShowUpdateWnd)
 end
+
+
+function DownLoadNewVersion(tNewVersionInfo)
+	local strPacketURL = tNewVersionInfo.strPacketURL
+	if not IsRealString(strPacketURL) then
+		return
+	end
+	
+	local strFileName = tFunctionHelper.GetFileSaveNameFromUrl(strPacketURL)
+	if not string.find(strFileName, "%.exe$") then
+		strFileName = strFileName..".exe"
+	end
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+
+	tFunctionHelper.NewAsynGetHttpFile(strPacketURL, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		if 0 == bRet then
+			PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
+		end
+	end)	
+end
+
+function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
+	if not IsRealString(strRealPath) then
+		return
+	end
+
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local strWndName = "TipUpdateWnd.Instance"
+	local objPopupWnd = hostwndManager:GetHostWnd(strWndName)
+	if objPopupWnd == nil then
+		TipLog("[PopupUpdateWndForInstall] GetHostWnd failed: "..tostring(strWndName))
+		return
+	end
+
+	local objTree = objPopupWnd:GetBindUIObjectTree()
+	local objRootCtrl = objTree:GetUIObject("root.layout")
+	if objRootCtrl then
+		objRootCtrl:ShowInstallPanel(strRealPath, tNewVersionInfo)
+	end
+end
+
 
 ----------------------------------
 

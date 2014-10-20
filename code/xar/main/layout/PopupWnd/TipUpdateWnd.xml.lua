@@ -29,6 +29,11 @@ function OnShowWindow(self, bVisible)
 		return
 	end	
 	
+	local attr = objRootCtrl:GetAttribute()
+	if attr.bInstall then
+		return
+	end
+	
 	local function InitMainWnd(nRet, strCfgPath)	
 		HideCheckingImage(objRootCtrl)
 		
@@ -60,6 +65,43 @@ function OnShowWindow(self, bVisible)
 	FunctionObj.DownLoadServerConfig(InitMainWnd)
 end
 
+
+function ShowInstallPanel(self, strInstallPath, tNewVersionInfo)
+	local objRootCtrl = self
+	SetVersionText(objRootCtrl, tNewVersionInfo)
+	
+	local objBkg = objRootCtrl:GetObject("TipUpdate.Bkg")
+	if not objBkg then
+		return
+	end
+	
+	local objTitle = objBkg:GetObject("TipUpdate.Title.Text")
+	local objEnterBtn = objBkg:GetObject("TipUpdate.EnterBtn")
+	local objProgressBar = objBkg:GetObject("TipUpdate.ProgressBar.Layout")
+	
+	if not objTitle or not objEnterBtn or not objProgressBar then
+		return
+	end
+
+	objEnterBtn:SetVisible(true)
+	objEnterBtn:SetChildrenVisible(true)
+	objProgressBar:SetVisible(false)
+	objProgressBar:SetChildrenVisible(false)
+	
+	local strText = objTitle:GetText()
+	strText = strText..",已经下载完毕"
+	objTitle:SetText(strText)
+	objEnterBtn:SetText("立即安装")
+	
+	local attr = objRootCtrl:GetAttribute()
+	attr.bInstall = true
+	attr.strInstallPath = strInstallPath
+	
+	local objTree = self:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	objHostWnd:Show(4)
+end
+
 ----------------------------------------------------------------
 
 function OnClickCloseBtn(self)
@@ -77,16 +119,24 @@ end
 
 
 function OnClickEnterBtn(self)
-	self:SetVisible(false)
-	self:SetChildrenVisible(false)
+	local objRootCtrl = self:GetOwnerControl()
+	local attr = objRootCtrl:GetAttribute()
+	if attr.bInstall then
+		local strInstallPath = attr.strInstallPath 
+		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
+		HideCurrentWnd(self)
+	else
+		self:SetVisible(false)
+		self:SetChildrenVisible(false)
 
-	local objTree = self:GetOwner()
-	local objRootCtrl = objTree:GetUIObject("root.layout")
-	local objProgBarLayout = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.ProgressBar.Layout")
-	objProgBarLayout:SetVisible(true)
-	objProgBarLayout:SetChildrenVisible(true)
-	
-	SetProgBar(objProgBarLayout)
+		local objTree = self:GetOwner()
+		local objRootCtrl = objTree:GetUIObject("root.layout")
+		local objProgBarLayout = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.ProgressBar.Layout")
+		objProgBarLayout:SetVisible(true)
+		objProgBarLayout:SetChildrenVisible(true)
+		
+		SetProgBar(objProgBarLayout)
+	end
 end
 
 
@@ -211,6 +261,7 @@ function SetProgBar(objProgBarLayout)
 			
 		elseif bRet == -1 then
 			l_bHasFinish = true
+			HideCurrentWnd(objProgBarLayout)
 			
 		elseif bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
 			l_bHasFinish = true
@@ -221,7 +272,6 @@ function SetProgBar(objProgBarLayout)
 			objInnerText:SetText(strInnerText)
 			
 			tipUtil:ShellExecute(0, "open", strPacketPath, 0, 0, "SW_SHOWNORMAL")
-			HideCurrentWnd(objProgBarLayout)
 		end
 	end
 
@@ -235,7 +285,7 @@ function DownLoadNewVersion(fnCallBack)
 		fnCallBack(-1)
 	end
 	
-	local strFileName = GetFileSaveNameFromUrl(strUrl)
+	local strFileName = FunctionObj.GetFileSaveNameFromUrl(strUrl)
 	if not string.find(strFileName, "%.exe$") then
 		strFileName = strFileName..".exe"
 	end
@@ -290,11 +340,3 @@ function TipLog(strLog)
 	end
 end
 
-function GetFileSaveNameFromUrl(url)
-	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
-	local npos = string.find(strFileName, "?", 1, true)
-	if npos ~= nil then
-		strFileName = string.sub(strFileName, 1, npos-1)
-	end
-	return strFileName
-end
