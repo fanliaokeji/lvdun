@@ -194,7 +194,7 @@ end
 function LoadAppList(strAppListName)
 	local strCfgPath = FunctionObj.GetCfgPathWithName(strAppListName)
 	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath)
-	if type(infoTable) == "table" then
+	if type(infoTable) == "table" and #infoTable > 0 then
 		return infoTable
 	end
 	
@@ -451,8 +451,9 @@ function OpenSoftware(objUIItem, tItemInfo)
 		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
 	end
 	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
-	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strInstallPath) then
-		tipUtil:ShellExecute(0, "open", strInstallPath, 0, 0, "SW_SHOWNORMAL")
+	local strPathWithFix = string.gsub(strInstallPath, '"', "")
+	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strPathWithFix) then
+		tipUtil:ShellExecute(0, "open", strPathWithFix, 0, 0, "SW_SHOWNORMAL")
 		SendAppReport(strKeyName, 2)
 	else
 		local objRootCtrl = objUIItem:GetOwnerControl()
