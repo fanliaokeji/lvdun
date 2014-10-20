@@ -1105,7 +1105,7 @@ function SetIERegValue(strNewRegValue)
 		tipUtil:CreateRegKey("HKEY_CURRENT_USER", "Software\\Microsoft\\Internet Explorer\\Main\\Isolation")
 	end
 	
-	TipLog("[SetIERegValue] strNewRegValue:"..tostring())
+	TipLog("[SetIERegValue] strNewRegValue:"..tostring(strNewRegValue))
 	RegSetValue(strRegPath, strNewRegValue)
 end
 
