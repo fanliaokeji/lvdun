@@ -557,6 +557,7 @@ function PushWhiteList(strName, strDomain, bState)
 	g_tWhiteList[nTopIndex]["bState"] = bState
 	
 	AutoEnableDomain(strDomain)
+	SaveConfigToFile()
 end
 
 
@@ -565,6 +566,7 @@ function RemoveWhiteList(nIDToDelete)
 		local strDomain = FetchValueByPath(g_tWhiteList, {nIDToDelete, "strDomain"})
 		table.remove(g_tWhiteList, nIDToDelete)
 		AutoEnableDomain(strDomain)
+		SaveConfigToFile()
 	end
 end
 
@@ -580,6 +582,12 @@ function AutoEnableDomain(strDomain)
 	else
 		tFunctionHelper.EnableWhiteDomain(strDomain, false)
 	end
+end
+
+
+function SaveConfigToFile()
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	FunctionObj.SaveFilterConfigToFile()
 end
 
 

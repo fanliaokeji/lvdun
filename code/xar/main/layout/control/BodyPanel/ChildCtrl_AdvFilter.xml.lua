@@ -610,6 +610,24 @@ function ShowPopupPanel(objRootCtrl, bShowPopup)
 end
 
 
+function GetIDByDomain(strDomain)
+	if not IsRealString(strDomain) then
+		return nil
+	end
+
+	for nID, tBlackElem in ipairs(g_tBlackList) do
+		if type(tBlackElem) == "table" then
+			local strBlackDomain = tBlackElem["strDomain"] or ""
+			if strDomain == strBlackDomain then
+				return nID
+			end		
+		end	
+	end
+	
+	return nil
+end
+
+
 function PushBlackList(strName, strDomain, bState)
 	if not IsRealString(strDomain) then
 		return
@@ -620,11 +638,12 @@ function PushBlackList(strName, strDomain, bState)
 	end
 	
 	local nTopIndex = #g_tBlackList+1
+	local nIndex = GetIDByDomain(strDomain) or nTopIndex
 	
-	g_tBlackList[nTopIndex] = {}
-	g_tBlackList[nTopIndex]["strName"] = strName or ""
-	g_tBlackList[nTopIndex]["strDomain"] = strDomain
-	g_tBlackList[nTopIndex]["bState"] = bState
+	g_tBlackList[nIndex] = {}
+	g_tBlackList[nIndex]["strName"] = strName or ""
+	g_tBlackList[nIndex]["strDomain"] = strDomain
+	g_tBlackList[nIndex]["bState"] = bState
 	
 	AutoEnableDomain(strDomain)
 	SaveConfigToFile()

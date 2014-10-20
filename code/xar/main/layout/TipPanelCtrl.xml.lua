@@ -102,6 +102,8 @@ function CreateFilterListener(objRootCtrl)
 				OnFilterResult(p1, p2)
 			elseif tostring(key) == "OnFilterASK" then
 				OnFilterASK(p1, p2)
+			elseif tostring(key) == "OnCommandLine" then
+				--show
 			end	
 		end
 	)

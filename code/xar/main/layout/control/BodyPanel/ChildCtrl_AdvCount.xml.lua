@@ -242,6 +242,7 @@ function DoSthAnotherDay(objRootCtrl)
 	ReportAdvCountInfo()
 	ClearAdvCount(objRootCtrl)
 	CheckUpdateVersion()
+	InitVideoState()
 	
 	local nCurUTC = tipUtil:GetCurrentUTCTime()
 	SaveAdvLastUTC(nCurUTC)
@@ -298,10 +299,24 @@ function CheckUpdateVersion()
 		end
 		
 		DownLoadNewVersion(tNewVersionInfo)
-		-- tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
 	end	
 	
 	tFunctionHelper.DownLoadServerConfig(TryShowUpdateWnd)
+end
+
+--隔天将disable状态的video设置为可弹窗
+function InitVideoState()
+	local tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList") or {}
+	for key, tBlackItem in pairs(tBlackList) do
+		if type(tBlackItem) == "table" then
+			local strDomain = tBlackItem["strDomain"] or ""
+			local bState = tBlackItem["strDomain"] or true
+			
+			if not bState and tFunctionHelper.IsVideoDomain(strDomain) then
+				tFunctionHelper.EnableVideoDomain(strDomain, 0)
+			end		
+		end	
+	end	
 end
 
 
