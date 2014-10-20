@@ -88,14 +88,12 @@ function GetSubTable()
 			["strExeName"] = "KwMusic.exe",
 		},
 		[12] = {
-			["strAppName"] = "百度杀毒",
-			["strKeyName"] = "BaiduSD",
+			["strAppName"] = "UC浏览器",
+			["strKeyName"] = "UCBrowser",
 			["nOpenType"] = 2,
 			["strCommand"] = "/S",
-			["strOpenLink"] = "http://dlsw.baidu.com/sw-search-sp/soft/44/17448/Baidusd_Setup_2.1.0.3086.1409900448.exe",
-			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Baidu\\BaiduSd\\InstallDir",
-			["strRegVersion"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Baidu\\BaiduSd\\Version",
-			["strExeName"] = "BaiduSd.exe",
+			["strOpenLink"] = "http://down2.uc.cn/pcbrowser/down.php?pid=4074",
+			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\UCBrowser\\InstallerSuccessLaunchCmdLine",
 		},
 	}
 	return t

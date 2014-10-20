@@ -227,6 +227,30 @@ function ShowReadyUpdate(objRootCtrl, tNewVersionInfo)
 	SetVersionText(objRootCtrl, tNewVersionInfo)
 end
 
+
+function ShowErrorPanel(objRootCtrl)
+	if not objRootCtrl then
+		return
+	end
+
+	local objProgBarLayout = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.ProgressBar.Layout")
+	local objTitle = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.Title.Text")
+	local objEnterBtn = objRootCtrl:GetObject("TipUpdate.Bkg:TipUpdate.EnterBtn")
+	if not objTitle or not objProgBarLayout or not objEnterBtn then
+		return
+	end
+	
+	objTitle:SetText("新版本下载失败")
+	objEnterBtn:SetText("重试")
+	
+	objProgBarLayout:SetVisible(false)
+	objProgBarLayout:SetChildrenVisible(false)
+	objEnterBtn:SetVisible(true)
+	objEnterBtn:SetChildrenVisible(true)
+end
+
+
+
 function SetProgBar(objProgBarLayout)
 	local objProgBar = objProgBarLayout:GetObject("TipUpdate.ProgressBar")
 	local objOutText = objProgBarLayout:GetObject("TipUpdate.ProgressBar.Text")
@@ -263,7 +287,7 @@ function SetProgBar(objProgBarLayout)
 			
 		elseif bRet == -1 then
 			l_bHasFinish = true
-			HideCurrentWnd(objProgBarLayout)
+			ShowErrorPanel(objProgBarLayout:GetOwnerControl())
 			
 		elseif bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
 			l_bHasFinish = true
