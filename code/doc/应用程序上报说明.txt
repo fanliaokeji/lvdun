@@ -7,12 +7,13 @@ cid 为 pid
 ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
 el = 0
-
+ev = 1			(版本号的最后一位)
 
 2. 主界面展示后上报
 ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
 el = 1
+ev = 1			(版本号的最后一位)
 
 3. 应用界面上报
 ec = AppPanel   		(面版名)
@@ -78,7 +79,9 @@ ev = 安装包版本最后一个数字
 el = 0|1		  (0静默， 1有界面)
 
 
-
+13.检查更新窗口
+ec = UpdateWnd
+el = 1|2		  (1 表示立即安装，2表示立即更新)
 
 
 
