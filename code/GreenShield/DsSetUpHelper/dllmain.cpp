@@ -12,7 +12,7 @@
 #pragma comment(lib, "Version.lib")
 
 #define TSLOG
-#define GS_GROUP "GS_GROUP"	//可选,默认为 "TSLOG"
+#define GS_GROUP "GS"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>				//如上配置,日志程序将根据 C:\TSLOG_CONFIG\TSLOG.ini 定义的策略打印
 
 
