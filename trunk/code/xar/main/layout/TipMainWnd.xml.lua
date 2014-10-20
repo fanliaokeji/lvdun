@@ -2,9 +2,11 @@ local tipUtil = XLGetObject("GS.Util")
 local gRootCtrl = nil
 
 
-function OnMouseMove( self )
-
+function OnClose( self )
+	self:Show(0)
+	return 0, true
 end
+
 
 function OnMouseLeave(self, x, y)
 
