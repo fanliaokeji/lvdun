@@ -80,10 +80,9 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	TSAUTO();
 	CHAR* szURL = new CHAR[MAX_PATH];
 	memset(szURL, 0, MAX_PATH);
-	std::wstring wstrPeerID;
-	GetPeerId_(wstrPeerID);
-	std::string strPeerID;
-	WStringToString(wstrPeerID, strPeerID);
+	char szPid[256] = {0};
+	extern void GetPeerID(CHAR * pszPeerID);
+	GetPeerID(szPid);
 	std::string str = "";
 	if (el != NULL )
 	{
@@ -96,7 +95,7 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		sprintf(szev, "&ev=%ld",ev);
 		str += szev;
 	}
-	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s",strPeerID.c_str(),ec,ea,str.c_str());
+	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
 
 	//DWORD dwThreadId = 0;
 	//HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
@@ -135,6 +134,21 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
+
+	HKEY hKEY;
+	LPCSTR data_Set= "/Software//GreenShield";
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER,data_Set,0,KEY_READ,&hKEY))
+	{
+		char szValue[256] = {0};
+		DWORD dwSize = sizeof(szValue);
+		DWORD dwType = REG_SZ;
+		if (::RegQueryValueExA(hKEY,"PeerId", 0, &dwType, (LPBYTE)&szValue, &dwSize) == ERROR_SUCCESS)
+		{
+			strcpy(pszPeerID, szValue);
+			return;
+		}
+		::RegCloseKey(hKEY);
+	}
 	std::wstring wstrPeerID;
 	GetPeerId_(wstrPeerID);
 	std::string strPeerID;
