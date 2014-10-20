@@ -90,6 +90,7 @@ function RegisterFunctionObject(self)
 	obj.DownLoadServerConfig = DownLoadServerConfig
 	obj.CheckIsNewVersion = CheckIsNewVersion
 	obj.IsVideoDomain = IsVideoDomain
+	obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -104,6 +105,14 @@ end
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
+end
+
+function MessageBox(str)
+	if not IsRealString(str) then
+		return
+	end
+	
+	tipUtil:MsgBox(str, "错误", 0x10)
 end
 
 
@@ -146,6 +155,16 @@ function QueryAllUsersDir()	--获取AllUser路径
 		bRet = true
 	end
 	return bRet, strRet
+end
+
+
+function GetFileSaveNameFromUrl(url)
+	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
+	local npos = string.find(strFileName, "?", 1, true)
+	if npos ~= nil then
+		strFileName = string.sub(strFileName, 1, npos-1)
+	end
+	return strFileName
 end
 
 
@@ -688,7 +707,7 @@ function ReadAllConfigInfo()
 	end
 	
 	local tVideoListTable = GetVideoListFromFile()
-	if type(tFilterTable) ~= "table" then
+	if type(tVideoListTable) ~= "table" then
 		TipLog("[ReadAllConfigInfo] GetVideoListFromFile failed! ")
 		return false
 	end
@@ -720,6 +739,7 @@ end
 function SendFileDataToFilterThread()
 	local bSucc = SendLazyListToFilterThread()
 	if not bSucc then
+		MessageBox(tostring("文件被损坏，请重新安装"))
 		return false
 	end	
 
@@ -738,7 +758,7 @@ end
 
 
 function SendLazyListToFilterThread()
-	local strLazyListPath = GetCfgPathWithName("Lazy.dat")
+	local strLazyListPath = GetCfgPathWithName("data.dat")
 	if not IsRealString(strLazyListPath) or not tipUtil:QueryFileExists(strLazyListPath) then
 		return false
 	end
@@ -762,7 +782,7 @@ function SendLazyListToFilterThread()
 		return false
 	end
 	
-	local strCfgName = tipUtil:GetTmpFileName() or "rule.dat"
+	local strCfgName = tipUtil:GetTmpFileName() or "data.dat"
 	local strCfgPath = tipUtil:PathCombine(strTmpDir, strCfgName)
 	tipUtil:WriteStringToFile(strCfgPath, strDecString)
 	
@@ -1074,6 +1094,7 @@ function TipMain()
 	
 	local bSuccess = ReadAllConfigInfo()	
 	if not bSuccess then
+		MessageBox(tostring("文件被损坏，请重新安装"))
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 		FunctionObj:FailExitTipWnd()
 		return
