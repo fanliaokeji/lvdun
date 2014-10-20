@@ -70,6 +70,7 @@ function RegisterFunctionObject(self)
 	obj.GetSpecifyFilterTableFromMem = GetSpecifyFilterTableFromMem
 	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
 	obj.SaveFilterConfigToFile = SaveFilterConfigToFile
+	obj.SaveVideoListToFile = SaveVideoListToFile
 	obj.GetVideoListFromMem = GetVideoListFromMem
 	obj.SaveVideoListToMem = SaveVideoListToMem
 	obj.ReportAndExit = ReportAndExit
@@ -1088,29 +1089,31 @@ function ReportAndExit()
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
---win8.1对IE11的支持
-function ModifyOSConfig()
+--win8.1对IE11的支持.
+function SetIERegValue(strNewRegValue)
 	local nMajVer, nMinVer = tipUtil:GetOSVersion()
 	if IsNilString(nMajVer) or IsNilString(nMinVer) 
-		or nMajVer ~= 6 or nMinVer ~= 3 then
+		or nMajVer ~= 6 or nMinVer < 2 then
 		return
 	end
 	
-	TipLog("[ModifyOSConfig] win 8.1")
+	TipLog("[SetIERegValue] win 8 or 8.1")
 	
-	RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation", "PMIL")
+	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation"
+	local strRegValue = RegQueryValue(strRegPath)
+	if IsRealString(strRegValue) then
+		TipLog("[SetIERegValue] strNewRegValue:"..tostring(strNewRegValue))
+		RegSetValue(strRegPath, strNewRegValue)
+	end
+end
+
+
+function ModifyOSConfig()
+	SetIERegValue("PMIL")
 end
 
 function RestoreOSConfig()
-	local nMajVer, nMinVer = tipUtil:GetOSVersion()
-	if IsNilString(nMajVer) or IsNilString(nMinVer) 
-		or nMajVer ~= 6 or nMinVer ~= 3 then
-		return
-	end
-	
-	TipLog("[RestoreOSConfig] win 8.1")
-	
-	RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation", "PMEM")
+	SetIERegValue("PMEM")
 end
 
 

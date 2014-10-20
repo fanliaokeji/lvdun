@@ -234,6 +234,7 @@ function RecordPopupTime(strDomain)
 	end
 	
 	tVideoList[strDomain]["nLastPopupUTC"] = tipUtil:GetCurrentUTCTime()
+	tFunctionHelper.SaveVideoListToFile()
 end 
 
 

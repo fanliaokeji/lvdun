@@ -234,9 +234,12 @@ end
 
 
 function DoSthAnotherDay(objRootCtrl)
+	TipLog("[DoSthAnotherDay] enter, lastutc:"..tostring(g_nLastClearUTC))
+	
 	if not tFunctionHelper.CheckTimeIsAnotherDay(g_nLastClearUTC) then
 		return 
 	end
+	
 	TipLog("[DoSthAnotherDay] begin, lastutc:"..tostring(g_nLastClearUTC))
 	
 	ReportAdvCountInfo()
@@ -251,7 +254,8 @@ end
 
 
 function BeginAnotherDayEvent(objRootCtrl)
-	local nTimeSpanInMs = 1800 * 1000
+	local nTimeSpanInMs = 10 * 1000
+	-- local nTimeSpanInMs = 1800 * 1000
 	
 	DoSthAnotherDay(objRootCtrl)	
 	
@@ -306,13 +310,14 @@ end
 
 --隔天将disable状态的video设置为可弹窗
 function InitVideoState()
+	TipLog("[InitVideoState] enter")
 	local tBlackList = tFunctionHelper.GetSpecifyFilterTableFromMem("tBlackList") or {}
 	for key, tBlackItem in pairs(tBlackList) do
 		if type(tBlackItem) == "table" then
 			local strDomain = tBlackItem["strDomain"] or ""
-			local bState = tBlackItem["strDomain"] or true
-			
-			if not bState and tFunctionHelper.IsVideoDomain(strDomain) then
+			local bState = tBlackItem["bState"] or true
+			TipLog("[InitVideoState] strDomain :"..tostring(strDomain).." bState"..tostring(bState))
+			if not bState and tFunctionHelper.IsVideoDomain(strDomain) then	
 				tFunctionHelper.EnableVideoDomain(strDomain, 0)
 			end		
 		end	
