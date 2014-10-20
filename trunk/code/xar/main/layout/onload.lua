@@ -264,6 +264,7 @@ end
 
 function ExitTipWnd(statInfo)
 	SaveAllConfig()	
+	RestoreOSConfig()	
 		
 	TipLog("************ Exit ************")
 	tipUtil:Exit("Exit")
@@ -833,7 +834,7 @@ function CheckVideoList(strDomain, nLastPopupUTC)
 		AddVideoDomain(strDomain, 1)
 		
 	elseif bBlackState == 2 then
-		if not IsNilString(nLastPopupUTC) and CheckTimeIsAnotherDay(nLastPopupUTC) then
+		if IsNilString(nLastPopupUTC) or CheckTimeIsAnotherDay(nLastPopupUTC) then
 			AddVideoDomain(strDomain, 0)
 		else
 			AddVideoDomain(strDomain, 2)
@@ -1087,10 +1088,37 @@ function ReportAndExit()
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
+--win8.1对IE11的支持
+function ModifyOSConfig()
+	local nMajVer, nMinVer = tipUtil:GetOSVersion()
+	if IsNilString(nMajVer) or IsNilString(nMinVer) 
+		or nMajVer ~= 6 or nMinVer ~= 3 then
+		return
+	end
+	
+	TipLog("[ModifyOSConfig] win 8.1")
+	
+	RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation", "PMIL")
+end
+
+function RestoreOSConfig()
+	local nMajVer, nMinVer = tipUtil:GetOSVersion()
+	if IsNilString(nMajVer) or IsNilString(nMinVer) 
+		or nMajVer ~= 6 or nMinVer ~= 3 then
+		return
+	end
+	
+	TipLog("[RestoreOSConfig] win 8.1")
+	
+	RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Isolation", "PMEM")
+end
+
 
 function TipMain() 
 	RegisterFunctionObject()
 	SendStartupReport(false)
+	
+	ModifyOSConfig()
 	
 	local bSuccess = ReadAllConfigInfo()	
 	if not bSuccess then
