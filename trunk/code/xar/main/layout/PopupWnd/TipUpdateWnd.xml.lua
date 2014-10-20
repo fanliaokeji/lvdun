@@ -162,6 +162,8 @@ function ShowCheckingImage(objRootCtrl)
 		return
 	end
 
+	objCheckingImage:SetVisible(true)
+	objCheckingImage:SetChildrenVisible(true)
 	objContent:SetVisible(false)
 	objContent:SetChildrenVisible(false)
 	objEnterBtn:SetVisible(false)
