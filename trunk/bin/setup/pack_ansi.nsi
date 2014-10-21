@@ -53,8 +53,8 @@ Var Btn_FreeUse
 !define EM_OUTFILE_NAME "GsSetup_${PRODUCT_VERSION}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
-!define PRODUCT_PUBLISHER "My company, Inc."
-!define PRODUCT_WEB_SITE "http://www.mycompany.com"
+!define PRODUCT_PUBLISHER "GreenShield"
+!define PRODUCT_WEB_SITE "http://www.lvdun123.com/"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -173,10 +173,6 @@ Function CmdSilentInstall
 	${GetOptions} $R1 "/silent"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
-	Pop $R0
-	StrCmp $R0 0 +2
-	Abort
 	;SetOutPath "$TEMP\${PRODUCT_NAME}"
 	;SetOverwrite on
 	;File "bin\DsSetUpHelper.dll"
@@ -227,11 +223,6 @@ Function CmdUnstall
 	${GetOptions} $R1 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
-	
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
-	Pop $R0
-	StrCmp $R0 0 +2
-	Abort
 	;发退出消息
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
@@ -277,6 +268,10 @@ Function CmdUnstall
 FunctionEnd
 
 Function .onInit
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
+	Pop $R0
+	StrCmp $R0 0 +2
+	Abort
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
 	IfFileExists "$FONTS\msyh.ttf" 0 +3
@@ -289,11 +284,6 @@ Function .onInit
 	File "license\license.txt"
 	Call CmdSilentInstall
 	Call CmdUnstall
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
-	Pop $R0
-	StrCmp $R0 0 +2
-	;MessageBox MB_OK|MB_ICONEXCLAMATION "Another Installer is Running!"
-	Abort
 	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
@@ -325,19 +315,18 @@ Function .onInit
 		Abort
 		SendMessage $R0 1324 0 0
 	${EndIf}
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-    Pop $R0
-    ${If} $R0 != 0
-		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
-		 Abort
-		CheckProcessExist:
+	${For} $R3 0 3
 		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		Pop $R0
-		${If} $R0 != 0
+		${If} $R3 == 3
+		${AndIf} $R0 != 0
 			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Goto CheckProcessExist
+		${ElseIf} $R0 != 0
+			Sleep 250
+		${Else}
+			${Break}
 		${EndIf}
-    ${EndIf}
+	${Next}
+	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
@@ -410,6 +399,14 @@ Function onGUICallback
   ${EndIf}
 FunctionEnd
 
+Function onCloseCallback
+  ${If} $MSG = ${WM_CLOSE}
+   ;MessageBox MB_ICONINFORMATION|MB_OK "close"
+   Call onClickGuanbi
+   ;SendMessage $HWNDPARENT ${WM_NCLBUTTONDOWN} ${HTCAPTION} $0
+  ${EndIf}
+FunctionEnd
+
 ;下一步按钮事件
 Function onClickNext
 	Call OnClick_Install
@@ -442,6 +439,8 @@ Function OnClick_CheckXieyi
 		EnableWindow $Btn_Next 1
 		EnableWindow $Btn_Zidingyi 1
     ${EndIf}
+	ShowWindow $ck_xieyi ${SW_HIDE}
+	ShowWindow $ck_xieyi ${SW_SHOW}
 FunctionEnd
 
 Function OnClick_BrowseButton
@@ -600,13 +599,18 @@ Function onClickGuanbi
 FunctionEnd
 
 Function OnClickQuitOK
-	FindProcDLL::FindProc ${EM_OUTFILE_NAME}
-    ;Pop $R0
-    ${If} $R0 != 0
-		KillProcDLL::KillProc ${EM_OUTFILE_NAME}
-	${Else}
-		SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
-    ${EndIf}
+	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 == ""
+		StrCpy $R1 ${EM_OUTFILE_NAME} 
+	${EndIf}
+	FindProcDLL::FindProc $R1
+	${If} $R0 != 0
+		KillProcDLL::KillProc $R1
+	${EndIf}
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -623,6 +627,8 @@ Function OnClick_CheckDeskTopLink
         IntOp $Bool_DeskTopLink $Bool_DeskTopLink + 1
         SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_DeskTopLink
     ${EndIf}
+	ShowWindow $ck_DeskTopLink ${SW_HIDE}
+	ShowWindow $ck_DeskTopLink ${SW_SHOW}
 FunctionEnd
 
 Function OnClick_CheckStartTimeDo
@@ -633,6 +639,8 @@ Function OnClick_CheckStartTimeDo
         IntOp $Bool_StartTimeDo $Bool_StartTimeDo + 1
         SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_StartTimeDo
     ${EndIf}
+	ShowWindow $ck_StartTimeDo ${SW_HIDE}
+	ShowWindow $ck_StartTimeDo ${SW_SHOW}
 FunctionEnd
 
 ;处理页面跳转的命令
@@ -666,7 +674,7 @@ Function WelcomePage
 
     ${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变窗体大小
     ${NSW_SetWindowSize} $Hwnd_Welcome 478 320 ;改变Page大小
-
+	
 	System::Call  'User32::GetDesktopWindow() i.R9'
 	${NSW_CenterWindow} $HWNDPARENT $R9
 	
@@ -692,6 +700,7 @@ Function WelcomePage
 	IntOp $3 $3 + $Int_FontOffset
     ${NSD_CreateLabel} 30 $3 180 20 "我已阅读并同意绿盾广告管家"
     Pop $Lbl_Xieyi
+	${NSD_OnClick} $Lbl_Xieyi OnClick_CheckXieyi
     SetCtlColors $Lbl_Xieyi "${TEXTCOLOR}" transparent ;背景设成透明
 	SendMessage $Lbl_Xieyi ${WM_SETFONT} $Handle_Font 0
 	
@@ -768,6 +777,7 @@ Function WelcomePage
 	IntOp $3 $3 + $Int_FontOffset
     ${NSD_CreateLabel} 36 $3 120 18 "添加桌面快捷方式"
     Pop $Lbl_DeskTopLink
+	${NSD_OnClick} $Lbl_DeskTopLink OnClick_CheckDeskTopLink
     SetCtlColors $Lbl_DeskTopLink "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $ck_DeskTopLink ${SW_HIDE}
 	ShowWindow $Lbl_DeskTopLink ${SW_HIDE}
@@ -786,6 +796,7 @@ Function WelcomePage
 	IntOp $3 $3 + $Int_FontOffset
     ${NSD_CreateLabel} 186 $3 100 18 "开启实时监控"
     Pop $Lbl_StartTimeDo
+	${NSD_OnClick} $Lbl_StartTimeDo OnClick_CheckStartTimeDo
     SetCtlColors $Lbl_StartTimeDo "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $ck_StartTimeDo ${SW_HIDE}
 	ShowWindow $Lbl_StartTimeDo ${SW_HIDE}
@@ -817,6 +828,10 @@ Function WelcomePage
     ${NSD_SetImage} $BGImage $PLUGINSDIR\bg.bmp $ImageHandle
 	
 	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
+	
+	GetFunctionAddress $0 onCloseCallback
+	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
 FunctionEnd
@@ -830,11 +845,15 @@ Function NSD_TimerFun
     !else
         Call InstallationMainFun
     !endif
+	ShowWindow $HWNDPARENT ${SW_HIDE}
+	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
 	ShowWindow $Lbl_Sumary ${SW_HIDE}
 	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	ShowWindow $BGImage ${SW_HIDE}
+	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
+	ShowWindow $HWNDPARENT ${SW_SHOW}
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -942,6 +961,9 @@ Function LoadingPage
     ${NSD_SetImage} $BGImage $PLUGINSDIR\loading_head.bmp $ImageHandle
 
     WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
+	
+	;GetFunctionAddress $0 onCloseCallback
+	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
     nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
@@ -1059,12 +1081,9 @@ Function un.UNSD_TimerFun
 			Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
 		IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
 			Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-		;IfFileExists "$SMPROGRAMS\绿盾\*.*" 0 +2
-			;Delete "$SMPROGRAMS\绿盾\绿盾.lnk"
-			;Delete "$SMPROGRAMS\绿盾\卸载${SHORTCUT_NAME}.lnk"
-			RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 		 ;删除自用的注册表信息
-		 DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 	${EndIf}
 	
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
@@ -1072,7 +1091,6 @@ Function un.UNSD_TimerFun
 	ShowWindow $Btn_CruelRefused ${SW_HIDE}
 	ShowWindow $Bmp_FinishUnstall 1
 	ShowWindow $Btn_FinishUnstall 1
-	EndTimerFunction:
 FunctionEnd
 
 Function un.OnClick_CruelRefused
