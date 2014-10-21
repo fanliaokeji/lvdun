@@ -105,13 +105,30 @@ OutFile "bin\${EM_OUTFILE_NAME}"
 InstallDir "$PROGRAMFILES\GreenShield"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
+Function Random
+	Exch $0
+	Push $1
+	System::Call 'kernel32::QueryPerformanceCounter(*l.r1)'
+	System::Int64Op $1 % $0
+	Pop $0
+	Pop $1
+	Exch $0
+FunctionEnd
+
 Function DoInstall
+  ;先删再装
+  RMDir /r "$INSTDIR\program"
   ;文件被占用则改一下名字
   StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
   IfFileExists $R4 0 RenameOK
   Delete $R4
   IfFileExists $R4 0 RenameOK
-  Rename $R4 "$R4.del"
+  BeginRename:
+  Push "100" 
+  Call Random
+  Pop $0
+  IfFileExists "$R4.$0" BeginRename
+  Rename $R4 "$R4.$0"
   RenameOK:
   
   
@@ -236,18 +253,19 @@ Function CmdUnstall
 		Goto CheckProcessExist
 	${EndIf}
 	
-	;删除不成功则重试3次
-	StrCpy $R0 0
-	BeginRepeatDelete:
-	RMDir /r /REBOOTOK "$INSTDIR"
-	${If} $R0 == 3
-		Goto EndRepeatDelete
+	;删除
+	RMDir /r /REBOOTOK "$INSTDIR\appimage"
+	RMDir /r /REBOOTOK "$INSTDIR\xar"
+	Delete "$INSTDIR\uninst.exe"
+	RMDir /r /REBOOTOK "$INSTDIR\program"
+
+	
+	StrCpy "$R0" "$INSTDIR"
+	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
+	Pop $R1
+	${If} $R1 == 1
+		RMDir /r /REBOOTOK "$INSTDIR"
 	${EndIf}
-	IfFileExists "$INSTDIR" 0 +4
-	IntOp $R0 $R0 + 1
-	Sleep 100
-	Goto BeginRepeatDelete
-	EndRepeatDelete:
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "0", i ${VERSION_LASTNUMBER}) '
@@ -1054,17 +1072,19 @@ Function un.OnClick_ContinueUse
 FunctionEnd
 
 Function un.DoUninstall
-	StrCpy $R0 0
-	BeginRepeatDelete:
-	RMDir /r /REBOOTOK "$INSTDIR"
-	${If} $R0 == 3
-		Goto EndRepeatDelete
+	;删除
+	RMDir /r /REBOOTOK "$INSTDIR\appimage"
+	RMDir /r /REBOOTOK "$INSTDIR\xar"
+	Delete "$INSTDIR\uninst.exe"
+	RMDir /r /REBOOTOK "$INSTDIR\program"
+
+	
+	StrCpy "$R0" "$INSTDIR"
+	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
+	Pop $R1
+	${If} $R1 == 1
+		RMDir /r /REBOOTOK "$INSTDIR"
 	${EndIf}
-	IfFileExists "$INSTDIR" 0 +4
-	IntOp $R0 $R0 + 1
-	Sleep 100
-	Goto BeginRepeatDelete
-	EndRepeatDelete:
 FunctionEnd
 
 Function un.UNSD_TimerFun
@@ -1106,7 +1126,6 @@ Function un.OnClick_CruelRefused
 FunctionEnd
 
 Function un.OnClick_FinishUnstall
-	RMDir /r /REBOOTOK "$INSTDIR"
 	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
