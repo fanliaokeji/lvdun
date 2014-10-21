@@ -254,8 +254,7 @@ end
 
 
 function BeginAnotherDayEvent(objRootCtrl)
-	local nTimeSpanInMs = 10 * 1000
-	-- local nTimeSpanInMs = 1800 * 1000
+	local nTimeSpanInMs = 1800 * 1000
 	
 	DoSthAnotherDay(objRootCtrl)	
 	

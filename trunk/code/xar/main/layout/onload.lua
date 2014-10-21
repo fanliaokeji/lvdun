@@ -444,6 +444,13 @@ function ShowExitRemindWnd()
 end
 
 
+function HideTray()
+	if g_tipNotifyIcon then
+		g_tipNotifyIcon:Hide()
+	end
+end
+
+
 function InitTrayTipWnd(objHostWnd)
     if not objHostWnd then
 	    TipLog("[InitTrayTipWnd] para error")
@@ -476,12 +483,9 @@ function InitTrayTipWnd(objHostWnd)
 		
 		--单击左键
 		if event3 == 0x0202 then
-			local strHostWndName = "GreenWallTipWnd.MainFrame"
-			local objHostWnd = hostwndManager:GetHostWnd(strHostWndName)
-			if not objHostWnd then
-				CreateMainTipWnd()
+			if objHostWnd then
+				objHostWnd:BringWindowToTop(true)
 			end
-			objHostWnd:BringWindowToTop(true)
 		end
 		
 		--mousemove
@@ -526,6 +530,7 @@ function PopupBubbleOneDay()
 	if g_tipNotifyIcon then
 		g_tipNotifyIcon:ShowNotifyIconTip(true, "绿盾广告管家\r\n已为您屏蔽骚扰广告")
 		tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
+		SaveUserConfigToFile()
 	end
 end
 
@@ -1074,6 +1079,7 @@ end
 function ReportAndExit()
 	DestroyMainWnd()
 	DestroyPopupWnd()
+	HideTray()
 	
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
