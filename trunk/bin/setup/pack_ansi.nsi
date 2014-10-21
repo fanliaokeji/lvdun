@@ -115,6 +115,24 @@ Function Random
 	Exch $0
 FunctionEnd
 
+Function CloseExe
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		SendMessage $R0 1324 0 0
+	${EndIf}
+	${For} $R3 0 3
+		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		${If} $R3 == 3
+		${AndIf} $R0 != 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		${ElseIf} $R0 != 0
+			Sleep 250
+		${Else}
+			${Break}
+		${EndIf}
+	${Next}
+FunctionEnd
+
 Function DoInstall
   ;先删再装
   RMDir /r "$INSTDIR\program"
@@ -130,7 +148,6 @@ Function DoInstall
   IfFileExists "$R4.$0" BeginRename
   Rename $R4 "$R4.$0"
   RenameOK:
-  
   
   ;释放主程序文件到安装目录
   SetOutPath "$INSTDIR"
@@ -214,17 +231,7 @@ Function CmdSilentInstall
 	StartInstall:
 	
 	;发退出消息
-	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
-	${If} $R0 != 0
-		SendMessage $R0 1324 0 0
-	${EndIf}
-	CheckProcessExist:
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-	Pop $R0
-    ${If} $R0 != 0
-		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-		Goto CheckProcessExist
-	${EndIf}
+	Call CloseExe
 	
 	Call DoInstall
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -241,17 +248,7 @@ Function CmdUnstall
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	;发退出消息
-	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
-	${If} $R0 != 0
-		SendMessage $R0 1324 0 0
-	${EndIf}
-	CheckProcessExist:
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-	Pop $R0
-    ${If} $R0 != 0
-		KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-		Goto CheckProcessExist
-	${EndIf}
+	Call CloseExe
 	
 	;删除
 	RMDir /r /REBOOTOK "$INSTDIR\appimage"
@@ -888,7 +885,8 @@ Function NSD_TimerFun
 FunctionEnd
 
 Function InstallationMainFun
-	call DoInstall
+	Call CloseExe
+	Call DoInstall
     SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
 	SendMessage $PB_ProgressBar ${PBM_SETPOS} 5 0
     Sleep 100
@@ -1012,19 +1010,17 @@ Function un.onInit
 		Abort
 		SendMessage $R0 1324 0 0
 	${EndIf}
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-    ${If} $R0 != 0
-		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES CheckProcessExist
-		 Abort
-		 CheckProcessExist:
-		 FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		 ${If} $R0 != 0
-			SendMessage $R0 ${WM_CLOSE} 0 0
+	${For} $R3 0 3
+		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		${If} $R3 == 3
+		${AndIf} $R0 != 0
 			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 100
-			Goto CheckProcessExist
-		 ${EndIf}
-    ${EndIf}
+		${ElseIf} $R0 != 0
+			Sleep 250
+		${Else}
+			${Break}
+		${EndIf}
+	${Next}
 	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
 	File `/ONAME=$PLUGINSDIR\un_finishbg.bmp` `images\un_finishbg.bmp`
@@ -1121,6 +1117,21 @@ Function un.OnClick_CruelRefused
 	File "bin\DsSetUpHelper.dll"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "1", i ${VERSION_LASTNUMBER}) '
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		SendMessage $R0 1324 0 0
+	${EndIf}
+	${For} $R3 0 3
+		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		${If} $R3 == 3
+		${AndIf} $R0 != 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		${ElseIf} $R0 != 0
+			Sleep 250
+		${Else}
+			${Break}
+		${EndIf}
+	${Next}
 	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::CreateTimer $0 1
 FunctionEnd
