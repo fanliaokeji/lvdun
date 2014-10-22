@@ -91,3 +91,21 @@ bool GsUpdateConfigWhiteHost(const std::string& url,bool bEnable)
 	}
 	return m->updateConfigWhiteHost(url.c_str(), bEnable);
 }
+
+bool GsGetWebRules(const std::wstring& filename)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->getWebRules(filename);
+}
+
+bool GsGetVideoRules(const std::wstring& filename)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->getVideoRules(filename);
+}

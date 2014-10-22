@@ -31,3 +31,5 @@ class FilterManager;
 GSNETFILTER_API FilterManager* GsGetFilterManager(const std::wstring & filename);
 GSNETFILTER_API bool GsUpdateConfigVideoHost(const std::string& url,int istate = 0);
 GSNETFILTER_API bool GsUpdateConfigWhiteHost(const std::string& url,bool bEnable);
+GSNETFILTER_API bool GsGetWebRules(const std::wstring& filename);
+GSNETFILTER_API bool GsGetVideoRules(const std::wstring& filename);
