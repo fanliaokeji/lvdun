@@ -92,8 +92,10 @@ VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}广告管家安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 
 ;自定义页面
+Page custom CheckMessageBox
 Page custom WelcomePage
 Page custom LoadingPage
+UninstPage custom un.MyUnstallMsgBox
 UninstPage custom un.MyUnstall
 
 
@@ -239,6 +241,13 @@ Function CmdSilentInstall
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$R0" "6.0" $2
+	${if} $2 == 2
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	${else}
+		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	${Endif}
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -249,6 +258,13 @@ Function CmdUnstall
 	SetSilent silent
 	;发退出消息
 	Call CloseExe
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$R0" "6.0" $2
+	${if} $2 == 2
+		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+	${else}
+		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	${Endif}
 	
 	;删除
 	RMDir /r /REBOOTOK "$INSTDIR\appimage"
@@ -270,14 +286,14 @@ Function CmdUnstall
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-		IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-			Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-			Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 		 ;删除自用的注册表信息
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 	${EndIf}
+	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
+	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -300,48 +316,6 @@ Function .onInit
 	Call CmdSilentInstall
 	Call CmdUnstall
 	
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
-	IfFileExists $0 0 StartInstall
-	;System::Call 'DsSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
-	${GetFileVersion} $0 $1
-	${VersionCompare} $1 ${PRODUCT_VERSION} $2
-	${GetParameters} $R1
-	${GetOptions} $R1 "/write"  $R0
-	IfErrors 0 +3
-	push "false"
-	pop $R0
-	${If} $2 == "2" ;已安装的版本低于该版本
-		Goto StartInstall
-	${ElseIf} $2 == "0" ;版本相同
-		 StrCmp $R0 "false" 0 StartInstall
-		 MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
-		 Abort
-	${ElseIf} $2 == "1"	;已安装的版本高于该版本
-		StrCmp $R0 "false" 0 StartInstall
-		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测到已安装$(^Name)，是否覆盖安装？" IDYES StartInstall
-		Abort
-	${EndIf}
-	
-	StartInstall:
-	;发退出消息
-	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
-	${If} $R0 != 0
-		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES +2
-		Abort
-		SendMessage $R0 1324 0 0
-	${EndIf}
-	${For} $R3 0 3
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 3
-		${AndIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-		${ElseIf} $R0 != 0
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
@@ -360,6 +334,7 @@ Function .onInit
 	File `/oname=$PLUGINSDIR\btn_install.bmp` `images\btn_install.bmp`
 	File `/oname=$PLUGINSDIR\btn_return.bmp` `images\btn_return.bmp`
 	File `/oname=$PLUGINSDIR\quit.bmp` `images\quit.bmp`
+	File `/oname=$PLUGINSDIR\quit2.bmp` `images\quit2.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
    	
@@ -383,6 +358,157 @@ Function .onInit
 	SkinBtn::Init "$PLUGINSDIR\btn_quitsure.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_quitreturn.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_freeuse.bmp"
+FunctionEnd
+
+Function onMsgBoxCloseCallback
+  ${If} $MSG = ${WM_CLOSE}
+   Call OnClickQuitOK
+  ${EndIf}
+FunctionEnd
+
+Var Hwnd_MsgBox
+Var btn_MsgBoxSure
+Var btn_MsgBoxCancel
+Var lab_MsgBoxText
+Var lab_MsgBoxText2
+Function GsMessageBox
+	IsWindow $Hwnd_MsgBox Create_End
+	GetDlgItem $0 $HWNDPARENT 1
+    ShowWindow $0 ${SW_HIDE}
+    GetDlgItem $0 $HWNDPARENT 2
+    ShowWindow $0 ${SW_HIDE}
+    GetDlgItem $0 $HWNDPARENT 3
+    ShowWindow $0 ${SW_HIDE}
+	
+    nsDialogs::Create 1044
+    Pop $Hwnd_MsgBox
+    ${If} $Hwnd_MsgBox == error
+        Abort
+    ${EndIf}
+    SetCtlColors $Hwnd_MsgBox ""  transparent ;背景设成透明
+
+    ${NSW_SetWindowSize} $HWNDPARENT 300 130 ;改变窗体大小
+    ${NSW_SetWindowSize} $Hwnd_MsgBox 300 130 ;改变Page大小
+	System::Call  'User32::GetDesktopWindow() i.r8'
+	${NSW_CenterWindow} $HWNDPARENT $8
+	
+	
+	${NSD_CreateButton} 123 94 71 26 ''
+	Pop $btn_MsgBoxSure
+	StrCpy $1 $btn_MsgBoxSure
+	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_quitsure.bmp $1
+	SkinBtn::onClick $1 $R7
+
+	${NSD_CreateButton} 219 94 71 26 ''
+	Pop $btn_MsgBoxCancel
+	StrCpy $1 $btn_MsgBoxCancel
+	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_quitreturn.bmp $1
+	GetFunctionAddress $0 OnClickQuitOK
+	SkinBtn::onClick $1 $0
+	
+	StrCpy $3 50
+	IntOp $3 $3 + $Int_FontOffset
+	${NSD_CreateLabel} 66 $3 250 20 $R6
+	Pop $lab_MsgBoxText
+    SetCtlColors $lab_MsgBoxText "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $lab_MsgBoxText ${WM_SETFONT} $Handle_Font 0
+	
+	StrCpy $3 70
+	IntOp $3 $3 + $Int_FontOffset
+	${NSD_CreateLabel} 66 $3 250 20 $R8
+	Pop $lab_MsgBoxText2
+    SetCtlColors $lab_MsgBoxText2 "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $lab_MsgBoxText2 ${WM_SETFONT} $Handle_Font 0
+	
+	
+	GetFunctionAddress $0 onGUICallback
+    ;贴背景大图
+    ${NSD_CreateBitmap} 0 0 100% 100% ""
+    Pop $BGImage
+    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit2.bmp $ImageHandle
+	
+	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
+	
+	GetFunctionAddress $0 onMsgBoxCloseCallback
+	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	
+	nsDialogs::Show
+	${NSD_FreeImage} $ImageHandle
+	Create_End:
+	System::Call  'User32::GetDesktopWindow() i.r8'
+	${NSW_CenterWindow} $HWNDPARENT $8
+	system::Call `user32::SetWindowText(i $lab_MsgBoxText, t "$R6")`
+	system::Call `user32::SetWindowText(i $lab_MsgBoxText2, t "$R8")`
+	SkinBtn::onClick $btn_MsgBoxSure $R7
+	
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	ShowWindow $Hwnd_MsgBox ${SW_SHOW}
+FunctionEnd
+
+Function ClickSure2
+	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
+	ShowWindow $HWNDPARENT ${SW_HIDE}
+	${If} $9 != 0
+		SendMessage $9 1324 0 0
+		${For} $R3 0 3
+			FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+			${If} $R3 == 3
+			${AndIf} $R0 != 0
+				KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+			${ElseIf} $R0 != 0
+				Sleep 250
+			${Else}
+				${Break}
+			${EndIf}
+		${Next}
+	${EndIf}
+	StrCpy $R9 1 ;Goto the next page
+    Call RelGotoPage
+FunctionEnd
+
+Function ClickSure1
+	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
+	ShowWindow $HWNDPARENT ${SW_HIDE}
+	Sleep 100
+	;发退出消息
+	FindWindow $9 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $9 != 0
+		StrCpy $R6 "检测${PRODUCT_NAME}.exe正在运行，"
+		StrCpy $R8 "是否强制结束？"
+		GetFunctionAddress $R7 ClickSure2
+		Call GsMessageBox
+	${Else}
+		Call ClickSure2
+	${EndIf}
+FunctionEnd
+
+Function CheckMessageBox
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
+	IfFileExists $0 0 StartInstall
+	${GetFileVersion} $0 $1
+	${VersionCompare} $1 ${PRODUCT_VERSION} $2
+	${GetParameters} $R1
+	${GetOptions} $R1 "/write"  $R0
+	IfErrors 0 +3
+	push "false"
+	pop $R0
+	${If} $2 == "2" ;已安装的版本低于该版本
+		Call ClickSure1
+	${ElseIf} $2 == "0" ;版本相同
+	${OrIf} $2 == "1"	;已安装的版本高于该版本
+		 ${If} $R0 == "false"
+			StrCpy $R6 "检测到已安装$(^Name)，"
+			StrCpy $R8 "是否覆盖安装？"
+			GetFunctionAddress $R7 ClickSure1
+			Call GsMessageBox
+		${Else}
+			Call ClickSure1
+		${EndIf}
+	${EndIf}
+	Goto EndFunction
+	StartInstall:
+	Call ClickSure1
+	EndFunction:
 FunctionEnd
 
 Function onGUIInit
@@ -872,6 +998,14 @@ Function NSD_TimerFun
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+		;快速启动栏
+		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+		${VersionCompare} "$R0" "6.0" $2
+		${if} $2 == 2
+			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+		${else}
+			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		${Endif}
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
 		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
@@ -1003,24 +1137,13 @@ Function un.onInit
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
-	;发退出消息
-	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
-	${If} $R0 != 0
-		MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "检测${PRODUCT_NAME}.exe正在运行，是否强制结束？" IDYES +2
-		Abort
-		SendMessage $R0 1324 0 0
-	${EndIf}
-	${For} $R3 0 3
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 3
-		${AndIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-		${ElseIf} $R0 != 0
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
+	
+	StrCpy $Int_FontOffset 4
+	CreateFont $Handle_Font "宋体" 10 0
+	IfFileExists "$FONTS\msyh.ttf" 0 +3
+	CreateFont $Handle_Font "微软雅黑" 10 0
+	StrCpy $Int_FontOffset 0
+	
 	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
 	File `/ONAME=$PLUGINSDIR\un_finishbg.bmp` `images\un_finishbg.bmp`
@@ -1031,6 +1154,12 @@ Function un.onInit
 	SkinBtn::Init "$PLUGINSDIR\btn_jixushiyong.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_canrenxiezai.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_xiezaiwancheng.bmp"
+	
+	File `/oname=$PLUGINSDIR\quit2.bmp` `images\quit2.bmp`
+	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
+	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
+	SkinBtn::Init "$PLUGINSDIR\btn_quitsure.bmp"
+	SkinBtn::Init "$PLUGINSDIR\btn_quitreturn.bmp"
 FunctionEnd
 
 Function un.onGUICallback
@@ -1039,6 +1168,11 @@ Function un.onGUICallback
   ${EndIf}
 FunctionEnd
 
+;Function un.onMsgBoxCloseCallback
+;	${If} $MSG = ${WM_CLOSE}
+;		Call un.OnClick_ContinueUse
+;	${EndIf}
+;FunctionEnd
 Function un.myGUIInit
 	;消除边框
     System::Call `user32::SetWindowLong(i$HWNDPARENT,i${GWL_STYLE},0x9480084C)i.R0`
@@ -1084,7 +1218,7 @@ Function un.DoUninstall
 FunctionEnd
 
 Function un.UNSD_TimerFun
-    GetFunctionAddress $0 un.UNSD_TimerFun
+	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::KillTimer $0
     GetFunctionAddress $0 un.DoUninstall
     BgWorker::CallAndWait
@@ -1093,15 +1227,15 @@ Function un.UNSD_TimerFun
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-		IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-			Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-			Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-		RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 		 ;删除自用的注册表信息
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 	${EndIf}
-	
+
+	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
+		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
+	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
 	ShowWindow $Btn_ContinueUse ${SW_HIDE}
 	ShowWindow $Btn_CruelRefused ${SW_HIDE}
@@ -1132,6 +1266,13 @@ Function un.OnClick_CruelRefused
 			${Break}
 		${EndIf}
 	${Next}
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$R0" "6.0" $2
+	${if} $2 == 2
+		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+	${else}
+		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	${Endif}
 	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::CreateTimer $0 1
 FunctionEnd
@@ -1140,9 +1281,116 @@ Function un.OnClick_FinishUnstall
 	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 FunctionEnd
 
-Function un.MyUnstall
+Function un.GsMessageBox
+	IsWindow $Hwnd_MsgBox Create_End
+	GetDlgItem $0 $HWNDPARENT 1
+    ShowWindow $0 ${SW_HIDE}
+    GetDlgItem $0 $HWNDPARENT 2
+    ShowWindow $0 ${SW_HIDE}
+    GetDlgItem $0 $HWNDPARENT 3
+    ShowWindow $0 ${SW_HIDE}
+	
+    nsDialogs::Create 1044
+    Pop $Hwnd_MsgBox
+    ${If} $Hwnd_MsgBox == error
+        Abort
+    ${EndIf}
+    SetCtlColors $Hwnd_MsgBox ""  transparent ;背景设成透明
+
+    ${NSW_SetWindowSize} $HWNDPARENT 300 130 ;改变窗体大小
+    ${NSW_SetWindowSize} $Hwnd_MsgBox 300 130 ;改变Page大小
+	System::Call  'User32::GetDesktopWindow() i.r8'
+	${NSW_CenterWindow} $HWNDPARENT $8
+	
+	
+	${NSD_CreateButton} 123 94 71 26 ''
+	Pop $btn_MsgBoxSure
+	StrCpy $1 $btn_MsgBoxSure
+	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_quitsure.bmp $1
+	SkinBtn::onClick $1 $R7
+
+	${NSD_CreateButton} 219 94 71 26 ''
+	Pop $btn_MsgBoxCancel
+	StrCpy $1 $btn_MsgBoxCancel
+	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_quitreturn.bmp $1
+	GetFunctionAddress $0 un.OnClick_FinishUnstall
+	SkinBtn::onClick $1 $0
+	
+	StrCpy $3 50
+	IntOp $3 $3 + $Int_FontOffset
+	${NSD_CreateLabel} 66 $3 250 20 $R6
+	Pop $lab_MsgBoxText
+    SetCtlColors $lab_MsgBoxText "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $lab_MsgBoxText ${WM_SETFONT} $Handle_Font 0
+	
+	StrCpy $3 70
+	IntOp $3 $3 + $Int_FontOffset
+	${NSD_CreateLabel} 66 $3 250 20 $R8
+	Pop $lab_MsgBoxText2
+    SetCtlColors $lab_MsgBoxText2 "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $lab_MsgBoxText2 ${WM_SETFONT} $Handle_Font 0
+	
+	
+	GetFunctionAddress $0 un.onGUICallback
+    ;贴背景大图
+    ${NSD_CreateBitmap} 0 0 100% 100% ""
+    Pop $BGImage
+    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit2.bmp $ImageHandle
+	
+	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
+	
+	;GetFunctionAddress $0 un.onMsgBoxCloseCallback
+	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	
+	nsDialogs::Show
+	${NSD_FreeImage} $ImageHandle
+	Create_End:
+	System::Call  'User32::GetDesktopWindow() i.r8'
+	${NSW_CenterWindow} $HWNDPARENT $8
+	system::Call `user32::SetWindowText(i $lab_MsgBoxText, t "$R6")`
+	system::Call `user32::SetWindowText(i $lab_MsgBoxText2, t "$R8")`
+	SkinBtn::onClick $btn_MsgBoxSure $R7
+	
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	ShowWindow $Hwnd_MsgBox ${SW_SHOW}
+FunctionEnd
+
+Function un.ClickSure
+	${If} $R0 != 0
+		SendMessage $R0 1324 0 0
+	${EndIf}
+	${For} $R3 0 3
+		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+		${If} $R3 == 3
+		${AndIf} $R0 != 0
+			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
+		${ElseIf} $R0 != 0
+			Sleep 250
+		${Else}
+			${Break}
+		${EndIf}
+	${Next}
+	SendMessage $HWNDPARENT 0x408 1 0
+FunctionEnd
+
+Function un.MyUnstallMsgBox
 	push $0
 	call un.myGUIInit
+	;发退出消息
+	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R0 != 0
+		StrCpy $R6 "检测${PRODUCT_NAME}.exe正在运行，"
+		StrCpy $R8 "是否强制结束？"
+		GetFunctionAddress $R7 un.ClickSure
+		Call un.GsMessageBox
+	${Else}
+		Call un.ClickSure
+	${EndIf}
+FunctionEnd
+
+Function un.MyUnstall
+	;push $HWNDPARENT
+	;call un.myGUIInit
 	GetDlgItem $0 $HWNDPARENT 1
 	ShowWindow $0 ${SW_HIDE}
 	GetDlgItem $0 $HWNDPARENT 2
@@ -1202,6 +1450,9 @@ Function un.MyUnstall
     Pop $Bmp_StartUnstall
     ${NSD_SetImage} $Bmp_StartUnstall $PLUGINSDIR\un_startbg.bmp $ImageHandle
     WndProc::onCallback $Bmp_StartUnstall $0 ;处理无边框窗体移动
+	
+	;GetFunctionAddress $0 un.onMsgBoxCloseCallback
+	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
     nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
