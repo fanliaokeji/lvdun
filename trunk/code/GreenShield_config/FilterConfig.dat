@@ -1,79 +1,108 @@
 function GetSubTable()
 	local t = {
-		["tBlackList"] = { 
+		["tBlackList"] = {
+			
 		}, 
-		["tWhiteList"] = {
-			[1] = {
+		["tDefWhiteList"] = {
+			["baidu.com"] = {
 				["strName"] = "百度", 
 				["bState"] = true, 
-				["strDomain"] = "baidu.com", 
 			}, 
-			[2] = {
+			["so.com"] = {
 				["strName"] = "360搜索", 
 				["bState"] = true, 
-				["strDomain"] = "so.com", 
 			}, 
-			[3] = {
+			["qq.com"] = {
 				["strName"] = "腾讯", 
 				["bState"] = true, 
-				["strDomain"] = "qq.com", 
 			}, 
-			[4] = {
+			["sohu.com"] = {
 				["strName"] = "搜狐", 
 				["bState"] = true, 
-				["strDomain"] = "tv.sohu.com", 
 			}, 
-			[5] = {
+			["sina.com.cn"] = {
 				["strName"] = "新浪", 
 				["bState"] = true, 
-				["strDomain"] = "sina.com", 
 			}, 
-			[6] = {
+			["163.com"] = {
 				["strName"] = "网易", 
 				["bState"] = true, 
-				["strDomain"] = "163.com", 
 			}, 
-			[7] = {
+			["weibo.com"] = {
 				["strName"] = "微博", 
 				["bState"] = true, 
-				["strDomain"] = "weibo.com", 
 			}, 
-			[8] = {
+			["taobao.com"] = {
 				["strName"] = "淘宝", 
 				["bState"] = true, 
-				["strDomain"] = "taobao.com", 
 			}, 
-			[9] = {
+			["tmall.com"] = {
 				["strName"] = "天猫", 
 				["bState"] = true, 
-				["strDomain"] = "tmall.com", 
 			}, 
-			[10] = {
-				["strName"] = "央视网", 
-				["bState"] = true, 
-				["strDomain"] = "cntv.cn", 
-			}, 
-			[11] = {
+			["people.com.cn"] = {
 				["strName"] = "人民网", 
 				["bState"] = true, 
-				["strDomain"] = "people.com.cn", 
 			}, 
-			[12] = {
+			["xinhuanet.com"] = {
 				["strName"] = "新华网", 
 				["bState"] = true, 
-				["strDomain"] = "xinhuanet.com", 
 			}, 
-			[13] = {
+			["china.com.cn"] = {
+				["strName"] = "中国网", 
+				["bState"] = true, 
+			},
+			["cnr.cn"] = {
+				["strName"] = "央广网", 
+				["bState"] = true, 
+			},			
+			["hao123.com"] = {
 				["strName"] = "好123", 
 				["bState"] = true, 
-				["strDomain"] = "hao123.com", 
 			}, 
-			[14] = {
+			["360.cn"] = {
 				["strName"] = "360", 
 				["bState"] = true, 
-				["strDomain"] = "360.cn", 
 			}, 
+			["ifeng.com"] = {
+				["strName"] = "凤凰网", 
+				["bState"] = true, 
+			}, 
+			["youku.com"] = {
+				["strName"] = "优酷", 
+				["bState"] = true, 
+			}, 
+			["tudou.com"] = {
+				["strName"] = "土豆", 
+				["bState"] = true, 
+			},
+			["iqiyi.com"] = {
+				["strName"] = "爱奇艺", 
+				["bState"] = true, 
+			},
+			["kankan.com"] = {
+				["strName"] = "迅雷看看", 
+				["bState"] = true, 
+			},
+			["letv.com"] = {
+				["strName"] = "乐视", 
+				["bState"] = true, 
+			},
+			["pptv.com"] = {
+				["strName"] = "PPTV聚力", 
+				["bState"] = true, 
+			},
+			["pps.com"] = {
+				["strName"] = "PPS", 
+				["bState"] = true, 
+			},
+			["sogou.com"] = {
+				["strName"] = "搜狗", 
+				["bState"] = true, 
+			},
 		}, 
+		["tUserWhiteList"] = {
+		},
 	}
 	return t
 end
