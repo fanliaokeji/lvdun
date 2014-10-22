@@ -27,9 +27,8 @@ GSNETFILTER_API BOOL GsEnable(BOOL bEnable);
 GSNETFILTER_API HANDLE GsStartProxy();
 GSNETFILTER_API BOOL GsSetHook(const std::wstring& dllPath);
 
-class FilterManager;
-GSNETFILTER_API FilterManager* GsGetFilterManager(const std::wstring & filename);
 GSNETFILTER_API bool GsUpdateConfigVideoHost(const std::string& url,int istate = 0);
 GSNETFILTER_API bool GsUpdateConfigWhiteHost(const std::string& url,bool bEnable);
 GSNETFILTER_API bool GsGetWebRules(const std::wstring& filename);
 GSNETFILTER_API bool GsGetVideoRules(const std::wstring& filename);
+GSNETFILTER_API bool GsGetUsersRules(const std::wstring& filename);
