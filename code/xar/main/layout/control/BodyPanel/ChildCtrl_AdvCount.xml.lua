@@ -28,12 +28,14 @@ function ChangeSwitchFilter(objRootCtrl)
 	local objFilterSwitch = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.Switch.Filter")
 	Inner_ChangeSwitchFilter(objFilterSwitch)
 	SaveAdvOpenState()
+	tFunctionHelper.SetNotifyIconState()
 end
 
 ---事件---
 function OnClickSwitchFilter(self)
 	Inner_ChangeSwitchFilter(self)
 	SaveAdvOpenState()
+	tFunctionHelper.SetNotifyIconState()
 	
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"

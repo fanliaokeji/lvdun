@@ -18,6 +18,7 @@
 						<width>father.width</width>
 						<height>father.height</height>
 						<visible>true</visible>
+						<zorder>0</zorder>
 					</attr>
 					<children>
 						<obj id="ChildCtrl_AdvFilter.Title" class="TextureObject">
@@ -107,7 +108,7 @@
 								<top>15+27</top>
 								<width>289</width>
 								<height>27*4</height>
-								<limitchild>1</limitchild>
+								<limitchild>true</limitchild>
 							</attr>
 							<children>
 								<obj id="ChildCtrl_AdvFilter.MainWnd.List.Container" class="LayoutObject">

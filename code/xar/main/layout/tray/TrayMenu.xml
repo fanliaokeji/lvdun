@@ -39,7 +39,7 @@
 			</obj>
 			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>关于绿盾广告软件管家</Text>
+					<Text>关于绿盾广告管家</Text>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_About" />
