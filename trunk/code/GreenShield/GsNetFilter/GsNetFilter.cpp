@@ -69,11 +69,6 @@ BOOL GsSetHook(const std::wstring& dllPath)
 	return ::SetWindowsHookEx(WH_CALLWNDPROC, hookProc, hinstDLL, 0) == NULL ? FALSE : TRUE;
 }
 
-FilterManager* GsGetFilterManager(const std::wstring & filename)
-{
-	return FilterManager::getManager(filename);
-}
-
 bool GsUpdateConfigVideoHost(const std::string& url,int istate)
 {
 	FilterManager* m = FilterManager::getManager();
@@ -108,4 +103,13 @@ bool GsGetVideoRules(const std::wstring& filename)
 		return false;
 	}
 	return m->getVideoRules(filename);
+}
+
+bool GsGetUsersRules(const std::wstring& filename)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->getUsersRules(filename);
 }
