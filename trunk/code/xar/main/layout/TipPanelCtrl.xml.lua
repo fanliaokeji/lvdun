@@ -85,6 +85,20 @@ end
 
 
 --------辅助函数----
+local g_bFilterASKFlag = true
+function CheckFilterASKLock()
+	return g_bFilterASKFlag
+end
+
+function FilterASKLock()
+	g_bFilterASKFlag = false
+end
+
+function FilterASKUnLock()
+	g_bFilterASKFlag = true
+end
+
+
 function CreateFilterListener(objRootCtrl)
 	local gsFactory = XLGetObject("GSListen.Factory")
 	if not gsFactory then
@@ -132,18 +146,22 @@ function CreateFilterListener(objRootCtrl)
 
 
 	function OnFilterASK(p1, p2)
+		local strDomain = p1
 		local strURL = p2
-		TipLog("[OnFilterASK] strURL:"..tostring(strURL))
+		TipLog("[OnFilterASK] strDomain: "..tostring(strDomain)
+				.."  strURL: "..tostring(strURL))
 		
-		local strDomain = ExractRuleDomain(strURL)
+		-- local strDomain = ExractRuleDomain(strURL)
 		if not IsRealString(strDomain) then
-			TipLog("[OnFilterASK] ExractRuleDomain failed")
+			TipLog("[OnFilterASK] strDomain is nil")
 			return
 		end
 		
 		local bCheckSucc = CheckPopupCond(strDomain)
 		if bCheckSucc then
+			FilterASKLock()
 			ShowPopupWindow(strDomain)
+			FilterASKUnLock()
 		end
 	end
 end
@@ -245,10 +263,10 @@ end
 
 
 function CheckPopupCond(strDomain)
-	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
-		TipLog("[CheckPopupCond] domain in white list: "..tostring(strDomain))
-		return false
-	end
+	-- if tFunctionHelper.IsDomainInWhiteList(strDomain) then
+		-- TipLog("[CheckPopupCond] domain in white list: "..tostring(strDomain))
+		-- return false
+	-- end
 	
 	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	local tVideoElem = tVideoList[strDomain]
@@ -268,6 +286,22 @@ function CheckPopupCond(strDomain)
 		TipLog("[CheckPopupCond] fiter has opened: "..tostring(strDomain))
 		return false
 	end
+	
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd("TipFilterRemindWnd.Instance")
+	if frameHostWnd ~= nil then
+		local bVisible = frameHostWnd:GetVisible()
+		if bVisible then
+			TipLog("[CheckPopupCond] TipFilterRemindWnd is visible: "..tostring(strDomain))
+			return false
+		end
+	end
+	
+	local bPassCheck = CheckFilterASKLock()
+	if not bPassCheck then
+		TipLog("[CheckPopupCond] CheckFilterASKLock failed: "..tostring(strDomain))
+		return false
+	end	
 	
 	return true
 end

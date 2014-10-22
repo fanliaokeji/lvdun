@@ -236,7 +236,12 @@
 												<height>father.height-2</height>
 												<font>font.yahei11</font>
 												<textcolor>666666</textcolor>
+												<tabgroup>2</tabgroup>
+												<taborder>1</taborder>
 											</attr>
+											<eventlist>
+												<event name="OnKeyDown" file="ChildCtrl_WhiteList.xml.lua" func="OnPopupPanelKeyDown" />
+											</eventlist>
 										</obj>
 									</children>
 								</obj>
@@ -282,7 +287,12 @@
 												<height>father.height-2</height>
 												<font>font.yahei11</font>
 												<textcolor>666666</textcolor>
+												<tabgroup>2</tabgroup>
+												<taborder>2</taborder>
 											</attr>
+											<eventlist>
+												<event name="OnKeyDown" file="ChildCtrl_WhiteList.xml.lua" func="OnPopupPanelKeyDown" />
+											</eventlist>
 										</obj>
 									</children>
 								</obj>

@@ -121,6 +121,7 @@ function OnClick_StateButton(self)
 	
 	local strDomain = FetchValueByPath(g_tBlackList, {nUrlID, "strDomain"})
 	AutoEnableDomain(strDomain)
+	SaveConfigToFile()
 	
 	if bNewState then
 		ReportDomainState(strDomain, g_nReportELEnable)

@@ -81,6 +81,19 @@ function OnClickAddBtn(self)
 	ShowPopupPanel(objRootCtrl, false)	
 end
 
+function OnPopupPanelKeyDown(self, nKeyCode)
+	if nKeyCode ~= 13 then --处理回车
+		return
+	end
+
+	local objRootCtrl = self:GetOwnerControl()
+	local objPopupAddBtn = objRootCtrl:GetControlObject("ChildCtrl_WhiteList.PopupPanel.AddBtn")
+	if not objPopupAddBtn then
+		return
+	end
+	
+	OnClickAddBtn(objPopupAddBtn)	
+end
 
 -------WhiteList 事件----
 function EventRouteToFather(self)
@@ -104,6 +117,7 @@ function OnClick_StateButton(self)
 	
 	local strDomain = FetchValueByPath(g_tWhiteList, {nUrlID, "strDomain"})
 	AutoEnableDomain(strDomain)
+	SaveConfigToFile()
 	
 	if bNewState then
 		ReportDomainState(strDomain, g_nReportELEnable)
@@ -303,7 +317,7 @@ end
 
 function LoadConfig()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	g_tWhiteList = tFunctionHelper.GetSpecifyFilterTableFromMem("tWhiteList") or {}
+	g_tWhiteList = tFunctionHelper.GetSpecifyFilterTableFromMem("tUserWhiteList") or {}
 	
 	return true
 end
@@ -551,18 +565,23 @@ function RemoveWhiteList(nIDToDelete)
 	if type(g_tWhiteList[nIDToDelete]) == "table" then
 		local strDomain = FetchValueByPath(g_tWhiteList, {nIDToDelete, "strDomain"})
 		table.remove(g_tWhiteList, nIDToDelete)
-		AutoEnableDomain(strDomain)
+		AutoEnableDomain(strDomain, true)
 		SaveConfigToFile()
 	end
 end
 
 
-function AutoEnableDomain(strDomain)
+function AutoEnableDomain(strDomain, bDelete)
+	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if not IsRealString(strDomain) then
 		return
 	end
 
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	if bDelete then
+		tFunctionHelper.EnableWhiteDomain(strDomain, true)
+		return
+	end
+	
 	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
 		tFunctionHelper.EnableWhiteDomain(strDomain, true)
 	else
@@ -602,7 +621,6 @@ function SendReport(tStatInfo)
 		FunctionObj.TipConvStatistic(tStatInfo)
 	end
 end
-
 
 
 function IsRealString(str)
