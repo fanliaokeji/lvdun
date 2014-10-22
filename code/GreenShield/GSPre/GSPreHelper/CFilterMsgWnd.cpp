@@ -167,13 +167,17 @@ LRESULT CFilterMsgWindow::HandleFilterResult(UINT uiMsg, WPARAM wParam, LPARAM l
 }
 LRESULT CFilterMsgWindow::HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
-	TSAUTO();
+	LPSTR pHost = (LPSTR)wParam;
+	std::wstring wstrHost;
+	AnsiStringToWideString(pHost,wstrHost);
+	delete pHost;
+
 	LPSTR pUrl = (LPSTR)lParam;
 	std::wstring wstrUrl;
 	AnsiStringToWideString(pUrl,wstrUrl);
 	delete pUrl;
 	CComVariant vParam[2];
-	vParam[0] = (int)wParam;
+	vParam[0] = (LPWSTR)wstrHost.c_str();
 	vParam[1] = (LPWSTR)wstrUrl.c_str();
 
 	DISPPARAMS params = { vParam, NULL, 2, 0 };

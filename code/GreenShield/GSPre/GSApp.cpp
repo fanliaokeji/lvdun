@@ -59,14 +59,14 @@ int __stdcall CGSApp::LuaErrorHandle(lua_State* luaState,const wchar_t* pExtInfo
 
 int CGSApp::ExitInstance()
 {
-	TSTRACEAUTO();
+	//TSTRACEAUTO();
 	TSDEBUG4CXX(" TerminateProcess 0");
 
-	//XLUE_Uninit(NULL); XPÏÂ¿¨ËÀ
+	//XLUE_Uninit(NULL); //XPÏÂ¿¨ËÀ
 	TSDEBUG4CXX(" TerminateProcess 1");
 	XLUE_UninitLuaHost(NULL);
 	TSDEBUG4CXX(" TerminateProcess 2");
-	XL_UnInitGraphicLib();
+	//XL_UnInitGraphicLib();
 	TSDEBUG4CXX(" TerminateProcess 3");
 	XLUE_UninitHandleMap(NULL);
 	TSDEBUG4CXX(" TerminateProcess 4");

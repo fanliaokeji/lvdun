@@ -54,7 +54,10 @@ public:
 public:
 	//static int RegisterFilterWnd(lua_State* pLuaState);
 	static int MsgBox(lua_State* pLuaState);
-	static int LoadConfig(lua_State* pLuaState);
+	static int LoadWebRules(lua_State* pLuaState);
+	static int LoadVideoRules(lua_State* pLuaState);
+	static int LoadUserRules(lua_State* pLuaState);
+
 	static int AddVideoHost(lua_State* pLuaState);
 	static int AddWhiteHost(lua_State* pLuaState);
 	
@@ -153,6 +156,7 @@ public:
 	static int GetTotalTickCount(lua_State* pLuaState);
 	static int GetOSVersionInfo(lua_State* pLuaState);
 	static int QueryProcessExists(lua_State* pLuaState);
+	static int IsWindows8Point1(lua_State* pLuaState);
 
 	//¹¦ÄÜ
 	static int CreateShortCutLinkEx(lua_State* pLuaState);

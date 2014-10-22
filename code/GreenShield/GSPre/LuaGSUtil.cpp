@@ -38,8 +38,10 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	//主要函数
 	{"MsgBox",MsgBox},
 
-	{"LoadConfig",LoadConfig},
-	
+	{"LoadWebRules",LoadWebRules},
+	{"LoadVideoRules",LoadVideoRules},
+	{"LoadUserRules",LoadUserRules},
+
 	{"AddVideoHost",AddVideoHost},
 	{"AddWhiteHost",AddWhiteHost},
 	{"UpdateVideoHost",UpdateVideoHost},
@@ -123,14 +125,15 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	//互斥量函数
 	{"CreateMutex", CreateNamedMutex},
 	{"CloseMutex", CloseNamedMutex},
-
+	
+	//系统
 	{"GetCurrentProcessId", FGetCurrentProcessId},
 	{"GetAllSystemInfo", FGetAllSystemInfo},
 	{"GetProcessIdFromHandle", FGetProcessIdFromHandle},
 	{"GetTickCount", GetTotalTickCount},
 	{"GetOSVersion", GetOSVersionInfo},
 	{"QueryProcessExists", QueryProcessExists},
-
+	{"IsWindows8Point1",IsWindows8Point1},
 	//功能
 	{"CreateShortCutLinkEx", CreateShortCutLinkEx},
 	{"OpenURL", OpenURL},
@@ -155,8 +158,6 @@ int LuaGSUtil::MsgBox(lua_State* pLuaState)
 	{
 		return 0;
 	}
-
-	BOOL bRet = FALSE;
 	const char* utf8Text = luaL_checkstring(pLuaState, 2);
 	const char* utf8Title = luaL_checkstring(pLuaState, 3);
 
@@ -174,7 +175,7 @@ int LuaGSUtil::MsgBox(lua_State* pLuaState)
 }
 
 
-int LuaGSUtil::LoadConfig(lua_State* pLuaState)
+int LuaGSUtil::LoadWebRules(lua_State* pLuaState)
 {
 	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
 	if (ppGSUtil == NULL)
@@ -192,12 +193,55 @@ int LuaGSUtil::LoadConfig(lua_State* pLuaState)
 	LuaStringToCComBSTR(utf8CfgPath,bstrPath);
 	if (::PathFileExists(bstrPath.m_str))
 	{
-		 FilterManager* m_Filter = GsGetFilterManager(bstrPath.m_str);
-		if (m_Filter)
+		if (GsGetWebRules(bstrPath.m_str))
 		{
 			bRet = TRUE;
 		}
 	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaGSUtil::LoadVideoRules(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	BOOL bRet = FALSE;
+	const char* utf8CfgPath = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrPath;
+	LuaStringToCComBSTR(utf8CfgPath,bstrPath);
+	if (::PathFileExists(bstrPath.m_str))
+	{
+		if (GsGetVideoRules(bstrPath.m_str))
+		{
+			bRet = TRUE;
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaGSUtil::LoadUserRules(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	BOOL bRet = FALSE;
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
@@ -1192,6 +1236,26 @@ int LuaGSUtil::GetOSVersionInfo(lua_State* pLuaState)
 		lua_pushnumber(pLuaState, osvi.dwMajorVersion);
 		lua_pushnumber(pLuaState, osvi.dwMinorVersion);
 		return 2;
+	}
+	return 0;
+}
+
+int LuaGSUtil::IsWindows8Point1(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		OSVERSIONINFOEX osVersionInfo;
+		::ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFOEX));
+		osVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+		osVersionInfo.dwMajorVersion = 6;
+		ULONGLONG maskCondition = ::VerSetConditionMask(0, VER_MAJORVERSION, VER_EQUAL);
+		BOOL bMajorVer = ::VerifyVersionInfo(&osVersionInfo, VER_MAJORVERSION, maskCondition);
+		osVersionInfo.dwMinorVersion = 3;
+		BOOL bMinorVer = ::VerifyVersionInfo(&osVersionInfo, VER_MINORVERSION, maskCondition);
+		lua_pushboolean(pLuaState, (int )(bMajorVer && bMinorVer));
+		return 1;	
+
 	}
 	return 0;
 }
