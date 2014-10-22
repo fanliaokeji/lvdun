@@ -507,6 +507,7 @@ function SetNotifyIconState()
 
 	local tUserConfig = GetUserConfigFromMem() or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"] or false
+	local nFilterCount = tUserConfig["nFilterCountOneDay"] or 0
 	
 	local strState = "正常过滤"
 	if not bFilterOpen then
@@ -751,12 +752,14 @@ end
 
 
 function IsVideoDomain(strDomain)
-	if not IsRealString(strDomain) then
+	local strDomainWithFix = FormatDomain(strDomain)
+	
+	if not IsRealString(strDomainWithFix) then
 		return false
 	end
 	
 	local tVideoList = GetVideoListFromMem() or {}
-	if tVideoList[strDomain] then
+	if tVideoList[strDomainWithFix] then
 		return true
 	else
 		return false
@@ -765,7 +768,13 @@ end
 
 
 function SendFileDataToFilterThread()
-	local bSucc = SendLazyListToFilterThread()
+	-- local bSucc = SendLazyListToFilterThread()
+	-- if not bSucc then
+		-- MessageBox(tostring("文件被损坏，请重新安装"))
+		-- return false
+	-- end		
+	
+	local bSucc = SendRuleListtToFilterThread()
 	if not bSucc then
 		MessageBox(tostring("文件被损坏，请重新安装"))
 		return false
@@ -825,6 +834,18 @@ function SendLazyListToFilterThread()
 end
 
 
+function SendRuleListtToFilterThread()
+	local strWebRulePath = GetCfgPathWithName("WebRule.dat")
+	local strVideoRulePath = GetCfgPathWithName("VideoRule.dat")
+	if not IsRealString(strWebRulePath) or not tipUtil:QueryFileExists(strWebRulePath) 
+	   or not IsRealString(strVideoRulePath) or not tipUtil:QueryFileExists(strVideoRulePath) then
+		return false
+	end
+
+	return tipUtil:LoadWebRules(strWebRulePath) and	tipUtil:LoadVideoRules(strVideoRulePath)
+end
+
+
 function SendVideoListToFilterThread()
 	local tVideoList = GetVideoListFromMem() or {}
 	
@@ -832,9 +853,9 @@ function SendVideoListToFilterThread()
 		if IsRealString(strDomain) and type(tVideoElem) == "table" then
 			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
 			
-			if not CheckWhiteList(strDomain) then
+			-- if not CheckWhiteList(strDomain) then
 				CheckVideoList(strDomain, nLastPopupUTC)
-			end
+			-- end
 		end
 	end
 
@@ -881,12 +902,47 @@ end
 --1 过滤
 --2 不过滤
 function EnableVideoDomain(strDomain, nState)
-	if not IsRealString(strDomain) or type(nState) ~= "number" then
+	local strDomainWithFix = FormatDomain(strDomain)
+
+	if not IsRealString(strDomainWithFix) or type(nState) ~= "number" then
 		return
 	end
 
-	tipUtil:UpdateVideoHost(strDomain, nState)
-	TipLog("[UpdateVideoHost] strDomain: "..tostring(strDomain).." nState: "..tostring(nState))
+	tipUtil:UpdateVideoHost(strDomainWithFix, nState)
+	TipLog("[UpdateVideoHost] strDomainWithFix: "..tostring(strDomainWithFix).." nState: "..tostring(nState))
+end
+
+
+function SynchDefaultWhiteList(strDomainWithFix, bSetWite)
+	local tDefWhiteList = GetSpecifyFilterTableFromMem("tDefWhiteList") or {}
+	if type(tDefWhiteList[strDomainWithFix]) == "table" then
+		tDefWhiteList[strDomainWithFix]["bState"] = bSetWite
+	end
+end
+
+
+function EnableWhiteDomain(strDomain, bSetWite)
+	local strDomainWithFix = FormatDomain(strDomain)
+	if not IsRealString(strDomainWithFix) or type(bSetWite) ~= "boolean" then
+		return
+	end
+
+	SynchDefaultWhiteList(strDomainWithFix, bSetWite) --同步用户操作到默认白名单表
+	
+	tipUtil:UpdateWhiteHost(strDomainWithFix, bSetWite)
+	TipLog("[UpdateWhiteHost] strDomainWithFix: "..tostring(strDomainWithFix).." nState: "..tostring(bSetWite))
+end
+
+
+function AddWhiteDomain(strDomain)
+	local strDomainWithFix = FormatDomain(strDomain)
+
+	if not IsRealString(strDomainWithFix) then
+		return
+	end
+
+	tipUtil:AddWhiteHost(strDomainWithFix)
+	TipLog("[AddWhiteDomain] strDomainWithFix: "..tostring(strDomainWithFix))
 end
 
 
@@ -900,30 +956,29 @@ function AddVideoDomain(strDomain, nState)
 end
 
 
-function EnableWhiteDomain(strDomain, bSetWite)
-	if not IsRealString(strDomain) or type(bSetWite) ~= "boolean" then
-		return
-	end
-
-	tipUtil:UpdateWhiteHost(strDomain, bSetWite)
-	TipLog("[UpdateWhiteHost] strDomain: "..tostring(strDomain).." nState: "..tostring(bSetWite))
-end
-
-
-function AddWhiteDomain(strDomain)
+function FormatDomain(strDomain)
 	if not IsRealString(strDomain) then
-		return
+		return ""
 	end
 
-	tipUtil:AddWhiteHost(strDomain)
-	TipLog("[AddWhiteDomain] strDomain: "..tostring(strDomain))
+	local strDomainWithFix = string.gsub(strDomain, "^www%.", "")
+	return strDomainWithFix
 end
 
 
 function SendWhiteListToFilterThread()
-	local tWhiteList = GetSpecifyFilterTableFromMem("tWhiteList") or {}
+	local tDefWhiteList = GetSpecifyFilterTableFromMem("tDefWhiteList") or {}
+	local tUserWhiteList = GetSpecifyFilterTableFromMem("tUserWhiteList") or {}
 		
-	for key, tWhiteElem in pairs(tWhiteList) do
+	for key, tWhiteElem in pairs(tDefWhiteList) do
+		local strWhiteDomain = key
+		local bStateOpen = tWhiteElem["bState"]
+		if IsRealString(strWhiteDomain) and bStateOpen then
+			AddWhiteDomain(strWhiteDomain)
+		end
+	end
+	
+	for key, tWhiteElem in pairs(tUserWhiteList) do
 		local strWhiteDomain = tWhiteElem["strDomain"]
 		local bStateOpen = tWhiteElem["bState"]
 		if IsRealString(strWhiteDomain) and bStateOpen then
@@ -940,8 +995,20 @@ function IsDomainInWhiteList(strDomain)
 		return false
 	end
 
-	local tWhiteList = GetSpecifyFilterTableFromMem("tWhiteList") or {}
-	for key, tWhiteElem in pairs(tWhiteList) do
+	local tDefWhiteList = GetSpecifyFilterTableFromMem("tDefWhiteList") or {}
+	local tUserWhiteList = GetSpecifyFilterTableFromMem("tUserWhiteList") or {}
+	
+	for key, tWhiteElem in pairs(tDefWhiteList) do
+		local strWhiteDomain = key
+		local bStateOpen = tWhiteElem["bState"]
+		if IsRealString(strWhiteDomain) and bStateOpen
+			and string.find(strWhiteDomain, strDomain) then
+			
+			return true
+		end
+	end
+	
+	for key, tWhiteElem in pairs(tUserWhiteList) do
 		local strWhiteDomain = tWhiteElem["strDomain"]
 		local bStateOpen = tWhiteElem["bState"]
 		if IsRealString(strWhiteDomain) and bStateOpen
