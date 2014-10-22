@@ -92,6 +92,7 @@ function RegisterFunctionObject(self)
 	obj.CheckIsNewVersion = CheckIsNewVersion
 	obj.IsVideoDomain = IsVideoDomain
 	obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
+	obj.SetNotifyIconState = SetNotifyIconState
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -464,9 +465,6 @@ function InitTrayTipWnd(objHostWnd)
 	    return
 	end
 	
-	SetNotifyIconText(tipNotifyIcon)
-	tipNotifyIcon:Show()
-	
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	
 	----托盘事件响应
@@ -491,26 +489,43 @@ function InitTrayTipWnd(objHostWnd)
 		--mousemove
 		if event3 == 512 then
 			g_tipNotifyIcon:ShowNotifyIconTip(false)
-			SetNotifyIconText(tipNotifyIcon)
+			SetNotifyIconState()
 		end
 	end
 
 	tipNotifyIcon:Attach(OnTrayEvent)
 	g_tipNotifyIcon = tipNotifyIcon
+	SetNotifyIconState()
+	tipNotifyIcon:Show()
 end
 
 
-function SetNotifyIconText(tipNotifyIcon)
+function SetNotifyIconState()
+	if not g_tipNotifyIcon then
+		return
+	end
+
 	local tUserConfig = GetUserConfigFromMem() or {}
-	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
 	local bFilterOpen = tUserConfig["bFilterOpen"] or false
+	
 	local strState = "正常过滤"
 	if not bFilterOpen then
 		strState = "停止过滤"
 	end
+	local strText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
 	
-	local strText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计屏蔽："..tostring(nFilterCount).."次"
-    tipNotifyIcon:SetIcon(nil,strText)
+	local strResImageDir = __document .. "\\..\\..\\res\\default\\bitmap"
+	local strImageName = "GreenWall.TrayIcon.Close.ico"
+	if bFilterOpen then
+		strImageName = "GreenWall.TrayIcon.Open.ico"
+	end
+	
+	local strImagePath = strResImageDir.. "\\".. strImageName
+	if not tipUtil:QueryFileExists(strImagePath) then
+		strImagePath = nil
+	end
+	
+	g_tipNotifyIcon:SetIcon(strImagePath, strText)
 end
 
 

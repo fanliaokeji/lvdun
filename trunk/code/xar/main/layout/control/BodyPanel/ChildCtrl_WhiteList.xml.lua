@@ -112,18 +112,6 @@ function OnClick_StateButton(self)
 	end
 end
 
----鼠标移入显示过滤信息的那一行
-function OnMouseEnter_Layout(self)
-	local bHover = true
-	SetFilterLayoutStyle(self, bHover)
-	self:SetZorder(2000)
-end
-
-function OnMouseLeave_Layout(self)
-	local bHover = false
-	SetFilterLayoutStyle(self, bHover)
-	self:SetZorder(0)
-end
 
 --切换删除\添加
 function OnClick_Layout(self)
@@ -453,9 +441,7 @@ function CreateLine(objWhiteList)
 	objStateBtn:AttachListener("OnLButtonUp", false, OnClick_StateButton)
 	objStateBtn:AttachListener("OnMouseWheel", false, EventRouteToFather)
 	objStateBtn:AttachListener("OnFocusChange", false, EventRouteToFather)
-
-	--objLayout:AttachListener("OnMouseEnter", false, OnMouseEnter_Layout)
-	--objLayout:AttachListener("OnMouseLeave", false, OnMouseLeave_Layout)
+	
 	objLayout:AttachListener("OnLButtonUp", false, OnClick_Layout)
 	objLayout:AttachListener("OnMouseWheel", false, EventRouteToFather)
 	objLayout:AttachListener("OnFocusChange", false, OnFocus_Layout)
