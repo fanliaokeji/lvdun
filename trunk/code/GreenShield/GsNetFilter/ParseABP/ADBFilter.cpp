@@ -87,7 +87,7 @@ FilterRule::FilterRule( const std::string & r)
 	if(dollarPos!= std::string::npos) {
 		//const UChar* types = rule.substring(dollarPos).charactersWithNullTermination();
 		std::string token;
-		for (int i = dollarPos+1; i<rule.length(); i++) {
+		for (UINT i = dollarPos+1; i<rule.length(); i++) {
 			if (rule[i] != ',' && i != rule.length()-1) {
 				token += rule[i];
 			} else {
@@ -168,7 +168,7 @@ void FilterRule::getDomains(StringVector & domains)
 void FilterRule::processDomains(std::string &ds)
 {
  	std::string token;
-	for(int  i=0;i<ds.length();i++) {
+	for(UINT  i=0;i<ds.length();i++) {
 		if (ds[i] != '|' && i != ds.length()-1) {
 			token += ds[i];
 		} else {
@@ -361,7 +361,7 @@ static inline int  patternStep( const char * s, const  char * p)
     if(!step) //just one character ,such as ^,*
         return 1;
     memset(temp,0,sizeof(temp));
-    strncpy(temp,p,abpmin(sizeof(temp)-1,step));
+    strncpy_s(temp,p,abpmin(sizeof(temp)-1,step));
     //printf("temp=%s,step=%d\n",temp,step);
     const char * res=strfind(s,temp);
     if(!res) //没有找到
@@ -432,9 +432,7 @@ HideRule::HideRule(const std::string & r)
 
 void HideRule::print()
 {
-	for(int i=0;i<this->m_domains.size();i++) {
 
-	}
 }
 
 ReplaceRule::ReplaceRule(const std::string & r)
