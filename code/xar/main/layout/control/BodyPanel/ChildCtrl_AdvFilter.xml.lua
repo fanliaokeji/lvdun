@@ -85,6 +85,20 @@ function OnClickAddBtn(self)
 end
 
 
+function OnPopupPanelKeyDown(self, nKeyCode)
+	if nKeyCode ~= 13 then --处理回车
+		return
+	end
+
+	local objRootCtrl = self:GetOwnerControl()
+	local objPopupAddBtn = objRootCtrl:GetControlObject("ChildCtrl_AdvFilter.PopupPanel.AddBtn")
+	if not objPopupAddBtn then
+		return
+	end
+	
+	OnClickAddBtn(objPopupAddBtn)	
+end
+
 -------blacklist 事件----
 function EventRouteToFather(self)
 	self:RouteToFather()
@@ -423,7 +437,11 @@ end
 
 
 function UpdateBlackListPanel()
-	if #g_tBlackList < g_nPageSize+1 then
+	if g_nCurTopIndex + g_nPageSize > #g_tBlackList+1 then
+		g_nCurTopIndex = #g_tBlackList - g_nPageSize + 1
+	end
+	
+	if #g_tBlackList < g_nPageSize+1 or g_nCurTopIndex < 1 then
 		g_nCurTopIndex = 1
 	end
 	
