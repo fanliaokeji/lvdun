@@ -987,7 +987,7 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 								}
 
 								// ÐÞ¸ÄÊôÐÔ
-								this->m_bytesOfResponseContentHasRead = decodedResponseContent.size() + style.size();
+								this->m_bytesOfResponseContentHasRead = modifiedContentLength;
 								this->m_responseTransferEncoding = TE_NONE;
 								this->m_responseContentEncoding = CE_NONE;
 								this->m_responseContentLength = this->m_bytesOfResponseContentHasRead;
