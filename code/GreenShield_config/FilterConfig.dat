@@ -92,7 +92,7 @@ function GetSubTable()
 				["strName"] = "PPTV聚力", 
 				["bState"] = true, 
 			},
-			["pps.com"] = {
+			["pps.tv"] = {
 				["strName"] = "PPS", 
 				["bState"] = true, 
 			},

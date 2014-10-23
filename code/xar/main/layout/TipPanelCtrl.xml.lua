@@ -263,11 +263,6 @@ end
 
 
 function CheckPopupCond(strDomain)
-	-- if tFunctionHelper.IsDomainInWhiteList(strDomain) then
-		-- TipLog("[CheckPopupCond] domain in white list: "..tostring(strDomain))
-		-- return false
-	-- end
-	
 	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
 	local tVideoElem = tVideoList[strDomain]
 	if type(tVideoElem) ~= "table" then
