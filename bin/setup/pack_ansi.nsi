@@ -61,10 +61,12 @@ Var Btn_FreeUse
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
-SetCompressor lzma
+SetCompressor /SOLID lzma
+SetCompressorDictSize 32
 BrandingText "${EM_BrandingText}"
 SetCompress force
-XPStyle on
+SetDatablockOptimize on
+;XPStyle on
 ; ------ MUI 现代界面定义 (1.67 版本以上兼容) ------
 !include "MUI2.nsh"
 !include "WinCore.nsh"
@@ -239,6 +241,7 @@ Function CmdSilentInstall
 	Call CloseExe
 	
 	Call DoInstall
+	SetOutPath "$INSTDIR"
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
@@ -1003,6 +1006,7 @@ Function NSD_TimerFun
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
+		SetOutPath "$INSTDIR"
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 		;快速启动栏
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
