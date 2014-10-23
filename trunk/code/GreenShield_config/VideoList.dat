@@ -6,6 +6,12 @@ function GetSubTable()
 		["baomihua.com"] = {
 			["strTitle"] = "爆米花", 
 		}, 
+		["fun.tv"] = {
+			["strTitle"] = "风行", 
+		}, 
+		["1905.com"] = {
+			["strTitle"] = "1905电影网", 
+		}, 
 		["kankan.com"] = {
 			["strTitle"] = "迅雷看看", 
 		}, 
@@ -18,26 +24,20 @@ function GetSubTable()
 		["pptv.com"] = {
 			["strTitle"] = "pptv", 
 		}, 
-		["kankannews.com"] = {
-			["strTitle"] = "看看新闻网", 
-		}, 
 		["cntv.cn"] = {
 			["strTitle"] = "央视网", 
 		}, 
-		["letv.cn"] = {
+		["6.cn"] = {
+			["strTitle"] = "六间房", 
+		}, 
+		["letv.com"] = {
 			["strTitle"] = "乐视", 
-		}, 
-		["v.qq.com"] = {
-			["strTitle"] = "腾讯视频", 
-		}, 
-		["56.com"] = {
-			["strTitle"] = "56视频", 
 		}, 
 		["aipai.com"] = {
 			["strTitle"] = "爱拍", 
 		}, 
-		["6.cn"] = {
-			["strTitle"] = "六间房", 
+		["56.com"] = {
+			["strTitle"] = "56视频", 
 		}, 
 		["ku6.com"] = {
 			["strTitle"] = "酷6", 
@@ -48,14 +48,14 @@ function GetSubTable()
 		["pps.tv"] = {
 			["strTitle"] = "pps", 
 		}, 
-		["m1905.com"] = {
-			["strTitle"] = "1905电影网", 
+		["kankanews.com"] = {
+			["strTitle"] = "看看新闻网", 
 		}, 
 		["ifeng.com"] = {
 			["strTitle"] = "凤凰网", 
 		}, 
-		["funshion.com"] = {
-			["strTitle"] = "风行", 
+		["v.qq.com"] = {
+			["strTitle"] = "腾讯视频", 
 		}, 
 		["baofeng.com"] = {
 			["strTitle"] = "暴风", 
