@@ -1,4 +1,10 @@
 <xlue>
+	<animationtemplate id="tip.pos.animation" class="PosChangeAnimation">
+		<attr>
+			<totaltime>800</totaltime>
+		</attr>
+	</animationtemplate>
+
 	<control class="TipMainWndRootCtrl">
 		<attr_def>
 		    <attr name="popanitime" type="int">
