@@ -160,6 +160,9 @@ Function DoInstall
   SetOutPath "$TEMP\${PRODUCT_NAME}"
   StrCpy $1 ${NSIS_MAX_STRLEN}
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+  SetOutPath "$0\GreenShield"
+  File "input_config\GreenShield\VideoRule.dat"
+  File "input_config\GreenShield\WebRule.dat"
   SetOutPath "$0"
   SetOverwrite off
   File /r "input_config\*.*"
@@ -248,6 +251,8 @@ Function CmdSilentInstall
 	${else}
 		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	${Endif}
+	;静默安装也写开机启动
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -288,6 +293,7 @@ Function CmdUnstall
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
 		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
@@ -1229,6 +1235,7 @@ Function un.UNSD_TimerFun
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
