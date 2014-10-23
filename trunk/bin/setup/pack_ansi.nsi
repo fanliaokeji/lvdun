@@ -101,7 +101,7 @@ UninstPage custom un.MyUnstall
 
 ;------------------------------------------------------MUI 现代界面定义以及函数结束------------------------
 ;应用程序显示名字
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 ;应用程序输出路径
 OutFile "bin\${EM_OUTFILE_NAME}"
 InstallDir "$PROGRAMFILES\GreenShield"
@@ -412,14 +412,14 @@ Function GsMessageBox
 	GetFunctionAddress $0 OnClickQuitOK
 	SkinBtn::onClick $1 $0
 	
-	StrCpy $3 50
+	StrCpy $3 45
 	IntOp $3 $3 + $Int_FontOffset
 	${NSD_CreateLabel} 66 $3 250 20 $R6
 	Pop $lab_MsgBoxText
     SetCtlColors $lab_MsgBoxText "${TEXTCOLOR}" transparent ;背景设成透明
 	SendMessage $lab_MsgBoxText ${WM_SETFONT} $Handle_Font 0
 	
-	StrCpy $3 70
+	StrCpy $3 65
 	IntOp $3 $3 + $Int_FontOffset
 	${NSD_CreateLabel} 66 $3 250 20 $R8
 	Pop $lab_MsgBoxText2
@@ -1323,14 +1323,14 @@ Function un.GsMessageBox
 	GetFunctionAddress $0 un.OnClick_FinishUnstall
 	SkinBtn::onClick $1 $0
 	
-	StrCpy $3 50
+	StrCpy $3 45
 	IntOp $3 $3 + $Int_FontOffset
 	${NSD_CreateLabel} 66 $3 250 20 $R6
 	Pop $lab_MsgBoxText
     SetCtlColors $lab_MsgBoxText "${TEXTCOLOR}" transparent ;背景设成透明
 	SendMessage $lab_MsgBoxText ${WM_SETFONT} $Handle_Font 0
 	
-	StrCpy $3 70
+	StrCpy $3 65
 	IntOp $3 $3 + $Int_FontOffset
 	${NSD_CreateLabel} 66 $3 250 20 $R8
 	Pop $lab_MsgBoxText2
