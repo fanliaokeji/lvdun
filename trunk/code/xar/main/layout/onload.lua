@@ -768,12 +768,6 @@ end
 
 
 function SendFileDataToFilterThread()
-	-- local bSucc = SendLazyListToFilterThread()
-	-- if not bSucc then
-		-- MessageBox(tostring("文件被损坏，请重新安装"))
-		-- return false
-	-- end		
-	
 	local bSucc = SendRuleListtToFilterThread()
 	if not bSucc then
 		MessageBox(tostring("文件被损坏，请重新安装"))
@@ -794,43 +788,24 @@ function SendFileDataToFilterThread()
 end
 
 
-function SendLazyListToFilterThread()
-	local strLazyListPath = GetCfgPathWithName("data.dat")
-	if not IsRealString(strLazyListPath) or not tipUtil:QueryFileExists(strLazyListPath) then
-		return false
-	end
-
-	local strAESString = tipUtil:ReadFileToString(strLazyListPath)
-	if not strAESString then
-		TipLog("[SendLazyListToFilterThread] ReadFileToString failed : "..tostring(strLazyListPath))
-		return false
-	end
-	
+function GenDecFilePath(strEncFilePath)
 	local strKey = "fvSem9Rt6wvhxmzs"
-	local strDecString = tipUtil:DecryptFileAES(strLazyListPath, strKey)
+	local strDecString = tipUtil:DecryptFileAES(strEncFilePath, strKey)
 	if type(strDecString) ~= "string" then
-		TipLog("[SendLazyListToFilterThread] DecryptFileAES failed : "..tostring(strLazyListPath))
-		return false
+		TipLog("[GenDecFilePath] DecryptFileAES failed : "..tostring(strEncFilePath))
+		return ""
 	end
 	
 	local strTmpDir = tipUtil:GetSystemTempPath()
 	if not tipUtil:QueryFileExists(strTmpDir) then
-		TipLog("[SendLazyListToFilterThread] GetSystemTempPath failed strTmpDir: "..tostring(strTmpDir))
-		return false
+		TipLog("[GenDecFilePath] GetSystemTempPath failed strTmpDir: "..tostring(strTmpDir))
+		return ""
 	end
 	
 	local strCfgName = tipUtil:GetTmpFileName() or "data.dat"
 	local strCfgPath = tipUtil:PathCombine(strTmpDir, strCfgName)
 	tipUtil:WriteStringToFile(strCfgPath, strDecString)
-	
-	local bSucc = tipUtil:LoadConfig(strCfgPath) 
-	if not bSucc then
-		TipLog("[SendLazyListToFilterThread] LoadConfig failed strCfgPath: "..tostring(strCfgPath))
-		return false
-	end
-	
-	tipUtil:DeletePathFile(strCfgPath)
-	return true
+	return strCfgPath
 end
 
 
@@ -842,7 +817,30 @@ function SendRuleListtToFilterThread()
 		return false
 	end
 
-	return tipUtil:LoadWebRules(strWebRulePath) and	tipUtil:LoadVideoRules(strVideoRulePath)
+	local strDecWebRulePath = GenDecFilePath(strWebRulePath)
+	if not IsRealString(strDecWebRulePath) then
+		return fasle	
+	end
+	
+	local bSucc = tipUtil:LoadWebRules(strDecWebRulePath)
+	if not bSucc then
+		TipLog("[SendRuleListtToFilterThread] LoadWebRules failed")
+		return false
+	end
+	tipUtil:DeletePathFile(strDecWebRulePath)
+	
+	local strDecVideoRulePath = GenDecFilePath(strVideoRulePath)
+	if not IsRealString(strDecVideoRulePath) then
+		return fasle	
+	end
+	local bSucc = tipUtil:LoadVideoRules(strDecVideoRulePath)
+	if not bSucc then
+		TipLog("[SendRuleListtToFilterThread] LoadVideoRules failed")
+		return false
+	end
+	tipUtil:DeletePathFile(strDecVideoRulePath)
+	
+	return true
 end
 
 
