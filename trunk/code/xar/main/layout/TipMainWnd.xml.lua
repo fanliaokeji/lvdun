@@ -25,18 +25,32 @@ function OnShowWindow(self, bShow)
 	end
 end
 
-function OnCreate( self )
-	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	local selfleft, selftop, selfright, selfbottom = self:GetWindowRect()
-	local wndwidth, wndheight = selfright - selfleft, selfbottom - selftop
+
+function PopupInDeskRight(self)
 	local objtree = self:GetBindUIObjectTree()
-	local objRootCtrl = objtree:GetUIObject("root.layout")
+	local objRootLayout = objtree:GetUIObject("root.layout")
+    local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local aniT = templateMananger:GetTemplate("tip.pos.animation","AnimationTemplate")
+	local ani = aniT:CreateInstance()
+	ani:BindObj(objRootLayout)
 	
-	local webleft, webtop, webright, webbottom = objRootCtrl:GetAbsPos()
-	local webwidth, webheight = webright - webleft, webbottom - webtop
-	local wndleft = ((workright-workleft)-webwidth)/2-webleft
-	local wndtop = ((workbottom-worktop)-webheight)/2-webtop
-	self:Move(wndleft, wndtop, wndwidth, wndheight)
+	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+	local nLayoutWidth = nLayoutR - nLayoutL
+	local nLayoutHeight = nLayoutB - nLayoutT
+	
+	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
+	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
+	ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
+	objtree:AddAnimation(ani)
+	ani:Resume()
+
+	return true
+end
+
+
+
+function OnCreate( self )
+	 PopupInDeskRight(self)
 end
 
 function OnDestroy( self )
