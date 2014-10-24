@@ -2,12 +2,21 @@
 #define FILTER_H
 
 #include <boost/algorithm/string.hpp>
- 
+#include "boost/unordered_map.hpp"
+#include "boost/thread/shared_mutex.hpp"
+#include "boost/thread.hpp"
+
 #include <vector>
 #include <string>
 
 #include "FilterManager.h"
 #include <hash_map>
+
+typedef boost::shared_mutex rwmutex;
+typedef boost::shared_lock<rwmutex> readLock;
+typedef boost::unique_lock<rwmutex> writeLock;	
+
+typedef boost::unordered_map<std::string /*host*/, int /*state*/ > ConfigRuleMap;
 
 
 class FilterRule {
@@ -33,8 +42,9 @@ private:
     bool m_matchFirstParty;
 	std::vector<std::string> m_domains;
 	std::vector<std::string> m_inverseDomains;
-
+	std::vector<std::string> m_stateDomains;
 private:
+	bool isMatchStateDomain();
     bool isMatchType(const Url & url,FilterType t);
     bool isMatchThirdParty(const Url & host,const Url & other);
     bool isMatchDomains( const Url & url);
@@ -71,6 +81,8 @@ private:
 	std::string m_reReplace;
 	std::string m_rule;
 	bool m_isMatchProtocol;
+
+	std::vector<std::string> m_stateDomains;
 	
 };
 

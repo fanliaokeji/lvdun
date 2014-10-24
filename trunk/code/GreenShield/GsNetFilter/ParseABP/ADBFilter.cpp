@@ -6,7 +6,8 @@
 #include <string.h>
 #include <iostream>
 
-
+extern ConfigRuleMap map_VideoState;
+extern rwmutex rw_cfgmutex;
 static std::string parseDomain(std::string host)
 {
 	int spos=0;
@@ -55,6 +56,20 @@ static std::string parseDomain(std::string host)
 	return host;
 }
 
+static bool isMatchState(std::vector<std::string> & v_domain)
+{
+	readLock rdLock(rw_cfgmutex);
+	for (std::vector<std::string>::const_iterator c_iter = v_domain.begin();c_iter!= v_domain.end();c_iter++)
+	{
+		ConfigRuleMap::iterator map_iter =map_VideoState.find(*c_iter);
+		if (map_iter != map_VideoState.end() && map_iter->second == 1)
+		{
+			return true;
+		}
+		
+	}
+	return false; 
+}
 /*
   首先manager已经判断过是过滤而不是隐藏规则了
   以@@开始，则是白名单，manager会优先考虑
@@ -63,6 +78,7 @@ static std::string parseDomain(std::string host)
   含有$类型指定规则，去掉这些字符串，并处理类型
   以|结尾，去掉|，否则在结尾处添加*
   */
+
 FilterRule::FilterRule( const std::string & r)
 {
 	std::string rule=boost::trim_copy(r);
@@ -71,6 +87,15 @@ FilterRule::FilterRule( const std::string & r)
     this->m_isMatchProtocol=true;
     m_filterThirdParty=false;
     m_type=0;
+	
+	std::string::size_type pos = rule.find_last_of("$$$");
+	if (pos!= std::string::npos)
+	{
+		std::string strState = rule.substr(pos+1);
+		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
+		rule = rule.substr(0,pos-2);
+	}
+
 	if(boost::istarts_with(rule,"@@")) {
         this->m_isException=true;
 		boost::erase_first(rule, "@@");
@@ -259,6 +284,10 @@ static bool adbMatch(const char * s,  const char *  p,bool caseSensitivie=false)
 
 bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
 {
+	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	{
+		return false;
+	}
 	std::string url=u.GetString();
 	bool ret;
     if(!this->m_isMatchProtocol) {
@@ -437,8 +466,18 @@ void HideRule::print()
 
 ReplaceRule::ReplaceRule(const std::string & r)
 {
+
 	std::string rule=boost::trim_copy(r);
 	m_rule=rule;
+
+	std::string::size_type pos = rule.find_last_of("$$$");
+	if (pos!= std::string::npos)
+	{
+		std::string strState = rule.substr(pos+1);
+		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
+		rule = rule.substr(0,pos-2);
+	}
+
 	this->m_isMatchProtocol=true;
 
 	if(boost::istarts_with(rule,"||")) {
@@ -464,6 +503,11 @@ ReplaceRule::ReplaceRule(const std::string & r)
 
 bool ReplaceRule::shouldReplace(const Url & u)
 {
+	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	{
+		return false;
+	}
+
 	std::string url=u.GetString();
 	bool ret;
 	if(!this->m_isMatchProtocol) 
