@@ -93,6 +93,7 @@ function RegisterFunctionObject(self)
 	obj.IsVideoDomain = IsVideoDomain
 	obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
 	obj.SetNotifyIconState = SetNotifyIconState
+	obj.SetWndForeGround = SetWndForeGround
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -395,6 +396,28 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
+function SetWndForeGround(objHostWnd)
+	if not objHostWnd then
+		return
+	end
+
+	if not IsUserFullScreen() then
+		objHostWnd:SetTopMost(true)
+		if type(tipUtil.SetWndPos) == "function" then
+			local hWnd = objHostWnd:GetWndHandle()
+			if hWnd ~= nil then
+				tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0,0x0053)
+			end
+		end
+	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
+		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
+		if hFrontHandle ~= nil then
+			objHostWnd:BringWindowToBack(hFrontHandle)
+		end
+	end
+end
+
+
 function ShowMainTipWnd(objMainWnd)
 	local tUserConfig = GetUserConfigFromMem() or {}
 	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
@@ -406,6 +429,8 @@ function ShowMainTipWnd(objMainWnd)
 	if bRet then
 		bAutoStup = true
 	end
+	
+	SetWndForeGround(objMainWnd)
 	
 	if bHideMainPage or bAutoStup then
 		objMainWnd:Show(0)
@@ -423,21 +448,7 @@ function ShowPopupWndByName(strWndName)
 		return
 	end
 
-	if not IsUserFullScreen() then
-		frameHostWnd:SetTopMost(true)
-		if type(tipUtil.SetWndPos) == "function" then
-			local hWnd = frameHostWnd:GetWndHandle()
-			if hWnd ~= nil then
-				tipUtil:SetWndPos(hWnd,-2, 0, 0, 0, 0,0x0053)
-			end
-		end
-	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
-		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
-		if hFrontHandle ~= nil then
-			frameHostWnd:BringWindowToBack(hFrontHandle)
-		end
-	end
-	
+	SetWndForeGround(frameHostWnd)
 	frameHostWnd:Show(4)
 end
 
@@ -485,6 +496,15 @@ function InitTrayTipWnd(objHostWnd)
 		if event3 == 0x0202 then
 			if objHostWnd then
 				objHostWnd:BringWindowToTop(true)
+				
+				local strHostWndName = "TipFilterRemindWnd.Instance"
+				local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
+				if objPopupWnd and objPopupWnd:GetVisible() then
+					local hWnd = objPopupWnd:GetWndHandle()
+					if hWnd then
+						objHostWnd:BringWindowToBack(hWnd)
+					end
+				end
 			end
 		end
 		

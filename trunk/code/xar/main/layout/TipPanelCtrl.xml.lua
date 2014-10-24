@@ -220,21 +220,7 @@ function ShowPopupWindow(strDomain)
 	objTextName:SetText(tostring(strName))
 	objTextDomain:SetText(tostring(strDomain))
 	
-	if not IsUserFullScreen() then
-		frameHostWnd:SetTopMost(true)
-		if type(tipUtil.SetWndPos) == "function" then
-			local hWnd = frameHostWnd:GetWndHandle()
-			if hWnd ~= nil then
-				tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0,0x0053)
-			end
-		end
-	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
-		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
-		if hFrontHandle ~= nil then
-			frameHostWnd:BringWindowToBack(hFrontHandle)
-		end
-	end
-	
+	tFunctionHelper.SetWndForeGround(frameHostWnd)
 	frameHostWnd:Show(4)
 	RecordPopupTime(strDomain)
 end
@@ -337,14 +323,6 @@ function SetCaptionText(objUIItem, strTitle)
 	objCaptionText:SetText(strTitle)
 end
 
-
-function IsUserFullScreen()
-	local bRet = false
-	if type(tipUtil.IsNowFullScreen) == "function" then
-		bRet = tipUtil:IsNowFullScreen()
-	end
-	return bRet
-end
 
 function IsNilString(AString)
 	if AString == nil or AString == "" then
