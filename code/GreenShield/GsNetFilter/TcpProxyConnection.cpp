@@ -953,7 +953,7 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 									}
 								}
 
-								if(content_list.size() == 1) {
+								if(content_list.size() == 1 && content_list.begin()->second) {
 									this->m_isThisRequestNeedModifyResponse = false;
 									break;
 								}
