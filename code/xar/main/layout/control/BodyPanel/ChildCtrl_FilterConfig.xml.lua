@@ -8,6 +8,11 @@ local g_tPanelCtrlList = {
 
 
 ---事件---
+function OnInitControl(self)
+	InitFilterConfig(self)
+end
+
+
 function OnClickAdvFilter(self)
 	SetMenuSelect(self, 1)
 	OpenPanel(self, "ChildCtrl_AdvFilter")
