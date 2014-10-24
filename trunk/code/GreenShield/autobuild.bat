@@ -23,7 +23,7 @@ for /r %%i in (*.exe *.dll) do (
 )
 
 del /f /q /s "%basedir:~1,-1%..\..\bin\setup\input_config\GreenShield\*"
-for %%i in (AppList,FilterConfig,UserConfig,VideoList,data) do (
+for %%i in (AppList,FilterConfig,UserConfig,VideoList,VideoRule,WebRule) do (
   copy /y "%basedir:~1,-1%..\GreenShield_config\%%i.dat" "%basedir:~1,-1%..\..\bin\setup\input_config\GreenShield"
 )
 
