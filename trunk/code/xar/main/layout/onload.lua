@@ -435,7 +435,7 @@ function ShowMainTipWnd(objMainWnd)
 	if bHideMainPage or bAutoStup then
 		objMainWnd:Show(0)
 	else
-		objMainWnd:Show(4)
+		objMainWnd:Show(5)
 	end
 end
 
@@ -449,7 +449,7 @@ function ShowPopupWndByName(strWndName)
 	end
 
 	SetWndForeGround(frameHostWnd)
-	frameHostWnd:Show(4)
+	frameHostWnd:Show(5)
 end
 
 
@@ -495,6 +495,7 @@ function InitTrayTipWnd(objHostWnd)
 		--单击左键
 		if event3 == 0x0202 then
 			if objHostWnd then
+				objHostWnd:Show(4)
 				objHostWnd:BringWindowToTop(true)
 				
 				local strHostWndName = "TipFilterRemindWnd.Instance"

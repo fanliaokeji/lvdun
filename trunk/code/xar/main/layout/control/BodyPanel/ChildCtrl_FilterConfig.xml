@@ -101,6 +101,9 @@
 				</obj>		
 				
 			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ChildCtrl_FilterConfig.xml.lua" func="OnInitControl" />
+			</eventlist>
 		</objtemplate>
 	</control>
 </xlue>
