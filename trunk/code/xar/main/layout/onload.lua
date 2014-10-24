@@ -400,7 +400,9 @@ function ShowMainTipWnd(objMainWnd)
 	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
 	
 	local bAutoStup = false
-	local bRet, strSource = GetCommandStrValue("/embedding")
+	local cmdString = tipUtil:GetCommandLine()
+	
+	local bRet = string.find(tostring(cmdString), "/embedding")
 	if bRet then
 		bAutoStup = true
 	end
