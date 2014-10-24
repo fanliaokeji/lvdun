@@ -41,6 +41,7 @@ Var Btn_FreeUse
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
 !define MUI_ABORTWARNING
+!define MUI_PAGE_FUNCTION_ABORTWARNING onClickGuanbi
 ;安装图标的路径名字
 !define MUI_ICON "images\fav.ico"
 ;卸载图标的路径名字
@@ -60,6 +61,7 @@ Var Btn_FreeUse
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
+;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
 SetCompressor /SOLID lzma
 SetCompressorDictSize 32
@@ -108,6 +110,30 @@ Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 OutFile "bin\${EM_OUTFILE_NAME}"
 InstallDir "$PROGRAMFILES\GreenShield"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
+
+Section MainSetup
+SectionEnd
+
+Var isMainUIShow
+Function HandlePageChange
+	${If} $MSG = 0x408
+		;MessageBox MB_ICONINFORMATION|MB_OK "$9,$0"
+		${If} $9 != "userchoice"
+			Abort
+		${EndIf}
+		StrCpy $9 ""
+	${EndIf}
+FunctionEnd
+
+Function un.HandlePageChange
+	${If} $MSG = 0x408
+		;MessageBox MB_ICONINFORMATION|MB_OK "$9,$0"
+		${If} $9 != "userchoice"
+			Abort
+		${EndIf}
+		StrCpy $9 ""
+	${EndIf}
+FunctionEnd
 
 Function Random
 	Exch $0
@@ -343,7 +369,6 @@ Function .onInit
 	File `/oname=$PLUGINSDIR\btn_install.bmp` `images\btn_install.bmp`
 	File `/oname=$PLUGINSDIR\btn_return.bmp` `images\btn_return.bmp`
 	File `/oname=$PLUGINSDIR\quit.bmp` `images\quit.bmp`
-	File `/oname=$PLUGINSDIR\quit2.bmp` `images\quit2.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
    	
@@ -372,6 +397,8 @@ FunctionEnd
 Function onMsgBoxCloseCallback
   ${If} $MSG = ${WM_CLOSE}
    Call OnClickQuitOK
+  ${Else}
+	Call HandlePageChange
   ${EndIf}
 FunctionEnd
 
@@ -434,7 +461,7 @@ Function GsMessageBox
     ;贴背景大图
     ${NSD_CreateBitmap} 0 0 100% 100% ""
     Pop $BGImage
-    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit2.bmp $ImageHandle
+    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit.bmp $ImageHandle
 	
 	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
 	
@@ -550,11 +577,11 @@ Function onGUICallback
 FunctionEnd
 
 Function onCloseCallback
-  ${If} $MSG = ${WM_CLOSE}
-   ;MessageBox MB_ICONINFORMATION|MB_OK "close"
-   Call onClickGuanbi
-   ;SendMessage $HWNDPARENT ${WM_NCLBUTTONDOWN} ${HTCAPTION} $0
-  ${EndIf}
+	${If} $MSG = ${WM_CLOSE}
+		Call onClickGuanbi
+	${Else} 
+		Call HandlePageChange
+	${EndIf}
 FunctionEnd
 
 ;下一步按钮事件
@@ -718,6 +745,10 @@ Function onWarningGUICallback
 FunctionEnd
 
 Function onClickGuanbi
+	${If} $isMainUIShow != "true"
+		Call OnClickQuitOK
+		Abort
+	${EndIf}
 	IsWindow $WarningForm Create_End
 	!define Style ${WS_VISIBLE}|${WS_OVERLAPPEDWINDOW}
 	${NSW_CreateWindowEx} $WarningForm $hwndparent ${ExStyle} ${Style} "" 1018
@@ -737,6 +768,13 @@ Function onClickGuanbi
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_quitreturn.bmp $1
 	${NSW_OnClick} $R0 OnClickQuitCancel
 
+	StrCpy $3 54
+	IntOp $3 $3 + $Int_FontOffset
+	${NSW_CreateLabel} 62 $3 250 20 "您确定要退出绿盾广告管家安装程序？"
+	Pop $4
+    SetCtlColors $4 "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $4 ${WM_SETFONT} $Handle_Font 0
+	
 	${NSW_CreateBitmap} 0 0 100% 100% ""
   	Pop $1
 	${NSW_SetImage} $1 $PLUGINSDIR\quit.bmp $ImageHandle
@@ -746,6 +784,7 @@ Function onClickGuanbi
 	${NSW_Show}
 	Create_End:
 	ShowWindow $WarningForm ${SW_SHOW}
+	Abort
 FunctionEnd
 
 Function OnClickQuitOK
@@ -795,6 +834,7 @@ FunctionEnd
 
 ;处理页面跳转的命令
 Function RelGotoPage
+  StrCpy $9 "userchoice"
   IntCmp $R9 0 0 Move Move
     StrCmp $R9 "X" 0 Move
       StrCpy $R9 "120"
@@ -808,7 +848,8 @@ Function OnClick_Install
 FunctionEnd
 
 Function WelcomePage
-    GetDlgItem $0 $HWNDPARENT 1
+    StrCpy $isMainUIShow "true"
+	GetDlgItem $0 $HWNDPARENT 1
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 2
     ShowWindow $0 ${SW_HIDE}
@@ -1122,14 +1163,11 @@ Function LoadingPage
 
     WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
 	
-	;GetFunctionAddress $0 onCloseCallback
-	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	GetFunctionAddress $0 onCloseCallback
+	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
     nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
-
-Section MainSetup
-SectionEnd
 
 
 /****************************************************/
@@ -1165,7 +1203,7 @@ Function un.onInit
 	SkinBtn::Init "$PLUGINSDIR\btn_canrenxiezai.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_xiezaiwancheng.bmp"
 	
-	File `/oname=$PLUGINSDIR\quit2.bmp` `images\quit2.bmp`
+	File `/oname=$PLUGINSDIR\quit.bmp` `images\quit.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
 	SkinBtn::Init "$PLUGINSDIR\btn_quitsure.bmp"
@@ -1178,11 +1216,12 @@ Function un.onGUICallback
   ${EndIf}
 FunctionEnd
 
-;Function un.onMsgBoxCloseCallback
-;	${If} $MSG = ${WM_CLOSE}
-;		Call un.OnClick_ContinueUse
-;	${EndIf}
-;FunctionEnd
+Function un.onMsgBoxCloseCallback
+	;${If} $MSG = ${WM_CLOSE}
+	;	Call un.OnClick_ContinueUse
+	;${EndIf}
+	Call un.HandlePageChange
+FunctionEnd
 Function un.myGUIInit
 	;消除边框
     System::Call `user32::SetWindowLong(i$HWNDPARENT,i${GWL_STYLE},0x9480084C)i.R0`
@@ -1208,7 +1247,8 @@ FunctionEnd
 Function un.OnClick_ContinueUse
 	EnableWindow $Btn_CruelRefused 0
 	EnableWindow $Btn_ContinueUse 0
-	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+	;SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+	Call un.OnClick_FinishUnstall
 FunctionEnd
 
 Function un.DoUninstall
@@ -1288,8 +1328,45 @@ Function un.OnClick_CruelRefused
     nsDialogs::CreateTimer $0 1
 FunctionEnd
 
+Function un.GetLastPart
+  Exch $0 ; chop char
+  Exch
+  Exch $1 ; input string
+  Push $2
+  Push $3
+  StrCpy $2 0
+  loop:
+    IntOp $2 $2 - 1
+    StrCpy $3 $1 1 $2
+    StrCmp $3 "" 0 +3
+      StrCpy $0 ""
+      Goto exit2
+    StrCmp $3 $0 exit1
+    Goto loop
+  exit1:
+    IntOp $2 $2 + 1
+    StrCpy $0 $1 "" $2
+  exit2:
+    Pop $3
+    Pop $2
+    Pop $1
+    Exch $0 ; output string
+FunctionEnd
+
 Function un.OnClick_FinishUnstall
-	SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+	;SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	Push $R2
+	Push "\"
+	Call un.GetLastPart
+	Pop $R1
+	${If} $R1 == ""
+		StrCpy $R1 "Au_.exe"
+	${EndIf}
+	FindProcDLL::FindProc $R1
+	${If} $R0 != 0
+		KillProcDLL::KillProc $R1
+	${EndIf}
 FunctionEnd
 
 Function un.GsMessageBox
@@ -1346,12 +1423,12 @@ Function un.GsMessageBox
     ;贴背景大图
     ${NSD_CreateBitmap} 0 0 100% 100% ""
     Pop $BGImage
-    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit2.bmp $ImageHandle
+    ${NSD_SetImage} $BGImage $PLUGINSDIR\quit.bmp $ImageHandle
 	
 	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
 	
-	;GetFunctionAddress $0 un.onMsgBoxCloseCallback
-	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	GetFunctionAddress $0 un.onMsgBoxCloseCallback
+	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
 	
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
@@ -1381,6 +1458,7 @@ Function un.ClickSure
 			${Break}
 		${EndIf}
 	${Next}
+	StrCpy $9 "userchoice"
 	SendMessage $HWNDPARENT 0x408 1 0
 FunctionEnd
 
@@ -1462,8 +1540,8 @@ Function un.MyUnstall
     ${NSD_SetImage} $Bmp_StartUnstall $PLUGINSDIR\un_startbg.bmp $ImageHandle
     WndProc::onCallback $Bmp_StartUnstall $0 ;处理无边框窗体移动
 	
-	;GetFunctionAddress $0 un.onMsgBoxCloseCallback
-	;WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+	GetFunctionAddress $0 un.onMsgBoxCloseCallback
+	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
     nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
