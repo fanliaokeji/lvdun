@@ -122,7 +122,7 @@ function CreateFilterListener(objRootCtrl)
 			elseif tostring(key) == "OnFilterASK" then
 				OnFilterASK(p1, p2)
 			elseif tostring(key) == "OnCommandLine" then
-				--show
+				OnCommandLine(p1, p2)
 			end	
 		end
 	)
@@ -169,6 +169,19 @@ function CreateFilterListener(objRootCtrl)
 			FilterASKUnLock()
 		end
 	end
+	
+	function OnCommandLine(p1, p2)
+		local strCommand = p1
+		if not IsRealString(strCommand) then
+			return
+		end
+		
+		local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+		local strHostWndName = "GreenWallTipWnd.MainFrame"
+		local objHostWnd = hostwndManager:GetHostWnd(strHostWndName)
+		objHostWnd:Show(4)
+		objHostWnd:BringWindowToTop(true)
+	end	
 end
 
 
