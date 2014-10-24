@@ -82,7 +82,7 @@ static bool isMatchState(std::vector<std::string> & v_domain)
 FilterRule::FilterRule( const std::string & r)
 {
 	std::string rule=boost::trim_copy(r);
-    m_rule=rule;
+    //m_rule=rule;
     this->m_isException=false;
     this->m_isMatchProtocol=true;
     m_filterThirdParty=false;
@@ -95,7 +95,7 @@ FilterRule::FilterRule( const std::string & r)
 		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
 		rule = rule.substr(0,pos-2);
 	}
-
+	m_rule=rule;
 	if(boost::istarts_with(rule,"@@")) {
         this->m_isException=true;
 		boost::erase_first(rule, "@@");
@@ -468,7 +468,7 @@ ReplaceRule::ReplaceRule(const std::string & r)
 {
 
 	std::string rule=boost::trim_copy(r);
-	m_rule=rule;
+	//m_rule=rule;
 
 	std::string::size_type pos = rule.find_last_of("$$$");
 	if (pos!= std::string::npos)
@@ -477,7 +477,7 @@ ReplaceRule::ReplaceRule(const std::string & r)
 		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
 		rule = rule.substr(0,pos-2);
 	}
-
+	m_rule=rule;
 	this->m_isMatchProtocol=true;
 
 	if(boost::istarts_with(rule,"||")) {
