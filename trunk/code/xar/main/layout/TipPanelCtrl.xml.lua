@@ -63,8 +63,13 @@ function OnClickMinBtn(self)
 end
 
 function OnClickConfigBtn(self)
-	OpenPanel(self, "ChildCtrl_Config")
 	SetCaptionText(self, "设置")
+	local bOpenSucc = OpenPanel(self, "ChildCtrl_Config")
+	
+	if not bOpenSucc then
+		OpenPanel(self, "ChildCtrl_AdvCount")
+		SetCaptionText(self, "绿盾广告管家")
+	end
 end
 
 
@@ -290,23 +295,26 @@ end
 
 function OpenPanel(objButton, strNewCtrlName)
 	if objButton == nil then
-		return
+		return false
 	end
 
 	local objRootCtrl = objButton:GetOwnerControl()
 	if objRootCtrl == nil then
-		return
+		return false
 	end
 
 	local objMainBodyCtrl = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
 	if objMainBodyCtrl == nil then
-		return
+		return false
 	end
 	
 	local strCurCtrlName = objMainBodyCtrl:GetCurrentCtrlName()
 	if strCurCtrlName ~= strNewCtrlName then
 		objMainBodyCtrl:ChangePanel(strNewCtrlName)
+		return true
 	end
+	
+	return false
 end
 
 function SetCaptionText(objUIItem, strTitle)
