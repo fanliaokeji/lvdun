@@ -1284,8 +1284,87 @@ function SetIERegValue(strNewRegValue)
 end
 
 
+function DeleteBrowserCache()
+	local t = {
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.html",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.js",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.htm",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.xml",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.css",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.swf",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.flv",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\*.mp4",
+	"%USERPROFILE%\\Local Settings\\Temporary Internet Files\\Content.IE5\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\Microsoft\\Windows\\Temporary Internet Files\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\Microsoft\\Windows\\Temporary Internet Files\\Content.IE5\\*.*",
+	"%USERPROFILE%\\Application Data\\360se\\ie8data\\Temporary Internet Files\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\360Chrome\\Chrome\\User Data\\Default\\CacheIE\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\360Chrome\\Chrome\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\360Chrome\\Chrome\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\360Chrome\\Chrome\\User Data\\Default\\CacheIE\\Content.IE5\\*.*",
+	"%USERPROFILE%\\Application Data\\SogouExplorer\\Webkit\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\AppData\\Roaming\\SogouExplorer\\Webkit\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\Opera\\Opera\\cache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\Opera\\Opera\\cache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\Opera\\Opera\\application_cache\\mcache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\Opera\\Opera\\application_cache\\cache_groups.xml",
+	"%USERPROFILE%\\Local Settings\\Application Data\\Opera\\Opera\\opcache\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\TaoBrowser\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\TaoBrowser\\User Data\\Default\\JumpListIcons\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\TaoBrowser\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\Application Data\\Baidu\\browser\\DiskCache\\*.*",
+	"%USERPROFILE%\\AppData\\Roaming\\Baidu\\browser\\DiskCache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\liebao\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\Local Settings\\Application Data\\liebao\\User Data\\iecache\\Content.IE5\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\liebao\\User Data\\Default\\Cache\\*.*",
+	"%USERPROFILE%\\AppData\\Local\\liebao\\User Data\\Default\\JumpListIcons\\*.*",
+	"%USERPROFILE%\\Application Data\\Letv\\Logg\\*.log",
+	"%APPDATA%\\PPStream\\adsys\\*.*",
+	"%APPDATA%\\PPStream\\banner\\*.*",
+	"%APPDATA%\\PPStream\\notice\\*.*",
+	"%APPDATA%\\PPStream\\CLCache\\*.pld",
+	"%APPDATA%\\PPStream\\FDSCache\\*.blf",
+	"%APPDATA%\\PPLive\\PPTV\\cache\\*.*",
+	"%USERPROFILE%\\funshion\\cache\\*.*",
+	"%ALLUSERSPROFILE%\\Baofeng\\StormPlayer\\Profiles\\md\\*.*",
+	"%ALLUSERSPROFILE%\\Baofeng\\StormPlayer\\Profiles\\vod\\*.*",
+	"%ALLUSERSPROFILE%\\Application Data\\Baofeng\\StormPlayer\\Profiles\\md\\*.*",
+	"%ALLUSERSPROFILE%\\Application Data\\Baofeng\\StormPlayer\\Profiles\\vod\\*.*",
+	"%ALLUSERSPROFILE%\\Baofeng\\Application Data\\StormPlayer\\Profiles\\md\\*.*",
+	"%ALLUSERSPROFILE%\\Baofeng\\Application Data\\StormPlayer\\Profiles\\vod\\*.*",
+	"%ALLUSERSPROFILE%\\PPLive\\PPTV\\Cache\\pluginad\\*.*",
+	"%ALLUSERSPROFILE%\\Application Data\\PPLive\\PPTV\\Cache\\pluginad\\*.*",
+	"%ALLUSERSPROFILE%\\Application Data\\PPLive\\PPTV\\screensaver\\*.*",
+	"C:\\Program Files\\DuoMi\\dmdeskinfo.exe",
+	"%TEMP%\\UUFile\\*.*",
+	"%ALLUSERSPROFILE%\\Application Data\\Qiyi\\qiyiclient\\cache\\*.*",
+	}
+	
+
+	for key, strPattern in pairs(t) do
+		local _, _, strEnvHead, strPathBody, strFileName = string.find(strPattern, "^([^\\]*)\\(.*)\\([^\\]*)$")
+		
+		local strEnvName = tipUtil:ExpandEnvironmentStrings(tostring(strEnvHead))
+		local strDir = tipUtil:PathCombine(strEnvName, strPathBody)
+
+		if IsRealString(strDir) and tipUtil:QueryFileExists(strDir) then
+			local strFileList = {}
+			local strFileList = tipUtil:FindFileList(strDir, strFileName) or {}
+
+			for i, strFile in pairs(strFileList) do
+				if tipUtil:QueryFileExists(strFile) then
+					tipUtil:DeletePathFile(strFile)
+				end
+			end
+		end
+	end
+	
+end
+
 function ModifyOSConfig()
 	SetIERegValue("PMIL")
+	DeleteBrowserCache()
 end
 
 function RestoreOSConfig()
@@ -1297,7 +1376,7 @@ function TipMain()
 	RegisterFunctionObject()
 	SendStartupReport(false)
 	
-	ModifyOSConfig()
+	ModifyOSConfig()	
 	
 	local bSuccess = ReadAllConfigInfo()	
 	if not bSuccess then
