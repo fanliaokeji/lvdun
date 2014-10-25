@@ -2187,7 +2187,7 @@ std::vector<std::string> TcpProxyConnection::GetReplaceRule(const std::string& u
 
 void TcpProxyConnection::SendNotify(const std::string& url) const
 {
-	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
+	static HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
 	if(hNotifyWnd != NULL) 
 	{
 		char* szUrl = new char[url.size() + 1];
