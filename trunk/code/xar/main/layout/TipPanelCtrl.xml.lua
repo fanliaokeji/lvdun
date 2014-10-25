@@ -239,7 +239,7 @@ function ShowPopupWindow(strDomain)
 	objTextDomain:SetText(tostring(strDomain))
 	
 	tFunctionHelper.SetWndForeGround(frameHostWnd)
-	frameHostWnd:Show(4)
+	frameHostWnd:Show(5)
 	RecordPopupTime(strDomain)
 end
 

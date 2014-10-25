@@ -253,7 +253,6 @@ function DownLoadServerConfig(fnCallBack)
 			fnCallBack(bRet)
 		end		
 	end, nTimeInMs)
-
 end
 
 
@@ -406,7 +405,8 @@ function SetWndForeGround(objHostWnd)
 		if type(tipUtil.SetWndPos) == "function" then
 			local hWnd = objHostWnd:GetWndHandle()
 			if hWnd ~= nil then
-				tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0,0x0053)
+				TipLog("[SetWndForeGround] success")
+				tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
 			end
 		end
 	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
@@ -790,6 +790,35 @@ function IsVideoDomain(strDomain)
 end
 
 
+function DownLoadServerRule()
+	local tUserConfig = GetUserConfigFromMem() or {}
+	
+	local strServerVideoURL = tUserConfig["strServerDataVURL"]
+	local strServerWebURL = tUserConfig["strServerDataWURL"]
+	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) then
+		return
+	end
+	
+	local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
+	local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
+	if not IsRealString(strVideoSavePath) or not IsRealString(strWebSavePath) then
+		return
+	end
+		
+	NewAsynGetHttpFile(strServerVideoURL, strVideoSavePath, false
+	, function(bRet, strVideoPath)
+		TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
+				.." strVideoPath:"..tostring(strVideoPath))
+	end)
+	
+	NewAsynGetHttpFile(strServerWebURL, strWebSavePath, false
+	, function(bRet, strWebPath)
+		TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
+				.." strWebPath:"..tostring(strWebPath))
+	end)
+end
+
+
 function SendFileDataToFilterThread()
 	local bSucc = SendRuleListtToFilterThread()
 	if not bSucc then
@@ -807,6 +836,7 @@ function SendFileDataToFilterThread()
 		return false
 	end
 	
+	DownLoadServerRule()
 	return true
 end
 
@@ -832,9 +862,39 @@ function GenDecFilePath(strEncFilePath)
 end
 
 
+function GetWebRulePath()
+	local strServerWebRulePath = GetCfgPathWithName("ServerDataW.dat")
+	if IsRealString(strServerWebRulePath) and tipUtil:QueryFileExists(strServerWebRulePath) then
+		return strServerWebRulePath
+	end
+
+	local strWebRulePath = GetCfgPathWithName("DataW.dat")
+	if IsRealString(strWebRulePath) and tipUtil:QueryFileExists(strWebRulePath) then
+		return strWebRulePath
+	end
+	
+	return ""
+end
+
+
+function GetVideoRulePath()
+	local strServerVideoRulePath = GetCfgPathWithName("ServerDataV.dat")
+	if IsRealString(strServerVideoRulePath) and tipUtil:QueryFileExists(strServerVideoRulePath) then
+		return strServerVideoRulePath
+	end
+
+	local strVideoRulePath = GetCfgPathWithName("DataV.dat")
+	if IsRealString(strVideoRulePath) and tipUtil:QueryFileExists(strVideoRulePath) then
+		return strVideoRulePath
+	end
+	
+	return ""
+end
+
+
 function SendRuleListtToFilterThread()
-	local strWebRulePath = GetCfgPathWithName("WebRule.dat")
-	local strVideoRulePath = GetCfgPathWithName("VideoRule.dat")
+	local strWebRulePath = GetWebRulePath()
+	local strVideoRulePath = GetVideoRulePath()
 	if not IsRealString(strWebRulePath) or not tipUtil:QueryFileExists(strWebRulePath) 
 	   or not IsRealString(strVideoRulePath) or not tipUtil:QueryFileExists(strVideoRulePath) then
 		return false
@@ -842,7 +902,7 @@ function SendRuleListtToFilterThread()
 
 	local strDecWebRulePath = GenDecFilePath(strWebRulePath)
 	if not IsRealString(strDecWebRulePath) then
-		return fasle	
+		return false	
 	end
 	
 	local bSucc = tipUtil:LoadWebRules(strDecWebRulePath)
@@ -854,7 +914,7 @@ function SendRuleListtToFilterThread()
 	
 	local strDecVideoRulePath = GenDecFilePath(strVideoRulePath)
 	if not IsRealString(strDecVideoRulePath) then
-		return fasle	
+		return false	
 	end
 	local bSucc = tipUtil:LoadVideoRules(strDecVideoRulePath)
 	if not bSucc then
@@ -873,24 +933,11 @@ function SendVideoListToFilterThread()
 	for strDomain, tVideoElem in pairs(tVideoList) do
 		if IsRealString(strDomain) and type(tVideoElem) == "table" then
 			local nLastPopupUTC = tVideoElem["nLastPopupUTC"]
-			
-			-- if not CheckWhiteList(strDomain) then
-				CheckVideoList(strDomain, nLastPopupUTC)
-			-- end
+			CheckVideoList(strDomain, nLastPopupUTC)
 		end
 	end
 
 	return true
-end
-
-
-function CheckWhiteList(strDomain) 
-	if IsDomainInWhiteList(strDomain) then
-		AddVideoDomain(strDomain, 2)
-		return true
-	end
-	
-	return false
 end
 
 
