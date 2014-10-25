@@ -548,7 +548,7 @@ function SetNotifyIconState()
 	end
 	local strText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
 	
-	local strResImageDir = __document .. "\\..\\..\\res\\default\\bitmap"
+	local strResImageDir = __document .. "\\..\\..\\..\\..\\res"
 	local strImageName = "GreenWall.TrayIcon.Close.ico"
 	if bFilterOpen then
 		strImageName = "GreenWall.TrayIcon.Open.ico"
