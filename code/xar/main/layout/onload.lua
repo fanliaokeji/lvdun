@@ -198,6 +198,16 @@ function GetPeerID()
 end
 
 
+function GetInstallSrc()
+	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallSource")
+	if not IsNilString(strInstallSrc) then
+		return tostring(strInstallSrc)
+	end
+	
+	return ""
+end
+
+
 function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutInMS)
 	local bHasAlreadyCallback = false
 	local timerID = nil
@@ -1213,12 +1223,13 @@ function SendStartupReport(bShowWnd)
 	local bRet, strSource = GetCommandStrValue("/sstartfrom")
 	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
-	tStatInfo.strEV = GetGSMinorVer() or ""
 	
 	if bShowWnd then
-		tStatInfo.strEL = 0   --进入上报
+		tStatInfo.strEV = 0   --进入上报
+		tStatInfo.strEL = GetGSMinorVer() or ""
 	else
-		tStatInfo.strEL = 1   --展示上报
+		tStatInfo.strEV = 1   --展示上报
+		tStatInfo.strEL = GetInstallSrc() or ""
 	end
 		
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
@@ -1246,6 +1257,7 @@ function ReportAndExit()
 
 	tStatInfo.strEC = "exit"
 	tStatInfo.strEV = iLastTime
+	tStatInfo.strEL = GetInstallSrc() or ""
 	tStatInfo.Exit = true
 		
 	FunctionObj.TipConvStatistic(tStatInfo)
