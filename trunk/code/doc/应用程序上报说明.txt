@@ -1,19 +1,19 @@
 上报示例：
-http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=FC4DD4F733785ABE&t=event&ec=exit&ea=filtercount&el=29&ev=80
+http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=FC4DD4F73378EBCE&t=event&ec=exit&ea=&el=00001&ev=13
 
 cid 为 pid
 
 1. 程序启动后立即上报
 ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
-el = 0
-ev = 1			(版本号的最后一位)
+el = 1			(版本号的最后一位)
+ev = 0		    (表示程序刚启动)	
 
 2. 主界面展示后上报
 ec = startup
 ea = openfrom   (从本进程的命令行获取来源)
-el = 1
-ev = 1			(版本号的最后一位)
+el = 渠道ID
+ev = 1			 (表示面版已经展示)
 
 3. 应用界面上报
 ec = AppPanel   		(面版名)
@@ -65,6 +65,7 @@ el = 0110		    	(依次为: 开机启动,自动检查更新,隐藏主界面,使用气泡;
 								 
 10. 程序退出上报
 ec = exit
+el = 渠道ID
 ev = 80			  (程序运行时间，秒)
 
 11.安装上报
