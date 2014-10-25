@@ -1,6 +1,8 @@
 function GetSubTable()
 	local t = {
 		["strServerAppListURL"] = "", 
+		["strServerDataWURL"] = "", 
+		["strServerDataVURL"] = "", 
 		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
 		["bFilterOpen"] = true, 
