@@ -351,7 +351,11 @@ end
 
 
 function UpdateWhiteListPanel()
-	if #g_tWhiteList < g_nPageSize+1 then
+	if g_nCurTopIndex + g_nPageSize > #g_tWhiteList+1 then
+		g_nCurTopIndex = #g_tWhiteList - g_nPageSize + 1
+	end
+	
+	if #g_tWhiteList < g_nPageSize+1 or g_nCurTopIndex < 1 then
 		g_nCurTopIndex = 1
 	end
 	
