@@ -293,11 +293,11 @@ function InitVideoState()
 end
 
 
-
 --每天自动检查更新
 function CheckUpdateVersion()
 	tFunctionHelper.DownLoadServerConfig(CheckForceUpdate)
 end
+
 
 --强制更新
 function CheckForceUpdate(bRet, strCfgPath)

@@ -95,6 +95,7 @@ function RegisterFunctionObject(self)
 	obj.SetNotifyIconState = SetNotifyIconState
 	obj.SetWndForeGround = SetWndForeGround
 	obj.SwitchGSFilter = SwitchGSFilter
+	obj.PopupNotifyIconTip = PopupNotifyIconTip
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -444,17 +445,21 @@ function ShowMainTipWnd(objMainWnd)
 	local tUserConfig = GetUserConfigFromMem() or {}
 	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
 	
-	local bAutoStup = false
 	local cmdString = tipUtil:GetCommandLine()
 	
-	local bRet = string.find(tostring(cmdString), "/embedding")
+	local bRet = string.find(tostring(cmdString), "/forceshow")
 	if bRet then
-		bAutoStup = true
+		bHideMainPage = false
+	else
+		local bRet = string.find(tostring(cmdString), "/embedding")
+		if bRet then
+			bHideMainPage = true
+		end
 	end
 	
 	SetWndForeGround(objMainWnd)
 	
-	if bHideMainPage or bAutoStup then
+	if bHideMainPage then
 		objMainWnd:Show(0)
 	else
 		objMainWnd:Show(5)
@@ -545,7 +550,7 @@ function InitTrayTipWnd(objHostWnd)
 end
 
 
-function SetNotifyIconState()
+function SetNotifyIconState(strText)
 	if not g_tipNotifyIcon then
 		return
 	end
@@ -558,7 +563,7 @@ function SetNotifyIconState()
 	if not bFilterOpen then
 		strState = "停止过滤"
 	end
-	local strText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
+	local strDefaultText = "绿盾广告管家\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
 	
 	local strResImageDir = __document .. "\\..\\..\\..\\..\\res"
 	local strImageName = "GreenWall.TrayIcon.Close.ico"
@@ -571,7 +576,15 @@ function SetNotifyIconState()
 		strImagePath = nil
 	end
 	
-	g_tipNotifyIcon:SetIcon(strImagePath, strText)
+	local strShowText = strText or strDefaultText
+	g_tipNotifyIcon:SetIcon(strImagePath, strShowText)
+end
+
+
+function PopupNotifyIconTip(strText)
+	if IsRealString(strText) and g_tipNotifyIcon then
+		g_tipNotifyIcon:ShowNotifyIconTip(true, strText)
+	end
 end
 
 
@@ -589,7 +602,7 @@ function PopupBubbleOneDay()
 	end
 	
 	if g_tipNotifyIcon then
-		g_tipNotifyIcon:ShowNotifyIconTip(true, "绿盾广告管家\r\n已为您屏蔽骚扰广告")
+		PopupNotifyIconTip("绿盾广告管家\r\n已为您屏蔽骚扰广告")
 		tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
 		SaveUserConfigToFile()
 	end
