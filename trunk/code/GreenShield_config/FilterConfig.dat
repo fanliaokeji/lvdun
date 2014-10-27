@@ -100,6 +100,50 @@ function GetSubTable()
 				["strName"] = "搜狗", 
 				["bState"] = true, 
 			},
+			["tieba.baidu.com"] = {
+				["strName"] = "百度贴吧", 
+				["bState"] = true, 
+			},
+			["v.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
+			["baishi.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
+			["zhidao.baidu.com"] = {
+				["strName"] = "百度知道", 
+				["bState"] = true, 
+			},
+			["rj.baidu.com"] = {
+				["strName"] = "百度软件", 
+				["bState"] = true, 
+			},
+			["play.baidu.com"] = {
+				["strName"] = "百度音乐", 
+				["bState"] = true, 
+			},
+			["pan.baidu.com"] = {
+				["strName"] = "百度云盘", 
+				["bState"] = true, 
+			},
+			["gate.baidu.com"] = {
+				["strName"] = "百度开放平台", 
+				["bState"] = true, 
+			},
+			["baijia.baidu.com"] = {
+				["strName"] = "百度百家", 
+				["bState"] = true, 
+			},
+			["jiaoyu.baidu.com"] = {
+				["strName"] = "百度教育", 
+				["bState"] = true, 
+			},
+			["list.video.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
 		}, 
 		["tUserWhiteList"] = {
 		},
