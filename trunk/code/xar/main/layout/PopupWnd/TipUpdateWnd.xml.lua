@@ -254,7 +254,6 @@ function ShowErrorPanel(objRootCtrl)
 end
 
 
-
 function SetProgBar(objProgBarLayout)
 	local objProgBar = objProgBarLayout:GetObject("TipUpdate.ProgressBar")
 	local objOutText = objProgBarLayout:GetObject("TipUpdate.ProgressBar.Text")

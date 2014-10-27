@@ -320,8 +320,9 @@ function OnClickPopupEnter(self)
 	end
 	
 	objHostWnd:Show(0)
+	tFunctionHelper.PopupNotifyIconTip("为保证广告过滤效果，建议刷新该页面")
 end
-
+		
 --nState: 1 免费过滤， 2 取消
 function ReportPopupState(strDomain, nState)
 	local tStatInfo = {}
