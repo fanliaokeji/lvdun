@@ -88,7 +88,7 @@
 				
 			</children>
 			<eventlist>
-				<event name="OnDestroy" file="ChildCtrl_AdvCount.xml.lua" func="OnDestroy" />
+				<event name="OnInitControl" file="ChildCtrl_AdvCount.xml.lua" func="OnInitControl" />
 			</eventlist>
 			
 		</objtemplate>
