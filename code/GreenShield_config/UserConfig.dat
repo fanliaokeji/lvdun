@@ -11,7 +11,7 @@ function GetSubTable()
 		["strServerConfigURL"] = "", 
 		["tConfig"] = {
 			["HideMainPage"] = {
-				["bState"] = false, 
+				["bState"] = true, 
 			}, 
 			["BubbleRemind"] = {
 				["bState"] = true, 
