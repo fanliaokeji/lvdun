@@ -232,13 +232,13 @@ function GetConfigTable()
 	return tUserConfig	
 end
 
-function SaveConfigTable(tNewConfig)
+function SaveConfigTable()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.SaveUserConfigToMem) ~= "function" then
+	if type(tFunctionHelper.SaveUserConfigToFile) ~= "function" then
 		return
 	end
 	
-	tFunctionHelper.SaveUserConfigToMem(tNewConfig)
+	tFunctionHelper.SaveUserConfigToFile()
 end
 
 
@@ -253,7 +253,7 @@ function SaveStateToCfg(strKeyName, bState)
 	end
 	
 	tUserCfg["tConfig"][strKeyName]["bState"] = bState
-	SaveConfigTable(tUserCfg)
+	SaveConfigTable()
 end
 
 
