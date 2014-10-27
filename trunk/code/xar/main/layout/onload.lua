@@ -94,6 +94,7 @@ function RegisterFunctionObject(self)
 	obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
 	obj.SetNotifyIconState = SetNotifyIconState
 	obj.SetWndForeGround = SetWndForeGround
+	obj.SwitchGSFilter = SwitchGSFilter
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -266,6 +267,17 @@ function DownLoadServerConfig(fnCallBack)
 end
 
 
+function SwitchGSFilter(bOpen)
+	local bSucc = tipUtil:GSFilter(bOpen)
+	if not bSucc then
+		MessageBox(tostring("文件被损坏，请重新安装"))
+		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+		FunctionObj:FailExitTipWnd(3)
+		return
+	end	
+end
+
+
 function SaveAllConfig()
 	if gbLoadCfgSucc then
 		SaveUserConfigToFile()
@@ -396,7 +408,7 @@ function PopTipWnd(OnCreateFunc)
 	end
 	if not bSuccess then
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-		FunctionObj:FailExitTipWnd(7)
+		FunctionObj:FailExitTipWnd(4)
 	end
 	
 	---初始化托盘
@@ -1150,7 +1162,7 @@ function CreatePopupTipWnd()
 		if not bSucc then
 			TipLog("[CreatePopupTipWnd] create wnd failed: "..tostring(strHostWndName))
 			local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-			FunctionObj:FailExitTipWnd()
+			FunctionObj:FailExitTipWnd(5)
 			return false
 		end
 	end
@@ -1382,14 +1394,14 @@ function TipMain()
 	if not bSuccess then
 		MessageBox(tostring("文件被损坏，请重新安装"))
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-		FunctionObj:FailExitTipWnd()
+		FunctionObj:FailExitTipWnd(1)
 		return
 	end
 
 	local bSucc = SendFileDataToFilterThread()
 	if not bSucc then
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-		FunctionObj:FailExitTipWnd()
+		FunctionObj:FailExitTipWnd(2)
 		return
 	end
 	
