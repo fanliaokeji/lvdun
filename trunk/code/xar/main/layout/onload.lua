@@ -82,7 +82,6 @@ function RegisterFunctionObject(self)
 	obj.RegSetValue = RegSetValue
 	obj.GetGSVersion = GetGSVersion
 	obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
-	obj.IsDomainInWhiteList = IsDomainInWhiteList
 	obj.GetVideoDomainState = GetVideoDomainState
 	obj.EnableWhiteDomain = EnableWhiteDomain
 	obj.EnableVideoDomain = EnableVideoDomain
@@ -1092,36 +1091,6 @@ function SendWhiteListToFilterThread()
 	return true
 end
 
-
-function IsDomainInWhiteList(strDomain)
-	if not IsRealString(strDomain) then
-		return false
-	end
-
-	local tDefWhiteList = GetSpecifyFilterTableFromMem("tDefWhiteList") or {}
-	local tUserWhiteList = GetSpecifyFilterTableFromMem("tUserWhiteList") or {}
-	
-	for key, tWhiteElem in pairs(tDefWhiteList) do
-		local strWhiteDomain = key
-		local bStateOpen = tWhiteElem["bState"]
-		if IsRealString(strWhiteDomain) and bStateOpen
-			and string.find(strWhiteDomain, strDomain) then
-			
-			return true
-		end
-	end
-	
-	for key, tWhiteElem in pairs(tUserWhiteList) do
-		local strWhiteDomain = tWhiteElem["strDomain"]
-		local bStateOpen = tWhiteElem["bState"]
-		if IsRealString(strWhiteDomain) and bStateOpen
-			and string.find(strWhiteDomain, strDomain) then
-			
-			return true
-		end
-	end
-	return false
-end
 
 --0 不在视频列表且不是用户添加的域名
 --1 在视频列表，且开启过滤

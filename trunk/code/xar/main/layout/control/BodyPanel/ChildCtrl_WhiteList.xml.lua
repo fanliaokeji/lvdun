@@ -116,7 +116,7 @@ function OnClick_StateButton(self)
 	SetStateByID(nUrlID, bNewState)
 	
 	local strDomain = FetchValueByPath(g_tWhiteList, {nUrlID, "strDomain"})
-	AutoEnableDomain(strDomain)
+	EnableDomain(strDomain, bNewState)
 	SaveConfigToFile()
 	
 	if bNewState then
@@ -562,7 +562,7 @@ function PushWhiteList(strName, strDomain, bState)
 	g_tWhiteList[nTopIndex]["strDomain"] = strDomain
 	g_tWhiteList[nTopIndex]["bState"] = bState
 	
-	AutoEnableDomain(strDomain)
+	EnableDomain(strDomain, bState)
 	SaveConfigToFile()
 end
 
@@ -571,28 +571,19 @@ function RemoveWhiteList(nIDToDelete)
 	if type(g_tWhiteList[nIDToDelete]) == "table" then
 		local strDomain = FetchValueByPath(g_tWhiteList, {nIDToDelete, "strDomain"})
 		table.remove(g_tWhiteList, nIDToDelete)
-		AutoEnableDomain(strDomain, true)
+		EnableDomain(strDomain, true)
 		SaveConfigToFile()
 	end
 end
 
 
-function AutoEnableDomain(strDomain, bDelete)
+function EnableDomain(strDomain, bNewState)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if not IsRealString(strDomain) then
 		return
 	end
 
-	if bDelete then
-		tFunctionHelper.EnableWhiteDomain(strDomain, true)
-		return
-	end
-	
-	if tFunctionHelper.IsDomainInWhiteList(strDomain) then
-		tFunctionHelper.EnableWhiteDomain(strDomain, true)
-	else
-		tFunctionHelper.EnableWhiteDomain(strDomain, false)
-	end
+	tFunctionHelper.EnableWhiteDomain(strDomain, bNewState)
 end
 
 
