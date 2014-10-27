@@ -88,13 +88,15 @@ FilterRule::FilterRule( const std::string & r)
     m_filterThirdParty=false;
     m_type=0;
 	
-	std::string::size_type pos = rule.find_last_of("$$$");
-	if (pos!= std::string::npos)
+	boost::iterator_range<string::iterator> range = boost::ifind_last(rule,"$$$");
+	if (range.begin() != rule.end())
 	{
-		std::string strState = rule.substr(pos+1);
+		std::string::size_type pos = range.begin()-rule.begin();
+		std::string strState = rule.substr(pos+3);
 		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
-		rule = rule.substr(0,pos-2);
+		rule = rule.substr(0,pos);
 	}
+
 	m_rule=rule;
 	if(boost::istarts_with(rule,"@@")) {
         this->m_isException=true;
@@ -470,12 +472,13 @@ ReplaceRule::ReplaceRule(const std::string & r)
 	std::string rule=boost::trim_copy(r);
 	//m_rule=rule;
 
-	std::string::size_type pos = rule.find_last_of("$$$");
-	if (pos!= std::string::npos)
+	boost::iterator_range<string::iterator> range = boost::ifind_last(rule,"$$$");
+	if (range.begin() != rule.end())
 	{
-		std::string strState = rule.substr(pos+1);
+		std::string::size_type pos = range.begin()-rule.begin();
+		std::string strState = rule.substr(pos+3);
 		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
-		rule = rule.substr(0,pos-2);
+		rule = rule.substr(0,pos);
 	}
 	m_rule=rule;
 	this->m_isMatchProtocol=true;
