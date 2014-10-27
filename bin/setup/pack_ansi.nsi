@@ -47,11 +47,13 @@ Var Btn_FreeUse
 ;卸载图标的路径名字
 !define MUI_UNICON "images\unis.ico"
 
+!define INSTALL_CHANNELID "0001"
+
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
 !define PRODUCT_VERSION "1.0.0.1"
 !define VERSION_LASTNUMBER 1
-!define EM_OUTFILE_NAME "GsSetup_${PRODUCT_VERSION}.exe"
+!define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "GreenShield"
@@ -90,10 +92,12 @@ VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}广告管家"
 VIAddVersionKey /LANG=2052 "Comments" ""
 VIAddVersionKey /LANG=2052 "CompanyName" ""
-VIAddVersionKey /LANG=2052 "LegalTrademarks" ""
-VIAddVersionKey /LANG=2052 "LegalCopyright" "GreenShield"
+VIAddVersionKey /LANG=2052 "LegalTrademarks" "GreenShield"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright(c)2014-2016 GreenShield All Rights Reserved"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}广告管家安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "OriginalFilename" ${EM_OUTFILE_NAME}
 
 ;自定义页面
 Page custom CheckMessageBox
@@ -189,8 +193,8 @@ Function DoInstall
   StrCpy $1 ${NSIS_MAX_STRLEN}
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
   SetOutPath "$0\GreenShield"
-  File "input_config\GreenShield\VideoRule.dat"
-  File "input_config\GreenShield\WebRule.dat"
+  File "input_config\GreenShield\DataV.dat"
+  File "input_config\GreenShield\DataW.dat"
   SetOutPath "$0"
   SetOverwrite off
   File /r "input_config\*.*"
@@ -201,16 +205,16 @@ Function DoInstall
   ${GetParameters} $R1
   ${GetOptions} $R1 "/source"  $R0
   IfErrors 0 +2
-  StrCpy $R0 "cmd_null"
+  StrCpy $R0 ${INSTALL_CHANNELID}
   ;是否静默安装
   ${GetParameters} $R1
-  ${GetOptions} $R1 "/silent"  $R2
+  ${GetOptions} $R1 "/s"  $R2
   StrCpy $R3 "0"
   IfErrors 0 +2
   StrCpy $R3 "1"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "$R0", t "$R3", i ${VERSION_LASTNUMBER}) '
   ;写入自用的注册表信息
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" "$(^Name)"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" ${INSTALL_CHANNELID}
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
@@ -237,7 +241,7 @@ FunctionEnd
 
 Function CmdSilentInstall
 	${GetParameters} $R1
-	${GetOptions} $R1 "/silent"  $R0
+	${GetOptions} $R1 "/s"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	;SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -268,7 +272,6 @@ Function CmdSilentInstall
 	
 	Call DoInstall
 	SetOutPath "$INSTDIR"
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -276,12 +279,24 @@ Function CmdSilentInstall
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/embedding"
 	${else}
+		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	${Endif}
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	;静默安装也写开机启动
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
+	${GetParameters} $R1
+	${GetOptions} $R1 "/run"  $R0
+	IfErrors +7 0
+	${If} $R0 == ""
+	${OrIf} $R0 == 0
+		StrCpy $R0 "/embedding"
+	${EndIf}
+	SetOutPath "$INSTDIR\program"
+	ExecShell open "${PRODUCT_NAME}.exe" "$R0" SW_SHOWNORMAL
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -305,6 +320,7 @@ Function CmdUnstall
 	RMDir /r /REBOOTOK "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
 	RMDir /r /REBOOTOK "$INSTDIR\program"
+	RMDir /r /REBOOTOK "$INSTDIR\res"
 
 	
 	StrCpy "$R0" "$INSTDIR"
@@ -370,8 +386,7 @@ Function .onInit
 	File `/oname=$PLUGINSDIR\btn_return.bmp` `images\btn_return.bmp`
 	File `/oname=$PLUGINSDIR\quit.bmp` `images\quit.bmp`
 	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
-	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
-   	
+	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`   	
    	File `/oname=$PLUGINSDIR\loading1.bmp` `images\loading1.bmp`
     File `/oname=$PLUGINSDIR\loading2.bmp` `images\loading2.bmp`
 	File `/oname=$PLUGINSDIR\loading_head.bmp` `images\loading_head.bmp`
@@ -1048,15 +1063,17 @@ Function NSD_TimerFun
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
 		SetOutPath "$INSTDIR"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 		;快速启动栏
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 		${VersionCompare} "$R0" "6.0" $2
 		${if} $2 == 2
-			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/embedding"
 		${else}
+			ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
 		${Endif}
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
 		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
@@ -1097,7 +1114,7 @@ FunctionEnd
 
 Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "${PRODUCT_NAME}.exe" /x SW_SHOWNORMAL
+	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow" SW_SHOWNORMAL
 	Call OnClickQuitOK
 FunctionEnd
 
@@ -1257,6 +1274,7 @@ Function un.DoUninstall
 	RMDir /r /REBOOTOK "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
 	RMDir /r /REBOOTOK "$INSTDIR\program"
+	RMDir /r /REBOOTOK "$INSTDIR\res"
 
 	
 	StrCpy "$R0" "$INSTDIR"
