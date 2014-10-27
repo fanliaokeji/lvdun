@@ -3,11 +3,7 @@ function GetSubTable()
 		["tBlackList"] = {
 			
 		}, 
-		["tDefWhiteList"] = {
-			["baidu.com"] = {
-				["strName"] = "百度", 
-				["bState"] = true, 
-			}, 
+		["tDefWhiteList"] = { 
 			["so.com"] = {
 				["strName"] = "360搜索", 
 				["bState"] = true, 
