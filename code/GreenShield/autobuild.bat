@@ -23,7 +23,7 @@ for /r %%i in (*.exe *.dll) do (
 )
 
 del /f /q /s "%basedir:~1,-1%..\..\bin\setup\input_config\GreenShield\*"
-for %%i in (AppList,FilterConfig,UserConfig,VideoList,VideoRule,WebRule) do (
+for %%i in (AppList,FilterConfig,UserConfig,VideoList,DataW,DataV) do (
   copy /y "%basedir:~1,-1%..\GreenShield_config\%%i.dat" "%basedir:~1,-1%..\..\bin\setup\input_config\GreenShield"
 )
 
@@ -31,6 +31,9 @@ call "%basedir:~1,-1%..\xar\pack.bat"
 copy /y %~dp0..\xar\bin\main.xar "%basedir:~1,-1%..\..\bin\setup\input_main\xar"
 del /f /q /s "%basedir:~1,-1%..\..\bin\setup\input_main\appimage\*"
 xcopy "%basedir:~1,-1%..\appimage" "%basedir:~1,-1%..\..\bin\setup\input_main\appimage" /e /y
+
+del /f /q /s "%basedir:~1,-1%..\..\bin\setup\input_main\res\*"
+xcopy "%basedir:~1,-1%..\res" "%basedir:~1,-1%..\..\bin\setup\input_main\res" /e /y
 
 for %%b in (GreenShield,GsNet,GsNetFilter,GSPre) do (
 	for %%i in (.dll,.map,.exe,.pdb) do (
@@ -56,7 +59,7 @@ set bin_path=%bin_path:~1,-1%
 echo %bin_path%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') do (
 	if "%bin_path:~-3,1000%" == "exe" (
-		set pdbdir=%basedir:~1,-1%\%%i\pdb__%build_date%__%build_time%__%random%\
+		set pdbdir=%basedir:~1,-1%\%%i\pdb__!build_date!__!build_time!__!random!\
 		md !pdbdir!
 		echo about create commit_setup_log.txt
 		copy /y nul !pdbdir!\commit_setup_log.txt
