@@ -85,5 +85,12 @@ ec = UpdateWnd
 el = 1|2		  (1 表示立即安装，2表示立即更新)
 
 
-
+14.程序出错退出上报
+	ec = failexit
+	el = 渠道ID	
+	ev = 出错码，其中
+		1:VideoList.dat或UserConfig.dat或FilterConfig.dat读取失败
+		2:DataW.dat或DataV.dat加载失败
+		3:gsfilter返回失败，如GsNet32.dll被破坏
+		4:创建主界面失败
 
