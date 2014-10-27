@@ -62,8 +62,12 @@ function OnShowPanel(self, bShow)
 	end
 end
 
-function OnDestroy(self)
-	--SaveAdvCountCfg()
+function OnInitControl(self)
+	-- local attr = self:GetAttribute()
+	-- local bHasInit = attr.bHasInit
+	-- if not bHasInit then
+		-- InitAdvCount(self)
+	-- end
 end
 
 

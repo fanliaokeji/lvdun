@@ -20,7 +20,15 @@ local g_tPopupWndList = {
 
 function RegisterFunctionObject(self)
 	local function FailExitTipWnd(self, iExitCode)
-		ExitTipWnd()
+		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+		local tStatInfo = {}
+			
+		tStatInfo.strEC = "failexit"
+		tStatInfo.strEL = GetInstallSrc() or ""
+		tStatInfo.strEV = tostring(iExitCode)
+		tStatInfo.Exit = true
+			
+		FunctionObj.TipConvStatistic(tStatInfo)
 	end
 	
 	local function TipConvStatistic(tStat)
@@ -273,8 +281,17 @@ function SwitchGSFilter(bOpen)
 		MessageBox(tostring("文件被损坏，请重新安装"))
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 		FunctionObj:FailExitTipWnd(3)
-		return
 	end	
+	
+	return bSucc
+end
+
+
+function InitGSFilter()
+	local tUserConfig = GetUserConfigFromMem() or {}
+	local bFilterOpen = tUserConfig["bFilterOpen"]
+
+	return SwitchGSFilter(bFilterOpen)
 end
 
 
@@ -463,6 +480,7 @@ function ShowMainTipWnd(objMainWnd)
 	else
 		objMainWnd:Show(5)
 	end
+	SendStartupReport(true)
 end
 
 
@@ -1218,7 +1236,7 @@ function SendStartupReport(bShowWnd)
 	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
 	
-	if bShowWnd then
+	if not bShowWnd then
 		tStatInfo.strEV = 0   --进入上报
 		tStatInfo.strEL = GetGSMinorVer() or ""
 	else
@@ -1387,11 +1405,14 @@ function TipMain()
 		return
 	end
 	
-	CreatePopupTipWnd()
-	CreateMainTipWnd()
-	SaveConfigInTimer()
+	local bSucc = InitGSFilter()
+	if not bSucc then
+		return
+	end 
 	
-	SendStartupReport(true)
+	CreateMainTipWnd()
+	CreatePopupTipWnd()
+	SaveConfigInTimer()
 end
 
 
