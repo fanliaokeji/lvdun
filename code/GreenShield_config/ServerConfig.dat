@@ -2,7 +2,7 @@ function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
 			["strVersion"] = "1.0.0.2",
-			["strPacketURL"] = "",
+			["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
 			["tInroduce"] = {
 				"1.开发家庭控制功能",
 				"2.视频过滤优化",
@@ -15,12 +15,12 @@ function GetSubTable()
 		
 		["tServerData"] = {
 			["tServerDataW"] = {
-				["strURL"] = "",
-				["strMD5"] = "",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW.dat",
+				["strMD5"] = "D46D882ED5AC77905E0DB07AAC26EBDC",
 			},
 			["tServerDataV"] = {
-				["strURL"] = "",
-				["strMD5"] = "",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
+				["strMD5"] = "582DBE4036DD02F7FECE1949EC83546B",
 			},
 		},
 	}
