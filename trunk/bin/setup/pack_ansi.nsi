@@ -170,13 +170,16 @@ FunctionEnd
 Function DoInstall
   ;先删再装
   RMDir /r "$INSTDIR\program"
+  RMDir /r "$INSTDIR\xar"
+  RMDir /r "$INSTDIR\res"
+  RMDir /r "$INSTDIR\appimage"
   ;文件被占用则改一下名字
   StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
   IfFileExists $R4 0 RenameOK
   Delete $R4
   IfFileExists $R4 0 RenameOK
   BeginRename:
-  Push "100" 
+  Push "1000" 
   Call Random
   Pop $0
   IfFileExists "$R4.$0" BeginRename
