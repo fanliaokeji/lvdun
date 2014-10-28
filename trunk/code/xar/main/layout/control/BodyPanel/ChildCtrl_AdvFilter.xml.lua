@@ -359,12 +359,12 @@ function InitAdvFilter(self)
 	for i=1,g_nPageSize do
 		g_tObjLineList[#g_tObjLineList + 1] = CreateLine(objBlackList)
 	end
-
-	UpdateBlackListPanel()
-	ResetScrollBar(self)
 	
 	g_selfRootCtrl = self
 	g_bHasInit = true
+
+	UpdateBlackListPanel()
+	ResetScrollBar(self)
 end
 
 --滚动条
@@ -438,7 +438,11 @@ function SetStateByID(nUrlID, bNewState)
 end
 
 
-function UpdateBlackListPanel()
+function UpdateBlackListPanel(self)
+	if not g_bHasInit then
+		return
+	end
+
 	if g_nCurTopIndex + g_nPageSize > #g_tBlackList+1 then
 		g_nCurTopIndex = #g_tBlackList - g_nPageSize + 1
 	end
@@ -659,13 +663,17 @@ function PushBlackList(strName, strDomain, bState)
 		bState = true
 	end
 	
-	local nTopIndex = #g_tBlackList+1
-	local nIndex = GetIDByDomain(strDomain) or nTopIndex
+	local tTemp = {}
+	tTemp["strName"] = strName or ""
+	tTemp["strDomain"] = strDomain
+	tTemp["bState"] = bState
 	
-	g_tBlackList[nIndex] = {}
-	g_tBlackList[nIndex]["strName"] = strName or ""
-	g_tBlackList[nIndex]["strDomain"] = strDomain
-	g_tBlackList[nIndex]["bState"] = bState
+	local nIndex = GetIDByDomain(strDomain)
+	if IsNilString(nIndex) then
+		table.insert(g_tBlackList, 1, tTemp)
+	else
+		g_tBlackList[nIndex] = tTemp
+	end
 	
 	AutoEnableDomain(strDomain)
 	SaveConfigToFile()

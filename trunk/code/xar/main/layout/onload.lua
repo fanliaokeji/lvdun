@@ -280,6 +280,7 @@ function SwitchGSFilter(bOpen)
 	if not bSucc then
 		MessageBox(tostring("文件被损坏，请重新安装"))
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+		TipLog("[SwitchGSFilter] GSFilter failed ")
 		FunctionObj:FailExitTipWnd(3)
 	end	
 	
@@ -480,6 +481,8 @@ function ShowMainTipWnd(objMainWnd)
 	else
 		objMainWnd:Show(5)
 	end
+	
+	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
 end
 
