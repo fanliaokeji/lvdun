@@ -1756,6 +1756,9 @@ ContentType TcpProxyConnection::GetResponseContentType() const
 	else if(lower_type == "application/x-pnacl") {
 		return CT_APPLICATION_X_PNACL;
 	}
+	else if(lower_type == "application/x-javascript") {
+		return CT_APPLICATION_X_JAVASCRIPT; 
+	}
 	else if(lower_type == "audio/basic") {
 		return CT_AUDIO_BASIC;
 	}
@@ -1964,6 +1967,7 @@ bool TcpProxyConnection::ResponseContentTypeIsText() const
 		// case CT_APPLICATION_EXAMPLE:
 		// case CT_APPLICATION_X_NACL:
 		// case CT_APPLICATION_X_PNACL:
+		case CT_APPLICATION_X_JAVASCRIPT:
 		// case CT_AUDIO_BASIC:
 		// case CT_AUDIO_L24:
 		// case CT_AUDIO_MP4:
