@@ -1,4 +1,3 @@
---nOpenType 1:浏览器打开;2:直接下载或运行
 function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
@@ -11,6 +10,17 @@ function GetSubTable()
 			},
 			["tForceUpdate"] = {
 				["tVersion"] = {"0"},
+			},
+		},
+		
+		["tServerData"] = {
+			["tServerDataW"] = {
+				["strURL"] = "",
+				["strMD5"] = "",
+			},
+			["strServerV"] = {
+				["strURL"] = "",
+				["strMD5"] = "",
 			},
 		},
 	}
