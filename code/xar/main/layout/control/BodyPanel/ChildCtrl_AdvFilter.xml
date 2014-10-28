@@ -5,6 +5,7 @@
 		</attr_def>
 		<method_def>
 			<OnShowPanel file="ChildCtrl_AdvFilter.xml.lua" func="OnShowPanel"/>
+			<UpdateBlackListPanel file="ChildCtrl_AdvFilter.xml.lua" func="UpdateBlackListPanel"/>
 		</method_def>
 		<event_def>
 			

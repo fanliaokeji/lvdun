@@ -63,11 +63,7 @@ function OnShowPanel(self, bShow)
 end
 
 function OnInitControl(self)
-	-- local attr = self:GetAttribute()
-	-- local bHasInit = attr.bHasInit
-	-- if not bHasInit then
-		-- InitAdvCount(self)
-	-- end
+
 end
 
 

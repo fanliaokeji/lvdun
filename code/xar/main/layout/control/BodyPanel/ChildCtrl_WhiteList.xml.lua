@@ -119,6 +119,8 @@ function OnClick_StateButton(self)
 	EnableDomain(strDomain, bNewState)
 	SaveConfigToFile()
 	
+	SynchAdvFilterPanel(strDomain, bNewState)
+	
 	if bNewState then
 		ReportDomainState(strDomain, g_nReportELEnable)
 	else
@@ -176,6 +178,13 @@ function OnFocus_Layout(self, bFocus)
 	end
 end
 
+
+--同步广告过滤面版的按钮现实
+function SynchAdvFilterPanel(strDomain, bNewState)
+	
+
+
+end
 
 ----滚动条----
 function CLB__OnVScroll(self, fun, type_, pos)
@@ -517,6 +526,7 @@ function SetAddBtnStyle(objAddBtn, bAdd)
 	g_bActionAdd = bAdd
 end
 
+
 function ShowPopupPanel(objRootCtrl, bShowPopup)
 	local objPopUpPanel = objRootCtrl:GetControlObject("ChildCtrl_WhiteList.PopupPanel.Bkg")
 	if objPopUpPanel == nil then
@@ -546,6 +556,24 @@ function ShowPopupPanel(objRootCtrl, bShowPopup)
 end
 
 
+function GetIDByDomain(strDomain)
+	if not IsRealString(strDomain) then
+		return nil
+	end
+
+	for nID, tWhiteElem in ipairs(g_tWhiteList) do
+		if type(tWhiteElem) == "table" then
+			local strWhiteDomain = tWhiteElem["strDomain"] or ""
+			if strDomain == strWhiteDomain then
+				return nID
+			end		
+		end	
+	end
+	
+	return nil
+end
+
+
 function PushWhiteList(strName, strDomain, bState)
 	if not IsRealString(strDomain) then
 		return
@@ -555,12 +583,17 @@ function PushWhiteList(strName, strDomain, bState)
 		bState = true
 	end
 	
-	local nTopIndex = #g_tWhiteList+1
+	local tTemp = {}
+	tTemp["strName"] = strName or ""
+	tTemp["strDomain"] = strDomain
+	tTemp["bState"] = bState
 	
-	g_tWhiteList[nTopIndex] = {}
-	g_tWhiteList[nTopIndex]["strName"] = strName or ""
-	g_tWhiteList[nTopIndex]["strDomain"] = strDomain
-	g_tWhiteList[nTopIndex]["bState"] = bState
+	local nIndex = GetIDByDomain(strDomain)
+	if IsNilString(nIndex) then
+		table.insert(g_tWhiteList, 1, tTemp)
+	else
+		g_tWhiteList[nIndex] = tTemp
+	end
 	
 	EnableDomain(strDomain, bState)
 	SaveConfigToFile()
