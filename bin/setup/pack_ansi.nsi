@@ -91,9 +91,9 @@ RequestExecutionLevel highest
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}广告管家"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" ""
-VIAddVersionKey /LANG=2052 "LegalTrademarks" "GreenShield"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright(c)2014-2016 GreenShield All Rights Reserved"
+VIAddVersionKey /LANG=2052 "CompanyName" "成都市灵智互动科技有限公司"
+;VIAddVersionKey /LANG=2052 "LegalTrademarks" "GreenShield"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}广告管家安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
