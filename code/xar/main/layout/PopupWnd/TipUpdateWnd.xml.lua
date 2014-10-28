@@ -24,6 +24,11 @@ function OnShowWindow(self, bVisible)
 	end
 	
 	local objTree = self:GetBindUIObjectTree()
+	local objHostWnd = objTree:GetBindHostWnd()
+	if objHostWnd then
+		objHostWnd:SetTitle("绿盾在线升级")
+	end
+	
 	local objRootCtrl = objTree:GetUIObject("root.layout")
 	if not objRootCtrl then
 		return
@@ -254,6 +259,7 @@ function ShowErrorPanel(objRootCtrl)
 end
 
 
+
 function SetProgBar(objProgBarLayout)
 	local objProgBar = objProgBarLayout:GetObject("TipUpdate.ProgressBar")
 	local objOutText = objProgBarLayout:GetObject("TipUpdate.ProgressBar.Text")
@@ -328,7 +334,9 @@ end
 function HideCurrentWnd(objUIItem)
 	local objTree = objUIItem:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0) 
+	if objHostWnd then
+		objHostWnd:Show(0)
+	end
 end
 
 
