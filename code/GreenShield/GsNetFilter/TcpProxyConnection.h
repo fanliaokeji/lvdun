@@ -79,6 +79,7 @@ enum ContentType {
 	CT_APPLICATION_EXAMPLE, // application/example
 	CT_APPLICATION_X_NACL, // application/x-nacl
 	CT_APPLICATION_X_PNACL, // application/x-pnacl
+	CT_APPLICATION_X_JAVASCRIPT, // application/x-javascript
 
 	// audio
 	CT_AUDIO_BASIC, // audio/basic
