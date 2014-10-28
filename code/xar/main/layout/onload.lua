@@ -244,7 +244,7 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 end
 
 
-function DownLoadServerConfig(fnCallBack)
+function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	local tUserConfig = GetUserConfigFromMem() or {}
 	
 	local strConfigURL = tUserConfig["strServerConfigURL"]
@@ -259,7 +259,7 @@ function DownLoadServerConfig(fnCallBack)
 		return
 	end
 	
-	local nTimeInMs = 30*1000
+	local nTime = tonumber(nTimeInMs) or 5*1000
 		
 	NewAsynGetHttpFile(strConfigURL, strSavePath, false
 	, function(bRet, strRealPath)
@@ -271,8 +271,9 @@ function DownLoadServerConfig(fnCallBack)
 		else
 			fnCallBack(bRet)
 		end		
-	end, nTimeInMs)
+	end, nTime)
 end
+
 
 
 function SwitchGSFilter(bOpen)
@@ -845,34 +846,6 @@ function IsVideoDomain(strDomain)
 end
 
 
-function DownLoadServerRule()
-	local tUserConfig = GetUserConfigFromMem() or {}
-	
-	local strServerVideoURL = tUserConfig["strServerDataVURL"]
-	local strServerWebURL = tUserConfig["strServerDataWURL"]
-	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) then
-		return
-	end
-	
-	local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
-	local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
-	if not IsRealString(strVideoSavePath) or not IsRealString(strWebSavePath) then
-		return
-	end
-		
-	NewAsynGetHttpFile(strServerVideoURL, strVideoSavePath, false
-	, function(bRet, strVideoPath)
-		TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
-				.." strVideoPath:"..tostring(strVideoPath))
-	end)
-	
-	NewAsynGetHttpFile(strServerWebURL, strWebSavePath, false
-	, function(bRet, strWebPath)
-		TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
-				.." strWebPath:"..tostring(strWebPath))
-	end)
-end
-
 
 function SendFileDataToFilterThread()
 	local bSucc = SendRuleListtToFilterThread()
@@ -891,7 +864,6 @@ function SendFileDataToFilterThread()
 		return false
 	end
 	
-	DownLoadServerRule()
 	return true
 end
 
@@ -1387,20 +1359,87 @@ function RestoreOSConfig()
 end
 
 
-function TipMain() 
-	RegisterFunctionObject()
-	SendStartupReport(false)
+function DownLoadServerRule(tDownRuleList)
+	local nDownFlag = #tDownRuleList
+	if nDownFlag == 0 then
+		TipLog("[DownLoadServerRule] no rule to down, start tipmain ")
+		TipMain()
+		return
+	end	
 	
-	ModifyOSConfig()	
+	for key, tDownInfo in pairs(tDownRuleList) do 
+		local strURL = tDownInfo["strURL"]
+		local strPath = tDownInfo["strPath"]
 	
-	local bSuccess = ReadAllConfigInfo()	
-	if not bSuccess then
-		MessageBox(tostring("文件被损坏，请重新安装"))
-		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-		FunctionObj:FailExitTipWnd(1)
+		NewAsynGetHttpFile(strURL, strPath, false
+		, function(bRet, strVideoPath)
+			TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
+					.." strVideoPath:"..tostring(strVideoPath))
+					
+			nDownFlag = nDownFlag - 1 
+			if nDownFlag < 1 then
+				TipLog("[DownLoadServerRule] download finish, start tipmain ")
+				TipMain()
+			end
+
+		end, 5*1000)
+	end
+end
+
+
+function CheckServerRuleFile(nDownServer, strServerPath)
+	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
+		TipLog("[CheckServerRuleFile] Download server config failed , start tipmain ")
+		TipMain()
+		return	
+	end
+	
+	local tServerConfig = LoadTableFromFile(strServerPath) or {}
+	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
+	
+	local strServerVideoURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
+	local strServerVideoMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
+	local strServerWebURL = FetchValueByPath(tServerData, {"tServerDataV", "strURL"})
+	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataV", "strMD5"})
+	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) 
+	   or not IsRealString(strServerVideoMD5) or not IsRealString(strServerWebMD5) then
+		TipLog("[CheckServerRuleFile] get server rule info failed , start tipmain ")
+		TipMain()
 		return
 	end
+	
+	local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
+	local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
+	if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
+		strVideoSavePath = GetCfgPathWithName("DataV.dat")
+	end
+	if not IsRealString(strWebSavePath) or not tipUtil:QueryFileExists(strWebSavePath) then
+		strWebSavePath = GetCfgPathWithName("DataW.dat")
+	end
+	
+	local strDataVMD5 = tipUtil:GetMD5Value(strVideoSavePath)
+	local strDataWMD5 = tipUtil:GetMD5Value(strWebSavePath)
+	local tDownRuleList = {}
+	
+	if tostring(strDataVMD5) ~= strServerVideoMD5 then
+		local nIndex = #tDownRuleList+1
+		tDownRuleList[nIndex] = {}
+		tDownRuleList[nIndex]["strURL"] = strServerVideoURL
+		tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataV.dat")
+	end
+	
+	if tostring(strDataWMD5) ~= strServerWebMD5 then
+		local nIndex = #tDownRuleList+1
+		tDownRuleList[nIndex] = {}
+		tDownRuleList[nIndex]["strURL"] = strServerWebURL
+		tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataW.dat")
+	end
+	
+	DownLoadServerRule(tDownRuleList)
+end
 
+
+function TipMain()
 	local bSucc = SendFileDataToFilterThread()
 	if not bSucc then
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
@@ -1419,4 +1458,22 @@ function TipMain()
 end
 
 
-TipMain()
+function PreTipMain() 
+	RegisterFunctionObject()
+	SendStartupReport(false)
+	
+	ModifyOSConfig()	
+	
+	local bSuccess = ReadAllConfigInfo()	
+	if not bSuccess then
+		MessageBox(tostring("文件被损坏，请重新安装"))
+		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+		FunctionObj:FailExitTipWnd(1)
+		return
+	end
+
+	DownLoadServerConfig(CheckServerRuleFile)
+	
+end
+
+PreTipMain()

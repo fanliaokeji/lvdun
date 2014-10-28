@@ -18,7 +18,7 @@ function GetSubTable()
 				["strURL"] = "",
 				["strMD5"] = "",
 			},
-			["strServerV"] = {
+			["tServerDataV"] = {
 				["strURL"] = "",
 				["strMD5"] = "",
 			},
