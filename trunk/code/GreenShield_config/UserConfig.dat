@@ -6,7 +6,7 @@ function GetSubTable()
 		["bFilterOpen"] = true, 
 		["nLastBubbleUTC"] = 0, 
 		["strContactURL"] = "http://www.lvdun123.com/", 
-		["strServerConfigURL"] = "", 
+		["strServerConfigURL"] = "http://dl.lvdun123.com/update/1.0/ServerConfig.dat", 
 		["tConfig"] = {
 			["HideMainPage"] = {
 				["bState"] = true, 
