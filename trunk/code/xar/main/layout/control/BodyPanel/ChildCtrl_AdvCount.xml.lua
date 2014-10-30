@@ -62,6 +62,7 @@ function OnShowPanel(self, bShow)
 	end
 end
 
+
 function OnInitControl(self)
 
 end
@@ -69,14 +70,58 @@ end
 
 ---------------------------
 function SetElemCount(self, nCount)
-	local objImg = self:GetControlObject("AdvCountElem.Number")
-	if nil == objImg then
+	local objText1 = self:GetControlObject("AdvCountElem.Number1")
+	local objText2 = self:GetControlObject("AdvCountElem.Number2")
+	if nil == objText1 or nil == objText2 then
+		return
+	end
+
+	local objTextList = {objText1, objText2}
+	local attr = self:GetAttribute()
+	local nCurShowNumber = attr.nCurShowNumber or 1
+	local nHideNumber = math.mod(nCurShowNumber, 2) + 1
+	
+	local objCurShow = objTextList[nCurShowNumber]
+	local objCurHide = objTextList[nHideNumber]
+	local nCurCount = objCurShow:GetText()
+	
+	if tostring(nCurCount) == tostring(nCount) then
 		return
 	end
 	
-	local strID = "Number_"..tostring(nCount)
-	objImg:SetResID(strID)		
+	objCurHide:SetText(tostring(nCount))
+	
+	ShowAnimate(objCurShow, objCurHide)
+	attr.nCurShowNumber = nHideNumber
 end
+
+
+function ShowAnimate(objCurShow, objCurHide)
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local aniT = templateMananger:GetTemplate("advcount.animation","AnimationTemplate")
+	local aniShow = aniT:CreateInstance(nil, "AniShow")
+	local aniHide = aniT:CreateInstance(nil, "AniHide")
+	aniShow:BindObj(objCurShow)
+	aniHide:BindObj(objCurHide)
+	
+	local objParent = objCurShow:GetParent()
+	local nL, nT, nR, nB = objParent:GetObjPos()
+	local nWidth = nR - nL
+	local nHeight = nB - nT
+	
+	objCurHide:SetObjPos(nL, nB, nR, nB+nHeight)
+	
+	aniShow:SetKeyFramePos(nL, nT, nL, nT-nHeight) 
+	aniHide:SetKeyFramePos(nL, nB, nL, nT) 
+	
+	local objtree = objCurShow:GetOwner()
+	objtree:AddAnimation(aniShow)
+	objtree:AddAnimation(aniHide)
+	
+	aniShow:Resume()
+	aniHide:Resume()
+end
+
 
 function UpdateAdvShow(objRootCtrl)
 	local attr = objRootCtrl:GetAttribute()

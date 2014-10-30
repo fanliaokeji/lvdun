@@ -14,5 +14,7 @@
 		<font id="font.yahei12.bold" height="12" facename="微软雅黑" weight="bold"/>
 		<font id="font.yahei11.underline" height="11" facename="微软雅黑" underline="1"/> 
 		
+		<font id="font.haetten53" height="53" facename="Haettenschweiler" /> 
+		
 	</resource>
 </XLUE>
