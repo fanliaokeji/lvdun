@@ -97,7 +97,7 @@
 
 	<control class="AdvCountElem">
 		<attr_def>
-			<attr name="nCurShowNumber" type="int"><default>1</default></attr>
+
 		</attr_def>
 		<method_def>
 			<SetElemCount file="ChildCtrl_AdvCount.xml.lua" func="SetElemCount"/>
@@ -114,29 +114,14 @@
 						<width>30</width>
 						<height>55</height>
 						<texture>GreenWall.AdvCountElem.Bkg</texture>
-						<limitchild>1</limitchild>
 					</attr>
 					<children>
-						<obj id="AdvCountElem.Number1" class="TextObject">
+						<obj id="AdvCountElem.Number" class="ImageObject">
 							<attr>
-								<left>0</left>
-								<top>-1</top>
-								<width>father.width</width>
-								<height>father.height</height>
-								<font>font.haetten53</font>
-								<halign>center</halign>
-								<textcolor>system.white</textcolor>
-							</attr>
-						</obj>	
-						<obj id="AdvCountElem.Number2" class="TextObject">
-							<attr>
-								<left>0</left>
-								<top>55</top>
-								<width>father.width</width>
-								<height>father.height</height>
-								<font>font.haetten53</font>
-								<halign>center</halign>
-								<textcolor>system.white</textcolor>
+								<left>5</left>
+								<top>9</top>
+								<width>20</width>
+								<height>38</height>
 							</attr>
 						</obj>	
 					</children>
@@ -144,12 +129,6 @@
 			</children>
 		</objtemplate>
 	</control>	
-	
-	<animationtemplate id="advcount.animation" class="PosChangeAnimation">
-		<attr>
-			<totaltime>200</totaltime>
-		</attr>
-	</animationtemplate>
 	
 		
 </xlue>
