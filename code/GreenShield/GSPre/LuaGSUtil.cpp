@@ -3359,6 +3359,28 @@ int LuaGSUtil::GetWndProcessThreadId(lua_State* pLuaState)
 	return 1;
 }
 
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+
+LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+BOOL IsWow64()
+{
+	BOOL bIsWow64 = FALSE;
+
+	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
+		GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+
+	if (NULL != fnIsWow64Process)
+	{
+		if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
+		{
+			// handle error
+		}
+	}
+	return bIsWow64;
+}
+
+
 int LuaGSUtil::FGetAllSystemInfo(lua_State* pLuaState)
 {
 	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
@@ -3402,7 +3424,7 @@ int LuaGSUtil::FGetAllSystemInfo(lua_State* pLuaState)
 		}
 		// system bits
 		BOOL bWow64Process = FALSE;
-		if (::IsWow64Process(::GetCurrentProcess(), &bWow64Process))
+		if ( IsWow64())
 		{
 			lua_pushstring(pLuaState, "BitNumbers");
 			lua_pushinteger(pLuaState, bWow64Process ? 64 : (unsigned(~0) > 0xFFFF ? 32 : 16));
