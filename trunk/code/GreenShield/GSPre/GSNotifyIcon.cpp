@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+
+
 #include "GSNotifyIcon.h"
 
 GSNotifyIcon::GSNotifyIcon(void) :
