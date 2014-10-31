@@ -34,12 +34,29 @@ function RegisterFunctionObject(self)
 	local function TipConvStatistic(tStat)
 		local rdRandom = tipUtil:GetCurrentUTCTime()
 		local tStatInfo = tStat or {}
+		local strDefaultNil = "gs_null"
 		
 		local strCID = GetPeerID()
-		local strEC = tStatInfo.strEC or ""
-		local strEA = tStatInfo.strEA or ""
-		local strEL = tStatInfo.strEL or ""
-		local strEV = tStatInfo.strEV or ""
+		local strEC = tStatInfo.strEC 
+		local strEA = tStatInfo.strEA 
+		local strEL = tStatInfo.strEL
+		local strEV = tStatInfo.strEV
+		
+		if not IsRealString(strEC) then
+			strEC = strDefaultNil
+		end
+		
+		if not IsRealString(strEA) then
+			strEA = strDefaultNil
+		end
+		
+		if not IsRealString(strEL) then
+			strEL = strDefaultNil
+		end
+		
+		if not IsRealString(strEV) then
+			strEV = strDefaultNil
+		end
 
 		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid="..tostring(strCID)
 						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
