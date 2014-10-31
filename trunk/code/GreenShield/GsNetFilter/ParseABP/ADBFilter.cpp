@@ -302,7 +302,7 @@ bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
     if(!this->isMatchThirdParty(mainURL,u)) {
         return false;
     }
-    if(!this->isMatchDomains(u)) {
+    if(!this->isMatchDomains(u) || !this->isMatchDomains(mainURL)) {
         return false;
     }
     if(!isMatchType(u,t)) {
