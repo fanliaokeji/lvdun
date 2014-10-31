@@ -1,5 +1,8 @@
+说明： 字段值不能为空。EV字段默认值为0，其它字段默认值为"gs_null"
+
+
 上报示例：
-http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=FC4DD4F73378EBCE&t=event&ec=exit&ea=&el=00001&ev=13
+http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=FC4DD4F73378EBCE&t=event&ec=exit&ea="gs_null"&el=00001&ev=13
 
 cid 为 pid
 
