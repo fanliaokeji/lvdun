@@ -54,8 +54,8 @@ function RegisterFunctionObject(self)
 			strEL = strDefaultNil
 		end
 		
-		if not IsRealString(strEV) then
-			strEV = strDefaultNil
+		if tonumber(strEV) == nil then
+			strEV = 0
 		end
 
 		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid="..tostring(strCID)
