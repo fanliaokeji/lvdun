@@ -1473,7 +1473,10 @@ bool TcpProxyConnection::ParseHttpRequestHeader(std::string::const_iterator begi
 				}
 				break;
 			case 3:
-				if(!std::isspace(static_cast<unsigned char>(*iter))) {
+				if(*iter == '\r') {
+					state = 5;
+				}
+				else if(!std::isspace(static_cast<unsigned char>(*iter))) {
 					++state; // 4
 					value.push_back(*iter);
 				}
