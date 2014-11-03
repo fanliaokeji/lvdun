@@ -87,17 +87,13 @@
 				</obj>
 				
 			</children>
-			<eventlist>
-				<event name="OnInitControl" file="ChildCtrl_AdvCount.xml.lua" func="OnInitControl" />
-			</eventlist>
-			
 		</objtemplate>
 	</control>
 
 
 	<control class="AdvCountElem">
 		<attr_def>
-
+			<attr name="nCurShowNumber" type="int"><default>1</default></attr>
 		</attr_def>
 		<method_def>
 			<SetElemCount file="ChildCtrl_AdvCount.xml.lua" func="SetElemCount"/>
@@ -114,21 +110,61 @@
 						<width>30</width>
 						<height>55</height>
 						<texture>GreenWall.AdvCountElem.Bkg</texture>
+						<limitchild>1</limitchild>
 					</attr>
 					<children>
-						<obj id="AdvCountElem.Number" class="ImageObject">
+						<obj id="AdvCountElem.Number1.Text" class="TextObject">
 							<attr>
-								<left>5</left>
-								<top>9</top>
-								<width>20</width>
-								<height>38</height>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<visible>false</visible>
 							</attr>
+							<children>
+								<obj id="AdvCountElem.Number1.Img" class="ImageObject">
+									<attr>
+										<left>5</left>
+										<top>9</top>
+										<width>20</width>
+										<height>38</height>
+									</attr>
+								</obj>	
+							</children>
+						</obj>
+						<obj id="AdvCountElem.Number2.Text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>father.height</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<visible>false</visible>
+							</attr>
+							<children>
+								<obj id="AdvCountElem.Number2.Img" class="ImageObject">
+									<attr>
+										<left>5</left>
+										<top>9</top>
+										<width>20</width>
+										<height>38</height>
+									</attr>
+								</obj>	
+							</children>
 						</obj>	
+						
 					</children>
 				</obj>
 			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ChildCtrl_AdvCount.xml.lua" func="OnInitCountElem" />
+			</eventlist>
 		</objtemplate>
 	</control>	
 	
-		
+	<animationtemplate id="advcount.animation" class="PosChangeAnimation">
+		<attr>
+			<totaltime>200</totaltime>
+		</attr>
+	</animationtemplate>
+	
 </xlue>

@@ -292,7 +292,6 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 end
 
 
-
 function SwitchGSFilter(bOpen)
 	local bSucc = tipUtil:GSFilter(bOpen)
 	if not bSucc then
@@ -491,15 +490,14 @@ function ShowMainTipWnd(objMainWnd)
 			bHideMainPage = true
 		end
 	end
-	
-	SetWndForeGround(objMainWnd)
-	
+		
 	if bHideMainPage then
 		objMainWnd:Show(0)
 	else
 		objMainWnd:Show(5)
 	end
 	
+	SetWndForeGround(objMainWnd)
 	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
 end
@@ -577,6 +575,7 @@ function InitTrayTipWnd(objHostWnd)
 			if objHostWnd then
 				objHostWnd:Show(4)
 				objHostWnd:BringWindowToTop(true)
+				SetWndForeGround(objHostWnd)
 				
 				local strHostWndName = "TipFilterRemindWnd.Instance"
 				local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
