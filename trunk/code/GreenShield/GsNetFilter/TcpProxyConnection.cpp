@@ -457,9 +457,27 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 
 								if(this->ShouldBlockRequest(this->m_absoluteUrl, referer)) {
 									this->SendNotify(this->m_absoluteUrl);
-									this->m_requestString = "HTTP/1.1 403 Blocking\r\n";
-									this->m_requestString += "Content-Length: 0\r\n";
-									this->m_requestString += "Connection: close\r\n\r\n";
+									std::string content_to_response;
+									this->m_requestString = "HTTP/1.1 200 OK\r\n";
+									if(this->IsJavaScriptUrl(this->m_absoluteUrl)) {
+										this->m_requestString += "Content-Type: text/javascript\r\n";
+										content_to_response = ";window.onerror=function(){return!0};";
+									}
+									else {
+										this->m_requestString += "Content-Type: image/gif\r\n";
+										const char* gif_data = "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xFF\xFF\xFF\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B";
+										content_to_response.append(gif_data, gif_data + 43);
+									}
+									std::string content_length;
+									{
+										std::stringstream ss;
+										ss << content_to_response.size();
+										ss >> content_length;
+									}
+									this->m_requestString += "Content-Length: ";
+									this->m_requestString += content_length;
+									this->m_requestString += "\r\nConnection: close\r\n\r\n";
+									this->m_requestString += content_to_response;
 									this->m_state = CS_WRITE_BLOCK_RESPONSE;
 									boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
 										boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
@@ -2125,6 +2143,45 @@ std::string TcpProxyConnection::GetRequestReferer() const
 	else {
 		return iter->second;
 	}
+}
+
+bool TcpProxyConnection::IsJavaScriptUrl(const std::string& url) const
+{
+	std::size_t query_start_pos = url.find('?');
+	if(query_start_pos == std::string::npos) {
+		query_start_pos = url.size();
+	}
+	if(query_start_pos < 1) {
+		return false;
+	}
+	std::size_t last_slash_pos = std::string::npos;
+	for(std::size_t index = query_start_pos - 1; index != 0; --index) {
+		if(url[index] == '/') {
+			last_slash_pos = index;
+			break;
+		}
+	}
+	if(last_slash_pos == std::string::npos) {
+		return false;
+	}
+	assert(last_slash_pos > 0);
+	std::size_t dot_pos = std::string::npos;
+	for(std::size_t index = query_start_pos - 1; index > last_slash_pos; --index) {
+		if(url[index] == '.') {
+			dot_pos = index;
+			break;
+		}
+	}
+	if(dot_pos == std::string::npos) {
+		return false;
+	}
+	if(dot_pos + 3 == query_start_pos) {
+		if(std::tolower(static_cast<unsigned char>(url[dot_pos + 1]) == 'j')
+			&& std::tolower(static_cast<unsigned char>(url[dot_pos + 1]) == 'j')) {
+				return true;
+		}
+	}
+	return false;
 }
 
 bool TcpProxyConnection::ShouldBlockRequest(const std::string& url, const std::string& referer) const

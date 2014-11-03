@@ -240,6 +240,7 @@ private:
 	bool ResponseContentTypeIsText() const;
 	std::size_t GetHideElementCodeInsertPos(const std::string& decodedContentData) const;
 	std::string GetRequestReferer() const;
+	bool IsJavaScriptUrl(const std::string& url) const;
 	// 重置状态等待下一次请求
 	void PrepareForNextHttpQuery();
 private:
