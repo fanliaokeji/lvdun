@@ -38,6 +38,9 @@ Var Lbl_Sumary
 Var PB_ProgressBar
 Var Bmp_Finish
 Var Btn_FreeUse
+
+;动态获取渠道号
+Var str_ChannelID
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
 !define MUI_ABORTWARNING
@@ -51,8 +54,8 @@ Var Btn_FreeUse
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.1"
-!define VERSION_LASTNUMBER 1
+!define PRODUCT_VERSION "1.0.0.2"
+!define VERSION_LASTNUMBER 2
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
@@ -168,6 +171,24 @@ Function CloseExe
 FunctionEnd
 
 Function DoInstall
+  ;释放配置到public目录
+  SetOutPath "$TEMP\${PRODUCT_NAME}"
+  StrCpy $1 ${NSIS_MAX_STRLEN}
+  StrCpy $0 ""
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+  ${If} $0 == ""
+	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,反馈请加QQ群67542242"
+	Call OnClickQuitOK
+  ${EndIf}
+  IfFileExists "$0" +3 0
+  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,反馈请加QQ群67542242"
+  Call OnClickQuitOK
+  SetOutPath "$0\GreenShield"
+  File "input_config\GreenShield\DataV.dat"
+  File "input_config\GreenShield\DataW.dat"
+  SetOutPath "$0"
+  SetOverwrite off
+  File /r "input_config\*.*"
   ;先删再装
   RMDir /r "$INSTDIR\program"
   RMDir /r "$INSTDIR\xar"
@@ -191,16 +212,6 @@ Function DoInstall
   SetOverwrite on
   File /r "input_main\*.*"
   WriteUninstaller "$INSTDIR\uninst.exe"
-  ;释放配置到public目录
-  SetOutPath "$TEMP\${PRODUCT_NAME}"
-  StrCpy $1 ${NSIS_MAX_STRLEN}
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
-  SetOutPath "$0\GreenShield"
-  File "input_config\GreenShield\DataV.dat"
-  File "input_config\GreenShield\DataW.dat"
-  SetOutPath "$0"
-  SetOverwrite off
-  File /r "input_config\*.*"
   
   
   ;上报统计
@@ -208,7 +219,7 @@ Function DoInstall
   ${GetParameters} $R1
   ${GetOptions} $R1 "/source"  $R0
   IfErrors 0 +2
-  StrCpy $R0 ${INSTALL_CHANNELID}
+  StrCpy $R0 $str_ChannelID
   ;是否静默安装
   ${GetParameters} $R1
   ${GetOptions} $R1 "/s"  $R2
@@ -217,7 +228,7 @@ Function DoInstall
   StrCpy $R3 "1"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "$R0", t "$R3", i ${VERSION_LASTNUMBER}) '
   ;写入自用的注册表信息
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" ${INSTALL_CHANNELID}
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
@@ -308,6 +319,9 @@ Function CmdUnstall
 	${GetOptions} $R1 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
+	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	IfFileExists $INSTDIR +2 0
+	Abort
 	;发退出消息
 	Call CloseExe
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
@@ -319,22 +333,40 @@ Function CmdUnstall
 	${Endif}
 	
 	;删除
-	RMDir /r /REBOOTOK "$INSTDIR\appimage"
-	RMDir /r /REBOOTOK "$INSTDIR\xar"
+	RMDir /r "$INSTDIR\appimage"
+	RMDir /r "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
-	RMDir /r /REBOOTOK "$INSTDIR\program"
-	RMDir /r /REBOOTOK "$INSTDIR\res"
-
+	RMDir /r "$INSTDIR\program"
+	RMDir /r "$INSTDIR\res"
+	
+	 ;文件被占用则改一下名字
+	StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
+	IfFileExists $R4 0 RenameOK
+	BeginRename:
+	Push "1000" 
+	Call Random
+	Pop $0
+	IfFileExists "$R4.$0" BeginRename
+	Rename $R4 "$R4.$0"
+	Delete /REBOOTOK "$R4.$0"
+	RenameOK:
 	
 	StrCpy "$R0" "$INSTDIR"
 	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
 	Pop $R1
 	${If} $R1 == 1
-		RMDir /r /REBOOTOK "$INSTDIR"
+		RMDir /r "$INSTDIR"
 	${EndIf}
+	;读取渠道号
+	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	${If} $R4 != ""
+	${AndIf} $R4 != 0
+		StrCpy $str_ChannelID $R4
+	${EndIF}
+	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "0", i ${VERSION_LASTNUMBER}) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "$str_ChannelID", t "0", i ${VERSION_LASTNUMBER}) '
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
@@ -352,6 +384,23 @@ Function CmdUnstall
 	FunctionReturn:
 FunctionEnd
 
+Function UpdateChanel
+	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${WordReplace} "$R1" "GsSetup_" "" "+" $R3
+	${WordReplace} "$R3" ".exe" "" "+" $R4
+	;MessageBox MB_ICONINFORMATION|MB_OK $R4
+	${If} $R4 == 0
+	${OrIf} $R4 == ""
+		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+	${Else}
+		StrCpy $str_ChannelID $R4
+	${EndIf}
+FunctionEnd
+	
 Function .onInit
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
@@ -363,9 +412,14 @@ Function .onInit
 	CreateFont $Handle_Font "微软雅黑" 10 0
 	StrCpy $Int_FontOffset 0
 	
+	Call UpdateChanel
+	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
+	File "input_main\program\Microsoft.VC90.CRT.manifest"
+	File "input_main\program\msvcp90.dll"
+	File "input_main\program\msvcr90.dll"
 	File "license\license.txt"
 	Call CmdSilentInstall
 	Call CmdUnstall
@@ -551,7 +605,7 @@ Function CheckMessageBox
 	${ElseIf} $2 == "0" ;版本相同
 	${OrIf} $2 == "1"	;已安装的版本高于该版本
 		 ${If} $R0 == "false"
-			StrCpy $R6 "检测到已安装$(^Name)，"
+			StrCpy $R6 "检测到已安装${SHORTCUT_NAME} $1，"
 			StrCpy $R8 "是否覆盖安装？"
 			GetFunctionAddress $R7 ClickSure1
 			Call GsMessageBox
@@ -1045,8 +1099,23 @@ Function WelcomePage
 	${NSD_FreeImage} $ImageHandle
 FunctionEnd
 
+Var ck_bind360install
+Var lab_bind360install
+Var Bool_bind360install
+Function OnClick_bind360install
+	${IF} $Bool_bind360install == 1
+        IntOp $Bool_bind360install $Bool_bind360install - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bind360install
+    ${ELSE}
+        IntOp $Bool_bind360install $Bool_bind360install + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bind360install
+    ${EndIf}
+	ShowWindow $ck_bind360install ${SW_HIDE}
+	ShowWindow $ck_bind360install ${SW_SHOW}
+FunctionEnd
+
 Function NSD_TimerFun
-    GetFunctionAddress $0 NSD_TimerFun
+	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
     !if 1   ;是否在后台运行,1有效
         GetFunctionAddress $0 InstallationMainFun
@@ -1058,9 +1127,13 @@ Function NSD_TimerFun
 	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
+	ShowWindow $ck_bind360install ${SW_SHOW}
+	ShowWindow $lab_bind360install ${SW_SHOW}
+	
 	ShowWindow $Lbl_Sumary ${SW_HIDE}
 	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	ShowWindow $BGImage ${SW_HIDE}
+	ShowWindow $Btn_Guanbi ${SW_SHOW}
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	;主线程中创建快捷方式
@@ -1118,11 +1191,19 @@ FunctionEnd
 Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow" SW_SHOWNORMAL
-	Call OnClickQuitOK
+	${IF} $Bool_bind360install == 1
+		HideWindow
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::DownLoadBundledSoftware() v.r1'
+		Call OnClickQuitOK
+	${ELSE}
+		Call OnClickQuitOK
+	${EndIf}
 FunctionEnd
 
 ;安装进度页面
 Function LoadingPage
+  StrCpy $isMainUIShow "false";按下exc直接退出
   GetDlgItem $0 $HWNDPARENT 1
   ShowWindow $0 ${SW_HIDE}
   GetDlgItem $0 $HWNDPARENT 2
@@ -1160,13 +1241,43 @@ Function LoadingPage
     
 	
 	;完成时"免费使用"按钮
-	${NSD_CreateButton} 180 245 117 37 ""
+	${NSD_CreateButton} 180 240 117 37 ""
  	Pop	$Btn_FreeUse
  	StrCpy $1 $Btn_FreeUse
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_freeuse.bmp $1
 	GetFunctionAddress $3 OnClick_FreeUse
     SkinBtn::onClick $1 $3
 	ShowWindow $Btn_FreeUse ${SW_HIDE}
+	
+	;捆绑安装360
+	${NSD_CreateButton} 165 285 15 15 ""
+	Pop $ck_bind360install
+	StrCpy $1 $ck_bind360install
+	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
+	GetFunctionAddress $3 OnClick_bind360install
+    SkinBtn::onClick $1 $3
+	StrCpy $Bool_bind360install 1
+	
+	StrCpy $3 283
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 185 $3 150 18 "推荐使用360安全套装"
+    Pop $lab_bind360install
+	${NSD_OnClick} $lab_bind360install OnClick_bind360install
+    SetCtlColors $lab_bind360install "${TEXTCOLOR}" transparent ;背景设成透明
+	ShowWindow $ck_bind360install ${SW_HIDE}
+	ShowWindow $lab_bind360install ${SW_HIDE}
+	SendMessage $lab_bind360install ${WM_SETFONT} $Handle_Font 0
+	
+	
+	;关闭
+	${NSD_CreateButton} 457 5 13 13 ""
+	Pop $Btn_Guanbi
+	StrCpy $1 $Btn_Guanbi
+	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_close.bmp $1
+	GetFunctionAddress $3 OnClickQuitOK
+	SkinBtn::onClick $1 $3
+	ShowWindow $Btn_Guanbi ${SW_HIDE}
+	
 	
 	GetFunctionAddress $0 onGUICallback  
     ;完成时背景图
@@ -1200,6 +1311,16 @@ Var Btn_CruelRefused
 Var Bmp_FinishUnstall
 Var Btn_FinishUnstall
 
+Function un.UpdateChanel
+	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	${If} $R4 == 0
+	${OrIf} $R4 == ""
+		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+	${Else}
+		StrCpy $str_ChannelID $R4
+	${EndIf}
+FunctionEnd
+
 Function un.onInit
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
@@ -1211,6 +1332,8 @@ Function un.onInit
 	IfFileExists "$FONTS\msyh.ttf" 0 +3
 	CreateFont $Handle_Font "微软雅黑" 10 0
 	StrCpy $Int_FontOffset 0
+	
+	Call un.UpdateChanel
 	
 	InitPluginsDir
     File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
@@ -1271,20 +1394,41 @@ Function un.OnClick_ContinueUse
 	Call un.OnClick_FinishUnstall
 FunctionEnd
 
+Function un.Random
+	Exch $0
+	Push $1
+	System::Call 'kernel32::QueryPerformanceCounter(*l.r1)'
+	System::Int64Op $1 % $0
+	Pop $0
+	Pop $1
+	Exch $0
+FunctionEnd
+
 Function un.DoUninstall
 	;删除
-	RMDir /r /REBOOTOK "$INSTDIR\appimage"
-	RMDir /r /REBOOTOK "$INSTDIR\xar"
+	RMDir /r "$INSTDIR\appimage"
+	RMDir /r "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
-	RMDir /r /REBOOTOK "$INSTDIR\program"
-	RMDir /r /REBOOTOK "$INSTDIR\res"
+	RMDir /r "$INSTDIR\program"
+	RMDir /r "$INSTDIR\res"
 
+	 ;文件被占用则改一下名字
+	StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
+	IfFileExists $R4 0 RenameOK
+	BeginRename:
+	Push "1000" 
+	Call un.Random
+	Pop $0
+	IfFileExists "$R4.$0" BeginRename
+	Rename $R4 "$R4.$0"
+	Delete /REBOOTOK "$R4.$0"
+	RenameOK:
 	
 	StrCpy "$R0" "$INSTDIR"
 	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
 	Pop $R1
 	${If} $R1 == 1
-		RMDir /r /REBOOTOK "$INSTDIR"
+		RMDir /r "$INSTDIR"
 	${EndIf}
 FunctionEnd
 
@@ -1321,8 +1465,16 @@ Function un.OnClick_CruelRefused
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
+	IfFileExists "$INSTDIR\program\Microsoft.VC90.CRT.manifest" 0 RePortOK
+	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.CRT.manifest" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\msvcp90.dll" 0 RePortOK
+	CopyFiles /silent "$INSTDIR\program\msvcp90.dll" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\msvcr90.dll" 0 RePortOK
+	CopyFiles /silent "$INSTDIR\program\msvcr90.dll" "$TEMP\${PRODUCT_NAME}\"
+	
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "", t "1", i ${VERSION_LASTNUMBER}) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "$str_ChannelID", t "1", i ${VERSION_LASTNUMBER}) '
+	RePortOK:
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
 		SendMessage $R0 1324 0 0
