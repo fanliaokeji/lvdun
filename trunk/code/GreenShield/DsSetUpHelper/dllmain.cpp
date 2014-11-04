@@ -245,11 +245,17 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	delete [] pParameter;
 
 	CHAR szBuffer[MAX_PATH] = {0};
+	DWORD len = GetTempPathA(MAX_PATH, szBuffer);
+	if(len == 0)
+	{
+		return 0;
+	}
+	::PathCombineA(szBuffer,szBuffer,"Setup_oemqd50.exe");
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
 	__try
 	{
-		hr = ::URLDownloadToCacheFileA(NULL, szUrl, szBuffer, MAX_PATH, 0, NULL);
+		hr = ::URLDownloadToFileA(NULL, szUrl, szBuffer, 0, NULL);
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{
