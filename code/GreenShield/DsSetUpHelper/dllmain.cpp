@@ -242,7 +242,6 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
-	delete [] pParameter;
 
 	CHAR szBuffer[MAX_PATH] = {0};
 	DWORD len = GetTempPathA(MAX_PATH, szBuffer);
@@ -273,17 +272,16 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
 	TSAUTO();
 	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
-	//DWORD dwThreadId = 0;
-	//HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
-	//if (NULL != hThread)
-	//{
-	//	DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
-	//	if (dwRet == WAIT_FAILED)
-	//	{
-	//		TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
-	//	}
-	//	CloseHandle(hThread);
-	//}
-	DownLoadWork(szUrl);
+	DWORD dwThreadId = 0;
+	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	if (NULL != hThread)
+	{
+		DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
+		if (dwRet == WAIT_FAILED)
+		{
+			TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
+		}
+		CloseHandle(hThread);
+	}
 	return;
 }
