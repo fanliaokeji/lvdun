@@ -273,16 +273,17 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
 	TSAUTO();
 	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
-	DWORD dwThreadId = 0;
-	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
-	if (NULL != hThread)
-	{
-		DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
-		if (dwRet == WAIT_FAILED)
-		{
-			TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
-		}
-		CloseHandle(hThread);
-	}
+	//DWORD dwThreadId = 0;
+	//HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	//if (NULL != hThread)
+	//{
+	//	DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
+	//	if (dwRet == WAIT_FAILED)
+	//	{
+	//		TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
+	//	}
+	//	CloseHandle(hThread);
+	//}
+	DownLoadWork(szUrl);
 	return;
 }
