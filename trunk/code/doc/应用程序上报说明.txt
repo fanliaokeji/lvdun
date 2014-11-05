@@ -13,7 +13,7 @@ el = 1			(版本号的最后一位)
 ev = 0		    (表示程序刚启动)	
 
 2. 主界面展示后上报
-ec = startup
+ec = showui
 ea = openfrom   (从本进程的命令行获取来源)
 el = 渠道ID
 ev = 1			 (表示面版已经展示)
