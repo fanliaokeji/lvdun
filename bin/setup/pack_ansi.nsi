@@ -54,8 +54,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.2"
-!define VERSION_LASTNUMBER 2
+!define PRODUCT_VERSION "1.0.0.3"
+!define VERSION_LASTNUMBER 3
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
@@ -286,20 +286,20 @@ Function CmdSilentInstall
 	
 	Call DoInstall
 	SetOutPath "$INSTDIR"
-	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/embedding"
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 	${else}
-		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 	${Endif}
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
 	;静默安装也写开机启动
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	${GetParameters} $R1
@@ -385,19 +385,29 @@ Function CmdUnstall
 FunctionEnd
 
 Function UpdateChanel
-	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
-	Push $R2
-	Push "\"
-	Call GetLastPart
-	Pop $R1
-	${WordReplace} "$R1" "GsSetup_" "" "+" $R3
-	${WordReplace} "$R3" ".exe" "" "+" $R4
-	;MessageBox MB_ICONINFORMATION|MB_OK $R4
-	${If} $R4 == 0
-	${OrIf} $R4 == ""
-		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+	ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	${If} $R0 != 0
+	${AndIf} $R0 != ""
+	${AndIf} $R0 != "unknown"
+		StrCpy $str_ChannelID $R0
 	${Else}
-		StrCpy $str_ChannelID $R4
+		System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+		Push $R2
+		Push "\"
+		Call GetLastPart
+		Pop $R1
+		${WordReplace} "$R1" "GsSetup_" "" "+" $R3
+		${WordReplace} "$R3" ".exe" "" "+" $R4
+		;MessageBox MB_ICONINFORMATION|MB_OK $R4
+		${If} $R4 == 0
+		${OrIf} $R4 == ""
+			StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+		${ElseIf} $R1 == $R3
+		${OrIf} $R3 == $R4
+			StrCpy $str_ChannelID "unknown"
+		${Else}
+			StrCpy $str_ChannelID $R4
+		${EndIf}
 	${EndIf}
 FunctionEnd
 	
@@ -1143,22 +1153,22 @@ Function NSD_TimerFun
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 		${VersionCompare} "$R0" "6.0" $2
 		${if} $2 == 2
-			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/embedding"
+			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 		${else}
-			ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+			ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 		${Endif}
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
 		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	${EndIf}
 	
 	; 创建开始菜单快捷方式
-	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 FunctionEnd
 
@@ -1194,7 +1204,7 @@ Function OnClick_FreeUse
 	${IF} $Bool_bind360install == 1
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::DownLoadBundledSoftware() v.r1'
+		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::DownLoadBundledSoftware() i.r1'
 		Call OnClickQuitOK
 	${ELSE}
 		Call OnClickQuitOK
@@ -1315,7 +1325,7 @@ Function un.UpdateChanel
 	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R4 == 0
 	${OrIf} $R4 == ""
-		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+		StrCpy $str_ChannelID "unknown"
 	${Else}
 		StrCpy $str_ChannelID $R4
 	${EndIf}
