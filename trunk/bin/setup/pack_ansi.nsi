@@ -310,7 +310,7 @@ Function CmdSilentInstall
 		StrCpy $R0 "/embedding"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "${PRODUCT_NAME}.exe" "$R0" SW_SHOWNORMAL
+	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -1200,7 +1200,7 @@ FunctionEnd
 
 Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow" SW_SHOWNORMAL
+	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow /sstartfrom installfinish" SW_SHOWNORMAL
 	${IF} $Bool_bind360install == 1
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
