@@ -1239,13 +1239,14 @@ function SendStartupReport(bShowWnd)
 	local tStatInfo = {}
 	
 	local bRet, strSource = GetCommandStrValue("/sstartfrom")
-	tStatInfo.strEC = "startup"
 	tStatInfo.strEA = strSource or ""
 	
 	if not bShowWnd then
+		tStatInfo.strEC = "startup"
 		tStatInfo.strEV = 0   --进入上报
 		tStatInfo.strEL = GetGSMinorVer() or ""
 	else
+		tStatInfo.strEC = "showui"
 		tStatInfo.strEV = 1   --展示上报
 		tStatInfo.strEL = GetInstallSrc() or ""
 	end
