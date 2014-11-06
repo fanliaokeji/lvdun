@@ -1,4 +1,5 @@
-说明： 字段值不能为空。EV字段默认值为0，其它字段默认值为"gs_null"
+说明： 字段值不能为空。EV字段默认值为1，其它字段默认值为"gs_null"
+
 ec：事件类别
 ea: 事件动作
 el: 事件标签
@@ -13,14 +14,14 @@ cid 为 pid
 
 1. 程序启动后立即上报
 ec = startup
-ea = openfrom   (从本进程的命令行获取来源)
-el = 1			(版本号的最后一位)
+ea = 1			(版本号的最后一位)
+el = openfrom   (从本进程的命令行获取来源)
 ev = 0		    (表示程序刚启动)	
 
 2. 主界面展示后上报
 ec = showui
-ea = openfrom   (从本进程的命令行获取来源)
-el = 渠道ID
+ea = 渠道ID
+el = openfrom   (从本进程的命令行获取来源)
 ev = 1			 (表示面版已经展示)
 
 3. 应用界面上报
@@ -68,19 +69,21 @@ el = 1 | 2		        (1 开启过滤， 2 停止过滤)
 9. 设置界面上报
 程序退出时上报
 ec = ConfigPanel   		(面版名)
+ea = userstate
 el = 0110		    	(依次为: 开机启动,自动检查更新,隐藏主界面,使用气泡;
 						         1 打开开关， 0 关闭开关)
 								 
 10. 程序退出上报
 ec = exit
-el = 渠道ID
-ev = 80			  (程序运行时间，秒)
+ea = 渠道ID
+
 
 11.安装上报
 ec = install
 ea = 安装来源(字符串)
 ev = 安装包版本最后一个数字
 el = 0|1		  (0静默， 1有界面)
+
 
 12.卸载上报
 ec = uninstall
@@ -96,10 +99,27 @@ el = 1|2		  (1 表示立即安装，2表示立即更新)
 
 14.程序出错退出上报
 	ec = failexit
-	el = 渠道ID	
-	ev = 出错码，其中
+	ea = 渠道ID	
+	el = 出错码，其中
 		1:VideoList.dat或UserConfig.dat或FilterConfig.dat读取失败
 		2:DataW.dat或DataV.dat加载失败
 		3:gsfilter返回失败，如GsNet32.dll被破坏
 		4:创建主界面失败
 
+
+15.程序执行时间上报
+ec = runtime
+ea = 渠道号
+ev = 运行时长
+		
+		
+16.绿盾服务器上报
+op:  install 安装    start：启动  uninstall：卸载
+mac：机器mac
+cid：渠道号，0001 0002 0003
+http://stat.lvdun123.com:8082/?mac=00-00-00-00-00-00&op=install&cid=0000
+
+
+		
+		
+		
