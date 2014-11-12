@@ -22,6 +22,12 @@ private:
 	static long CreateRegKeyHelper(const char* utf8Root, const char* utf8SubKey,BOOL bWow64=FALSE);
 	static long SetRegValueHelper(const char* utf8Root, const char* utf8SubKey, const char* utf8ValueName,DWORD dwType, const char* utf8Data, DWORD dwValue = 0,BOOL bWow64=FALSE);
 
+	//INI配置文件操作
+	static long ReadIniHelper(const char* utf8FilePath,const char* utf8AppName,const char* utf8KeyName,std::string& utf8Result);
+	static long WriteIniHelper(const char* utf8AppName, const char* utf8KeyName, const char* utf8String, const char* utf8FileName);
+	static long ReadSectionsHelper(const char*  utf8Path, std::vector<std::string> & strSections);
+	static long ReadKeyValueInSectionHelper(const char*  utf8Path, const char*  utf8Section, std::vector<std::string> & strKeyValue);
+
 
 	static long OpenURLHelper(const char* utf8URL);
 	static BOOL IsFullScreenHelper();
@@ -166,6 +172,16 @@ public:
 
 	static int EncryptAESToFile(lua_State* pLuaState);
 	static int DecryptFileAES(lua_State* pLuaState);
+
+	//INI配置文件操作
+	static int ReadINI(lua_State* pLuaState);
+	static int WriteINI(lua_State* pLuaState);
+	static int ReadStringUtf8(lua_State* pLuaState);
+	static int ReadSections(lua_State* pLuaState);
+	static int ReadKeyValueInSection(lua_State* pLuaState);
+	static int ReadINIInteger(lua_State* pLuaState);
+	
+
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };
