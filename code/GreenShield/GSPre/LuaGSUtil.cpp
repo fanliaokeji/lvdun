@@ -143,6 +143,14 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
+
+	//INI配置文件操作
+	{"ReadINI", ReadINI},
+	{"WriteINI", WriteINI},
+	{"ReadStringUtf8", ReadStringUtf8},
+	{"ReadSections", ReadSections},
+	{"ReadKeyValueInSection", ReadKeyValueInSection},
+	{"ReadINIInteger", ReadINIInteger},
 	
 	{NULL, NULL}
 };
@@ -1987,6 +1995,7 @@ int LuaGSUtil::EnumRegRightSubKey(lua_State* pLuaState)
 	return 1;
 }
 
+
 long LuaGSUtil::OpenURLHelper(const char* utf8URL)
 {
 	//TODO
@@ -3751,3 +3760,313 @@ int LuaGSUtil::DecryptFileAES(lua_State* pLuaState)
 	lua_pushnil(pLuaState);
 	return 1;
 }
+
+
+
+int LuaGSUtil::ReadINI(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	const char* utf8Path = luaL_checkstring(pLuaState,2);
+	const char* utf8App = luaL_checkstring(pLuaState,3);
+	const char* utf8Key = luaL_checkstring(pLuaState,4);
+
+	if(ppTipWndUtil == NULL || utf8Path == NULL || utf8App == NULL || utf8Key == NULL)
+	{
+		lua_pushnil(pLuaState);
+		lua_pushboolean(pLuaState,0);
+		return 2;
+	}
+
+	std::string utf8Result;
+
+	if(ReadIniHelper(utf8Path,utf8App,utf8Key,utf8Result) == 1)
+	{
+		lua_pushstring(pLuaState,utf8Result.c_str());
+		lua_pushboolean(pLuaState,1);
+		return 2;
+	}
+	else
+	{
+		lua_pushstring(pLuaState,"");
+		lua_pushboolean(pLuaState,0);
+		return 2;
+	}
+}
+
+long LuaGSUtil::ReadIniHelper(const char* utf8FilePath,const char* utf8AppName,const char* utf8KeyName,std::string& utf8Result)
+{
+	CComBSTR bstrFilePath;
+	CComBSTR bstrAppName;
+	CComBSTR bstrKeyName;
+
+	if(utf8FilePath)
+	{
+		LuaStringToCComBSTR(utf8FilePath, bstrFilePath);
+	}
+	if(utf8AppName)
+	{
+		LuaStringToCComBSTR(utf8AppName, bstrAppName);
+	}
+	if(utf8KeyName)
+	{
+		LuaStringToCComBSTR(utf8KeyName, bstrKeyName);
+	}
+	wchar_t resultBuffer[4*1024] = {0};
+	DWORD result = ::GetPrivateProfileString (bstrAppName.m_str,bstrKeyName.m_str,TEXT(""),resultBuffer,4*1024,bstrFilePath.m_str);
+	if(result > 0)
+	{
+		BSTRToLuaString(resultBuffer, utf8Result);
+		return 1;
+	}
+	return 0;
+}
+
+int LuaGSUtil::WriteINI(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	const char* utf8AppName = luaL_checkstring(pLuaState, 2);
+	const char* utf8KeyName = luaL_checkstring(pLuaState, 3);
+	const char* utf8Value = lua_tostring(pLuaState, 4);
+	const char* utf8FileName = luaL_checkstring(pLuaState, 5);
+
+	if(ppTipWndUtil == NULL || utf8AppName == NULL || utf8KeyName == NULL || utf8FileName == NULL)
+	{
+		lua_pushboolean(pLuaState, 0);
+		return 1;
+	}
+
+	if(WriteIniHelper(utf8AppName, utf8KeyName, utf8Value, utf8FileName) == 1)
+	{
+		lua_pushboolean(pLuaState, 1);
+		return 1;
+	}
+
+	lua_pushboolean(pLuaState, 0);
+	return 1;
+}
+
+
+long LuaGSUtil::WriteIniHelper(const char* utf8AppName, const char* utf8KeyName, const char* utf8String, const char* utf8FileName)
+{
+	CComBSTR bstrAppName;
+	CComBSTR bstrKeyName;
+	CComBSTR bstrString;
+	CComBSTR bstrFileName;
+
+	if(utf8AppName)
+	{
+		LuaStringToCComBSTR(utf8AppName, bstrAppName);
+	}
+	if(utf8FileName)
+	{
+		LuaStringToCComBSTR(utf8FileName, bstrFileName);
+	}
+	if(utf8KeyName)
+	{
+		LuaStringToCComBSTR(utf8KeyName, bstrKeyName);
+	}
+	if(utf8String)
+	{
+		LuaStringToCComBSTR(utf8String, bstrString);
+	}
+
+	BOOL bRet = FALSE;
+	if (utf8String == NULL)
+	{
+		bRet = WritePrivateProfileString(bstrAppName.m_str, bstrKeyName.m_str, NULL, bstrFileName.m_str);
+	}
+	else
+	{
+		bRet = WritePrivateProfileString(bstrAppName.m_str, bstrKeyName.m_str, bstrString.m_str, bstrFileName.m_str);
+	}
+
+	if(bRet)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+int LuaGSUtil::ReadStringUtf8(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppTipWndUtil)
+	{
+		const char* utf8IniPath = luaL_checkstring(pLuaState,2);
+		const char* utf8AppName = luaL_checkstring(pLuaState,3);
+		const char* utf8KeyName = luaL_checkstring(pLuaState,4);
+		const char* utf8Default = luaL_checkstring(pLuaState, 5);
+
+		CHAR szValue[MAX_PATH] = {0};
+
+		GetPrivateProfileStringA(utf8AppName, utf8KeyName, utf8Default, szValue, MAX_PATH - 1, utf8IniPath);
+
+		lua_pushstring(pLuaState, szValue);
+		return 1;
+	}
+	return 0;
+}
+
+int LuaGSUtil::ReadSections(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppTipWndUtil)
+	{
+		const char* utf8Path = luaL_checkstring(pLuaState,2);
+
+		std::vector<std::string> vecStrSections;
+		std::string strTemp;
+		ReadSectionsHelper(utf8Path, vecStrSections);
+		int nCount = vecStrSections.size();
+		lua_checkstack(pLuaState, nCount);
+		lua_newtable(pLuaState);
+		for(int i = 0; i < nCount;i++)
+		{
+			strTemp=vecStrSections.at(i);
+			lua_pushstring(pLuaState,strTemp.c_str()); 
+			lua_rawseti(pLuaState,-2,i+1); 
+		} 
+		return 1;
+	}
+	return 0;
+}
+
+long LuaGSUtil::ReadSectionsHelper(const char*  utf8Path, std::vector<std::string> & strSections)
+{
+	CComBSTR bstrPath;
+	LuaStringToCComBSTR(utf8Path, bstrPath);
+
+	strSections.clear();
+	DWORD nSize = 0, nLen = nSize-2;
+	TCHAR *lpszReturnBuffer = 0;
+	while(nLen==nSize-2)
+	{
+		nSize+=2048;
+		if(lpszReturnBuffer)
+			delete lpszReturnBuffer;
+
+		lpszReturnBuffer = new TCHAR[nSize];
+		nLen = GetPrivateProfileSectionNames(lpszReturnBuffer, nSize,//如果返回nSize-2则表示
+			bstrPath.m_str);	//缓冲区长度不足，递增MAX_BUFFER_SIZE
+	}
+	TCHAR *pName = new TCHAR[MAX_PATH];
+	TCHAR *pStart, *pEnd;
+	pStart = lpszReturnBuffer;
+	pEnd = 0;
+	while(pStart != pEnd)
+	{
+		pEnd = wcschr(pStart, 0);
+		size_t iLenTmp = pEnd - pStart;
+		if(iLenTmp == 0)
+			break;
+
+		wcsncpy(pName, pStart, iLenTmp);
+		pName[iLenTmp] = 0;
+		std::string strTemp;
+		BSTRToLuaString(pName, strTemp);
+		strSections.push_back(strTemp.c_str());
+		pStart = pEnd + 1;
+	}
+	delete lpszReturnBuffer;
+	delete pName;
+
+	return 0;
+}
+
+int LuaGSUtil::ReadKeyValueInSection(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppTipWndUtil)
+	{
+		const char* utf8Path = luaL_checkstring(pLuaState,2);
+		const char* utf8Section = luaL_checkstring(pLuaState,3);
+
+		std::vector<std::string> vecStrSections;
+		std::string strTemp;
+		ReadKeyValueInSectionHelper(utf8Path, utf8Section, vecStrSections);
+		int nCount = vecStrSections.size();
+		lua_checkstack(pLuaState, nCount);
+		lua_newtable(pLuaState);
+		for(int i = 0; i < nCount;i++)
+		{
+			strTemp=vecStrSections.at(i);
+			lua_pushstring(pLuaState,strTemp.c_str()); 
+			lua_rawseti(pLuaState,-2,i+1); 
+		} 
+		return 1;
+	}
+	return 0;
+}
+
+long LuaGSUtil::ReadKeyValueInSectionHelper(const char*  utf8Path, const char*  utf8Section, std::vector<std::string> & strKeyValue)
+{
+	CComBSTR bstrPath;
+	LuaStringToCComBSTR(utf8Path, bstrPath);
+
+	CComBSTR bstrSection;
+	LuaStringToCComBSTR(utf8Section, bstrSection);
+
+	strKeyValue.clear();
+	DWORD nSize = 0, nLen = nSize-2;
+	TCHAR *lpszReturnBuffer = 0;
+	while(nLen==nSize-2)
+	{
+		nSize+=2048;
+		if(lpszReturnBuffer)
+			delete lpszReturnBuffer;
+
+		lpszReturnBuffer = new TCHAR[nSize];
+		nLen = GetPrivateProfileSection(bstrSection.m_str, lpszReturnBuffer, nSize,//如果返回nSize-2则表示
+			bstrPath.m_str);	//缓冲区长度不足，递增MAX_BUFFER_SIZE
+	}
+	TCHAR *pName = new TCHAR[MAX_PATH];
+	TCHAR *pStart, *pEnd;
+	pStart = lpszReturnBuffer;
+	pEnd = 0;
+	while(pStart != pEnd)
+	{
+		pEnd = wcschr(pStart, 0);
+		size_t iLenTmp = pEnd - pStart;
+		if(iLenTmp == 0)
+			break;
+
+		wcsncpy(pName, pStart, iLenTmp);
+		pName[iLenTmp] = 0;
+		std::string strTemp;
+		BSTRToLuaString(pName, strTemp);
+		strKeyValue.push_back(strTemp.c_str());
+		pStart = pEnd + 1;
+	}
+	delete lpszReturnBuffer;
+	delete pName;
+
+	return 0;
+}
+
+int LuaGSUtil::ReadINIInteger(lua_State* pLuaState)
+{
+	LuaGSUtil** ppTipWndUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppTipWndUtil)
+	{
+		const char* utf8IniPath = luaL_checkstring(pLuaState,2);
+		const char* utf8AppName = luaL_checkstring(pLuaState,3);
+		const char* utf8KeyName = luaL_checkstring(pLuaState,4);
+		int nDefault = (int)luaL_checkinteger(pLuaState, 5);
+
+		CComBSTR bstrIniPath;
+		LuaStringToCComBSTR(utf8IniPath, bstrIniPath);
+
+		CComBSTR bstrAppName;
+		LuaStringToCComBSTR(utf8AppName, bstrAppName);
+		
+		CComBSTR bstrKeyName;
+		LuaStringToCComBSTR(utf8KeyName, bstrKeyName);
+
+		int nRet = GetPrivateProfileInt(bstrAppName.m_str, bstrKeyName.m_str, nDefault, bstrIniPath.m_str);
+		lua_pushinteger(pLuaState, nRet);
+		return 1;
+	}
+	return 0;
+}
+
