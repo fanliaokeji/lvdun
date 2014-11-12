@@ -27,9 +27,9 @@
 //	return;
 //}
 
-GSNETFILTER_API BOOL GsEnable(BOOL bEnable)
+GSNETFILTER_API BOOL GsEnable(BOOL bEnable, USHORT listen_port)
 {
-	return HttpRequestFilter::GetInstance().Enable(bEnable == FALSE ? false : true) ? TRUE : FALSE;
+	return HttpRequestFilter::GetInstance().Enable(bEnable == FALSE ? false : true, listen_port) ? TRUE : FALSE;
 }
 
 namespace {
@@ -41,18 +41,35 @@ namespace {
 	}
 }
 
-GSNETFILTER_API HANDLE GsStartProxy()
+GSNETFILTER_API HANDLE GsStartProxy(USHORT* listen_port)
 {
+	if(listen_port == NULL) {
+		return FALSE;
+	}
 	std::auto_ptr<TcpProxyServer> spServer(new TcpProxyServer());
+	if(!spServer->Open(boost::asio::ip::tcp::v4())) {
+		return FALSE;
+	}
 	boost::asio::ip::address_v4 ip = boost::asio::ip::address_v4::from_string("127.0.0.1");
-	bool result = spServer->Bind(ip, 15868);
-	if(!result) {
-		return NULL;
+	unsigned short port = 15868;
+	bool bindResult = false;
+	for(std::size_t i = 0; i < 1000; ++i, ++port) {
+		bindResult = spServer->Bind(ip, port);
+		if(bindResult) {
+			break;
+		}
+	}
+	if(!bindResult) {
+		return FALSE;
+	}
+	if(!spServer->Listen(boost::asio::ip::tcp::acceptor::max_connections)) {
+		return FALSE;
 	}
 	HANDLE hThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, ProxyWorkingThread, reinterpret_cast<void*>(spServer.get()), 0, NULL));
 	if(hThread != NULL) {
 		spServer.release();
 	}
+	*listen_port = port;
 	return hThread;
 }
 

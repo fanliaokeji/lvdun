@@ -35,7 +35,7 @@ bool SetObjectToLowIntegrity(HANDLE hObject, SE_OBJECT_TYPE type = SE_KERNEL_OBJ
 
 }
 
-bool HttpRequestFilter::Enable(bool enable)
+bool HttpRequestFilter::Enable(bool enable, unsigned short listen_port)
 {
 	XMLib::CriticalSectionLockGuard lck(this->cs);
 	this->m_enable = enable;
@@ -60,6 +60,26 @@ bool HttpRequestFilter::Enable(bool enable)
 	else {
 		sharedMemoryBuffer[2] = '\x00';
 	}
+
+	// 3~5±£Áô
+	sharedMemoryBuffer[3] = '\x00';
+	sharedMemoryBuffer[4] = '\x00';
+	sharedMemoryBuffer[5] = '\x00';
+
+	// ¶Ë¿Ú
+	assert(sizeof(unsigned short) == 2);
+	if(enable) {
+		union {
+			unsigned short from;
+			char to[2];
+		}cvt;
+
+		cvt.from = listen_port;
+
+		sharedMemoryBuffer[6] = cvt.to[0];
+		sharedMemoryBuffer[7] = cvt.to[1];
+	}
+
 	sharedMemoryBuffer[1] = 'S';
 	sharedMemoryBuffer[0] = 'G';
 	return true;

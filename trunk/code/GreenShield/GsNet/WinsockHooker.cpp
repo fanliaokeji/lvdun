@@ -59,7 +59,6 @@ SOCKET WSAAPI WinsockHooker::Hooked_WSASocket(int af, int type, int protocol, LP
 	return s;
 }
 
-static unsigned int proxy_port = 15868;
 struct LocalPortToRemoteAddress {
 	USHORT local_port;
 	USHORT remote_port;
@@ -135,8 +134,8 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 		remote_ip = reinterpret_cast<const sockaddr_in*>(name)->sin_addr.s_addr;
 		is_ipv4_tcp = reinterpret_cast<const sockaddr_in*>(name)->sin_family == AF_INET;
 	}
-
-	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable()) {
+	unsigned short proxy_port = 0;
+	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port)) {
 		unsigned short local_port = 0;
 		sockaddr_in local_addr;
 		std::memset(&local_addr, 0, sizeof(local_addr));
@@ -265,7 +264,8 @@ BOOL WSAAPI WinsockHooker::Hooked_ExtendConnectEx(SOCKET s, const struct sockadd
 	}
 	BOOL ret = FALSE;
 	if(real_connect_ex != NULL) {
-		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable()) {
+		unsigned short proxy_port = 0;
+		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port)) {
 			unsigned short local_port = 0;
 			sockaddr_in local_addr;
 			std::memset(&local_addr, 0, sizeof(local_addr));
@@ -359,7 +359,7 @@ void WinsockHooker::DetachHook()
 	}
 }
 
-bool WinsockHooker::IsEnable()
+bool WinsockHooker::IsEnable(unsigned short* proxy_port)
 {
 	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{1469EA0A-0606-4C68-B120-062DC9CAD0C7}GSFilterEnable");
 	if(hFileMapping == NULL) {
@@ -375,5 +375,30 @@ bool WinsockHooker::IsEnable()
 
 	// 自动关闭内存文件视图
 	ScopeResourceHandle<LPCVOID, BOOL (WINAPI*)(LPCVOID)> autoUnmapViewOfFile(sharedMemeryBuffer, ::UnmapViewOfFile);
-	return sharedMemeryBuffer[0] == 'G' && sharedMemeryBuffer[1] == 'S' && sharedMemeryBuffer[2] == '\x01';
+
+	if(sharedMemeryBuffer[0] != 'G' || sharedMemeryBuffer[1] != 'S') {
+		return false;
+	}
+
+	// 是否启用
+	if(sharedMemeryBuffer[2] != '\x01') {
+		return false;
+	}
+
+	// 3 4 5 必须为0
+	if(sharedMemeryBuffer[3] != '\x00' || sharedMemeryBuffer[4] != '\x00' || sharedMemeryBuffer[5] != '\x00') {
+		return false;
+	}
+
+	// 6 7 端口
+	assert(sizeof(unsigned short) == 2);
+	union {
+		char from[2];
+		unsigned short to;
+	} cvt;
+
+	cvt.from[0] = sharedMemeryBuffer[6];
+	cvt.from[1] = sharedMemeryBuffer[7];
+	*proxy_port = cvt.to;
+	return true;
 }

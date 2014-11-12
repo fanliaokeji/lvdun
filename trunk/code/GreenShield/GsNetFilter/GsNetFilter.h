@@ -23,8 +23,8 @@
 //
 //GSNETFILTER_API int fnGsNetFilter(void);
 
-GSNETFILTER_API BOOL GsEnable(BOOL bEnable);
-GSNETFILTER_API HANDLE GsStartProxy();
+GSNETFILTER_API BOOL GsEnable(BOOL bEnable, USHORT listen_port);
+GSNETFILTER_API HANDLE GsStartProxy(USHORT* listen_port);
 GSNETFILTER_API BOOL GsSetHook(const std::wstring& dllPath);
 
 GSNETFILTER_API bool GsUpdateConfigVideoHost(const std::string& url,int istate = 0);

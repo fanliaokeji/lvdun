@@ -10,7 +10,9 @@ class TcpProxyServer {
 	unsigned short listen_port;
 public:
 	TcpProxyServer();
+	bool Open(const boost::asio::ip::tcp::acceptor::protocol_type& protocol);
 	bool Bind(boost::asio::ip::address address, unsigned short listen_port);
+	bool Listen(int backlog);
     void Run();
 private:
 	void AsyncAccept();

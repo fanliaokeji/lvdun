@@ -24,7 +24,7 @@ private:
 	static std::map<SOCKET, LPFN_CONNECTEX> Connect_Ex_Funcs;
 	static bool IsHooked;
 private:
-	static bool IsEnable();
+	static bool IsEnable(unsigned short* proxy_port);
 public:
 	static SOCKET WSAAPI Hooked_socket(int af, int type, int protocol);
 	static SOCKET WSAAPI Hooked_WSASocket(int af, int type, int protocol, LPWSAPROTOCOL_INFO lpProtocolInfo, GROUP g, DWORD dwFlags);
