@@ -8,22 +8,36 @@ TcpProxyServer::TcpProxyServer()
 {
 }
 
-bool TcpProxyServer::Bind(boost::asio::ip::address address, unsigned short listen_port)
+bool TcpProxyServer::Open(const boost::asio::ip::tcp::acceptor::protocol_type& protocol)
 {
 	boost::system::error_code ec;
-	this->listen_port = listen_port;
-	boost::asio::ip::tcp::acceptor::endpoint_type endpoint(address, listen_port);
 	if(!this->acceptor.is_open()) {
-		this->acceptor.open(endpoint.protocol(), ec);
-		if(ec) {
-			return false;	
+		try {
+			this->acceptor.open(protocol);
+		}
+		catch(const boost::system::system_error&) {
+			return false;
 		}
 	}
-	this->acceptor.bind(endpoint, ec);
-	if(ec) {
-		return false;
+	return true;
+}
+
+bool TcpProxyServer::Bind(boost::asio::ip::address address, unsigned short listen_port)
+{
+	this->listen_port = listen_port;
+	if(!this->acceptor.is_open()) {
+		return false;	
 	}
-	this->acceptor.listen(boost::asio::ip::tcp::acceptor::max_connections, ec);
+	boost::asio::ip::tcp::acceptor::endpoint_type endpoint(address, listen_port);
+	boost::system::error_code ec;
+	this->acceptor.bind(endpoint, ec);
+	return !ec;
+}
+
+bool TcpProxyServer::Listen(int backlog)
+{
+	boost::system::error_code ec;
+	this->acceptor.listen(backlog, ec);
 	return !ec;
 }
 

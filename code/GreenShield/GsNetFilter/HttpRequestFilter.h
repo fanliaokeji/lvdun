@@ -18,7 +18,7 @@ private:
 	HANDLE m_hIPCFileMapping;
 	HttpRequestFilter();
 public:
-	bool Enable(bool enable);
+	bool Enable(bool enable, unsigned short listen_port);
 	bool IsEnable() const;
 public:
 	static HttpRequestFilter& GetInstance();
