@@ -63,6 +63,9 @@ function GetSubTable()
 		["iqiyi.com"] = {
 			["strTitle"] = "爱奇艺", 
 		}, 
+		["video.sina.com.cn"] = {
+			["strTitle"] = "新浪视频", 
+		},
 	}
 	return t
 end
