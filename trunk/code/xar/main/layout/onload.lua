@@ -63,15 +63,15 @@ function RegisterFunctionObject(self)
 		local strEL = tStatInfo.strEL
 		local strEV = tStatInfo.strEV
 		
-		if not IsRealString(strEC) then
+		if IsNilString(strEC) then
 			strEC = strDefaultNil
 		end
 		
-		if not IsRealString(strEA) then
+		if IsNilString(strEA) then
 			strEA = strDefaultNil
 		end
 		
-		if not IsRealString(strEL) then
+		if IsNilString(strEL) then
 			strEL = strDefaultNil
 		end
 		
@@ -1365,13 +1365,14 @@ end
 function GetCommandStrValue(strKey)
 	local bRet, strValue = false, nil
 	local cmdString = tipUtil:GetCommandLine()
-
+	
 	if string.find(cmdString, strKey .. " ") then
 		local cmdList = tipUtil:CommandLineToList(cmdString)
 		if cmdList ~= nil then	
 			for i = 1, #cmdList, 2 do
 				local strTmp = tostring(cmdList[i])
-				if strTmp == strKey then
+				if strTmp == strKey 
+					and not string.find(tostring(cmdList[i + 1]), "^/") then		
 					bRet = true
 					strValue = tostring(cmdList[i + 1])
 					break
