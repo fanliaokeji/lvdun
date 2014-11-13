@@ -7,6 +7,10 @@
 		<texture id="GreenWall.ExitRemind.Bkg" image="bitmap\GreenWall.ExitRemind.Bkg.png" />
 		<texture id="GreenWall.AboutWnd.Bkg" image="bitmap\GreenWall.AboutWnd.Bkg.png" />
 		<texture id="GreenWall.UpdateWnd.Bkg" image="bitmap\GreenWall.UpdateWnd.Bkg.png" />
+		<texture id="GreenWall.BubbleWnd.Bkg" image="bitmap\GreenWall.BubbleWnd.Bkg.png" />
+		
+		<texture id="GreenWall.BubbleWnd.CheckBox.Empty" image="bitmap\GreenWall.BubbleWnd.CheckBox.Empty.png" />
+		<texture id="GreenWall.BubbleWnd.CheckBox.Check" image="bitmap\GreenWall.BubbleWnd.CheckBox.Check.png" />
 		
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Hover" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Hover.png" />
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Normal" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Normal.png" />

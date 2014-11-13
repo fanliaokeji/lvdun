@@ -1,8 +1,8 @@
-local gTipInfoTab = {}
-local gFilterConfigInfo = {}
-local gVideoList = {}
+local gStartCfg = {}
 
+local g_bShowWndByTray = false
 local gStatCount = 0
+local gnLastReportRunTmUTC = 0
 local gTimeoutTimerId = nil
 
 local gbLoadCfgSucc = false
@@ -15,7 +15,28 @@ local g_tPopupWndList = {
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipAboutWnd", "TipAboutTree"},
 	[4] = {"TipUpdateWnd", "TipUpdateTree"},
+	[5] = {"TipBubbleWnd", "TipBubbleTree"},
 }
+
+local g_tConfigFileStruct = {
+	["tUserConfig"] = {
+		["strFileName"] = "UserConfig.dat",
+		["tContent"] = {}, 
+		["fnMergeOldFile"] = function(infoTable, strFileName) return MergeOldUserCfg(infoTable, strFileName) end,
+	},
+	["tFilterConfig"] = {
+		["strFileName"] = "FilterConfig.dat",
+		["tContent"] = {},
+		["fnMergeOldFile"] = function(infoTable, strFileName) return MergeOldFilterCfg(infoTable, strFileName) end,
+	},
+	["tVideoList"] = {
+		["strFileName"] = "VideoList.dat",
+		["tContent"] = {},
+		["fnMergeOldFile"] = function(infoTable, strFileName) return MergeOldVideoList(infoTable, strFileName) end,
+	},
+}
+
+
 -----------------
 
 function RegisterFunctionObject(self)
@@ -24,8 +45,8 @@ function RegisterFunctionObject(self)
 		local tStatInfo = {}
 			
 		tStatInfo.strEC = "failexit"
-		tStatInfo.strEL = GetInstallSrc() or ""
-		tStatInfo.strEV = tostring(iExitCode)
+		tStatInfo.strEA = GetInstallSrc() or ""
+		tStatInfo.strEL = tostring(iExitCode)
 		tStatInfo.Exit = true
 			
 		FunctionObj.TipConvStatistic(tStatInfo)
@@ -55,7 +76,7 @@ function RegisterFunctionObject(self)
 		end
 		
 		if tonumber(strEV) == nil then
-			strEV = 0
+			strEV = 1
 		end
 
 		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid="..tostring(strCID)
@@ -86,18 +107,7 @@ function RegisterFunctionObject(self)
 	
 	local obj = {}
 	obj.FailExitTipWnd = FailExitTipWnd
-	obj.GetFailExitCode = GetFailExitCode
 	obj.TipConvStatistic = TipConvStatistic
-	obj.SaveUserConfigToFile = SaveUserConfigToFile
-	obj.GetUserConfigFromFile = GetUserConfigFromFile
-	obj.SaveUserConfigToMem = SaveUserConfigToMem
-	obj.GetUserConfigFromMem = GetUserConfigFromMem
-	obj.GetSpecifyFilterTableFromMem = GetSpecifyFilterTableFromMem
-	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
-	obj.SaveFilterConfigToFile = SaveFilterConfigToFile
-	obj.SaveVideoListToFile = SaveVideoListToFile
-	obj.GetVideoListFromMem = GetVideoListFromMem
-	obj.SaveVideoListToMem = SaveVideoListToMem
 	obj.ReportAndExit = ReportAndExit
 	obj.ShowPopupWndByName = ShowPopupWndByName
 	obj.GetCfgPathWithName = GetCfgPathWithName
@@ -112,6 +122,7 @@ function RegisterFunctionObject(self)
 	obj.EnableVideoDomain = EnableVideoDomain
 	obj.PopupBubbleOneDay = PopupBubbleOneDay
 	obj.NewAsynGetHttpFile = NewAsynGetHttpFile
+	obj.DownLoadFileWithCheck = DownLoadFileWithCheck
 	obj.DownLoadServerConfig = DownLoadServerConfig
 	obj.CheckIsNewVersion = CheckIsNewVersion
 	obj.IsVideoDomain = IsVideoDomain
@@ -120,6 +131,15 @@ function RegisterFunctionObject(self)
 	obj.SetWndForeGround = SetWndForeGround
 	obj.SwitchGSFilter = SwitchGSFilter
 	obj.PopupNotifyIconTip = PopupNotifyIconTip
+	obj.CheckCommonUpdateTime = CheckCommonUpdateTime
+	obj.CheckAutoUpdateTime = CheckAutoUpdateTime
+	obj.SaveCommonUpdateUTC = SaveCommonUpdateUTC
+	obj.SaveAutoUpdateUTC = SaveAutoUpdateUTC
+	obj.CheckMD5 = CheckMD5
+	obj.GetSpecifyFilterTableFromMem = GetSpecifyFilterTableFromMem
+	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
+	obj.SaveConfigToFileByKey = SaveConfigToFileByKey
+	obj.ReadConfigFromMemByKey = ReadConfigFromMemByKey
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -223,7 +243,7 @@ function GetPeerID()
 	return strRandPeerID
 end
 
-
+--渠道
 function GetInstallSrc()
 	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallSource")
 	if not IsNilString(strInstallSrc) then
@@ -261,8 +281,56 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 end
 
 
+function CheckMD5(strFilePath, strExpectedMD5) 
+	local bPassCheck = false
+	
+	if not IsNilString(strFilePath) then
+		local strMD5 = tipUtil:GetMD5Value(strFilePath)
+		TipLog("[CheckMD5] strFilePath = " .. tostring(strFilePath) .. ", strMD5 = " .. tostring(strMD5))
+		if not IsRealString(strExpectedMD5) 
+			or (not IsNilString(strMD5) and not IsNilString(strExpectedMD5) and string.lower(strMD5) == string.lower(strExpectedMD5))
+			then
+			bPassCheck = true
+		end
+	end
+	
+	TipLog("[CheckMD5] strFilePath = " .. tostring(strFilePath) .. ", strExpectedMD5 = " .. tostring(strExpectedMD5) .. ". bPassCheck = " .. tostring(bPassCheck))
+	return bPassCheck
+end
+
+
+function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
+	if type(fnCallBack) ~= "function"  then
+		return
+	end
+
+	if IsRealString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
+		TipLog("[DownLoadFileWithCheck]File Already existed")
+		fnCallBack(1)
+		return
+	end
+	
+	NewAsynGetHttpFile(strURL, strSavePath, false, function(bRet, strDownLoadPath)
+		TipLog("[DownLoadFileWithCheck] NewAsynGetHttpFile:bret = " .. tostring(bRet) 
+				.. ", strURL = " .. tostring(strURL) .. ", strDownLoadPath = " .. tostring(strDownLoadPath))
+		if 0 == bRet then
+			strSavePath = strDownLoadPath
+            if CheckMD5(strSavePath, strCheckMD5) then
+				fnCallBack(bRet, strSavePath)
+			else
+				TipLog("[DownLoadFileWithCheck]Did Not Pass MD5 Check")
+				fnCallBack(-2)
+			end	
+		else
+			TipLog("[DownLoadFileWithCheck] DownLoad failed")
+			fnCallBack(-3)
+		end
+	end)
+end
+
+
 function DownLoadServerConfig(fnCallBack, nTimeInMs)
-	local tUserConfig = GetUserConfigFromMem() or {}
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	
 	local strConfigURL = tUserConfig["strServerConfigURL"]
 	if not IsRealString(strConfigURL) then
@@ -306,7 +374,7 @@ end
 
 
 function InitGSFilter()
-	local tUserConfig = GetUserConfigFromMem() or {}
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 
 	return SwitchGSFilter(bFilterOpen)
@@ -315,11 +383,12 @@ end
 
 function SaveAllConfig()
 	if gbLoadCfgSucc then
-		SaveUserConfigToFile()
-		SaveFilterConfigToFile()
-		SaveVideoListToFile()
+		for strKey, tContent in pairs(g_tConfigFileStruct) do
+			SaveConfigToFileByKey(strKey)
+		end
 	end
 end
+
 
 function ExitTipWnd(statInfo)
 	SaveAllConfig()	
@@ -476,7 +545,7 @@ end
 
 
 function ShowMainTipWnd(objMainWnd)
-	local tUserConfig = GetUserConfigFromMem() or {}
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local bHideMainPage = FetchValueByPath(tUserConfig, {"tConfig", "HideMainPage", "bState"})
 	
 	local cmdString = tipUtil:GetCommandLine()
@@ -490,20 +559,20 @@ function ShowMainTipWnd(objMainWnd)
 			bHideMainPage = true
 		end
 	end
-		
+	
 	if bHideMainPage then
 		objMainWnd:Show(0)
 	else
 		objMainWnd:Show(5)
+		SetWndForeGround(objMainWnd)
 	end
 	
-	SetWndForeGround(objMainWnd)
 	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
 end
 
 
-function ShowPopupWndByName(strWndName)
+function ShowPopupWndByName(strWndName, bSetTop)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local frameHostWnd = hostwndManager:GetHostWnd(tostring(strWndName))
 	if frameHostWnd == nil then
@@ -512,12 +581,16 @@ function ShowPopupWndByName(strWndName)
 	end
 
 	if not IsUserFullScreen() then
-		frameHostWnd:SetTopMost(true)
 		if type(tipUtil.SetWndPos) == "function" then
 			local hWnd = frameHostWnd:GetWndHandle()
 			if hWnd ~= nil then
-				TipLog("[SetWndForeGround] success")
-				tipUtil:SetWndPos(hWnd, -2, 0, 0, 0, 0, 0x0043)
+				TipLog("[ShowPopupWndByName] success")
+				if bSetTop then
+					frameHostWnd:SetTopMost(true)
+					tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
+				else
+					tipUtil:SetWndPos(hWnd, -2, 0, 0, 0, 0, 0x0043)
+				end
 			end
 		end
 	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
@@ -532,7 +605,7 @@ end
 
 
 function ShowExitRemindWnd()
-	ShowPopupWndByName("TipExitRemindWnd.Instance")
+	ShowPopupWndByName("TipExitRemindWnd.Instance", true)
 end
 
 
@@ -572,19 +645,13 @@ function InitTrayTipWnd(objHostWnd)
 		
 		--单击左键
 		if event3 == 0x0202 then
-			if objHostWnd then
-				objHostWnd:Show(4)
-				objHostWnd:BringWindowToTop(true)
-				SetWndForeGround(objHostWnd)
-				
-				local strHostWndName = "TipFilterRemindWnd.Instance"
-				local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
-				if objPopupWnd and objPopupWnd:GetVisible() then
-					local hWnd = objPopupWnd:GetWndHandle()
-					if hWnd then
-						objHostWnd:BringWindowToBack(hWnd)
-					end
-				end
+			ShowMainPanleByTray(objHostWnd)
+		end
+		
+		--点击气泡
+		if event3 == 1029 then
+			if g_bShowWndByTray then
+				ShowMainPanleByTray(objHostWnd)	
 			end
 		end
 		
@@ -602,12 +669,34 @@ function InitTrayTipWnd(objHostWnd)
 end
 
 
+function ShowMainPanleByTray(objHostWnd)
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	if objHostWnd then
+		objHostWnd:Show(5)
+		SetWndForeGround(objHostWnd)
+		local strState = objHostWnd:GetWindowState()
+		if tostring(strState) == "min" then
+			objHostWnd:BringWindowToTop(true)
+		end
+		
+		local strHostWndName = "TipFilterRemindWnd.Instance"
+		local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
+		if objPopupWnd and objPopupWnd:GetVisible() then
+			local hWnd = objPopupWnd:GetWndHandle()
+			if hWnd then
+				objHostWnd:BringWindowToBack(hWnd)
+			end
+		end
+	end
+end
+
+
 function SetNotifyIconState(strText)
 	if not g_tipNotifyIcon then
 		return
 	end
 
-	local tUserConfig = GetUserConfigFromMem() or {}
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"] or false
 	local nFilterCount = tUserConfig["nFilterCountOneDay"] or 0
 	
@@ -633,30 +722,35 @@ function SetNotifyIconState(strText)
 end
 
 
-function PopupNotifyIconTip(strText)
+function PopupNotifyIconTip(strText, bShowWndByTray)
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	local bBubbleRemind = FetchValueByPath(tUserConfig, {"tConfig", "BubbleRemind", "bState"})
+	
+	if not bBubbleRemind then
+		g_bShowWndByTray = false
+		return
+	end
+	
 	if IsRealString(strText) and g_tipNotifyIcon then
 		g_tipNotifyIcon:ShowNotifyIconTip(true, strText)
 	end
+	
+	g_bShowWndByTray = bShowWndByTray
 end
 
 
 function PopupBubbleOneDay()
-	local tUserConfig = GetUserConfigFromMem() or {}
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLastBubbleUTC = tonumber(tUserConfig["nLastBubbleUTC"]) 
-	local bBubbleRemind = FetchValueByPath(tUserConfig, {"tConfig", "BubbleRemind", "bState"})
 	
-	if not bBubbleRemind then
-		return
-	end
-
 	if not IsNilString(nLastBubbleUTC) and not CheckTimeIsAnotherDay(nLastBubbleUTC) then
 		return
 	end
 	
 	if g_tipNotifyIcon then
-		PopupNotifyIconTip("绿盾广告管家\r\n已为您屏蔽骚扰广告")
+		PopupNotifyIconTip("绿盾广告管家\r\n已开始为您过滤骚扰广告", true)
 		tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
-		SaveUserConfigToFile()
+		SaveConfigToFileByKey("tUserConfig")
 	end
 end
 
@@ -747,20 +841,13 @@ function FetchValueByPath(obj, path)
 end
 
 
-function SaveUserConfigToMem(tNewConfig)
-	gTipInfoTab = tNewConfig
-end
+function ReadConfigFromMemByKey(strKey)
+	if not IsRealString(strKey) or type(g_tConfigFileStruct[strKey])~="table" then
+		return nil
+	end
 
-function GetUserConfigFromMem()
-	return gTipInfoTab
-end
-
-function GetVideoListFromMem()
-	return gVideoList
-end
-
-function SaveVideoListToMem(tNewVideoList)
-	gVideoList = tNewVideoList
+	local tContent = g_tConfigFileStruct[strKey]["tContent"]
+	return tContent
 end
 
 
@@ -776,88 +863,137 @@ end
 
 
 function GetSpecifyFilterTableFromMem(strTableName)
+	local tFilterTable = ReadConfigFromMemByKey("tFilterConfig") or {}
+
 	if not IsRealString(strTableName) then
-		return gFilterConfigInfo
+		return tFilterTable
 	end
 
-	return gFilterConfigInfo[strTableName]
+	return tFilterTable[strTableName]
 end
+
 
 function SaveSpecifyFilterTableToMem(tNewTable, strTableName)
+	local tFilterTable = ReadConfigFromMemByKey("tFilterConfig") or {}
+
 	if not IsRealString(strTableName) then
-		gFilterConfigInfo = tNewTable
+		tFilterTable = tNewTable
 	else
-		gFilterConfigInfo[strTableName] = tNewTable
-	end
-end
-
-function SaveUserConfigToFile()
-	local strUserCfgPath = GetCfgPathWithName("UserConfig.dat")
-	if IsRealString(strUserCfgPath) then
-		tipUtil:SaveLuaTableToLuaFile(gTipInfoTab, strUserCfgPath)
-	end
-end
-
-function GetUserConfigFromFile()
-	local strUserCfgPath = GetCfgPathWithName("UserConfig.dat")
-	local infoTable = LoadTableFromFile(strUserCfgPath)
-	return infoTable
-end
-
-
-function GetFilterConfigFromFile()
-	local strFilterCfgPath = GetCfgPathWithName("FilterConfig.dat")
-	local infoTable = LoadTableFromFile(strFilterCfgPath)
-	return infoTable
-end
-
-function SaveFilterConfigToFile()
-	local strFilterCfgPath = GetCfgPathWithName("FilterConfig.dat")
-	if IsRealString(strFilterCfgPath) then
-		tipUtil:SaveLuaTableToLuaFile(gFilterConfigInfo, strFilterCfgPath)
-	end
-end
-
-function GetVideoListFromFile()
-	local strVideoListPath = GetCfgPathWithName("VideoList.dat")
-	local tVideoList = LoadTableFromFile(strVideoListPath)
-	return tVideoList
-end
-
-function SaveVideoListToFile()
-	local strVideoListPath = GetCfgPathWithName("VideoList.dat")
-	if IsRealString(strVideoListPath) then
-		tipUtil:SaveLuaTableToLuaFile(gVideoList, strVideoListPath)
+		tFilterTable[strTableName] = tNewTable
 	end
 end
 
 
-function ReadAllConfigInfo()	
-	local infoTable = GetUserConfigFromFile()
-	if type(infoTable) ~= "table" then
-		TipLog("[ReadAllConfigInfo] GetUserConfigFromFile failed! ")
-		return false
+function SaveConfigToFileByKey(strKey)
+	if not IsRealString(strKey) or type(g_tConfigFileStruct[strKey])~="table" then
+		return
 	end
+
+	local strFileName = g_tConfigFileStruct[strKey]["strFileName"]
+	local tContent = g_tConfigFileStruct[strKey]["tContent"]
+	local strConfigPath = GetCfgPathWithName(strFileName)
+	if IsRealString(strConfigPath) and type(tContent) == "table" then
+		tipUtil:SaveLuaTableToLuaFile(tContent, strConfigPath)
+	end
+end
+
+
+function ReadAllConfigInfo()
+	for strKey, tConfig in pairs(g_tConfigFileStruct) do
+		local strFileName = tConfig["strFileName"]
+		local strCfgPath = GetCfgPathWithName(strFileName)
+		local infoTable = LoadTableFromFile(strCfgPath)
+		if type(infoTable) ~= "table" then
+			TipLog("[ReadAllConfigInfo] GetConfigFile failed! "..tostring(strFileName))
+			return false
+		end
 		
-	local tFilterTable = GetFilterConfigFromFile()
-	if type(tFilterTable) ~= "table" then
-		TipLog("[ReadAllConfigInfo] GetFilterConfigFromFile failed! ")
-		return false
+		local tContent = infoTable
+		local fnMergeOldFile = tConfig["fnMergeOldFile"]
+		if type(fnMergeOldFile) == "function" then
+			tContent = fnMergeOldFile(infoTable, strFileName)
+		end
+		
+		tConfig["tContent"] = tContent
 	end
-	
-	local tVideoListTable = GetVideoListFromFile()
-	if type(tVideoListTable) ~= "table" then
-		TipLog("[ReadAllConfigInfo] GetVideoListFromFile failed! ")
-		return false
-	end
-			
-	gTipInfoTab = infoTable
-	gFilterConfigInfo = tFilterTable
-	gVideoList = tVideoListTable
-	
+
 	gbLoadCfgSucc = true	
 	TipLog("[ReadAllConfigInfo] success!")
 	return true
+end
+
+
+function MergeOldUserCfg(tCurrentCfg, strFileName)
+	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
+	if type(tOldCfg) ~= "table" then
+		return tCurrentCfg
+	end
+	
+	tCurrentCfg["nFilterCountTotal"] = tOldCfg["nFilterCountTotal"] or 0
+	tCurrentCfg["nFilterCountOneDay"] = tOldCfg["nFilterCountOneDay"] or 0
+	tCurrentCfg["bFilterOpen"] = tOldCfg["bFilterOpen"]
+	tCurrentCfg["nLastAutoUpdateUTC"] = tOldCfg["nLastAutoUpdateUTC"]
+	tCurrentCfg["nLastBubbleUTC"] = tOldCfg["nLastBubbleUTC"]
+	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
+	tCurrentCfg["tConfig"] = tOldCfg["tConfig"]
+	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
+	
+	tipUtil:DeletePathFile(strOldCfgPath)
+	return tCurrentCfg
+end
+
+
+function MergeOldFilterCfg(tCurrentCfg, strFileName)
+	local tOldCfg, strOldCfgPath  = GetOldCfgContent(strFileName)
+	if type(tOldCfg) ~= "table" then
+		return tCurrentCfg
+	end
+	
+	tCurrentCfg["tBlackList"] = tOldCfg["tBlackList"]
+	tCurrentCfg["tUserWhiteList"] = tOldCfg["tUserWhiteList"]
+	
+	local tDefWhiteList = tOldCfg["tDefWhiteList"] or {}
+	if type(tCurrentCfg["tDefWhiteList"]) ~= "table" then
+		tCurrentCfg["tDefWhiteList"] = {}
+	end	
+	
+	for strDomain, tInfo in pairs(tDefWhiteList) do
+		if type(tInfo) == "table" then
+			tCurrentCfg["tDefWhiteList"][strDomain] = tInfo
+		end
+	end
+	
+	tipUtil:DeletePathFile(strOldCfgPath)
+	return tCurrentCfg
+end
+
+
+function MergeOldVideoList(tCurrentCfg, strFileName)
+	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
+	if type(tOldCfg) ~= "table" then
+		return tCurrentCfg
+	end
+	
+	for strDomain, tInfo in pairs(tOldCfg) do
+		if type(tInfo) == "table" then
+			tCurrentCfg[strDomain] = tInfo
+		end
+	end
+	
+	tipUtil:DeletePathFile(strOldCfgPath)
+	return tCurrentCfg
+end
+
+
+function GetOldCfgContent(strCurFileName)
+	local strOldFileName = strCurFileName..".bak"
+	local strOldCfgPath = GetCfgPathWithName(strOldFileName)
+	if not IsRealString(strOldCfgPath) or not tipUtil:QueryFileExists(strOldCfgPath) then
+		return nil
+	end
+	
+	local tOldCfg = LoadTableFromFile(strOldCfgPath)
+	return tOldCfg, strOldCfgPath
 end
 
 
@@ -868,7 +1004,7 @@ function IsVideoDomain(strDomain)
 		return false
 	end
 	
-	local tVideoList = GetVideoListFromMem() or {}
+	local tVideoList = ReadConfigFromMemByKey("tVideoList") or {}
 	if tVideoList[strDomainWithFix] then
 		return true
 	else
@@ -986,7 +1122,7 @@ end
 
 
 function SendVideoListToFilterThread()
-	local tVideoList = GetVideoListFromMem() or {}
+	local tVideoList = ReadConfigFromMemByKey("tVideoList") or {}
 	
 	for strDomain, tVideoElem in pairs(tVideoList) do
 		if IsRealString(strDomain) and type(tVideoElem) == "table" then
@@ -1147,7 +1283,8 @@ end
 function CreateMainTipWnd()
 	local function OnCreateFuncF(treectrl)
 		local rootctrl = treectrl:GetUIObject("root.layout:root.ctrl")
-		local bRet = rootctrl:SetTipData(gTipInfoTab)			
+		local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+		local bRet = rootctrl:SetTipData(tUserConfig)			
 		if not bRet then
 			return false
 		end
@@ -1214,6 +1351,17 @@ function SaveConfigInTimer()
 end
 
 
+function StartRunCountTimer()
+	local nTimeSpanInSec = 10 * 60 
+	local nTimeSpanInMs = nTimeSpanInSec * 1000
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
+		SendRunTimeReport(nTimeSpanInSec, false)
+	end, nTimeSpanInMs)
+end
+
+
 function GetCommandStrValue(strKey)
 	local bRet, strValue = false, nil
 	local cmdString = tipUtil:GetCommandLine()
@@ -1239,20 +1387,41 @@ function SendStartupReport(bShowWnd)
 	local tStatInfo = {}
 	
 	local bRet, strSource = GetCommandStrValue("/sstartfrom")
-	tStatInfo.strEA = strSource or ""
+	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
 		tStatInfo.strEC = "startup"
+		tStatInfo.strEA = GetGSMinorVer() or ""
 		tStatInfo.strEV = 0   --进入上报
-		tStatInfo.strEL = GetGSMinorVer() or ""
 	else
 		tStatInfo.strEC = "showui"
+		tStatInfo.strEA = GetInstallSrc() or ""
 		tStatInfo.strEV = 1   --展示上报
-		tStatInfo.strEL = GetInstallSrc() or ""
 	end
 		
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+
+function SendGSStartReport()
+	local strCID = GetPeerID()
+	local strMAC = ""
+	if IsRealString(strCID) then
+		local nIndex = 1
+		for i=1, 6 do 
+			local strTemp = string.sub(strCID, nIndex, nIndex+1)
+			strMAC = strMAC..strTemp.."-"
+			nIndex = nIndex+2
+		end
+	end
+	local strMACFix = string.gsub(strMAC, "-$", "")
+	local strChannelID = GetInstallSrc()
+	
+	local strUrl = "http://stat.lvdun123.com:8082/?mac=" .. tostring(strMACFix) 
+					.."&op=start&cid=" .. (strChannelID)
+	TipLog("SendGSStartReport: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
 end
 
 
@@ -1264,23 +1433,33 @@ function ReportAndExit()
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
 			
-	local iLastTime = 0	--失败认为展示时长为0
-	local nCurTime = tipUtil:GetCurrentUTCTime()
-	local fnGetTipStartTime = XLGetGlobal("GreenWall.GetTipStartTime")
-	if type(fnGetTipStartTime) == "function" then
-		local iTimeStart = fnGetTipStartTime()
-		if type(iTimeStart) == "number" then
-			iLastTime = nCurTime - iTimeStart
-		end
-	end
-
-	tStatInfo.strEC = "exit"
-	tStatInfo.strEV = iLastTime
-	tStatInfo.strEL = GetInstallSrc() or ""
+	SendRunTimeReport(0, true)
+	
+	tStatInfo.strEC = "exit"	
+	tStatInfo.strEA = GetInstallSrc() or ""
 	tStatInfo.Exit = true
 		
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
+
+
+function SendRunTimeReport(nTimeSpanInSec, bExit)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tStatInfo = {}
+	tStatInfo.strEC = "runtime"
+	tStatInfo.strEA = GetInstallSrc() or ""
+	
+	local nRunTime = 0
+	if bExit and gnLastReportRunTmUTC ~= 0 then
+		nRunTime = math.abs(tipUtil:GetCurrentUTCTime() - gnLastReportRunTmUTC)
+	else
+		nRunTime = nTimeSpanInSec
+	end
+	tStatInfo.strEV = nRunTime
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
 
 --win8.1对IE11的支持.
 function SetIERegValue(strNewRegValue)
@@ -1360,7 +1539,6 @@ function DeleteBrowserCache()
 	"%ALLUSERSPROFILE%\\Application Data\\Qiyi\\qiyiclient\\cache\\*.*",
 	}
 	
-
 	for key, strPattern in pairs(t) do
 		local _, _, strEnvHead, strPathBody, strFileName = string.find(strPattern, "^([^\\]*)\\(.*)\\([^\\]*)$")
 		
@@ -1378,7 +1556,6 @@ function DeleteBrowserCache()
 			end
 		end
 	end
-	
 end
 
 function ModifyOSConfig()
@@ -1419,14 +1596,182 @@ function DownLoadServerRule(tDownRuleList)
 end
 
 
-function CheckServerRuleFile(nDownServer, strServerPath)
-	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
-		TipLog("[CheckServerRuleFile] Download server config failed , start tipmain ")
-		TipMain()
-		return	
+function CheckForceVersion(tForceVersion)
+	if type(tForceVersion) ~= "table" then
+		return false
+	end
+
+	local bRightVer = false
+	
+	local strCurVersion = GetGSVersion()
+	local _, _, _, _, _, strCurVersion_4 = string.find(strCurVersion, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	local nCurVersion_4 = tonumber(strCurVersion_4)
+	if type(nCurVersion_4) ~= "number" then
+		return bRightVer
+	end
+	for iIndex = 1, #tForceVersion do
+		local strRange = tForceVersion[iIndex]
+		local iPos = string.find(strRange, "-")
+		if iPos ~= nil then
+			local lVer = tonumber(string.sub(strRange, 1, iPos - 1))
+			local hVer = tonumber(string.sub(strRange, iPos + 1))
+			if lVer ~= nil and hVer ~= nil and nCurVersion_4 >= lVer and nCurVersion_4 <= hVer then
+				bRightVer = true
+				break
+			end
+		else
+			local verFlag = tonumber(strRange)
+			if verFlag ~= nil and nCurVersion_4 == verFlag then
+				bRightVer = true
+				break
+			end
+		end
 	end
 	
-	local tServerConfig = LoadTableFromFile(strServerPath) or {}
+	return bRightVer
+end
+
+
+function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
+	local strPacketURL = tNewVersionInfo.strPacketURL
+	local strMD5 = tNewVersionInfo.strMD5
+	if not IsRealString(strPacketURL) then
+		return
+	end
+	
+	local strFileName = GetFileSaveNameFromUrl(strPacketURL)
+	if not string.find(strFileName, "%.exe$") then
+		strFileName = strFileName..".exe"
+	end
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+
+	DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
+	, function(bRet, strRealPath)
+		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		if 0 == bRet then
+			fnCallBack(strRealPath, tNewVersionInfo)
+			return
+		end
+		
+		if 1 == bRet then
+			fnCallBack(strSavePath, tNewVersionInfo)
+			return
+		end
+	end)	
+end
+
+
+function CheckCommonUpdateTime(nTimeInDay)
+	return CheckUpdateTimeSpan(nTimeInDay, "nLastCommonUpdateUTC")
+end
+
+function CheckAutoUpdateTime(nTimeInDay)
+	return CheckUpdateTimeSpan(nTimeInDay, "nLastAutoUpdateUTC")
+end
+
+function CheckUpdateTimeSpan(nTimeInDay, strUpdateType)
+	if type(nTimeInDay) ~= "number" then
+		return false
+	end
+	
+	local nTimeInSec = nTimeInDay*24*3600
+	local nCurTimeUTC = tipUtil:GetCurrentUTCTime()
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	local nLastUpdateUTC = tUserConfig[strUpdateType] or 0
+	local nTimeSpan = math.abs(nCurTimeUTC - nLastUpdateUTC)
+	
+	if nTimeSpan > nTimeInSec then
+		return true
+	end	
+	
+	return false
+end
+
+
+function SaveCommonUpdateUTC()
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	tUserConfig["nLastCommonUpdateUTC"] = tipUtil:GetCurrentUTCTime()
+	SaveConfigToFileByKey("tUserConfig")
+end
+
+
+function SaveAutoUpdateUTC()
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	tUserConfig["nLastAutoUpdateUTC"] = tipUtil:GetCurrentUTCTime()
+	SaveConfigToFileByKey("tUserConfig")
+end
+
+
+function TryForceUpdate(tServerConfig)
+	local bPassCheck = CheckCommonUpdateTime(1)
+	if not bPassCheck then
+		TipLog("[TryForceUpdate] CheckCommonUpdateTime failed")
+		return		
+	end
+
+	local tNewVersionInfo = tServerConfig["tNewVersionInfo"] or {}
+	local tForceUpdate = tNewVersionInfo["tForceUpdate"]
+	if(type(tForceUpdate)) ~= "table" then
+		return 
+	end
+	
+	local strCurVersion = GetGSVersion()
+	local strNewVersion = tForceUpdate.strVersion		
+	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
+		or not CheckIsNewVersion(strNewVersion, strCurVersion) then
+		return
+	end
+	
+	local tVersionLimit = tForceUpdate["tVersion"]
+	local bPassCheck = CheckForceVersion(tVersionLimit)
+	TipLog("[TryForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
+	if not bPassCheck then
+		return 
+	end
+	
+	DownLoadNewVersion(tForceUpdate, function(strRealPath) 
+		if not IsRealString(strRealPath) then
+			return
+		end
+		
+		SaveCommonUpdateUTC()
+		local strCmd = " /write /silent /run"
+		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
+	end)
+end
+
+
+function FixStartConfig(tServerConfig)
+	local tStartConfig = tServerConfig["tStartConfig"]
+	if type(tStartConfig) ~= "table" then
+		return
+	end
+	
+	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local noremindspanday = tonumber(tStartConfig["noremindspanday"])
+	local intervaltime = tonumber(tStartConfig["intervaltime"])
+	local maxcntperday = tonumber(tStartConfig["maxcntperday"])
+
+	if not IsNilString(noremindspanday) then
+		tipUtil:WriteINI("pusher", "noremindspanday", noremindspanday, strStartCfgPath)
+	end
+	if not IsNilString(intervaltime) then
+		tipUtil:WriteINI("pusher", "intervaltime", intervaltime, strStartCfgPath)
+	end
+	if not IsNilString(maxcntperday) then
+		tipUtil:WriteINI("pusher", "maxcntperday", maxcntperday, strStartCfgPath)
+	end
+end
+
+
+function CheckServerRuleFile(tServerConfig)
 	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
 	
 	local strServerVideoURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
@@ -1471,6 +1816,29 @@ function CheckServerRuleFile(nDownServer, strServerPath)
 end
 
 
+function AnalyzeServerConfig(nDownServer, strServerPath)
+	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
+		TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
+		TipMain()
+		return	
+	end
+	
+	local tServerConfig = LoadTableFromFile(strServerPath) or {}
+	TryForceUpdate(tServerConfig)
+	FixStartConfig(tServerConfig)
+	CheckServerRuleFile(tServerConfig)
+end
+
+
+function TryShowNonSysBubble()
+	local bRet, strSource = GetCommandStrValue("/sstartfrom")
+	if string.lower(tostring(strSource)) == "service" 
+		or string.lower(tostring(strSource)) == "bho" then
+		ShowPopupWndByName("TipBubbleWnd.Instance", true)
+	end
+end
+
+
 function TipMain()
 	local bSucc = SendFileDataToFilterThread()
 	if not bSucc then
@@ -1487,11 +1855,18 @@ function TipMain()
 	CreateMainTipWnd()
 	CreatePopupTipWnd()
 	SaveConfigInTimer()
+	
+	TryShowNonSysBubble()
 end
 
 
 function PreTipMain() 
+	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
+	
 	RegisterFunctionObject()
+	
+	StartRunCountTimer()
+	SendGSStartReport()
 	SendStartupReport(false)
 	
 	ModifyOSConfig()	
@@ -1504,8 +1879,7 @@ function PreTipMain()
 		return
 	end
 
-	DownLoadServerConfig(CheckServerRuleFile)
-	
+	DownLoadServerConfig(AnalyzeServerConfig)
 end
 
 PreTipMain()

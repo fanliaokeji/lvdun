@@ -136,6 +136,8 @@ function UpdateAdvShow(objRootCtrl)
 	end
 
 	local nTempAdvCnt = g_nFilterCountOneDay
+	TryShowBubble(nTempAdvCnt)
+	
 	for i=1, g_nElemCount do
 		local objElem = g_tCountElemList[i]
 		if objElem == nil then
@@ -148,6 +150,18 @@ function UpdateAdvShow(objRootCtrl)
 	end
 	
 	SaveAdvCountCfg()
+end
+
+
+function TryShowBubble(nAdvCnt)
+	local tSpecialCount = {200, 500}
+
+	for nIndex, nSpecialCount in ipairs(tSpecialCount) do
+		if nAdvCnt == nSpecialCount then
+			local strText = "绿盾广告管家\r\n今日累计过滤："..tostring(nSpecialCount).."次"
+			tFunctionHelper.PopupNotifyIconTip(strText, true)
+		end
+	end
 end
 
 
@@ -167,12 +181,9 @@ function Inner_ChangeSwitchFilter(objFilterSwitch)
 	end
 end
 
-function LoadAdvCountCfg(objRootCtrl)
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
-		return
-	end
 
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem()
+function LoadAdvCountCfg(objRootCtrl)
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig")
 	if type(tUserConfig) ~= "table" then
 		return nil
 	end
@@ -193,36 +204,30 @@ function LoadAdvCountCfg(objRootCtrl)
 end
 
 
-function SaveAdvCfgSepcifyKey(strKey, strValue)
-	if type(tFunctionHelper.SaveUserConfigToMem) ~= "function" then
-		return
-	end
-
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
-		return
-	end
-
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem()
+function SaveAdvCfgSepcifyKey(strKey, strValue, bSaveToFile)
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig")
 	if type(tUserConfig) ~= "table" then
 		return nil
 	end
 	
 	tUserConfig[strKey] = strValue	
-	tFunctionHelper.SaveUserConfigToMem(tUserConfig)
+	if bSaveToFile then
+		tFunctionHelper.SaveConfigToFileByKey("tUserConfig")
+	end
 end
 
 
 function SaveAdvCountCfg()
-	SaveAdvCfgSepcifyKey("nFilterCountOneDay", g_nFilterCountOneDay)
-	SaveAdvCfgSepcifyKey("nFilterCountTotal", g_nFilterCountTotal)
+	SaveAdvCfgSepcifyKey("nFilterCountOneDay", g_nFilterCountOneDay, false)
+	SaveAdvCfgSepcifyKey("nFilterCountTotal", g_nFilterCountTotal, false)
 end
 
 function SaveAdvLastUTC(nLastUTC)
-	SaveAdvCfgSepcifyKey("nLastClearUTC", nLastUTC)
+	SaveAdvCfgSepcifyKey("nLastClearUTC", nLastUTC, false)
 end
 
 function SaveAdvOpenState()
-	SaveAdvCfgSepcifyKey("bFilterOpen", g_bFilterOpen)
+	SaveAdvCfgSepcifyKey("bFilterOpen", g_bFilterOpen, true)
 end
 
 
@@ -261,6 +266,16 @@ function InitAdvCount(objRootCtrl)
 	
 	LoadAdvCountCfg(objRootCtrl)
 	BeginAnotherDayEvent(objRootCtrl)
+	StartAutoUpdateTimer()
+end
+
+
+function StartAutoUpdateTimer()
+	local nTimeSpanInMs = 3600 * 1000
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		CheckUpdateCond()
+	end, nTimeSpanInMs)
 end
 
 
@@ -294,7 +309,6 @@ function DoSthAnotherDay(objRootCtrl)
 	
 	ReportAdvCountInfo()
 	ClearAdvCount(objRootCtrl)
-	CheckUpdateVersion()
 	InitVideoState()
 	
 	local nCurUTC = tipUtil:GetCurrentUTCTime()
@@ -342,13 +356,29 @@ end
 
 
 --每天自动检查更新
-function CheckUpdateVersion()
-	tFunctionHelper.DownLoadServerConfig(CheckForceUpdate)
+function CheckUpdateCond()
+	local tUserCfg = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local bState = FetchValueByPath(tUserCfg, {"tConfig", "AutoUpdate", "bState"}) or false
+	if not bState then
+		return
+	end
+
+	if not tFunctionHelper.CheckCommonUpdateTime(1) then
+		TipLog("[CheckUpdateCond] CheckCommonUpdateTime failed")
+		return
+	end
+	
+	if not tFunctionHelper.CheckAutoUpdateTime(7) then
+		TipLog("[CheckUpdateCond] CheckAutoUpdateTime failed")
+		return
+	end
+
+	tFunctionHelper.DownLoadServerConfig(CheckAutoUpdate)
 end
 
 
---强制更新
-function CheckForceUpdate(bRet, strCfgPath)
+--自动检查更新
+function CheckAutoUpdate(bRet, strCfgPath)
 	if bRet ~= 0 or not tipUtil:QueryFileExists(strCfgPath) then
 		return
 	end
@@ -359,38 +389,11 @@ function CheckForceUpdate(bRet, strCfgPath)
 		return
 	end	
 	
-	local tForceUpdate = tNewVersionInfo["tForceUpdate"]
-	if(type(tForceUpdate)) ~= "table" then
-		TryShowUpdateWnd(tNewVersionInfo)
-		return 
-	end
-
-	local tVersion = tForceUpdate["tVersion"]
-	local bPassCheck = CheckForceVersion(tVersion)
-	TipLog("[CheckForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
-	if not bPassCheck then
-		TryShowUpdateWnd(tNewVersionInfo)
-		return 
-	end
-	
-	DownLoadNewVersion(tNewVersionInfo, function(strRealPath) 
-		if not IsRealString(strRealPath) then
-			return
-		end
-		
-		local strCmd = " /write /silent /run"
-		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
-	end)
+	TryShowUpdateWnd(tNewVersionInfo)
 end
 
 
 function TryShowUpdateWnd(tNewVersionInfo)
-	local tUserCfg = tFunctionHelper.GetUserConfigFromMem() or {}
-	local bState = FetchValueByPath(tUserCfg, {"tConfig", "AutoUpdate", "bState"}) or false
-	if not bState then
-		return
-	end
-	
 	local strCurVersion = tFunctionHelper.GetGSVersion()
 	local strNewVersion = tNewVersionInfo.strVersion		
 	
@@ -405,6 +408,7 @@ end
 
 function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	local strPacketURL = tNewVersionInfo.strPacketURL
+	local strMD5 = tNewVersionInfo.strMD5
 	if not IsRealString(strPacketURL) then
 		return
 	end
@@ -416,13 +420,19 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 
-	tFunctionHelper.NewAsynGetHttpFile(strPacketURL, strSavePath, false
+	tFunctionHelper.DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
 				
 		if 0 == bRet then
 			fnCallBack(strRealPath, tNewVersionInfo)
+			return
+		end
+		
+		if 1 == bRet then
+			fnCallBack(strSavePath, tNewVersionInfo)
+			return
 		end
 	end)	
 end
@@ -446,42 +456,9 @@ function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
 	if objRootCtrl then
 		objRootCtrl:ShowInstallPanel(strRealPath, tNewVersionInfo)
 	end
-end
-
-
-function CheckForceVersion(tForceVersion)
-	if type(tForceVersion) ~= "table" then
-		return false
-	end
-
-	local bRightVer = false
 	
-	local strCurVersion = tFunctionHelper.GetGSVersion()
-	local _, _, _, _, _, strCurVersion_4 = string.find(strCurVersion, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
-	local nCurVersion_4 = tonumber(strCurVersion_4)
-	if type(nCurVersion_4) ~= "number" then
-		return bRightVer
-	end
-	for iIndex = 1, #tForceVersion do
-		local strRange = tForceVersion[iIndex]
-		local iPos = string.find(strRange, "-")
-		if iPos ~= nil then
-			local lVer = tonumber(string.sub(strRange, 1, iPos - 1))
-			local hVer = tonumber(string.sub(strRange, iPos + 1))
-			if lVer ~= nil and hVer ~= nil and nCurVersion_4 >= lVer and nCurVersion_4 <= hVer then
-				bRightVer = true
-				break
-			end
-		else
-			local verFlag = tonumber(strRange)
-			if verFlag ~= nil and nCurVersion_4 == verFlag then
-				bRightVer = true
-				break
-			end
-		end
-	end
-	
-	return bRightVer
+	tFunctionHelper.SaveCommonUpdateUTC()
+	tFunctionHelper.SaveAutoUpdateUTC()
 end
 
 ----------------------------------

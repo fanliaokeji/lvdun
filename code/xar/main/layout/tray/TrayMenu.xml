@@ -31,7 +31,7 @@
 			</obj>
 			<obj id="contact" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>联系我们</Text>
+					<Text>问题反馈</Text>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Contact" />

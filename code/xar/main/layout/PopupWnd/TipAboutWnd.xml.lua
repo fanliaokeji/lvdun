@@ -23,8 +23,7 @@ end
 
 function SetShowText(objRootCtrl)
 	local objVersion = objRootCtrl:GetObject("TipAbout.MainWndCenter.Bkg:TipAbout.MainWndCenter.Version")
-	local objContact = objRootCtrl:GetObject("TipAbout.MainWndCenter.Bkg:TipAbout.MainWndCenter.Contact")
-	if not objVersion or not objContact then
+	if not objVersion then
 		return
 	end
 	
@@ -33,10 +32,7 @@ function SetShowText(objRootCtrl)
 	local strText = "版本号 ："..tostring(strVersion).." 正式版本"
 	objVersion:SetText(strText)
 	
-	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
-	local strQQ = tUserConfig["strContactQQ"]
-	local strContact = "QQ群 : "..tostring(strQQ)
-	objContact:SetText(strContact)
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 end
 
 
