@@ -23,7 +23,6 @@ function GetSubTable()
 		}, 
 		["strIndexURL"] = "www.lvdun123.com", 
 		["nLastClearUTC"] = 0, 
-		["strContactQQ"] = "67542242",
 	}
 	return t
 end
