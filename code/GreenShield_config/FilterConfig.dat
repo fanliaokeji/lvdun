@@ -140,6 +140,106 @@ function GetSubTable()
 				["strName"] = "百度视频", 
 				["bState"] = true, 
 			},
+			["duba.com"] = {
+				["strName"] = "毒霸", 
+				["bState"] = true, 
+			},
+			["alipay.com"] = {
+				["strName"] = "支付宝", 
+				["bState"] = true, 
+			},
+			["alimama.com"] = {
+				["strName"] = "阿里妈妈", 
+				["bState"] = true, 
+			},
+			["tenpay.com"] = {
+				["strName"] = "财付通", 
+				["bState"] = true, 
+			},
+			["yeepay.com"] = {
+				["strName"] = "易宝支付", 
+				["bState"] = true, 
+			},
+			["99bill.com"] = {
+				["strName"] = "快钱", 
+				["bState"] = true, 
+			},
+			["95516.com"] = {
+				["strName"] = "中国银联", 
+				["bState"] = true, 
+			},
+			["amazon.com"] = {
+				["strName"] = "亚马逊", 
+				["bState"] = true, 
+			},
+			["icbc.com.cn"] = {
+				["strName"] = "工商银行", 
+				["bState"] = true, 
+			},
+			["ccb.com"] = {
+				["strName"] = "建设银行", 
+				["bState"] = true, 
+			},
+			["boc.cn"] = {
+				["strName"] = "中国银行", 
+				["bState"] = true, 
+			},
+			["bankcomm.com"] = {
+				["strName"] = "交通银行", 
+				["bState"] = true, 
+			},
+			["abcchina.com"] = {
+				["strName"] = "农业银行", 
+				["bState"] = true, 
+			},
+			["cmbchina.com"] = {
+				["strName"] = "招商银行", 
+				["bState"] = true, 
+			},
+			["psbc.com"] = {
+				["strName"] = "中国邮政", 
+				["bState"] = true, 
+			},
+			["cebbank.com"] = {
+				["strName"] = "光大银行", 
+				["bState"] = true, 
+			},
+			["cmbc.com.cn"] = {
+				["strName"] = "民生银行", 
+				["bState"] = true, 
+			},
+			["pingan.com"] = {
+				["strName"] = "中国平安", 
+				["bState"] = true, 
+			},
+			["spdb.com.cn"] = {
+				["strName"] = "浦发银行", 
+				["bState"] = true, 
+			},
+			["ecitic.com"] = {
+				["strName"] = "中信", 
+				["bState"] = true, 
+			},
+			["cib.com.cn"] = {
+				["strName"] = "兴业银行", 
+				["bState"] = true, 
+			},
+			["hxb.com.cn"] = {
+				["strName"] = "华夏银行", 
+				["bState"] = true, 
+			},
+			["cgbchina.com.cn"] = {
+				["strName"] = "广发银行", 
+				["bState"] = true, 
+			},
+			["bankofbeijing.com.cn"] = {
+				["strName"] = "北京银行", 
+				["bState"] = true, 
+			},
+			["weather.com.cn"] = {
+				["strName"] = "中国天气", 
+				["bState"] = true, 
+			},
 		}, 
 		["tUserWhiteList"] = {
 		},
