@@ -32,11 +32,11 @@ function SetTitleText(self)
 	end
 	
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
+	if type(tFunctionHelper.ReadConfigFromMemByKey("tUserConfig")) ~= "function" then
 		return
 	end
 
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
 	local strText = "今天为您过滤广告"..tostring(nFilterCount).."次"
 	objTitleText:SetText(strText)	

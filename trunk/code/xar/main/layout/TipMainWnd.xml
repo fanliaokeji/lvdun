@@ -53,7 +53,7 @@
             <cachetop>0</cachetop>
 
             <center>1</center>
-            <topmost>0</topmost>
+            <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
             <active>0</active>

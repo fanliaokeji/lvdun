@@ -21,7 +21,6 @@ XLSetGlobal("GreenWall.GetTipStartTime", GetTipStartTime)
 function OnShowWindow(self, bShow)
 	if bShow then
 		gTipStartTime = tipUtil:GetCurrentUTCTime()
-
 	end
 end
 
@@ -48,10 +47,10 @@ function PopupInDeskRight(self)
 end
 
 
-
 function OnCreate( self )
 	 PopupInDeskRight(self)
 end
+
 
 function OnDestroy( self )
 	local objtree = self:GetBindUIObjectTree()

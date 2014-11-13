@@ -78,7 +78,7 @@
 						<obj id="TipAbout.MainWndCenter.Version" class="TextObject">
 							<attr>
 								<left>18</left>
-								<top>137</top>
+								<top>137+23</top>
 								<width>father.width-18</width>
 								<height>20</height>
 								<text>版本号 : </text>
@@ -88,21 +88,7 @@
 								<halign>left</halign>
 							</attr>
 						</obj>
-						
-						<obj id="TipAbout.MainWndCenter.Contact" class="TextObject">
-							<attr>
-								<left>18</left>
-								<top>137+23</top>
-								<width>father.width-18</width>
-								<height>20</height>
-								<text>QQ群 : </text>
-								<textcolor>system.white</textcolor>
-								<font>font.yahei12</font>
-								<valign>top</valign>
-								<halign>left</halign>
-							</attr>
-						</obj>
-						
+												
 						<obj id="TipAbout.MainWndCenter.CopyRight" class="TextObject">
 							<attr>
 								<left>18</left>

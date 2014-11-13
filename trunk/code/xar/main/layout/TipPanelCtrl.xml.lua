@@ -195,7 +195,7 @@ function ExractRuleDomain(strURL)
 		return nil
 	end
 	
-	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoList = tFunctionHelper.ReadConfigFromMemByKey("tVideoList") or {}
 	for strDomain, tVideoElem in pairs(tVideoList) do
 		if string.find(strHost, strDomain.."$") then
 			return strDomain
@@ -245,7 +245,7 @@ end
 
 
 function GetDomainDefName(strDomain)
-	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoList = tFunctionHelper.ReadConfigFromMemByKey("tVideoList") or {}
 	local tVideoElem = tVideoList[strDomain]
 	if type(tVideoElem) ~= "table" then
 		return ""
@@ -256,18 +256,18 @@ end
 
 
 function RecordPopupTime(strDomain)
-	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoList = tFunctionHelper.ReadConfigFromMemByKey("tVideoList") or {}
 	if type(tVideoList[strDomain]) ~= "table" then
 		tVideoList[strDomain] = {}
 	end
 	
 	tVideoList[strDomain]["nLastPopupUTC"] = tipUtil:GetCurrentUTCTime()
-	tFunctionHelper.SaveVideoListToFile()
+	tFunctionHelper.SaveConfigToFileByKey("tVideoList")
 end 
 
 
 function CheckPopupCond(strDomain)
-	local tVideoList = tFunctionHelper.GetVideoListFromMem() or {}
+	local tVideoList = tFunctionHelper.ReadConfigFromMemByKey("tVideoList") or {}
 	local tVideoElem = tVideoList[strDomain]
 	if type(tVideoElem) ~= "table" then
 		TipLog("[CheckPopupCond] not video website: "..tostring(strDomain))

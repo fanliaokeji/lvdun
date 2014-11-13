@@ -56,6 +56,7 @@ function OnDestroy(self)
 	local tStatInfo = {}
 	local strStateList = table.concat(tState, "")
 	tStatInfo.strEC = "ConfigPanel"
+	tStatInfo.strEA = "userstate"
 	tStatInfo.strEL = strStateList
 
 	SendReport(tStatInfo)
@@ -224,21 +225,21 @@ end
 
 function GetConfigTable()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
+	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return nil
 	end
 	
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem()
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig")
 	return tUserConfig	
 end
 
 function SaveConfigTable()
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.SaveUserConfigToFile) ~= "function" then
+	if type(tFunctionHelper.SaveConfigToFileByKey) ~= "function" then
 		return
 	end
 	
-	tFunctionHelper.SaveUserConfigToFile()
+	tFunctionHelper.SaveConfigToFileByKey("tUserConfig")
 end
 
 

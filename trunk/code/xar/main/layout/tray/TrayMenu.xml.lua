@@ -65,11 +65,11 @@ end
 
 function OpenConfigURL(strUrlKey)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
+	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return
 	end
 	
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local strIndexURL = tUserConfig[strUrlKey]
 	if IsRealString(strIndexURL) then
 		tipUtil:OpenURL(strIndexURL)
@@ -79,11 +79,11 @@ end
 
 function SetFilterText(self)
 	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-	if type(tFunctionHelper.GetUserConfigFromMem) ~= "function" then
+	if type(tFunctionHelper.ReadConfigFromMemByKey("tUserConfig")) ~= "function" then
 		return
 	end
 	
-	local tUserConfig = tFunctionHelper.GetUserConfigFromMem() or {}
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 	if bFilterOpen then
 		self:SetText("过滤已开启")

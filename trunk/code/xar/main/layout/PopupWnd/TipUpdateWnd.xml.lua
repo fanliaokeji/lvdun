@@ -48,8 +48,9 @@ function OnShowWindow(self, bVisible)
 		end	
 
 		local tServerConfig = FunctionObj.LoadTableFromFile(strCfgPath) or {}
-		local tNewVersionInfo = tServerConfig["tNewVersionInfo"]
-		if(type(tNewVersionInfo)) ~= "table" then
+		local tNewVersionInfo = tServerConfig["tNewVersionInfo"] or {}
+		local strPacketURL = tNewVersionInfo["strPacketURL"]
+		if not IsRealString(strPacketURL) then
 			ShowNoUpdate(objRootCtrl)
 			return 
 		end
@@ -59,6 +60,13 @@ function OnShowWindow(self, bVisible)
 		if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 			or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
 			ShowNoUpdate(objRootCtrl)
+			return
+		end
+		
+		local strSavePath = GetPacketSavePath(strPacketURL)
+		if IsRealString(tNewVersionInfo.strMD5) 
+			and FunctionObj.CheckMD5(strSavePath, tNewVersionInfo.strMD5) then
+			ShowInstallPanel(objRootCtrl, strSavePath, tNewVersionInfo)
 			return
 		end
 		
@@ -259,6 +267,11 @@ function ShowErrorPanel(objRootCtrl)
 end
 
 
+function CheckPacketMD5(strPacketPath)
+	local strServerMD5 = g_tNewVersionInfo["strMD5"]
+	return FunctionObj.CheckMD5(strPacketPath, strServerMD5)
+end
+
 
 function SetProgBar(objProgBarLayout)
 	local objProgBar = objProgBarLayout:GetObject("TipUpdate.ProgressBar")
@@ -301,6 +314,12 @@ function SetProgBar(objProgBarLayout)
 		elseif bRet == 0 and tipUtil:QueryFileExists(strPacketPath) then
 			l_bHasFinish = true
 			
+			local bSucc = CheckPacketMD5(strPacketPath)
+			if not bSucc then
+				ShowErrorPanel(objProgBarLayout:GetOwnerControl())
+				return
+			end
+			
 			objProgBar:SetProgress(120)
 			local strInnerText = "完成"
 			objOutText:SetText("")
@@ -314,20 +333,27 @@ end
 
 
 function DownLoadNewVersion(fnCallBack)
-	local strUrl = g_tNewVersionInfo["strPacketURL"]
-	if not IsRealString(strUrl) then
+	local strURL = g_tNewVersionInfo["strPacketURL"]
+	if not IsRealString(strURL) then
 		fnCallBack(-1)
 	end
 	
-	local strFileName = FunctionObj.GetFileSaveNameFromUrl(strUrl)
+	local strSavePath = GetPacketSavePath(strURL)
+	
+	TipLog("[DownLoadNewVersion] strURL: "..tostring(strURL).." strSavePath: "..tostring(strSavePath))
+	tipAsynUtil:AsynGetHttpFileWithProgress(strURL, strSavePath, false, fnCallBack)
+end
+
+
+function GetPacketSavePath(strURL)
+	local strFileName = FunctionObj.GetFileSaveNameFromUrl(strURL)
 	if not string.find(strFileName, "%.exe$") then
 		strFileName = strFileName..".exe"
 	end
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	
-	TipLog("[DownLoadNewVersion] strUrl: "..tostring(strUrl).." strSavePath: "..tostring(strSavePath))
-	tipAsynUtil:AsynGetHttpFileWithProgress(strUrl, strSavePath, false, fnCallBack)
+
+	return strSavePath
 end
 
 
@@ -374,7 +400,7 @@ end
 function SendUpdateReport(nState)
 	local tStatInfo = {}
 	tStatInfo.strEC = "UpdateWnd"
-	tStatInfo.strEL = tostring(nState)
+	tStatInfo.strEA = tostring(nState)
 	
 	if type(FunctionObj.TipConvStatistic) == "function" then
 		FunctionObj.TipConvStatistic(tStatInfo)

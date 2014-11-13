@@ -622,7 +622,7 @@ end
 
 function SaveConfigToFile()
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	FunctionObj.SaveFilterConfigToFile()
+	FunctionObj.SaveConfigToFileByKey("tFilterConfig")
 end
 
 

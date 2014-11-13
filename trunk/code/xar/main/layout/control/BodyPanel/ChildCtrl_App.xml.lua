@@ -45,7 +45,7 @@ end
 
 
 function DownLoadAppList(fnCallBack)
-	local tUserConfig = FunctionObj.GetUserConfigFromMem() or {}
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	
 	local strAppListURL = tUserConfig["strServerAppListURL"]
 	if not IsRealString(strAppListURL) then
