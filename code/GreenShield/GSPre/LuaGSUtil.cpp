@@ -403,26 +403,29 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 	if (bFilter)
 	{
 		static BOOL bOnce  = FALSE;
+		USHORT listen_port = 0;
+
 		if (!bOnce)
-		{
-			bOnce = TRUE;
+		{	
 			if (GsSetHook(L"GsNet32.dll"))
 			{
-				HANDLE hThread = GsStartProxy();
+				HANDLE hThread = GsStartProxy(&listen_port);
+
 				if (NULL != hThread)
 				{
-					bRet = GsEnable(TRUE);
+					bRet = GsEnable(TRUE, listen_port);
+					bOnce = TRUE;
 				}
 			}
 		}
 		else
 		{
-			bRet = GsEnable(TRUE);
+			bRet = GsEnable(TRUE, listen_port);
 		}
 	}
 	else
 	{
-		bRet = GsEnable(FALSE);
+		bRet = GsEnable(FALSE, 0);
 	}
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
