@@ -657,7 +657,6 @@ function InitTrayTipWnd(objHostWnd)
 		
 		--mousemove
 		if event3 == 512 then
-			g_tipNotifyIcon:ShowNotifyIconTip(false)
 			SetNotifyIconState()
 		end
 	end
@@ -695,7 +694,8 @@ function SetNotifyIconState(strText)
 	if not g_tipNotifyIcon then
 		return
 	end
-
+	g_tipNotifyIcon:ShowNotifyIconTip(false)
+	
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"] or false
 	local nFilterCount = tUserConfig["nFilterCountOneDay"] or 0
@@ -909,12 +909,16 @@ function ReadAllConfigInfo()
 		end
 		
 		local tContent = infoTable
+		local bMerge = false
 		local fnMergeOldFile = tConfig["fnMergeOldFile"]
 		if type(fnMergeOldFile) == "function" then
-			tContent = fnMergeOldFile(infoTable, strFileName)
+			bMerge, tContent = fnMergeOldFile(infoTable, strFileName)
 		end
 		
 		tConfig["tContent"] = tContent
+		if bMerge then
+			SaveConfigToFileByKey(strKey)
+		end
 	end
 
 	gbLoadCfgSucc = true	
@@ -926,7 +930,7 @@ end
 function MergeOldUserCfg(tCurrentCfg, strFileName)
 	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
 	if type(tOldCfg) ~= "table" then
-		return tCurrentCfg
+		return false, tCurrentCfg
 	end
 	
 	tCurrentCfg["nFilterCountTotal"] = tOldCfg["nFilterCountTotal"] or 0
@@ -939,14 +943,14 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
 	
 	tipUtil:DeletePathFile(strOldCfgPath)
-	return tCurrentCfg
+	return true, tCurrentCfg
 end
 
 
 function MergeOldFilterCfg(tCurrentCfg, strFileName)
 	local tOldCfg, strOldCfgPath  = GetOldCfgContent(strFileName)
 	if type(tOldCfg) ~= "table" then
-		return tCurrentCfg
+		return false, tCurrentCfg
 	end
 	
 	tCurrentCfg["tBlackList"] = tOldCfg["tBlackList"]
@@ -964,14 +968,14 @@ function MergeOldFilterCfg(tCurrentCfg, strFileName)
 	end
 	
 	tipUtil:DeletePathFile(strOldCfgPath)
-	return tCurrentCfg
+	return true, tCurrentCfg
 end
 
 
 function MergeOldVideoList(tCurrentCfg, strFileName)
 	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
 	if type(tOldCfg) ~= "table" then
-		return tCurrentCfg
+		return false, tCurrentCfg
 	end
 	
 	for strDomain, tInfo in pairs(tOldCfg) do
@@ -981,7 +985,7 @@ function MergeOldVideoList(tCurrentCfg, strFileName)
 	end
 	
 	tipUtil:DeletePathFile(strOldCfgPath)
-	return tCurrentCfg
+	return true, tCurrentCfg
 end
 
 
