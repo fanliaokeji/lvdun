@@ -403,7 +403,7 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 	if (bFilter)
 	{
 		static BOOL bOnce  = FALSE;
-		USHORT listen_port = 0;
+		static USHORT listen_port = 0;
 
 		if (!bOnce)
 		{	
