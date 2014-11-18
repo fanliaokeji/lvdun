@@ -285,3 +285,162 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 	}
 	return;
 }
+
+extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
+{
+	if (op == NULL || cid == NULL)
+	{
+		return ;
+	}
+	TSAUTO();	
+	char szPid[256] = {0};
+	extern void GetPeerID(CHAR * pszPeerID);
+	GetPeerID(szPid);
+	szPid[12] = '\0';
+	char szMac[128] = {0};
+	for(int i = 0; i < strlen(szPid); ++i)
+	{
+		if(i != 0 && i%2 == 0)
+		{
+			strcat(szMac, "-");
+		}
+		szMac[strlen(szMac)] = szPid[i];
+	}
+	std::string str = "http://stat.lvdun123.com:8082/?mac=";
+	str += szMac;
+	str += "&op=";
+	str += op;
+	str += "&cid=";
+	str += cid;
+	CHAR* szURL = new CHAR[MAX_PATH];
+	memset(szURL, 0, MAX_PATH);
+	sprintf(szURL, "%s", str.c_str());
+	SendHttpStatThread((LPVOID)szURL);
+}
+
+#include <vector>
+#include <COMUTIL.H>
+typedef std::vector<std::wstring> VectorVerbName;
+VectorVerbName*  GetVerbNames(bool bPin)
+{
+	TSAUTO();
+	static bool bInit = false;
+	static std::vector<std::wstring> vecPinStartMenuNames;
+	static std::vector<std::wstring> vecUnPinStartMenuNames;
+	if (!bInit )
+	{	
+		bInit = true;
+		vecPinStartMenuNames.push_back(_T("锁定到开始菜单"));vecPinStartMenuNames.push_back(_T("附到「开始」菜单"));
+		vecUnPinStartMenuNames.push_back(_T("从「开始」菜单脱离"));vecUnPinStartMenuNames.push_back(_T("(从「开始」菜单解锁"));
+	}
+
+	return bPin? &vecPinStartMenuNames : &vecUnPinStartMenuNames;
+}
+
+bool VerbNameMatch(TCHAR* tszName, bool bPin)
+{
+	TSAUTO();
+	VectorVerbName *pVec = GetVerbNames(bPin);
+	
+	VectorVerbName::iterator iter = pVec->begin();
+	VectorVerbName::iterator iter_end = pVec->end();
+	while(iter!=iter_end)
+	{
+		std::wstring strName= *iter;
+		if ( 0 == _wcsnicmp(tszName,strName.c_str(),strName.length()))
+			return true;
+		iter ++;
+	}
+	return false;
+}
+
+wchar_t* AnsiToUnicode( const char* szStr )
+{
+	int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
+	if (nLen == 0)
+	{
+		return NULL;
+	}
+	wchar_t* pResult = new wchar_t[nLen];
+	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
+	return pResult;
+}
+
+#define IF_FAILED_OR_NULL_BREAK(rv,ptr) \
+{if (FAILED(rv) || ptr == NULL) break;}
+
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+extern "C" __declspec(dllexport) bool PinToStartMenu4XP(bool bPin, char* szPath)
+{
+	TSAUTO();
+
+	TCHAR file_dir[MAX_PATH + 1] = {0};
+	TCHAR *file_name;
+	wchar_t* pwstr_Path = AnsiToUnicode(szPath);
+	if(pwstr_Path == NULL){
+		return false;
+	}
+
+	wcscpy_s(file_dir,MAX_PATH,pwstr_Path);
+	PathRemoveFileSpecW(file_dir);
+	file_name = PathFindFileName(pwstr_Path);
+	::CoInitialize(NULL);
+	CComPtr<IShellDispatch> pShellDisp;
+	CComPtr<Folder> folder_ptr;
+	CComPtr<FolderItem> folder_item_ptr;
+	CComPtr<FolderItemVerbs> folder_item_verbs_ptr;
+
+
+	HRESULT rv = CoCreateInstance( CLSID_Shell, NULL, CLSCTX_SERVER,IID_IDispatch, (LPVOID *) &pShellDisp );
+	do 
+	{
+		IF_FAILED_OR_NULL_BREAK(rv,pShellDisp);
+		rv = pShellDisp->NameSpace(_variant_t(file_dir),&folder_ptr);
+		IF_FAILED_OR_NULL_BREAK(rv,folder_ptr);
+		rv = folder_ptr->ParseName(CComBSTR(file_name),&folder_item_ptr);
+		IF_FAILED_OR_NULL_BREAK(rv,folder_item_ptr);
+		rv = folder_item_ptr->Verbs(&folder_item_verbs_ptr);
+		IF_FAILED_OR_NULL_BREAK(rv,folder_item_verbs_ptr);
+		long count = 0;
+		folder_item_verbs_ptr->get_Count(&count);
+		for (long i = 0; i < count ; ++i)
+		{
+			FolderItemVerb* item_verb = NULL;
+			rv = folder_item_verbs_ptr->Item(_variant_t(i),&item_verb);
+			if (SUCCEEDED(rv) && item_verb)
+			{
+				CComBSTR bstrName;
+				item_verb->get_Name(&bstrName);
+
+				if ( VerbNameMatch(bstrName,bPin) )
+				{
+					TSDEBUG4CXX("Find Verb to Pin:"<< bstrName);
+					int i = 0;
+					do
+					{
+						rv = item_verb->DoIt();
+						TSDEBUG4CXX("Try Do Verb. NO." << i+1 << ", return="<<rv);
+						if (SUCCEEDED(rv))
+						{
+							::SHChangeNotify(SHCNE_UPDATEDIR|SHCNE_INTERRUPT|SHCNE_ASSOCCHANGED, SHCNF_IDLIST |SHCNF_FLUSH | SHCNF_PATH|SHCNE_ASSOCCHANGED,
+								pwstr_Path,0);
+							Sleep(500);
+							delete [] pwstr_Path;
+							::CoUninitialize();
+							return true;
+						}else
+						{
+							Sleep(500);
+							rv = item_verb->DoIt();
+						}
+					}while ( i++ < 3);
+						
+					break;
+				}
+			}
+		}
+	} while (0);
+	delete [] pwstr_Path;
+	::CoUninitialize();
+	return false;
+}
