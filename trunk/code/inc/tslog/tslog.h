@@ -83,7 +83,7 @@ int _tmain(int argc, _TCHAR* argv[])
 /********************************************************************************************************
 	tslog大小不变!	定义版本,每次更改加1,版本号用来判断预留空间的使用情况
 ********************************************************************************************************/
-#define TSLOG_VERSION	0x00028100 //@@@@version
+#define TSLOG_VERSION	0x00030300 //@@@@version
 //兼容LOG4C
 #define LOG4C_TRACE		TSTRACE
 #define LOG4C_DEBUG		TSDEBUG
@@ -229,6 +229,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 //As long as shared memory can be no change in tslog
 #include <tchar.h>	//_T
+#include <stdlib.h> //_ultot
 #include <windows.h>
 #include <string>	//std::string strstr
 #include <vector>	//std:vector
@@ -254,6 +255,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #define MAX_PRIVATEDATA_SIZE	256		//TSLOG内部数据
 #define MAX_LOGFILE_INDEX		999		//日志文件名使用的索引
 #define MAX_HEX_DUMP_SIZE  		512
+#define MAX_ENVTSLOG_SIZE		128
 //no config, default
 #define DEFAULT_LOGFILE_PATH				"C:\\GSLOG\\"
 #define __TDEFAULT_LOGFILE_PATH				_T(DEFAULT_LOGFILE_PATH)
@@ -725,18 +727,26 @@ public:
 	//IID
 	inline  CTSLog& 		operator << (REFGUID _Val)  throw()
 	{
+		 
 		OPERATOR_XX_AUTOGUARD();
 		if(m_dwUsedSize < m_dwMaxLogDataSize)
 		{
- 			OLECHAR szGUID[40];
-			HRESULT hr = S_OK;
-			hr = StringFromGUID2(_Val, szGUID, 40);
-			if(SUCCEEDED(hr))
+			//OLECHAR szGUID2[40];
+			//HRESULT hr = S_OK;			
+			OLECHAR szGUID[40] = {0};
+			_snwprintf(szGUID, 40, L"{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}", 
+									(_Val.Data1 & 0xFF000000)  >> 24, (_Val.Data1 & 0x00FF0000)  >> 16, (_Val.Data1 & 0x0000FF00)  >> 8, (_Val.Data1 & 0x000000FF),
+									(_Val.Data2 & 0xFF00) >> 8, (_Val.Data2 & 0x00FF),
+									(_Val.Data3 & 0xFF00) >> 8, (_Val.Data3 & 0x00FF), 
+									_Val.Data4[0],_Val.Data4[1],
+									_Val.Data4[2], _Val.Data4[3], _Val.Data4[4], _Val.Data4[5], _Val.Data4[6], _Val.Data4[7]);			
+			//hr = StringFromGUID2(_Val, szGUID2, 40);
+			//if(SUCCEEDED(hr))
 				this->operator << (szGUID);
-			else
-			{
-				this->operator << ("{StringFromIID ERROR}");                                
-			}
+			//else
+			//{
+			//	this->operator << ("{StringFromIID ERROR}");                                
+			//}
 		}
 		return *this;
 	}
@@ -1263,13 +1273,22 @@ public:
 					hGlobal = NULL;
 					s_pThis->m_pszLogDataA = NULL;
 				}
+				if(s_hGlobalAlloc)
+				{
+					SetEnvironmentVariable(s_szTSLOGEnv, NULL);
+					GlobalUnlock(s_hGlobalAlloc);
+					GlobalFree(s_hGlobalAlloc);
+					s_hGlobalAlloc = NULL;
+				}				
 			}
 			if( INVALID_HANDLE_VALUE != s_pThis->s_hLogFile)
 				::CloseHandle( s_pThis->s_hLogFile );			
-			::UnmapViewOfFile( s_pThis );
+			//::UnmapViewOfFile( s_pThis );
+			
+			//::CloseHandle( s_hFileMap );
+			//s_hFileMap = NULL;
+			s_hGlobalAlloc = NULL;
 			s_pThis = NULL;
-			::CloseHandle( s_hFileMap );
-			s_hFileMap = NULL;
 			if (hMutex)
 			{
 				::ReleaseMutex( hMutex );
@@ -1286,7 +1305,9 @@ public:
 
 private:
 	static HANDLE	s_hMutex;			// 只用于同步初始化和终结化
-	static HANDLE	s_hFileMap;			// 文件影射句柄
+	//static HANDLE	s_hFileMap;			// 文件影射句柄 win10不能用，直接用s_hGlobalAlloc 替代
+	static TCHAR	s_szTSLOGEnv[MAX_ENVTSLOG_SIZE];
+	static HGLOBAL	s_hGlobalAlloc;
 	static CTSLog * s_pThis;			// 影射视图指针
 	static HINSTANCE s_hInst;			// 模块句柄
 	static TCHAR s_szModuleFileName[_MAX_PATH];
@@ -1334,9 +1355,11 @@ private:
 #pragma pack(pop)
 //避免多文件包时编译错误
 __declspec(selectany) HANDLE CTSLog::s_hMutex = NULL;
-__declspec(selectany) HANDLE CTSLog::s_hFileMap = NULL;
+//__declspec(selectany) HANDLE CTSLog::s_hFileMap = NULL;
+__declspec(selectany) HGLOBAL CTSLog::s_hGlobalAlloc = NULL;
 __declspec(selectany) CTSLog* CTSLog::s_pThis = NULL;
 __declspec(selectany) HINSTANCE CTSLog::s_hInst = NULL;
+__declspec(selectany) TCHAR CTSLog::s_szTSLOGEnv[MAX_ENVTSLOG_SIZE];
 __declspec(selectany) TCHAR CTSLog::s_szModuleFileName[_MAX_PATH];
 __declspec(selectany) CRITICAL_SECTION CTSLog::s_cs;
 __declspec(selectany) DWORD CTSLog::s_dwTlsIndex = TLS_OUT_OF_INDEXES;
@@ -1462,11 +1485,12 @@ CTSLog & CTSLog::GetInstance(LPCTSTR pszCallFunName, LPCVOID pvThis)
 	}
 	s_hInst = reinterpret_cast<HINSTANCE>(GetCurrentModuleHandle());
 	::GetModuleFileName(s_hInst, s_szModuleFileName, MAX_PATH - 1);
-	TCHAR szMutex[MAX_PATH] = _T("#mutexTSLOG") __TTSLOG_GROUP;
-	TCHAR szFileMap[MAX_PATH] = _T("#filemapTSLOG") __TTSLOG_GROUP;
+	TCHAR szMutex[MAX_PATH] = _T("#mutexTSLOGV3") __TTSLOG_GROUP;
+	_tcsncpy(s_szTSLOGEnv, _T("#envTSLOG") __TTSLOG_GROUP, MAX_ENVTSLOG_SIZE);
+	
 	DWORD dwPID = GetCurrentProcessId();
 	_sntprintf( szMutex + _tcslen(szMutex), MAX_PATH/2, _T("%d"), dwPID);
-	_sntprintf( szFileMap + _tcslen(szFileMap),MAX_PATH/2 , _T("%d"), dwPID);
+	_sntprintf( s_szTSLOGEnv + _tcslen(s_szTSLOGEnv),MAX_PATH/2 , _T("%d"), dwPID);
 	s_hMutex = CreateMutex(NULL, true, szMutex);
 	if(NULL == s_hMutex)
 	{
@@ -1476,7 +1500,8 @@ CTSLog & CTSLog::GetInstance(LPCTSTR pszCallFunName, LPCVOID pvThis)
 	bool bExist = (ERROR_ALREADY_EXISTS == ::GetLastError());
 	if(bExist)
 		::WaitForSingleObject(s_hMutex, INFINITE);				// 等待第一个模块把本单一实例创建完成，或Release完成
-	s_hFileMap = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(CTSLog), szFileMap);
+	/*
+	s_hFileMap = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(CTSLog), szFileMap);	
 	if( NULL == s_hFileMap )
 	{
 		::MessageBox( NULL, _T("CreateFileMapping failure"), s_szModuleFileName, MB_OK | MB_ICONERROR );
@@ -1484,7 +1509,7 @@ CTSLog & CTSLog::GetInstance(LPCTSTR pszCallFunName, LPCVOID pvThis)
 		::CloseHandle( s_hMutex );
 		s_hMutex = NULL;
 		::ExitProcess((UINT)-1);
-	}
+	}	
 	bExist = (ERROR_ALREADY_EXISTS == ::GetLastError());
 	// 如果第一个模块刚创建单一实例，又立即Release，会导致第二个模块hMutex已存在，但hFileMap已关闭的情况。此时，第二个模块当作新建单一实例	 
 	s_pThis = (CTSLog *) ::MapViewOfFile(s_hFileMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(CTSLog));		
@@ -1498,6 +1523,29 @@ CTSLog & CTSLog::GetInstance(LPCTSTR pszCallFunName, LPCVOID pvThis)
 		s_hMutex = NULL;
 		::ExitProcess((UINT)-1);
 	}
+	*/
+	TCHAR szpThis[32] = {0};
+	DWORD dwpThisLen = GetEnvironmentVariable(s_szTSLOGEnv, szpThis, 32);
+	if(0 == dwpThisLen)
+	{
+		s_hGlobalAlloc = GlobalAlloc(GMEM_FIXED, sizeof(CTSLog));
+		if(NULL == s_hGlobalAlloc)
+		{
+			::MessageBox(NULL, _T("GlobalAlloc failure"), s_szModuleFileName, MB_OK | MB_ICONERROR);
+			ReleaseMutex(s_hMutex);
+			CloseHandle(s_hMutex);
+			s_hMutex = NULL;
+			::ExitProcess((UINT)-1);
+		}
+		s_pThis = (CTSLog *)GlobalLock(s_hGlobalAlloc);		
+		_ultot((ULONG)(ULONG_PTR)s_pThis, szpThis, 10);
+		SetEnvironmentVariable(s_szTSLOGEnv, ( LPCTSTR)szpThis);
+	}
+	else
+	{
+		ULONG lpThis = (ULONG)_ttol(szpThis);
+		s_pThis = (CTSLog*)(ULONG_PTR) lpThis;
+	}	
 	TlsSetValue(s_dwTlsIndex, (LPVOID)pszCallFunName);
 	TlsSetValue(s_dwTlsIndex_this, (LPVOID)pvThis);
 	s_release.m_bIsModuleUnloading = FALSE; //禁止 Release 优化,这一行非写不可,2当模块退出时，不检测日志是否被更改
@@ -2113,8 +2161,8 @@ UINT CTSLog::GetStringCodePage(const char* szData)
 	{	 
 		if(pfnDllGetClassObject)
 		{
-			CoInitialize(NULL);
-			IClassFactory* pCF = NULL;
+		//	CoInitialize(NULL);//win10 A buffer overrun has occurred in IBConnection.exe which has corrupted the program's internal state. Press Break to debug the program or Continue to terminate the program.
+	 		IClassFactory* pCF = NULL;
 			IMultiLanguage2* pMLang = NULL;
 			hr = (*pfnDllGetClassObject)(CLSID_CMultiLanguage, IID_IClassFactory, (LPVOID*) &pCF);
 			if(pCF && SUCCEEDED(hr))
@@ -2140,7 +2188,8 @@ UINT CTSLog::GetStringCodePage(const char* szData)
 				}
 				pMLang->Release();
 			}
-			CoUninitialize();
+			 
+			//CoUninitialize();
 		}//pfnDllGetClassObject
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
@@ -3390,7 +3439,7 @@ DWORD CTSLog::GetSafeValidValue(const CTSLog::PARAM_TYPE &tslog_eParamType,LPSTR
 		case CTSLog::PT_GUIDREF:
 			{
 				_GUID * pGUID = NULL;
-				LPOLESTR lpGUIDString = NULL;
+				//LPOLESTR lpGUIDString = NULL;
 				if(PT_GUID == tslog_eParamType)
 					pGUID = (_GUID *)tslog_pnRegValue;
 				else
@@ -3400,17 +3449,26 @@ DWORD CTSLog::GetSafeValidValue(const CTSLog::PARAM_TYPE &tslog_eParamType,LPSTR
 					dwRet = _snprintf(tslog_szRegValue,MAX_USERDATA_SIZE, " = NULL");
 					break;
 				}
-				if(S_OK == StringFromIID(*pGUID, &lpGUIDString))
-				{
+
+				GUID _Val = * pGUID;
+				OLECHAR szGUID[40] = {0};
+				_snwprintf(szGUID, 40, L"{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}", 
+									(_Val.Data1 & 0xFF000000)  >> 24, (_Val.Data1 & 0x00FF0000)  >> 16, (_Val.Data1 & 0x0000FF00)  >> 8, (_Val.Data1 & 0x000000FF),
+									(_Val.Data2 & 0xFF00) >> 8, (_Val.Data2 & 0x00FF),
+									(_Val.Data3 & 0xFF00) >> 8, (_Val.Data3 & 0x00FF), 
+									_Val.Data4[0],_Val.Data4[1],
+									_Val.Data4[2], _Val.Data4[3], _Val.Data4[4], _Val.Data4[5], _Val.Data4[6], _Val.Data4[7]);
+				//if(S_OK == StringFromIID(*pGUID, &lpGUIDString))
+				//{
 #ifdef OLE2A
-					dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = %s", W2A(lpGUIDString));
+					dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = %s", W2A(szGUID));
 #else
-					dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = %S", lpGUIDString);
+					dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = %S", szGUID);
 #endif
-					CoTaskMemFree(lpGUIDString);
-				}
-				else
-					dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = {StringFromIID ERROR}");
+					//CoTaskMemFree(lpGUIDString);
+				//}
+				//else
+				//	dwRet = _snprintf(tslog_szRegValue, MAX_USERDATA_SIZE," = {StringFromIID ERROR}");
 			}
 			break;
 		default:
@@ -3598,8 +3656,8 @@ LPCTSTR CTSLog::TraceAuto(LPCSTR pszFuncSig, DWORD dwEBP, BOOL bIsStatic)
 			}
 			if(MAX_USERDATA_SIZE <= tslog_nPos)
 				tslog_strDestFuncSig = pszFuncSig;
-		}
-	}
+		} //endif tslog_bRet
+	}//endif CTSLog::IsTRACEValid()
 #if (defined(UNICODE) || defined(_UNICODE))
  	static std::basic_string<WCHAR>tslog_strDestFuncSigW;
  	CTSLog::MultiByteToUnicode(tslog_strDestFuncSig,tslog_strDestFuncSigW );
@@ -4413,15 +4471,18 @@ public:
 		OPERATOR_XX_AUTOGUARD();
 		if(m_dwUsedSize < m_dwMaxLogDataSize)
 		{
-			OLECHAR szIID[40];
-			HRESULT hr = S_OK;
-			hr = StringFromGUID2(_Val, szIID, 40);
-			if(SUCCEEDED(hr))
-				this->operator << (szIID);
-			else
-			{
-				this->operator << ("{StringFromIID ERROR}");                                
-			}
+			//OLECHAR szGUID[40];
+			//HRESULT hr = S_OK;
+			//hr = StringFromGUID2(_Val, szIID, 40);
+			 
+			OLECHAR szGUID[40] = {0};
+			_snwprintf(szGUID, 40, L"{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}", 
+									(_Val.Data1 & 0xFF000000)  >> 24, (_Val.Data1 & 0x00FF0000)  >> 16, (_Val.Data1 & 0x0000FF00)  >> 8, (_Val.Data1 & 0x000000FF),
+									(_Val.Data2 & 0xFF00) >> 8, (_Val.Data2 & 0x00FF),
+									(_Val.Data3 & 0xFF00) >> 8, (_Val.Data3 & 0x00FF), 
+									_Val.Data4[0],_Val.Data4[1],
+									_Val.Data4[2], _Val.Data4[3], _Val.Data4[4], _Val.Data4[5], _Val.Data4[6], _Val.Data4[7]);			 
+			this->operator << (szGUID);			 
 		}
 		return *this;
 	}
