@@ -117,7 +117,9 @@ bool CopyFilesToPublicFolder()
 		L"GsSvc.dll",
 		L"Microsoft.VC90.CRT.manifest",
 		L"msvcp90.dll",
-		L"msvcr90.dll"
+		L"msvcr90.dll",
+		L"Microsoft.VC90.ATL.manifest",
+		L"ATL90.dll"
 	};
 
 	wchar_t souorcePath[MAX_PATH];
