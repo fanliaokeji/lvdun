@@ -1395,15 +1395,14 @@ function SendStartupReport(bShowWnd)
 	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
-		tStatInfo.strEC = "startup"
+		tStatInfo.strEC = "startup"  --进入上报
 		tStatInfo.strEA = GetGSMinorVer() or ""
-		tStatInfo.strEV = 0   --进入上报
 	else
-		tStatInfo.strEC = "showui"
+		tStatInfo.strEC = "showui" 	 --展示上报
 		tStatInfo.strEA = GetInstallSrc() or ""
-		tStatInfo.strEV = 1   --展示上报
 	end
-		
+	
+	tStatInfo.strEV = 1
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
