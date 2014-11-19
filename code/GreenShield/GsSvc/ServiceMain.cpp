@@ -67,7 +67,7 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
 	HANDLE hMutex = NULL;
-	
+
 	LaunchGreenShieldConfig launchGreenShieldCfg;
 	if(launchGreenShieldCfg.UpdateConfig()) {
 		if(launchGreenShieldCfg.Valid()) {
@@ -184,7 +184,6 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 				}
 				do {
 					if(ProcessDetect::IsBrowerFileName(pe32.szExeFile)) {
-						
 						if(pe32.th32ProcessID == 0 || pe32.th32ProcessID == 4) {
 							// Idle or system
 							continue;
