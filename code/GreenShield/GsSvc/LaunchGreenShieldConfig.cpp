@@ -6,8 +6,6 @@
 #include <sstream>
 #include <cassert>
 
-#include <Shlwapi.h>
-
 #include "Utility.h"
 #include "AdvanceFunctionProvider.h"
 #include "ScopeResourceHandle.h"
@@ -61,46 +59,9 @@ bool LaunchGreenShieldConfig::UpdateConfig()
 	return true;
 }
 
-bool LaunchGreenShieldConfig::GetGreenShieldConfigPath(wchar_t* szPathBuffer, std::size_t bufferLength)
-{
-	if(IsVistaOrLatter()) {
-		AdvanceFunctionProvider shFunctionProvider;
-		AdvanceFunctionProvider::SHGetKnownFolderPathFuncType SHGetKnownFolderPathFunctionPtr = shFunctionProvider.GetSHGetKnownFolderPathFunctionPtr();
-		if(SHGetKnownFolderPathFunctionPtr == NULL) {
-			return false;
-		}
-		const GUID publicFolderGuid = {0xDFDF76A2, 0xC82A, 0x4D63, {0x90, 0x6A, 0x56, 0x44, 0xAC, 0x45, 0x73, 0x85}};
-		wchar_t* szPublicPath = NULL;
-		HRESULT hr = SHGetKnownFolderPathFunctionPtr(publicFolderGuid, 0, NULL, &szPublicPath);
-		if(FAILED(hr)) {
-			return false;
-		}
-		ScopeResourceHandle<LPVOID, void (STDAPICALLTYPE*)(LPVOID)> autoFreePublicPathBuffer(szPublicPath, ::CoTaskMemFree);
-		std::size_t length = std::wcslen(szPublicPath) + 1;
-		if(bufferLength < length) {
-			return false;
-		}
-		std::copy(szPublicPath, szPublicPath + length, szPathBuffer);
-		return true;
-	}
-	else {
-		wchar_t tempBuffer[MAX_PATH];
-		HRESULT hr = SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, &tempBuffer[0]);
-		if(FAILED(hr)) {
-			return false;
-		}
-		std::size_t length = std::wcslen(tempBuffer) + 1;
-		if(bufferLength < length) {
-			return false;
-		}
-		std::copy(tempBuffer, tempBuffer + length, szPathBuffer);
-		return true;
-	}
-}
-
 bool LaunchGreenShieldConfig::GetConfigFilePath(wchar_t* szPathBuffer, std::size_t bufferLength)
 {
-	if(!this->GetGreenShieldConfigPath(szPathBuffer, bufferLength)) {
+	if(GetAllUsersPublicPath(szPathBuffer, bufferLength)) {
 		return false;
 	}
 	wchar_t tmpBuffer[MAX_PATH];

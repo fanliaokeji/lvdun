@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "ServiceInstall.h"
 
+#include <cassert>
+
 #include "ScopeResourceHandle.h"
+#include "Utility.h"
 
 static const wchar_t* szServiceName = L"GreenShieldService";
 extern HINSTANCE g_hModule;
@@ -108,6 +111,113 @@ bool IsServiceInstalled()
 	return true;
 }
 
+bool CopyFilesToPublicFolder()
+{
+	wchar_t* dependFiles[] = {
+		L"GsSvc.dll",
+		L"Microsoft.VC90.CRT.manifest",
+		L"msvcp90.dll",
+		L"msvcr90.dll"
+	};
+
+	wchar_t souorcePath[MAX_PATH];
+	if(!GetModuleFileName(g_hModule, souorcePath, MAX_PATH)) {
+		TSERROR4CXX("Failed to get current dll path.");
+		return false;
+    }
+
+	std::size_t sourceDirPathLength = std::wcslen(souorcePath);
+	for (std::size_t i = std::wcslen(souorcePath); souorcePath[sourceDirPathLength - 1] != '\\' && sourceDirPathLength > 0; --sourceDirPathLength)
+		;
+	if (sourceDirPathLength == 0) {
+		return false;
+	}
+	souorcePath[sourceDirPathLength] = L'\0';
+
+	wchar_t targetPath[MAX_PATH];
+	if(!GetAllUsersPublicPath(targetPath, MAX_PATH)) {
+		TSERROR4CXX("Failed to get public path.");
+		return false;
+	}
+
+	std::size_t targetDirPathLength = std::wcslen(targetPath);
+	if(targetDirPathLength == 0 || targetDirPathLength + 1 == sizeof(targetPath) / sizeof(targetPath[0])) {
+		return false;
+	}
+	if(targetPath[targetDirPathLength - 1] != '\\') {
+		targetPath[targetDirPathLength++] = '\\';
+	}
+	// GreenShield\\addin
+	const wchar_t* addinSuffix = L"GreenShield\\addin\\";
+	std::size_t addinSuffixLength = std::wcslen(addinSuffix);
+	if(targetDirPathLength + addinSuffixLength + 1 > sizeof(targetPath) / sizeof(targetPath[0])) {
+		return false;
+	}
+	std::copy(addinSuffix, addinSuffix + addinSuffixLength + 1, targetPath + targetDirPathLength);
+	targetDirPathLength += addinSuffixLength;
+	assert(targetDirPathLength == std::wcslen(targetPath));
+
+	if (!::PathFileExists(targetPath)) {
+		if (!RecurseCreateDirctory(targetPath)) {
+			return false;
+		}
+ 	}
+
+	// 判断serviceDll是否存在 如果存在先删除
+	wchar_t* serviceDll = L"GsSvc.dll";
+	std::size_t fileNameLength = std::wcslen(serviceDll);
+	if (sourceDirPathLength + fileNameLength + 1 > sizeof(souorcePath) / sizeof(souorcePath[0])
+		|| targetDirPathLength + fileNameLength + 1 > sizeof(targetPath) / sizeof(targetPath[0])) {
+		return false;
+	}
+	std::copy(serviceDll, serviceDll + fileNameLength + 1, &souorcePath[sourceDirPathLength]);
+	std::copy(serviceDll, serviceDll + fileNameLength + 1, &targetPath[targetDirPathLength]);
+
+	if (::PathFileExists(targetPath)) {
+		// 判断版本 放在外面 这里不再判断
+		if (!::DeleteFile(targetPath)) {
+			// 删除失败 重名名 重启删除
+			wchar_t fileNameRenamed[MAX_PATH];
+			const wchar_t* renameSuffix = L".renamed";
+			std::size_t suffixLength = std::wcslen(renameSuffix);
+			if (sourceDirPathLength + fileNameLength + suffixLength + 1 > sizeof(fileNameRenamed) / sizeof(fileNameRenamed[0])) {
+				return false;
+			}
+			std::copy(targetPath, targetPath + targetDirPathLength + fileNameLength, fileNameRenamed);
+			std::copy(renameSuffix, renameSuffix + suffixLength + 1, fileNameRenamed + targetDirPathLength + fileNameLength);
+			if (::MoveFileEx(targetPath, fileNameRenamed, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+				::MoveFileEx(fileNameRenamed, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+			}
+		}
+	}
+
+	if (::PathFileExists(targetPath)) {
+		return false;
+	}
+
+	for (std::size_t fileIndex = 0; fileIndex < sizeof(dependFiles) / sizeof(dependFiles[0]); ++fileIndex) {
+		fileNameLength = std::wcslen(dependFiles[fileIndex]);
+		if (sourceDirPathLength + fileNameLength + 1 > sizeof(souorcePath) / sizeof(souorcePath[0])
+			|| targetDirPathLength + fileNameLength + 1 > sizeof(targetPath) / sizeof(targetPath[0])) {
+			TSERROR4CXX("File name too long.");
+			return false;
+		}
+		std::copy(dependFiles[fileIndex], dependFiles[fileIndex] + fileNameLength + 1, &targetPath[targetDirPathLength]);
+		if (!::PathFileExists(souorcePath)) {
+			TSERROR4CXX("Source file not found: " << souorcePath);
+			return false;
+		}
+		if (!::PathFileExists(targetPath)) {
+			std::copy(dependFiles[fileIndex], dependFiles[fileIndex] + fileNameLength + 1, &souorcePath[sourceDirPathLength]);
+			TSINFO4CXX("Copy: " << souorcePath << " -> " << targetPath);
+			if (!::CopyFile(souorcePath, targetPath, FALSE)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 HRESULT InstallService()
 {
 	TSAUTO();
@@ -115,12 +225,74 @@ HRESULT InstallService()
 		UninstallService();
 	}
 	wchar_t szPath[MAX_PATH];
-
     if(!GetModuleFileName(g_hModule, szPath, MAX_PATH)) {
 		return HRESULT_FROM_WIN32(::GetLastError());
     }
 	HRESULT hr = CreateGreenShieldService(szPath);
 	return hr;
+}
+
+HRESULT SetupInstallService()
+{
+	TSAUTO();
+	wchar_t currentDllPath[MAX_PATH];
+    if(!GetModuleFileName(g_hModule, currentDllPath, MAX_PATH)) {
+		return HRESULT_FROM_WIN32(::GetLastError());
+    }
+
+	wchar_t serviceDllPath[MAX_PATH];
+	if(!GetAllUsersPublicPath(serviceDllPath, MAX_PATH)) {
+		TSERROR4CXX("Failed to get public path.");
+		return false;
+	}
+
+	std::size_t pathLength = std::wcslen(serviceDllPath);
+	if(pathLength == 0 || pathLength + 1 == sizeof(serviceDllPath) / sizeof(serviceDllPath[0])) {
+		return false;
+	}
+	if(serviceDllPath[pathLength - 1] != '\\') {
+		serviceDllPath[pathLength++] = '\\';
+	}
+
+	// GreenShield\\addin\\GsSvc.dll
+	const wchar_t* addinSuffix = L"GreenShield\\addin\\GsSvc.dll";
+	std::size_t addinSuffixLength = std::wcslen(addinSuffix);
+
+	if(pathLength + addinSuffixLength + 1 > sizeof(serviceDllPath) / sizeof(serviceDllPath[0])) {
+		return false;
+	}
+	std::copy(addinSuffix, addinSuffix + addinSuffixLength + 1, serviceDllPath + pathLength);
+
+	if(IsServiceInstalled()) {
+		if(::PathFileExists(serviceDllPath)) {
+			// 版本比较
+			DWORD old_v1, old_v2, old_v3, old_v4;
+			DWORD new_v1, new_v2, new_v3, new_v4;
+			if(!GetFileVersionNumber(serviceDllPath, old_v1, old_v2, old_v3, old_v4)
+				|| !GetFileVersionNumber(currentDllPath, new_v1, new_v2, new_v3, new_v4)) {
+				TSERROR4CXX("Failed to get file version number.");
+				if(!GetFileVersionNumber(serviceDllPath, old_v1, old_v2, old_v3, old_v4)) {
+					TSINFO4CXX(serviceDllPath);
+				}
+				else {
+					TSINFO4CXX(currentDllPath);
+				}
+				return false;
+			}
+			if(old_v1 > new_v1 || old_v2 > new_v2 || old_v3 > new_v3 || old_v4 > new_v4) {
+				TSERROR4CXX("The old service dll is later than this.");
+				return false;
+			}
+		}
+		UninstallService();
+	}
+
+	if(!CopyFilesToPublicFolder()) {
+		TSERROR4CXX("CopyFilesToPublicFolder return false.");
+		return E_FAIL;
+	}
+
+	return CreateGreenShieldService(serviceDllPath);
 }
 
 HRESULT UninstallService()
@@ -252,4 +424,66 @@ AfterStopLabel:
 		TSERROR4CXX("DeleteService failed. Error: " << dwDeleteError);
 		return HRESULT_FROM_WIN32(dwDeleteError);
 	}
+}
+
+bool DeleteSeriviceDll()
+{
+	wchar_t serviceDllPath[MAX_PATH];
+	if(!GetAllUsersPublicPath(serviceDllPath, MAX_PATH)) {
+		TSERROR4CXX("Failed to get public path.");
+		return false;
+	}
+
+	std::size_t serviceDllLength = std::wcslen(serviceDllPath);
+	if(serviceDllLength == 0 || serviceDllLength + 1 == sizeof(serviceDllPath) / sizeof(serviceDllPath[0])) {
+		return false;
+	}
+	if(serviceDllPath[serviceDllLength - 1] != '\\') {
+		serviceDllPath[serviceDllLength++] = '\\';
+	}
+
+	// GreenShield\\addin\\GsSvc.dll
+	const wchar_t* addinSuffix = L"GreenShield\\addin\\GsSvc.dll";
+	std::size_t addinSuffixLength = std::wcslen(addinSuffix);
+
+	if(serviceDllLength + addinSuffixLength + 1 > sizeof(serviceDllPath) / sizeof(serviceDllPath[0])) {
+		return false;
+	}
+	std::copy(addinSuffix, addinSuffix + addinSuffixLength + 1, serviceDllPath + serviceDllLength);
+	serviceDllLength += addinSuffixLength;
+
+	if(::PathFileExists(serviceDllPath)) {
+		if(!::DeleteFile(serviceDllPath)) {
+			wchar_t fileNameRenamed[MAX_PATH];
+			const wchar_t* renameSuffix = L".renamed";
+			std::size_t suffixLength = std::wcslen(renameSuffix);
+			if (serviceDllLength + suffixLength + 1 > sizeof(fileNameRenamed) / sizeof(fileNameRenamed[0])) {
+				return false;
+			}
+			std::copy(serviceDllPath, serviceDllPath + serviceDllLength, fileNameRenamed);
+			std::copy(renameSuffix, renameSuffix + suffixLength + 1, fileNameRenamed + serviceDllLength);
+			if (::MoveFileEx(serviceDllPath, fileNameRenamed, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+				if(!::MoveFileEx(fileNameRenamed, NULL, MOVEFILE_DELAY_UNTIL_REBOOT)) {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+HRESULT SetupUninstallService()
+{
+	HRESULT hr = UninstallService();
+	if(FAILED(hr)) {
+		TSERROR4CXX("UninstallService failed");
+		return hr;
+	}
+	if(!DeleteSeriviceDll()) {
+		TSWARN4CXX("Failed to delete service dll.");
+	}
+	return hr;
 }
