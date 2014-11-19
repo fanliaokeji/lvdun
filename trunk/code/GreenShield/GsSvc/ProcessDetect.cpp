@@ -10,13 +10,46 @@
 typedef bool ProccessPredFuncionType(const wchar_t* szFileName);
 
 const wchar_t* browserFileNameTable[] = {
-	L"chrome.exe",
 	L"iexplore.exe",
-	L"firefox.exe"
+	L"chrome.exe",
+	L"sogouexplorer.exe",
+	L"twchrome.exe",
+	L"baidubrowser.exe",
+	L"ucbrowser.exe",
+	L"qqbrowser.exe",
+	L"liebao.exe",
+	L"theworld.exe",
+	L"firefox.exe",
+	L"iceweasel.exe",
+	// L"waterfox.exe",
+	L"ruiying.exe",
+	L"ttraveler.exe",
+	L"taobrowser.exe",
+	L"360chrome.exe",
+	L"safari.exe",
+	L"opera.exe",
+	L"360se.exe",
+	L"2345explorer.exe",
+	L"maxthon.exe",
+	L"chromium.exe",
+	L"yandex.exe",
+	L"qupzilla.exe",
+	L"dragon.exe",
+	L"115chrome.exe",
+	L"114ie.exe",
+	L"114web.exe"
+};
+
+const wchar_t* browserFileNameEndWithTable[] = {
+	L"sleipnir.exe",
+	L"webkit.exe",
+	L"myie.exe",
+	L"browser.exe"
 };
 
 bool ProcessDetect::IsBrowerFileName(const wchar_t* szFileName)
 {
+	// full match
 	for(std::size_t index = 0; index < sizeof(browserFileNameTable) / sizeof(browserFileNameTable[0]); ++index) {
 		for(std::size_t i = 0;; ++i) {
 			if(std::towlower(szFileName[i]) != browserFileNameTable[index][i]) {
@@ -28,6 +61,15 @@ bool ProcessDetect::IsBrowerFileName(const wchar_t* szFileName)
 			else if(szFileName[i] == L'\0' || browserFileNameTable[index][i] == L'\0') {
 				break;
 			}
+		}
+	}
+
+	// end with
+	for(std::size_t index = 0; index < sizeof(browserFileNameEndWithTable) / sizeof(browserFileNameEndWithTable[0]); ++index) {
+		std::size_t len = std::wcslen(browserFileNameEndWithTable[index]);
+		std::size_t fileNameLength = std::wcslen(szFileName);
+		if(fileNameLength >= len && std::equal(szFileName + fileNameLength - len, szFileName + fileNameLength, browserFileNameEndWithTable[index])) {
+			return true;
 		}
 	}
 	return false;
