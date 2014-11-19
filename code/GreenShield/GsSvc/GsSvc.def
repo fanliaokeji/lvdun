@@ -1,0 +1,6 @@
+LIBRARY	"GsSvc"
+EXPORTS
+	DllMain				PRIVATE
+	ServiceMain			PRIVATE
+	InstallService		PRIVATE
+	UninstallService	PRIVATE
