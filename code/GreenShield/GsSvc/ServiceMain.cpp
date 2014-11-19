@@ -166,9 +166,15 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 		}
 
 		if(hMutex == NULL || ProcessDetect::IsGreenShieldOrGreenShieldSetupRunning()) {
-			dwTimeToWait = 20 * 1000;
+			dwTimeToWait = 1000;
 		}
 		else if(launchGreenShieldCfg.Valid() && launchGreenShieldCfg.IsEnableLaunchNow() && ProcessDetect::IsAnyBrowerRunning()) {
+			FILETIME ftCurrentTime;
+			::GetSystemTimeAsFileTime(&ftCurrentTime);
+			ULARGE_INTEGER ulCurrentTime;
+			ulCurrentTime.HighPart = ftCurrentTime.dwHighDateTime;
+			ulCurrentTime.LowPart = ftCurrentTime.dwLowDateTime;
+			unsigned long long ullCurrentTime = ulCurrentTime.QuadPart;
 			do {
 				HANDLE hProcessSnap = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 				if(hProcessSnap == INVALID_HANDLE_VALUE) {
@@ -188,6 +194,27 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 							// Idle or system
 							continue;
 						}
+						HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe32.th32ProcessID);
+						if (hProcess == NULL) {
+							continue;
+						}
+						ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseProcessHandle(hProcess, ::CloseHandle);
+						FILETIME ftCreationTime;
+						FILETIME ftExitTime;
+						FILETIME ftKernelTime;
+						FILETIME ftUserTime;
+						if (!::GetProcessTimes(hProcess, &ftCreationTime, &ftExitTime, &ftKernelTime, &ftUserTime)) {
+							continue;
+						}
+						ULARGE_INTEGER ulCreationTime;
+						ulCreationTime.HighPart = ftCreationTime.dwHighDateTime;
+						ulCreationTime.LowPart = ftCreationTime.dwLowDateTime;
+						unsigned long long ullCreationTime = ulCreationTime.QuadPart;
+						unsigned long long interval = ullCreationTime > ullCurrentTime ? ullCreationTime - ullCurrentTime : ullCurrentTime - ullCreationTime;
+						if(interval > 5ull * 10ull * 1000ull * 1000ull) {
+							continue;
+						}
+
 						if(launchGreenShieldCfg.CheckEnableLaunchNow()) {
 							if(!::LaunchGreenShield(pe32.th32ProcessID)) {
 								dwTimeToWait = 5 * 60 * 1000;
