@@ -61,7 +61,7 @@ bool LaunchGreenShieldConfig::UpdateConfig()
 
 bool LaunchGreenShieldConfig::GetConfigFilePath(wchar_t* szPathBuffer, std::size_t bufferLength)
 {
-	if(GetAllUsersPublicPath(szPathBuffer, bufferLength)) {
+	if(!GetAllUsersPublicPath(szPathBuffer, bufferLength)) {
 		return false;
 	}
 	wchar_t tmpBuffer[MAX_PATH];
