@@ -25,7 +25,14 @@ bool LaunchGreenShieldConfig::UpdateConfig()
 		return false;
 	}
 	if(!::PathFileExists(configFilePath)) {
-		return false;
+		this->m_NoRemind = 0;
+		this->m_NoRemindSpanDay = 7;
+		this->m_Cnt = 0;
+		this->m_LaunchInterval = 1;
+		this->m_MaxCntPerDay = 1;
+		this->m_LastPull = 0;
+		this->m_Valid = true;
+		return true;
 	}
 
 	const wchar_t* szSectionName = L"pusher";
@@ -212,9 +219,6 @@ bool LaunchGreenShieldConfig::CheckEnableLaunchNow()
 
 	wchar_t configFilePath[MAX_PATH];
 	if(!this->GetConfigFilePath(configFilePath, MAX_PATH)) {
-		return false;
-	}
-	if(!::PathFileExists(configFilePath)) {
 		return false;
 	}
 	const wchar_t* szSectionName = L"pusher";
