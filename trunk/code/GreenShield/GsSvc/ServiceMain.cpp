@@ -89,6 +89,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 		TSERROR4CXX(L"Load Config failed");
 	}
 
+	bool isVistaOrLatter = IsVistaOrLatter();
+
     while(1) {
         DWORD dwTimeToWait = 1000;
 		if(hMutex == NULL) {
@@ -194,7 +196,12 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 							// Idle or system
 							continue;
 						}
-						HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe32.th32ProcessID);
+						DWORD dwDesiredAccess = PROCESS_QUERY_INFORMATION;
+						if(isVistaOrLatter) {
+							dwDesiredAccess = PROCESS_QUERY_LIMITED_INFORMATION;
+						}
+						HANDLE hProcess = ::OpenProcess(dwDesiredAccess, FALSE, pe32.th32ProcessID);
+
 						if (hProcess == NULL) {
 							continue;
 						}
