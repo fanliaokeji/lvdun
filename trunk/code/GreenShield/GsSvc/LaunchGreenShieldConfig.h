@@ -27,7 +27,6 @@ public:
 	bool IsEnableLaunchNow() const;
 	bool CheckEnableLaunchNow();
 private:
-	bool GetGreenShieldConfigPath(wchar_t* szPathBuffer, std::size_t bufferLength);
 	bool GetConfigFilePath(wchar_t* szPathBuffer, std::size_t bufferLength);
 	bool wstring_to_int64(const wchar_t* szStr, __int64& value);
 };

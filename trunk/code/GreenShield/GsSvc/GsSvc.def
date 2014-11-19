@@ -1,6 +1,9 @@
 LIBRARY	"GsSvc"
 EXPORTS
-	DllMain				PRIVATE
-	ServiceMain			PRIVATE
-	InstallService		PRIVATE
-	UninstallService	PRIVATE
+	DllMain					PRIVATE
+	ServiceMain				PRIVATE
+	InstallService			PRIVATE
+	UninstallService		PRIVATE
+	SetupInstallService		PRIVATE
+	SetupUninstallService	PRIVATE
+	

@@ -2,9 +2,13 @@
 #include "Utility.h"
 
 #include <Windows.h>
+#include <Shlwapi.h>
+
+#include <sstream>
 
 #include "ScopeResourceHandle.h"
 #include "WTSProvider.h"
+#include "AdvanceFunctionProvider.h"
 
 bool IsVistaOrLatter()
 {
@@ -144,4 +148,101 @@ bool LaunchGreenShield(DWORD browserProcessId)
 		}
 		return true;
 	}
+}
+
+bool GetFileVersionNumber(const wchar_t* szFileName, DWORD& v1, DWORD& v2, DWORD& v3, DWORD& v4)
+{
+	bool result = false;
+	DWORD dwHandle = 0;
+	DWORD dwSize = ::GetFileVersionInfoSize(szFileName, &dwHandle);
+	if (dwSize > 0) {
+		wchar_t* pVersionInfo = new wchar_t[dwSize + 1];
+		if(::GetFileVersionInfo(szFileName, dwHandle, dwSize, pVersionInfo)) {
+			VS_FIXEDFILEINFO * pvi;
+			UINT uLength = 0;
+			if (::VerQueryValueA(pVersionInfo, "\\", (void **)&pvi, &uLength)) {
+				v1 = HIWORD(pvi->dwFileVersionMS);
+				v2 = LOWORD(pvi->dwFileVersionMS);
+				v3 = HIWORD(pvi->dwFileVersionLS);
+				v4 = LOWORD(pvi->dwFileVersionLS);
+				result = true;
+			}
+		}
+		delete[] pVersionInfo;
+	}
+	return result;
+}
+
+bool GetAllUsersPublicPath(wchar_t* buffer, std::size_t bufferLength)
+{
+	if(IsVistaOrLatter()) {
+		AdvanceFunctionProvider shFunctionProvider;
+		AdvanceFunctionProvider::SHGetKnownFolderPathFuncType SHGetKnownFolderPathFunctionPtr = shFunctionProvider.GetSHGetKnownFolderPathFunctionPtr();
+		if(SHGetKnownFolderPathFunctionPtr == NULL) {
+			return false;
+		}
+		const GUID publicFolderGuid = {0xDFDF76A2, 0xC82A, 0x4D63, {0x90, 0x6A, 0x56, 0x44, 0xAC, 0x45, 0x73, 0x85}};
+		wchar_t* szPublicPath = NULL;
+		HRESULT hr = SHGetKnownFolderPathFunctionPtr(publicFolderGuid, 0, NULL, &szPublicPath);
+		if(FAILED(hr)) {
+			return false;
+		}
+		ScopeResourceHandle<LPVOID, void (STDAPICALLTYPE*)(LPVOID)> autoFreePublicPathBuffer(szPublicPath, ::CoTaskMemFree);
+		std::size_t length = std::wcslen(szPublicPath) + 1;
+		if(bufferLength < length) {
+			return false;
+		}
+		std::copy(szPublicPath, szPublicPath + length, buffer);
+		return true;
+	}
+	else {
+		wchar_t tempBuffer[MAX_PATH];
+		HRESULT hr = SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, &tempBuffer[0]);
+		if(FAILED(hr)) {
+			return false;
+		}
+		std::size_t length = std::wcslen(tempBuffer) + 1;
+		if(bufferLength < length) {
+			return false;
+		}
+		std::copy(tempBuffer, tempBuffer + length, buffer);
+		return true;
+	}
+}
+
+bool RecurseCreateDirctory(const std::wstring& path)
+{
+	std::size_t pos = path.find(':');
+	if (pos == std::wstring::npos) {
+		return false;
+	}
+	std::wstring _path;
+	_path.reserve(path.size());
+	_path.append(path.begin(), path.begin() + pos + 1);
+	++pos;
+	while (pos < path.size()) {
+		std::size_t start_pos = pos;
+		for (; pos < path.size() && path[pos] == '\\'; ++pos)
+			;
+		if (pos == path.size()) {
+			return true;
+		}
+		++pos;
+		for (; pos < path.size() && path[pos] != '\\'; ++pos)
+			;
+		_path.append(path.begin() + start_pos, path.begin() + pos);
+		if (::PathFileExists(_path.c_str())) {
+			if ((::GetFileAttributes(_path.c_str()) & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+				return false;
+			}
+		}
+		else {
+			if (::CreateDirectory(_path.c_str(), NULL) == FALSE) {
+				if (::GetLastError() != ERROR_ALREADY_EXISTS || (::GetFileAttributes(_path.c_str()) & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
