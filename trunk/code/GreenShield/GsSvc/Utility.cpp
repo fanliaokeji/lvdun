@@ -36,23 +36,28 @@ bool GetGreenShiledExeFilePath(wchar_t* buffer, std::size_t bufferLength)
 
 bool LaunchGreenShield(DWORD browserProcessId)
 {
+	TSAUTO();
 	const wchar_t launchParameters[] = L" /sstartfrom service /embedding";
 	if(!IsVistaOrLatter()) {
 		// XP
+		TSTRACE4CXX("XP");
 		HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, browserProcessId);
 		if(hProcess == NULL) {
+			TSERROR4CXX("OpenProcess fail. Error: " << ::GetLastError());
 			return false;
 		}
 		ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseProcessHandle(hProcess, ::CloseHandle);
 
 		HANDLE hProcessToken = NULL;
 		if(!::OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, &hProcessToken)) {
+			TSERROR4CXX("OpenProcessToken fail. Error: " << ::GetLastError());
 			return false;
 		}
 		ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseProcessToken(hProcessToken, ::CloseHandle);
 
 		HANDLE hDuplicateToken = NULL;
 		if(!::DuplicateTokenEx(hProcessToken, TOKEN_ALL_ACCESS, NULL, SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
+			TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
 			return false;
 		}
 
@@ -82,14 +87,17 @@ bool LaunchGreenShield(DWORD browserProcessId)
 		std::memset(&processInfomation, 0, sizeof(PROCESS_INFORMATION));
 
 		if(!::CreateProcessAsUser(hDuplicateToken, NULL, exeFilePath, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfomation)) {
+			TSERROR4CXX("CreateProcessAsUser fail. Error: " << ::GetLastError());
 			return false;
 		}
 		return true;
 	}
 	else {
+		TSTRACE4CXX("Vista Or Higher");
 		// Vista Or Higher
 		DWORD sessionId = 0;
 		if(!::ProcessIdToSessionId(browserProcessId, &sessionId)) {
+			TSERROR4CXX("ProcessIdToSessionId fail. Error: " << ::GetLastError());
 			return false;
 		}
 
@@ -97,25 +105,43 @@ bool LaunchGreenShield(DWORD browserProcessId)
 
 		WTSProvider::WTSQueryUserTokenFuncType wtsQueryUserTokenPtr = wtsProvider.GetWTSQueryUserTokenFunctionPtr();
 		if(!wtsQueryUserTokenPtr) {
+			TSERROR4CXX("wtsQueryUserTokenPtr == NULL.");
 			return false;
 		}
 
 		HANDLE hUserToken = NULL;
 		if(!wtsQueryUserTokenPtr(sessionId, &hUserToken)) {
+			TSERROR4CXX("WTSQueryUserToken fail. Error: " << ::GetLastError());
 			return false;
 		}
 		
 		ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseUserToken(hUserToken, ::CloseHandle);
 
-		TOKEN_LINKED_TOKEN linkedToken; 
-		DWORD dwSize = sizeof(TOKEN_LINKED_TOKEN);
-		if (!::GetTokenInformation(hUserToken, TokenLinkedToken, &linkedToken, dwSize, &dwSize)) {
+		TOKEN_ELEVATION_TYPE tokenElevationType;
+		DWORD dwSize = sizeof(TOKEN_ELEVATION_TYPE);
+		if(!::GetTokenInformation(hUserToken, TokenElevationType, &tokenElevationType, dwSize, &dwSize)) {
+			TSERROR4CXX("GetTokenInformation TokenElevationType fail." << ::GetLastError());
 			return false;
 		}
-
 		HANDLE hDuplicateToken = NULL;
-		if(!::DuplicateTokenEx(linkedToken.LinkedToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
-			return false;
+		if(tokenElevationType == TokenElevationTypeLimited) {
+			TOKEN_LINKED_TOKEN linkedToken; 
+			dwSize = sizeof(TOKEN_LINKED_TOKEN);
+			if (!::GetTokenInformation(hUserToken, TokenLinkedToken, &linkedToken, dwSize, &dwSize)) {
+				TSERROR4CXX("GetTokenInformation TokenLinkedToken fail. Error: " << ::GetLastError());
+				return false;
+			}
+
+			if(!::DuplicateTokenEx(linkedToken.LinkedToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
+				TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
+				return false;
+			}
+		}
+		else {
+			if(!::DuplicateTokenEx(hUserToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
+				TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
+				return false;
+			}
 		}
 
 		ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseDuplicateToken(hDuplicateToken, ::CloseHandle);
@@ -144,6 +170,7 @@ bool LaunchGreenShield(DWORD browserProcessId)
 		std::memset(&processInfomation, 0, sizeof(PROCESS_INFORMATION));
 
 		if(!::CreateProcessAsUser(hDuplicateToken, NULL, exeFilePath, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfomation)) {
+			TSERROR4CXX("CreateProcessAsUser fail. Error: " << ::GetLastError());
 			return false;
 		}
 		return true;
