@@ -7,6 +7,7 @@ local gTimeoutTimerId = nil
 
 local gbLoadCfgSucc = false
 local g_tipNotifyIcon = nil
+local g_bIsUpdating = false
 local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
 
@@ -140,6 +141,8 @@ function RegisterFunctionObject(self)
 	obj.SaveSpecifyFilterTableToMem = SaveSpecifyFilterTableToMem
 	obj.SaveConfigToFileByKey = SaveConfigToFileByKey
 	obj.ReadConfigFromMemByKey = ReadConfigFromMemByKey
+	obj.CheckIsUpdating = CheckIsUpdating
+	obj.SetIsUpdating = SetIsUpdating
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -326,6 +329,17 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 			fnCallBack(-3)
 		end
 	end)
+end
+
+
+function CheckIsUpdating()
+	return g_bIsUpdating
+end
+
+function SetIsUpdating(bIsUpdating)
+	if type(bIsUpdating) == "boolean" then
+		g_bIsUpdating = bIsUpdating
+	end
 end
 
 
@@ -1660,7 +1674,7 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 			return
 		end
 		
-		if 1 == bRet then
+		if 1 == bRet then	--安装包已经存在
 			fnCallBack(strSavePath, tNewVersionInfo)
 			return
 		end
@@ -1710,6 +1724,11 @@ end
 
 
 function TryForceUpdate(tServerConfig)
+	if CheckIsUpdating() then
+		TipLog("[TryForceUpdate] CheckIsUpdating failed,another thread is updating!")
+		return
+	end
+
 	local bPassCheck = CheckCommonUpdateTime(1)
 	if not bPassCheck then
 		TipLog("[TryForceUpdate] CheckCommonUpdateTime failed")
@@ -1736,7 +1755,10 @@ function TryForceUpdate(tServerConfig)
 		return 
 	end
 	
+	SetIsUpdating(true)
 	DownLoadNewVersion(tForceUpdate, function(strRealPath) 
+		SetIsUpdating(false)
+	
 		if not IsRealString(strRealPath) then
 			return
 		end
@@ -1772,6 +1794,18 @@ function FixStartConfig(tServerConfig)
 	if not IsNilString(maxcntperday) then
 		tipUtil:WriteINI("pusher", "maxcntperday", maxcntperday, strStartCfgPath)
 	end
+end
+
+function FixUserConfig(tServerConfig)
+	local tUserConfigInServer = tServerConfig["tUserConfigInServer"]
+	if type(tUserConfigInServer) ~= "table" then
+		return
+	end
+
+	local tLocalUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	tLocalUserConfig["nHideBubblePopWndInSec"] = tUserConfigInServer["nHideBubblePopWndInSec"] or 5
+	
+	SaveConfigToFileByKey("tUserConfig")
 end
 
 
@@ -1830,6 +1864,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	local tServerConfig = LoadTableFromFile(strServerPath) or {}
 	TryForceUpdate(tServerConfig)
 	FixStartConfig(tServerConfig)
+	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
 end
 
