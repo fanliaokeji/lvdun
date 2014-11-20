@@ -43,6 +43,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipBubbleWnd.xml.lua" func="OnClickCloseBtn" />
+						<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+						<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
 					</eventlist>
 				</obj>
 				
@@ -56,6 +58,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="TipBubbleWnd.xml.lua" func="OnClickCheckBox" />
+						<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+						<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
 					</eventlist>
 				</obj>
 			</children>

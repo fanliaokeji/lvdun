@@ -1,10 +1,12 @@
 local tipUtil = XLGetObject("GS.Util")
+local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_bHasInit = false
 local g_tConfigElemList = {
 	[1] = {"AutoStup", "开机时启动",  function(self,eventname) StateChange_AutoStup(self,eventname) end},
 	[2] = {"AutoUpdate", "自动检查更新", function(self,eventname) StateChange_AutoUpdate(self,eventname) end},
 	[3] = {"HideMainPage", "启动后隐藏主界面", function(self,eventname) StateChange_HideMain(self,eventname) end},
 	[4] = {"BubbleRemind", "使用气泡提示", function(self,eventname) StateChange_Bubble(self,eventname) end},
+	[5] = {"FiltInTime", "开启实时过滤", function(self,eventname) StateChange_FiltInTime(self,eventname) end},
 }
 
 local g_tReportState = {}
@@ -16,6 +18,25 @@ function OnShowPanel(self, bShow)
 	end
 end
 
+
+function SetElemState(self, strElemKey, bState)
+	if not IsRealString(strElemKey) or type(bState) ~= "boolean" then
+		return 
+	end
+	
+	for nIndex, tElemInfo in pairs(g_tConfigElemList) do
+		local strKeyName = tElemInfo[1]
+		if strElemKey == strKeyName then
+			local objElem = self:GetControlObject(strElemKey)
+			if not objElem then 
+				return			
+			end
+			
+			objElem:SetSwitchState(bState)
+			g_tReportState[nIndex] = bState
+		end
+	end
+end
 
 ---事件---
 function OnMouseEnterBkg(self)
@@ -76,9 +97,9 @@ function InitConfitCtrl(objRootCtrl)
 	
 	local nFatherLeft, nFatherTop, nFatherRight, nFatherBottom = objFather:GetObjPos(objElem)
 	local nFatherHeight = nFatherBottom - nFatherTop
-	local nElemHeight = 38
-	local nElemSpace = 12
-	local nExtraSpace = 14
+	local nElemHeight = 35
+	local nElemSpace = 10
+	local nExtraSpace = 5
 
 	local tUserCfg = GetConfigTable() or {}
 	
@@ -166,6 +187,30 @@ function StateChange_Bubble(self, eventname)
 	SaveStateToCfg("BubbleRemind", bState)
 	g_tReportState[4] = bState
 end
+
+--开启实时过滤
+function StateChange_FiltInTime(self, eventname)
+	local bState = self:GetSwitchState()
+	SaveStateToCfg("FiltInTime", bState)
+	g_tReportState[5] = bState
+	SaveStateToFile(bState)
+end
+
+
+function SaveStateToFile(bNewState)
+	local strStartCfgPath = tFunctionHelper.GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	if bNewState then
+		tipUtil:WriteINI("pusher", "noremind", 0, strStartCfgPath)
+	else
+		tipUtil:WriteINI("pusher", "noremind", 1, strStartCfgPath)
+	end	
+end
+
+
 ---------------
 
 -------------ConfigElemCtrl---------
@@ -224,7 +269,6 @@ end
 
 
 function GetConfigTable()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return nil
 	end
@@ -234,7 +278,6 @@ function GetConfigTable()
 end
 
 function SaveConfigTable()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.SaveConfigToFileByKey) ~= "function" then
 		return
 	end

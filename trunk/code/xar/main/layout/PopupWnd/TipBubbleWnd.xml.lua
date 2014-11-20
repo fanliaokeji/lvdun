@@ -49,6 +49,11 @@ function OnMouseLeave(self, x, y)
 end
 
 
+function RouteToFather(self)
+	self:RouteToFather()
+end
+
+
 function EndTimer()
 	if g_hTimer then
 		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
@@ -96,6 +101,8 @@ function OnClickCheckBox(self)
 	local bNewState = not g_bCheckState
 	SetCheckBoxState(self, bNewState)
 	SaveStateToFile(bNewState)
+	
+	SetConfigState(not bNewState)
 end
 
 
@@ -111,6 +118,37 @@ function SetCheckBoxState(objCheckBox, bState)
 	end
 	
 	g_bCheckState = bState
+end
+
+
+function SetConfigState(bState)
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd("GreenWallTipWnd.MainFrame")
+	if nil == frameHostWnd then
+		return
+	end
+	
+	local objTree = frameHostWnd:GetBindUIObjectTree()
+	if nil == objTree then
+		return
+	end
+	
+	local objRootCtrl = objTree:GetUIObject("root.layout:root.ctrl")
+	if nil == objRootCtrl then
+		return
+	end
+	
+	local objBodyContainer = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
+	if nil == objBodyContainer then
+		return
+	end
+	
+	local objConfigCtrl = objBodyContainer:GetChildObjByCtrlName("ChildCtrl_Config")
+	if nil == objConfigCtrl then
+		return
+	end
+	
+	objConfigCtrl:SetElemState("FiltInTime", bState)
 end
 
 
