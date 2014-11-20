@@ -132,6 +132,8 @@ bool LaunchGreenShield(DWORD browserProcessId)
 				return false;
 			}
 
+			ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseLinkedToken(linkedToken.LinkedToken, ::CloseHandle);
+
 			if(!::DuplicateTokenEx(linkedToken.LinkedToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
 				TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
 				return false;
