@@ -5,6 +5,7 @@
 		</attr_def>
 		<method_def>
 			<OnShowPanel file="ChildCtrl_Config.xml.lua" func="OnShowPanel"/>
+			<SetElemState file="ChildCtrl_Config.xml.lua" func="SetElemState"/>
 		</method_def>
 		<event_def>
 			
@@ -47,7 +48,7 @@
 						<left>12</left>
 						<top>0</top>
 						<width>289</width>
-						<height>38</height>
+						<height>35</height>
 						<texture>Greenwall.ConfigElem.ElemBkg.Normal</texture>
 					</attr>
 					<children>
@@ -66,7 +67,7 @@
 						<obj id="ConfigElem.SwitchBtn" class="TextureObject">
 							<attr>
 								<left>father.width-18-54</left>
-								<top>10</top>
+								<top>(father.height-20)/2</top>
 								<width>54</width>
 								<height>20</height>
 								<texture>GreenWall.Common.SwitchButton.Open</texture>
