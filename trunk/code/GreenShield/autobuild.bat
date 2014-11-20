@@ -35,7 +35,7 @@ xcopy "%basedir:~1,-1%..\appimage" "%basedir:~1,-1%..\..\bin\setup\input_main\ap
 del /f /q /s "%basedir:~1,-1%..\..\bin\setup\input_main\res\*"
 xcopy "%basedir:~1,-1%..\res" "%basedir:~1,-1%..\..\bin\setup\input_main\res" /e /y
 
-for %%b in (GreenShield,GsNet,GsNetFilter,GSPre) do (
+for %%b in (GreenShield,GsNet,GsNetFilter,GSPre,GsSvc) do (
 	for %%i in (.dll,.map,.exe,.pdb) do (
 		copy /y "%basedir:~1,-1%\Release\*%%i" !pdbdir!
 	)
