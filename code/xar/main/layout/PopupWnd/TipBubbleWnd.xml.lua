@@ -1,6 +1,7 @@
 local tipUtil = XLGetObject( "GS.Util" )
 local g_bCheckState = false
 local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+local g_hTimer = nil
 
 function OnCreate( self )
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
@@ -19,7 +20,68 @@ end
 function OnShowWindow(self, bShow)
 	if bShow then
 		SaveStateToFile(false)
+		StartHideTimer(self)
 	end
+end
+
+
+function StartHideTimer(objHostWnd)
+	EndTimer()
+
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local nTimeSpanInSec = tonumber(tUserConfig["nHideBubblePopWndInSec"]) or 5
+	
+	local nTimeSpanInMs = nTimeSpanInSec * 1000
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	g_hTimer = timerManager:SetTimer(function(item, id)
+			item:KillTimer(id)
+			objHostWnd:Show(0)		
+		end, nTimeSpanInMs)
+end
+
+
+function OnMouseEnter( self )
+	EndTimer()
+end
+
+function OnMouseLeave(self, x, y)
+	StartTimerWithCheck(self)
+end
+
+
+function EndTimer()
+	if g_hTimer then
+		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+		timerManager:KillTimer(g_hTimer)
+		g_hTimer = nil
+	end
+end
+
+
+function StartTimerWithCheck(objCtrl)
+	if nil == objCtrl or type(objCtrl.GetOwner) ~= "function" then
+		return
+	end
+
+	local objTree = objCtrl:GetOwner()
+	if nil == objTree then
+		return
+	end
+	
+	local objRootCtrl = objTree:GetUIObject("root.layout")	
+	local objHostWnd = objTree:GetBindHostWnd()
+	local mouseX, mouseY = tipUtil:GetCursorPos()
+	local nWndX, nWndY = objHostWnd:ScreenPtToHostWndPt(mouseX, mouseY)
+	local nTreeX, nTreeY = objHostWnd:HostWndPtToTreePt(nWndX, nWndY)
+	local nEdgeWidth = 1
+	local nLeft, nTop, nRight, nBottom = objRootCtrl:GetAbsPos()
+	
+	if nTreeX > (nLeft+nEdgeWidth) and nTreeX < (nRight-nEdgeWidth) 
+		and nTreeY < (nBottom-nEdgeWidth) and nTreeY > (nTop+nEdgeWidth) then
+		return
+	end
+
+	StartHideTimer(objHostWnd)
 end
 
 

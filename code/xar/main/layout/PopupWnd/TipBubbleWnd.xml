@@ -3,22 +3,22 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>220</width>
-			<height>51</height>
+			<width>186</width>
+			<height>40</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>220</width>
-				<height>51</height>
+				<width>186</width>
+				<height>40</height>
 				<texture>GreenWall.BubbleWnd.Bkg</texture>
 			</attr>				
 			<children>					
 				<obj id="BubbleWnd.Text" class="TextObject">
 					<attr>
-						<left>0</left>
+						<left>5</left>
 						<top>0</top>
 						<width>father.width</width>
 						<height>father.height</height>
@@ -32,8 +32,8 @@
 				
 				<obj id="BubbleWnd.CloseBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-17</left>
-						<top>5</top>
+						<left>father.width-20</left>
+						<top>6</top>
 						<width>12</width>
 						<height>12</height>
 						<NormalBkgID>GreenWall.BtnClose.Normal</NormalBkgID>
@@ -49,9 +49,9 @@
 				<obj id="BubbleWnd.CheckBox" class="TextureObject">
 					<attr>
 						<left>10</left>
-						<top>(father.height-22)/2</top>
-						<width>22</width>
-						<height>22</height>
+						<top>(father.height-20)/2+1</top>
+						<width>20</width>
+						<height>20</height>
 						<texture>GreenWall.BubbleWnd.CheckBox.Empty</texture>
 					</attr>
 					<eventlist>
@@ -59,6 +59,10 @@
 					</eventlist>
 				</obj>
 			</children>
+			<eventlist>
+				<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="OnMouseEnter" />
+				<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="OnMouseLeave" />
+			</eventlist>
 		</obj>
 	</objtreetemplate>
 
@@ -67,8 +71,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>220</width>
-            <height>51</height>
+            <width>186</width>
+            <height>40</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

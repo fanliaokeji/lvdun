@@ -65,8 +65,7 @@ end
 
 ---------------------------
 function OnInitCountElem(self)
-
-
+	--
 end
 
 
@@ -158,7 +157,7 @@ function TryShowBubble(nAdvCnt)
 
 	for nIndex, nSpecialCount in ipairs(tSpecialCount) do
 		if nAdvCnt == nSpecialCount then
-			local strText = "绿盾广告管家\r\n今日累计过滤："..tostring(nSpecialCount).."次"
+			local strText = "绿盾广告管家\r\n今日累计过滤广告："..tostring(nSpecialCount).."次"
 			tFunctionHelper.PopupNotifyIconTip(strText, true)
 		end
 	end
@@ -271,6 +270,8 @@ end
 
 
 function StartAutoUpdateTimer()
+	CheckUpdateCond()
+
 	local nTimeSpanInMs = 3600 * 1000
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
@@ -363,6 +364,11 @@ function CheckUpdateCond()
 		return
 	end
 
+	if tFunctionHelper.CheckIsUpdating() then
+		TipLog("[CheckUpdateCond] CheckIsUpdating failed,another thread is updating!")
+		return
+	end
+	
 	if not tFunctionHelper.CheckCommonUpdateTime(1) then
 		TipLog("[CheckUpdateCond] CheckCommonUpdateTime failed")
 		return
@@ -420,17 +426,21 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 
+	tFunctionHelper.SetIsUpdating(true)
+	
 	tFunctionHelper.DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
 				
-		if 0 == bRet then
+		tFunctionHelper.SetIsUpdating(false)
+		
+		if 0 == bRet then --下载安装包成功
 			fnCallBack(strRealPath, tNewVersionInfo)
 			return
 		end
 		
-		if 1 == bRet then
+		if 1 == bRet then  --安装包已经存在
 			fnCallBack(strSavePath, tNewVersionInfo)
 			return
 		end
