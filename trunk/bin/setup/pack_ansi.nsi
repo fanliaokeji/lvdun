@@ -54,8 +54,9 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.3"
-!define VERSION_LASTNUMBER 3
+!define PRODUCT_VERSION "1.0.0.4"
+!define VERSION_LASTNUMBER 4
+!define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
@@ -65,6 +66,9 @@ Var str_ChannelID
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
+
+;卸载包开关（请不要轻易打开）
+;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -87,7 +91,7 @@ SetDatablockOptimize on
 !define MUI_CUSTOMFUNCTION_UNGUIINIT un.myGUIInit
 
 !insertmacro MUI_LANGUAGE "SimpChinese"
-SetFont 微软雅黑 10
+SetFont 宋体 9
 !define TEXTCOLOR "4D4D4D"
 RequestExecutionLevel highest
 
@@ -114,7 +118,11 @@ UninstPage custom un.MyUnstall
 ;应用程序显示名字
 Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 ;应用程序输出路径
-OutFile "bin\${EM_OUTFILE_NAME}"
+!ifdef SWITCH_CREATE_UNINSTALL_PAKAGE
+	OutFile "uninst\_uninst.exe"
+!else
+	OutFile "bin\${EM_OUTFILE_NAME}"
+!endif
 InstallDir "$PROGRAMFILES\GreenShield"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
@@ -177,17 +185,33 @@ Function DoInstall
   StrCpy $0 ""
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
   ${If} $0 == ""
-	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,反馈请加QQ群67542242"
+	HideWindow
+	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请加QQ群67542242寻求帮助"
 	Call OnClickQuitOK
   ${EndIf}
-  IfFileExists "$0" +3 0
-  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,反馈请加QQ群67542242"
+  IfFileExists "$0" +4 0
+  HideWindow
+  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请加QQ群67542242寻求帮助"
   Call OnClickQuitOK
+ 
   SetOutPath "$0\GreenShield"
   File "input_config\GreenShield\DataV.dat"
   File "input_config\GreenShield\DataW.dat"
+  
+  ;重命名
+  ;Delete "$0\GreenShield\*.bak"
+  IfFileExists "$0\GreenShield\VideoList.dat" 0 +3
+  IfFileExists "$0\GreenShield\VideoList.dat.bak" +2 0
+  Rename "$0\GreenShield\VideoList.dat" "$0\GreenShield\VideoList.dat.bak"
+  IfFileExists "$0\GreenShield\UserConfig.dat" 0 +3
+  IfFileExists "$0\GreenShield\UserConfig.dat.bak" +2 0
+  Rename "$0\GreenShield\UserConfig.dat" "$0\GreenShield\UserConfig.dat.bak"
+  IfFileExists "$0\GreenShield\FilterConfig.dat" 0 +3
+  IfFileExists "$0\GreenShield\FilterConfig.dat.bak" +2 0
+  Rename "$0\GreenShield\FilterConfig.dat" "$0\GreenShield\FilterConfig.dat.bak"
+  
   SetOutPath "$0"
-  SetOverwrite off
+  SetOverwrite on
   File /r "input_config\*.*"
   ;先删再装
   RMDir /r "$INSTDIR\program"
@@ -211,8 +235,12 @@ Function DoInstall
   SetOutPath "$INSTDIR"
   SetOverwrite on
   File /r "input_main\*.*"
-  WriteUninstaller "$INSTDIR\uninst.exe"
+  ;WriteUninstaller "$INSTDIR\uninst.exe"
+  File "uninst\uninst.exe"
   
+  ;最后一步注册服务
+  IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
+  System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupInstallService() ?u'
   
   ;上报统计
   SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -226,7 +254,9 @@ Function DoInstall
   StrCpy $R3 "0"
   IfErrors 0 +2
   StrCpy $R3 "1"
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "$R0", t "$R3", i ${VERSION_LASTNUMBER}) '
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
+  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
   ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
@@ -283,22 +313,43 @@ Function CmdSilentInstall
 	
 	;发退出消息
 	Call CloseExe
-	
+	 ;先卸载旧的
+	;ReadRegStr $4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	;${If} $4 != 0
+	;${AndIf} $4 != ""
+	;IfFileExists $4 0 NextAction
+	;StrCpy $1 $4
+	;Call UnstallOnlyFile
+	;NextAction:
+	;${EndIf}
 	Call DoInstall
 	SetOutPath "$INSTDIR"
-	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
+	;锁定到任务栏
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
 		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+		SetOutPath "$INSTDIR"
 	${else}
 		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+		;锁定到开始菜单栏
+		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+		ExecShell startpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+		; 创建开始菜单快捷方式
+		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 	${Endif}
+	
+	;桌面快捷方式
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
 	;静默安装也写开机启动
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
@@ -315,6 +366,34 @@ Function CmdSilentInstall
 	FunctionReturn:
 FunctionEnd
 
+Function UnstallOnlyFile
+	;删除
+	RMDir /r "$1\appimage"
+	RMDir /r "$1\xar"
+	Delete "$1\uninst.exe"
+	RMDir /r "$1\program"
+	RMDir /r "$1\res"
+	
+	 ;文件被占用则改一下名字
+	StrCpy $R4 "$1\program\GsNet32.dll"
+	IfFileExists $R4 0 RenameOK
+	BeginRename:
+	Push "1000" 
+	Call Random
+	Pop $2
+	IfFileExists "$R4.$2" BeginRename
+	Rename $R4 "$R4.$2"
+	Delete /REBOOTOK "$R4.$2"
+	RenameOK:
+	
+	StrCpy "$R0" "$1"
+	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
+	Pop $R1
+	${If} $R1 == 1
+		RMDir /r "$1"
+	${EndIf}
+FunctionEnd
+
 Function CmdUnstall
 	${GetOptions} $R1 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
@@ -328,35 +407,19 @@ Function CmdUnstall
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
 		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		;解除锁定到开始菜单栏
+		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	${Endif}
-	
-	;删除
-	RMDir /r "$INSTDIR\appimage"
-	RMDir /r "$INSTDIR\xar"
-	Delete "$INSTDIR\uninst.exe"
-	RMDir /r "$INSTDIR\program"
-	RMDir /r "$INSTDIR\res"
-	
-	 ;文件被占用则改一下名字
-	StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
-	IfFileExists $R4 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call Random
-	Pop $0
-	IfFileExists "$R4.$0" BeginRename
-	Rename $R4 "$R4.$0"
-	Delete /REBOOTOK "$R4.$0"
-	RenameOK:
-	
-	StrCpy "$R0" "$INSTDIR"
-	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
-	Pop $R1
-	${If} $R1 == 1
-		RMDir /r "$INSTDIR"
-	${EndIf}
+	;最先卸载服务
+	IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
+    System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupUninstallService() ?u'
+	StrCpy $1 $INSTDIR
+	Call UnstallOnlyFile
 	;读取渠道号
 	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R4 != ""
@@ -366,7 +429,8 @@ Function CmdUnstall
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "$str_ChannelID", t "0", i ${VERSION_LASTNUMBER}) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
@@ -412,6 +476,10 @@ Function UpdateChanel
 FunctionEnd
 	
 Function .onInit
+	${If} ${SWITCH_CREATE_UNINSTALL_PAKAGE} == 1 
+		WriteUninstaller "$EXEDIR\uninst.exe"
+		Abort
+	${EndIf}
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
@@ -430,6 +498,9 @@ Function .onInit
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
+	File "input_main\program\GsSvc.dll"
+	File "input_main\program\Microsoft.VC90.ATL.manifest"
+	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	Call CmdSilentInstall
 	Call CmdUnstall
@@ -497,7 +568,7 @@ Function GsMessageBox
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 3
     ShowWindow $0 ${SW_HIDE}
-	
+	HideWindow
     nsDialogs::Create 1044
     Pop $Hwnd_MsgBox
     ${If} $Hwnd_MsgBox == error
@@ -553,6 +624,8 @@ Function GsMessageBox
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
 	Create_End:
+	HideWindow
+	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
 	System::Call  'User32::GetDesktopWindow() i.r8'
 	${NSW_CenterWindow} $HWNDPARENT $8
 	system::Call `user32::SetWindowText(i $lab_MsgBoxText, t "$R6")`
@@ -712,6 +785,10 @@ Function OnClick_BrowseButton
 	Push "\" ; input chop char
 	Call GetLastPart
 	Pop $R1 ; last part "ProgramName"
+	${If} $R1 == 0
+	${Orif} $R1 == ""
+		StrCpy $R1 "GreenShield"
+	${EndIf}
 
 	nsDialogs::SelectFolderDialog "请选择 $R0 安装的文件夹:" "$R0"
 	Pop $0
@@ -774,10 +851,34 @@ FunctionEnd
 
 ;更改目录事件
 Function OnChange_DirRequest
-	Pop $0
 	System::Call "user32::GetWindowText(i $Txt_Browser, t .r0, i ${NSIS_MAX_STRLEN})"
-	;MessageBox MB_ICONINFORMATION|MB_OK $0
 	StrCpy $INSTDIR $0
+	StrCpy $6 $INSTDIR 2
+	StrCpy $7 $INSTDIR 3
+	${If} $INSTDIR == ""
+	${OrIf} $INSTDIR == 0
+	${OrIf} $INSTDIR == $6
+	${OrIf} $INSTDIR == $7
+		EnableWindow $Btn_Install 0
+		EnableWindow $Btn_Return 0
+	${Else}
+		StrCpy $8 ""
+		${DriveSpace} $7 "/D=F /S=K" $8
+		${If} $8 == ""
+			EnableWindow $Btn_Install 0
+			EnableWindow $Btn_Return 0
+			Abort
+		${EndIf}
+		IntCmp ${NeedSpace} $8 0 0 ErrorChunk
+		EnableWindow $Btn_Install 1
+		EnableWindow $Btn_Return 1
+		Goto EndFunction
+		ErrorChunk:
+			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}KB"
+			EnableWindow $Btn_Install 0
+			EnableWindow $Btn_Return 0
+		EndFunction:
+	${EndIf}
 FunctionEnd
 
 Function onClickZidingyi
@@ -925,8 +1026,28 @@ Function RelGotoPage
 FunctionEnd
 
 Function OnClick_Install
-	StrCpy $R9 1 ;Goto the next page
-    Call RelGotoPage
+	StrCpy $6 $INSTDIR 2
+	StrCpy $7 $INSTDIR 3
+	${If} $INSTDIR == ""
+	${OrIf} $INSTDIR == 0
+	${OrIf} $INSTDIR == $6
+	${OrIf} $INSTDIR == $7
+		MessageBox MB_OK|MB_ICONSTOP "路径不合法"
+	${Else}
+		StrCpy $8 ""
+		${DriveSpace} $7 "/D=F /S=K" $8
+		${If} $8 == ""
+			MessageBox MB_OK|MB_ICONSTOP "路径不合法"
+			Abort
+		${EndIf}
+		IntCmp ${NeedSpace} $8 0 0 ErrorChunk
+		StrCpy $R9 1 ;Goto the next page
+		Call RelGotoPage
+		Goto EndFunction
+		ErrorChunk:
+			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}KB"
+		EndFunction:
+	${EndIf}
 FunctionEnd
 
 Function WelcomePage
@@ -937,7 +1058,7 @@ Function WelcomePage
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 3
     ShowWindow $0 ${SW_HIDE}
-	
+	HideWindow
     nsDialogs::Create 1044
     Pop $Hwnd_Welcome
     ${If} $Hwnd_Welcome == error
@@ -1015,6 +1136,7 @@ Function WelcomePage
 	SendMessage $Txt_Browser ${WM_SETFONT} $Handle_Font 0
  	${NSD_OnChange} $Txt_Browser OnChange_DirRequest
 	ShowWindow $Txt_Browser ${SW_HIDE}
+	;EnableWindow $Txt_Browser 0
 	;目录选择按钮
 	${NSD_CreateBrowseButton} 399 239 63 26 ""
  	Pop	$Btn_Browser
@@ -1031,7 +1153,7 @@ Function WelcomePage
 	;路径选择文字描述
 	StrCpy $3 218
 	IntOp $3 $3 + $Int_FontOffset
-	 ${NSD_CreateLabel} 16 $3 80 18 "安装位置："
+	 ${NSD_CreateLabel} 16 $3 250 18 "安装位置："
     Pop $Lbl_Path
     SetCtlColors $Lbl_Path "${TEXTCOLOR}" transparent ;背景设成透明
 	ShowWindow $Lbl_Path ${SW_HIDE}
@@ -1105,6 +1227,7 @@ Function WelcomePage
 	GetFunctionAddress $0 onCloseCallback
 	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
 	
+	ShowWindow $HWNDPARENT ${SW_SHOW}
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
 FunctionEnd
@@ -1124,78 +1247,113 @@ Function OnClick_bind360install
 	ShowWindow $ck_bind360install ${SW_SHOW}
 FunctionEnd
 
+Var Handle_Loading
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
+	;先去掉快捷栏和开始菜单栏
+	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$R0" "6.0" $2
+	SetOutPath "$INSTDIR"
+	${if} $2 == 2
+		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
+	${else}
+		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		;解除锁定到开始菜单栏
+		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	${Endif}
+	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+	Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
     !if 1   ;是否在后台运行,1有效
         GetFunctionAddress $0 InstallationMainFun
         BgWorker::CallAndWait
     !else
         Call InstallationMainFun
     !endif
-	ShowWindow $HWNDPARENT ${SW_HIDE}
-	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
-	ShowWindow $Bmp_Finish ${SW_SHOW}
-	ShowWindow $Btn_FreeUse ${SW_SHOW}
-	ShowWindow $ck_bind360install ${SW_SHOW}
-	ShowWindow $lab_bind360install ${SW_SHOW}
-	
-	ShowWindow $Lbl_Sumary ${SW_HIDE}
-	ShowWindow $PB_ProgressBar ${SW_HIDE}
-	ShowWindow $BGImage ${SW_HIDE}
-	ShowWindow $Btn_Guanbi ${SW_SHOW}
-	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
-	ShowWindow $HWNDPARENT ${SW_SHOW}
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
-		SetOutPath "$INSTDIR"
-		;快速启动栏
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 		${VersionCompare} "$R0" "6.0" $2
+		SetOutPath "$INSTDIR"
+		;快速启动栏
 		${if} $2 == 2
 			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+			SetOutPath "$TEMP\${PRODUCT_NAME}"
+			IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+			System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+			SetOutPath "$INSTDIR"
 		${else}
 			ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			;锁定到开始菜单栏
+			ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+			ExecShell startpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			; 创建开始菜单快捷方式
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 		${Endif}
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
 		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	${EndIf}
-	
-	; 创建开始菜单快捷方式
-	CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
+	;最后才显示安装完成界面
+	;ShowWindow $HWNDPARENT ${SW_HIDE}
+	HideWindow
+	ShowWindow $Handle_Loading ${SW_HIDE}
+	;${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
+	ShowWindow $Lbl_Sumary ${SW_HIDE}
+	ShowWindow $PB_ProgressBar ${SW_HIDE}
+	;ShowWindow $BGImage ${SW_HIDE}
+	ShowWindow $Btn_Guanbi ${SW_SHOW}
+	
+	ShowWindow $Bmp_Finish ${SW_SHOW}
+	ShowWindow $Btn_FreeUse ${SW_SHOW}
+	ShowWindow $ck_bind360install ${SW_SHOW}
+	ShowWindow $lab_bind360install ${SW_SHOW}
+	;${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
+	ShowWindow $Handle_Loading ${SW_SHOW}
+	ShowWindow $HWNDPARENT ${SW_SHOW}
 FunctionEnd
 
 Function InstallationMainFun
-	Call CloseExe
-	Call DoInstall
     SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
-	SendMessage $PB_ProgressBar ${PBM_SETPOS} 5 0
+	Sleep 100
+	Call CloseExe
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 2 0
+	Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 4 0
+     ;先卸载旧的
+	;ReadRegStr $4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	;${If} $4 != 0
+	;${AndIf} $4 != ""
+	;IfFileExists $4 0 NextAction
+	;StrCpy $1 $4
+	;Call UnstallOnlyFile
+	;NextAction:
+	;${EndIf}
+	Sleep 100
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 14 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 10 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
+    Call DoInstall
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 15 0
-    Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 22 0
-    Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 32 0
-    Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 68 0
-    Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 80 0
-    Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 92 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
-	Sleep 200
 FunctionEnd
 
 Function OnClick_FreeUse
@@ -1213,23 +1371,24 @@ FunctionEnd
 
 ;安装进度页面
 Function LoadingPage
-  StrCpy $isMainUIShow "false";按下exc直接退出
+  StrCpy $isMainUIShow "false";按下esc直接退出
   GetDlgItem $0 $HWNDPARENT 1
   ShowWindow $0 ${SW_HIDE}
   GetDlgItem $0 $HWNDPARENT 2
   ShowWindow $0 ${SW_HIDE}
   GetDlgItem $0 $HWNDPARENT 3
   ShowWindow $0 ${SW_HIDE}
-
+	
+	HideWindow
 	nsDialogs::Create 1044
-	Pop $0
-	${If} $0 == error
+	Pop $Handle_Loading
+	${If} $Handle_Loading == error
 		Abort
 	${EndIf}
-	SetCtlColors $0 ""  transparent ;背景设成透明
+	SetCtlColors $Handle_Loading ""  transparent ;背景设成透明
 
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
-	${NSW_SetWindowSize} $0 478 320 ;改变自定义Page大小
+	${NSW_SetWindowSize} $Handle_Loading 478 320 ;改变自定义Page大小
 	
 	;System::Call  'User32::GetDesktopWindow() i.R9'
 	;${NSW_CenterWindow} $HWNDPARENT $R9
@@ -1301,12 +1460,13 @@ Function LoadingPage
     ${NSD_CreateBitmap} 0 0 100% 100% ""
     Pop $BGImage
     ${NSD_SetImage} $BGImage $PLUGINSDIR\loading_head.bmp $ImageHandle
-
     WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
 	
 	GetFunctionAddress $0 onCloseCallback
 	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
-    nsDialogs::Show
+    
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
 
@@ -1332,9 +1492,31 @@ Function un.UpdateChanel
 FunctionEnd
 
 Function un.onInit
+	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	;${If} $0 == 0
+	;${OrIf} $0 == ""
+	;	Abort
+	;${EndIf}
+	;StrCpy $INSTDIR $0
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "LVDUNSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
+	Abort
+	
+	IfFileExists "$INSTDIR\program\Microsoft.VC90.CRT.manifest" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.CRT.manifest" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\msvcp90.dll" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\msvcp90.dll" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\msvcr90.dll" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\msvcr90.dll" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\GsSvc.dll" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\GsSvc.dll" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\ATL90.dll" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\ATL90.dll" "$TEMP\${PRODUCT_NAME}\"
+	IfFileExists "$INSTDIR\program\Microsoft.VC90.ATL.manifest" 0 InitFailed
+	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.ATL.manifest" "$TEMP\${PRODUCT_NAME}\"
+	Goto +3
+	InitFailed:
 	Abort
 	
 	StrCpy $Int_FontOffset 4
@@ -1415,6 +1597,9 @@ Function un.Random
 FunctionEnd
 
 Function un.DoUninstall
+	;最先卸载服务
+	IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
+	System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupUninstallService() ?u'
 	;删除
 	RMDir /r "$INSTDIR\appimage"
 	RMDir /r "$INSTDIR\xar"
@@ -1475,16 +1660,9 @@ Function un.OnClick_CruelRefused
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
-	IfFileExists "$INSTDIR\program\Microsoft.VC90.CRT.manifest" 0 RePortOK
-	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.CRT.manifest" "$TEMP\${PRODUCT_NAME}\"
-	IfFileExists "$INSTDIR\program\msvcp90.dll" 0 RePortOK
-	CopyFiles /silent "$INSTDIR\program\msvcp90.dll" "$TEMP\${PRODUCT_NAME}\"
-	IfFileExists "$INSTDIR\program\msvcr90.dll" 0 RePortOK
-	CopyFiles /silent "$INSTDIR\program\msvcr90.dll" "$TEMP\${PRODUCT_NAME}\"
-	
-	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "$str_ChannelID", t "1", i ${VERSION_LASTNUMBER}) '
-	RePortOK:
+	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +3
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
 		SendMessage $R0 1324 0 0
@@ -1504,9 +1682,15 @@ Function un.OnClick_CruelRefused
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
 		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		;解除锁定到开始菜单栏
+		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	${Endif}
+
 	GetFunctionAddress $0 un.UNSD_TimerFun
     nsDialogs::CreateTimer $0 1
 FunctionEnd
@@ -1560,7 +1744,7 @@ Function un.GsMessageBox
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 3
     ShowWindow $0 ${SW_HIDE}
-	
+	HideWindow
     nsDialogs::Create 1044
     Pop $Hwnd_MsgBox
     ${If} $Hwnd_MsgBox == error
@@ -1616,6 +1800,7 @@ Function un.GsMessageBox
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
 	Create_End:
+	HideWindow
 	System::Call  'User32::GetDesktopWindow() i.r8'
 	${NSW_CenterWindow} $HWNDPARENT $8
 	system::Call `user32::SetWindowText(i $lab_MsgBoxText, t "$R6")`
@@ -1669,7 +1854,8 @@ Function un.MyUnstall
 	ShowWindow $0 ${SW_HIDE}
 	GetDlgItem $0 $HWNDPARENT 3
 	ShowWindow $0 ${SW_HIDE}
-
+	
+	HideWindow
 	nsDialogs::Create 1044
 	Pop $0
 	${If} $0 == error
@@ -1691,7 +1877,7 @@ Function un.MyUnstall
 	GetFunctionAddress $3 un.OnClick_ContinueUse
     SkinBtn::onClick $1 $3
 	
-	;残忍拒绝
+	;残忍卸载
 	${NSD_CreateButton} 355 235 95 30 ""
  	Pop	$Btn_CruelRefused
  	StrCpy $1 $Btn_CruelRefused
@@ -1725,6 +1911,8 @@ Function un.MyUnstall
 	
 	GetFunctionAddress $0 un.onMsgBoxCloseCallback
 	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
-    nsDialogs::Show
+    
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
 FunctionEnd
