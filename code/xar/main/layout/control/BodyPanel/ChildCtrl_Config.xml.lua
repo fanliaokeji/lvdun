@@ -14,7 +14,7 @@ local g_tReportState = {}
 ---方法---
 function OnShowPanel(self, bShow)
 	if not g_bHasInit then
-		InitConfitCtrl(self)
+		InitConfigCtrl(self)
 	end
 end
 
@@ -59,7 +59,7 @@ end
 
 
 function OnInitControl(self)
-	InitConfitCtrl(self)
+	InitConfigCtrl(self)
 end
 
 
@@ -84,7 +84,7 @@ function OnDestroy(self)
 end
 
 ----------
-function InitConfitCtrl(objRootCtrl)
+function InitConfigCtrl(objRootCtrl)
 	objFather = objRootCtrl:GetControlObject("ChildCtrl_Config.MainWnd.Container")
 	if objFather == nil then
 		return nil
@@ -129,6 +129,7 @@ function InitConfitCtrl(objRootCtrl)
 		objElem:SetObjPos(0, nNewTop, "father.width", nNewTop+nElemHeight)
 	end
 	
+	SetFiltConfigState(objRootCtrl)
 	g_bHasInit = true
 end
 
@@ -211,9 +212,37 @@ function SaveStateToFile(bNewState)
 		tipUtil:WriteINI("pusher", "noremind", 0, strStartCfgPath)
 	else
 		tipUtil:WriteINI("pusher", "noremind", 1, strStartCfgPath)
+		tipUtil:WriteINI("pusher", "lastpull", tipUtil:GetCurrentUTCTime(), strStartCfgPath)
 	end	
 end
 
+
+function SetFiltConfigState(objRootCtrl)
+	local objFiltInTime = objRootCtrl:GetControlObject("FiltInTime")
+	if not objFiltInTime then
+		return
+	end
+	
+	local strStartCfgPath = tFunctionHelper.GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local nLastPull, bRet = tipUtil:ReadINI(strStartCfgPath, "pusher", "lastpull")
+	local nSpanDay, bRet = tipUtil:ReadINI(strStartCfgPath, "pusher", "noremindspanday") 
+	if tonumber(nLastPull) == nil then
+		nLastPull = 0
+	end
+	if tonumber(nSpanDay) == nil then
+		nSpanDay = 7
+	end
+
+	local nSpanSec = nSpanDay*24*3600
+	local nCurTimeUTC = tipUtil:GetCurrentUTCTime()
+	if math.abs(nCurTimeUTC-nLastPull) > nSpanSec then
+		objFiltInTime:SetSwitchState(true)
+	end	
+end
 
 ---------------
 
@@ -224,7 +253,7 @@ function OnClickSwitchButton(self)
 	local bNewState = not bState
 	
 	objOwner:SetSwitchState(bNewState)
-	objOwner:FireExtEvent("OnStateChange")
+	--objOwner:FireExtEvent("OnStateChange")
 end
 
 
@@ -253,6 +282,8 @@ function SetSwitchState(self, bState)
 	
 	local attr = self:GetAttribute()
 	attr.SwitchState = bState
+	
+	self:FireExtEvent("OnStateChange")
 end
 
 
