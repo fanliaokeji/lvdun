@@ -953,8 +953,16 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	tCurrentCfg["nLastAutoUpdateUTC"] = tOldCfg["nLastAutoUpdateUTC"]
 	tCurrentCfg["nLastBubbleUTC"] = tOldCfg["nLastBubbleUTC"]
 	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
-	tCurrentCfg["tConfig"] = tOldCfg["tConfig"]
 	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
+	
+	if type(tCurrentCfg["tConfig"]) ~= "table" then
+		tCurrentCfg["tConfig"] = {}
+	end
+	
+	local tOldStateConfig = tOldCfg["tConfig"] or {}
+	for strKey, tStateInfo in pairs(tOldStateConfig) do
+		tCurrentCfg["tConfig"][strKey] = tStateInfo
+	end	
 	
 	tipUtil:DeletePathFile(strOldCfgPath)
 	return true, tCurrentCfg
