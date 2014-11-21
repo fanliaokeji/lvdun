@@ -114,7 +114,11 @@ function InitConfitCtrl(objRootCtrl)
 			return false
 		end
 		
-		local bState = FetchValueByPath(tUserCfg, {"tConfig", strElemKey, "bState"}) or false
+		local bState = FetchValueByPath(tUserCfg, {"tConfig", strElemKey, "bState"})
+		if bState == nil then
+			bState = true
+		end
+		
 		objFather:AddChild(objElem)
 		objElem:SetElemText(strElemText)
 		objElem:AttachListener("OnStateChange", false, fnElemEvent)
