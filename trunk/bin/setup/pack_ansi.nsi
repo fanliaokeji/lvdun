@@ -323,6 +323,7 @@ Function CmdSilentInstall
 	;NextAction:
 	;${EndIf}
 	Call DoInstall
+	Sleep 6000
 	SetOutPath "$INSTDIR"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
@@ -1354,6 +1355,7 @@ Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
+	Sleep 1000
 FunctionEnd
 
 Function OnClick_FreeUse
