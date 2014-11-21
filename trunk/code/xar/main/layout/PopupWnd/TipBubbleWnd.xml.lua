@@ -20,6 +20,7 @@ end
 function OnShowWindow(self, bShow)
 	if bShow then
 		SaveStateToFile(false)
+		SetConfigState(true)
 		StartHideTimer(self)
 	end
 end
