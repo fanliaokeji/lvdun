@@ -20,6 +20,9 @@ function GetSubTable()
 			["AutoUpdate"] = {
 				["bState"] = true, 
 			}, 
+			["FiltInTime"] = {
+				["bState"] = true, 
+			},
 		}, 
 		["strIndexURL"] = "www.lvdun123.com", 
 		["nLastClearUTC"] = 0, 
