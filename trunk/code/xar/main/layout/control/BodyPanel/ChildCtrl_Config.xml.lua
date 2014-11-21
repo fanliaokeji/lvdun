@@ -253,7 +253,7 @@ function OnClickSwitchButton(self)
 	local bNewState = not bState
 	
 	objOwner:SetSwitchState(bNewState)
-	--objOwner:FireExtEvent("OnStateChange")
+	objOwner:FireExtEvent("OnStateChange")
 end
 
 
@@ -283,7 +283,7 @@ function SetSwitchState(self, bState)
 	local attr = self:GetAttribute()
 	attr.SwitchState = bState
 	
-	self:FireExtEvent("OnStateChange")
+	--self:FireExtEvent("OnStateChange")
 end
 
 
