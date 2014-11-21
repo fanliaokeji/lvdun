@@ -97,10 +97,10 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	}
 	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
 
-	//DWORD dwThreadId = 0;
-	//HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
-	//CloseHandle(hThread);
-	SendHttpStatThread((LPVOID)szURL);
+	DWORD dwThreadId = 0;
+	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
+	CloseHandle(hThread);
+	//SendHttpStatThread((LPVOID)szURL);
 }
 
 
@@ -315,7 +315,10 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	CHAR* szURL = new CHAR[MAX_PATH];
 	memset(szURL, 0, MAX_PATH);
 	sprintf(szURL, "%s", str.c_str());
-	SendHttpStatThread((LPVOID)szURL);
+	//SendHttpStatThread((LPVOID)szURL);
+	DWORD dwThreadId = 0;
+	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
+	CloseHandle(hThread);
 }
 
 #include <vector>
