@@ -181,7 +181,11 @@ public:
 	static int ReadKeyValueInSection(lua_State* pLuaState);
 	static int ReadINIInteger(lua_State* pLuaState);
 	
-
+private:
+	static LRESULT CALLBACK GsLowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
+public:
+	static int SetLowLevelKeyboardHook(lua_State* pLuaState);
+	static int UnhookLowLevelKeyboard(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

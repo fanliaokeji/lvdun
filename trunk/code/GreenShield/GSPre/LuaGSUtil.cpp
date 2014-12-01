@@ -151,6 +151,10 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"ReadSections", ReadSections},
 	{"ReadKeyValueInSection", ReadKeyValueInSection},
 	{"ReadINIInteger", ReadINIInteger},
+
+	// Hook
+	{"SetLowLevelKeyboardHook", SetLowLevelKeyboardHook},
+	{"UnhookLowLevelKeyboard", UnhookLowLevelKeyboard},
 	
 	{NULL, NULL}
 };
@@ -4073,3 +4077,66 @@ int LuaGSUtil::ReadINIInteger(lua_State* pLuaState)
 	return 0;
 }
 
+LRESULT CALLBACK LuaGSUtil::GsLowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if(nCode < 0)
+	{
+		return ::CallNextHookEx(0, nCode, wParam, lParam);
+	}
+
+	KBDLLHOOKSTRUCT* pHookStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+	switch(pHookStruct->vkCode)
+	{
+		case VK_LWIN:
+		case VK_RWIN:
+			// win
+			return 1;
+		case VK_TAB:
+			if(pHookStruct->flags & LLKHF_ALTDOWN)
+			{
+				// atl + tab
+				return 1;
+			}
+			break;
+		case VK_ESCAPE:
+			if(pHookStruct->flags & LLKHF_ALTDOWN)
+			{
+				// alt + esc
+				return 1;
+			}
+			else if((::GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+			{
+				// ctrl + esc Ë³´øÆÁ±ÎÁËctrl + shift + esc
+				return 1;
+			}
+			break;
+		case VK_F4:
+			if(pHookStruct->flags & LLKHF_ALTDOWN)
+			{
+				// atl + f4
+				return 1;
+			}
+			break;
+		case VK_APPS:
+			return 1;
+	}
+	return ::CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+int LuaGSUtil::SetLowLevelKeyboardHook(lua_State* pLuaState)
+{
+	HHOOK hHook = ::SetWindowsHookEx(WH_KEYBOARD_LL, &LuaGSUtil::GsLowLevelKeyboardProc, ::GetModuleHandle(NULL), 0);
+	if(hHook != NULL)
+	{
+		lua_pushlightuserdata(pLuaState, hHook);
+		return 1;
+	}
+	return 0;
+}
+
+int LuaGSUtil::UnhookLowLevelKeyboard(lua_State* pLuaState)
+{
+	luaL_argcheck(pLuaState, lua_islightuserdata(pLuaState, 1), 1, "'HHOOK' expected");
+	lua_pushboolean(pLuaState, ::UnhookWindowsHookEx(reinterpret_cast<HHOOK>(lua_touserdata(pLuaState, 1))));
+	return 1;
+}
