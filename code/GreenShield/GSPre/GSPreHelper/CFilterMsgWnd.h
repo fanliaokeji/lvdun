@@ -9,6 +9,7 @@ typedef void (*funResultCallBack) (DWORD userdata1,DWORD userdata2, const char* 
 #define WM_FILTERASK WM_USER + 202
 
 #define WM_FILTEREXIT WM_USER + 300
+#define WM_FILTERLOCKING WM_USER + 301
 
 struct CallbackNode
 {
@@ -34,11 +35,12 @@ public:
 
 	DECLARE_WND_CLASS(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg")
 	BEGIN_MSG_MAP(CFilterMsgWindow)
-		MESSAGE_HANDLER(WM_COPYDATA,		OnCopyData)
+		MESSAGE_HANDLER(WM_COPYDATA, OnCopyData)
 		MESSAGE_HANDLER(WM_FILTERRESULT, HandleFilterResult)
 		MESSAGE_HANDLER(WM_FILTERASK, HandleFilterAsk)
-		
 		MESSAGE_HANDLER(WM_FILTEREXIT, HandleFilterExit)
+
+		MESSAGE_HANDLER(WM_FILTERLOCKING, HandleFilterLocking)
 	END_MSG_MAP()
 private:
 	CFilterMsgWindow(void);
@@ -65,4 +67,5 @@ public:
 	LRESULT HandleFilterAsk(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 
 	LRESULT HandleFilterExit(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
+	LRESULT HandleFilterLocking(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 };

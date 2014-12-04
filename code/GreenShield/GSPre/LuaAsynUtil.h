@@ -15,6 +15,7 @@
 #define WM_AJAXDOWNLOADFILEFAILED		WM_USER + 2021
 
 #define WM_HTTPFILEGOTPROGRESS		WM_USER + 2023
+#define WM_KILLPROCESS					WM_USER + 2024
 
 enum AjaxTaskFlag
 {
@@ -62,6 +63,7 @@ public:
 	static int AsynCreateProcess(lua_State* pLuaState);
 
 	static int NewAsynGetHttpFileWithProgress(lua_State* pLuaState);
+	static int AsynKillProcess(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI  s_functionlist[];
 };
@@ -533,6 +535,35 @@ private:
 	PROCESS_INFORMATION m_pi;
 };
 
+struct KillProcessData
+{
+	LuaCallInfo m_callInfo;
+	DWORD m_dwPID;
+	DWORD m_dwWaitTimeMS;
+
+	KillProcessData(lua_State* pLuaState, DWORD dwPID, DWORD dwWaitTimeMS) : 
+	m_dwPID(dwPID), 
+		m_dwWaitTimeMS(dwWaitTimeMS), 
+		m_callInfo(pLuaState, luaL_ref(pLuaState, LUA_REGISTRYINDEX))
+	{
+		TSTRACEAUTO();
+	}
+
+	~KillProcessData()
+	{
+		TSTRACEAUTO();
+	}
+
+	void Notify(int nErrCode)
+	{
+		lua_rawgeti(m_callInfo.GetLuaState(), LUA_REGISTRYINDEX, m_callInfo.GetRefFn());
+		lua_pushinteger(m_callInfo.GetLuaState(), nErrCode);
+		XLLRT_LuaCall(m_callInfo.GetLuaState(), 1, 0, L"KillProcess Callback");
+	}
+
+	void Work();
+};
+
 
 class CAsynMsgWindow : public CMsgWindow
 {
@@ -586,7 +617,7 @@ public:
 		MESSAGE_HANDLER(WM_AJAXDOWNLOADFILESUCCESS, OnAjaxDownloadSucess)
 		MESSAGE_HANDLER(WM_CREATEPROCESSFINISH, OnCreateProcessFinish)
 		MESSAGE_HANDLER(WM_HTTPFILEGOTPROGRESS, OnHttpFileGotProgress)
-
+		MESSAGE_HANDLER(WM_KILLPROCESS, OnKillProcessFinish)
 		CHAIN_MSG_MAP(CMsgWindow)
 	END_MSG_MAP()
 
@@ -675,6 +706,14 @@ protected:
 		ULONG ulProgressMax = pdp->ulProgressMax;
 		pData->Notify(-2,ulProgress,ulProgressMax);
 		//delete pData;
+		return 0;
+	}
+	
+	LRESULT OnKillProcessFinish(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		KillProcessData* pData = (KillProcessData*)lParam;
+		pData->Notify((int)wParam);
+		delete pData;
 		return 0;
 	}
 

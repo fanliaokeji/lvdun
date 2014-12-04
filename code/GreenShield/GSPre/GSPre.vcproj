@@ -323,6 +323,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\base64.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DatFileUtility.cpp"
 				>
 			</File>
