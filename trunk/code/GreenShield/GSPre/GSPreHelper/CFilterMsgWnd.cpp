@@ -107,9 +107,6 @@ int CFilterMsgWindow::AttachListener(DWORD userdata1,DWORD userdata2,funResultCa
 	newNode.luaFunction = pfun;
 	int k = m_allCallBack.size();
 	m_allCallBack.push_back(newNode);
-	int i=0;
-	i++;
-	i++;
 	TSDEBUG4CXX(" userdata1 : "<<newNode.userData1<<" userData2 : "<< newNode.userData2<<", pfn : "<<pfn << ", pfun : " << pfun);
 	 
 	return 0;
@@ -191,5 +188,14 @@ LRESULT CFilterMsgWindow::HandleFilterExit(UINT uiMsg, WPARAM wParam, LPARAM lPa
 {
 	gsNotifyIcon.Hide();
 	theApp.ExitInstance();
+	return 0;
+}
+
+LRESULT CFilterMsgWindow::HandleFilterLocking(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+{
+	CComVariant vParam[1];
+	vParam[0] = (int)wParam;
+	DISPPARAMS params = { vParam, NULL, 1, 0 };
+	Fire_LuaEvent("OnFilterLocking", &params);
 	return 0;
 }

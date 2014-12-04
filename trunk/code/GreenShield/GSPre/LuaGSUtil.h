@@ -172,6 +172,9 @@ public:
 
 	static int EncryptAESToFile(lua_State* pLuaState);
 	static int DecryptFileAES(lua_State* pLuaState);
+	
+	static int Encrypt_AES_BASE64(lua_State* pLuaState);
+	static int Decrypt_AES_BASE64(lua_State* pLuaState);
 
 	//INIÅäÖÃÎÄ¼þ²Ù×÷
 	static int ReadINI(lua_State* pLuaState);

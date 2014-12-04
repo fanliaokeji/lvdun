@@ -22,6 +22,7 @@ extern CGSApp theApp;
 
 #include "GSPreHelper\CFilterMsgWnd.h"
 #include "GSNotifyIcon.h"
+#include "base64.h"
 //extern CFilterMsgWindow gFilterMsgWindow;
 
 LuaGSUtil::LuaGSUtil(void)
@@ -143,6 +144,10 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
+	
+	{"Encrypt_AES_BASE64", Encrypt_AES_BASE64},
+	{"Decrypt_AES_BASE64", Decrypt_AES_BASE64},
+
 
 	//INIÅäÖÃÎÄ¼þ²Ù×÷
 	{"ReadINI", ReadINI},
@@ -4138,5 +4143,78 @@ int LuaGSUtil::UnhookLowLevelKeyboard(lua_State* pLuaState)
 {
 	luaL_argcheck(pLuaState, lua_islightuserdata(pLuaState, 1), 1, "'HHOOK' expected");
 	lua_pushboolean(pLuaState, ::UnhookWindowsHookEx(reinterpret_cast<HHOOK>(lua_touserdata(pLuaState, 1))));
+	return 1;
+}
+
+
+int LuaGSUtil::Encrypt_AES_BASE64(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* pszData = lua_tostring(pLuaState, 2);
+		const char* pszKey = lua_tostring(pLuaState, 3);
+		if (pszKey == NULL || pszData == NULL)
+		{
+			return 0;
+		}
+		int ubuff = strlen(pszKey)>16?strlen(pszKey):16;
+		char* pszNewKey = new(std::nothrow) char[ubuff+1];
+		memset(pszNewKey,0,ubuff+1);
+
+		strcpy_s(pszNewKey,ubuff+1,pszKey);
+		
+		int msglen = strlen(pszData);
+		int flen = ((msglen >> 4) + 1) << 4;
+		unsigned char* out_str = (unsigned char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+
+		int nlen = 0;
+		EncryptAESToFileHelper((const unsigned char*)pszNewKey, pszData, out_str, nlen);
+		delete[] pszNewKey;
+		if (nlen > 0)
+		{
+			std::string strBase64 = base64_encode(out_str,nlen);
+			lua_pushstring(pLuaState, strBase64.c_str());
+			free(out_str);
+			return 1;
+		}
+	}
+	lua_pushnil(pLuaState);
+	return 1;
+}
+
+int LuaGSUtil::Decrypt_AES_BASE64(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil != NULL)
+	{
+		const char* pszBase64Data = lua_tostring(pLuaState, 2);
+		const char* pszKey = lua_tostring(pLuaState, 3);
+		if (pszKey == NULL || pszBase64Data == NULL)
+		{
+			return 0;
+		}
+		std::string strData = base64_decode(pszBase64Data);
+		if (strData.size() <= 0)
+		{
+			return 0;
+		}
+
+		int ubuff = strlen(pszKey)>16?strlen(pszKey):16;
+		char* pszNewKey = new(std::nothrow) char[ubuff+1];
+		memset(pszNewKey,0,ubuff+1);
+		strcpy_s(pszNewKey,ubuff+1,pszKey);
+		
+		int flen = ((strData.length() >> 4) + 1) << 4;
+		unsigned char* out_str = (unsigned char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+		DecryptFileAESHelper((const unsigned char*)pszNewKey, (const unsigned char*)strData.c_str(), strData.length(), out_str);
+		delete[] pszNewKey;
+		lua_pushstring(pLuaState, (const char*)out_str);
+		free(out_str);
+		return 1;
+	}
+	lua_pushnil(pLuaState);
 	return 1;
 }

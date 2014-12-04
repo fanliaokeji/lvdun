@@ -38,7 +38,7 @@ XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] =
 	{"AjaxGetHttpContent", AjaxGetHttpContent},
 	{"AjaxGetHttpFile", AjaxGetHttpFile},
 	{"AsynCreateProcess", AsynCreateProcess},
-	
+	{"AsynKillProcess", AsynKillProcess},
 	
 
 
@@ -665,6 +665,87 @@ int LuaAsynUtil::AsynCreateProcess(lua_State* pLuaState)
 
 	return 0;
 }
+
+
+static unsigned __stdcall KillProcessProc(LPVOID pThreadParam)
+{
+	KillProcessData* pData = (KillProcessData*)pThreadParam;
+	pData->Work();
+	return 0;
+}
+
+int LuaAsynUtil::AsynKillProcess( lua_State* pLuaState )
+{
+	BOOL bErrCode = FALSE;
+	LuaAsynUtil** ppAsynUtil = (LuaAsynUtil**)luaL_checkudata(pLuaState, 1, XMPTIPWND_ASYNCUTIL_CLASS);
+	if (ppAsynUtil && *ppAsynUtil)
+	{
+		DWORD dwPID = static_cast< DWORD >(lua_tointeger(pLuaState, 2));
+		DWORD dwWaitTimeMS = static_cast< DWORD >(lua_tointeger(pLuaState, 3));
+		if ((dwPID > 0) && (dwWaitTimeMS > 0) && lua_isfunction(pLuaState, 4))
+		{
+			KillProcessData* pData = new KillProcessData(pLuaState, dwPID, dwWaitTimeMS);
+			if (pData)
+			{
+				if (_beginthreadex(NULL, 0, KillProcessProc, pData, 0, NULL))
+				{
+					bErrCode = TRUE;
+				}
+				else
+				{
+					TSERROR(_T("Begin KillProcessProc thread failed, GetLastError() return 0x%X"), GetLastError());
+				}
+			}
+			else
+			{
+				TSERROR(_T("new KillProcessData failed, GetLastError() return 0x%X"), GetLastError());
+			}
+		}
+		else
+		{
+			TSERROR(_T("invalidate input params, dwPID=%d, dwWaitTimeMS=%d"), dwPID, dwWaitTimeMS);
+		}
+	}
+
+	lua_pushboolean(pLuaState, bErrCode);
+	return 1;
+}
+
+void KillProcessData::Work()
+{
+	TSTRACEAUTO();
+
+	int nErrCode = 0;
+	HANDLE hProcess = ::OpenProcess(PROCESS_TERMINATE|SYNCHRONIZE, FALSE, m_dwPID);
+	if (hProcess)
+	{
+		if (::TerminateProcess(hProcess, 4))
+		{
+			DWORD dwWaitResult = ::WaitForSingleObject(hProcess, m_dwWaitTimeMS);
+			if (WAIT_OBJECT_0 != dwWaitResult)
+			{
+				nErrCode = 3;
+				TSERROR(_T("WaitForSingleObject kill process failed, dwWaitResult=%d, m_dwPID=%d, hProcess=0x%X, m_dwWaitTimeMS=%d, GetLastError() return 0x%X"), 
+					dwWaitResult, m_dwPID, hProcess, m_dwWaitTimeMS, GetLastError());
+			}
+		}
+		else
+		{
+			nErrCode = 2;
+			TSERROR(_T("TerminateProcess failed, hProcess=0x%X, GetLastError() return 0x%X"), hProcess, GetLastError());
+		}
+
+		::CloseHandle(hProcess);
+	}
+	else
+	{
+		nErrCode = 1;
+		TSERROR(_T("OpenProcess with PROCESS_TERMINATE flag failed, m_dwPID=%d, GetLastError() return 0x%X"), m_dwPID, GetLastError());
+	}
+
+	g_wndMsg.PostMessage(WM_KILLPROCESS, nErrCode, (LPARAM)this);
+}
+
 
 void* __stdcall LuaAsynUtil::GetInstance( void* )
 {
