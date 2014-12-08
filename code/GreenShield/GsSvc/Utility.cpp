@@ -37,7 +37,7 @@ bool GetGreenShiledExeFilePath(wchar_t* buffer, std::size_t bufferLength)
 bool LaunchGreenShield(DWORD browserProcessId)
 {
 	TSAUTO();
-	const wchar_t launchParameters[] = L" /sstartfrom service /embedding";
+	const wchar_t launchParameters[] = L" /sstartfrom service /embedding /showbubble";
 	if(!IsVistaOrLatter()) {
 		// XP
 		TSTRACE4CXX("XP");
