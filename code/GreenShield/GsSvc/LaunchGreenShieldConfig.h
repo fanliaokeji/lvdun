@@ -11,6 +11,7 @@ private:
 	UINT m_MaxCntPerDay;
 	UINT m_Cnt;
 	__int64 m_LastPull;
+	__int64 m_LastExitTime;
 	bool m_Valid;
 	__time64_t m_LastUpdateTime;
 public:
@@ -23,6 +24,7 @@ public:
 	UINT GetMaxCntPerDay() const;
 	UINT GetCnt() const;
 	__int64 GetLastPull() const;
+	__int64 GetLastExitTime() const;
 	__time64_t GetLastUpdateTime() const;
 	bool IsEnableLaunchNow() const;
 	bool CheckEnableLaunchNow();
