@@ -10,7 +10,7 @@
 #include "AdvanceFunctionProvider.h"
 #include "ScopeResourceHandle.h"
 
-LaunchGreenShieldConfig::LaunchGreenShieldConfig() : m_NoRemind(0), m_NoRemindSpanDay(7), m_LaunchInterval(1), m_MaxCntPerDay(1), m_Cnt(0), m_LastPull(0), m_LastExitTime(0), m_Valid(false), m_LastUpdateTime(0)
+LaunchGreenShieldConfig::LaunchGreenShieldConfig() : m_NoRemind(0), m_NoRemindSpanDay(7), m_LaunchInterval(1), m_MaxCntPerDay(1), m_Cnt(0), m_LastPull(0), m_Valid(false), m_LastUpdateTime(0)
 {
 }
 
@@ -29,7 +29,6 @@ bool LaunchGreenShieldConfig::UpdateConfig()
 		this->m_LaunchInterval = 1;
 		this->m_MaxCntPerDay = 1;
 		this->m_LastPull = 0;
-		this->m_LastExitTime = 0;
 		this->m_Valid = true;
 		return true;
 	}
@@ -56,15 +55,6 @@ bool LaunchGreenShieldConfig::UpdateConfig()
 		TSWARN4CXX("lastpull is not a valid __int64 value.");
 		this->m_LastPull = 0;
 	}
-
-	// lastexittime
-	wchar_t lastExitTimeBuffer[30];
-	::GetPrivateProfileString(szSectionName, L"lastexittime", L"0", lastExitTimeBuffer, sizeof(lastExitTimeBuffer) / sizeof(lastExitTimeBuffer[0]), configFilePath);
-	if(!this->wstring_to_int64(lastExitTimeBuffer, this->m_LastExitTime)) {
-		TSWARN4CXX("lastexittime is not a valid __int64 value.");
-		this->m_LastExitTime = 0;
-	}
-
 	this->m_Valid = true;
 	return true;
 }
@@ -138,12 +128,6 @@ __int64 LaunchGreenShieldConfig::GetLastPull() const
 	return this->m_LastPull;
 }
 
-__int64 LaunchGreenShieldConfig::GetLastExitTime() const
-{
-	assert(this->Valid());
-	return this->m_LastExitTime;
-}
-
 __time64_t LaunchGreenShieldConfig::GetLastUpdateTime() const
 {
 	return this->m_LastUpdateTime;
@@ -178,12 +162,6 @@ bool LaunchGreenShieldConfig::IsEnableLaunchNow() const
 			return false;
 		}
 	}
-
-	__time64_t nLastExitTime = this->GetLastExitTime();
-	if(_abs64(nCurrentTime - nLastExitTime) < 1800) {
-		return false;
-	}
-
 	return true;
 }
 
