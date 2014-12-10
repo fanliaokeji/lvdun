@@ -13,7 +13,7 @@ function OnSelect_Website(self)
 end
 
 function OnSelect_Introduce(self)
-	tFunctionHelper.ShowPopupWndByName("TipIntroduceWnd.Instance")
+	tFunctionHelper.ShowPopupWndByName("TipIntroduceWnd.Instance", true)
 end
 
 

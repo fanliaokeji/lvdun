@@ -582,7 +582,7 @@ function ShowMainTipWnd(objMainWnd)
 	
 	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
-	WriteLastLaunchTime()
+	WriteLastPullTime()
 end
 
 
@@ -1169,11 +1169,7 @@ function CheckVideoList(strDomain, nLastPopupUTC)
 		AddVideoDomain(strDomain, 1)
 		
 	elseif bBlackState == 2 then
-		if IsNilString(nLastPopupUTC) or CheckTimeIsAnotherDay(nLastPopupUTC) then
-			AddVideoDomain(strDomain, 0)
-		else
-			AddVideoDomain(strDomain, 2)
-		end
+		AddVideoDomain(strDomain, 2)
 	elseif bBlackState == 3 then
 		if bStateOpen then
 			AddVideoDomain(strDomain, 1)
@@ -1459,7 +1455,6 @@ function ReportAndExit()
 	local tStatInfo = {}
 			
 	SendRunTimeReport(0, true)
-	WriteLastExitTime()
 	
 	tStatInfo.strEC = "exit"	
 	tStatInfo.strEA = GetInstallSrc() or ""
@@ -1778,26 +1773,14 @@ function TryForceUpdate(tServerConfig)
 end
 
 
-function WriteLastLaunchTime()
+function WriteLastPullTime()
 	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
 	if not IsRealString(strStartCfgPath) then
 		return
 	end
 
 	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
-	tipUtil:WriteINI("pusher", "lastlaunchtime", nCurrnetTime, strStartCfgPath)
 	tipUtil:WriteINI("pusher", "lastpull", nCurrnetTime, strStartCfgPath)
-end
-
-
-function WriteLastExitTime()
-	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
-	if not IsRealString(strStartCfgPath) then
-		return
-	end
-
-	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
-	tipUtil:WriteINI("pusher", "lastexittime", nCurrnetTime, strStartCfgPath)
 end
 
 
