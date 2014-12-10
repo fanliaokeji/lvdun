@@ -109,7 +109,6 @@ function ShowItemList(objRootCtrl, tAppList, bDownLoad)
 					g_nShowedCount = g_nShowedCount+1
 				end
 			elseif bDownLoad then
-				DownLoadImage(objRootCtrl, tItem)
 				g_tDownLoadList[#g_tDownLoadList+1] = tItem
 			end		
 		end

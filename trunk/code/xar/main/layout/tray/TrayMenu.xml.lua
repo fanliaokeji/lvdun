@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("GS.Util")
+local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_bFilterOpen = false
 
 -------事件---
@@ -9,6 +10,10 @@ end
 
 function OnSelect_Website(self)
 	OpenConfigURL("strIndexURL")
+end
+
+function OnSelect_Introduce(self)
+	tFunctionHelper.ShowPopupWndByName("TipIntroduceWnd.Instance")
 end
 
 
@@ -46,25 +51,21 @@ end
 
 
 function OnSelect_Exit(self)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	tFunctionHelper.ShowExitRemindWnd()
 end
 
 -------
 
 function ShowAboutWnd()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	tFunctionHelper.ShowPopupWndByName("TipAboutWnd.Instance")
 end
 
 function ShowUpdateWnd()
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
 end
 
 
 function OpenConfigURL(strUrlKey)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return
 	end
@@ -78,7 +79,6 @@ end
 
 
 function SetFilterText(self)
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return
 	end

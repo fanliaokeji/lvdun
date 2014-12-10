@@ -1,5 +1,3 @@
-local gStartCfg = {}
-
 local g_bShowWndByTray = false
 local gStatCount = 0
 local gnLastReportRunTmUTC = 0
@@ -17,6 +15,7 @@ local g_tPopupWndList = {
 	[3] = {"TipAboutWnd", "TipAboutTree"},
 	[4] = {"TipUpdateWnd", "TipUpdateTree"},
 	[5] = {"TipBubbleWnd", "TipBubbleTree"},
+	[6] = {"TipIntroduceWnd", "TipIntroduceTree"},
 }
 
 local g_tConfigFileStruct = {
@@ -583,6 +582,7 @@ function ShowMainTipWnd(objMainWnd)
 	
 	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
+	WriteLastLaunchTime()
 end
 
 
@@ -1039,7 +1039,6 @@ function IsVideoDomain(strDomain)
 end
 
 
-
 function SendFileDataToFilterThread()
 	local bSucc = SendRuleListtToFilterThread()
 	if not bSucc then
@@ -1460,11 +1459,12 @@ function ReportAndExit()
 	local tStatInfo = {}
 			
 	SendRunTimeReport(0, true)
+	WriteLastExitTime()
 	
 	tStatInfo.strEC = "exit"	
 	tStatInfo.strEA = GetInstallSrc() or ""
 	tStatInfo.Exit = true
-		
+			
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
@@ -1778,6 +1778,29 @@ function TryForceUpdate(tServerConfig)
 end
 
 
+function WriteLastLaunchTime()
+	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
+	tipUtil:WriteINI("pusher", "lastlaunchtime", nCurrnetTime, strStartCfgPath)
+	tipUtil:WriteINI("pusher", "lastpull", nCurrnetTime, strStartCfgPath)
+end
+
+
+function WriteLastExitTime()
+	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
+	tipUtil:WriteINI("pusher", "lastexittime", nCurrnetTime, strStartCfgPath)
+end
+
+
 function FixStartConfig(tServerConfig)
 	local tStartConfig = tServerConfig["tStartConfig"]
 	if type(tStartConfig) ~= "table" then
@@ -1812,6 +1835,7 @@ function FixUserConfig(tServerConfig)
 
 	local tLocalUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	tLocalUserConfig["nHideBubblePopWndInSec"] = tUserConfigInServer["nHideBubblePopWndInSec"] or 5
+	tLocalUserConfig["strServerAppListURL"] = tUserConfigInServer["strServerAppListURL"] or ""
 	
 	SaveConfigToFileByKey("tUserConfig")
 end
@@ -1877,12 +1901,24 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 end
 
 
-function TryShowNonSysBubble()
-	local bRet, strSource = GetCommandStrValue("/sstartfrom")
-	if string.lower(tostring(strSource)) == "service" 
-		or string.lower(tostring(strSource)) == "bho" then
+function TryShowNonSysBubble(strCmd)
+	if string.find(tostring(strCmd), "/showbubble") then
 		ShowPopupWndByName("TipBubbleWnd.Instance", true)
 	end
+end
+
+
+function TryShowIntroduceWnd(strCmd)
+	if string.find(tostring(strCmd), "/showintroduce") then
+		ShowPopupWndByName("TipIntroduceWnd.Instance", true)
+	end
+end
+
+
+function ShowPopWndByCommand()
+	local cmdString = tipUtil:GetCommandLine()
+	TryShowNonSysBubble(cmdString)
+	TryShowIntroduceWnd(cmdString)
 end
 
 
@@ -1903,7 +1939,7 @@ function TipMain()
 	CreatePopupTipWnd()
 	SaveConfigInTimer()
 	
-	TryShowNonSysBubble()
+	ShowPopWndByCommand()
 end
 
 
