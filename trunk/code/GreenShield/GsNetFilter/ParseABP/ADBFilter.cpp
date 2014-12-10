@@ -56,19 +56,20 @@ static std::string parseDomain(std::string host)
 	return host;
 }
 
+//不弹过滤框，只有在VideoState里存在且等于2的才不弹
 static bool isMatchState(std::vector<std::string> & v_domain)
 {
 	readLock rdLock(rw_cfgmutex);
 	for (std::vector<std::string>::const_iterator c_iter = v_domain.begin();c_iter!= v_domain.end();c_iter++)
 	{
 		ConfigRuleMap::iterator map_iter =map_VideoState.find(*c_iter);
-		if (map_iter != map_VideoState.end() && map_iter->second == 1)
+		if (map_iter != map_VideoState.end() && map_iter->second == 2)
 		{
-			return true;
+			return false;
 		}
 		
 	}
-	return false; 
+	return true; 
 }
 /*
   首先manager已经判断过是过滤而不是隐藏规则了
