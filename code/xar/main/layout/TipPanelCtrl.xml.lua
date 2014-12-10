@@ -1,5 +1,6 @@
 local tipUtil = XLGetObject("GS.Util")
 local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+
 local g_tPanelCtrlList = {
 	"ChildCtrl_AdvCount",
 	"ChildCtrl_Config",

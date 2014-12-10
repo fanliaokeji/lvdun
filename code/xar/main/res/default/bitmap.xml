@@ -12,6 +12,15 @@
 		<texture id="GreenWall.BubbleWnd.CheckBox.Empty" image="bitmap\GreenWall.BubbleWnd.CheckBox.Empty.png" />
 		<texture id="GreenWall.BubbleWnd.CheckBox.Check" image="bitmap\GreenWall.BubbleWnd.CheckBox.Check.png" />
 		
+		<texture id="GreenWall.IntroduceWnd.Panel1" image="bitmap\GreenWall.IntroduceWnd.Panel1.png" />
+		<texture id="GreenWall.IntroduceWnd.Panel2" image="bitmap\GreenWall.IntroduceWnd.Panel2.png" />
+		<texture id="GreenWall.IntroduceWnd.Panel3" image="bitmap\GreenWall.IntroduceWnd.Panel3.png" />
+		<texture id="GreenWall.IntroduceWnd.Panel4" image="bitmap\GreenWall.IntroduceWnd.Panel4.png" />
+		<texture id="GreenWall.IntroduceWnd.TryBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.TryBtn.Hover.png" />
+		<texture id="GreenWall.IntroduceWnd.TryBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.TryBtn.Normal.png" />
+		<texture id="GreenWall.IntroduceWnd.CloseBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Normal.png" />
+		<texture id="GreenWall.IntroduceWnd.CloseBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Hover.png" />
+		
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Hover" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Hover.png" />
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Normal" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Normal.png" />
 		<texture id="GreenWall.UpdateWnd.CloseBtn.Normal" image="bitmap\GreenWall.UpdateWnd.CloseBtn.Normal.png" />
@@ -122,7 +131,5 @@
 
 		<texture id="GreenWall.Common.SwitchButton.Open" image="bitmap\GreenWall.Common.SwitchButton.Open.png"/>
 		<texture id="GreenWall.Common.SwitchButton.Close" image="bitmap\GreenWall.Common.SwitchButton.Close.png" />		
-			
-	
 	</resource>
 </XLUE>

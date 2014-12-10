@@ -20,6 +20,15 @@
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Website" />
 				</eventlist>
 			</obj>
+			<obj id="introduce" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>功能特性</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Introduce" />
+				</eventlist>
+			</obj>
+			
 			<obj id="filterstate" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
 					<Text>过滤已开启</Text>
@@ -69,7 +78,7 @@
 				<left>0</left>
 				<top>0</top>
 				<width>210</width>
-				<height>200</height>
+				<height>225</height>
 			</attr>
 			<children>
 				<obj id="TrayMenu.Title" class="TextureObject">
@@ -110,7 +119,7 @@
 						<left>0</left>
 						<top>29</top>
 						<width>210</width>
-						<height>171</height>
+						<height>196</height>
 						<ContextID>menu.context</ContextID>
 						<BknID>GreenWall.MainWndCenter.Bkg</BknID>
 					</attr>
