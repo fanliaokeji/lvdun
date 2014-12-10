@@ -178,6 +178,7 @@ Function CloseExe
 	${Next}
 FunctionEnd
 
+Var Bool_IsUpdate
 Function DoInstall
   ;释放配置到public目录
   SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -242,6 +243,11 @@ Function DoInstall
   IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
   System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupInstallService() ?u'
   
+  StrCpy $Bool_IsUpdate 0 
+  ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
+  IfFileExists $0 0 +2
+  StrCpy $Bool_IsUpdate 1 
+  
   ;上报统计
   SetOutPath "$TEMP\${PRODUCT_NAME}"
   ${GetParameters} $R1
@@ -254,10 +260,15 @@ Function DoInstall
   StrCpy $R3 "0"
   IfErrors 0 +2
   StrCpy $R3 "1"
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-  System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
-  ;写入自用的注册表信息
+  ${If} $Bool_IsUpdate == 0
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
+  ${Else}
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
+  ${EndIf}  
+ ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
@@ -323,8 +334,8 @@ Function CmdSilentInstall
 	;NextAction:
 	;${EndIf}
 	Call DoInstall
-	Sleep 6000
-	SetOutPath "$INSTDIR"
+	;Sleep 2000
+	SetOutPath "$INSTDIR\program"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
@@ -337,21 +348,34 @@ Function CmdSilentInstall
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
-		SetOutPath "$INSTDIR"
 	${else}
-		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
-		ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-		;锁定到开始菜单栏
-		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
-		ExecShell startpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-		; 创建开始菜单快捷方式
-		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
+		Call GetPinPath
+		${If} $0 != "" 
+		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 500
+			SetOutPath "$INSTDIR\program"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			
+			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			Sleep 1000
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+			Call RefreshIcon
+			Sleep 200
+			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+		${EndIf}
 	${Endif}
 	
+	SetOutPath "$INSTDIR\program"
 	;桌面快捷方式
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+	${RefreshShellIcons}
+	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	Call RefreshIcon
 	;静默安装也写开机启动
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	${GetParameters} $R1
@@ -363,6 +387,7 @@ Function CmdSilentInstall
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SoftExit()"
 	Abort
 	FunctionReturn:
 FunctionEnd
@@ -412,9 +437,18 @@ Function CmdUnstall
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
-		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		;解除锁定到开始菜单栏
-		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		Call GetPinPath
+		${If} $0 != "" 
+		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 200
+			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 200
+		${EndIf}
 	${Endif}
 	;最先卸载服务
 	IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
@@ -581,7 +615,7 @@ Function GsMessageBox
     ${NSW_SetWindowSize} $Hwnd_MsgBox 300 130 ;改变Page大小
 	System::Call  'User32::GetDesktopWindow() i.r8'
 	${NSW_CenterWindow} $HWNDPARENT $8
-	
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
 	
 	${NSD_CreateButton} 123 94 71 26 ''
 	Pop $btn_MsgBoxSure
@@ -635,6 +669,7 @@ Function GsMessageBox
 	
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	ShowWindow $Hwnd_MsgBox ${SW_SHOW}
+	Call SetWindowShowTop
 FunctionEnd
 
 Function ClickSure2
@@ -972,7 +1007,7 @@ Function onClickGuanbi
 FunctionEnd
 
 Function OnClickQuitOK
-	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	/*System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
 	Push $R2
 	Push "\"
 	Call GetLastPart
@@ -983,7 +1018,9 @@ Function OnClickQuitOK
 	FindProcDLL::FindProc $R1
 	${If} $R0 != 0
 		KillProcDLL::KillProc $R1
-	${EndIf}
+	${EndIf}*/
+	HideWindow
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SoftExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -1072,7 +1109,7 @@ Function WelcomePage
 	
 	System::Call  'User32::GetDesktopWindow() i.R9'
 	${NSW_CenterWindow} $HWNDPARENT $R9
-	
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
     ;一键安装
 	StrCpy $Bool_IsExtend 0
     ${NSD_CreateButton} 180 222 117 35 ""
@@ -1231,6 +1268,7 @@ Function WelcomePage
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
+	Call SetWindowShowTop
 FunctionEnd
 
 Var ck_bind360install
@@ -1248,28 +1286,46 @@ Function OnClick_bind360install
 	ShowWindow $ck_bind360install ${SW_SHOW}
 FunctionEnd
 
+Function SetWindowShowTop
+	System::Call "user32::GetForegroundWindow() i.r0"
+	System::Call "user32::GetCurrentThreadId() i.r1"
+	System::Call "user32::GetWindowThreadProcessId(i, i) i(r0, 0).r2"
+	System::Call "user32::AttachThreadInput(i, i, i) i(r1, t2, 1).r3"
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	System::Call "user32::SetWindowPos(i $HWNDPARENT, i ${HWND_TOPMOST}, i 0, i 0,i 0,i 0,i 3)"
+	System::Call "user32::SetWindowPos(i $HWNDPARENT, i ${HWND_NOTOPMOST}, i 0, i 0,i 0,i 0,i 3)"
+	System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
+	System::Call "user32::AttachThreadInput(i r1, i r2, i 0)"
+FunctionEnd
+
 Var Handle_Loading
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
 	;先去掉快捷栏和开始菜单栏
 	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	/*ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	SetOutPath "$INSTDIR"
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
-		
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
-		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		;解除锁定到开始菜单栏
-		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	${Endif}
-	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-	Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		Call GetPinPath
+		${If} $0 != "" 
+		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+		${EndIf}
+	${Endif}*/
+	;IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
+	;Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
     !if 1   ;是否在后台运行,1有效
         GetFunctionAddress $0 InstallationMainFun
         BgWorker::CallAndWait
@@ -1280,32 +1336,46 @@ Function NSD_TimerFun
 	${If} $Bool_DeskTopLink == 1
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 		${VersionCompare} "$R0" "6.0" $2
-		SetOutPath "$INSTDIR"
+		SetOutPath "$INSTDIR\program"
 		;快速启动栏
 		${if} $2 == 2
 			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+			Call RefreshIcon
 			SetOutPath "$TEMP\${PRODUCT_NAME}"
 			IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 			System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
-			SetOutPath "$INSTDIR"
 		${else}
-			ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
-			ExecShell taskbarpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-			;锁定到开始菜单栏
-			ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-			CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
-			ExecShell startpin "$DESKTOP\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-			; 创建开始菜单快捷方式
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenu"
+			Call GetPinPath
+			${If} $0 != "" 
+			${AndIf} $0 != 0
+				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				Call RefreshIcon
+				Sleep 500
+				SetOutPath "$INSTDIR\program"
+				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+				
+				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				Sleep 1000
+				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+				Call RefreshIcon
+				Sleep 200
+				ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			${EndIf}
 		${Endif}
+		SetOutPath "$INSTDIR\program"
 		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+		${RefreshShellIcons}
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
 		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
 	${EndIf}
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
+	SetOutPath "$INSTDIR\program"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;最后才显示安装完成界面
@@ -1325,6 +1395,8 @@ Function NSD_TimerFun
 	;${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	ShowWindow $Handle_Loading ${SW_SHOW}
 	ShowWindow $HWNDPARENT ${SW_SHOW}
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
+	Call SetWindowShowTop
 FunctionEnd
 
 Function InstallationMainFun
@@ -1391,7 +1463,7 @@ Function LoadingPage
 
 	${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	${NSW_SetWindowSize} $Handle_Loading 478 320 ;改变自定义Page大小
-	
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
 	;System::Call  'User32::GetDesktopWindow() i.R9'
 	;${NSW_CenterWindow} $HWNDPARENT $R9
 
@@ -1470,7 +1542,19 @@ Function LoadingPage
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
+	Call SetWindowShowTop
 FunctionEnd
+
+Function RefreshIcon
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::RefleshIcon(t "$R0")'
+FunctionEnd
+
+Function GetPinPath
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetUserPinPath(t) i(.r0)'
+FunctionEnd
+
 
 
 /****************************************************/
@@ -1493,6 +1577,18 @@ Function un.UpdateChanel
 	${EndIf}
 FunctionEnd
 
+Function un.SetWindowShowTop
+	System::Call "user32::GetForegroundWindow() i.r0"
+	System::Call "user32::GetCurrentThreadId() i.r1"
+	System::Call "user32::GetWindowThreadProcessId(i, i) i(r0, 0).r2"
+	System::Call "user32::AttachThreadInput(i, i, i) i(r1, t2, 1).r3"
+	ShowWindow $HWNDPARENT ${SW_SHOW}
+	System::Call "user32::SetWindowPos(i $HWNDPARENT, i ${HWND_TOPMOST}, i 0, i 0,i 0,i 0,i 3)"
+	System::Call "user32::SetWindowPos(i $HWNDPARENT, i ${HWND_NOTOPMOST}, i 0, i 0,i 0,i 0,i 3)"
+	System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
+	System::Call "user32::AttachThreadInput(i r1, i r2, i 0)"
+FunctionEnd
+
 Function un.onInit
 	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	;${If} $0 == 0
@@ -1504,6 +1600,20 @@ Function un.onInit
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
+	
+	;家长管理模式开启时不能卸载
+	/*System::Call "kernel32::CreateMutexA(i 0, i 0, t 'LVDUNSETUP_PARENTS_MANAGE') i .r1 ?e"
+	Pop $R0
+	StrCmp $R0 0 +2
+	FindWindow $R1 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+	${If} $R1 != 0
+	${AndIf} $R1 != ""
+		SendMessage $R1 1324 0 0
+		Sleep 500
+	${EndIf}
+	Abort*/
+	
+	
 	
 	IfFileExists "$INSTDIR\program\Microsoft.VC90.CRT.manifest" 0 InitFailed
 	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.CRT.manifest" "$TEMP\${PRODUCT_NAME}\"
@@ -1520,6 +1630,17 @@ Function un.onInit
 	Goto +3
 	InitFailed:
 	Abort
+	
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::QueryMutex() i.r0"
+	${If} $0 == 1
+		FindWindow $R1 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
+		${If} $R1 != 0
+		${AndIf} $R1 != ""
+			SendMessage $R1 1324 0 0
+			Sleep 500
+		${EndIf}
+		Abort
+	${EndIf}
 	
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
@@ -1656,6 +1777,16 @@ Function un.UNSD_TimerFun
 	ShowWindow $Btn_FinishUnstall 1
 FunctionEnd
 
+Function un.RefreshIcon
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::RefleshIcon(t "$R0")'
+FunctionEnd
+
+Function un.GetPinPath
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetUserPinPath(t) i(.r0)'
+FunctionEnd
+
 Function un.OnClick_CruelRefused
 	EnableWindow $Btn_CruelRefused 0
 	EnableWindow $Btn_ContinueUse 0
@@ -1688,9 +1819,18 @@ Function un.OnClick_CruelRefused
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
-		ExecShell taskbarunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
-		;解除锁定到开始菜单栏
-		ExecShell startunpin "$DESKTOP\${SHORTCUT_NAME}.lnk"
+		Call un.GetPinPath
+		${If} $0 != "" 
+		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call un.RefreshIcon
+			Sleep 200
+			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			Call un.RefreshIcon
+			Sleep 200
+		${EndIf}
 	${Endif}
 
 	GetFunctionAddress $0 un.UNSD_TimerFun
@@ -1758,7 +1898,7 @@ Function un.GsMessageBox
     ${NSW_SetWindowSize} $Hwnd_MsgBox 300 130 ;改变Page大小
 	System::Call  'User32::GetDesktopWindow() i.r8'
 	${NSW_CenterWindow} $HWNDPARENT $8
-	
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
 	
 	${NSD_CreateButton} 123 94 71 26 ''
 	Pop $btn_MsgBoxSure
@@ -1811,6 +1951,7 @@ Function un.GsMessageBox
 	
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	ShowWindow $Hwnd_MsgBox ${SW_SHOW}
+	Call un.SetWindowShowTop
 FunctionEnd
 
 Function un.ClickSure
@@ -1870,7 +2011,7 @@ Function un.MyUnstall
 	
 	System::Call 'user32::GetDesktopWindow()i.R9'
 	${NSW_CenterWindow} $HWNDPARENT $R9
-
+	;System::Call "user32::SetForegroundWindow(i $HWNDPARENT)"
 	;继续使用
 	${NSD_CreateButton} 246 235 95 30 ""
  	Pop	$Btn_ContinueUse
@@ -1917,4 +2058,5 @@ Function un.MyUnstall
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	nsDialogs::Show
     ${NSD_FreeImage} $ImageHandle
+	Call un.SetWindowShowTop
 FunctionEnd
