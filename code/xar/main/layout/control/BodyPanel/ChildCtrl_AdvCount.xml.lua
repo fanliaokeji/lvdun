@@ -349,7 +349,7 @@ function InitVideoState()
 			local bState = tBlackItem["bState"]
 			TipLog("[InitVideoState] strDomain :"..tostring(strDomain).." bState: "..tostring(bState))
 			if not bState and tFunctionHelper.IsVideoDomain(strDomain) then	
-				tFunctionHelper.EnableVideoDomain(strDomain, 0)
+				-- tFunctionHelper.EnableVideoDomain(strDomain, 0)  --取消隔天逻辑20141210
 			end		
 		end	
 	end	
