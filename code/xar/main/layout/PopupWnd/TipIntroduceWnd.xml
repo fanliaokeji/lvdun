@@ -74,7 +74,7 @@
 			<height>354</height>
 		</attr>
 
-		<obj id="root.layout" class="LayoutObject">
+		<obj id="root.layout" class="CaptionObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
