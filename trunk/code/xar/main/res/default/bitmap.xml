@@ -132,6 +132,9 @@
 		<texture id="GreenWall.Common.SwitchButton.Open" image="bitmap\GreenWall.Common.SwitchButton.Open.png"/>
 		<texture id="GreenWall.Common.SwitchButton.Close" image="bitmap\GreenWall.Common.SwitchButton.Close.png" />		
 			
-		<gif id="myGif" file="bitmap\v1.gif" />
+		<gif id="FilterBubble.GifBkg" file="bitmap\GreenWall.FilterBubble.GifBkg.gif" />
+		<texture id="FilterBubble.Low.Bkg" image="bitmap\GreenWall.FilterBubble.Low.Bkg.png" />
+		<texture id="GreenWall.FilterBubble.CheckBox.Empty" image="bitmap\GreenWall.FilterBubble.CheckBox.Empty.png" />
+		<texture id="GreenWall.FilterBubble.CheckBox.Check" image="bitmap\GreenWall.FilterBubble.CheckBox.Check.png" />
 	</resource>
 </XLUE>
