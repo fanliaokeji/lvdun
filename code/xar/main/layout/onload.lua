@@ -10,12 +10,13 @@ local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
 
 local g_tPopupWndList = {
-	[1] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
+	[1] = {"TipFilterBubbleWnd", "TipFilterBubbleTree"},
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipAboutWnd", "TipAboutTree"},
 	[4] = {"TipUpdateWnd", "TipUpdateTree"},
 	[5] = {"TipBubbleWnd", "TipBubbleTree"},
 	[6] = {"TipIntroduceWnd", "TipIntroduceTree"},
+	-- [7] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
 }
 
 local g_tConfigFileStruct = {
@@ -692,14 +693,14 @@ function ShowMainPanleByTray(objHostWnd)
 			objHostWnd:BringWindowToTop(true)
 		end
 		
-		local strHostWndName = "TipFilterRemindWnd.Instance"
-		local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
-		if objPopupWnd and objPopupWnd:GetVisible() then
-			local hWnd = objPopupWnd:GetWndHandle()
-			if hWnd then
-				objHostWnd:BringWindowToBack(hWnd)
-			end
-		end
+		-- local strHostWndName = "TipFilterRemindWnd.Instance"
+		-- local objPopupWnd = hostwndManager:GetHostWnd(strHostWndName)
+		-- if objPopupWnd and objPopupWnd:GetVisible() then
+			-- local hWnd = objPopupWnd:GetWndHandle()
+			-- if hWnd then
+				-- objHostWnd:BringWindowToBack(hWnd)
+			-- end
+		-- end
 	end
 end
 
@@ -761,11 +762,20 @@ function PopupBubbleOneDay()
 		return
 	end
 	
-	if g_tipNotifyIcon then
-		PopupNotifyIconTip("绿盾广告管家\r\n已开始为您过滤骚扰广告", true)
-		tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
-		SaveConfigToFileByKey("tUserConfig")
+	local nNoShowFilterBubble = tonumber(tUserConfig["nNoShowFilterBubble"]) 
+	if not IsNilString(nNoShowFilterBubble) then
+		return
 	end
+	
+	-- if g_tipNotifyIcon then
+		-- PopupNotifyIconTip("绿盾广告管家\r\n已开始为您过滤骚扰广告", true)
+		-- tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
+		-- SaveConfigToFileByKey("tUserConfig")
+	-- end
+	
+	ShowPopupWndByName("TipFilterBubbleWnd.Instance", true)
+	tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
+	SaveConfigToFileByKey("tUserConfig")
 end
 
 
@@ -1892,8 +1902,16 @@ end
 
 
 function TryShowIntroduceWnd(strCmd)
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	local nLastShowIntroduce = FetchValueByPath(tUserConfig, {"nLastShowIntroduce"})
+	if not IsNilString(nLastShowIntroduce) then
+		return
+	end
+	
 	if string.find(tostring(strCmd), "/showintroduce") then
 		ShowPopupWndByName("TipIntroduceWnd.Instance", true)
+		tUserConfig["nLastShowIntroduce"] = tipUtil:GetCurrentUTCTime()
+		SaveConfigToFileByKey("tUserConfig")
 	end
 end
 
