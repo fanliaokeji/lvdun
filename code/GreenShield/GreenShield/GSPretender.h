@@ -21,6 +21,7 @@ public:
 			_T("libexpat.dll"), 
 			_T("libpng13.dll"), 
 			_T("xlgraphic.dll"), 
+			_T("xlgraphicplus.dll"),
 			_T("xlue.dll")
 		};
 		HMODULE rghmodDeps[_countof(rgszFileName)] = {NULL};
