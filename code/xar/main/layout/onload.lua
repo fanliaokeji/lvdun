@@ -975,6 +975,7 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	tCurrentCfg["nLastBubbleUTC"] = tOldCfg["nLastBubbleUTC"]
 	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
 	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
+	tCurrentCfg["nLastShowIntroduce"] = tOldCfg["nLastShowIntroduce"] or ""
 	
 	if type(tCurrentCfg["tConfig"]) ~= "table" then
 		tCurrentCfg["tConfig"] = {}
@@ -998,7 +999,6 @@ function MergeOldFilterCfg(tCurrentCfg, strFileName)
 	
 	tCurrentCfg["tBlackList"] = tOldCfg["tBlackList"]
 	tCurrentCfg["tUserWhiteList"] = tOldCfg["tUserWhiteList"]
-	tCurrentCfg["nLastShowIntroduce"] = tOldCfg["nLastShowIntroduce"] or ""
 	
 	local tDefWhiteList = tOldCfg["tDefWhiteList"] or {}
 	if type(tCurrentCfg["tDefWhiteList"]) ~= "table" then
