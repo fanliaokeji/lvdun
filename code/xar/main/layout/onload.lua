@@ -470,6 +470,17 @@ function RegQueryValue(sPath)
 end
 
 
+function RegDeleteValue(sPath)
+	if IsRealString(sPath) then
+		local sRegRoot, sRegPath = string.match(sPath, "^(.-)[\\/](.*)")
+		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
+			return tipUtil:DeleteRegValue(sRegRoot, sRegPath)
+		end
+	end
+	return false
+end
+
+
 function RegSetValue(sPath, value)
 	if IsRealString(sPath) then
 		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
@@ -987,6 +998,7 @@ function MergeOldFilterCfg(tCurrentCfg, strFileName)
 	
 	tCurrentCfg["tBlackList"] = tOldCfg["tBlackList"]
 	tCurrentCfg["tUserWhiteList"] = tOldCfg["tUserWhiteList"]
+	tCurrentCfg["nLastShowIntroduce"] = tOldCfg["nLastShowIntroduce"] or ""
 	
 	local tDefWhiteList = tOldCfg["tDefWhiteList"] or {}
 	if type(tCurrentCfg["tDefWhiteList"]) ~= "table" then
@@ -1904,14 +1916,17 @@ end
 function TryShowIntroduceWnd(strCmd)
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLastShowIntroduce = FetchValueByPath(tUserConfig, {"nLastShowIntroduce"})
+	
 	if not IsNilString(nLastShowIntroduce) then
 		return
 	end
 	
-	if string.find(tostring(strCmd), "/showintroduce") then
+	local strRegPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\ShowIntroduce"
+	if RegQueryValue(strRegPath) then
 		ShowPopupWndByName("TipIntroduceWnd.Instance", true)
 		tUserConfig["nLastShowIntroduce"] = tipUtil:GetCurrentUTCTime()
 		SaveConfigToFileByKey("tUserConfig")
+		RegDeleteValue(strRegPath)		
 	end
 end
 
@@ -1919,7 +1934,7 @@ end
 function ShowPopWndByCommand()
 	local cmdString = tipUtil:GetCommandLine()
 	TryShowNonSysBubble(cmdString)
-	TryShowIntroduceWnd(cmdString)
+	TryShowIntroduceWnd()
 end
 
 
