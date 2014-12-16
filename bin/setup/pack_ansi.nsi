@@ -54,7 +54,7 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.4"
+!define PRODUCT_VERSION "1.0.0.5"
 !define VERSION_LASTNUMBER 4
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
@@ -68,7 +68,7 @@ Var str_ChannelID
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
 ;卸载包开关（请不要轻易打开）
-;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
+; !define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -377,13 +377,18 @@ Function CmdSilentInstall
 	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	Call RefreshIcon
 	;静默安装也写开机启动
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
+	${GetParameters} $R1
+	${GetOptions} $R1 "/setboot"  $R0
+	IfErrors +2 0
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	${GetParameters} $R1
 	${GetOptions} $R1 "/run"  $R0
 	IfErrors +7 0
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
-		StrCpy $R0 "/embedding"
+		StrCpy $R0 "/embedding /showintroduce"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
@@ -420,6 +425,7 @@ Function UnstallOnlyFile
 	${EndIf}
 FunctionEnd
 
+
 Function CmdUnstall
 	${GetOptions} $R1 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
@@ -455,6 +461,7 @@ Function CmdUnstall
     System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupUninstallService() ?u'
 	StrCpy $1 $INSTDIR
 	Call UnstallOnlyFile
+	
 	;读取渠道号
 	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R4 != ""
@@ -1372,7 +1379,7 @@ Function NSD_TimerFun
 		${RefreshShellIcons}
 	${EndIf}
 	${If} $Bool_StartTimeDo == 1
-		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding'
+		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot_packet'
 	${EndIf}
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
@@ -1613,8 +1620,6 @@ Function un.onInit
 	${EndIf}
 	Abort*/
 	
-	
-	
 	IfFileExists "$INSTDIR\program\Microsoft.VC90.CRT.manifest" 0 InitFailed
 	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.CRT.manifest" "$TEMP\${PRODUCT_NAME}\"
 	IfFileExists "$INSTDIR\program\msvcp90.dll" 0 InitFailed
@@ -1631,6 +1636,7 @@ Function un.onInit
 	InitFailed:
 	Abort
 	
+	/***
 	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::QueryMutex() i.r0"
 	${If} $0 == 1
 		FindWindow $R1 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
@@ -1641,6 +1647,7 @@ Function un.onInit
 		${EndIf}
 		Abort
 	${EndIf}
+	***/
 	
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
@@ -1719,6 +1726,25 @@ Function un.Random
 	Exch $0
 FunctionEnd
 
+
+Function un.DeleteConfigFile
+	StrCpy $1 ${NSIS_MAX_STRLEN}
+	StrCpy $0 ""
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+	${If} $0 == ""
+		Goto EndFun
+	${EndIf}
+
+	IfFileExists "$0\GreenShield\UserConfig.dat" 0 +2
+	Delete "$0\GreenShield\UserConfig.dat"
+	
+	IfFileExists "$0\GreenShield\UserConfig.dat.bak" 0 +2
+	Delete "$0\GreenShield\UserConfig.dat.bak"
+
+	EndFun:	
+FunctionEnd
+
+
 Function un.DoUninstall
 	;最先卸载服务
 	IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
@@ -1730,6 +1756,9 @@ Function un.DoUninstall
 	RMDir /r "$INSTDIR\program"
 	RMDir /r "$INSTDIR\res"
 
+	;删除配置文件
+	Call un.DeleteConfigFile
+	
 	 ;文件被占用则改一下名字
 	StrCpy $R4 "$INSTDIR\program\GsNet32.dll"
 	IfFileExists $R4 0 RenameOK
