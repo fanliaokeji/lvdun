@@ -1916,18 +1916,20 @@ end
 function TryShowIntroduceWnd(strCmd)
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLastShowIntroduce = FetchValueByPath(tUserConfig, {"nLastShowIntroduce"})
+	local strRegPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\ShowIntroduce"
 	
 	if not IsNilString(nLastShowIntroduce) then
+		RegDeleteValue(strRegPath)
 		return
 	end
 	
-	local strRegPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\ShowIntroduce"
-	if RegQueryValue(strRegPath) then
+	local strValue = RegQueryValue(strRegPath)
+	if IsRealString(strValue) then
 		ShowPopupWndByName("TipIntroduceWnd.Instance", true)
 		tUserConfig["nLastShowIntroduce"] = tipUtil:GetCurrentUTCTime()
 		SaveConfigToFileByKey("tUserConfig")
-		RegDeleteValue(strRegPath)		
 	end
+	RegDeleteValue(strRegPath)
 end
 
 
