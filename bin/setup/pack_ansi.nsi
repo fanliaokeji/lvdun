@@ -10,6 +10,9 @@ Var Bool_IsExtend
 Var ck_xieyi
 Var Bool_Xieyi
 Var Lbl_Xieyi
+Var ck_sysstup
+Var Bool_Sysstup
+Var Lbl_Sysstup
 Var Btn_Zidingyi
 Var Btn_Zuixiaohua
 Var Btn_Guanbi
@@ -21,6 +24,10 @@ Var Lbl_Path
 Var ck_DeskTopLink
 Var Lbl_DeskTopLink
 Var Bool_DeskTopLink
+
+Var ck_ToolBarLink
+Var Lbl_ToolBarLink
+Var Bool_ToolBarLink
 
 Var ck_StartTimeDo
 Var Lbl_StartTimeDo
@@ -55,7 +62,7 @@ Var str_ChannelID
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
 !define PRODUCT_VERSION "1.0.0.5"
-!define VERSION_LASTNUMBER 4
+!define VERSION_LASTNUMBER 5
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
@@ -240,8 +247,13 @@ Function DoInstall
   File "uninst\uninst.exe"
   
   ;最后一步注册服务
-  IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
-  System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupInstallService() ?u'
+  ${If} $Bool_StartTimeDo == 1
+	 IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +6
+	 System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupInstallService() ?u' 
+  ${Else}
+	 IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +3
+	 System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupUninstallService() ?u'
+  ${EndIf}
   
   StrCpy $Bool_IsUpdate 0 
   ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
@@ -376,7 +388,7 @@ Function CmdSilentInstall
 	${RefreshShellIcons}
 	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	Call RefreshIcon
-	;静默安装也写开机启动
+	;静默安装根据命令行开机启动
 	${GetParameters} $R1
 	${GetOptions} $R1 "/setboot"  $R0
 	IfErrors +2 0
@@ -388,7 +400,7 @@ Function CmdSilentInstall
 	IfErrors +7 0
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
-		StrCpy $R0 "/embedding /showintroduce"
+		StrCpy $R0 "/embedding"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
@@ -818,6 +830,21 @@ Function OnClick_CheckXieyi
 	ShowWindow $ck_xieyi ${SW_SHOW}
 FunctionEnd
 
+
+Function OnClick_CheckSysstup
+	${IF} $Bool_Sysstup == 1
+        IntOp $Bool_Sysstup $Bool_Sysstup - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_sysstup
+    ${ELSE}
+        IntOp $Bool_Sysstup $Bool_Sysstup + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_sysstup
+    ${EndIf}
+	ShowWindow $ck_sysstup ${SW_HIDE}
+	ShowWindow $ck_sysstup ${SW_SHOW}
+FunctionEnd
+
+
+
 Function OnClick_BrowseButton
 	Pop $0
 	Push $INSTDIR ; input string "C:\Program Files\ProgramName"
@@ -928,16 +955,20 @@ Function onClickZidingyi
 	ShowWindow $Btn_Next ${SW_HIDE}
 	ShowWindow $Btn_Agreement ${SW_HIDE}
 	ShowWindow $Lbl_Xieyi ${SW_HIDE}
+	ShowWindow $Lbl_Sysstup ${SW_HIDE}
 	ShowWindow $ck_xieyi ${SW_HIDE}
+	ShowWindow $ck_sysstup ${SW_HIDE}
 	ShowWindow $Btn_Zidingyi ${SW_HIDE}
+	ShowWindow $ck_StartTimeDo ${SW_HIDE}
+	ShowWindow $Lbl_StartTimeDo ${SW_HIDE}
 	ShowWindow $Edit_BrowserBg 1
 	ShowWindow $Txt_Browser 1
 	ShowWindow $Btn_Browser 1
 	ShowWindow $Lbl_Path 1
 	ShowWindow $ck_DeskTopLink 1
-	ShowWindow $Lbl_DeskTopLink 1
-	ShowWindow $ck_StartTimeDo 1
-	ShowWindow $Lbl_StartTimeDo 1
+	ShowWindow $Lbl_DeskTopLink 1	
+	ShowWindow $ck_ToolBarLink 1
+	ShowWindow $Lbl_ToolBarLink 1
 	ShowWindow $Btn_Install 1
 	ShowWindow $Btn_Return 1
 FunctionEnd
@@ -946,16 +977,20 @@ Function OnClick_Return
 	ShowWindow $Btn_Next 1
 	ShowWindow $Btn_Agreement 1
 	ShowWindow $Lbl_Xieyi 1
+	ShowWindow $Lbl_Sysstup 1
 	ShowWindow $ck_xieyi 1
+	ShowWindow $ck_sysstup 1
 	ShowWindow $Btn_Zidingyi 1
+	ShowWindow $ck_StartTimeDo 1
+	ShowWindow $Lbl_StartTimeDo 1
 	ShowWindow $Edit_BrowserBg ${SW_HIDE}
 	ShowWindow $Txt_Browser ${SW_HIDE}
 	ShowWindow $Btn_Browser ${SW_HIDE}
 	ShowWindow $Lbl_Path ${SW_HIDE}
 	ShowWindow $ck_DeskTopLink ${SW_HIDE}
-	ShowWindow $Lbl_DeskTopLink ${SW_HIDE}
-	ShowWindow $ck_StartTimeDo ${SW_HIDE}
-	ShowWindow $Lbl_StartTimeDo ${SW_HIDE}
+	ShowWindow $Lbl_DeskTopLink ${SW_HIDE}	
+	ShowWindow $ck_ToolBarLink ${SW_HIDE}
+	ShowWindow $Lbl_ToolBarLink ${SW_HIDE}
 	ShowWindow $Btn_Install ${SW_HIDE}
 	ShowWindow $Btn_Return ${SW_HIDE}
 FunctionEnd
@@ -1048,6 +1083,20 @@ Function OnClick_CheckDeskTopLink
 	ShowWindow $ck_DeskTopLink ${SW_SHOW}
 FunctionEnd
 
+
+Function OnClick_CheckToolBarLink
+	${IF} $Bool_ToolBarLink == 1
+        IntOp $Bool_ToolBarLink $Bool_ToolBarLink - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_ToolBarLink
+    ${ELSE}
+        IntOp $Bool_ToolBarLink $Bool_ToolBarLink + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_ToolBarLink
+    ${EndIf}
+	ShowWindow $ck_ToolBarLink ${SW_HIDE}
+	ShowWindow $ck_ToolBarLink ${SW_SHOW}
+FunctionEnd
+
+
 Function OnClick_CheckStartTimeDo
 	${IF} $Bool_StartTimeDo == 1
         IntOp $Bool_StartTimeDo $Bool_StartTimeDo - 1
@@ -1127,7 +1176,7 @@ Function WelcomePage
     SkinBtn::onClick $1 $3
     
 	;勾选同意协议
-	${NSD_CreateButton} 11 285 15 15 ""
+	${NSD_CreateButton} 11 290 15 15 ""
 	Pop $ck_xieyi
 	StrCpy $1 $ck_xieyi
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
@@ -1135,7 +1184,7 @@ Function WelcomePage
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_Xieyi 1
 	
-	StrCpy $3 283
+	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
     ${NSD_CreateLabel} 30 $3 180 20 "我已阅读并同意绿盾广告管家"
     Pop $Lbl_Xieyi
@@ -1143,8 +1192,43 @@ Function WelcomePage
     SetCtlColors $Lbl_Xieyi "${TEXTCOLOR}" transparent ;背景设成透明
 	SendMessage $Lbl_Xieyi ${WM_SETFONT} $Handle_Font 0
 	
+	;勾选开机启动
+	${NSD_CreateButton} 11 265 15 15 ""
+	Pop $ck_sysstup
+	StrCpy $1 $ck_sysstup
+	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
+	GetFunctionAddress $3 OnClick_CheckSysstup
+    SkinBtn::onClick $1 $3
+	StrCpy $Bool_Sysstup 1
+	
+	StrCpy $3 263
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 30 $3 60 20 "开机启动"
+    Pop $Lbl_Sysstup
+	${NSD_OnClick} $Lbl_Sysstup OnClick_CheckSysstup
+    SetCtlColors $Lbl_Sysstup "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $Lbl_Sysstup ${WM_SETFONT} $Handle_Font 0
+	
+	;勾选开启实时过滤
+	${NSD_CreateButton} 100 265 15 15 ""
+	Pop $ck_StartTimeDo
+	StrCpy $1 $ck_StartTimeDo
+	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
+	GetFunctionAddress $3 OnClick_CheckStartTimeDo
+    SkinBtn::onClick $1 $3
+	StrCpy $Bool_StartTimeDo 1
+	
+	StrCpy $3 263
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 119 $3 100 18 "开启实时过滤"
+    Pop $Lbl_StartTimeDo
+	${NSD_OnClick} $Lbl_StartTimeDo OnClick_CheckStartTimeDo
+    SetCtlColors $Lbl_StartTimeDo "${TEXTCOLOR}" transparent ;背景设成透明
+	SendMessage $Lbl_StartTimeDo ${WM_SETFONT} $Handle_Font 0
+	
+	
     ;用户协议
-	${NSD_CreateButton} 201 286 68 15 ""
+	${NSD_CreateButton} 201 291 68 15 ""
 	Pop $Btn_Agreement
 	StrCpy $1 $Btn_Agreement
 	Call SkinBtn_Agreement1
@@ -1152,7 +1236,7 @@ Function WelcomePage
 	SkinBtn::onClick $1 $3
 		
 	;自定义安装
-	${NSD_CreateButton} 385 286 81 15 ""
+	${NSD_CreateButton} 385 291 81 15 ""
 	Pop $Btn_Zidingyi
 	StrCpy $1 $Btn_Zidingyi
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_agreement2.bmp $1
@@ -1215,7 +1299,7 @@ Function WelcomePage
 	
 	StrCpy $3 276
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 36 $3 120 18 "添加桌面快捷方式"
+    ${NSD_CreateLabel} 36 $3 100 18 "添加桌面快捷方式"
     Pop $Lbl_DeskTopLink
 	${NSD_OnClick} $Lbl_DeskTopLink OnClick_CheckDeskTopLink
     SetCtlColors $Lbl_DeskTopLink "${TEXTCOLOR}" transparent ;背景设成透明
@@ -1223,24 +1307,24 @@ Function WelcomePage
 	ShowWindow $Lbl_DeskTopLink ${SW_HIDE}
 	SendMessage $Lbl_DeskTopLink ${WM_SETFONT} $Handle_Font 0
 	
-	;开启实时过滤
+	;添加到启动栏
 	${NSD_CreateButton} 166 278 15 15 ""
-	Pop $ck_StartTimeDo
-	StrCpy $1 $ck_StartTimeDo
+	Pop $ck_ToolBarLink
+	StrCpy $1 $ck_ToolBarLink
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
-	GetFunctionAddress $3 OnClick_CheckStartTimeDo
+	GetFunctionAddress $3 OnClick_CheckToolBarLink
     SkinBtn::onClick $1 $3
-	StrCpy $Bool_StartTimeDo 1
+	StrCpy $Bool_ToolBarLink 1
 	
 	StrCpy $3 276
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 186 $3 100 18 "开启实时监控"
-    Pop $Lbl_StartTimeDo
-	${NSD_OnClick} $Lbl_StartTimeDo OnClick_CheckStartTimeDo
-    SetCtlColors $Lbl_StartTimeDo "${TEXTCOLOR}" transparent ;背景设成透明
-	ShowWindow $ck_StartTimeDo ${SW_HIDE}
-	ShowWindow $Lbl_StartTimeDo ${SW_HIDE}
-	SendMessage $Lbl_StartTimeDo ${WM_SETFONT} $Handle_Font 0
+    ${NSD_CreateLabel} 186 $3 100 18 "添加到启动栏"
+    Pop $Lbl_ToolBarLink
+	${NSD_OnClick} $Lbl_ToolBarLink OnClick_CheckToolBarLink
+    SetCtlColors $Lbl_ToolBarLink "${TEXTCOLOR}" transparent ;背景设成透明
+	ShowWindow $ck_ToolBarLink ${SW_HIDE}
+	ShowWindow $Lbl_ToolBarLink ${SW_HIDE}
+	SendMessage $Lbl_ToolBarLink ${WM_SETFONT} $Handle_Font 0
 	
 	;立即安装
 	${NSD_CreateButton} 316 286 76 26 ""
@@ -1339,8 +1423,16 @@ Function NSD_TimerFun
     !else
         Call InstallationMainFun
     !endif
+	
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
+		SetOutPath "$INSTDIR\program"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+		${RefreshShellIcons}
+	${EndIf}
+	
+	
+	${If} $Bool_ToolBarLink == 1
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 		${VersionCompare} "$R0" "6.0" $2
 		SetOutPath "$INSTDIR\program"
@@ -1357,30 +1449,34 @@ Function NSD_TimerFun
 			Call GetPinPath
 			${If} $0 != "" 
 			${AndIf} $0 != 0
-				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-				Call RefreshIcon
-				Sleep 500
-				SetOutPath "$INSTDIR\program"
-				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
-				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-				
-				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-				Sleep 1000
-				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
-				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
-				Call RefreshIcon
-				Sleep 200
-				ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			Call RefreshIcon
+			Sleep 500
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 500
+			SetOutPath "$INSTDIR\program"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			
+			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			Sleep 1000
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
+			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+			Call RefreshIcon
+			Sleep 200
+			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
 			${EndIf}
 		${Endif}
-		SetOutPath "$INSTDIR\program"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
-		${RefreshShellIcons}
 	${EndIf}
-	${If} $Bool_StartTimeDo == 1
-		 WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot_packet'
+	
+	${If} $Bool_Sysstup == 1
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	${Else}
+		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
+	
+	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
