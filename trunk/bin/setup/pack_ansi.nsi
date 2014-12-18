@@ -545,6 +545,7 @@ Function .onInit
 	StrCpy $Int_FontOffset 0
 	
 	Call UpdateChanel
+	Call InitInsConfParam
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
@@ -600,6 +601,12 @@ Function .onInit
 	SkinBtn::Init "$PLUGINSDIR\btn_quitreturn.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_freeuse.bmp"
 FunctionEnd
+
+
+Function InitInsConfParam
+	StrCpy $Bool_StartTimeDo 1
+FunctionEnd
+
 
 Function onMsgBoxCloseCallback
   ${If} $MSG = ${WM_CLOSE}
