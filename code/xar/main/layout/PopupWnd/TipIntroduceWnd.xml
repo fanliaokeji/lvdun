@@ -46,10 +46,10 @@
 					<children>
 						<obj id="TipIntroduce.TryBtn" class="TipAddin.Button">
 							<attr>
-								<left>440</left>
-								<top>225</top>
-								<width>157</width>
-								<height>59</height>
+								<left>370</left>
+								<top>201</top>
+								<width>133</width>
+								<height>50</height>
 								<NormalBkgID>GreenWall.IntroduceWnd.TryBtn.Normal</NormalBkgID>
 								<DownBkgID>GreenWall.IntroduceWnd.TryBtn.Hover</DownBkgID>
 								<HoverBkgID>GreenWall.IntroduceWnd.TryBtn.Hover</HoverBkgID>
@@ -70,16 +70,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>660</width>
-			<height>354</height>
+			<width>563</width>
+			<height>332</height>
 		</attr>
 
 		<obj id="root.layout" class="CaptionObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>660</width>
-				<height>354</height>
+				<width>563</width>
+				<height>332</height>
 				<limitchild>true</limitchild>
 			</attr>				
 			<children>						
@@ -94,10 +94,10 @@
 
 				<obj id="TipIntroduce.Menu.Layout" class="LayoutObject">
 					<attr>
-						<left>32</left>  
-						<top>308</top>
-						<width>593</width>
-						<height>27</height>
+						<left>27</left>  
+						<top>282</top>
+						<width>506</width>
+						<height>23</height>
 						<cursor>IDC_HAND</cursor>
 					</attr>
 					<eventlist>
@@ -135,8 +135,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>660</width>
-            <height>354</height>
+            <width>563</width>
+            <height>332</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
