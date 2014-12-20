@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by GreenShield.rc
 //
-#define IDI_ICON1                       203
+#define IDI_ICON1                       201
 
 // Next default values for new objects
 // 
