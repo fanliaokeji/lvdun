@@ -1,26 +1,32 @@
 function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
-			["strVersion"] = "1.0.0.2",
+			["strVersion"] = "1.0.0.6",
 			["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
+			["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
 			["tInroduce"] = {
-				"1.开发家庭控制功能",
-				"2.视频过滤优化",
-				"3.修复部分bug",
+				"1.修复部分bug",
+				"",
+				"",
 			},
+			
 			["tForceUpdate"] = {
-				["tVersion"] = {"0"},
+				["strVersion"] = "1.0.0.6",
+				["tVersion"] = {"1-5"},
+				["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
+				["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
 			},
 		},
 		
+		!!!!!!!注意 检查W和V!!!
 		["tServerData"] = {
 			["tServerDataW"] = {
-				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW.dat",
-				["strMD5"] = "D46D882ED5AC77905E0DB07AAC26EBDC",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
+				["strMD5"] = "D5A605FF37D902420BAA058CA5D31806",
 			},
 			["tServerDataV"] = {
-				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
-				["strMD5"] = "582DBE4036DD02F7FECE1949EC83546B",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW.dat",
+				["strMD5"] = "9757D329685A4958537D51714F8E7180",
 			},
 		},
 	}
