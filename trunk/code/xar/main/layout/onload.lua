@@ -1849,10 +1849,10 @@ end
 function CheckServerRuleFile(tServerConfig)
 	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
 	
-	local strServerVideoURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
-	local strServerVideoMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
-	local strServerWebURL = FetchValueByPath(tServerData, {"tServerDataV", "strURL"})
-	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataV", "strMD5"})
+	local strServerVideoURL = FetchValueByPath(tServerData, {"tServerDataV", "strURL"})
+	local strServerVideoMD5 = FetchValueByPath(tServerData, {"tServerDataV", "strMD5"})
+	local strServerWebURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
+	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
 	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) 
 	   or not IsRealString(strServerVideoMD5) or not IsRealString(strServerWebMD5) then
 		TipLog("[CheckServerRuleFile] get server rule info failed , start tipmain ")
