@@ -98,7 +98,8 @@ static const wchar_t* app_table[] = {
 	{L"slimboat.exe"},
 	{L"yyexplorer.exe"},
 	{L"qyclient.exe"},
-	{L"letvloader.exe"}
+	{L"letvloader.exe"},
+	{L"qyplayer.exe"}
 };
 
 static const wchar_t* app_table_end_with[] = {
