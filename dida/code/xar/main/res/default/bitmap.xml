@@ -1,0 +1,43 @@
+<XLUE>
+	<resource>
+		<texture id="DiDa.MainWnd.Bkg" image="bitmap\DiDa.MainWnd.Bkg.png" />
+		<texture id="DiDa.MainWnd.Close" image="bitmap\DiDa.MainWnd.Close.png" />
+		
+		<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" image="bitmap\DiDa.Scroll.ThumbBtn.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Long.Hover" image="bitmap\DiDa.Combobox.Bkg.Long.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Long.Normal" image="bitmap\DiDa.Combobox.Bkg.Long.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Short.Normal" image="bitmap\DiDa.Combobox.Bkg.Short.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Short.Hover" image="bitmap\DiDa.Combobox.Bkg.Short.Hover.png" />
+		<texture id="DiDa.DropList.Bkg" image="bitmap\DiDa.DropList.Bkg.png" />
+		<texture id="DiDa.DropList.Big.Bkg" image="bitmap\DiDa.DropList.Big.Bkg.png" />
+		<texture id="DiDa.DropList.Select" image="bitmap\DiDa.DropList.Select.png" />
+		
+		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
+		<texture id="DiDa.Canlender.Select" image="bitmap\DiDa.Canlender.Select.png" />
+		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
+		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
+		
+		<bitmap id="Weather.DuoYun" path="bitmap\weather\Weather.DuoYun.png" />
+	
+		<!--imagelist id="DiDa.Scroll.ThumbBtn" splitter="1" varyblock="1" image="bitmap\DiDa.Scroll.ThumbBtn.png" />
+			<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" imagelist="DiDa.Scroll.ThumbBtn" index="1" />
+			<texture id="DiDa.Scroll.ThumbBtn.Hover" type="ThreeInOneV" imagelist="DiDa.Scroll.ThumbBtn" index="2" />
+			<texture id="DiDa.Scroll.ThumbBtn.Down" type="ThreeInOneV"  imagelist="DiDa.Scroll.ThumbBtn" index="3" />
+			<texture id="DiDa.Scroll.ThumbBtn.Disable" type="ThreeInOneV"  imagelist="DiDa.Scroll.ThumbBtn" index="4" /-->
+	
+	</resource>
+</XLUE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

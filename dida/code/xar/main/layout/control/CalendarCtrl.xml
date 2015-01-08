@@ -1,0 +1,41 @@
+<xlue>
+	<control class="CalendarCtrl">
+		<attr_def>
+			<attr name="ItemWidth" type="int">
+				<default>40</default>
+			</attr>
+			<attr name="ItemHeight" type="int">
+				<default>40</default>
+			</attr>
+			<attr name="ItemSpanW" type="int">
+				<default>8</default>
+			</attr>
+			<attr name="ItemSpanH" type="int">
+				<default>1</default>
+			</attr>
+			
+		</attr_def>
+		<method_def>
+			<ShowClndrContent file="CalendarCtrl.xml.lua" func="ShowClndrContent"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="CalendarCtrl.Container" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+					</attr>		
+				</obj>	
+			
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="CalendarCtrl.xml.lua" func="OnInitCalendarCtrl"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

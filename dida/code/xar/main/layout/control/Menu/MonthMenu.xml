@@ -1,0 +1,45 @@
+<xlue>
+	<objtemplate id="monthmenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>1</ItemTop>
+			<ItemBottom>1</ItemBottom>
+			<ItemLeft>1</ItemLeft> 
+			<ItemRight>0</ItemRight> 
+		</attr>
+		<children>
+			<!--动态创建-->
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="MonthMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>63</width>
+			<height>206</height>
+		</attr>
+		
+		<obj id="Menu.MainLayout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>63</width>
+				<height>206</height>
+			</attr>
+			<children>
+				<obj id="Menu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<BknID>DiDa.DropList.Bkg</BknID>
+					</attr>
+					<eventlist>
+						<event name="OnInitControl" file="MonthMenu.xml.lua" func="OnInitControl" />
+					</eventlist>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
