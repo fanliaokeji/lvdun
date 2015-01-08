@@ -1,0 +1,122 @@
+<xlue>
+	<control class="CalendarItem">
+		<attr_def>
+			<attr name="tClndrContent" />
+		</attr_def>
+		<method_def>
+			<SetContent file="CalendarItem.xml.lua" func="SetContent"/>
+			<SetDayText file="CalendarItem.xml.lua" func="SetDayText"/>
+			<SetCHNDayText file="CalendarItem.xml.lua" func="SetCHNDayText"/>
+			<SetAllTextNormal file="CalendarItem.xml.lua" func="SetAllTextNormal"/>
+			<SetAllTextGray file="CalendarItem.xml.lua" func="SetAllTextGray"/>
+			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
+			<SetTextHoliday file="CalendarItem.xml.lua" func="SetTextHoliday"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="Calendar.Layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+					</attr>		
+					<children>
+						<obj id="Calendar.Day" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>3</top>
+								<width>father.width</width> 
+								<height>father.height/2</height>
+								<valign>bottom</valign>
+								<halign>center</halign>
+								<font>font.dincond18</font>
+								<textcolor>4D4D4D</textcolor>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.CHNDay" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>father.height/2+3</top>
+								<width>father.width</width> 
+								<height>father.height/2</height>
+								<valign>top</valign>
+								<halign>center</halign>
+								<font>font.fzlt12</font>
+								<textcolor>808080</textcolor>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.Current" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.Canlender.Current</texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.Select" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.Canlender.Select</texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>
+						
+						<obj id="Calendar.Work" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.Canlender.Work</texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>
+						
+						<obj id="Calendar.Holiday" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.Canlender.Holiday</texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>
+					
+					</children>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnLButtonUp" file="CalendarItem.xml.lua" func="OnLButtonUp"/>
+				<event name="OnMouseEnter" file="CalendarItem.xml.lua" func="OnMouseEnter"/>
+				<event name="OnMouseLeave" file="CalendarItem.xml.lua" func="OnMouseLeave"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

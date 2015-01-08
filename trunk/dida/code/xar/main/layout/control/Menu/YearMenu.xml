@@ -1,0 +1,44 @@
+<xlue>
+	<objtemplate id="yearmenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>1</ItemTop>
+			<ItemLeft>0</ItemLeft> 
+			<ItemRight>0</ItemRight> 
+		</attr>
+		<children>
+			<!--动态创建-->
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="YearMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>90</width>
+			<height>204</height>
+		</attr>
+		
+		<obj id="Menu.MainLayout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>90</width>
+				<height>204</height>
+			</attr>
+			<children>
+				<obj id="Menu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<BknID>DiDa.DropList.Big.Bkg</BknID>
+					</attr>
+					<eventlist>
+						<event name="OnInitControl" file="YearMenu.xml.lua" func="OnInitControl" />
+					</eventlist>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
