@@ -1,0 +1,6 @@
+LIBRARY	"DDKernel"
+
+EXPORTS
+InitXLUE
+UnInitXLUE
+HandleSingleton
