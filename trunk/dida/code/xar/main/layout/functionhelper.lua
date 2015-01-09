@@ -346,8 +346,25 @@ function QueryAllUsersDir()
 end
 
 function GetExePath()
-	return RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DiDa\\path")
+	return tipUtil:GetModuleExeName()
 end
+
+
+function GetDBPath(strDBName)
+	local strExePath = GetExePath()
+	local _, _, strExeDir = string.find(strExePath, "(.*)\\.*$")
+	
+	local strDBPath = tipUtil:PathCombine(strExeDir, strDBName)
+	if IsRealString(strDBPath) and tipUtil:QueryFileExists(strDBPath) then
+		return strDBPath
+	end
+	
+	XLMessageBox(tostring("数据缺失， 请重新安装"))
+	ExitProcess()
+	return nil
+end
+
+
 
 function GetDiDaVersion()
 	local strEXEPath = GetExePath()
@@ -444,30 +461,59 @@ function GetYearMonthFromUI()
 		return nil
 	end
 	
+	local nMonth = tonumber(strMonth)
+	strMonth = string.format("%02d", nMonth)
+	
 	local strYearMonth = strYear..strMonth
 	return strYearMonth
 end
 
-function GetClndrContent(strYearMonth)
-	local t = {}
-	for i=1, 42 do
-		t[i] = {
-			["solarcalendar"] = "20141028",
-			["cmonth"] = "十一",
-			["cday"] = "十一",
-			["ganzhi"] = "甲子",
-			["shengxiao"] = "马",
-			["sterm"] = "节气",
-			["weekday"] = "日",
-			["holiday"] = "公历节",
-			["choliday"] = "农历节",
-		}
-	end
+
+--strDateInfo：格式： 20150101 , nDay可为空
+function GetClndrContent(strDateInfo, fnCallBack)
+	local strCalendarDB = GetDBPath("lunar.db")
+	local strYear = string.sub(strDateInfo, 1, 4)
+	local strMonth = string.sub(strDateInfo, 5, 6)
+	local strDay = string.sub(strDateInfo, 7, 8)
 	
-	return t
+	local nYear = tonumber(strYear)
+	local nMonth = tonumber(strMonth)
+	local nDay = tonumber(strDay)
+	
+	tipAsynUtil:AsynGetCalendarData(strCalendarDB, nYear, nMonth, nDay, 
+		function(ret, tData)
+			
+		if ret == 0 then
+			fnCallBack(tData)
+		else
+			fnCallBack(nil)
+		end
+	end)
 end
 
-
+--默认返回每月第一天的索引
+--如果当前日期在这个月内， 返回当前日的索引
+function GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
+	if type(tClndrContent) ~= "table" then
+		return 0
+	end
+	
+	local strDateToFind = strYearMonth.."01"
+	local strCurYearMonth = os.date("%Y%m")
+	if strYearMonth == strCurYearMonth then
+		strDateToFind = os.date("%Y%m%d")
+	end
+	
+	for nIndex, tContent in ipairs(tClndrContent) do
+		if type(tContent) == "table" and
+		   tContent.solarcalendar == strDateToFind then
+		   
+		   return nIndex
+		end
+	end
+		
+	return 0
+end
 
 ------------UI--
 
@@ -841,6 +887,7 @@ obj.GetMinorVer = GetMinorVer
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.GetYearMonthFromUI = GetYearMonthFromUI
 obj.GetClndrContent = GetClndrContent
+obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName

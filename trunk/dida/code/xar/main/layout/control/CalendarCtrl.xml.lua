@@ -3,19 +3,34 @@ local tipUtil = tFunHelper.tipUtil
 
 --方法
 function ShowClndrContent(objRootCtrl, strYearMonth)
-	local tClndrContent = tFunHelper.GetClndrContent(strYearMonth)
-	
-	for nIndex, tContent in ipairs(tClndrContent) do
-		local strKey = "ClndrItem_"..tostring(nIndex)
-		local objCurItem = objRootCtrl:GetControlObject(strKey)
-		if objCurItem then
-			SetItemText(objCurItem, tContent)
-			SetTextColor(objCurItem, tContent)
-			SetBackGround(objCurItem, tContent)
-			
-			objCurItem:SetContent(tContent)
-		end		
+	function ProcessCalendar(tClndrContent)
+		for nIndex, tContent in ipairs(tClndrContent) do
+			local strKey = "ClndrItem_"..tostring(nIndex)
+			local objCurItem = objRootCtrl:GetControlObject(strKey)
+			if objCurItem then
+				SetItemText(objCurItem, tContent)
+				SetTextColor(objCurItem, tContent)
+				SetBackGround(objCurItem, tContent)
+				
+				objCurItem:SetContent(tContent)
+			end		
+		end
+		
+		local nFocusDayIdxInMonth = tFunHelper.GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
+		if nFocusDayIdxInMonth == 0 then
+			return
+		end
+		
+		--设置每月第一天为默认的焦点， 如果当前日在这个月内，则当前日为焦点
+		SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
+		
+		local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
+		if objLeftBarCtrl then
+			objLeftBarCtrl:SetClndrInfo(tClndrContent[nFocusDayIdxInMonth])
+		end
 	end
+	
+	tFunHelper.GetClndrContent(strYearMonth, ProcessCalendar)
 end
 
 
@@ -122,6 +137,27 @@ function CheckIsHoliday(tClndrItem)
 	return false
 end
 
+
+function SetFocusDay(objRootCtrl, nFocusDayIdx)
+	local attr = objRootCtrl:GetAttribute()
+	local nFocusDayIndex = attr.FocusDayIndex
+	
+	if nFocusDayIndex ~= 0 then
+		local strKey = "ClndrItem_"..tostring(nFocusDayIndex)
+		local objLastItem = objRootCtrl:GetControlObject(strKey)
+		if objLastItem then
+			objLastItem:SetCurrentDayBkg(false)
+		end
+	end
+	
+	local strKey = "ClndrItem_"..tostring(nFocusDayIdx)
+	local objCurItem = objRootCtrl:GetControlObject(strKey)
+	if objCurItem then
+		objCurItem:SetCurrentDayBkg(true)
+	end
+	
+	attr.FocusDayIndex = nFocusDayIdx
+end
 
 ------------------
 

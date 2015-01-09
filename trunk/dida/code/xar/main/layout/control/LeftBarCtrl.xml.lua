@@ -3,47 +3,76 @@ local tipUtil = tFunHelper.tipUtil
 
 
 --方法
+function SetClndrInfo(self, tClndrContent)
+	local objRootCtrl = self
+	if type(tClndrContent) ~= "table" then
+		return
+	end
 
-function SetClndrInfo(self)
+	local strLunarDate = tostring(tClndrContent.cmonth)..tostring(tClndrContent.cday)
+	SetTextObjContent(objRootCtrl, "LeftBar.LunarDate", strLunarDate)
 
+	local strChineseYear = tostring(tClndrContent.yearganzhi).."年【"..tostring(tClndrContent.shengxiao).."年】"
+	SetTextObjContent(objRootCtrl, "LeftBar.ChineseYear", strChineseYear)
+	
+	local strChineseDate = tostring(tClndrContent.monthganzhi).."月"..tostring(tClndrContent.dayganzhi).."日"
+	SetTextObjContent(objRootCtrl, "LeftBar.ChineseDate", strChineseDate)
+	
+	local strWeek = "星期"..tostring(tClndrContent.weekday)
+	SetTextObjContent(objRootCtrl, "LeftBar.Week", strWeek)
+
+	local _, _, strYear, strMonth, strDay = string.find(tClndrContent.solarcalendar, "(%d%d%d%d)(%d%d)(%d%d)")
+	local nMonth = tonumber(strMonth)
+	local nDay = tonumber(strDay)
+	strMonth = string.format("%1d", nMonth)
+	local strYearText = tostring(strYear).."/"..tostring(strMonth)
+	SetTextObjContent(objRootCtrl, "LeftBar.Year", strYearText)
+	
+	strDay = string.format("%1d", nDay)
+	SetTextObjContent(objRootCtrl, "LeftBar.Day", strDay)
 end
 
 
 
 ---事件
 function OnInitLeftBar(self)
-	SetCurrentTime(self)
+	InitClndrInfo(self)
+	SetClock(self)
 	StartTimer(self)
 end
 
 
-
 ------------------
-
-function SetCurrentTime(objRootCtrl)
+function SetClock(objRootCtrl)
 	local tDateInfo = os.date("*t")
 	if type(tDateInfo) ~= "table" then
 		return
 	end
 	
 	local strClockText = string.format("%02d:%02d:%02d", tDateInfo.hour, tDateInfo.min, tDateInfo.sec)
-	SetClockText(objRootCtrl, strClockText)
+	SetTextObjContent(objRootCtrl, "LeftBar.ClockText", strClockText)
+end
+
+
+function InitClndrInfo(objRootCtrl)
+	local strCurDate = os.date("%Y%m%d")
 	
-	local strWeekText = GetCHNWeekText(tDateInfo.wday)
-	SetWeekText(objRootCtrl, strWeekText)
-	
-	local strDateText = string.format("%02d", tDateInfo.day)
-	SetDateText(objRootCtrl, strDateText)
-	
-	local strYearText = string.format("%d/%02d", tDateInfo.year, tDateInfo.month)
-	SetYearText(objRootCtrl, strYearText)
+	tFunHelper.GetClndrContent(strCurDate, 
+		function (tClndrContentList)
+			if type(tClndrContentList) ~= "table" then
+				return
+			end
+		
+			tClndrContent = tClndrContentList[1]
+			SetClndrInfo(objRootCtrl, tClndrContent)
+		end)
 end
 
 
 function StartTimer(objRootCtrl)
 	local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timeMgr:SetTimer(function(Itm, id)
-			SetCurrentTime(objRootCtrl)
+			SetClock(objRootCtrl)
 		end, 1000)
 end
 
@@ -64,44 +93,12 @@ function GetCHNWeekText(nWeekNum)
 end
 
 
-function SetClockText(self, strText)
-	local objClock = self:GetControlObject("LeftBar.ClockText")
-	if objClock and IsRealString(strText) then
-		objClock:SetText(strText) 
+function SetTextObjContent(objRootCtrl, strObjKey, strText)
+	local objText = objRootCtrl:GetControlObject(strObjKey)
+	if objText and IsRealString(strText) then
+		objText:SetText(strText) 
 	end
 end
-
-
-function SetWeekText(self, strText)
-	local objWeek = self:GetControlObject("LeftBar.Week")
-	if objWeek and IsRealString(strText) 
-		and objWeek:GetText() ~= strText then
-		
-		objWeek:SetText(strText) 
-	end
-end
-
-
-function SetDateText(self, strText)
-	local objDate = self:GetControlObject("LeftBar.Date")
-	if objDate and IsRealString(strText) 
-		and objDate:GetText() ~= strText then
-		
-		objDate:SetText(strText) 
-	end
-end
-
-
-function SetYearText(self, strText)
-	local objYear = self:GetControlObject("LeftBar.Year")
-	if objYear and IsRealString(strText) 
-		and objYear:GetText() ~= strText then
-		
-		objYear:SetText(strText) 
-	end
-end
-
-
 
 
 function IsRealString(str)

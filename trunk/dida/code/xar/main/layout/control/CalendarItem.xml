@@ -11,6 +11,7 @@
 			<SetAllTextGray file="CalendarItem.xml.lua" func="SetAllTextGray"/>
 			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
 			<SetTextHoliday file="CalendarItem.xml.lua" func="SetTextHoliday"/>
+			<SetCurrentDayBkg file="CalendarItem.xml.lua" func="SetCurrentDayBkg"/>
 		</method_def>
 		<event_def>
 			
@@ -35,6 +36,7 @@
 								<halign>center</halign>
 								<font>font.dincond18</font>
 								<textcolor>4D4D4D</textcolor>
+								<zorder>999999</zorder>
 							</attr>		
 						</obj>	
 						
@@ -48,6 +50,7 @@
 								<halign>center</halign>
 								<font>font.fzlt12</font>
 								<textcolor>808080</textcolor>
+								<zorder>999999</zorder>
 							</attr>		
 						</obj>	
 						
