@@ -80,14 +80,11 @@ void CMonthInfo::GetTargetCalendar(int year,int month,int day)
 	{
 		date select_date(year,month,1);
 		day_iterator day_itr(select_date);
-		int day_week = select_date.day_of_week();
-		day_week = 0?7:day_week;
-		
-		for (int day_week = select_date.day_of_week();day_week>1; --day_week)
+		for (int day_week = select_date.day_of_week();day_week>0; --day_week)
 		{
 			--day_itr;
 		}
-		for (int index = 0;index < 35;++index)
+		for (int index = 0;index < 42;++index)
 		{
 			GetTargetDateCalendar((*day_itr).year(),(*day_itr).month(),(*day_itr).day());
 			++day_itr;

@@ -622,7 +622,7 @@ int LuaAPIUtil::Log(lua_State* pLuaState)
 			const char* szInput = lua_tostring(pLuaState, 2);
 			CComBSTR bstrInput;
 			LuaStringToCComBSTR(szInput,bstrInput);
-			TSDEBUG4CXX(L"[YBKernel] " << bstrInput.m_str);
+			TSDEBUG4CXX(L"[DDKernel] " << bstrInput.m_str);
 		}
 	}
 	return 0;

@@ -3,10 +3,10 @@
 #include <shlobj.h>
 #include <list>
 
-class CYBPretender
+class CDDPretender
 {
 public:
-	CYBPretender() : m_bInitOK(FALSE), m_hDDKernel(NULL)
+	CDDPretender() : m_bInitOK(FALSE), m_hDDKernel(NULL)
 	{
 
 
@@ -46,7 +46,7 @@ public:
 		m_bInitOK = TRUE;
 	}
 
-	~CYBPretender()
+	~CDDPretender()
 	{
 		if (m_hDDKernel)
 		{

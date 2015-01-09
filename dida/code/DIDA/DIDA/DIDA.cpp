@@ -11,8 +11,8 @@ int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	_Module.AddMessageLoop(&theLoop);
 
 	int nRet = 0;
-	CYBPretender ybPretender;
-	if (ybPretender.Init(lpstrCmdLine))
+	CDDPretender Pretender;
+	if (Pretender.Init(lpstrCmdLine))
 	{
 		nRet = theLoop.Run();
 	}
