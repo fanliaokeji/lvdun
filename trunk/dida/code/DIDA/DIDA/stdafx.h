@@ -15,7 +15,7 @@
 #include <atlbase.h>
 #include <WTL/atlapp.h>
 #define TSLOG
-#define YB_GROUP "YB"
+#define DD_GROUP "DD"
 #include <tslog\tslog.h>
 
 extern CAppModule _Module;
