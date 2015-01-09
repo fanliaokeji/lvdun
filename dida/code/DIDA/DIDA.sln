@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DIDA", "DIDA\DIDA.vcproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DDKernel", "DDKernel\DDKernel.vcproj", "{C9105AF3-E860-4794-BD07-A53EDBB1E36C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiDaCalendar", "DiDaCalendar\DiDaCalendar.vcproj", "{11A9C882-87BD-4C0D-905A-9256D779671C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{C9105AF3-E860-4794-BD07-A53EDBB1E36C}.Debug|Win32.Build.0 = Debug|Win32
 		{C9105AF3-E860-4794-BD07-A53EDBB1E36C}.Release|Win32.ActiveCfg = Release|Win32
 		{C9105AF3-E860-4794-BD07-A53EDBB1E36C}.Release|Win32.Build.0 = Release|Win32
+		{11A9C882-87BD-4C0D-905A-9256D779671C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{11A9C882-87BD-4C0D-905A-9256D779671C}.Debug|Win32.Build.0 = Debug|Win32
+		{11A9C882-87BD-4C0D-905A-9256D779671C}.Release|Win32.ActiveCfg = Release|Win32
+		{11A9C882-87BD-4C0D-905A-9256D779671C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
