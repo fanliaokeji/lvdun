@@ -10,7 +10,7 @@
 			<SetAllTextNormal file="CalendarItem.xml.lua" func="SetAllTextNormal"/>
 			<SetAllTextGray file="CalendarItem.xml.lua" func="SetAllTextGray"/>
 			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
-			<SetTextHoliday file="CalendarItem.xml.lua" func="SetTextHoliday"/>
+			<SetTextSpecialday file="CalendarItem.xml.lua" func="SetTextSpecialday"/>
 			<SetCurrentDayBkg file="CalendarItem.xml.lua" func="SetCurrentDayBkg"/>
 		</method_def>
 		<event_def>

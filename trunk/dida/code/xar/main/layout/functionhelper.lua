@@ -482,7 +482,7 @@ function GetClndrContent(strDateInfo, fnCallBack)
 	
 	tipAsynUtil:AsynGetCalendarData(strCalendarDB, nYear, nMonth, nDay, 
 		function(ret, tData)
-			
+			tipUtil:SaveLuaTableToLuaFile(tData, "d:\\123.txt")
 		if ret == 0 then
 			fnCallBack(tData)
 		else
