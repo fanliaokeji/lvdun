@@ -17,6 +17,16 @@ function GetMonthText(self)
 	return strMonthText
 end
 
+function SetYearText(self, strYear)
+	local objYearBox = self:GetControlObject("Combobox.Year")
+	objYearBox:SetText(strYear)
+end
+
+function SetMonthText(self, strMonth)
+	local objMonthBox = self:GetControlObject("Combobox.Month")
+	objMonthBox:SetText(strMonth)
+end
+
 
 
 ---事件
@@ -92,7 +102,18 @@ end
 
 --返回今天
 function OnLClickToday(self)
+	local objRootCtrl = self:GetOwnerControl()
+	local strYear = os.date("%Y")
+	objRootCtrl:SetYearText(strYear.."年")
 	
+	local strMonth = os.date("%m")
+	local nMonth = tonumber(strMonth)
+	strMonth = string.format("%1d", nMonth)
+	objRootCtrl:SetMonthText(strMonth.."月")
+	
+	local strYearMonth = tFunHelper.GetYearMonthFromUI()
+	local objCalendarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarCtrl")
+	objCalendarCtrl:ShowClndrContent(strYearMonth)
 end
 
 

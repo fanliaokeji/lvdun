@@ -2,6 +2,8 @@
 	<control class="CalendarItem">
 		<attr_def>
 			<attr name="tClndrContent" />
+			<attr name="bSelect" type="bool" ><default>false</default></attr>
+			<attr name="nItemIndex" type="int" ><default>0</default></attr>
 		</attr_def>
 		<method_def>
 			<SetContent file="CalendarItem.xml.lua" func="SetContent"/>
@@ -12,9 +14,15 @@
 			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
 			<SetTextSpecialday file="CalendarItem.xml.lua" func="SetTextSpecialday"/>
 			<SetCurrentDayBkg file="CalendarItem.xml.lua" func="SetCurrentDayBkg"/>
+			<SetSelectState file="CalendarItem.xml.lua" func="SetSelectState"/>
+			<SetItemIndex file="CalendarItem.xml.lua" func="SetItemIndex"/>
+			<GetItemIndex file="CalendarItem.xml.lua" func="GetItemIndex"/>
 		</method_def>
 		<event_def>
-			
+			<OnClick>
+				<param>
+				</param>
+			</OnClick>
 		</event_def>
 		<objtemplate>
 			<children>
