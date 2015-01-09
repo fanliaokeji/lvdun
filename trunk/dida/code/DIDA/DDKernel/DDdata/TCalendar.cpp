@@ -32,7 +32,7 @@ DDCTCalendar::~DDCTCalendar(void)
 
 int DDCTCalendar::ctcl_calendar_type(int y, int m, int d, int opt)
 {
-  int days_of_month[13]={0,31,28,31,30,31,30,31,30,30,31,30,31};
+  int days_of_month[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
   if(opt==1){
     if(y>1582 || (y==1582 && m>10) || (y==1582 && m==10 && d>14) ){
       if( (y%400==0) || (y%4==0 && y%100!=0) )days_of_month[2]++;
