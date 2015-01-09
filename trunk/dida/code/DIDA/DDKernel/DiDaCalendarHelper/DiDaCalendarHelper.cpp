@@ -106,6 +106,7 @@ static INJECT_RESULT Win32Inject32(DWORD dwProcessID, const wchar_t* dllFilePath
 		return INJECT_FAIL_CREATEREMOTETHREAD;
 	}
 	::WaitForSingleObject(hRemoteThread, INFINITE);
+	::CloseHandle(hRemoteThread);
 	::VirtualFreeEx(hTargetProcess, lpVirtualMem, alloc_size, MEM_RESERVE | MEM_COMMIT);
 	::CloseHandle(hTargetProcess);
 	return INJECT_OK;
