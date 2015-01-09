@@ -929,9 +929,23 @@ void CalendarData::Notify(int iErrCode)
 			lua_settable(pLuaState, -3);
 
 
-			lua_pushstring(pLuaState, "ganzhi");
+			lua_pushstring(pLuaState, "yearganzhi");
 			if (!pct->cmonth.empty())
-				lua_pushstring(pLuaState, pct->ganzhi.c_str());
+				lua_pushstring(pLuaState, pct->yearganzhi.c_str());
+			else
+				lua_pushnil(pLuaState);
+			lua_settable(pLuaState, -3);
+			
+			lua_pushstring(pLuaState, "monthganzhi");
+			if (!pct->cmonth.empty())
+				lua_pushstring(pLuaState, pct->monthganzhi.c_str());
+			else
+				lua_pushnil(pLuaState);
+			lua_settable(pLuaState, -3);
+
+			lua_pushstring(pLuaState, "dayganzhi");
+			if (!pct->cmonth.empty())
+				lua_pushstring(pLuaState, pct->dayganzhi.c_str());
 			else
 				lua_pushnil(pLuaState);
 			lua_settable(pLuaState, -3);
