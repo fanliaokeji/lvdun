@@ -83,9 +83,9 @@ function OnSelectMonth(objMenuItem)
 	local strText = objMenuItem:GetText()
 	local objMenu = objMenuItem:GetFather()
 	local objNormalMenu = objMenu:GetOwnerControl()
-	local objYearBox = objNormalMenu:GetRelateObject()
+	local objMonthBox = objNormalMenu:GetRelateObject()
 	
-	local attr = objYearBox:GetAttribute()
+	local attr = objMonthBox:GetAttribute()
 	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
 	local nMonth = tonumber(strMonth)
 	attr.LeftTextPos = 10
@@ -93,11 +93,12 @@ function OnSelectMonth(objMenuItem)
 		attr.LeftTextPos = 6
 	end
 	
-	objYearBox:SetText(strText)
+	objMonthBox:SetText(strText)
 	
-	local strYearMonth = tFunHelper.GetYearMonthFromUI()
-	local objCalendarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarCtrl")
-	objCalendarCtrl:ShowClndrContent(strYearMonth)
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	objDateSelect:ResetFestivalText()
+	
+	tFunHelper.UpdateCalendarContent()
 end
 
 

@@ -8,6 +8,7 @@
 			<SetYearText file="DateSelectCtrl.xml.lua" func="SetYearText"/>
 			<GetMonthText file="DateSelectCtrl.xml.lua" func="GetMonthText"/>
 			<SetMonthText file="DateSelectCtrl.xml.lua" func="SetMonthText"/>
+			<ResetFestivalText file="DateSelectCtrl.xml.lua" func="ResetFestivalText"/>
 		</method_def>
 		<event_def>
 			
@@ -78,7 +79,6 @@
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpFestivalBox" />
-						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitFestivalBox" />
 					</eventlist>
 				</obj>
 				

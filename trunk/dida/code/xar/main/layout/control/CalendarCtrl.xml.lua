@@ -12,7 +12,7 @@ function ShowClndrContent(objRootCtrl, strYearMonth)
 			if objCurItem then
 				SetItemText(objCurItem, tContent)
 				SetTextColor(objCurItem, tContent, strYearMonth)
-				SetBackGround(objCurItem, tContent)
+				SetVacBackGround(objCurItem, tContent)   --放假或上班的背景
 				
 				objCurItem:SetContent(tContent)
 			end		
@@ -123,7 +123,6 @@ function SetItemText(objCurItem, tClndrItem)
 	if bIsSpecialday then  --节日、节气
 		objCurItem:SetCHNDayText(strSpecialText)
 	end
-	
 end
 
 
@@ -148,9 +147,22 @@ function SetTextColor(objCurItem, tClndrItem, strYearMonth)
 end
 
 
-function SetBackGround(objCurItem, tClndrItem)
-	
+function SetVacBackGround(objCurItem, tClndrItem)	
+	objCurItem:SetVacationBkg(false)
+	objCurItem:SetWorkBkg(false)
 
+	local strDate = tClndrItem.solarcalendar
+	local bIsVacation = tFunHelper.CheckIsVacation(strDate)
+	if bIsVacation then
+		objCurItem:SetVacationBkg(true)
+		return
+	end
+	
+	local bIsVacation = tFunHelper.CheckIsWorkDay(strDate)
+	if bIsVacation then
+		objCurItem:SetWorkBkg(true)
+		return
+	end
 end
 
 			
