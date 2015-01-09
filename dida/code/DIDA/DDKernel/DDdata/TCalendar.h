@@ -54,9 +54,9 @@ private:
 	double ctcl_round(double x);
 	int ctcl_gan(int x);/*  返回甲子数x对应的天干数（如33为3）  */
 	int ctcl_zhi(int x);/*  返回甲子数x对应的地支数（如33为9）  */
-	int ctcl_year_ganzhi(int y,int m,int d,int h);/*  返回y年m月d日h时的年干支数（1-60）  */
+	int ctcl_year_ganzhi(int y,int m,int d);/*  返回y年m月d日h时的年干支数（1-60）  */
 	int ctcl_ganzhi_round(int start, int offset, int round); 
-	int ctcl_month_ganzhi(int y,int m,int d,int h); /*  返回y年m月d日h时的月干支数（1-60）  */
+	int ctcl_month_ganzhi(int y,int m,int d); /*  返回y年m月d日h时的月干支数（1-60）  */
 	int ctcl_day_ganzhi(int y,int m,int d); /*  返回y年m月d日h时的日干支数（1-60）  */
 	double ang(double x,double t,double c1,double t0,double t2,double t3);
 	int ctcl_lunar_date(int y,int m,int d);
