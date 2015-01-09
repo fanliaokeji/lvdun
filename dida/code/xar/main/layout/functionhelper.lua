@@ -482,7 +482,6 @@ function GetClndrContent(strDateInfo, fnCallBack)
 	
 	tipAsynUtil:AsynGetCalendarData(strCalendarDB, nYear, nMonth, nDay, 
 		function(ret, tData)
-			tipUtil:SaveLuaTableToLuaFile(tData, "d:\\123.txt")
 		if ret == 0 then
 			fnCallBack(tData)
 		else
@@ -514,6 +513,63 @@ function GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
 		
 	return 0
 end
+
+
+function CheckIsVacation(strDate)
+	return CheckIsDateInVacList(strDate, "tVacDay")
+end
+
+
+function CheckIsWorkDay(strDate)
+	return CheckIsDateInVacList(strDate, "tWorkDay")
+end
+
+
+function CheckIsDateInVacList(strDate, strType)
+	local tVacationList = ReadConfigFromMemByKey("tVacationList") or {}
+	local _, _, strYear, strMonth, strDay = string.find(strDate, "(%d%d%d%d)(%d%d)(%d%d)")
+	local nMonth = tonumber(strMonth)
+	strMonth = string.format("%1d", nMonth)
+	
+	local nDay = tonumber(strDay)
+	strDay = string.format("%1d", nDay)
+
+	local tDateScale = FetchValueByPath(tVacationList, {strYear, strMonth, strType})
+	if type(tDateScale) ~= "table" then
+		return false
+	end
+	
+	return IsDayInScale(strDay, tDateScale)
+end
+
+function IsDayInScale(strDay, tDateScale)
+	for _, strScale in pairs(tDateScale) do
+		if string.find(strScale, "-") then
+			local _, _, strBegin, strEnd = string.find(strScale, "(%d*)-(%d*)")
+			local nDay = tonumber(strDay)
+			local nBegin = tonumber(strBegin)
+			local nEnd = tonumber(strEnd)
+			
+			if nBegin<=nDay and nDay<=nEnd then
+				return true
+			end
+		else
+			if strScale == strDay then
+				return true
+			end
+		end	
+	end
+	
+	return false
+end
+
+
+function UpdateCalendarContent()
+	local strYearMonth = GetYearMonthFromUI()
+	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarCtrl")
+	objCalendarCtrl:ShowClndrContent(strYearMonth)
+end
+
 
 ------------UI--
 
@@ -661,6 +717,10 @@ local g_bLoadCfgSucc = false
 local g_tConfigFileStruct = {
 	["tUserConfig"] = {
 		["strFileName"] = "UserConfig.dat",
+		["tContent"] = {}, 
+	},
+	["tVacationList"] = {
+		["strFileName"] = "VacationList.dat",
 		["tContent"] = {}, 
 	},
 }
@@ -884,10 +944,14 @@ obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
 
 --UI
+obj.GetMainWndInst = GetMainWndInst
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.GetYearMonthFromUI = GetYearMonthFromUI
 obj.GetClndrContent = GetClndrContent
 obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
+obj.CheckIsVacation = CheckIsVacation
+obj.CheckIsWorkDay = CheckIsWorkDay
+obj.UpdateCalendarContent = UpdateCalendarContent
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName

@@ -17,6 +17,7 @@ function GetMonthText(self)
 	return strMonthText
 end
 
+
 function SetYearText(self, strYear)
 	local objYearBox = self:GetControlObject("Combobox.Year")
 	objYearBox:SetText(strYear)
@@ -27,12 +28,25 @@ function SetMonthText(self, strMonth)
 	objMonthBox:SetText(strMonth)
 end
 
+function SetFestivalText(self, strFestival)
+	local objFestival = self:GetControlObject("Combobox.Festival")
+	objFestival:SetText(strFestival)
+end
+
+
+function ResetFestivalText(self)
+	local objFestival = self:GetControlObject("Combobox.Festival")
+	local attr = objFestival:GetAttribute()
+	attr.LeftTextPos = 5
+	
+	objFestival:SetText("假期安排")
+end
 
 
 ---事件
 function OnInitRootCtrl(self)
-		
-	
+	CreateTimeListener(self)
+	self:ResetFestivalText()
 end
 
 
@@ -95,14 +109,32 @@ function OnLButtonUpFestivalBox(self)
 end
 
 
-function OnInitFestivalBox(self)
-	self:SetText("假期安排")
-end
-
-
 --返回今天
 function OnLClickToday(self)
 	local objRootCtrl = self:GetOwnerControl()
+	ResetCtrlText(objRootCtrl)
+	tFunHelper.UpdateCalendarContent()
+end
+
+
+
+------------------
+function CreateTimeListener(self)
+	local objHostWnd = tFunHelper.GetMainWndInst()
+	local WM_TIMECHANGE = 0x001E
+	local cookie,ret = objHostWnd:AddInputFilter(false, 
+		function(hostwnd, msg,wpram,lparam)
+		
+			if msg == WM_TIMECHANGE then
+				ResetCtrlText(self)	
+				tFunHelper.UpdateCalendarContent()				
+			end
+			return 0, false
+		end)
+end
+
+
+function ResetCtrlText(objRootCtrl)
 	local strYear = os.date("%Y")
 	objRootCtrl:SetYearText(strYear.."年")
 	
@@ -110,19 +142,15 @@ function OnLClickToday(self)
 	local nMonth = tonumber(strMonth)
 	strMonth = string.format("%1d", nMonth)
 	objRootCtrl:SetMonthText(strMonth.."月")
-	
-	local strYearMonth = tFunHelper.GetYearMonthFromUI()
-	local objCalendarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarCtrl")
-	objCalendarCtrl:ShowClndrContent(strYearMonth)
-end
 
+	objRootCtrl:ResetFestivalText()
+end	
 
-
-------------------
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
 end
+
 
 function IsNilString(AString)
 	if AString == nil or AString == "" then

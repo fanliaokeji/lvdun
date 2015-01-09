@@ -94,15 +94,11 @@ end
 
 function OnSelectYear(objMenuItem)
 	local strText = objMenuItem:GetText() .. "年"
-	local objMenu = objMenuItem:GetFather()
-	local objNormalMenu = objMenu:GetOwnerControl()
-	local objYearBox = objNormalMenu:GetRelateObject()
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	objDateSelect:SetYearText(strText)
+	objDateSelect:ResetFestivalText()
 	
-	objYearBox:SetText(strText)
-	
-	local strYearMonth = tFunHelper.GetYearMonthFromUI()
-	local objCalendarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarCtrl")
-	objCalendarCtrl:ShowClndrContent(strYearMonth)
+	tFunHelper.UpdateCalendarContent()
 end
 
 

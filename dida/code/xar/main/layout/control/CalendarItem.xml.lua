@@ -73,7 +73,15 @@ function SetItemIndex(self, nIndex)
 	attr.nItemIndex = nIndex
 end
 
+function SetVacationBkg(self, bShowBkg)
+	local objImg = self:GetControlObject("Calendar.Vacation")
+	objImg:SetVisible(bShowBkg)
+end
 
+function SetWorkBkg(self, bShowBkg)
+	local objImg = self:GetControlObject("Calendar.Work")
+	objImg:SetVisible(bShowBkg)
+end
 
 
 ---事件

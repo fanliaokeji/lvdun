@@ -77,6 +77,7 @@ function StartTimer(objRootCtrl)
 end
 
 
+
 --Sunday 是1
 function GetCHNWeekText(nWeekNum)
 	local tCHNNumMap = {

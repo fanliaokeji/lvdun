@@ -17,6 +17,8 @@
 			<SetSelectState file="CalendarItem.xml.lua" func="SetSelectState"/>
 			<SetItemIndex file="CalendarItem.xml.lua" func="SetItemIndex"/>
 			<GetItemIndex file="CalendarItem.xml.lua" func="GetItemIndex"/>
+			<SetVacationBkg file="CalendarItem.xml.lua" func="SetVacationBkg"/>
+			<SetWorkBkg file="CalendarItem.xml.lua" func="SetWorkBkg"/>
 		</method_def>
 		<event_def>
 			<OnClick>
@@ -70,6 +72,7 @@
 								<height>father.height</height>
 								<texture>DiDa.Canlender.Current</texture>
 								<visible>false</visible>
+								<zorder>-1</zorder>
 							</attr>		
 						</obj>	
 						
@@ -95,7 +98,7 @@
 							</attr>		
 						</obj>
 						
-						<obj id="Calendar.Holiday" class="TextureObject">
+						<obj id="Calendar.Vacation" class="TextureObject">
 							<attr>
 								<left>0</left>
 								<top>0</top>

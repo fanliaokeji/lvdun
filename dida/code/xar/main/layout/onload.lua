@@ -235,6 +235,53 @@ function ProcessCommandLine()
 	--to do
 end
 
+function GetResourceDir()
+	local strExePath = tipUtil:GetModuleExeName()
+	local _, _, strProgramDir = string.find(strExePath, "(.*)\\.*$")
+	if not IsRealString(strProgramDir) then
+		return nil
+	end
+	local _, _, strInstallDir = string.find(strProgramDir, "(.*)\\.*$")
+	if not IsRealString(strInstallDir) then
+		return nil
+	end
+	local strResPath = tipUtil:PathCombine(strInstallDir, "res")
+	if IsRealString(strResPath) and tipUtil:QueryFileExists(strResPath) then
+		return strResPath
+	end
+	return nil
+end
+
+function Add_Remove_FontResource(bAdd)
+	local strRes = GetResourceDir()
+	if strRes == nil then
+		return false
+	end
+	local strFontDir = tipUtil:PathCombine(strRes, "font")
+	if not tipUtil:QueryFileExists(strFontDir) then
+		return false
+	end
+	local tabFont = tipUtil:FindFileList(strFontDir,"*.*")
+	if type(tabFont) ~= "table" then
+		return false
+	end
+	for i=1,#tabFont do
+		local strFontPath = tipUtil:PathCombine(strFontDir, tabFont[i])
+		if tipUtil:QueryFileExists(strFontPath) then
+			if bAdd then
+				tipUtil:AddFontResource(strFontPath)
+			else
+				tipUtil:RemoveFontResource(strFontPath)
+			end
+		end
+	end
+end
+
+
+function InitFont()
+	Add_Remove_FontResource(true)
+end
+
 
 function CreateMainTipWnd()
 	local function OnCreateFuncF(treectrl)
@@ -263,6 +310,8 @@ function PreTipMain()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
+	
+	InitFont()
 	StartRunCountTimer()
 	
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
