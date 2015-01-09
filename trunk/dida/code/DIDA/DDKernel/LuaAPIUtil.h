@@ -184,6 +184,10 @@ public:
 	// 系统时钟dll相关
 	static int IsDiDaCalendarInjected(lua_State* pLuaState);
 	static int InjectDiDaCalendarDll(lua_State* pLuaState);
+
+	//资源相关
+	static int FAddFontResource(lua_State* pLuaState);
+	static int FRemoveFontResource(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

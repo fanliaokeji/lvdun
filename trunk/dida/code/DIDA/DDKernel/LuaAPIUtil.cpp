@@ -154,6 +154,10 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	// 系统时钟dll相关
 	{"IsDiDaCalendarInjected", IsDiDaCalendarInjected},
 	{"InjectDiDaCalendarDll", InjectDiDaCalendarDll},
+
+	//资源相关
+	{"AddFontResource",FAddFontResource},
+	{"RemoveFontResource",FRemoveFontResource},
 	{NULL, NULL}
 };
 
@@ -4003,5 +4007,44 @@ int LuaAPIUtil::InjectDiDaCalendarDll(lua_State* pLuaState)
 	CComBSTR dllPath64;
 	LuaStringToCComBSTR(utf8DllPath64, dllPath64);
 	lua_pushboolean(pLuaState, InjectCalendarDll(dllPath32.m_str, dllPath64.m_str) ? 1 : 0);
+	return 1;
+}
+
+
+int LuaAPIUtil::FAddFontResource(lua_State* pLuaState)
+{
+	int iRet = 0;
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil)
+	{
+		const char* utf8FilePath = luaL_checkstring(pLuaState, 2);		
+		if(utf8FilePath != NULL)
+		{
+			CComBSTR bstrFilePath;
+			LuaStringToCComBSTR(utf8FilePath,bstrFilePath);
+
+			iRet = AddFontResource(bstrFilePath.m_str);
+		}
+	}
+	lua_pushboolean(pLuaState, iRet);
+	return 1;
+}
+
+int LuaAPIUtil::FRemoveFontResource(lua_State* pLuaState)
+{
+	int iRet = 0;
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil)
+	{
+		const char* utf8FilePath = luaL_checkstring(pLuaState, 2);		
+		if(utf8FilePath != NULL)
+		{
+			CComBSTR bstrFilePath;
+			LuaStringToCComBSTR(utf8FilePath,bstrFilePath);
+
+			iRet = RemoveFontResource(bstrFilePath.m_str);
+		}
+	}
+	lua_pushboolean(pLuaState, iRet);
 	return 1;
 }
