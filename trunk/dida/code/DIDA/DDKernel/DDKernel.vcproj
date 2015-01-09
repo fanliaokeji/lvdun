@@ -439,6 +439,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="DiDaCalendarHelper"
+			>
+			<File
+				RelativePath=".\DiDaCalendarHelper\DiDaCalendarHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DiDaCalendarHelper\DiDaCalendarHelper.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

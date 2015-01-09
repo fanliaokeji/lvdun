@@ -181,6 +181,9 @@ public:
 	//static int FolderDialog(lua_State* pLuaState);
 	static int BrowserForFile(lua_State* pLuaState);
 
+	// 系统时钟dll相关
+	static int IsDiDaCalendarInjected(lua_State* pLuaState);
+	static int InjectDiDaCalendarDll(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

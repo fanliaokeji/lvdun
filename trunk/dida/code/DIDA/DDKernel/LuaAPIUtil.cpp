@@ -26,6 +26,7 @@ extern CDDApp theApp;
 
 #include "DDKernelHelper\CDDMsgWnd.h"
 #include "base64.h"
+#include "DidaCalendarHelper\DidaCalendarHelper.h"
 
 LuaAPIUtil::LuaAPIUtil(void)
 {
@@ -149,6 +150,10 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"ReadSections", ReadSections},
 	{"ReadKeyValueInSection", ReadKeyValueInSection},
 	{"ReadINIInteger", ReadINIInteger},
+
+	// 系统时钟dll相关
+	{"IsDiDaCalendarInjected", IsDiDaCalendarInjected},
+	{"InjectDiDaCalendarDll", InjectDiDaCalendarDll},
 	{NULL, NULL}
 };
 
@@ -3979,5 +3984,24 @@ int LuaAPIUtil::BrowserForFile(lua_State* pLuaState)
 		}
 	}
 	lua_pushnil(pLuaState);
+	return 1;
+}
+
+int LuaAPIUtil::IsDiDaCalendarInjected(lua_State* pLuaState)
+{
+	lua_pushboolean(pLuaState, IsCalendarInjected() ? 1 : 0);
+	return 1;
+}
+
+int LuaAPIUtil::InjectDiDaCalendarDll(lua_State* pLuaState)
+{
+	const char* utf8DllPath32 = luaL_checkstring(pLuaState,1);
+	const char* utf8DllPath64 = luaL_checkstring(pLuaState,2);
+	CComBSTR dllPath32;
+	LuaStringToCComBSTR(utf8DllPath32, dllPath32);
+
+	CComBSTR dllPath64;
+	LuaStringToCComBSTR(utf8DllPath64, dllPath64);
+	lua_pushboolean(pLuaState, InjectCalendarDll(dllPath32.m_str, dllPath64.m_str) ? 1 : 0);
 	return 1;
 }
