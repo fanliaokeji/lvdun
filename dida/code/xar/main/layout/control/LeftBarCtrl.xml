@@ -81,7 +81,7 @@
 					</attr>		
 				</obj>
 				
-				<obj id="LeftBar.Date" class="TextObject">
+				<obj id="LeftBar.Day" class="TextObject">
 					<attr>
 						<left>23</left>
 						<top>285</top>

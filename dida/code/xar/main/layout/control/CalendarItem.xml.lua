@@ -23,35 +23,31 @@ end
 
 
 function SetAllTextNormal(self)
-	local objDayText = self:GetControlObject("Calendar.Day")
-	local objCHNDayText = self:GetControlObject("Calendar.CHNDay")
-	
-	objDayText:SetTextColorResID("4D4D4D")
-	objCHNDayText:SetTextColorResID("808080")
+	 SetAllTextColorRes(self, "4D4D4D", "808080")
 end
 
 
 function SetAllTextGray(self)
-	local objDayText = self:GetControlObject("Calendar.Day")
-	local objCHNDayText = self:GetControlObject("Calendar.CHNDay")
-	
-	objDayText:SetTextColorResID("CCCCCC")
-	objCHNDayText:SetTextColorResID("CCCCCC")
+	 SetAllTextColorRes(self, "CCCCCC", "CCCCCC")
 end
 
-
 function SetAllTextWeekend(self)
-	local objDayText = self:GetControlObject("Calendar.Day")
-	local objCHNDayText = self:GetControlObject("Calendar.CHNDay")
-	
-	objDayText:SetTextColorResID("59ACFF")
-	objCHNDayText:SetTextColorResID("59ACFF")
+	 SetAllTextColorRes(self, "59ACFF", "59ACFF")
 end
 
 
 function SetTextHoliday(self)
-	local objCHNDayText = self:GetControlObject("Calendar.CHNDay")
-	objCHNDayText:SetTextColorResID("FF9933")
+	 SetAllTextColorRes(self, "", "FF9933")
+end
+
+
+function SetCurrentDayBkg(self, bShowBkg)
+	local objCurDayImg = self:GetControlObject("Calendar.Current")
+	objCurDayImg:SetVisible(bShowBkg)
+
+	if bShowBkg then
+		SetAllTextColorRes(self, "system.white", "system.white")
+	end
 end
 
 
@@ -59,8 +55,6 @@ function SetContent(self, tClndrContent)
 	local attr = self:GetAttribute()
 	attr.tClndrContent = tClndrContent
 end
-
-
 
 
 ---事件
@@ -80,15 +74,28 @@ function OnLButtonUp(self)
 	if type(tClndrContent) ~= "table" then
 		return
 	end
-	 
 	
+	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl") 
+	objLeftBarCtrl:SetClndrInfo(tClndrContent)	
+end
+
+
+----
+function SetAllTextColorRes(self, strDayClr, strCHNDayClr)
+	local objDayText = self:GetControlObject("Calendar.Day")
+	local objCHNDayText = self:GetControlObject("Calendar.CHNDay")
 	
+	if IsRealString(strDayClr) then
+		objDayText:SetTextColorResID(strDayClr)
+	end
+	
+	if IsRealString(strCHNDayClr) then
+		objCHNDayText:SetTextColorResID(strCHNDayClr)
+	end
 end
 
 
 ------------------
-
-
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""

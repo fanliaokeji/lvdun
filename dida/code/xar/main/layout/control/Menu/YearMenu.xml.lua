@@ -99,6 +99,10 @@ function OnSelectYear(objMenuItem)
 	local objYearBox = objNormalMenu:GetRelateObject()
 	
 	objYearBox:SetText(strText)
+	
+	local strYearMonth = tFunHelper.GetYearMonthFromUI()
+	local objCalendarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarCtrl")
+	objCalendarCtrl:ShowClndrContent(strYearMonth)
 end
 
 
