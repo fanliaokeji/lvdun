@@ -5,7 +5,9 @@
 		</attr_def>
 		<method_def>
 			<GetYearText file="DateSelectCtrl.xml.lua" func="GetYearText"/>
+			<SetYearText file="DateSelectCtrl.xml.lua" func="SetYearText"/>
 			<GetMonthText file="DateSelectCtrl.xml.lua" func="GetMonthText"/>
+			<SetMonthText file="DateSelectCtrl.xml.lua" func="SetMonthText"/>
 		</method_def>
 		<event_def>
 			

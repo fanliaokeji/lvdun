@@ -16,6 +16,9 @@
 			<attr name="FocusDayIndex" type="int">
 				<default>0</default>
 			</attr>
+			<attr name="SelectItemIndex" type="int">
+				<default>0</default>
+			</attr>
 			
 		</attr_def>
 		<method_def>

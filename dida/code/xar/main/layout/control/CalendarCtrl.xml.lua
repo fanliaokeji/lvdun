@@ -25,6 +25,7 @@ function ShowClndrContent(objRootCtrl, strYearMonth)
 		
 		--设置每月第一天为默认的焦点， 如果当前日在这个月内，则当前日为焦点
 		SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
+		ClearSelectBkg(objRootCtrl)
 		
 		local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
 		if objLeftBarCtrl then
@@ -44,7 +45,32 @@ function OnInitCalendarCtrl(self)
 end
 
 
+--CalendarItem
+function OnClickClndrItem(self)
+	local objRootCtrl = self:GetOwnerControl()
+	local attr = objRootCtrl:GetAttribute()
+	local nIndex = attr.SelectItemIndex
+	
+	local nCurIndex = self:GetItemIndex()
+	attr.SelectItemIndex = nCurIndex
+	
+	if nIndex ~= 0 and nIndex ~= nCurIndex then
+		local strKey = "ClndrItem_"..tostring(nIndex)
+		local objLastItem = objRootCtrl:GetControlObject(strKey)
+		if objLastItem then
+			objLastItem:SetSelectState(false)
+		end
+	end
+end
+
+
+
 ------
+function InitClndrContent(objRootCtrl)
+	local strCurYearMonth = os.date("%Y%m")
+	objRootCtrl:ShowClndrContent(strCurYearMonth)
+end
+
 function CreateClndrItem(objRootCtrl)
 	local nLineNum = 6
 	local nColNum = 7
@@ -59,6 +85,8 @@ function CreateClndrItem(objRootCtrl)
 			objFather:AddChild(objClndrItem)
 			
 			SetClndrItemPos(objRootCtrl, objClndrItem, i, j)
+			objClndrItem:SetItemIndex(nIndex)
+			objClndrItem:AttachListener("OnClick", false, OnClickClndrItem)
 		end	
 	end
 end
@@ -78,12 +106,6 @@ function SetClndrItemPos(objRootCtrl, objClndrItem, nLine, nCol)
 	end
 	
 	objClndrItem:SetObjPos(nNewLeft, nNewTop, nNewLeft+nWidth, nNewTop+nHeight)
-end
-
-
-function InitClndrContent(objRootCtrl)
-	local strCurYearMonth = os.date("%Y%m")
-	objRootCtrl:ShowClndrContent(strCurYearMonth)
 end
 
 
@@ -189,6 +211,22 @@ function SetFocusDay(objRootCtrl, nFocusDayIdx)
 	
 	attr.FocusDayIndex = nFocusDayIdx
 end
+
+
+function ClearSelectBkg(objRootCtrl)
+	local attr = objRootCtrl:GetAttribute()
+	local nIndex = attr.SelectItemIndex
+	
+	if nIndex ~= 0 then
+		local strKey = "ClndrItem_"..tostring(nIndex)
+		local objLastItem = objRootCtrl:GetControlObject(strKey)
+		if objLastItem then
+			objLastItem:SetSelectState(false)
+		end
+	end
+end
+
+
 
 ------------------
 
