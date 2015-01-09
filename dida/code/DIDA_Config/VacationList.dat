@@ -1,0 +1,61 @@
+function GetSubTable()
+	local t = {
+		["tDefaultVacMap"] = {
+				["yuandan"] = "1",
+				["qingmingjie"] = "4",
+				["laodongjie"] = "5",
+				["guoqingjie"] = "10",
+		},
+		
+		["2014"] = {
+			["tVactionMap"] = {
+				["chunjie"] = "1",
+				["chuxi"] = "1",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
+			},
+			
+			["1"] = {
+				["tWorkDay"] = {"26"},
+				["tVacDay"] = {"1", "31"},
+			},
+			["2"] = {
+				["tWorkDay"] = {"8"},
+				["tVacDay"] = {"1-6"},
+			},
+			["4"] = {
+				["tVacDay"] = {"5-7"},
+			},
+			["5"] = {
+				["tWorkDay"] = {"4"},
+				["tVacDay"] = {"1-3","31"},
+			},
+			["6"] = {
+				["tWorkDay"] = {"4"},
+				["tVacDay"] = {"1","2"},
+			},
+			["9"] = {
+				["tWorkDay"] = {"28"},
+				["tVacDay"] = {"6-8"},
+			},
+			["10"] = {
+				["tWorkDay"] = {"11"},
+				["tVacDay"] = {"1-7"},
+			},
+		},
+		
+		["2013"] = {
+			["tVactionMap"] = {
+				["chunjie"] = "2",
+				["duanwu"] = "6",
+				["zhongqiu"] = "9",
+			},
+			["1"] = {
+				["tWorkDay"] = {"5","6"},
+				["tVacDay"] = {"1-3", "31"},
+			},
+		
+		},	
+	}
+	return t
+end
