@@ -8,7 +8,8 @@
 #include "TCalendar.h"
 const int beginning_year=-849;  //记录从公元前850年开始
 const int baseIndex = 0;
-
+#include <boost/date_time.hpp>
+using namespace boost::gregorian; 
 //
 //农历保存在"lunar.db"的sqlite3数据库中，方便扩充和移植
 //
@@ -241,6 +242,78 @@ int DDCTCalendar::ctcl_year_ganzhi(int y,int m,int d,int h)
 // **TODO:ctcl_month_ganzhi, ctcl_day_ganzhi, ctcl_hour_ganzhi
 // ***************************************************************************
 
+//将offset的数值转化为特定偏移下的周期数，起始数，偏移量，周期
+
+int DDCTCalendar::ctcl_ganzhi_round(int start, int offset, int round)
+{
+	offset = (start+offset)%round;
+	if (offset >= 0)
+	{
+		if (offset == 0)
+			offset = round;
+		return offset;
+	} 
+	else
+	{
+		return round + offset;
+	}
+
+}
+
+//参考月，立春时间2010-2-4 6:42:00对应的干支序号为15 (这里先把天干从"甲"开始，地支从"子"开始,15对应为"戊寅")
+int DDCTCalendar::ctcl_month_ganzhi(int y,int m,int d,int h)
+{
+	int by = y;
+	int ey = y;
+	if ( (ctcl_date_to_days(y,m,d)+h/24.0) 
+		< ctcl_solar_term(y,3,1)-1.0 )/*  判断是否过立春  */
+		by-=1;
+	else
+		ey+=1;
+
+
+	int i = 0;
+	int c_term_date[24] ={0} ;
+
+	for(i=2;i<24;i++)
+	{
+		int r=ctcl_days_to_date(by,ctcl_solar_term(by,i+1,1));
+		c_term_date[i-2] = by*10000 + r;
+	}
+	c_term_date[22] = ey*10000 + ctcl_days_to_date(ey,ctcl_solar_term(ey,0+1,1));
+	c_term_date[23] = ey*10000 + ctcl_days_to_date(ey,ctcl_solar_term(ey,1+1,1));
+	int cdate = y*10000+m*100+d;
+	int ganzhi_monnum = 24 ;
+	for (int j = 0;j<23;j++)
+		if (c_term_date[j] <=cdate && cdate<c_term_date[j+1])
+		{
+			ganzhi_monnum = j+1;
+		}
+		ganzhi_monnum = (int)((ganzhi_monnum+1)/2);
+		int ydiff = by - 2010;
+		int mdiff = ganzhi_monnum - 1;
+		if (ydiff > 0)
+		{
+			mdiff = ydiff*12+mdiff;
+		} 
+		else
+		{
+			mdiff = (ydiff+1)*12 + mdiff -12;
+		}
+		return ctcl_ganzhi_round(15,mdiff,60);
+}
+//返回日的干支号，甲子从1开始 20120831 00:00:00
+int DDCTCalendar::ctcl_day_ganzhi(int y,int m,int d)
+{
+	date basetime(2012,8,31);
+	date ctime(y,m,d);
+	date_duration dd = ctime - basetime;
+	int daydiff = (int)(dd.days());
+	int ddd = ctcl_ganzhi_round(1,daydiff,60);
+	return ctcl_ganzhi_round(1,daydiff,60);
+
+}
+
 //角度函数(私有)
 double DDCTCalendar::ang(double x,double t,double c1,double t0,double t2,double t3)
 {
@@ -354,6 +427,7 @@ int DDCTCalendar::ctcl_lunar_month(int y,int m,int d)
 
 int DDCTCalendar::ctcl_solar_to_lunar(int y,int m,int d,struct CTCalendar* ctc)
 {
+	ctcl_month_ganzhi(y,m,d,12);
 	int r,i;
 	char buf[10] = {0};
 	sprintf(buf,"%d%02d%02d", y,m,d);
@@ -386,12 +460,30 @@ int DDCTCalendar::ctcl_solar_to_lunar(int y,int m,int d,struct CTCalendar* ctc)
     ctc->zhi=ctcl_zhi(ctcl_year_ganzhi(y,m,d,12));
 
 	sprintf(szSQLBuff, "select VALUE from tiangan where ID=%d",ctc->gan);
-	ctc->ganzhi=ctcl_common_query("gan",szSQLBuff);
-    memset(szSQLBuff,0,MAX_PATH);
+	ctc->yearganzhi=ctcl_common_query("gan",szSQLBuff);
+	memset(szSQLBuff,0,MAX_PATH);
 
 	sprintf(szSQLBuff, "select VALUE from dizhi where ID=%d",ctc->zhi);
-	ctc->ganzhi.append(ctcl_common_query("zhi",szSQLBuff));
-    memset(szSQLBuff,0,MAX_PATH);
+	ctc->yearganzhi.append(ctcl_common_query("zhi",szSQLBuff));
+	memset(szSQLBuff,0,MAX_PATH);
+
+
+	int monthganzhi = ctcl_month_ganzhi(y,m,d,12);
+	sprintf(szSQLBuff, "select VALUE from tiangan where ID=%d",ctcl_gan(monthganzhi));
+	ctc->monthganzhi=ctcl_common_query("gan",szSQLBuff);
+	memset(szSQLBuff,0,MAX_PATH);
+	sprintf(szSQLBuff, "select VALUE from dizhi where ID=%d",ctcl_zhi(monthganzhi));
+	ctc->monthganzhi.append(ctcl_common_query("zhi",szSQLBuff));
+	memset(szSQLBuff,0,MAX_PATH);
+
+
+	int dayganzhi = ctcl_day_ganzhi(y,m,d);
+	sprintf(szSQLBuff, "select VALUE from tiangan where ID=%d",ctcl_gan(dayganzhi));
+	ctc->dayganzhi=ctcl_common_query("gan",szSQLBuff);
+	memset(szSQLBuff,0,MAX_PATH);
+	sprintf(szSQLBuff, "select VALUE from dizhi where ID=%d",ctcl_zhi(dayganzhi));
+	ctc->dayganzhi.append(ctcl_common_query("zhi",szSQLBuff));
+	memset(szSQLBuff,0,MAX_PATH);
 	
 	 sprintf(szSQLBuff, "select VALUE from shengxiao where ID=%d",ctc->zhi);
 	 ctc->shengxiao=ctcl_common_query("shengxiao",szSQLBuff);
