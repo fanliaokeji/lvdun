@@ -1,7 +1,9 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
---方法
+--方法  
+
+--strYearMonth：年月查询
 function ShowClndrContent(objRootCtrl, strYearMonth)
 	function ProcessCalendar(tClndrContent)
 		for nIndex, tContent in ipairs(tClndrContent) do
@@ -9,7 +11,7 @@ function ShowClndrContent(objRootCtrl, strYearMonth)
 			local objCurItem = objRootCtrl:GetControlObject(strKey)
 			if objCurItem then
 				SetItemText(objCurItem, tContent)
-				SetTextColor(objCurItem, tContent)
+				SetTextColor(objCurItem, tContent, strYearMonth)
 				SetBackGround(objCurItem, tContent)
 				
 				objCurItem:SetContent(tContent)
@@ -94,27 +96,32 @@ function SetItemText(objCurItem, tClndrItem)
 	
 	local strCDay = tClndrItem.cday
 	objCurItem:SetCHNDayText(strCDay)
+	
+	local bIsSpecialday, strSpecialText = CheckIsSpecialday(tClndrItem)
+	if bIsSpecialday then  --节日、节气
+		objCurItem:SetCHNDayText(strSpecialText)
+	end
+	
 end
 
 
-function SetTextColor(objCurItem, tClndrItem)
-	local bIsInCurMonth = CheckIsInCurMonth(tClndrItem)
+function SetTextColor(objCurItem, tClndrItem, strYearMonth)
+	local bIsInCurMonth = CheckIsInCurMonth(tClndrItem, strYearMonth)
 	if not bIsInCurMonth then  --不在当月， 灰化
 		objCurItem:SetAllTextGray()
 		return
 	end
 	
+	objCurItem:SetAllTextNormal()
+	
 	local bIsWeekend = CheckIsWeekend(tClndrItem)
 	if bIsWeekend then  --周末
 		objCurItem:SetAllTextWeekend()
-		return
 	end
 	
-	objCurItem:SetAllTextNormal()
-	
-	local bIsHoliday = CheckIsHoliday(tClndrItem)
-	if bIsHoliday then  --节日
-		objCurItem:SetTextHoliday()
+	local bIsSpecialday = CheckIsSpecialday(tClndrItem)
+	if bIsSpecialday then  --节日、节气
+		objCurItem:SetTextSpecialday()
 	end
 end
 
@@ -125,15 +132,39 @@ function SetBackGround(objCurItem, tClndrItem)
 end
 
 			
-function CheckIsInCurMonth(tClndrItem)		
-	return true
+function CheckIsInCurMonth(tClndrItem, strQryYearMonth)		
+	local strSolarcalendar = tClndrItem.solarcalendar
+	local strYearMonth = string.sub(strSolarcalendar, 1, 6)
+	if strYearMonth == strQryYearMonth then
+		return true
+	end
+	
+	return false	
 end
 
-function CheckIsWeekend(tClndrItem)		
+function CheckIsWeekend(tClndrItem)	
+	local strWeekday = tClndrItem.weekday
+	if tostring(strWeekday) == "六" 
+	or tostring(strWeekday) == "日"  then
+		return true
+	end
+	
 	return false
 end
 
-function CheckIsHoliday(tClndrItem)		
+function CheckIsSpecialday(tClndrItem)
+	if IsRealString(tClndrItem.choliday) then  --农历节
+		return true, tClndrItem.choliday
+	end
+	
+	if IsRealString(tClndrItem.holiday) then   --公历节
+		return true, tClndrItem.holiday
+	end
+	
+	if IsRealString(tClndrItem.sterm) then   --节气
+		return true, tClndrItem.sterm
+	end
+	
 	return false
 end
 

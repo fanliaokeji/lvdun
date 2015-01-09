@@ -36,7 +36,7 @@ function SetAllTextWeekend(self)
 end
 
 
-function SetTextHoliday(self)
+function SetTextSpecialday(self)
 	 SetAllTextColorRes(self, "", "FF9933")
 end
 
