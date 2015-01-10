@@ -61,5 +61,6 @@ public:
 	//软件升级:WPARAM 1(/expupdate)
 	//关于滴答日历:WPARAM 2(/expabout)
 	//退出:WPARAM 3(/expexit)
+	//拉起:WPARAM 0(/expstart)
 	LRESULT OnExplorerNotify(UINT , WPARAM , LPARAM , BOOL&);
 };
