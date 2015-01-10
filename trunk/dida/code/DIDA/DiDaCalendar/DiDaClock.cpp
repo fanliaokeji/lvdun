@@ -163,7 +163,13 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	const int IMID_CHANGEDATETIME = 0x1003;
 	const int IMID_ABOUTDIDA = 0x1004;
 	const int IMID_EXIT = 0x1005;
-	AppendMenu(hMenu, MF_STRING, IMID_STARTLAUNCH, L"开机启动");
+	bool isDiDaCalendarStartRunEnable = DiDaClockControl::IsDiDaCalendarStartRunEnable();
+	if(isDiDaCalendarStartRunEnable) {
+		AppendMenu(hMenu, MF_STRING | MF_CHECKED, IMID_STARTLAUNCH, L"开机启动");
+	}
+	else {
+		AppendMenu(hMenu, MF_STRING, IMID_STARTLAUNCH, L"开机启动");
+	}
 	AppendMenu(hMenu, MF_STRING, IMID_UPDATE, L"软件升级");
 	AppendMenu(hMenu, MF_STRING, IMID_CHANGEDATETIME, L"调整日期时间");
 	AppendMenu(hMenu, MF_STRING, IMID_ABOUTDIDA, L"关于滴嗒日历");
@@ -171,16 +177,16 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	int menuId = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, pt.x, pt.y, 0, hWnd, NULL);
 	switch(menuId) {
 	case IMID_STARTLAUNCH:
-		::MessageBox(hWnd, L"开机启动", L"提示", MB_OK);
+		DiDaClockControl::EnableDiDaCalendarStartRun(!isDiDaCalendarStartRunEnable);
 		break;
 	case IMID_UPDATE:
-		::MessageBox(hWnd, L"软件升级", L"提示", MB_OK);
+		DiDaClockControl::Update(hWnd);
 		break;
 	case IMID_CHANGEDATETIME:
 		DiDaClockControl::ModifySystemDateTime();
 		break;
 	case IMID_ABOUTDIDA:
-		::MessageBox(hWnd, L"关于嘀嗒日历", L"提示", MB_OK);
+		DiDaClockControl::ShowAbout(hWnd);
 		break;
 	case IMID_EXIT:
 		::KillTimer(hWnd, TIMERID_UPDATETIME);
