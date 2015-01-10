@@ -607,19 +607,21 @@ bool DDCTCalendar::InitConnection(const std::string& strDBPath)
 		return false;
 	}
 
-	if (SQLITE_OK != execDML("select * from lunar where MaxYear=2100"))
+	if (SQLITE_OK != execDML("select * from lunar"))
 	{
-		TSDEBUG(_T("select * from lunar where MaxYear=2100 error "));
+		TSDEBUG(_T("select * from lunar where MaxYear=2101 error "));
 		return false;
 	}
 	int nCnt = m_vQuery.size();
 	if (nCnt<=0)
 	{
+		TSDEBUG(_T("MaxYear nCnt < 0"));
 		return false;
 	}
 	std::string strMaxYear = m_vQuery[nCnt-1].find("MaxYear")->second;
 	if (strMaxYear.empty())
 	{
+		TSDEBUG(_T("MaxYear empty"));
 		return false;
 	}
     maxyear=atoi(strMaxYear.c_str());
