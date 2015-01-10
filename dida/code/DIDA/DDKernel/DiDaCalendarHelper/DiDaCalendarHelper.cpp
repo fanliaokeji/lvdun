@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
+#include "wow64ext.h"
 
 bool IsCalendarInjected()
 {
@@ -105,16 +106,129 @@ static INJECT_RESULT Win32Inject32(DWORD dwProcessID, const wchar_t* dllFilePath
 		::CloseHandle(hTargetProcess);
 		return INJECT_FAIL_CREATEREMOTETHREAD;
 	}
-	::WaitForSingleObject(hRemoteThread, INFINITE);
+	::WaitForSingleObject(hRemoteThread, 3000);
 	::CloseHandle(hRemoteThread);
 	::VirtualFreeEx(hTargetProcess, lpVirtualMem, alloc_size, MEM_RESERVE | MEM_COMMIT);
 	::CloseHandle(hTargetProcess);
 	return INJECT_OK;
 }
 
+static const size_t PrefixCodeLength = 25;
+const static unsigned char exec_code[] = {
+	0x48, 0x89, 0x4c, 0x24, 0x08, 0x57, 0x48, 0x83, 0xec, 0x20,
+	0x48, 0x8b, 0xfc, 0xb9, 0x08, 0x00, 0x00, 0x00, 0xb8, 0xcc,
+	0xcc, 0xcc, 0xcc, 0xf3, 0xab,                               // prefix code
+	0x49, 0xb9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov r9, 0x0000000000000000
+	0x49, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov r8, 0x0000000000000000 
+	0x48, 0xba, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rdx, 0x0000000000000000
+	0x48, 0xb9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rcx, 0x0000000000000000
+	0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rax, 0x0000000000000000 
+	0xff, 0xd0,													// call rax
+	0x48, 0xb9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rcx, 0x0000000000000000
+	0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rax, 0x0000000000000000
+	0xff, 0xd0													// call rax
+};
+
 static INJECT_RESULT Win32Inject64(DWORD dwProcessID, const wchar_t* dllFilePath)
 {
-	return INJECT_FAIL_NOTIMPLEMENTED;
+	int path_length = std::wcslen(dllFilePath);
+	HANDLE hTargetProcess = ::OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, dwProcessID);
+	if (hTargetProcess == NULL) {
+		return INJECT_FAIL_OPENPROCESS;
+	}
+
+	int alloc_size = sizeof(DWORD64);
+	alloc_size += sizeof(_UNICODE_STRING_T<DWORD64>);
+	alloc_size += (path_length + 1) * sizeof(wchar_t);
+
+	DWORD64 lpVirtualMemExec = VirtualAllocEx64(hTargetProcess, NULL, sizeof(exec_code), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	DWORD64 lpVirtualMemParameters = VirtualAllocEx64(hTargetProcess, NULL, alloc_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	if(lpVirtualMemExec == NULL || lpVirtualMemParameters == NULL) {
+		if(lpVirtualMemExec != NULL) {
+			VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
+		}
+		if(lpVirtualMemParameters != NULL) {
+			VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
+		}
+		::CloseHandle(hTargetProcess);
+		return INJECT_FAIL_VIRTUALALLOC;
+	}
+	DWORD64 ntdll64 = GetModuleHandle64(L"ntdll.dll");
+	DWORD64 ntdll_LdrLoadDll = GetProcAddress64(ntdll64, "LdrLoadDll");
+	DWORD64 ntdll_RtlExitUserThread = GetProcAddress64(ntdll64, "RtlExitUserThread");
+	DWORD64 ntdll_RtlCreateUserThread = GetProcAddress64(ntdll64, "RtlCreateUserThread");
+	if(ntdll_LdrLoadDll == 0 || ntdll_RtlExitUserThread == 0 || ntdll_RtlCreateUserThread == 0) {
+		VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
+		VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
+		::CloseHandle(hTargetProcess);
+		return INJECT_FAIL_GETPROCADDRESS;
+	}
+
+	unsigned char* parameters = new unsigned char[alloc_size];
+	std::memset(parameters, 0, alloc_size);
+	_UNICODE_STRING_T<DWORD64>* upath = reinterpret_cast<_UNICODE_STRING_T<DWORD64>*>(parameters + sizeof(DWORD64));
+	upath->Length = (path_length) * sizeof(wchar_t);
+	upath->MaximumLength = (path_length + 1) * sizeof(wchar_t);
+	wchar_t* path = reinterpret_cast<wchar_t*>(parameters + sizeof(DWORD64) + sizeof(_UNICODE_STRING_T<DWORD64>));
+	std::wcscpy(path, dllFilePath);
+	upath->Buffer = lpVirtualMemParameters + sizeof(DWORD64) + sizeof(_UNICODE_STRING_T<DWORD64>);
+
+	unsigned char exec_code_copy[sizeof(exec_code)];
+	std::memcpy(exec_code_copy, exec_code, sizeof(exec_code_copy));
+	union {
+		DWORD64 dw64;
+		unsigned char bytes[8];
+	} cvt;
+	// arg4
+	cvt.dw64 = lpVirtualMemParameters;
+	std::memcpy(exec_code_copy + 2 + PrefixCodeLength, cvt.bytes, sizeof(cvt.bytes));
+	// arg3
+	cvt.dw64 = lpVirtualMemParameters + sizeof(DWORD64);
+	std::memcpy(exec_code_copy + 12 + PrefixCodeLength, cvt.bytes, sizeof(cvt.bytes));
+
+	// rax = LdrLoadDll
+	cvt.dw64 = ntdll_LdrLoadDll;
+	std::memcpy(exec_code_copy + 42 + PrefixCodeLength, cvt.bytes, sizeof(cvt.bytes));
+
+	// rax = RtlExitUserThread
+	cvt.dw64 = ntdll_RtlExitUserThread;
+	std::memcpy(exec_code_copy + 64 + PrefixCodeLength, cvt.bytes, sizeof(cvt.bytes));
+	if(FALSE == WriteProcessMemory64(hTargetProcess, lpVirtualMemExec, exec_code_copy, sizeof(exec_code), NULL)
+		|| FALSE == WriteProcessMemory64(hTargetProcess, lpVirtualMemParameters, parameters, alloc_size, NULL)) {
+		VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
+		VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
+		::CloseHandle(hTargetProcess);
+		return INJECT_FAIL_WRITEPROCESSMEMERY;
+	}
+	DWORD64 hRemoteThread = 0;
+	struct {
+	  DWORD64 UniqueProcess;
+	  DWORD64 UniqueThread;
+	} client_id;
+
+	X64Call(ntdll_RtlCreateUserThread, 10, 
+		(DWORD64)hTargetProcess, // ProcessHandle
+		(DWORD64)NULL, // SecurityDescriptor
+		(DWORD64)FALSE, // CreateSuspended
+		(DWORD64)0, // StackZeroBits
+		(DWORD64)NULL, // StackReserved
+		(DWORD64)NULL, // StackCommit
+		lpVirtualMemExec, // StartAddress
+		(DWORD64)NULL, // StartParameter
+		(DWORD64)&hRemoteThread, // ThreadHandle
+		(DWORD64)&client_id // ClientID
+		);
+	INJECT_RESULT result = INJECT_OK;
+	if(hRemoteThread == 0) {
+		result = INJECT_FAIL_CREATEREMOTETHREAD;
+	}
+	else {
+		::WaitForSingleObject((HANDLE)hRemoteThread, 3000);
+	}
+	VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
+	VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
+	::CloseHandle(hTargetProcess);
+	return result;
 }
 
 bool InjectCalendarDll(const wchar_t* dllPath32, const wchar_t* dllPath64)

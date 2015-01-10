@@ -451,11 +451,31 @@
 			Name="DiDaCalendarHelper"
 			>
 			<File
+				RelativePath=".\DiDaCalendarHelper\CMemPtr.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DiDaCalendarHelper\DiDaCalendarHelper.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\DiDaCalendarHelper\DiDaCalendarHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DiDaCalendarHelper\internal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DiDaCalendarHelper\vc90_def.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DiDaCalendarHelper\wow64ext.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DiDaCalendarHelper\wow64ext.h"
 				>
 			</File>
 		</Filter>
