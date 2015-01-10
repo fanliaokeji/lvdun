@@ -198,6 +198,7 @@ static INJECT_RESULT Win32Inject64(DWORD dwProcessID, const wchar_t* dllFilePath
 		VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
 		VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
 		::CloseHandle(hTargetProcess);
+		delete[] parameters;
 		return INJECT_FAIL_WRITEPROCESSMEMERY;
 	}
 	DWORD64 hRemoteThread = 0;
@@ -228,6 +229,7 @@ static INJECT_RESULT Win32Inject64(DWORD dwProcessID, const wchar_t* dllFilePath
 	VirtualFreeEx64(hTargetProcess, lpVirtualMemExec, sizeof(exec_code), MEM_RESERVE | MEM_COMMIT);
 	VirtualFreeEx64(hTargetProcess, lpVirtualMemParameters, alloc_size, MEM_RESERVE | MEM_COMMIT);
 	::CloseHandle(hTargetProcess);
+	delete[] parameters;
 	return result;
 }
 
