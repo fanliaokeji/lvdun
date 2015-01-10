@@ -11,19 +11,30 @@
 		</event_def>
 		<objtemplate>
 			<children>
+				<obj id="WeatherCtrl.Loading" class="SeqImageObject">
+					<attr>
+						<left>0</left>  
+						<top>0</top>
+						<width>73</width>
+						<height>52</height>
+						<gif>DiDa.Weather.Loading</gif>
+						<loop>1</loop>
+						<reverse>0</reverse>
+					</attr>
+				</obj>	
+			
 				<obj id="WeatherCtrl.Image" class="ImageObject">
 					<attr>
 						<left>0</left>
 						<top>father.height-51+5</top>
 						<width>51</width> 
 						<height>51</height>
-						<image>Weather.DuoYun</image>
 					</attr>		
 				</obj>	
 				
 				<obj id="WeatherCtrl.Average" class="TextObject">
 					<attr>
-						<left>51+10</left>
+						<left>51+5</left>
 						<top>0</top>
 						<width>50</width> 
 						<height>father.height</height>
@@ -31,7 +42,6 @@
 						<halign>center</halign>
 						<font>font.fzlt21</font>
 						<textcolor>59ACFF</textcolor>
-						<text>23℃</text>
 					</attr>		
 				</obj>
 				
@@ -45,21 +55,19 @@
 						<halign>right</halign>
 						<font>font.fzlt13</font>
 						<textcolor>59ACFF</textcolor>
-						<text>深圳</text>
 					</attr>		
 				</obj>
 				
 				<obj id="WeatherCtrl.Detail" class="TextObject">
 					<attr>
-						<left>father.width-95-8</left>
+						<left>father.width-95-20</left>
 						<top>30+5</top>
 						<width>95</width> 
 						<height>12</height>
 						<valign>center</valign>
-						<halign>left</halign>
+						<halign>right</halign>
 						<font>font.fzlt13</font>
 						<textcolor>59ACFF</textcolor>
-						<text>多云19～25℃</text>
 					</attr>		
 				</obj>
 				

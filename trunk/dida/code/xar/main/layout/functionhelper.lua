@@ -137,7 +137,7 @@ end
 
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DiDa\\PeerId")
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId")
 	if IsRealString(strPeerID) then
 		return strPeerID
 	end
@@ -147,13 +147,13 @@ function GetPeerID()
 		return ""
 	end
 	
-	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\DiDa\\PeerId", strRandPeerID)
+	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId", strRandPeerID)
 	return strRandPeerID
 end
 
 --渠道
 function GetInstallSrc()
-	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DiDa\\InstallSource")
+	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
 	if not IsNilString(strInstallSrc) then
 		return tostring(strInstallSrc)
 	end
@@ -331,6 +331,15 @@ function GetFileSaveNameFromUrl(url)
 end
 
 
+function MessageBox(str)
+	if not IsRealString(str) then
+		return
+	end
+	
+	tipUtil:MsgBox(str, "错误", 0x10)
+end
+
+
 function QueryAllUsersDir()	
 	local bRet = false
 	local strPublicEnv = "%PUBLIC%"
@@ -344,6 +353,7 @@ function QueryAllUsersDir()
 	end
 	return bRet, strRet
 end
+
 
 function GetExePath()
 	return tipUtil:GetModuleExeName()
@@ -359,7 +369,7 @@ function GetDBPath(strDBName)
 		return strDBPath
 	end
 	
-	XLMessageBox(tostring("数据缺失， 请重新安装"))
+	MessageBox(tostring("关键数据丢失，请重新安装"))
 	ExitProcess()
 	return nil
 end
@@ -569,6 +579,91 @@ function UpdateCalendarContent()
 	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarCtrl")
 	objCalendarCtrl:ShowClndrContent(strYearMonth)
 end
+
+
+--天气
+local strIPUrl = "http://ip.dnsexit.com/index.php"
+local strIPToCity = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip="
+local strWeatherPrefix = "http://weather.51wnl.com/weatherinfo/GetMoreWeather?cityCode="
+
+function GetWeatherInfo(fnSuccess, fnFail)
+	local JsonFun = XLGetGlobal("DiDa.Json")
+	GetCityCode(
+		function(nRet, tData)
+			if nRet ~= 0 or type(tData) ~= "table" or type(tData[1]) ~= "table" 
+			or not IsRealString(tData[1]["code"]) then
+				fnFail()
+				return
+			end
+		
+			local strWeatherUrl = strWeatherPrefix .. tostring(tData[1]["code"]) .. "&weatherType=0"
+			
+			tipAsynUtil:AjaxGetHttpContent(strWeatherUrl, 
+				function(iRet, strContent, respHeaders)
+					TipLog("[GetWeather] strWeatherUrl = " .. tostring(strWeatherUrl) .. ", iRet = " .. tostring(iRet))
+					if iRet ~= 0 or not IsRealString(strContent) or strContent == "{}" then
+						TipLog("[GetWeather] Get weather info failed.")
+						fnFail()
+						return
+					end
+					local tabWeather = JsonFun:decode(strContent)
+					if type(tabWeather) ~= "table" or type(tabWeather["weatherinfo"]) ~= "table" then
+						TipLog("[GetWeather] Parse weather info failed.")
+						fnFail()
+						return
+					end
+					
+					tabDetail = tabWeather["weatherinfo"]
+					local strCity = tabDetail["city"]
+					local strTemp1 = tabDetail["temp1"]
+					local strWeather1 = tabDetail["weather1"]
+					fnSuccess(strCity,strTemp1,strWeather1)
+				end)
+	end)
+end
+
+
+function GetCityCode(fnCallBack)
+	local JsonFun = XLGetGlobal("DiDa.Json")
+	tipAsynUtil:AjaxGetHttpContent(strIPUrl, 
+		function(iRet, strContent, respHeaders)
+			TipLog("[GetCityCode] strIPUrl = " .. tostring(strIPUrl) .. ", iRet = " .. tostring(iRet))
+			if iRet ~= 0 then
+				fnCallBack(-1)
+				return
+			end
+			
+			local strIP =  string.match(strContent,"(%d+.%d+.%d+.%d+)")
+			if not IsRealString(strIP) then
+				fnCallBack(-1)
+				return
+			end
+			
+			local strQueryIPToCityUrl = strIPToCity .. tostring(strIP)
+			tipAsynUtil:AjaxGetHttpContent(strQueryIPToCityUrl, 
+				function(iRet, strContent, respHeaders)
+					TipLog("[GetCityCode] strQueryIPToCityUrl = " .. tostring(strQueryIPToCityUrl) .. ", iRet = " .. tostring(iRet))
+					if iRet ~= 0 or not IsRealString(strContent) then
+						fnCallBack(-1)
+						return
+					end
+					local tabCityInfo = JsonFun:decode(strContent)
+					if type(tabCityInfo) ~= "table" or not IsRealString(tabCityInfo["city"]) then
+						fnCallBack(-1)
+						return
+					end
+					
+					local strCityName = tabCityInfo["city"]
+					local strCityDB = GetDBPath("citycode.db")
+					local strSQL = "select * from cityinfo where city='" .. strCityName .. "'"
+					TipLog("[GetCityCode] strSQL = " .. tostring(strSQL))
+					tipAsynUtil:AsynExecuteSqlite3DML(strCityDB, strSQL, nil,nil,function(iRet, tData)
+						fnCallBack(iRet, tData)
+					end)
+				end)
+		end)
+end
+
 
 
 ------------UI--
@@ -793,7 +888,9 @@ end
 function SaveAllConfig()
 	if g_bLoadCfgSucc then
 		for strKey, tContent in pairs(g_tConfigFileStruct) do
-			SaveConfigToFileByKey(strKey)
+			if strKey ~= "tVacationList" then
+				SaveConfigToFileByKey(strKey)
+			end
 		end
 	end
 end
@@ -952,6 +1049,7 @@ obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
 obj.CheckIsVacation = CheckIsVacation
 obj.CheckIsWorkDay = CheckIsWorkDay
 obj.UpdateCalendarContent = UpdateCalendarContent
+obj.GetWeatherInfo = GetWeatherInfo
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName

@@ -60,10 +60,19 @@ function SendStartupReport(bShowWnd)
 end
 
 
-
-
 function ShowMainTipWnd(objMainWnd)
-	objMainWnd:Show(5)
+	local bHideMainPage = false
+	local cmdString = tipUtil:GetCommandLine()
+	local bRet = string.find(tostring(cmdString), "/embedding")
+	if bRet then
+		bHideMainPage = true
+	end
+	
+	if bHideMainPage then
+		objMainWnd:Show(0)
+	else
+		objMainWnd:Show(5)
+	end
 	SendStartupReport(true)
 end
 
@@ -232,7 +241,7 @@ function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local bRet, strURL = FunctionObj.GetCommandStrValue("/openlink")
 
-	--to do
+	
 end
 
 function GetResourceDir()
@@ -302,15 +311,20 @@ function TipMain()
 	ProcessCommandLine()
 end
 
+function LoadJSONHelper()
+	local strJSONHelperPath = __document.."\\..\\JSON.lua"
+	local Module = XLLoadModule(strJSONHelperPath)
+end
+
 
 function PreTipMain() 
 	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 	XLSetGlobal("DiDa.LastReportRunTime", gnLastReportRunTmUTC) 
 	
+	LoadJSONHelper()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
-	
 	InitFont()
 	StartRunCountTimer()
 	
