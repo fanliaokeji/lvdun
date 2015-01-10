@@ -5,11 +5,8 @@
 #include <XLLuaRuntime.h>
 typedef void (*funResultCallBack) (DWORD userdata1,DWORD userdata2, const char* pszKey,  DISPPARAMS* pParams);
 
-#define WM_FILTERRESULT WM_USER + 201
-#define WM_FILTERASK WM_USER + 202
+#define WM_EXPLORER WM_USER + 200
 
-#define WM_FILTEREXIT WM_USER + 300
-#define WM_FILTERLOCKING WM_USER + 301
 
 struct CallbackNode
 {
@@ -36,6 +33,8 @@ public:
 	DECLARE_WND_CLASS(L"{10808D97-3494-4c5d-857F-0ADFA04FA721}_ddmainmsg")
 	BEGIN_MSG_MAP(CFilterMsgWindow)
 		MESSAGE_HANDLER(WM_COPYDATA, OnCopyData)
+		MESSAGE_HANDLER(WM_EXPLORER, OnExplorerNotify)
+
 	END_MSG_MAP()
 private:
 	CDDMsgWindow(void);
@@ -57,5 +56,10 @@ private:
 private:
 
 public:
-	LRESULT OnCopyData(UINT , WPARAM , LPARAM , BOOL& );
+	LRESULT OnCopyData(UINT , WPARAM , LPARAM , BOOL&);
+
+	//软件升级:WPARAM 1(/expupdate)
+	//关于滴答日历:WPARAM 2(/expabout)
+	//退出:WPARAM 3(/expexit)
+	LRESULT OnExplorerNotify(UINT , WPARAM , LPARAM , BOOL&);
 };

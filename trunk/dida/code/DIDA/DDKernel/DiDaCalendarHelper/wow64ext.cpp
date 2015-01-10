@@ -26,10 +26,10 @@
 #include "wow64ext.h"
 #include "CMemPtr.h"
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-    return TRUE;
-}
+//BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+//{
+//    return TRUE;
+//}
 
 #pragma warning(push)
 #pragma warning(disable : 4409)

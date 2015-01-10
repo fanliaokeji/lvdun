@@ -143,3 +143,16 @@ LRESULT CDDMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam
 
 	return 0;
 }
+
+LRESULT CDDMsgWindow::OnExplorerNotify(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+	TSAUTO();	
+	
+	CComVariant vParam[1];
+	vParam[0] = (UINT)wParam;
+
+	DISPPARAMS params = { vParam, NULL, 1, 0 };
+	Fire_LuaEvent("OnExplorerNotify", &params);
+
+	return 0;
+}
