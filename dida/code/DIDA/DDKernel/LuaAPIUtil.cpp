@@ -3999,8 +3999,8 @@ int LuaAPIUtil::IsDiDaCalendarInjected(lua_State* pLuaState)
 
 int LuaAPIUtil::InjectDiDaCalendarDll(lua_State* pLuaState)
 {
-	const char* utf8DllPath32 = luaL_checkstring(pLuaState,1);
-	const char* utf8DllPath64 = luaL_checkstring(pLuaState,2);
+	const char* utf8DllPath32 = luaL_checkstring(pLuaState,2);
+	const char* utf8DllPath64 = luaL_checkstring(pLuaState,3);
 	CComBSTR dllPath32;
 	LuaStringToCComBSTR(utf8DllPath32, dllPath32);
 
