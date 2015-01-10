@@ -75,7 +75,7 @@ bool DiDaClock::RestoreClockWndProc()
 {
 	bool result = false;
 	if (oldWndProc != NULL && hWndClock != NULL) {
-		::SetWindowLongPtr(hWndClock, GWLP_WNDPROC, (LONG)oldWndProc);
+		::SetWindowLongPtr(hWndClock, GWLP_WNDPROC, (LONG_PTR)oldWndProc);
 		result = true;
 	}
 	return result;
