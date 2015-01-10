@@ -40,6 +40,67 @@ function FetchValueByPath(obj, path)
 end
 
 
+
+--µ¯³ö´°¿Ú--
+local g_tPopupWndList = {
+	[1] = {"TipAboutWnd", "TipAboutTree"},
+	-- [2] = {"TipUpdateWnd", "TipUpdateTree"},
+}
+
+
+function CreatePopupTipWnd()
+	for key, tItem in pairs(g_tPopupWndList) do
+		local strHostWndName = tItem[1]
+		local strTreeName = tItem[2]
+		local bSucc = CreateWndByName(strHostWndName, strTreeName)
+	end
+	
+	return true
+end
+
+function CreateWndByName(strHostWndName, strTreeName)
+	local bSuccess = false
+	local strInstWndName = strHostWndName..".Instance"
+	local strInstTreeName = strTreeName..".Instance"
+	
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local frameHostWndTemplate = templateMananger:GetTemplate(strHostWndName, "HostWndTemplate" )
+	if frameHostWndTemplate then
+		local frameHostWnd = frameHostWndTemplate:CreateInstance(strInstWndName)
+		if frameHostWnd then
+			local objectTreeTemplate = nil
+			objectTreeTemplate = templateMananger:GetTemplate(strTreeName, "ObjectTreeTemplate")
+			if objectTreeTemplate then
+				local uiObjectTree = objectTreeTemplate:CreateInstance(strInstTreeName)
+				if uiObjectTree then
+					frameHostWnd:BindUIObjectTree(uiObjectTree)
+					local iRet = frameHostWnd:Create()
+					if iRet ~= nil and iRet ~= 0 then
+						bSuccess = true
+					end
+				end
+			end
+		end
+	end
+
+	return bSuccess
+end
+
+function DestroyPopupWnd()
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+
+	for key, tItem in pairs(g_tPopupWndList) do
+		local strPopupWndName = tItem[1]
+		local strPopupInst = strPopupWndName..".Instance"
+		
+		local objPopupWnd = hostwndManager:GetHostWnd(strPopupInst)
+		if objPopupWnd then
+			hostwndManager:RemoveHostWnd(strPopupInst)
+		end
+	end
+end
+
+
 function SendStartupReport(bShowWnd)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local tStatInfo = {}
@@ -239,9 +300,16 @@ end
 
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
-	local bRet, strURL = FunctionObj.GetCommandStrValue("/openlink")
-
+	local cmdString = tipUtil:GetCommandLine()
+	local bRet = string.find(tostring(cmdString), "/about")
+	if bRet then
+		FunctionObj.ShowPopupWndByName("TipAboutWnd.Instance")
+	end
 	
+	local bRet = string.find(tostring(cmdString), "/update")
+	if bRet then
+		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance")
+	end
 end
 
 function GetResourceDir()
@@ -292,6 +360,31 @@ function InitFont()
 end
 
 
+function InjectDLL()
+	function TryInjectDLL()
+		local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+		local bHasInject = tipUtil:IsDiDaCalendarInjected()
+		if bHasInject then
+			return
+		end
+		local strDllPath32 = FunctionObj.GetDllPath("DiDaCalendar.dll") 
+		local strDllPath64 = FunctionObj.GetDllPath("DiDaCalendar64.dll") 
+		
+		if IsRealString(strDllPath32) and tipUtil:QueryFileExists(strDllPath32)
+			and IsRealString(strDllPath64) and tipUtil:QueryFileExists(strDllPath64) then
+			tipUtil:InjectDiDaCalendarDll(strDllPath32, strDllPath64)
+		end
+	end
+	
+	TryInjectDLL()
+	
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		TryInjectDLL()
+	end, 3*1000)
+end
+
+
 function CreateMainTipWnd()
 	local function OnCreateFuncF(treectrl)
 		local rootctrl = treectrl:GetUIObject("root.layout:root.ctrl")
@@ -308,6 +401,7 @@ end
 
 function TipMain() 
 	CreateMainTipWnd()
+	CreatePopupTipWnd()
 	ProcessCommandLine()
 end
 
@@ -325,6 +419,7 @@ function PreTipMain()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
+	InjectDLL()
 	InitFont()
 	StartRunCountTimer()
 	

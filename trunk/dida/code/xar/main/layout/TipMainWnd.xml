@@ -67,6 +67,7 @@
 			<event name="OnShowWindow" file="TipMainWnd.xml.lua" func="OnShowWindow"/>
 			<event name="OnDestroy" file="TipMainWnd.xml.lua" func="OnDestroy"/>
 			<event name="OnClose" file="TipMainWnd.xml.lua" func="OnClose"/>
+			<event name="OnFocusChange" file="TipMainWnd.xml.lua" func="OnFocusChange"/>
         </eventlist>
     </hostwndtemplate>
 

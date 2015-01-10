@@ -17,6 +17,8 @@
 		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
 		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
 		
+		<texture id="DiDa.AboutWnd.Bkg" image="bitmap\DiDa.AboutWnd.Bkg.png" />
+		
 		<bitmap id="多云" path="bitmap\weather\Weather.DuoYun.png" />
 		<bitmap id="暴雪" path="bitmap\weather\Weather.BaoXue.png" />
 		<bitmap id="暴雨" path="bitmap\weather\Weather.BaoYu.png" />
