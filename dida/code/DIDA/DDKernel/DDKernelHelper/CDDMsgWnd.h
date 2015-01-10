@@ -58,9 +58,9 @@ private:
 public:
 	LRESULT OnCopyData(UINT , WPARAM , LPARAM , BOOL&);
 
-	//软件升级:WPARAM 1(/expupdate)
-	//关于滴答日历:WPARAM 2(/expabout)
-	//退出:WPARAM 3(/expexit)
-	//拉起:WPARAM 0(/expstart)
+	//软件升级:WPARAM 1
+	//关于滴答日历:WPARAM 2
+	//退出:WPARAM 3
+	//拉起:WPARAM 0
 	LRESULT OnExplorerNotify(UINT , WPARAM , LPARAM , BOOL&);
 };
