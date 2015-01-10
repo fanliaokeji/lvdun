@@ -30,13 +30,14 @@ void DiDaClockControl::ModifySystemDateTime()
 	}
 }
 
-void DiDaClockControl::LaunchCalendarMain()
-{
-	::MessageBox(NULL, L"拉起嘀嗒日历", L"提示", MB_OK);
-}
+#define DDCMD_SHOWCALENDARMAIN		0
+#define DDCMD_UPDATE				1
+#define DDCMD_SHOWABOUT				2
 
-#define DDCMD_UPDATE	0
-#define DDCMD_SHOWABOUT		1
+void DiDaClockControl::LaunchCalendarMain(HWND hWnd)
+{
+	Command(DDCMD_SHOWCALENDARMAIN);
+}
 
 void DiDaClockControl::Update(HWND hWnd)
 {
@@ -50,12 +51,32 @@ void DiDaClockControl::ShowAbout(HWND hWnd)
 
 static DWORD WINAPI FreeSelf(LPVOID param)
 {
+	if(param != NULL) {
+		HWND hWnd = ::FindWindow(L"{10808D97-3494-4c5d-857F-0ADFA04FA721}_ddmainmsg", NULL);
+		if(hWnd != NULL) {
+			DWORD dwProcessId = 0;
+			::GetWindowThreadProcessId(hWnd, &dwProcessId);
+			HANDLE hCalendarMainProcess = NULL;
+			if(dwProcessId != 0) {
+				hCalendarMainProcess = ::OpenProcess(SYNCHRONIZE, FALSE, dwProcessId);
+			}
+			::PostMessage(hWnd, WM_USER + 200, (WPARAM)3, NULL);
+			if(hCalendarMainProcess != NULL) {
+				::WaitForSingleObject(hCalendarMainProcess, 10000);
+				::CloseHandle(hCalendarMainProcess);
+			}
+		}
+	}
 	FreeLibraryAndExitThread(g_hModule, 0);
 }
 
-void DiDaClockControl::ExitCalendar(HWND hWnd)
+void DiDaClockControl::ExitCalendar(HWND hWnd, bool sendExitMsg)
 {
-	::CloseHandle(::CreateThread(NULL, 0, FreeSelf, NULL, 0, NULL));
+	LPVOID lpParameter = NULL;
+	if(sendExitMsg) {
+		lpParameter = (LPVOID)1;
+	}
+	::CloseHandle(::CreateThread(NULL, 0, FreeSelf, lpParameter, 0, NULL));
 }
 
 bool DiDaClockControl::IsDiDaCalendarStartRunEnable()
@@ -124,25 +145,30 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 	}
 }
 
-
 void DiDaClockControl::Command(int cmd)
 {
 	HWND hWnd = ::FindWindow(L"{10808D97-3494-4c5d-857F-0ADFA04FA721}_ddmainmsg", NULL);
-	if(hWnd != NULL) {
-		if(cmd == DDCMD_UPDATE) {
+	if (hWnd != NULL) {
+		if (cmd == DDCMD_SHOWCALENDARMAIN) {
+			::PostMessage(hWnd, WM_USER + 200, (WPARAM)0, NULL);
+		}
+		else if (cmd == DDCMD_UPDATE) {
 			::PostMessage(hWnd, WM_USER + 200, (WPARAM)1, NULL);
 		}
-		else if(cmd == DDCMD_SHOWABOUT) {
+		else if (cmd == DDCMD_SHOWABOUT) {
 			::PostMessage(hWnd, WM_USER + 200, (WPARAM)2, NULL);
 		}
 	}
 	else {
 		const wchar_t* lpParameters = NULL;
-		if(cmd == DDCMD_UPDATE) {
-			lpParameters = L"/expupdate";
+		if (cmd == DDCMD_SHOWCALENDARMAIN) {
+			lpParameters = L"/startfrom explorer";
 		}
-		else if(cmd == DDCMD_SHOWABOUT) {
-			lpParameters = L"/expabout";
+		else if (cmd == DDCMD_UPDATE) {
+			lpParameters = L"/embedding /update";
+		}
+		else if (cmd == DDCMD_SHOWABOUT) {
+			lpParameters = L"/embedding /about";
 		}
 		else {
 			return;

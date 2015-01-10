@@ -44,6 +44,17 @@ LRESULT CALLBACK DiDaClock::ClockWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			return OnLButtonUp(hWnd, uMsg, wParam, lParam);
 		case WM_RBUTTONUP:
 			return OnRButtonUp(hWnd, uMsg, wParam, lParam);
+		case WM_USER + 320:
+			if(wParam == 100) {
+				::KillTimer(hWnd, TIMERID_UPDATETIME);
+				RestoreClockWndProc();
+				::PostMessage(::GetParent(::GetParent(hWnd)), WM_SIZE, SIZE_RESTORED, 0);
+				::PostMessage(::GetParent(hWnd), WM_SIZE, SIZE_RESTORED, 0);
+				::InvalidateRect(hWnd, NULL, FALSE);
+				::InvalidateRect(::GetParent(hWnd), NULL, TRUE);
+				DiDaClockControl::ExitCalendar(hWnd, false);
+			}
+			return 0;
 	}
 	return CallWindowProc(oldWndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -138,7 +149,7 @@ LRESULT DiDaClock::OnThemeChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 LRESULT DiDaClock::OnLButtonUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	DiDaClockControl::LaunchCalendarMain();
+	DiDaClockControl::LaunchCalendarMain(hWnd);
 	return 0;
 }
 
@@ -195,7 +206,7 @@ void DiDaClock::TrackMenu(HWND hWnd)
 		::PostMessage(::GetParent(hWnd), WM_SIZE, SIZE_RESTORED, 0);
 		::InvalidateRect(hWnd, NULL, FALSE);
 		::InvalidateRect(::GetParent(hWnd), NULL, TRUE);
-		DiDaClockControl::ExitCalendar(hWnd);
+		DiDaClockControl::ExitCalendar(hWnd, true);
 		break;
 	}
 	::DestroyMenu(hMenu);
