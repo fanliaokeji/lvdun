@@ -17,14 +17,31 @@
 		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
 		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
 		
-		<bitmap id="Weather.DuoYun" path="bitmap\weather\Weather.DuoYun.png" />
+		<bitmap id="多云" path="bitmap\weather\Weather.DuoYun.png" />
+		<bitmap id="暴雪" path="bitmap\weather\Weather.BaoXue.png" />
+		<bitmap id="暴雨" path="bitmap\weather\Weather.BaoYu.png" />
+		<bitmap id="冰雹" path="bitmap\weather\Weather.BingBao.png" />
+		<bitmap id="大暴雨" path="bitmap\weather\Weather.DaBaoYu.png" />
+		<bitmap id="大台风" path="bitmap\weather\Weather.DaTaiFeng.png" />
+		<bitmap id="雷阵雨" path="bitmap\weather\Weather.LeiZhenYu.png" />
+		<bitmap id="雷阵雨伴有冰雹" path="bitmap\weather\Weather.LeiZhenYuBanYouBingBao.png" />
+		<bitmap id="霾" path="bitmap\weather\Weather.Mai.png" />
+		<bitmap id="晴" path="bitmap\weather\Weather.Qing.png" />
+		<bitmap id="台风" path="bitmap\weather\Weather.TaiFeng.png" />
+		<bitmap id="特大暴雨" path="bitmap\weather\Weather.TeDaBaoYu.png" />
+		<bitmap id="雾" path="bitmap\weather\Weather.Wu.png" />
+		<bitmap id="小雪" path="bitmap\weather\Weather.XiaoXue.png" />
+		<bitmap id="小雨" path="bitmap\weather\Weather.XiaoYu.png" />
+		<bitmap id="阴" path="bitmap\weather\Weather.Yin.png" />
+		<bitmap id="雨夹雪" path="bitmap\weather\Weather.YuJiaXue.png" />
+		<bitmap id="阵雪" path="bitmap\weather\Weather.ZhenXue.png" />
+		<bitmap id="阵雨" path="bitmap\weather\Weather.ZhenYu.png" />
+		<bitmap id="中台风" path="bitmap\weather\Weather.ZhongTaiFeng.png" />
+		<bitmap id="中雪" path="bitmap\weather\Weather.ZhongXue.png" />
+		<bitmap id="中雨" path="bitmap\weather\Weather.ZhongYu.png" />
 	
-		<!--imagelist id="DiDa.Scroll.ThumbBtn" splitter="1" varyblock="1" image="bitmap\DiDa.Scroll.ThumbBtn.png" />
-			<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" imagelist="DiDa.Scroll.ThumbBtn" index="1" />
-			<texture id="DiDa.Scroll.ThumbBtn.Hover" type="ThreeInOneV" imagelist="DiDa.Scroll.ThumbBtn" index="2" />
-			<texture id="DiDa.Scroll.ThumbBtn.Down" type="ThreeInOneV"  imagelist="DiDa.Scroll.ThumbBtn" index="3" />
-			<texture id="DiDa.Scroll.ThumbBtn.Disable" type="ThreeInOneV"  imagelist="DiDa.Scroll.ThumbBtn" index="4" /-->
-	
+		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
+
 	</resource>
 </XLUE>
 
