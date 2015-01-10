@@ -70,7 +70,7 @@ end
 
 function OnFocusChange(self, bFocus)
 	if not bFocus then
-		self:Show(0)
+		-- self:Show(0)
 	end
 end
 
