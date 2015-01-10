@@ -277,9 +277,15 @@ bool InjectCalendarDll(const wchar_t* dllPath32, const wchar_t* dllPath64)
 #error error
 #endif
 	if(Is64BitsWindows()) {
+		if(::PathFileExists(dllPath64) == FALSE) {
+			return false;
+		}
 		return Win32Inject64(dwProcessID, dllPath64) == INJECT_OK;
 	}
 	else {
+		if(::PathFileExists(dllPath32) == FALSE) {
+			return false;
+		}
 		return Win32Inject32(dwProcessID, dllPath32) == INJECT_OK;
 	}
 }
