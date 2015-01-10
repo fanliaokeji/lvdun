@@ -208,7 +208,9 @@ function TipConvStatistic(tStat)
 		strEV = 1
 	end
 	
-	local strUrl = ""
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid="..tostring(strCID)
+						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
+						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 	
 	TipLog("TipConvStatistic: " .. tostring(strUrl))
 	
@@ -360,11 +362,17 @@ function GetExePath()
 end
 
 
-function GetDBPath(strDBName)
+function GetProgramDir()
 	local strExePath = GetExePath()
-	local _, _, strExeDir = string.find(strExePath, "(.*)\\.*$")
+	local _, _, strProgramDir = string.find(strExePath, "(.*)\\.*$")
+	return strProgramDir
+end
+
+
+function GetDBPath(strDBName)
+	local strProgramDir = GetProgramDir() or ""
 	
-	local strDBPath = tipUtil:PathCombine(strExeDir, strDBName)
+	local strDBPath = tipUtil:PathCombine(strProgramDir, strDBName)
 	if IsRealString(strDBPath) and tipUtil:QueryFileExists(strDBPath) then
 		return strDBPath
 	end
@@ -374,6 +382,16 @@ function GetDBPath(strDBName)
 	return nil
 end
 
+
+function GetDllPath(strDllName)
+	local strProgramDir = GetProgramDir() or ""
+	local strDllPath = tipUtil:PathCombine(strProgramDir, strDllName)
+	if IsRealString(strDllPath) and tipUtil:QueryFileExists(strDllPath) then
+		return strDllPath
+	end
+	
+	return nil
+end
 
 
 function GetDiDaVersion()
@@ -462,6 +480,38 @@ function GetMainCtrlChildObj(strObjName)
 end
 
 
+function ShowPopupWndByName(strWndName, bSetTop)
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd(tostring(strWndName))
+	if frameHostWnd == nil then
+		TipLog("[ShowPopupWindow] GetHostWnd failed: "..tostring(strWndName))
+		return
+	end
+
+	if not IsUserFullScreen() then
+		if type(tipUtil.SetWndPos) == "function" then
+			local hWnd = frameHostWnd:GetWndHandle()
+			if hWnd ~= nil then
+				TipLog("[ShowPopupWndByName] success")
+				if bSetTop then
+					frameHostWnd:SetTopMost(true)
+					tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
+				else
+					tipUtil:SetWndPos(hWnd, -2, 0, 0, 0, 0, 0x0043)
+				end
+			end
+		end
+	elseif type(tipUtil.GetForegroundProcessInfo) == "function" then
+		local hFrontHandle, strPath = tipUtil:GetForegroundProcessInfo()
+		if hFrontHandle ~= nil then
+			frameHostWnd:BringWindowToBack(hFrontHandle)
+		end
+	end
+	
+	frameHostWnd:Show(5)
+end
+
+
 function GetYearMonthFromUI()
 	local objDateSelectCtrl = GetMainCtrlChildObj("DiDa.DateSelectCtrl")
 	local strYear = objDateSelectCtrl:GetYearText()
@@ -489,6 +539,8 @@ function GetClndrContent(strDateInfo, fnCallBack)
 	local nYear = tonumber(strYear)
 	local nMonth = tonumber(strMonth)
 	local nDay = tonumber(strDay)
+	TipLog("[GetClndrContent] strYear:"..tostring(strYear).."  strMonth:"..tostring(strMonth)
+				.."  strDay:".. tostring(strDay))
 	
 	tipAsynUtil:AsynGetCalendarData(strCalendarDB, nYear, nMonth, nDay, 
 		function(ret, tData)
@@ -1000,7 +1052,7 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		return
 	end
 	
-	local nTime = tonumber(nTimeInMs) or 5*1000
+	local nTime = tonumber(nTimeInMs) or 1*1000
 		
 	NewAsynGetHttpFile(strConfigURL, strSavePath, false
 	, function(bRet, strRealPath)
@@ -1025,6 +1077,7 @@ obj.tipAsynUtil = tipAsynUtil
 
 --通用
 obj.TipLog = TipLog
+obj.MessageBox = MessageBox
 obj.FailExitTipWnd = FailExitTipWnd
 obj.TipConvStatistic = TipConvStatistic
 obj.ExitProcess = ExitProcess
@@ -1039,10 +1092,13 @@ obj.GetProgramTempDir = GetProgramTempDir
 obj.GetDiDaVersion = GetDiDaVersion
 obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
+obj.GetDllPath = GetDllPath
+
 
 --UI
 obj.GetMainWndInst = GetMainWndInst
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
+obj.ShowPopupWndByName = ShowPopupWndByName
 obj.GetYearMonthFromUI = GetYearMonthFromUI
 obj.GetClndrContent = GetClndrContent
 obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth

@@ -6,6 +6,10 @@ local tipUtil = tFunHelper.tipUtil
 --strYearMonth：年月查询
 function ShowClndrContent(objRootCtrl, strYearMonth)
 	function ProcessCalendar(tClndrContent)
+		if type(tClndrContent) ~= "table" then
+			return
+		end
+	
 		for nIndex, tContent in ipairs(tClndrContent) do
 			local strKey = "ClndrItem_"..tostring(nIndex)
 			local objCurItem = objRootCtrl:GetControlObject(strKey)

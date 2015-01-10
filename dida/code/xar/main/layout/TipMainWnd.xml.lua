@@ -19,6 +19,7 @@ function OnShowWindow(self, bShow)
 	if bShow then
 		gTipStartTime = tipUtil:GetCurrentUTCTime()
 	end
+	self:SetFocus(true)
 end
 
 
@@ -63,6 +64,13 @@ function OnDestroy( self )
 		if tempWnd then
 			hostwndManager:RemoveHostWnd(wndId)
 		end
+	end
+end
+
+
+function OnFocusChange(self, bFocus)
+	if not bFocus then
+		self:Show(0)
 	end
 end
 

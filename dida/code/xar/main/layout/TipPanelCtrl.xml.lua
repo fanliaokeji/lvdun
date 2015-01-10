@@ -31,11 +31,44 @@ function CreateFilterListener(objRootCtrl)
 			tFunHelper.TipLog("[CreateFilterListener] key: " .. tostring(key))
 			
 			local tParam = {...}	
-			-- if tostring(key) == "" then
-				-- OnFilterResult(tParam)
-			-- end
-			
+			if tostring(key) == "OnCommandLine" then
+				OnCommandLine(tParam)
+			elseif tostring(key) == "OnExplorerNotify" then
+				OnExplorerNotify(tParam)
+			end
 		end)
+end
+
+
+function ShowHostWnd()
+	local objHostWnd = tFunHelper.GetMainWndInst()
+	if objHostWnd then
+		objHostWnd:Show(5)
+	end
+end
+
+
+function OnCommandLine(tParam)
+	ShowHostWnd()
+end
+
+
+function OnExplorerNotify(tParam)
+	local nMessage = tonumber(tParam[1]) or -1
+	local nShow = 0
+	local nUpdate = 1
+	local nAbout = 2
+	local nQUIT = 3
+	
+	if nMessage == nShow then
+		ShowHostWnd()
+	elseif nMessage == nUpdate then
+		tFunHelper.MessageBox(tostring("Update"))
+	elseif nMessage == nAbout then
+		tFunHelper.ShowPopupWndByName("TipAboutWnd.Instance")
+	elseif nMessage == nQUIT then
+		tFunHelper.ReportAndExit()
+	end
 end
 
 
