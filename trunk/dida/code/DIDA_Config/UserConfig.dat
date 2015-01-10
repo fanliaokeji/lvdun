@@ -1,0 +1,6 @@
+function GetSubTable()
+	local t = {
+		["strServerConfigURL"] = "http://dl.dida123.com/update/1.0/ServerConfig.dat", 
+	}
+	return t
+end
