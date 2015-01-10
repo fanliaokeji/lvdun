@@ -7,7 +7,7 @@ BOOL Sqlite3Data::Init()
 	HMODULE hMod = LoadLibraryA("sqlite3.dll");
 	if (NULL == hMod)
 	{
-		//TSDEBUG4CXX(_T("LoadLibraryA (")<<szSqlite3<< _T(") failed,error code = ") <<::GetLastError());
+		TSDEBUG4CXX(_T("LoadLibraryA (")<< _T(") failed,error code = ") <<::GetLastError());
 		return FALSE;
 	}
 	BOOL bRet = TRUE;
@@ -27,7 +27,7 @@ BOOL Sqlite3Data::Init()
 		if (NULL == (*fun_ptr))
 		{
 			bRet = FALSE;
-			//TSDEBUG4CXX(_T("GetProcAddress(") << func_name << _T(") return NULL"));
+			TSDEBUG4CXX(_T("GetProcAddress(") << func_name << _T(") return NULL"));
 			break;
 		}
 	}
