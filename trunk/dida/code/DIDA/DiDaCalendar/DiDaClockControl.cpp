@@ -33,6 +33,7 @@ void DiDaClockControl::ModifySystemDateTime()
 #define DDCMD_SHOWCALENDARMAIN		0
 #define DDCMD_UPDATE				1
 #define DDCMD_SHOWABOUT				2
+#define DDCMD_MENUEXIT				3
 
 void DiDaClockControl::LaunchCalendarMain(HWND hWnd)
 {
@@ -47,6 +48,11 @@ void DiDaClockControl::Update(HWND hWnd)
 void DiDaClockControl::ShowAbout(HWND hWnd)
 {
 	Command(DDCMD_SHOWABOUT);
+}
+
+void DiDaClockControl::MenuExit(HWND hWnd)
+{
+	Command(DDCMD_MENUEXIT);
 }
 
 static DWORD WINAPI FreeSelf(LPVOID param)
@@ -158,17 +164,23 @@ void DiDaClockControl::Command(int cmd)
 		else if (cmd == DDCMD_SHOWABOUT) {
 			::PostMessage(hWnd, WM_USER + 200, (WPARAM)2, NULL);
 		}
+		else if (cmd == DDCMD_MENUEXIT) {
+			::PostMessage(hWnd, WM_USER + 200, (WPARAM)3, NULL);
+		}
 	}
 	else {
 		const wchar_t* lpParameters = NULL;
 		if (cmd == DDCMD_SHOWCALENDARMAIN) {
-			lpParameters = L"/startfrom explorer";
+			lpParameters = L"/sstartfrom explorer";
 		}
 		else if (cmd == DDCMD_UPDATE) {
-			lpParameters = L"/embedding /update";
+			lpParameters = L"/sstartfrom explorer /embedding /update";
 		}
 		else if (cmd == DDCMD_SHOWABOUT) {
-			lpParameters = L"/embedding /about";
+			lpParameters = L"/sstartfrom explorer /embedding /about";
+		}
+		else if (cmd == DDCMD_MENUEXIT) {
+			lpParameters = L"/sstartfrom explorer /exit";
 		}
 		else {
 			return;

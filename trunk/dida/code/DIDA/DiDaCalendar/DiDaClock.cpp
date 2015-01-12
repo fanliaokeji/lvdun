@@ -200,13 +200,7 @@ void DiDaClock::TrackMenu(HWND hWnd)
 		DiDaClockControl::ShowAbout(hWnd);
 		break;
 	case IMID_EXIT:
-		::KillTimer(hWnd, TIMERID_UPDATETIME);
-		RestoreClockWndProc();
-		::PostMessage(::GetParent(::GetParent(hWnd)), WM_SIZE, SIZE_RESTORED, 0);
-		::PostMessage(::GetParent(hWnd), WM_SIZE, SIZE_RESTORED, 0);
-		::InvalidateRect(hWnd, NULL, FALSE);
-		::InvalidateRect(::GetParent(hWnd), NULL, TRUE);
-		DiDaClockControl::ExitCalendar(hWnd, true);
+		DiDaClockControl::MenuExit(hWnd);
 		break;
 	}
 	::DestroyMenu(hMenu);
