@@ -71,6 +71,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"PostWndMessageByHandle", PostWndMessageByHandle},
 	{"SendMessageByHwnd", SendMessageByHwnd},
 	{"IsNowFullScreen", IsNowFullScreen},
+	{"GetForegroundWindow", FGetForegroundWindow},
+	{"SetForegroundWindow", FSetForegroundWindow},
 
 	{"GetCursorWndHandle", GetCursorWndHandle},
 	{"GetFocusWnd", GetFocusWnd},
@@ -2002,6 +2004,41 @@ int LuaAPIUtil::IsNowFullScreen(lua_State* pLuaState)
 	}
 
 	lua_pushboolean(pLuaState, iValue);
+	return 1;
+}
+
+int LuaAPIUtil::FGetForegroundWindow(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	HWND hWnd = ::GetForegroundWindow();
+	if (NULL == hWnd)
+	{
+		lua_pushinteger(pLuaState, (lua_Integer)hWnd);
+	}
+	else
+	{
+		lua_pushnil(pLuaState);
+	}
+	return 1;
+
+}
+
+int LuaAPIUtil::FSetForegroundWindow(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	HWND hWnd = (HWND) lua_touserdata(pLuaState, 2);
+
+	BOOL bSuc = ::SetForegroundWindow(hWnd);
+
+	lua_pushboolean(pLuaState, bSuc);
 	return 1;
 }
 
