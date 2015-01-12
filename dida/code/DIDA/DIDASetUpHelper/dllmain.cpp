@@ -245,7 +245,7 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\Dida";
+	LPCSTR data_Set= "Software\\DDCalendar";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
@@ -267,7 +267,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "Dida", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "DDCalendar", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}
