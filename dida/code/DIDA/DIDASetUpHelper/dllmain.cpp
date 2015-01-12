@@ -69,7 +69,6 @@ void SetUserHandle()
 
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 {
-	ResetUserHandle();
 	TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
@@ -192,7 +191,8 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		str += szev;
 	}
 	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
-
+	
+	ResetUserHandle();
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
 	CloseHandle(hThread);
@@ -201,7 +201,7 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 
 extern "C" __declspec(dllexport)  HWND FindClockWindow()
 {
-	HWND hWnd = ::FindWindowEx(NULL, hWnd, L"Shell_TrayWnd", NULL);
+	HWND hWnd = ::FindWindowEx(NULL, NULL, L"Shell_TrayWnd", NULL);
 	if (::IsWindow(hWnd)) {
 		hWnd = ::FindWindowEx(hWnd, 0, L"TrayNotifyWnd", NULL);
 		if (::IsWindow(hWnd)) {
@@ -245,7 +245,7 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\GreenShield";
+	LPCSTR data_Set= "Software\\Dida";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
@@ -267,7 +267,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "GreenShield", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "Dida", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}
@@ -430,6 +430,7 @@ extern "C" __declspec(dllexport) void Send2DidaAnyHttpStat(CHAR *op, CHAR *cid)
 	memset(szURL, 0, MAX_PATH);
 	sprintf(szURL, "%s", str.c_str());
 	//SendHttpStatThread((LPVOID)szURL);
+	ResetUserHandle();
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
 	CloseHandle(hThread);
@@ -613,49 +614,4 @@ bool IsVistaOrLatter()
 		}
 	}
 	return (osvi.dwMajorVersion >= 6);
-}
-
-#include <Sddl.h>
-extern "C" __declspec(dllexport) int QueryMutex()
-{
-	HANDLE hMutex;
-	int nRet = 0;
-	if(::IsVistaOrLatter()) {
-		SECURITY_ATTRIBUTES sa;
-		char sd[SECURITY_DESCRIPTOR_MIN_LENGTH];
-		sa.nLength = sizeof(sa);
-		sa.bInheritHandle = FALSE;
-		sa.lpSecurityDescriptor = &sd;
-		if(::InitializeSecurityDescriptor(sa.lpSecurityDescriptor, SECURITY_DESCRIPTOR_REVISION)) {
-			if(::SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE, 0, FALSE)) {
-				PSECURITY_DESCRIPTOR pSD = NULL;
-				if (::ConvertStringSecurityDescriptorToSecurityDescriptor(_T("S:(ML;;NW;;;LW)"), SDDL_REVISION_1, &pSD, NULL)) {
-					PACL pSacl = NULL;
-					BOOL fSaclPresent = FALSE;
-					BOOL fSaclDefaulted = FALSE;
-					if(::GetSecurityDescriptorSacl(pSD, &fSaclPresent, &pSacl, &fSaclDefaulted)) {
-						if(::SetSecurityDescriptorSacl(sa.lpSecurityDescriptor, TRUE, pSacl, FALSE)) {
-							hMutex = ::CreateMutex(&sa, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
-							if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
-								::CloseHandle(hMutex);
-								hMutex = NULL;
-								nRet = 1;
-							}
-						}
-						::LocalFree(pSacl);
-					}
-					::LocalFree(pSD);
-				}
-			}
-		}
-	}
-	else {
-		hMutex = ::CreateMutex(NULL, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
-		if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
-			::CloseHandle(hMutex);
-			hMutex = NULL;
-			nRet = 1;
-		}
-	}
-	return nRet;
 }
