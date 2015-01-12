@@ -92,6 +92,8 @@ public:
 	static int PostWndMessageByHandle(lua_State* pLuaState);
 	static int SendMessageByHwnd(lua_State* pLuaState);
 	static int IsNowFullScreen(lua_State* pLuaState);
+	static int FGetForegroundWindow(lua_State* pLuaState);
+	static int FSetForegroundWindow(lua_State* pLuaState);
 	
 	static int GetCursorWndHandle(lua_State* pLuaState);
 	static int GetFocusWnd(lua_State* pLuaState);
