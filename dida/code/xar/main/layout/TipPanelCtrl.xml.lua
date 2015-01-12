@@ -3,7 +3,6 @@ local tipUtil = tFunHelper.tipUtil
 
 ----方法----
 function SetTipData(self, infoTab) 
-	
 	CreateFilterListener(self)
 	return true
 end
@@ -44,6 +43,13 @@ function ShowHostWnd()
 	local objHostWnd = tFunHelper.GetMainWndInst()
 	if objHostWnd then
 		objHostWnd:Show(5)
+		objHostWnd:SetTopMost(true)
+		objHostWnd:SetFocus(true)
+		
+		local hWnd = objHostWnd:GetWndHandle()
+		if hWnd then
+			tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
+		end
 	end
 end
 
@@ -63,11 +69,11 @@ function OnExplorerNotify(tParam)
 	if nMessage == nShow then
 		ShowHostWnd()
 	elseif nMessage == nUpdate then
-		tFunHelper.MessageBox(tostring("Update"))
+		tFunHelper.ShowPopupWndByName("TipUpdateWnd.Instance", true)
 	elseif nMessage == nAbout then
-		tFunHelper.ShowPopupWndByName("TipAboutWnd.Instance")
+		tFunHelper.ShowPopupWndByName("TipAboutWnd.Instance", true)
 	elseif nMessage == nQUIT then
-		tFunHelper.ReportAndExit()
+		tFunHelper.ShowPopupWndByName("TipExitRemindWnd.Instance", true)
 	end
 end
 

@@ -448,6 +448,45 @@ function RegSetValue(sPath, value)
 end
 
 
+function FindClockWindow()
+	local nCurProcessID = tipUtil:GetCurrentProcessId()
+	if not nCurProcessID or nCurProcessID == 0 then
+		return nil
+	end
+
+	local strWndClass = "Shell_TrayWnd"
+	local uWndHandle = tipUtil:FindWindow(strWndClass, nil)
+	
+	if not uWndHandle then
+		return nil
+	end
+
+	uWndHandle = tipUtil:FindWindowEx(uWndHandle, 0, "TrayNotifyWnd", nil)
+	if not uWndHandle then
+		return nil
+	end
+	
+	return tipUtil:FindWindowEx(uWndHandle, 0, "TrayClockWClass", NULL)
+end
+
+
+function KillClockWindow()
+	local g_InjectDLLTimer = XLGetGlobal("DiDa.InjectDLLTimer") 
+	if g_InjectDLLTimer then
+		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+		timerManager:KillTimer(g_InjectDLLTimer)
+	end
+
+	local hClockWnd = FindClockWindow()
+	if not hClockWnd then
+		return
+	end
+	
+	local uMsg = 1024 + 320
+	local wParam = 100
+	tipUtil:PostWndMessageByHandle(hClockWnd, uMsg, wParam,0)
+end
+
 ----UI相关---
 
 function GetMainWndInst()
@@ -1086,6 +1125,8 @@ obj.GetCommandStrValue = GetCommandStrValue
 obj.GetExePath = GetExePath
 obj.LoadTableFromFile = LoadTableFromFile
 obj.CheckIsNewVersion = CheckIsNewVersion
+obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
+obj.CheckMD5 = CheckMD5
 
 obj.NewAsynGetHttpFile = NewAsynGetHttpFile
 obj.GetProgramTempDir = GetProgramTempDir
@@ -1093,6 +1134,7 @@ obj.GetDiDaVersion = GetDiDaVersion
 obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
 obj.GetDllPath = GetDllPath
+obj.KillClockWindow = KillClockWindow
 
 
 --UI

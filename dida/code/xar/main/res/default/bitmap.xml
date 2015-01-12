@@ -17,10 +17,27 @@
 		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
 		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
 		
-		<texture id="DiDa.AboutWnd.Bkg" image="bitmap\DiDa.AboutWnd.Bkg.png" />
+		<texture id="DiDa.ExitRemind.Bkg" image="bitmap\DiDa.ExitRemind.Bkg.png" />
+		<texture id="DiDa.ExitRemind.Cancle.Normal" image="bitmap\DiDa.ExitRemind.Cancle.Normal.png" />
+		<texture id="DiDa.ExitRemind.Cancle.Hover" image="bitmap\DiDa.ExitRemind.Cancle.Hover.png" />
+		<texture id="DiDa.ExitRemind.Exit.Normal" image="bitmap\DiDa.ExitRemind.Exit.Normal.png" />
+		<texture id="DiDa.ExitRemind.Exit.Hover" image="bitmap\DiDa.ExitRemind.Exit.Hover.png" />
 		
+		<texture id="DiDa.AboutWnd.Bkg" image="bitmap\DiDa.AboutWnd.Bkg.png" />
+		<texture id="DiDa.AboutWnd.CloseBtn.Normal" image="bitmap\DiDa.AboutWnd.CloseBtn.Normal.png" />
+		<texture id="DiDa.AboutWnd.CloseBtn.Hover" image="bitmap\DiDa.AboutWnd.CloseBtn.Hover.png" />
+		
+		<texture id="DiDa.UpdateWnd.Bkg" image="bitmap\DiDa.UpdateWnd.Bkg.png" />
+		<texture id="DiDa.UpdateWnd.CloseBtn.Hover" image="bitmap\DiDa.UpdateWnd.CloseBtn.Hover.png" />
+		<texture id="DiDa.UpdateWnd.CloseBtn.Normal" image="bitmap\DiDa.UpdateWnd.CloseBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.UpdateBtn.Hover" image="bitmap\DiDa.UpdateWnd.UpdateBtn.Hover.png" />
+		<texture id="DiDa.UpdateWnd.UpdateBtn.Normal" image="bitmap\DiDa.UpdateWnd.UpdateBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.MinBtn.Normal" image="bitmap\DiDa.UpdateWnd.MinBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.MinBtn.Hover" image="bitmap\DiDa.UpdateWnd.MinBtn.Hover.png" />
+	
 		<bitmap id="多云" path="bitmap\weather\Weather.DuoYun.png" />
 		<bitmap id="暴雪" path="bitmap\weather\Weather.BaoXue.png" />
+		<bitmap id="大雨" path="bitmap\weather\Weather.DaYu.png" />
 		<bitmap id="暴雨" path="bitmap\weather\Weather.BaoYu.png" />
 		<bitmap id="冰雹" path="bitmap\weather\Weather.BingBao.png" />
 		<bitmap id="大暴雨" path="bitmap\weather\Weather.DaBaoYu.png" />
@@ -43,16 +60,10 @@
 		<bitmap id="中雨" path="bitmap\weather\Weather.ZhongYu.png" />
 	
 		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
+		<gif id="DiDa.UpdateWnd.Loading" file="bitmap\DiDa.UpdateWnd.Loading.gif" />
 
 	</resource>
 </XLUE>
-
-
-
-
-
-
-
 
 
 
