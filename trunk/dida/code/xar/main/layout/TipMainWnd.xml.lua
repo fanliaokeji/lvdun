@@ -18,8 +18,12 @@ XLSetGlobal("DiDa.GetTipStartTime", GetTipStartTime)
 function OnShowWindow(self, bShow)
 	if bShow then
 		gTipStartTime = tipUtil:GetCurrentUTCTime()
+		self:SetFocus(true)
 	end
-	self:SetFocus(true)
+	
+		tFunHelper.TipLog("[OnShowWindow]  bShow:"..tostring(bShow)
+				.." focus: "..tostring(self:GetFocus()))
+
 end
 
 
@@ -69,6 +73,8 @@ end
 
 
 function OnFocusChange(self, bFocus)
+	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
+
 	if not bFocus then
 		-- self:Show(0)
 	end

@@ -63,7 +63,7 @@
 						<left>father.width-95-20</left>
 						<top>30+5</top>
 						<width>95</width> 
-						<height>12</height>
+						<height>14</height>
 						<valign>center</valign>
 						<halign>right</halign>
 						<font>font.fzlt13</font>

@@ -1,5 +1,5 @@
-local tipUtil = XLGetObject("API.Util")
-local tipAsynUtil = XLGetObject("API.AsynUtil")
+local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
+local tipUtil = tFunHelper.tipUtil
 
 function OnCreate( self )
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
@@ -13,7 +13,7 @@ function OnCreate( self )
 	local wndtop = ((workbottom-worktop)-webheight)/2-webtop
 	self:Move(wndleft, wndtop, wndwidth, wndheight)
 	
-	-- SetShowText(objRootCtrl)
+	SetShowText(objRootCtrl)
 end
 
 function OnClickCloseBtn(self)
@@ -23,17 +23,14 @@ function OnClickCloseBtn(self)
 end
 
 function SetShowText(objRootCtrl)
-	local objVersion = objRootCtrl:GetObject("TipAbout.MainWndCenter.Bkg:TipAbout.MainWndCenter.Version")
+	local objVersion = objRootCtrl:GetObject("TipAbout.Caption:TipAbout.Version")
 	if not objVersion then
 		return
 	end
 	
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
-	local strVersion = FunctionObj.GetGSVersion()
-	local strText = "版本号 ："..tostring(strVersion).." 正式版本"
+	local strVersion = tFunHelper.GetDiDaVersion()
+	local strText = "版本号 ："..tostring(strVersion).." 正式版"
 	objVersion:SetText(strText)
-	
-	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 end
 
 

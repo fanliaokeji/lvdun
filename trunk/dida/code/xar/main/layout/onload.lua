@@ -44,7 +44,8 @@ end
 --µ¯³ö´°¿Ú--
 local g_tPopupWndList = {
 	[1] = {"TipAboutWnd", "TipAboutTree"},
-	-- [2] = {"TipUpdateWnd", "TipUpdateTree"},
+	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+	[3] = {"TipUpdateWnd", "TipUpdateTree"},
 }
 
 
@@ -303,14 +304,23 @@ function ProcessCommandLine()
 	local cmdString = tipUtil:GetCommandLine()
 	local bRet = string.find(tostring(cmdString), "/about")
 	if bRet then
-		FunctionObj.ShowPopupWndByName("TipAboutWnd.Instance")
+		FunctionObj.ShowPopupWndByName("TipAboutWnd.Instance", true)
 	end
 	
 	local bRet = string.find(tostring(cmdString), "/update")
 	if bRet then
-		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance")
+		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance", true)
+	end
+	
+	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+	if tostring(strSource) == "explorer" then 
+		local bRet = string.find(tostring(cmdString), "/exit")
+		if bRet then
+			FunctionObj.ShowPopupWndByName("TipExitRemindWnd.Instance", true)
+		end
 	end
 end
+
 
 function GetResourceDir()
 	local strExePath = tipUtil:GetModuleExeName()
@@ -379,9 +389,11 @@ function InjectDLL()
 	TryInjectDLL()
 	
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-	timerManager:SetTimer(function(item, id)
+	local g_InjectDLLTimer = timerManager:SetTimer(function(item, id)
 		TryInjectDLL()
 	end, 3*1000)
+	
+	XLSetGlobal("DiDa.InjectDLLTimer", g_InjectDLLTimer) 
 end
 
 
@@ -427,7 +439,6 @@ function PreTipMain()
 	FunctionObj.ReadAllConfigInfo()
 	
 	SendStartupReport(false)
-	
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
 end
 

@@ -89,7 +89,7 @@ function SetAverageText(objRootCtrl, strText)
 	if nBegin == nil or nEnd == nil then
 		return
 	end
-	local nAverage = (nBegin+nEnd)/2
+	local nAverage = math.floor((nBegin+nEnd)/2)
 	if objAverage then
 		objAverage:SetText(tostring(nAverage).."℃")
 	end
