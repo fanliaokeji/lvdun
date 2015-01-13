@@ -50,7 +50,7 @@
             <width>510</width>
             <height>383</height>
 
-            <topmost>0</topmost>
+            <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
             <maxbox>0</maxbox>

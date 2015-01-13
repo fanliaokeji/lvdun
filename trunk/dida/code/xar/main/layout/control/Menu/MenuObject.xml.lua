@@ -78,11 +78,16 @@ function AdjustItemPos( self )
 	end
 end
 
+
 function EndMenu(self)
-	local menuTree = self:GetOwner()
-	local menuHost = menuTree:GetBindHostWnd()
-	menuHost:EndMenu(true)
+	-- local menuTree = self:GetOwner()
+	-- local menuHost = menuTree:GetBindHostWnd()
+	-- menuHost:EndMenu(true)
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:SetVisible(false)
+	objRootCtrl:SetChildrenVisible(false)
 end
+
 
 function InsertItem( self, index, item )
 	local attr = self:GetAttribute()

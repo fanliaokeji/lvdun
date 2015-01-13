@@ -669,6 +669,11 @@ function GetUserData(self)
 end
 
 
+function OnMouseWheel(self)
+	self:RouteToFather()
+end
+
+
 function RouteToFather(self)
 	self:RouteToFather()
 end

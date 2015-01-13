@@ -151,7 +151,8 @@
 				<event name="OnLButtonUp" file="MenuItemObject.xml.lua" function="OnLButtonUp" />
 				<event name="OnRButtonUp" file="MenuItemObject.xml.lua" function="OnRButtonUp" />
 				<event name="OnKeyDown" file="MenuItemObject.xml.lua" func="OnKeyDown" />
-				<event name="OnMouseWheel" file="MenuItemObject.xml.lua" func="RouteToFather" />
+				<event name="OnMouseWheel" file="MenuItemObject.xml.lua" func="OnMouseWheel" />
+				<!--event name="OnFocusChange" file="MenuItemObject.xml.lua" func="RouteToFather" /-->
 			</eventlist>
 		</objtemplate>
 	</control>

@@ -15,6 +15,12 @@ end
 
 
 
+function OnLButtonUp(self, bFocus)
+
+end
+
+
+
 --监听事件
 function CreateFilterListener(objRootCtrl)
 	local objFactory = XLGetObject("APIListen.Factory")
@@ -42,13 +48,11 @@ end
 function ShowHostWnd()
 	local objHostWnd = tFunHelper.GetMainWndInst()
 	if objHostWnd then
-		objHostWnd:Show(5)
-		objHostWnd:SetTopMost(true)
-		objHostWnd:SetFocus(true)
-		
 		local hWnd = objHostWnd:GetWndHandle()
 		if hWnd then
-			tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
+			tipUtil:SetForegroundWindow(hWnd)
+		else
+			objHostWnd:Show(5)
 		end
 	end
 end
@@ -67,7 +71,9 @@ function OnExplorerNotify(tParam)
 	local nQUIT = 3
 	
 	if nMessage == nShow then
-		ShowHostWnd()
+		if tFunHelper.CheckIsNeedShow() then
+			ShowHostWnd()
+		end
 	elseif nMessage == nUpdate then
 		tFunHelper.ShowPopupWndByName("TipUpdateWnd.Instance", true)
 	elseif nMessage == nAbout then

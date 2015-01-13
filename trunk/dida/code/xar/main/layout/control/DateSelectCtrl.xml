@@ -34,10 +34,23 @@
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpYearBox" />
 						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearBox" />
-						<event name="OnMouseEnter" file="DateSelectCtrl.xml.lua" func="OnMouseEnterYearBox" />
-						<event name="OnMouseLeave" file="DateSelectCtrl.xml.lua" func="OnMouseLeaveYearBox" />
 					</eventlist>
 				</obj>
+				
+				<obj id="DropList.Year" class="YearDropList">
+					<attr>
+						<left>15</left>
+						<top>20</top>
+						<width>90</width>
+						<height>204</height>
+						<zorder>9999999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
+					</eventlist>
+				</obj>
+				
 				
 				<obj id="Combobox.Month" class="TipAddin.Button">
 					<attr>
@@ -61,6 +74,22 @@
 					</eventlist>
 				</obj>
 				
+				
+				<obj id="DropList.Month" class="MonthDropList">
+					<attr>
+						<left>15+89+5</left>
+						<top>20</top>
+						<width>62</width>
+						<height>206</height>
+						<zorder>9999999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
+					</eventlist>
+				</obj>
+				
+				
 				<obj id="Combobox.Festival" class="TipAddin.Button">
 					<attr>
 						<left>15+89+5+62+5</left>
@@ -81,6 +110,22 @@
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpFestivalBox" />
 					</eventlist>
 				</obj>
+				
+				
+				<obj id="DropList.Festival" class="FestivalDropList">
+					<attr>
+						<left>15+89+5+62+5</left>
+						<top>20</top>
+						<width>90</width>
+						<height>204</height>
+						<zorder>9999999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
+					</eventlist>
+				</obj>
+				
 				
 				<obj id="BackToToday.Text" class="TextObject">
 					<attr>

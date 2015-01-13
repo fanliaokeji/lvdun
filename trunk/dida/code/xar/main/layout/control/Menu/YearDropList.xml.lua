@@ -1,6 +1,32 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
+
+--方法
+function SetDefaultItemHover(self)
+	local objNormalMenu = self:GetControlObject("Menu.Context")
+	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
+	
+	local nBaseYear = 1900
+	local nCurYear = GetYearFromComboBox(objMenuContainer)
+	local nCurDiff = nCurYear - nBaseYear
+	
+	local nShowDiff = nCurDiff   --展示的时候，一并显示前三年的数字
+	if nCurDiff > 3 then
+		nShowDiff = nCurDiff-3
+	end
+	
+	local nItemHieght = objNormalMenu:GetItemHeight()
+	local nScrollPos = nShowDiff*nItemHieght
+
+	objNormalMenu:SetScrollPos(nScrollPos)
+	objNormalMenu:MoveItemListPanel(nScrollPos)
+	
+	local objChild = objMenuContainer:GetItem(nCurDiff+1)
+	objMenuContainer:SetHoverItem(objChild, false)
+end
+
+
 -------事件---
 function OnInitControl(self)
 	ShowYearList(self)
@@ -16,7 +42,7 @@ function ShowYearList(self)
 	end
 	
 	local nTotalCount = 0
-	for nIndex=1, 12 do
+	for nIndex=1, 201 do
 		local objMenuItem = CreateMenuItem(nIndex)	
 		if objMenuItem then
 			objMenuContainer:AddChild(objMenuItem)				
@@ -25,13 +51,13 @@ function ShowYearList(self)
 	end
 
 	BindMenuContainer(self, objMenuContainer, nMaxShowHistory, nTotalCount)
-	SetDefaultMonthHover(objMenuContainer)
+	SetDefaultItemHover(self:GetOwnerControl())
 end
 
 
 function CreateMenuContainer(objNormalMenuCtrl)
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
-	local menuTemplate = templateMananger:GetTemplate("monthmenu.context", "ObjectTemplate")
+	local menuTemplate = templateMananger:GetTemplate("yearmenu.context", "ObjectTemplate")
 	if menuTemplate == nil then
 		return nil
 	end
@@ -41,21 +67,22 @@ end
 
 
 function CreateMenuItem(nIndex)	
+	local nBaseYear = 1900
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
 	local objMenuItemTempl = templateMananger:GetTemplate("menu.context.item", "ObjectTemplate")
 	if objMenuItemTempl == nil then
 		return nil
 	end
 	
-	local objMenuItem = objMenuItemTempl:CreateInstance( "month_"..tostring(nIndex) )
+	local objMenuItem = objMenuItemTempl:CreateInstance( "year_"..tostring(nIndex) )
 	if not objMenuItem then
 		return nil
 	end
 
 	local attr = objMenuItem:GetAttribute()
-	attr.Text = tostring(nIndex).."月"
+	attr.Text = tostring(nBaseYear+nIndex-1)
 	
-	objMenuItem:AttachListener("OnSelect", false, OnSelectMonth)
+	objMenuItem:AttachListener("OnSelect", false, OnSelectYear)
 	return objMenuItem
 end
 
@@ -69,52 +96,40 @@ function BindMenuContainer(self, objMenuContainer, nMaxShowHistory, nTotalCount)
 end
 
 
-function SetDefaultMonthHover(objMenuContainer)
-	local nBaseMonth = 1
-	local nCurMonth = GetMonthFromComboBox(objMenuContainer)
-	local nCurDiff = nCurMonth - nBaseMonth
-		
-	local objChild = objMenuContainer:GetItem(nCurDiff+1)
-	objMenuContainer:SetHoverItem(objChild, false)
-end
 
-
-function OnSelectMonth(objMenuItem)
-	local strText = objMenuItem:GetText()
-	local objMenu = objMenuItem:GetFather()
-	local objNormalMenu = objMenu:GetOwnerControl()
-	local objMonthBox = objNormalMenu:GetRelateObject()
-	
-	local attr = objMonthBox:GetAttribute()
-	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
-	local nMonth = tonumber(strMonth)
-	attr.LeftTextPos = 10
-	if nMonth>9 then
-		attr.LeftTextPos = 6
-	end
-	
-	objMonthBox:SetText(strText)
-	
+function OnSelectYear(objMenuItem)
+	local strText = objMenuItem:GetText() .. "年"
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	objDateSelect:SetYearText(strText)
 	objDateSelect:ResetFestivalText()
 	
 	tFunHelper.UpdateCalendarContent()
 end
 
 
-function GetMonthFromComboBox(objMenuContainer)
+function GetYearFromComboBox(objMenuContainer)
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
-	local objMonthBox = objDateSelect:GetControlObject("Combobox.Month")
+	if not objDateSelect then
+		local strYear = os.date("%Y")
+		return tonumber(strYear)
+	end
+	
+	local objYearBox = objDateSelect:GetControlObject("Combobox.Year")
 
-	local strText = objMonthBox:GetText()
+	local strText = objYearBox:GetText()
 	if not IsRealString(strText) then
 		return
 	end
-	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
-	return tonumber(strMonth)
+	local _, _, strYear = string.find(strText, "(%d*)年")
+	return tonumber(strYear)
 end
 
 -----
+function RouteToFather(self)
+	self:RouteToFather()
+end
+
+
 function IsRealString(str)
 	return type(str) == "string" and str~=nil
 end

@@ -72,6 +72,7 @@
 					</children>
 					<eventlist>
 						<event name="OnMouseWheel" file="MenuObject.xml.lua" func="RouteToFather" />
+						<!--event name="OnFocusChange" file="MenuObject.xml.lua" func="RouteToFather" /-->
 					</eventlist>
 				</obj>
 				<obj id="ItemBkn" class="TextureObject">
@@ -86,6 +87,7 @@
 					</attr>
 					<eventlist>
 						<event name="OnMouseWheel" file="MenuObject.xml.lua" func="RouteToFather" />
+						<event name="OnFocusChange" file="MenuObject.xml.lua" func="RouteToFather" />
 					</eventlist>
 				</obj>
 				
@@ -96,6 +98,7 @@
 				<event name="OnDestroy" />
 				<event name="OnKeyDown" file="MenuObject.xml.lua" func="OnKeyDown" />
 				<event name="OnMouseWheel" file="MenuObject.xml.lua" func="RouteToFather" />
+				<!--event name="OnFocusChange" file="MenuObject.xml.lua" func="RouteToFather" /-->
 			</eventlist>
 		</objtemplate>
 	</control>

@@ -2,6 +2,13 @@ local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 local gRootCtrl = nil
 
+local gShowWnd = true
+function CheckIsNeedShow()
+	return gShowWnd
+end
+
+tFunHelper.CheckIsNeedShow = CheckIsNeedShow
+
 
 function OnClose( self )
 	self:Show(0)
@@ -28,29 +35,30 @@ end
 
 
 --to do left
-function PopupInDeskLeft(self)
-	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	local nScreenW = workright - workleft
-	local nScreenH = workbottom - worktop
-	
-	local selfleft, selftop, selfright, selfbottom = self:GetWindowRect()
-	local wndwidth, wndheight = selfright - selfleft, selfbottom - selftop
-	
+function PopupInDeskRight(self)
 	local objtree = self:GetBindUIObjectTree()
-	local objRootCtrl = objtree:GetUIObject("root.layout:root.ctrl")
-	local nRtCtrlL, nRtCtrlT, nRtCtrlR, nRtCtrlB = objRootCtrl:GetAbsPos()
-	local nRtCtrlW, nRtCtrlH = nRtCtrlR - nRtCtrlL, nRtCtrlB - nRtCtrlT
+	local objRootLayout = objtree:GetUIObject("root.layout")
+    local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	-- local aniT = templateMananger:GetTemplate("tip.pos.animation","AnimationTemplate")
+	-- local ani = aniT:CreateInstance()
+	-- ani:BindObj(objRootLayout)
 	
-	local wndleft = (nScreenW-nRtCtrlW)/2-nRtCtrlL
-	local wndtop = (nScreenH-nRtCtrlH)/2-nRtCtrlT
+	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+	local nLayoutWidth = nLayoutR - nLayoutL
+	local nLayoutHeight = nLayoutB - nLayoutT
 	
-	self:Move(wndleft, wndtop, wndwidth, wndheight)
+	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
+	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
+	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
+	-- objtree:AddAnimation(ani)
+	-- ani:Resume()
+
+	return true
 end
 
 
-
 function OnCreate( self )
-	 PopupInDeskLeft(self)
+	 PopupInDeskRight(self)
 end
 
 
@@ -72,12 +80,25 @@ function OnDestroy( self )
 end
 
 
+local gTimerID = nil
 function OnFocusChange(self, bFocus)
 	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
-
 	if not bFocus then
-		-- self:Show(0)
+		self:Show(0)
+		local nTimeSpanInMs = 200
+		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+		if gTimerID ~= nil then
+			timerManager:KillTimer(gTimerID)
+			gTimerID = nil
+		end
+		gShowWnd = false
+		gTimerID = timerManager:SetTimer(function(item, id)
+			timerManager:KillTimer(gTimerID)
+			gTimerID = nil
+			gShowWnd = true
+		end, nTimeSpanInMs)
 	end
 end
+
 
 
