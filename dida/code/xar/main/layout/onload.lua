@@ -415,6 +415,10 @@ function TipMain()
 	CreateMainTipWnd()
 	CreatePopupTipWnd()
 	ProcessCommandLine()
+	
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
+	FunctionObj.CreateMainTipWnd = CreateMainTipWnd
+	XLSetGlobal("DiDa.FunctionHelper", FunctionObj) 
 end
 
 function LoadJSONHelper()

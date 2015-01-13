@@ -761,6 +761,8 @@ end
 
 
 ----菜单--
+local g_bMenuExist = false
+
 function TryDestroyOldMenu(objUIElem, strMenuKey)
 	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
@@ -805,12 +807,14 @@ function CreateAndShowMenu(objUIElem, strMenuKey, nTopSpan, bRBtnPopup)
 
 		if uHostWnd and uObjTree then
 			--函数会阻塞
+			g_bMenuExist = true
 			local bSucc = ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
 			
 			if bSucc and uHostWnd:GetMenuMode() == "manual" then
 				uObjTreeMgr:DestroyTree(strObjTreeName)
 				uHostWndMgr:RemoveHostWnd(strHostWndName)
 			end
+			g_bMenuExist = false
 		end
 	end
 end
@@ -895,6 +899,10 @@ function AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContain
 	return nMenuLeft, nMenuTop
 end
 
+
+function CheckMenuExist()
+	return g_bMenuExist
+end
 -----
 
 
@@ -1158,6 +1166,7 @@ obj.ReadAllConfigInfo = ReadAllConfigInfo
 --菜单
 obj.TryDestroyOldMenu = TryDestroyOldMenu
 obj.CreateAndShowMenu = CreateAndShowMenu
+obj.CheckMenuExist = CheckMenuExist
 
 
 --升级

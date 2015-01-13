@@ -9,7 +9,7 @@
         </event_def>
 		<objtemplate>
             <children>				
-				<obj id="root.layout" class="CaptionObject">
+				<obj id="root.layout" class="LayoutObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
@@ -17,6 +17,15 @@
 						<height>father.height</height>
 					</attr>				
 					<children>	
+						<obj id="root.Caption" class="CaptionObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>	
+						</obj>
+					
 						<obj id="bkg" class="TextureObject">
 							<attr>
 								<left>0</left>
@@ -26,7 +35,7 @@
 								<texture>DiDa.MainWnd.Bkg</texture>
 							</attr>		
 							<children>	
-								<obj id="close" class="TextureObject">
+								<!--obj id="close" class="TextureObject">
 									<attr>
 										<left>father.width-25</left>
 										<top>10</top>
@@ -38,7 +47,7 @@
 									<eventlist>
 										<event name="OnLButtonUp" file="TipPanelCtrl.xml.lua" func="OnCloseWnd"/>
 									</eventlist>		
-								</obj>	
+								</obj-->	
 							
 								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
 									<attr>
@@ -89,7 +98,7 @@
 						</obj><!--bkg end-->
 					</children>
 					<eventlist>
-					
+						<event name="OnLButtonUp" file="TipPanelCtrl.xml.lua" func="OnLButtonUp" />
 					</eventlist>
 				</obj><!--root layout end-->
 			</children>

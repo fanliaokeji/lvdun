@@ -98,6 +98,7 @@
 							</children>
 							<eventlist>
 								<event name="OnMouseWheel" file="NormalMenu.xml.lua" func="RouteToFather"/>
+								<!--event name="OnFocusChange" file="NormalMenu.xml.lua" func="RouteToFather"/-->
 							</eventlist>
 						</obj>
 						
@@ -125,6 +126,7 @@
 					</children>
 					<eventlist>
 						<event name="OnMouseWheel" file="NormalMenu.xml.lua" redirect="listbox.vscroll"/>
+						<!--event name="OnFocusChange" file="NormalMenu.xml.lua" func="RouteToFather"/-->
 					</eventlist>
 				</obj>	<!--end menu.frame-->
 			</children>
@@ -132,7 +134,7 @@
 			<eventlist>
 				<!--event name="OnInitControl"/-->
 				<event name="OnKeyDown" file="NormalMenu.xml.lua" func="OnKeyDown" />
-				<event name="OnFocusChange" file="NormalMenu.xml.lua" func="OnFocusChange" />
+				<!--event name="OnFocusChange" file="NormalMenu.xml.lua" func="OnFocusChange" /-->
 			</eventlist>
 		</objtemplate>
 	</control>

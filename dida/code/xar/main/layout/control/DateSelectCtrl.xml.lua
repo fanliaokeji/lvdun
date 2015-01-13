@@ -51,22 +51,44 @@ end
 
 
 --年份
-local g_bYearBoxEnter = false
-local g_bNotShow = false
+local g_nYearTimer = nil
+local g_bShowYearMenu = false
+
+function OnFocusYearDropList(self, bFocus)
+	if bFocus then
+		return
+	end
+
+	local objTree = self:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	local mouseX, mouseY = tipUtil:GetCursorPos()
+	local nWndX, nWndY = objHostWnd:ScreenPtToHostWndPt(mouseX, mouseY)
+	local nTreeX, nTreeY = objHostWnd:HostWndPtToTreePt(nWndX, nWndY)
+
+	local nLeft, nTop, nRight, nBottom = self:GetAbsPos()
+
+	if nTreeX > nLeft-5 and nTreeX < nRight+5 and nTreeY < nBottom+5 and nTreeY > nTop-25 then	
+		self:SetFocus(true)
+		return
+	end
+	
+	self:SetVisible(false)
+	self:SetChildrenVisible(false)
+	
+	local objMenuContext = self:GetControlObject("Menu.Context")
+	objMenuContext:SetVisible(false)
+	objMenuContext:SetChildrenVisible(false)
+end
+
+
+function OnInitYearDropList(self)
+	self:SetVisible(false)
+	self:SetChildrenVisible(false)
+end
+
 
 function OnLButtonUpYearBox(self)
-	-- if g_bNotShow then
-		-- g_bNotShow = false
-		-- return
-	-- end
-
-	local nTopSpan = 21
-	tFunHelper.TryDestroyOldMenu(self, "YearMenu")
-	tFunHelper.CreateAndShowMenu(self, "YearMenu", nTopSpan)
-	
-	if g_bYearBoxEnter then
-		g_bNotShow = true
-	end
+	ProcessButtonUp(self, "DropList.Year")
 end
 
 
@@ -76,20 +98,13 @@ function OnInitYearBox(self)
 	self:SetText(strText)
 end
 
-function OnMouseEnterYearBox(self)
-	g_bYearBoxEnter = true
-end
-
-function OnMouseLeaveYearBox(self)
-	g_bYearBoxEnter = false
-end
 
 
 --月份
+local g_nMonthTimer = nil
+local g_bShowMonthMenu = false
 function OnLButtonUpMonthBox(self)
-	local nTopSpan = 21
-	tFunHelper.TryDestroyOldMenu(self, "MonthMenu")
-	tFunHelper.CreateAndShowMenu(self, "MonthMenu", nTopSpan)
+	ProcessButtonUp(self, "DropList.Month")	
 end
 
 
@@ -103,9 +118,7 @@ end
 
 --假期
 function OnLButtonUpFestivalBox(self)
-	local nTopSpan = 21
-	tFunHelper.TryDestroyOldMenu(self, "FestivalMenu")
-	tFunHelper.CreateAndShowMenu(self, "FestivalMenu", nTopSpan)
+	ProcessButtonUp(self, "DropList.Festival")
 end
 
 
@@ -119,6 +132,30 @@ end
 
 
 ------------------
+function ProcessButtonUp(objUIElem, strUIKey)
+	local objRootCtrl = objUIElem:GetOwnerControl()
+	local objDropList = objRootCtrl:GetControlObject(strUIKey)
+	local objMenuContext = objDropList:GetControlObject("Menu.Context")
+	if objDropList:GetVisible() and objMenuContext:GetVisible() then
+		objDropList:SetVisible(false)
+		objDropList:SetChildrenVisible(false)
+		
+		objMenuContext:SetVisible(false)
+		objMenuContext:SetChildrenVisible(false)
+		return
+	end
+	
+	objDropList:SetVisible(true)
+	objDropList:SetChildrenVisible(true)
+	
+	objMenuContext:SetVisible(true)
+	objMenuContext:SetChildrenVisible(true)
+	
+	objDropList:SetFocus(true)
+	objDropList:SetDefaultItemHover()
+end
+
+
 function CreateTimeListener(self)
 	local objHostWnd = tFunHelper.GetMainWndInst()
 	local WM_TIMECHANGE = 0x001E

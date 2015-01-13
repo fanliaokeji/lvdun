@@ -498,6 +498,7 @@ function OnKeyDown( self, char )
 end
 
 function OnFocusChange( self, is_focus )
+	
 end
 
 function MoveNextItem( self )
