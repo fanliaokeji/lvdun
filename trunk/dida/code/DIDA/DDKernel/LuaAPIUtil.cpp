@@ -2035,8 +2035,24 @@ int LuaAPIUtil::FSetForegroundWindow(lua_State* pLuaState)
 		return 0;
 	}
 	HWND hWnd = (HWND) lua_touserdata(pLuaState, 2);
+	
+	DWORD dwTimeout = -1;  
+	SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)&dwTimeout, 0);  
+	if (dwTimeout >= 100) {  
+		SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)0, SPIF_SENDCHANGE | SPIF_UPDATEINIFILE);  
+	}
+	
+	BOOL bSuc = FALSE;
+	HWND hForeWnd =  GetForegroundWindow(); 
+	DWORD dwForeID =   GetWindowThreadProcessId( hForeWnd, NULL ); 
+	DWORD dwCurID = GetCurrentThreadId(); 
 
-	BOOL bSuc = ::SetForegroundWindow(hWnd);
+	AttachThreadInput( dwCurID, dwForeID, TRUE); 
+	ShowWindow( hWnd, SW_SHOWNORMAL ); 
+	SetWindowPos( hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOSIZE|SWP_NOMOVE ); 
+	SetWindowPos( hWnd, HWND_NOTOPMOST, 0,0,0,0, SWP_NOSIZE|SWP_NOMOVE ); 
+	bSuc = SetForegroundWindow( hWnd ); 
+	AttachThreadInput( dwCurID, dwForeID, FALSE);
 
 	lua_pushboolean(pLuaState, bSuc);
 	return 1;
