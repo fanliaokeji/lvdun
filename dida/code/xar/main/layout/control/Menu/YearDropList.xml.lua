@@ -32,6 +32,13 @@ function OnInitControl(self)
 	ShowYearList(self)
 end
 
+
+function OnMouseWheel(self)
+	local objNormalMenu = self:GetControlObject("Menu.Context")
+	local objMenuContainer = objNormalMenu:GetControlObject("context_menu") 
+		
+end
+
 ----
 
 function ShowYearList(self)

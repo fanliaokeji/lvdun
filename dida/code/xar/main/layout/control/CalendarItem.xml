@@ -13,6 +13,7 @@
 			<SetAllTextGray file="CalendarItem.xml.lua" func="SetAllTextGray"/>
 			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
 			<SetTextSpecialday file="CalendarItem.xml.lua" func="SetTextSpecialday"/>
+			<SetCHNTextTermDay file="CalendarItem.xml.lua" func="SetCHNTextTermDay"/>
 			<SetCurrentDayBkg file="CalendarItem.xml.lua" func="SetCurrentDayBkg"/>
 			<SetSelectState file="CalendarItem.xml.lua" func="SetSelectState"/>
 			<SetItemIndex file="CalendarItem.xml.lua" func="SetItemIndex"/>
@@ -67,7 +68,7 @@
 						<obj id="Calendar.Current" class="TextureObject">
 							<attr>
 								<left>0</left>
-								<top>0</top>
+								<top>2</top>
 								<width>father.width</width> 
 								<height>father.height</height>
 								<texture>DiDa.Canlender.Current</texture>
@@ -78,10 +79,10 @@
 						
 						<obj id="Calendar.Select" class="TextureObject">
 							<attr>
-								<left>0</left>
-								<top>0</top>
-								<width>father.width</width> 
-								<height>father.height</height>
+								<left>1</left>
+								<top>1</top>
+								<width>38</width> 
+								<height>38</height>
 								<texture>DiDa.Canlender.Select</texture>
 								<visible>false</visible>
 							</attr>		
@@ -89,24 +90,56 @@
 						
 						<obj id="Calendar.Work" class="TextureObject">
 							<attr>
-								<left>0</left>
+								<left>-3</left>
 								<top>0</top>
-								<width>father.width</width> 
-								<height>father.height</height>
+								<width>16</width> 
+								<height>16</height>
 								<texture>DiDa.Canlender.Work</texture>
 								<visible>false</visible>
-							</attr>		
+							</attr>	
+							<children>
+								<obj id="Calendar.Work.Text" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>-1</top>
+										<width>father.width</width> 
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.yahei9</font>
+										<textcolor>system.white</textcolor>
+										<text>班</text>
+										<zorder>999999</zorder>
+									</attr>		
+								</obj>	
+							</children>
 						</obj>
 						
 						<obj id="Calendar.Vacation" class="TextureObject">
 							<attr>
-								<left>0</left>
+								<left>-3</left>
 								<top>0</top>
-								<width>father.width</width> 
-								<height>father.height</height>
+								<width>16</width> 
+								<height>16</height>
 								<texture>DiDa.Canlender.Holiday</texture>
 								<visible>false</visible>
 							</attr>		
+							<children>
+								<obj id="Calendar.Vacation.Text" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>-1</top>
+										<width>father.width</width> 
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.yahei9</font>
+										<textcolor>system.white</textcolor>
+										<text>假</text>
+										<zorder>999999</zorder>
+									</attr>		
+								</obj>	
+							</children>
 						</obj>
 					
 					</children>
@@ -120,16 +153,6 @@
 		</objtemplate>
 	</control>
 </xlue>
-
-
-
-
-
-
-
-
-
-
 
 
 

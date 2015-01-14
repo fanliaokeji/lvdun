@@ -27,8 +27,8 @@
 						<HoverBkgID>DiDa.Combobox.Bkg.Long.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.Combobox.Bkg.Long.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt14</TextFont>
-						<LeftTextPos>12</LeftTextPos>
+						<TextFont>font.fzlt12</TextFont>
+						<LeftTextPos>14</LeftTextPos>
 						<TopTextPos>2</TopTextPos>
 					</attr>
 					<eventlist>
@@ -64,9 +64,9 @@
 						<HoverBkgID>DiDa.Combobox.Bkg.Short.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.Combobox.Bkg.Short.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt14</TextFont>
-						<LeftTextPos>10</LeftTextPos>
-						<TopTextPos>2</TopTextPos>
+						<TextFont>font.fzlt12</TextFont>
+						<LeftTextPos>12</LeftTextPos>
+						<TopTextPos>4</TopTextPos>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpMonthBox" />
@@ -102,8 +102,8 @@
 						<HoverBkgID>DiDa.Combobox.Bkg.Long.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.Combobox.Bkg.Long.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt14</TextFont>
-						<LeftTextPos>5</LeftTextPos>
+						<TextFont>font.fzlt12</TextFont>
+						<LeftTextPos>12</LeftTextPos>
 						<TopTextPos>2</TopTextPos>
 					</attr>
 					<eventlist>

@@ -40,7 +40,6 @@ function FetchValueByPath(obj, path)
 end
 
 
-
 --µ¯³ö´°¿Ú--
 local g_tPopupWndList = {
 	[1] = {"TipAboutWnd", "TipAboutTree"},
@@ -122,6 +121,29 @@ function SendStartupReport(bShowWnd)
 end
 
 
+function SendDiDaStartReport()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local strCID = FunctionObj.GetPeerID()
+	local strMAC = ""
+	
+	if IsRealString(strCID) then
+		local nIndex = 1
+		for i=1, 6 do 
+			local strTemp = string.sub(strCID, nIndex, nIndex+1)
+			strMAC = strMAC..strTemp.."-"
+			nIndex = nIndex+2
+		end
+	end
+	local strMACFix = string.gsub(strMAC, "-$", "")
+	local strChannelID = FunctionObj.GetInstallSrc()
+	
+	local strUrl = "http://stat.didarili.com:8082/?mac=" .. tostring(strMACFix) 
+					.."&op=start&cid=" .. (strChannelID)
+	FunctionObj.TipLog("[SendDiDaStartReport]: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+end
+
+
 function ShowMainTipWnd(objMainWnd)
 	local bHideMainPage = false
 	local cmdString = tipUtil:GetCommandLine()
@@ -133,9 +155,16 @@ function ShowMainTipWnd(objMainWnd)
 	if bHideMainPage then
 		objMainWnd:Show(0)
 	else
-		objMainWnd:Show(5)
+		local hWnd = objMainWnd:GetWndHandle()
+		if hWnd then
+			tipUtil:SetForegroundWindow(hWnd)
+		else
+			objMainWnd:Show(5)
+		end
 	end
+	
 	SendStartupReport(true)
+	InjectDLL()
 end
 
 
@@ -435,13 +464,14 @@ function PreTipMain()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
-	InjectDLL()
+	
 	InitFont()
 	StartRunCountTimer()
 	
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
 	FunctionObj.ReadAllConfigInfo()
 	
+	SendDiDaStartReport()
 	SendStartupReport(false)
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
 end

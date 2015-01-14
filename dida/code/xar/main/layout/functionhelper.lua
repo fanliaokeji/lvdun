@@ -591,19 +591,18 @@ function GetClndrContent(strDateInfo, fnCallBack)
 	end)
 end
 
---默认返回每月第一天的索引
---如果当前日期在这个月内， 返回当前日的索引
+--返回当前天的索引
 function GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
 	if type(tClndrContent) ~= "table" then
 		return 0
 	end
 	
-	local strDateToFind = strYearMonth.."01"
 	local strCurYearMonth = os.date("%Y%m")
-	if strYearMonth == strCurYearMonth then
-		strDateToFind = os.date("%Y%m%d")
+	if strYearMonth ~= strCurYearMonth then
+		return 0
 	end
 	
+	local strDateToFind = os.date("%Y%m%d")
 	for nIndex, tContent in ipairs(tClndrContent) do
 		if type(tContent) == "table" and
 		   tContent.solarcalendar == strDateToFind then
@@ -758,152 +757,6 @@ end
 
 
 ------------UI--
-
-
-----菜单--
-local g_bMenuExist = false
-
-function TryDestroyOldMenu(objUIElem, strMenuKey)
-	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
-	local strHostWndName = strMenuKey..".HostWnd.Instance" 
-	local strObjTreeName = strMenuKey..".Tree.Instance"
-
-	if uHostWndMgr:GetHostWnd(strHostWndName) and uObjTreeMgr:GetUIObjectTree(strObjTreeName) then
-		uHostWndMgr:RemoveHostWnd(strHostWndName)
-		uObjTreeMgr:DestroyTree(strObjTreeName)
-		return true
-	end
-	
-	return false
-end
-
-
---nTopSpan: 离弹出控件的高度差
---bRBtnPopup：右键弹出菜单
-function CreateAndShowMenu(objUIElem, strMenuKey, nTopSpan, bRBtnPopup)
-	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
-	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
-
-	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
-		local uHostWnd = nil
-		local strHostWndName = strMenuKey..".HostWnd.Instance"
-		local strHostWndTempltName = "MenuHostWnd"
-		local strHostWndTempltClass = "HostWndTemplate"
-		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
-		if uHostWndTemplt then
-			uHostWnd = uHostWndTemplt:CreateInstance(strHostWndName)
-		end
-
-		local uObjTree = nil
-		local strObjTreeTempltName = strMenuKey.."Tree"
-		local strObjTreeTempltClass = "ObjectTreeTemplate"
-		local strObjTreeName = strMenuKey..".Tree.Instance"
-		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
-		if uObjTreeTemplt then
-			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
-		end
-
-		if uHostWnd and uObjTree then
-			--函数会阻塞
-			g_bMenuExist = true
-			local bSucc = ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
-			
-			if bSucc and uHostWnd:GetMenuMode() == "manual" then
-				uObjTreeMgr:DestroyTree(strObjTreeName)
-				uHostWndMgr:RemoveHostWnd(strHostWndName)
-			end
-			g_bMenuExist = false
-		end
-	end
-end
-
-
-function ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
-	uHostWnd:BindUIObjectTree(uObjTree)
-					
-	local objMainLayout = uObjTree:GetUIObject("Menu.MainLayout")
-	if not objMainLayout then
-		TipLog("[ShowMenuHostWnd] find Menu.MainLayout obj failed")
-	    return false
-	end	
-	
-	local objNormalMenu = uObjTree:GetUIObject("Menu.Context")
-	if not objNormalMenu then
-		TipLog("[ShowMenuHostWnd] find normalmenu obj failed")
-	    return false
-	end	
-	objNormalMenu:BindRelateObject(objUIElem)
-	
-	local nL, nT, nR, nB 
-	local objMenuFrame = objNormalMenu:GetControlObject("menu.frame")
-	if objMenuFrame then
-		nL, nT, nR, nB = objMenuFrame:GetObjPos()				
-	else
-		nL, nT, nR, nB = objNormalMenu:GetObjPos()	
-	end	
-	
-	local nMenuContainerWidth = nR - nL
-	local nMenuContainerHeight = nB - nT
-
-	local nMenuLeft, nMenuTop = 0, 0
-	if bRBtnPopup then
-		nMenuLeft, nMenuTop = tipUtil:GetCursorPos() 	
-		nTopSpan = 0 
-	else
-		nMenuLeft, nMenuTop = GetScreenAbsPos(objUIElem)
-	end
-	
-	local nMenuL, nMenuT, nMenuR, nMenuB = objUIElem:GetAbsPos()
-	local nMenuHeight = nMenuB - nMenuT
-	if tonumber(nTopSpan) == nil then
-		nTopSpan = nMenuHeight
-	end
-	
-	local nMenuLeft, nMenuTop = AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
-	
-	--函数会阻塞
-	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight)
-	return bOk
-end
-
-
-function GetScreenAbsPos(objUIElem)
-	local objTree = objUIElem:GetOwner()
-	local objHostWnd = objTree:GetBindHostWnd()
-	local nL, nT, nR, nB = objUIElem:GetAbsPos()
-	return objHostWnd:HostWndPtToScreenPt(nL, nT)
-end
-
-
-function AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
-	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetWorkArea()
-	
-	if nMenuLeft < nScrnLeft then
-		nMenuLeft = nScrnLeft
-	end
-	
-	if nMenuLeft+nMenuContainerWidth > nScrnRight then
-		nMenuLeft = nScrnRight - nMenuContainerWidth
-	end
-	
-	if nMenuTop < nScrnTop then
-		nMenuTop = nTopSpan+nScrnTop
-	elseif nMenuTop+nMenuContainerHeight+nTopSpan > nScrnBottom then
-		nMenuTop = nMenuTop - nMenuContainerHeight
-	else
-		nMenuTop = nTopSpan+nMenuTop
-	end	
-		
-	return nMenuLeft, nMenuTop
-end
-
-
-function CheckMenuExist()
-	return g_bMenuExist
-end
------
 
 
 -------文件操作---
@@ -1125,6 +978,7 @@ obj.tipAsynUtil = tipAsynUtil
 --通用
 obj.TipLog = TipLog
 obj.MessageBox = MessageBox
+obj.GetPeerID = GetPeerID
 obj.FailExitTipWnd = FailExitTipWnd
 obj.TipConvStatistic = TipConvStatistic
 obj.ExitProcess = ExitProcess
@@ -1162,11 +1016,6 @@ obj.GetCfgPathWithName = GetCfgPathWithName
 obj.ReadConfigFromMemByKey = ReadConfigFromMemByKey
 obj.SaveConfigToFileByKey = SaveConfigToFileByKey
 obj.ReadAllConfigInfo = ReadAllConfigInfo
-
---菜单
-obj.TryDestroyOldMenu = TryDestroyOldMenu
-obj.CreateAndShowMenu = CreateAndShowMenu
-obj.CheckMenuExist = CheckMenuExist
 
 
 --升级

@@ -28,16 +28,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>510</width>
-			<height>383</height>
+			<width>520</width>
+			<height>390</height>
 		</attr>
 
 		<obj id="root.layout" class="TipMainWndRootCtrl">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>510</width>
-				<height>383</height>
+				<width>520</width>
+				<height>390</height>
 			</attr>		
 		</obj>
 	</objtreetemplate>
@@ -47,8 +47,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>510</width>
-            <height>383</height>
+            <width>520</width>
+            <height>390</height>
 
             <topmost>1</topmost>
             <visible>0</visible>

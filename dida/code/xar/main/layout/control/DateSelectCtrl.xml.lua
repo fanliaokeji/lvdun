@@ -23,9 +23,17 @@ function SetYearText(self, strYear)
 	objYearBox:SetText(strYear)
 end
 
-function SetMonthText(self, strMonth)
+function SetMonthText(self, strText)
 	local objMonthBox = self:GetControlObject("Combobox.Month")
-	objMonthBox:SetText(strMonth)
+	local attr = objMonthBox:GetAttribute()
+	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
+	local nMonth = tonumber(strMonth)
+	attr.LeftTextPos = 12
+	if nMonth>9 then
+		attr.LeftTextPos = 7
+	end
+	
+	objMonthBox:SetText(strText)
 end
 
 function SetFestivalText(self, strFestival)
@@ -37,7 +45,7 @@ end
 function ResetFestivalText(self)
 	local objFestival = self:GetControlObject("Combobox.Festival")
 	local attr = objFestival:GetAttribute()
-	attr.LeftTextPos = 5
+	attr.LeftTextPos = 12
 	
 	objFestival:SetText("假期安排")
 end
@@ -112,7 +120,9 @@ function OnInitMonthBox(self)
 	local nCurMonth = os.date("%m")
 	local strMonth = string.format("%1d", nCurMonth)
 	local strText = tostring(strMonth)..tostring("月")
-	self:SetText(strText)
+	
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:SetMonthText(strText)
 end
 
 

@@ -35,20 +35,6 @@
 								<texture>DiDa.MainWnd.Bkg</texture>
 							</attr>		
 							<children>	
-								<!--obj id="close" class="TextureObject">
-									<attr>
-										<left>father.width-25</left>
-										<top>10</top>
-										<width>13</width> 
-										<height>14</height>
-										<cursor>IDC_HAND</cursor>
-										<texture>DiDa.MainWnd.Close</texture>
-									</attr>	
-									<eventlist>
-										<event name="OnLButtonUp" file="TipPanelCtrl.xml.lua" func="OnCloseWnd"/>
-									</eventlist>		
-								</obj-->	
-							
 								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
 									<attr>
 										<left>5</left>
@@ -61,7 +47,7 @@
 								<obj id="DiDa.WeatherCtrl" class="WeatherCtrl">
 									<attr>
 										<left>277</left>
-										<top>5</top>
+										<top>8</top>
 										<width>father.width-277-5</width> 
 										<height>50</height>
 									</attr>			
@@ -70,7 +56,7 @@
 								<obj id="DiDa.DateSelectCtrl" class="DateSelectCtrl">
 									<attr>
 										<left>135+5</left>
-										<top>62</top>
+										<top>65</top>
 										<width>father.width-135-5</width> 
 										<height>20</height>
 									</attr>			
@@ -78,8 +64,8 @@
 								
 								<obj id="DiDa.WeekNumCtrl" class="WeekNumCtrl">
 									<attr>
-										<left>153</left>
-										<top>85+5</top>
+										<left>158</left>
+										<top>93</top>
 										<width>336</width> 
 										<height>27</height>
 									</attr>			
@@ -87,8 +73,8 @@
 								
 								<obj id="DiDa.CalendarCtrl" class="CalendarCtrl">
 									<attr>
-										<left>152+5</left>
-										<top>112+5</top>
+										<left>152+10</left>
+										<top>112+8</top>
 										<width>332</width> 
 										<height>246</height>
 									</attr>			
@@ -109,15 +95,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>510</width>
-			<height>383</height>
+			<width>520</width>
+			<height>390</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>510</width>
-				<height>383</height>
+				<width>520</width>
+				<height>390</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >

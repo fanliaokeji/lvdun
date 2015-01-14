@@ -22,14 +22,15 @@ function ShowClndrContent(objRootCtrl, strYearMonth)
 			end		
 		end
 		
+		ClearFocusDay(objRootCtrl)
+		ClearSelectBkg(objRootCtrl)
 		local nFocusDayIdxInMonth = tFunHelper.GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
 		if nFocusDayIdxInMonth == 0 then
 			return
 		end
 		
-		--设置每月第一天为默认的焦点， 如果当前日在这个月内，则当前日为焦点
+		--设置当前日为焦点
 		SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
-		ClearSelectBkg(objRootCtrl)
 		
 		local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
 		if objLeftBarCtrl then
@@ -53,17 +54,20 @@ end
 function OnClickClndrItem(self)
 	local objRootCtrl = self:GetOwnerControl()
 	local attr = objRootCtrl:GetAttribute()
-	local nIndex = attr.SelectItemIndex
+	local nLastIndex = attr.SelectItemIndex
 	
-	local nCurIndex = self:GetItemIndex()
-	attr.SelectItemIndex = nCurIndex
-	
-	if nIndex ~= 0 and nIndex ~= nCurIndex then
-		local strKey = "ClndrItem_"..tostring(nIndex)
+	if nLastIndex ~= 0 then 
+		local strKey = "ClndrItem_"..tostring(nLastIndex)
 		local objLastItem = objRootCtrl:GetControlObject(strKey)
 		if objLastItem then
 			objLastItem:SetSelectState(false)
 		end
+	end
+	
+	local nCurIndex = self:GetItemIndex()
+	attr.SelectItemIndex = nCurIndex
+	if nLastIndex == nCurIndex then
+		attr.SelectItemIndex = 0
 	end
 end
 
@@ -123,8 +127,8 @@ function SetItemText(objCurItem, tClndrItem)
 	local strCDay = tClndrItem.cday
 	objCurItem:SetCHNDayText(strCDay)
 	
-	local bIsSpecialday, strSpecialText = CheckIsSpecialday(tClndrItem)
-	if bIsSpecialday then  --节日、节气
+	local nSpecialdayType, strSpecialText = CheckIsSpecialday(tClndrItem)
+	if nSpecialdayType then  --节日、节气
 		objCurItem:SetCHNDayText(strSpecialText)
 	end
 end
@@ -144,9 +148,14 @@ function SetTextColor(objCurItem, tClndrItem, strYearMonth)
 		objCurItem:SetAllTextWeekend()
 	end
 	
-	local bIsSpecialday = CheckIsSpecialday(tClndrItem)
-	if bIsSpecialday then  --节日、节气
-		objCurItem:SetTextSpecialday()
+	local nSpecialdayType, strSpecialText = CheckIsSpecialday(tClndrItem)
+	if nSpecialdayType then  
+		objCurItem:SetTextSpecialday()  --公历节日
+		
+		if nSpecialdayType == 1 or nSpecialdayType == 2 
+			or strSpecialText == "元旦" then  --农历节、节气
+			objCurItem:SetCHNTextTermDay()
+		end		
 	end
 end
 
@@ -192,22 +201,22 @@ end
 
 function CheckIsSpecialday(tClndrItem)
 	if IsRealString(tClndrItem.choliday) then  --农历节
-		return true, tClndrItem.choliday
-	end
-	
-	if IsRealString(tClndrItem.holiday) then   --公历节
-		return true, tClndrItem.holiday
+		return 1, tClndrItem.choliday
 	end
 	
 	if IsRealString(tClndrItem.sterm) then   --节气
-		return true, tClndrItem.sterm
+		return 2, tClndrItem.sterm
+	end
+	
+	if IsRealString(tClndrItem.holiday) then   --公历节
+		return 3, tClndrItem.holiday
 	end
 	
 	return false
 end
 
 
-function SetFocusDay(objRootCtrl, nFocusDayIdx)
+function ClearFocusDay(objRootCtrl)
 	local attr = objRootCtrl:GetAttribute()
 	local nFocusDayIndex = attr.FocusDayIndex
 	
@@ -218,7 +227,17 @@ function SetFocusDay(objRootCtrl, nFocusDayIdx)
 			objLastItem:SetCurrentDayBkg(false)
 		end
 	end
-	
+end
+
+
+function SetFocusDay(objRootCtrl, nFocusDayIdx)
+	if nFocusDayIdx == 0 then
+		return
+	end
+
+	local attr = objRootCtrl:GetAttribute()
+	local nFocusDayIndex = attr.FocusDayIndex
+		
 	local strKey = "ClndrItem_"..tostring(nFocusDayIdx)
 	local objCurItem = objRootCtrl:GetControlObject(strKey)
 	if objCurItem then
