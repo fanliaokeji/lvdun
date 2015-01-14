@@ -75,7 +75,7 @@ unsigned __stdcall WaitForQueryRemoteAddressThreadProc(void *arg)
 	if(dwWaitResult != WAIT_OBJECT_0) {
 		return 0;
 	}
-	std::wstring fileMappingName = L"Local\\GreenSheildPDIPCSharedMemory_";
+	std::wstring fileMappingName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSharedMemory_";
 	std::wstring local_port_str;
 	{
 		std::wstringstream wss;
@@ -108,7 +108,7 @@ unsigned __stdcall WaitForQueryRemoteAddressThreadProc(void *arg)
 		std::memcpy(sharedMemeryBuffer, ip_and_port, sizeof(ip_and_port));
 	}
 
-	std::wstring ackEventName = L"Local\\GreenSheildPDIPCSyncAckEvent_";
+	std::wstring ackEventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncAckEvent_";
 	ackEventName += local_port_str;
 	HANDLE hAckEvent = ::OpenEvent(EVENT_MODIFY_STATE, FALSE, ackEventName.c_str());
 	if(hAckEvent == NULL) {
@@ -156,7 +156,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 			}
 		}
 		if(local_port != 0) {
-			std::wstring eventName = L"Local\\GreenSheildPDIPCSyncEvent_";
+			std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncEvent_";
 			std::wstring port_str;
 			{
 				std::wstringstream wss;
@@ -286,7 +286,7 @@ BOOL WSAAPI WinsockHooker::Hooked_ExtendConnectEx(SOCKET s, const struct sockadd
 				}
 			}
 			if(local_port != 0) {
-				std::wstring eventName = L"Local\\GreenSheildPDIPCSyncEvent_";
+				std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncEvent_";
 				std::wstring port_str;
 				{
 					std::wstringstream wss;
@@ -361,7 +361,7 @@ void WinsockHooker::DetachHook()
 
 bool WinsockHooker::IsEnable(unsigned short* proxy_port)
 {
-	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{1469EA0A-0606-4C68-B120-062DC9CAD0C7}GSFilterEnable");
+	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}CleanFilterEnable");
 	if(hFileMapping == NULL) {
 		return false;
 	}
@@ -376,17 +376,17 @@ bool WinsockHooker::IsEnable(unsigned short* proxy_port)
 	// 自动关闭内存文件视图
 	ScopeResourceHandle<LPCVOID, BOOL (WINAPI*)(LPCVOID)> autoUnmapViewOfFile(sharedMemeryBuffer, ::UnmapViewOfFile);
 
-	if(sharedMemeryBuffer[0] != 'G' || sharedMemeryBuffer[1] != 'S') {
+	if(sharedMemeryBuffer[0] != 'A' || sharedMemeryBuffer[1] != 'D' || sharedMemeryBuffer[2] != 'C') {
 		return false;
 	}
 
 	// 是否启用
-	if(sharedMemeryBuffer[2] != '\x01') {
+	if(sharedMemeryBuffer[3] != '\x01') {
 		return false;
 	}
 
-	// 3 4 5 必须为0
-	if(sharedMemeryBuffer[3] != '\x00' || sharedMemeryBuffer[4] != '\x00' || sharedMemeryBuffer[5] != '\x00') {
+	// 4 5 必须为0
+	if(sharedMemeryBuffer[4] != '\x00' || sharedMemeryBuffer[5] != '\x00') {
 		return false;
 	}
 

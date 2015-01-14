@@ -40,7 +40,7 @@ bool HttpRequestFilter::Enable(bool enable, unsigned short listen_port)
 	XMLib::CriticalSectionLockGuard lck(this->cs);
 	this->m_enable = enable;
 	if(this->m_hIPCFileMapping == NULL) {
-		this->m_hIPCFileMapping = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4 * 1024, L"Local\\{1469EA0A-0606-4C68-B120-062DC9CAD0C7}GSFilterEnable");
+		this->m_hIPCFileMapping = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4 * 1024, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}CleanFilterEnable");
 		if(this->m_hIPCFileMapping == NULL) {
 			return false;
 		}
@@ -55,14 +55,13 @@ bool HttpRequestFilter::Enable(bool enable, unsigned short listen_port)
 	ScopeResourceHandle<HANDLE, BOOL(WINAPI*)(LPCVOID)> autoUnmapViewOfFile(sharedMemoryBuffer, ::UnmapViewOfFile);
 
 	if(enable) {
-		sharedMemoryBuffer[2] = '\x01';
+		sharedMemoryBuffer[3] = '\x01';
 	}
 	else {
-		sharedMemoryBuffer[2] = '\x00';
+		sharedMemoryBuffer[3] = '\x00';
 	}
 
-	// 3~5±£¡Ù
-	sharedMemoryBuffer[3] = '\x00';
+	// 4~5±£¡Ù
 	sharedMemoryBuffer[4] = '\x00';
 	sharedMemoryBuffer[5] = '\x00';
 
@@ -80,8 +79,9 @@ bool HttpRequestFilter::Enable(bool enable, unsigned short listen_port)
 		sharedMemoryBuffer[7] = cvt.to[1];
 	}
 
-	sharedMemoryBuffer[1] = 'S';
-	sharedMemoryBuffer[0] = 'G';
+	sharedMemoryBuffer[2] = 'C';
+	sharedMemoryBuffer[1] = 'D';
+	sharedMemoryBuffer[0] = 'A';
 	return true;
 }
 
