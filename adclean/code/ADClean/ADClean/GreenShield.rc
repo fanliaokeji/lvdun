@@ -27,8 +27,8 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,6
- PRODUCTVERSION 1,0,0,6
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -44,13 +44,13 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "成都市灵智互动科技有限公司"
-            VALUE "FileDescription", "GreenShield Module"
-            VALUE "FileVersion", "1, 0, 0, 6"
-            VALUE "InternalName", "GreenShield"
-            VALUE "LegalCopyright", "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
-            VALUE "OriginalFilename", "GreenShield.exe"
-            VALUE "ProductName", "绿盾"
-            VALUE "ProductVersion", "1, 0, 0, 6"
+            VALUE "FileDescription", "ADClean Module"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "ADClean"
+            VALUE "LegalCopyright", "Copyright (c) 2015 成都市灵智互动科技有限公司"
+            VALUE "OriginalFilename", "ADClean.exe"
+            VALUE "ProductName", "广告清道夫"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
@@ -67,7 +67,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "res\\GreenShield.ico"
+IDI_ICON1               ICON                    "res\\ADClean.ico"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
