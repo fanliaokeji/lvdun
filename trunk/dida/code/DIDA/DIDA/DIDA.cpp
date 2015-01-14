@@ -22,6 +22,8 @@ int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	return nRet;
 }
 
+#define WM_EXPLORER WM_USER + 200
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
 	TSTRACEAUTO();
@@ -33,6 +35,22 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	// make the EXE free threaded. This means that calls come in on a random RPC thread.
 	//	HRESULT hRes = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	ATLASSERT(SUCCEEDED(hRes));
+	
+	//1: Vista:允许低权限程序向高权限发送Message
+	// Vista Support {
+	typedef BOOL (WINAPI FAR *ChangeWindowMessageFilter_PROC)(UINT,DWORD);
+	ChangeWindowMessageFilter_PROC m_pfnChangeWindowMessageFilter;
+	//#if(WINVER   >=   0x0600)   
+#define   MSGFLT_ADD   1   
+#define   MSGFLT_REMOVE   2   
+	//#endif   /*   WINVER   >=   0x0600   */   
+	// Vista Support }	
+	m_pfnChangeWindowMessageFilter = (ChangeWindowMessageFilter_PROC)::GetProcAddress(::GetModuleHandle(_T("USER32")),"ChangeWindowMessageFilter");
+	if (m_pfnChangeWindowMessageFilter)
+	{
+		m_pfnChangeWindowMessageFilter(WM_COPYDATA, MSGFLT_ADD);
+		m_pfnChangeWindowMessageFilter(WM_EXPLORER, MSGFLT_ADD);
+	}	
 
 	// this resolves ATL window thunking problem when Microsoft Layer for Unicode (MSLU) is used
 	::DefWindowProc(NULL, 0, 0, 0L);
