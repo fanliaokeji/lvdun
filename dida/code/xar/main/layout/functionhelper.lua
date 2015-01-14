@@ -87,7 +87,8 @@ end
 
 function ReportAndExit()
 	local tStatInfo = {}
-	HideMainWindow()		
+	HideMainWindow()	
+	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
 	
 	tStatInfo.strEC = "exit"	
@@ -756,7 +757,79 @@ end
 
 
 
+--弹出窗口--
+local g_tPopupWndList = {
+	[1] = {"TipAboutWnd", "TipAboutTree"},
+	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+	[3] = {"TipUpdateWnd", "TipUpdateTree"},
+}
+
+function CreatePopupTipWnd()
+	for key, tItem in pairs(g_tPopupWndList) do
+		local strHostWndName = tItem[1]
+		local strTreeName = tItem[2]
+		local bSucc = CreateWndByName(strHostWndName, strTreeName)
+	end
+	
+	return true
+end
+
+function CreateWndByName(strHostWndName, strTreeName)
+	local bSuccess = false
+	local strInstWndName = strHostWndName..".Instance"
+	local strInstTreeName = strTreeName..".Instance"
+	
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local frameHostWndTemplate = templateMananger:GetTemplate(strHostWndName, "HostWndTemplate" )
+	if frameHostWndTemplate then
+		local frameHostWnd = frameHostWndTemplate:CreateInstance(strInstWndName)
+		if frameHostWnd then
+			local objectTreeTemplate = nil
+			objectTreeTemplate = templateMananger:GetTemplate(strTreeName, "ObjectTreeTemplate")
+			if objectTreeTemplate then
+				local uiObjectTree = objectTreeTemplate:CreateInstance(strInstTreeName)
+				if uiObjectTree then
+					frameHostWnd:BindUIObjectTree(uiObjectTree)
+					local iRet = frameHostWnd:Create()
+					if iRet ~= nil and iRet ~= 0 then
+						bSuccess = true
+					end
+				end
+			end
+		end
+	end
+
+	return bSuccess
+end
+
+function DestroyPopupWnd()
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+
+	for key, tItem in pairs(g_tPopupWndList) do
+		local strPopupWndName = tItem[1]
+		local strPopupInst = strPopupWndName..".Instance"
+		
+		local objPopupWnd = hostwndManager:GetHostWnd(strPopupInst)
+		if objPopupWnd then
+			hostwndManager:RemoveHostWnd(strPopupInst)
+		end
+	end
+end
+
 ------------UI--
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -------文件操作---
@@ -1003,6 +1076,7 @@ obj.KillClockWindow = KillClockWindow
 obj.GetMainWndInst = GetMainWndInst
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.ShowPopupWndByName = ShowPopupWndByName
+obj.CreatePopupTipWnd = CreatePopupTipWnd
 obj.GetYearMonthFromUI = GetYearMonthFromUI
 obj.GetClndrContent = GetClndrContent
 obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth

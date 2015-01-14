@@ -37,23 +37,10 @@ end
 ---事件
 function OnInitLeftBar(self)
 	InitClndrInfo(self)
-	SetClock(self)
-	StartTimer(self)
 end
 
 
 ------------------
-function SetClock(objRootCtrl)
-	local tDateInfo = os.date("*t")
-	if type(tDateInfo) ~= "table" then
-		return
-	end
-	
-	local strClockText = string.format("%02d:%02d:%02d", tDateInfo.hour, tDateInfo.min, tDateInfo.sec)
-	SetTextObjContent(objRootCtrl, "LeftBar.ClockText", strClockText)
-end
-
-
 function InitClndrInfo(objRootCtrl)
 	local strCurDate = os.date("%Y%m%d")
 	
@@ -67,15 +54,6 @@ function InitClndrInfo(objRootCtrl)
 			SetClndrInfo(objRootCtrl, tClndrContent)
 		end)
 end
-
-
-function StartTimer(objRootCtrl)
-	local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
-	timeMgr:SetTimer(function(Itm, id)
-			SetClock(objRootCtrl)
-		end, 1000)
-end
-
 
 
 --Sunday 是1
