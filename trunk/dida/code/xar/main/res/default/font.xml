@@ -19,7 +19,7 @@
 		
 		<font id="font.dincond18" height="18" facename="DINCondensedC" /> 
 		
-		<font id="font.dsdigital30.bold" height="30" facename="DS-Digital" weight="bold"/> 
+		<font id="font.dsdigital28.bold" height="28" facename="DS-Digital" weight="bold"/> 
 		<font id="font.tnroman38.bold" height="38" facename="Times New Roman" weight="bold" /> 
 		<font id="font.tnroman18.bold" height="18" facename="Times New Roman" weight="bold" /> 
 		

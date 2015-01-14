@@ -11,23 +11,18 @@
 		</event_def>
 		<objtemplate>
 			<children>
-				<obj id="LeftBar.ClockText" class="TextObject">
+				<obj id="LeftBar.ClockText" class="ClockCtrl">
 					<attr>
 						<left>22</left>
 						<top>120</top>
-						<width>father.width</width> 
-						<height>24</height>
-						<valign>center</valign>
-						<halign>left</halign>
-						<font>font.dsdigital30.bold</font>
-						<textcolor>system.white</textcolor>
-						<text>00:00:00</text>
+						<width>father.width-22</width> 
+						<height>26</height>
 					</attr>		
 				</obj>	
 				
 				<obj id="LeftBar.LunarDate" class="TextObject">
 					<attr>
-						<left>19</left>
+						<left>20</left>
 						<top>164</top>
 						<width>father.width-15</width> 
 						<height>20</height>
@@ -41,7 +36,7 @@
 				
 				<obj id="LeftBar.ChineseYear" class="TextObject">
 					<attr>
-						<left>19</left>
+						<left>20</left>
 						<top>190</top>
 						<width>father.width-15</width> 
 						<height>20</height>
@@ -55,7 +50,7 @@
 				
 				<obj id="LeftBar.ChineseDate" class="TextObject">
 					<attr>
-						<left>19</left>
+						<left>20</left>
 						<top>210</top>
 						<width>father.width-15</width> 
 						<height>20</height>

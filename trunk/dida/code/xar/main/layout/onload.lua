@@ -40,67 +40,6 @@ function FetchValueByPath(obj, path)
 end
 
 
---µ¯³ö´°¿Ú--
-local g_tPopupWndList = {
-	[1] = {"TipAboutWnd", "TipAboutTree"},
-	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
-	[3] = {"TipUpdateWnd", "TipUpdateTree"},
-}
-
-
-function CreatePopupTipWnd()
-	for key, tItem in pairs(g_tPopupWndList) do
-		local strHostWndName = tItem[1]
-		local strTreeName = tItem[2]
-		local bSucc = CreateWndByName(strHostWndName, strTreeName)
-	end
-	
-	return true
-end
-
-function CreateWndByName(strHostWndName, strTreeName)
-	local bSuccess = false
-	local strInstWndName = strHostWndName..".Instance"
-	local strInstTreeName = strTreeName..".Instance"
-	
-	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
-	local frameHostWndTemplate = templateMananger:GetTemplate(strHostWndName, "HostWndTemplate" )
-	if frameHostWndTemplate then
-		local frameHostWnd = frameHostWndTemplate:CreateInstance(strInstWndName)
-		if frameHostWnd then
-			local objectTreeTemplate = nil
-			objectTreeTemplate = templateMananger:GetTemplate(strTreeName, "ObjectTreeTemplate")
-			if objectTreeTemplate then
-				local uiObjectTree = objectTreeTemplate:CreateInstance(strInstTreeName)
-				if uiObjectTree then
-					frameHostWnd:BindUIObjectTree(uiObjectTree)
-					local iRet = frameHostWnd:Create()
-					if iRet ~= nil and iRet ~= 0 then
-						bSuccess = true
-					end
-				end
-			end
-		end
-	end
-
-	return bSuccess
-end
-
-function DestroyPopupWnd()
-	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-
-	for key, tItem in pairs(g_tPopupWndList) do
-		local strPopupWndName = tItem[1]
-		local strPopupInst = strPopupWndName..".Instance"
-		
-		local objPopupWnd = hostwndManager:GetHostWnd(strPopupInst)
-		if objPopupWnd then
-			hostwndManager:RemoveHostWnd(strPopupInst)
-		end
-	end
-end
-
-
 function SendStartupReport(bShowWnd)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local tStatInfo = {}
@@ -271,15 +210,12 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
-		TipMain()
 		return	
 	end
 	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
 	TryForceUpdate(tServerConfig)
 	FixUserConfig(tServerConfig)
-	
-	TipMain()
 end
 
 
@@ -441,13 +377,11 @@ end
 
 
 function TipMain() 
-	CreateMainTipWnd()
-	CreatePopupTipWnd()
-	ProcessCommandLine()
-	
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
-	FunctionObj.CreateMainTipWnd = CreateMainTipWnd
-	XLSetGlobal("DiDa.FunctionHelper", FunctionObj) 
+	
+	CreateMainTipWnd()
+	FunctionObj.CreatePopupTipWnd()
+	ProcessCommandLine()
 end
 
 function LoadJSONHelper()
@@ -473,6 +407,7 @@ function PreTipMain()
 	
 	SendDiDaStartReport()
 	SendStartupReport(false)
+	TipMain()
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
 end
 
