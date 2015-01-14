@@ -46,6 +46,8 @@ function OnShowWindow(self, bVisible)
 			return 
 		end
 		
+		g_tNewVersionInfo = tNewVersionInfo
+		
 		local strCurVersion = tFunHelper.GetDiDaVersion()
 		local strNewVersion = tNewVersionInfo.strVersion
 		if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
@@ -62,7 +64,6 @@ function OnShowWindow(self, bVisible)
 		end
 		
 		ShowReadyUpdate(objRootCtrl, tNewVersionInfo)
-		g_tNewVersionInfo = tNewVersionInfo
 	end
 	
 	ShowCheckingImage(objRootCtrl)
@@ -72,6 +73,8 @@ end
 
 function ShowInstallPanel(self, strInstallPath)
 	local objRootCtrl = self
+	SetVersionText(objRootCtrl)
+	
 	ShowLayout(objRootCtrl, "TipUpdate.CheckUpdate.Layout", false)
 	ShowLayout(objRootCtrl, "TipUpdate.Update.Layout", true)
 	
@@ -186,6 +189,8 @@ function ShowReadyUpdate(objRootCtrl)
 	ShowLayout(objRootCtrl, "TipUpdate.CheckUpdate.Layout", false)
 	ShowLayout(objRootCtrl, "TipUpdate.Update.Layout", true)
 	ShowLayout(objRootCtrl, "TipUpdate.DownLoading.Layout", false)
+	
+	SetVersionText(objRootCtrl)
 end
 
 
@@ -249,6 +254,48 @@ function HideCurrentWnd(objUIItem)
 		objHostWnd:Show(0)
 	end
 end
+
+
+function SetVersionText(objRootCtrl)
+	local tNewVersionInfo = g_tNewVersionInfo
+	if type(tNewVersionInfo) ~= "table" then
+		return
+	end
+
+	local objVersion = objRootCtrl:GetControlObject("TipUpdate.Title.Text")
+	local objContent = objRootCtrl:GetControlObject("TipUpdate.Content.Layout")
+	if not objVersion or not objContent then
+		return
+	end
+	
+	objVersion:SetVisible(true)
+	objVersion:SetChildrenVisible(true)
+	objContent:SetVisible(true)
+	objContent:SetChildrenVisible(true)
+	
+	local strVersion = tNewVersionInfo.strVersion
+	
+	local strText = "发现新版本嘀嗒日历V"..tostring(strVersion)
+	objVersion:SetText(strText)
+	
+	local objText1 = objContent:GetObject("TipUpdate.Content.Text1")
+	local objText2 = objContent:GetObject("TipUpdate.Content.Text2")
+	local objText3 = objContent:GetObject("TipUpdate.Content.Text3")
+	local tInroduce = tNewVersionInfo.tInroduce
+
+	if IsRealString(tInroduce[1]) then
+		objText1:SetText(tostring(tInroduce[1]))
+	end
+	
+	if IsRealString(tInroduce[2]) then
+		objText2:SetText(tostring(tInroduce[2]))
+	end
+	
+	if IsRealString(tInroduce[3]) then
+		objText3:SetText(tostring(tInroduce[3]))
+	end
+end
+
 
 
 --1 表示立即安装， 2表示立即更新

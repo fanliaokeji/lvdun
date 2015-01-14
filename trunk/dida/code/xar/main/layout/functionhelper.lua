@@ -665,6 +665,19 @@ function IsDayInScale(strDay, tDateScale)
 end
 
 
+function CheckIsYearInVacList(strYear) 
+	local tVacationList = ReadConfigFromMemByKey("tVacationList") or {}
+	local tYearInfo = FetchValueByPath(tVacationList, {strYear})
+	if type(tYearInfo) ~= "table" then
+		return false
+	end
+	
+	return true
+end
+
+
+
+
 function UpdateCalendarContent()
 	local strYearMonth = GetYearMonthFromUI()
 	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarCtrl")
@@ -686,7 +699,7 @@ function GetWeatherInfo(fnSuccess, fnFail)
 				fnFail()
 				return
 			end
-		
+			
 			local strWeatherUrl = strWeatherPrefix .. tostring(tData[1]["code"]) .. "&weatherType=0"
 			
 			tipAsynUtil:AjaxGetHttpContent(strWeatherUrl, 
@@ -714,7 +727,52 @@ function GetWeatherInfo(fnSuccess, fnFail)
 end
 
 
+function SaveCityCode(strCityCode)
+	if IsNilString(strCityCode) then
+		return
+	end
+
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	
+	if type(tUserConfig["tCityCode"]) ~= "table" then
+		tUserConfig["tCityCode"] = {}
+	end
+	
+	local tCityCode = tUserConfig["tCityCode"]
+	tCityCode["nLastUTC"] = tipUtil:GetCurrentUTCTime()
+	tCityCode["strCityCode"] = strCityCode
+	SaveConfigToFileByKey("tUserConfig")
+end
+
+
+function CheckExistCityCode()
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	local tCityCode = tUserConfig["tCityCode"]
+	if type(tCityCode)~="table" or not IsRealString(tCityCode.strCityCode) then
+		return false, nil
+	end
+
+	local nLastUTC = tCityCode["nLastUTC"]
+	if CheckTimeIsAnotherDay(nLastUTC) then
+		return false, nil
+	end
+	
+	return true, tCityCode.strCityCode
+end
+
+
+
 function GetCityCode(fnCallBack)
+	local bExist, strCityCode = CheckExistCityCode()
+	if bExist then
+		local tData = {}
+		tData[1] = {}
+		tData[1]["code"] = strCityCode
+		
+		fnCallBack(0, tData)
+		return
+	end
+	
 	local JsonFun = XLGetGlobal("DiDa.Json")
 	tipAsynUtil:AjaxGetHttpContent(strIPUrl, 
 		function(iRet, strContent, respHeaders)
@@ -749,6 +807,12 @@ function GetCityCode(fnCallBack)
 					local strSQL = "select * from cityinfo where city='" .. strCityName .. "'"
 					TipLog("[GetCityCode] strSQL = " .. tostring(strSQL))
 					tipAsynUtil:AsynExecuteSqlite3DML(strCityDB, strSQL, nil,nil,function(iRet, tData)
+					
+						if iRet == 0 and type(tData) == "table" and type(tData[1]) == "table" 
+							and not IsNilString(tData[1]["code"]) then
+								SaveCityCode(tData[1]["code"])
+						end
+						
 						fnCallBack(iRet, tData)
 					end)
 				end)
@@ -817,18 +881,6 @@ function DestroyPopupWnd()
 end
 
 ------------UI--
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1019,7 +1071,8 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		return
 	end
 	
-	local strSavePath = GetCfgPathWithName("ServerConfig.dat")
+	local strConfigName = GetFileSaveNameFromUrl(strConfigURL)
+	local strSavePath = GetCfgPathWithName(strConfigName)
 	if not IsRealString(strSavePath) then
 		fnCallBack(-1)
 		return
@@ -1084,6 +1137,7 @@ obj.CheckIsVacation = CheckIsVacation
 obj.CheckIsWorkDay = CheckIsWorkDay
 obj.UpdateCalendarContent = UpdateCalendarContent
 obj.GetWeatherInfo = GetWeatherInfo
+obj.CheckIsYearInVacList = CheckIsYearInVacList
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName

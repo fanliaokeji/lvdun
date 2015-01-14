@@ -46,8 +46,23 @@ function ResetFestivalText(self)
 	local objFestival = self:GetControlObject("Combobox.Festival")
 	local attr = objFestival:GetAttribute()
 	attr.LeftTextPos = 12
-	
 	objFestival:SetText("假期安排")
+	objFestival:SetEnable(true)
+	objFestival:SetAlpha(255, true)
+	
+	local strYear = self:GetYearText()
+	if not tFunHelper.CheckIsYearInVacList(strYear) then
+		objFestival:SetEnable(false)
+		objFestival:SetAlpha(180, true)
+	end
+end
+
+
+function HideAllDropList(self)
+	ShowDropList(self, "DropList.Year", false)
+	ShowDropList(self, "DropList.Month", false)
+	ShowDropList(self, "DropList.Festival", false)
+	
 end
 
 
@@ -163,6 +178,19 @@ function ProcessButtonUp(objUIElem, strUIKey)
 	
 	objDropList:SetFocus(true)
 	objDropList:SetDefaultItemHover()
+end
+
+
+function ShowDropList(objRootCtrl, strDropListKey, bShow)
+	local objDropList = objRootCtrl:GetControlObject(strDropListKey) 
+	if objDropList then
+		local objMenuContext = objDropList:GetControlObject("Menu.Context")
+		objDropList:SetVisible(bShow)
+		objDropList:SetChildrenVisible(bShow)
+		
+		objMenuContext:SetVisible(bShow)
+		objMenuContext:SetChildrenVisible(bShow)
+	end		
 end
 
 

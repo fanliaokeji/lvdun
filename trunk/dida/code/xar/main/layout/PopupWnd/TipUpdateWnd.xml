@@ -130,7 +130,7 @@
 												<top>0</top>
 												<width>father.width</width>
 												<height>20</height>
-												<text>发现新版本嘀嗒日历V1.1</text>
+												<text>发现新版本嘀嗒日历</text>
 												<textcolor>system.white</textcolor>
 												<font>font.yahei15</font>
 												<valign>center</valign>
@@ -165,7 +165,7 @@
 														<top>23</top>
 														<width>father.width</width>
 														<height>18</height>
-														<text>1.开发家庭控制功能</text>
+														<text></text>
 														<textcolor>system.white</textcolor>
 														<font>font.yahei12</font>
 														<valign>top</valign>
@@ -178,7 +178,7 @@
 														<top>20*2+1</top>
 														<width>father.width</width>
 														<height>18</height>
-														<text>2.视频过滤优化</text>
+														<text></text>
 														<textcolor>system.white</textcolor>
 														<font>font.yahei12</font>
 														<valign>top</valign>
@@ -191,7 +191,7 @@
 														<top>20*3</top>
 														<width>father.width</width>
 														<height>18</height>
-														<text>3.修复部分bug</text>
+														<text></text>
 														<textcolor>system.white</textcolor>
 														<font>font.yahei12</font>
 														<valign>top</valign>
