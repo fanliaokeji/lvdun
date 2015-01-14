@@ -16,7 +16,7 @@ end
 
 
 function OnLButtonUp(self, bFocus)
-
+	--勿删
 end
 
 
@@ -59,7 +59,9 @@ end
 
 
 function OnCommandLine(tParam)
-	ShowHostWnd()
+	if tFunHelper.CheckIsNeedShow() then
+		ShowHostWnd()
+	end
 end
 
 

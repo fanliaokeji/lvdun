@@ -30,17 +30,17 @@
 							</attr>
 							<eventlist>
 								<event name="OnInitControl" file="YearDropList.xml.lua" func="OnInitControl" />
-								<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
 							</eventlist>
 						</obj>
 					</children>
 					<eventlist>
-						<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
+						
 					</eventlist>
 				</obj>
 			</children>
 			<eventlist>
-				<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
+				<event name="OnMouseWheel" file="YearDropList.xml.lua" func="OnMouseWheel" />
+				<!--event name="OnMouseWheel" file="NormalMenu.xml.lua" redirect="listbox.vscroll"/-->
 			</eventlist>
 		</objtemplate>
 	</control>

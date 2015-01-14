@@ -72,7 +72,6 @@
 					</children>
 					<eventlist>
 						<event name="OnMouseWheel" file="MenuObject.xml.lua" func="RouteToFather" />
-						<!--event name="OnFocusChange" file="MenuObject.xml.lua" func="RouteToFather" /-->
 					</eventlist>
 				</obj>
 				<obj id="ItemBkn" class="TextureObject">

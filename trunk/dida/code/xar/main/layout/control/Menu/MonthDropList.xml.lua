@@ -85,17 +85,8 @@ end
 function OnSelectMonth(objMenuItem)
 	local strText = objMenuItem:GetText()
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
-	local objMonthBox = objDateSelect:GetControlObject("Combobox.Month")
 	
-	local attr = objMonthBox:GetAttribute()
-	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
-	local nMonth = tonumber(strMonth)
-	attr.LeftTextPos = 10
-	if nMonth>9 then
-		attr.LeftTextPos = 6
-	end
-	
-	objMonthBox:SetText(strText)
+	objDateSelect:SetMonthText(strText)
 	objDateSelect:ResetFestivalText()
 	tFunHelper.UpdateCalendarContent()
 end

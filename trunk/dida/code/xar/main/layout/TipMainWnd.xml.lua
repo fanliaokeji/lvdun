@@ -48,7 +48,7 @@ function PopupInDeskRight(self)
 	local nLayoutHeight = nLayoutB - nLayoutT
 	
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
+	self:Move( workright - nLayoutWidth+5, workbottom - nLayoutHeight+4, nLayoutWidth, nLayoutHeight)
 	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
 	-- objtree:AddAnimation(ani)
 	-- ani:Resume()
@@ -84,9 +84,14 @@ local gTimerID = nil
 function OnFocusChange(self, bFocus)
 	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
 	if not bFocus then
-		self:Show(0)
-		local nTimeSpanInMs = 200
 		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+		timerManager:SetTimer(function(item, id)
+			item:KillTimer(id)
+			gTimerID = nil
+			self:Show(0)
+		end, 50)
+			
+		local nTimeSpanInMs = 200
 		if gTimerID ~= nil then
 			timerManager:KillTimer(gTimerID)
 			gTimerID = nil

@@ -27,7 +27,7 @@
 				
 				<obj id="LeftBar.LunarDate" class="TextObject">
 					<attr>
-						<left>15</left>
+						<left>19</left>
 						<top>164</top>
 						<width>father.width-15</width> 
 						<height>20</height>
@@ -41,7 +41,7 @@
 				
 				<obj id="LeftBar.ChineseYear" class="TextObject">
 					<attr>
-						<left>15</left>
+						<left>19</left>
 						<top>190</top>
 						<width>father.width-15</width> 
 						<height>20</height>
@@ -55,7 +55,7 @@
 				
 				<obj id="LeftBar.ChineseDate" class="TextObject">
 					<attr>
-						<left>15</left>
+						<left>19</left>
 						<top>210</top>
 						<width>father.width-15</width> 
 						<height>20</height>
@@ -69,8 +69,8 @@
 				
 				<obj id="LeftBar.Week" class="TextObject">
 					<attr>
-						<left>18</left>
-						<top>258</top>
+						<left>18+5</left>
+						<top>258+3</top>
 						<width>95</width> 
 						<height>26</height>
 						<valign>center</valign>
@@ -83,8 +83,8 @@
 				
 				<obj id="LeftBar.Day" class="TextObject">
 					<attr>
-						<left>23</left>
-						<top>285</top>
+						<left>23+5</left>
+						<top>285+3</top>
 						<width>85</width> 
 						<height>35</height>
 						<valign>center</valign>
@@ -97,8 +97,8 @@
 				
 				<obj id="LeftBar.Year" class="TextObject">
 					<attr>
-						<left>23</left>
-						<top>321</top>
+						<left>23+5</left>
+						<top>321+3</top>
 						<width>85</width> 
 						<height>18</height>
 						<valign>center</valign>

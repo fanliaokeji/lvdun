@@ -24,11 +24,11 @@ function SetClndrInfo(self, tClndrContent)
 	local _, _, strYear, strMonth, strDay = string.find(tClndrContent.solarcalendar, "(%d%d%d%d)(%d%d)(%d%d)")
 	local nMonth = tonumber(strMonth)
 	local nDay = tonumber(strDay)
-	strMonth = string.format("%1d", nMonth)
+	strMonth = string.format("%02d", nMonth)
 	local strYearText = tostring(strYear).."/"..tostring(strMonth)
 	SetTextObjContent(objRootCtrl, "LeftBar.Year", strYearText)
 	
-	strDay = string.format("%1d", nDay)
+	strDay = string.format("%02d", nDay)
 	SetTextObjContent(objRootCtrl, "LeftBar.Day", strDay)
 end
 

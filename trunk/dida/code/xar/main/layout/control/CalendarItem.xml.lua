@@ -23,7 +23,7 @@ end
 
 
 function SetAllTextNormal(self)
-	 SetAllTextColorRes(self, "4D4D4D", "808080")
+	 SetAllTextColorRes(self, "262624", "808080")
 end
 
 
@@ -37,8 +37,14 @@ end
 
 
 function SetTextSpecialday(self)
-	 SetAllTextColorRes(self, "", "FF9933")
+	SetAllTextColorRes(self, "", "FF9933")
 end
+
+
+function SetCHNTextTermDay(self)
+	SetAllTextColorRes(self, "", "59ACFF")
+end
+
 
 
 function SetCurrentDayBkg(self, bShowBkg)
@@ -76,11 +82,13 @@ end
 function SetVacationBkg(self, bShowBkg)
 	local objImg = self:GetControlObject("Calendar.Vacation")
 	objImg:SetVisible(bShowBkg)
+	objImg:SetChildrenVisible(bShowBkg)
 end
 
 function SetWorkBkg(self, bShowBkg)
 	local objImg = self:GetControlObject("Calendar.Work")
 	objImg:SetVisible(bShowBkg)
+	objImg:SetChildrenVisible(bShowBkg)
 end
 
 
