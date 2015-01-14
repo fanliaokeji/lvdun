@@ -484,10 +484,10 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 									return;
 								}
 								
-								if(this->m_httpRequestMethod == HTTP_GET && this->NeedInsertCSSCode(this->m_absoluteUrl)) {
+								/*if(this->m_httpRequestMethod == HTTP_GET && this->NeedInsertCSSCode(this->m_absoluteUrl)) {
 									this->m_isThisRequestNeedModifyResponse = true;
 								}
-								else if(this->m_httpRequestMethod == HTTP_GET && this->NeedReplaceContent(this->m_absoluteUrl)) {
+								else */if(this->m_httpRequestMethod == HTTP_GET && this->NeedReplaceContent(this->m_absoluteUrl)) {
 									this->m_isThisRequestNeedModifyResponse = true;
 								}
 
@@ -911,24 +911,23 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 								std::list<std::pair<std::pair<std::string::const_iterator, std::string::const_iterator>, bool> > content_list;
 								content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin(), decodedResponseContent.end()), true));
 								// 在</head>前面添加CSS代码
-								std::size_t endHeadPos = this->GetHideElementCodeInsertPos(decodedResponseContent);
-								std::string style;
-								if(endHeadPos != std::string::npos) {
-									std::string insertCode = this->GetInsertCSSCode(this->m_absoluteUrl);
-									if(!insertCode.empty()) {
-										style = "<style>";
-										style += insertCode;
-										style += "</style>";
-										assert(content_list.size() == 1);
-										content_list.clear();
-										if(endHeadPos != 0) {
-											content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin(), decodedResponseContent.begin() + endHeadPos), true));
-										}
-										content_list.push_back(std::make_pair(std::make_pair(style.begin(), style.end()), false));
-										content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin() + endHeadPos, decodedResponseContent.end()), true));
-									}
-								}
-
+								//std::size_t endHeadPos = this->GetHideElementCodeInsertPos(decodedResponseContent);
+								//std::string style;
+								//if(endHeadPos != std::string::npos) {
+								//	std::string insertCode = this->GetInsertCSSCode(this->m_absoluteUrl);
+								//	if(!insertCode.empty()) {
+								//		style = "<style>";
+								//		style += insertCode;
+								//		style += "</style>";
+								//		assert(content_list.size() == 1);
+								//		content_list.clear();
+								//		if(endHeadPos != 0) {
+								//			content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin(), decodedResponseContent.begin() + endHeadPos), true));
+								//		}
+								//		content_list.push_back(std::make_pair(std::make_pair(style.begin(), style.end()), false));
+								//		content_list.push_back(std::make_pair(std::make_pair(decodedResponseContent.begin() + endHeadPos, decodedResponseContent.end()), true));
+								//	}
+								//}
 								// 正则匹配替换
 								std::vector<std::string> raw_rules = this->GetReplaceRule(this->m_absoluteUrl);
 								std::vector<std::pair<std::pair<std::string, std::string>, bool> > rules;
