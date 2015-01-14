@@ -1,0 +1,71 @@
+function GetSubTable()
+	local t = {
+		["youku.com"] = {
+			["strTitle"] = "优酷", 
+		}, 
+		["baomihua.com"] = {
+			["strTitle"] = "爆米花", 
+		}, 
+		["fun.tv"] = {
+			["strTitle"] = "风行", 
+		}, 
+		["1905.com"] = {
+			["strTitle"] = "1905电影网", 
+		}, 
+		["kankan.com"] = {
+			["strTitle"] = "迅雷看看", 
+		}, 
+		["tv.sohu.com"] = {
+			["strTitle"] = "搜狐视频", 
+		}, 
+		["tudou.com"] = {
+			["strTitle"] = "土豆", 
+		}, 
+		["pptv.com"] = {
+			["strTitle"] = "pptv", 
+		}, 
+		["cntv.cn"] = {
+			["strTitle"] = "央视网", 
+		}, 
+		["6.cn"] = {
+			["strTitle"] = "六间房", 
+		}, 
+		["letv.com"] = {
+			["strTitle"] = "乐视", 
+		}, 
+		["aipai.com"] = {
+			["strTitle"] = "爱拍", 
+		}, 
+		["56.com"] = {
+			["strTitle"] = "56视频", 
+		}, 
+		["ku6.com"] = {
+			["strTitle"] = "酷6", 
+		}, 
+		["v1.cn"] = {
+			["strTitle"] = "第一视频网", 
+		}, 
+		["pps.tv"] = {
+			["strTitle"] = "pps", 
+		}, 
+		["kankanews.com"] = {
+			["strTitle"] = "看看新闻网", 
+		}, 
+		["ifeng.com"] = {
+			["strTitle"] = "凤凰网", 
+		}, 
+		["v.qq.com"] = {
+			["strTitle"] = "腾讯视频", 
+		}, 
+		["baofeng.com"] = {
+			["strTitle"] = "暴风", 
+		}, 
+		["iqiyi.com"] = {
+			["strTitle"] = "爱奇艺", 
+		}, 
+		["video.sina.com.cn"] = {
+			["strTitle"] = "新浪视频", 
+		},
+	}
+	return t
+end

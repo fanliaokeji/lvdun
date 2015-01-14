@@ -1,0 +1,123 @@
+<xlue>
+	<objtreetemplate id="TipFilterBubbleTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>300</width>
+			<height>200</height>
+		</attr>
+
+		<obj id="root.layout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>300</width>
+				<height>200</height>
+			</attr>				
+			<children>	
+				<obj id="FilterBubble.GifBkg" class="SeqImageObject">
+					<attr>
+						<left>0</left>  
+						<top>0</top>
+						<width>300</width>
+						<height>165</height>
+						<gif>FilterBubble.GifBkg</gif>
+						<loop>1</loop>
+						<reverse>0</reverse>
+					</attr>
+				</obj>	
+				
+				<obj id="FilterBubble.Low.Bkg" class="TextureObject">
+					<attr>
+						<left>0</left>  
+						<top>father.height-35</top>
+						<width>300</width>
+						<height>35</height>
+						<texture>FilterBubble.Low.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="FilterBubble.Text" class="TextObject">
+							<attr>
+								<left>father.width-20-60</left>
+								<top>0</top>
+								<width>60</width>
+								<height>father.height</height>
+								<text>不再提醒</text>
+								<valign>center</valign>
+								<halign>center</halign>
+								<textcolor>6BA306</textcolor>
+								<font>font.yahei15</font>
+							</attr>
+						</obj>
+					
+						<obj id="FilterBubble.CheckBox" class="TextureObject">
+							<attr>
+								<left>father.width-90-16</left>
+								<top>(father.height-16)/2</top>
+								<width>16</width>
+								<height>16</height>
+								<texture>GreenWall.FilterBubble.CheckBox.Empty</texture>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipFilterBubbleWnd.xml.lua" func="OnClickCheckBox" />
+								<event name="OnMouseLeave" file="TipFilterBubbleWnd.xml.lua" func="RouteToFather" />
+								<event name="OnMouseEnter" file="TipFilterBubbleWnd.xml.lua" func="RouteToFather" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>	
+				
+				<obj id="FilterBubble.CloseBtn" class="LayoutObject">
+					<attr>
+						<left>father.width-35</left>
+						<top>10</top>
+						<width>15</width>
+						<height>15</height>
+						<cursor>IDC_HAND</cursor>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="TipFilterBubbleWnd.xml.lua" func="OnClickCloseBtn" />
+						<event name="OnMouseLeave" file="TipFilterBubbleWnd.xml.lua" func="RouteToFather" />
+						<event name="OnMouseEnter" file="TipFilterBubbleWnd.xml.lua" func="RouteToFather" />
+					</eventlist>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnMouseEnter" file="TipFilterBubbleWnd.xml.lua" func="OnMouseEnter" />
+				<event name="OnMouseLeave" file="TipFilterBubbleWnd.xml.lua" func="OnMouseLeave" />
+				<event name="OnLButtonUp" file="TipFilterBubbleWnd.xml.lua" func="OnClickBubblePanel" />
+			</eventlist>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipFilterBubbleWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>300</width>
+            <height>200</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>1</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipFilterBubbleWnd.xml.lua" func="OnCreate"/>
+			<event name="OnDestroy" file="TipFilterBubbleWnd.xml.lua" func="OnDestroy"/>
+			<event name="OnShowWindow" file="TipFilterBubbleWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

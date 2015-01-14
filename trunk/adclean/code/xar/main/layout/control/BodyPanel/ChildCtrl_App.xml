@@ -1,0 +1,141 @@
+<xlue>
+	<control class="ChildCtrl_App">
+		<attr_def>
+			<attr name="nTotalLineCount" type="int"/>
+			<attr name="nColumPerLine" type="int"><default>4</default></attr>
+			<attr name="nLinePerPage" type="int"><default>3</default></attr>
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_App.xml.lua" func="OnShowPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_App.MainWnd" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="ChildCtrl_App.ItemList" class="LayoutObject">
+							<attr>
+								<left>27</left>
+								<top>13</top>
+								<width>father.width-27*2</width>
+								<height>father.height</height>
+							</attr>		
+							<children>
+								<obj id="ChildCtrl_App.ItemList.Container" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>					
+								</obj>		
+							</children>
+						</obj>	
+						
+						<obj id="listbox.vscroll" class="TipAddin.ScrollBar">
+							<attr>
+								<Type>1</Type>
+								<ThumbBtn_normal>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_normal>
+								<ThumbBtn_hover>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_hover>
+								<ThumbBtn_down>GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal</ThumbBtn_down>
+								<ThumbRightMagrin>0</ThumbRightMagrin>
+								<ThumbBtnWidth>5</ThumbBtnWidth>
+								<ThumbBtnLength>13</ThumbBtnLength>
+								<SideBtnLength>0</SideBtnLength>
+								<left>father.width - 10</left>
+								<top>3</top>
+								<width>5</width>
+								<height>241</height>
+								<zorder>0</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnScrollBarMouseWheel" file="ChildCtrl_App.xml.lua" func="CLB__OnScrollBarMouseWheel"/>
+								<event name="OnMousePosEvent" file="ChildCtrl_App.xml.lua" func="CLB__OnScrollMousePosEvent"/>
+							</eventlist>
+						</obj>	
+					</children>
+					<eventlist>
+						<event name="OnMouseWheel" file="ChildCtrl_App.xml.lua" redirect="listbox.vscroll"/>
+					</eventlist>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ChildCtrl_App.xml.lua" func="OnInitControl"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+	
+	
+	<control class="AppItemCtrl">
+		<attr_def>
+			<attr name="bIsDownLoading" type="bool" ><default>false</default></attr>
+			<attr name="nItemHeight" type="int" ><default>67</default></attr>
+			<attr name="nItemWidth" type="int" ><default>48</default></attr>
+			<attr name="nItemSpaceH" type="int" ><default>9</default></attr>
+			<attr name="nItemSpaceW" type="int" ><default>25</default></attr>
+			<attr name="tItemInfo" />
+		</attr_def>
+		<method_def>
+			<SetAppName file="ChildCtrl_App.xml.lua" func="SetAppName"/>
+			<SetAppImageByPath file="ChildCtrl_App.xml.lua" func="SetAppImageByPath"/>
+			<SetAppInfo file="ChildCtrl_App.xml.lua" func="SetAppInfo"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="AppItemCtrl.Body" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>48</width>
+						<height>48+7+12</height>
+					</attr>
+					<children>
+						<obj id="AppItemCtrl.Image" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>48</width>
+								<height>48</height>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_App.xml.lua" func="OnClickAppImage" />
+								<event name="OnMouseWheel" file="ChildCtrl_App.xml.lua" func="EventRouteToFather"/>
+							</eventlist>
+						</obj>
+						
+						<obj id="AppItemCtrl.Text" class="DyTextCtrl">
+							<attr>
+								<left>0</left>
+								<top>48+7</top>
+								<width>father.width</width>
+								<height>12</height>
+								<Textcolor>4D4D4D</Textcolor>
+								<Font>font.yahei11</Font>
+								<FontUnderline>font.yahei11.underline</FontUnderline>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_App.xml.lua" func="OnClickAppText" />
+								<event name="OnMouseWheel" file="ChildCtrl_App.xml.lua" func="EventRouteToFather"/>
+							</eventlist>
+						</obj>	
+					</children>
+				</obj>	
+			</children>
+		</objtemplate>
+	</control>
+	
+</xlue>
