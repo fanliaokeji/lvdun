@@ -126,7 +126,7 @@ void DiDaClockDraw::DrawClock(HWND hWnd, HDC hdc)
 		::GetClientRect(hWndTaskBar, &rcTaskbar);
 		if(rcTaskbar.right - rcTaskbar.left > rcTaskbar.bottom - rcTaskbar.top) {
 			wchar_t first_line[100];
-			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d:%.2d %s", stLocal.wHour, stLocal.wMinute, stLocal.wSecond, week_day);
+			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d %s", stLocal.wHour, stLocal.wMinute, week_day);
 			wchar_t second_line[100];
 			int second_line_length = std::swprintf(second_line, L"%d-%.2d-%.2d", stLocal.wYear, stLocal.wMonth, stLocal.wDay);
 			if(first_line_length >= 0 && second_line_length >= 0) {
@@ -167,7 +167,7 @@ void DiDaClockDraw::DrawClock(HWND hWnd, HDC hdc)
 		}
 		else {
 			wchar_t first_line[100];
-			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d:%.2d", stLocal.wHour, stLocal.wMinute, stLocal.wSecond);
+			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d", stLocal.wHour, stLocal.wMinute);
 			wchar_t second_line[100];
 			int second_line_length = std::swprintf(second_line, L"%s", week_day);
 			if(first_line_length >= 0 && second_line_length >= 0) {
@@ -246,7 +246,7 @@ LRESULT DiDaClockDraw::OnCalcRect(HWND hWnd)
 		::GetClientRect(hWndTaskBar, &rcTaskbar);
 		if(rcTaskbar.right - rcTaskbar.left > rcTaskbar.bottom - rcTaskbar.top) {
 			wchar_t first_line[100];
-			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d:%.2d %s", stLocal.wHour, stLocal.wMinute, stLocal.wSecond, week_day);
+			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d %s", stLocal.wHour, stLocal.wMinute, week_day);
 			wchar_t second_line[100];
 			int second_line_length = std::swprintf(second_line, L"%d-%.2d-%.2d", stLocal.wYear, stLocal.wMonth, stLocal.wDay);
 			HDC hdc = ::GetDC(hWnd);
@@ -271,7 +271,7 @@ LRESULT DiDaClockDraw::OnCalcRect(HWND hWnd)
 		}
 		else {
 			wchar_t first_line[100];
-			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d:%.2d", stLocal.wHour, stLocal.wMinute, stLocal.wSecond);
+			int first_line_length = std::swprintf(first_line, L"%.2d:%.2d", stLocal.wHour, stLocal.wMinute);
 			wchar_t second_line[100];
 			int second_line_length = std::swprintf(second_line, L"%s", week_day);
 			HDC hdc = ::GetDC(hWnd);
