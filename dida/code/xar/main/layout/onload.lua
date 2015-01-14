@@ -181,7 +181,6 @@ function TryForceUpdate(tServerConfig)
 	
 	FunctionObj.DownLoadNewVersion(tForceUpdate, function(strRealPath) 
 		FunctionObj.SetIsUpdating(false)
-	
 		if not IsRealString(strRealPath) then
 			return
 		end

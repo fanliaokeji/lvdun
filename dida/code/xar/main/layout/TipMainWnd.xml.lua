@@ -85,12 +85,10 @@ function OnFocusChange(self, bFocus)
 	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
 	if not bFocus then
 		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-		timerManager:SetTimer(function(item, id)
-			item:KillTimer(id)
-			gTimerID = nil
-			self:Show(0)
-		end, 50)
-			
+
+		self:UpdateWindow()
+		self:Show(0)
+		
 		local nTimeSpanInMs = 200
 		if gTimerID ~= nil then
 			timerManager:KillTimer(gTimerID)

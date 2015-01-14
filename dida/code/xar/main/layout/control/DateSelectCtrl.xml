@@ -9,6 +9,7 @@
 			<GetMonthText file="DateSelectCtrl.xml.lua" func="GetMonthText"/>
 			<SetMonthText file="DateSelectCtrl.xml.lua" func="SetMonthText"/>
 			<ResetFestivalText file="DateSelectCtrl.xml.lua" func="ResetFestivalText"/>
+			<HideAllDropList file="DateSelectCtrl.xml.lua" func="HideAllDropList"/>
 		</method_def>
 		<event_def>
 			
