@@ -53,6 +53,7 @@
 			<MoveItemListPanel file="NormalMenu.xml.lua" func="MoveItemListPanel" />
 			<SetScrollPos file="NormalMenu.xml.lua" func="SetScrollPos" />
 			<GetItemHeight file="NormalMenu.xml.lua" func="GetItemHeight" />
+			<ProcessScrollWhenWheel file="NormalMenu.xml.lua" func="ProcessScrollWhenWheel" />
 		</method_def>
 		
 		<objtemplate>
