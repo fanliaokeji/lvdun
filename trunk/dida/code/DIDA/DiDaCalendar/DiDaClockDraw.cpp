@@ -340,8 +340,8 @@ void DiDaClockDraw::LoadDrawingSettings(HWND hWnd)
 	wchar_t fontname[LF_FACESIZE];	
 	GetDefaultFontName(fontname);
 
-	int size = 10;
-	LONG weight = FW_EXTRALIGHT;
+	int size = 9;
+	LONG weight = FW_THIN;
 	LONG italic = 0;
 	int codepage = GetACP();
 
@@ -519,7 +519,7 @@ HFONT DiDaClockDraw::DiDaCreateFont(const wchar_t *fontname, int size, LONG weig
 	// lf.lfCharSet = ;
 	lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
 	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-	lf.lfQuality = DEFAULT_QUALITY;
+	lf.lfQuality = CLEARTYPE_NATURAL_QUALITY;
 	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
 
 	return CreateFontIndirect(&lf);
