@@ -17,7 +17,7 @@ void LuaListenPre::LuaListener(DWORD userdata1,DWORD userdata2, const char* pszT
 	}
 
 	long lret = XLLRT_LuaCall(pLuaState, pParams->cArgs+1, 0, NULL);
-	ATLASSERT(lret == 0);
+	//ATLASSERT(lret == 0);
 	LONG lnStackTop2 = lua_gettop(pLuaState);
 	ATLASSERT(lnStackTop2 == lnStackTop);
 	return ;
