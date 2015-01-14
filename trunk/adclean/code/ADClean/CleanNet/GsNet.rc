@@ -70,12 +70,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "成都市灵智互动科技有限公司"
-            VALUE "FileDescription", "GsNet Module"
+            VALUE "FileDescription", "CleanNet Module"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "GsNet"
-            VALUE "LegalCopyright", "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
-            VALUE "OriginalFilename", "GsNet.dll"
-            VALUE "ProductName", "绿盾"
+            VALUE "InternalName", "CleanNet"
+            VALUE "LegalCopyright", "Copyright (c) 2015 成都市灵智互动科技有限公司"
+            VALUE "OriginalFilename", "CleanNet.dll"
+            VALUE "ProductName", "广告清道夫"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END

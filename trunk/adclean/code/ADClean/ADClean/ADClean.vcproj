@@ -248,6 +248,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest"
 			>
 			<File
+				RelativePath=".\res\ADClean.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\GreenShield.ico"
 				>
 			</File>
