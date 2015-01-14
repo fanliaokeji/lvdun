@@ -98,7 +98,7 @@ void TcpProxyConnection::AsyncStart(unsigned short listen_port)
 	boost::asio::ip::tcp::socket::endpoint_type userAgentEnpoint = this->m_userAgentSocket.remote_endpoint();
     unsigned short userAgentPort = userAgentEnpoint.port();
 	boost::asio::ip::address userAgentIP = userAgentEnpoint.address();
-	std::wstring eventName = L"Local\\GreenSheildPDIPCSyncEvent_";
+	std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncEvent_";
 	std::wstring userAgentPortStr;
     {
         std::wstringstream wss;
@@ -115,7 +115,7 @@ void TcpProxyConnection::AsyncStart(unsigned short listen_port)
 	// 自动关闭事件
 	ScopeResourceHandle<HANDLE, BOOL(WINAPI*)(HANDLE)> autoCloseEvent(hEvent, ::CloseHandle);
 
-    std::wstring fileMappingName = L"Local\\GreenSheildPDIPCSharedMemory_";
+    std::wstring fileMappingName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSharedMemory_";
     fileMappingName += userAgentPortStr;
 
     HANDLE hFileMapping = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4 * 1024, fileMappingName.c_str());
@@ -128,7 +128,7 @@ void TcpProxyConnection::AsyncStart(unsigned short listen_port)
 	ScopeResourceHandle<HANDLE, BOOL(WINAPI*)(HANDLE)> autoCloseFileMapping(hFileMapping, ::CloseHandle);
 
     SetObjectToLowIntegrity(hFileMapping);
-    std::wstring ackEventName = L"Local\\GreenSheildPDIPCSyncAckEvent_";
+    std::wstring ackEventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncAckEvent_";
     ackEventName += userAgentPortStr;
 
     HANDLE hAckEvent = ::CreateEvent(NULL, TRUE, FALSE, ackEventName.c_str());
