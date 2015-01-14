@@ -420,7 +420,7 @@ extern "C" __declspec(dllexport) void Send2DidaAnyHttpStat(CHAR *op, CHAR *cid)
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}
-	std::string str = "http://stat.lvdun123.com:8082/?mac=";
+	std::string str = "http://stat.didarili.com:8082/?mac=";
 	str += szMac;
 	str += "&op=";
 	str += op;
