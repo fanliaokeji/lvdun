@@ -1,0 +1,132 @@
+<xlue>
+	<objtreetemplate id="TipFilterRemindTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>399</width>
+			<height>181</height>
+		</attr>
+
+		<obj id="root.layout" class="TextureObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>399</width>
+				<height>181</height>
+				<texture>GreenWall.FilterRemind.Bkg</texture>
+			</attr>		
+			<children>	
+				<!--记录域名信息，不显示-->
+				<obj id="FilterRemind.Record.Name" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>0</width>
+						<height>0</height>
+					</attr>
+				</obj>	
+				<obj id="FilterRemind.Record.Domain" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>0</width>
+						<height>0</height>
+					</attr>
+				</obj>					
+			
+			
+				<obj id="FilterRemind.Caption" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>	
+				</obj>
+			
+				<obj id="FilterRemind.Text" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>36+40</top>
+						<width>father.width</width>
+						<height>40</height>
+						<valign>top</valign>
+						<halign>center</halign>
+						<font>font.yahei16</font>
+						<textcolor>4D4D4D</textcolor>
+						<text>该网站视频含有缓冲广告，是否一键过滤？</text>
+					</attr>
+				</obj>		
+
+				<obj id="FilterRemind.CancleBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25-88</left>
+						<top>father.height-25-28</top>
+						<width>88</width>
+						<height>28</height>
+						<NormalBkgID>GreenWall.PopupWnd.CancleBtn.Normal</NormalBkgID>
+						<DownBkgID>GreenWall.PopupWnd.CancleBtn.Hover</DownBkgID>
+						<HoverBkgID>GreenWall.PopupWnd.CancleBtn.Hover</HoverBkgID>
+						<DisableBkgID>GreenWall.PopupWnd.CancleBtn.Normal</DisableBkgID>
+						<Text>取消</Text>
+						<TextFont>font.yahei15</TextFont>
+						<TextColor>999999</TextColor>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="..\control\BodyPanel\ChildCtrl_AdvFilter.xml.lua" func="OnClickPopupCancle" />
+					</eventlist>
+				</obj>		
+				
+				<obj id="FilterRemind.EnterBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25*2-88*2</left>
+						<top>father.height-25-28</top>
+						<width>88</width>
+						<height>28</height>
+						<NormalBkgID>GreenWall.PopupWnd.EnterBtn.Normal</NormalBkgID>
+						<DownBkgID>GreenWall.PopupWnd.EnterBtn.Hover</DownBkgID>
+						<HoverBkgID>GreenWall.PopupWnd.EnterBtn.Hover</HoverBkgID>
+						<DisableBkgID>GreenWall.PopupWnd.EnterBtn.Normal</DisableBkgID>
+						<Text>免费体验</Text>
+						<TextFont>font.yahei15</TextFont>
+						<TextColor>system.white</TextColor>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="..\control\BodyPanel\ChildCtrl_AdvFilter.xml.lua" func="OnClickPopupEnter" />
+					</eventlist>
+				</obj>		
+				
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipFilterRemindWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>399</width>
+            <height>181</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>1</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipFilterRemindWnd.xml.lua" func="OnCreate"/>
+			<event name="OnDestroy" file="TipFilterRemindWnd.xml.lua" func="OnDestroy"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

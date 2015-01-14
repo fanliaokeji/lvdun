@@ -1,0 +1,170 @@
+<xlue>
+	<control class="ChildCtrl_AdvCount">
+		<attr_def>
+			<attr name="bHasInit" type="bool"/>
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_AdvCount.xml.lua" func="OnShowPanel"/>
+			<SetAdvCount file="ChildCtrl_AdvCount.xml.lua" func="SetAdvCount"/>
+			<AddAdvCount file="ChildCtrl_AdvCount.xml.lua" func="AddAdvCount"/>
+			<ChangeSwitchFilter file="ChildCtrl_AdvCount.xml.lua" func="ChangeSwitchFilter"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_AdvCount.MainWnd" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>188</height>
+						<texture>GreenWall.AdvCount.Bkg</texture>
+					</attr>
+				
+					<children>		
+						<obj id="ChildCtrl_AdvCount.MainWnd.Container" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>50</top>
+								<width>father.width</width>
+								<height>55</height>
+							</attr>
+						</obj>					
+					
+						<obj id="ChildCtrl_AdvCount.MainWnd.Text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>113</top>
+								<width>father.width</width>
+								<height>30</height>
+								<text>当天累计过滤广告次数</text>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.yahei24</font>
+								<textcolor>system.white</textcolor>
+							</attr>
+						</obj>							
+					</children>					
+				</obj>	
+							
+				<obj id="ChildCtrl_AdvCount.LowBkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>188</top>
+						<width>father.width</width>
+						<height>52</height>
+					</attr>
+					<children>
+						<obj id="ChildCtrl_AdvCount.Low.Text" class="TextObject">
+							<attr>
+								<left>34</left>
+								<top>0</top>
+								<width>father.width/2</width>
+								<height>father.height</height>
+								<text>广告过滤</text>
+								<font>font.yahei14</font>
+								<valign>center</valign>
+								<textcolor>filter.green</textcolor>
+							</attr>
+						</obj>
+						
+						<obj id="ChildCtrl_AdvCount.Switch.Filter" class="TextureObject">
+							<attr>
+								<left>father.width-(34+85)</left>
+								<top>(father.height-35)/2</top>
+								<width>84</width>
+								<height>35</height>
+								<texture>GreenWall.SwitchFilter.Open</texture>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_AdvCount.xml.lua" func="OnClickSwitchFilter" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+				
+			</children>
+		</objtemplate>
+	</control>
+
+
+	<control class="AdvCountElem">
+		<attr_def>
+			<attr name="nCurShowNumber" type="int"><default>1</default></attr>
+		</attr_def>
+		<method_def>
+			<SetElemCount file="ChildCtrl_AdvCount.xml.lua" func="SetElemCount"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="AdvCountElem.Bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>30</width>
+						<height>55</height>
+						<texture>GreenWall.AdvCountElem.Bkg</texture>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="AdvCountElem.Number1.Text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<visible>false</visible>
+							</attr>
+							<children>
+								<obj id="AdvCountElem.Number1.Img" class="ImageObject">
+									<attr>
+										<left>5</left>
+										<top>9</top>
+										<width>20</width>
+										<height>38</height>
+									</attr>
+								</obj>	
+							</children>
+						</obj>
+						<obj id="AdvCountElem.Number2.Text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>father.height</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<visible>false</visible>
+							</attr>
+							<children>
+								<obj id="AdvCountElem.Number2.Img" class="ImageObject">
+									<attr>
+										<left>5</left>
+										<top>9</top>
+										<width>20</width>
+										<height>38</height>
+									</attr>
+								</obj>	
+							</children>
+						</obj>	
+						
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ChildCtrl_AdvCount.xml.lua" func="OnInitCountElem" />
+			</eventlist>
+		</objtemplate>
+	</control>	
+	
+	<animationtemplate id="advcount.animation" class="PosChangeAnimation">
+		<attr>
+			<totaltime>200</totaltime>
+		</attr>
+	</animationtemplate>
+	
+</xlue>

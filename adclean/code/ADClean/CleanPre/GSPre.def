@@ -1,0 +1,6 @@
+LIBRARY	"GSPre"
+
+EXPORTS
+InitXLUE
+UnInitXLUE
+HandleSingleton

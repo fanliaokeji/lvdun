@@ -1,0 +1,248 @@
+function GetSubTable()
+	local t = {
+		["tBlackList"] = {
+			
+		}, 
+		["tDefWhiteList"] = { 
+			["so.com"] = {
+				["strName"] = "360搜索", 
+				["bState"] = true, 
+			}, 
+			["qq.com"] = {
+				["strName"] = "腾讯", 
+				["bState"] = true, 
+			}, 
+			["sohu.com"] = {
+				["strName"] = "搜狐", 
+				["bState"] = true, 
+			}, 
+			["sina.com.cn"] = {
+				["strName"] = "新浪", 
+				["bState"] = true, 
+			}, 
+			["163.com"] = {
+				["strName"] = "网易", 
+				["bState"] = true, 
+			}, 
+			["weibo.com"] = {
+				["strName"] = "微博", 
+				["bState"] = true, 
+			}, 
+			["taobao.com"] = {
+				["strName"] = "淘宝", 
+				["bState"] = true, 
+			}, 
+			["tmall.com"] = {
+				["strName"] = "天猫", 
+				["bState"] = true, 
+			}, 
+			["people.com.cn"] = {
+				["strName"] = "人民网", 
+				["bState"] = true, 
+			}, 
+			["xinhuanet.com"] = {
+				["strName"] = "新华网", 
+				["bState"] = true, 
+			}, 
+			["china.com.cn"] = {
+				["strName"] = "中国网", 
+				["bState"] = true, 
+			},
+			["cnr.cn"] = {
+				["strName"] = "央广网", 
+				["bState"] = true, 
+			},			
+			["hao123.com"] = {
+				["strName"] = "好123", 
+				["bState"] = true, 
+			}, 
+			["360.cn"] = {
+				["strName"] = "360", 
+				["bState"] = true, 
+			}, 
+			["ifeng.com"] = {
+				["strName"] = "凤凰网", 
+				["bState"] = true, 
+			}, 
+			["youku.com"] = {
+				["strName"] = "优酷", 
+				["bState"] = true, 
+			}, 
+			["tudou.com"] = {
+				["strName"] = "土豆", 
+				["bState"] = true, 
+			},
+			["iqiyi.com"] = {
+				["strName"] = "爱奇艺", 
+				["bState"] = true, 
+			},
+			["kankan.com"] = {
+				["strName"] = "迅雷看看", 
+				["bState"] = true, 
+			},
+			["letv.com"] = {
+				["strName"] = "乐视", 
+				["bState"] = true, 
+			},
+			["pptv.com"] = {
+				["strName"] = "PPTV聚力", 
+				["bState"] = true, 
+			},
+			["pps.tv"] = {
+				["strName"] = "PPS", 
+				["bState"] = true, 
+			},
+			["sogou.com"] = {
+				["strName"] = "搜狗", 
+				["bState"] = true, 
+			},
+			["tieba.baidu.com"] = {
+				["strName"] = "百度贴吧", 
+				["bState"] = true, 
+			},
+			["v.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
+			["baishi.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
+			["zhidao.baidu.com"] = {
+				["strName"] = "百度知道", 
+				["bState"] = true, 
+			},
+			["rj.baidu.com"] = {
+				["strName"] = "百度软件", 
+				["bState"] = true, 
+			},
+			["play.baidu.com"] = {
+				["strName"] = "百度音乐", 
+				["bState"] = true, 
+			},
+			["pan.baidu.com"] = {
+				["strName"] = "百度云盘", 
+				["bState"] = true, 
+			},
+			["gate.baidu.com"] = {
+				["strName"] = "百度开放平台", 
+				["bState"] = true, 
+			},
+			["baijia.baidu.com"] = {
+				["strName"] = "百度百家", 
+				["bState"] = true, 
+			},
+			["jiaoyu.baidu.com"] = {
+				["strName"] = "百度教育", 
+				["bState"] = true, 
+			},
+			["list.video.baidu.com"] = {
+				["strName"] = "百度视频", 
+				["bState"] = true, 
+			},
+			["duba.com"] = {
+				["strName"] = "毒霸", 
+				["bState"] = true, 
+			},
+			["alipay.com"] = {
+				["strName"] = "支付宝", 
+				["bState"] = true, 
+			},
+			["alimama.com"] = {
+				["strName"] = "阿里妈妈", 
+				["bState"] = true, 
+			},
+			["tenpay.com"] = {
+				["strName"] = "财付通", 
+				["bState"] = true, 
+			},
+			["yeepay.com"] = {
+				["strName"] = "易宝支付", 
+				["bState"] = true, 
+			},
+			["99bill.com"] = {
+				["strName"] = "快钱", 
+				["bState"] = true, 
+			},
+			["95516.com"] = {
+				["strName"] = "中国银联", 
+				["bState"] = true, 
+			},
+			["amazon.com"] = {
+				["strName"] = "亚马逊", 
+				["bState"] = true, 
+			},
+			["icbc.com.cn"] = {
+				["strName"] = "工商银行", 
+				["bState"] = true, 
+			},
+			["ccb.com"] = {
+				["strName"] = "建设银行", 
+				["bState"] = true, 
+			},
+			["boc.cn"] = {
+				["strName"] = "中国银行", 
+				["bState"] = true, 
+			},
+			["bankcomm.com"] = {
+				["strName"] = "交通银行", 
+				["bState"] = true, 
+			},
+			["abcchina.com"] = {
+				["strName"] = "农业银行", 
+				["bState"] = true, 
+			},
+			["cmbchina.com"] = {
+				["strName"] = "招商银行", 
+				["bState"] = true, 
+			},
+			["psbc.com"] = {
+				["strName"] = "中国邮政", 
+				["bState"] = true, 
+			},
+			["cebbank.com"] = {
+				["strName"] = "光大银行", 
+				["bState"] = true, 
+			},
+			["cmbc.com.cn"] = {
+				["strName"] = "民生银行", 
+				["bState"] = true, 
+			},
+			["pingan.com"] = {
+				["strName"] = "中国平安", 
+				["bState"] = true, 
+			},
+			["spdb.com.cn"] = {
+				["strName"] = "浦发银行", 
+				["bState"] = true, 
+			},
+			["ecitic.com"] = {
+				["strName"] = "中信", 
+				["bState"] = true, 
+			},
+			["cib.com.cn"] = {
+				["strName"] = "兴业银行", 
+				["bState"] = true, 
+			},
+			["hxb.com.cn"] = {
+				["strName"] = "华夏银行", 
+				["bState"] = true, 
+			},
+			["cgbchina.com.cn"] = {
+				["strName"] = "广发银行", 
+				["bState"] = true, 
+			},
+			["bankofbeijing.com.cn"] = {
+				["strName"] = "北京银行", 
+				["bState"] = true, 
+			},
+			["weather.com.cn"] = {
+				["strName"] = "中国天气", 
+				["bState"] = true, 
+			},
+		}, 
+		["tUserWhiteList"] = {
+		},
+	}
+	return t
+end
