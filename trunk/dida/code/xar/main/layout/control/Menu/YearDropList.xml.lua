@@ -33,10 +33,9 @@ function OnInitControl(self)
 end
 
 
-function OnMouseWheel(self)
+function OnMouseWheel(self, x, y, distance)
 	local objNormalMenu = self:GetControlObject("Menu.Context")
-	local objMenuContainer = objNormalMenu:GetControlObject("context_menu") 
-		
+	objNormalMenu:ProcessScrollWhenWheel(x, y, distance)
 end
 
 ----

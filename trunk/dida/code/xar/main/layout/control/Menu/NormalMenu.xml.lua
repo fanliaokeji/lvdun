@@ -597,21 +597,28 @@ function SetScrollPos(self, nScrollPos)
 end
 
 
-function CLB__OnScrollBarMouseWheel(self, name, x, y, distance)
-	local objRootCtrl = self:GetOwnerControl()
-	local nScrollPos = self:GetScrollPos()
-
+function ProcessScrollWhenWheel(self, x, y, distance)
+	local objRootCtrl = self
+	local objScrollBar = objRootCtrl:GetControlObject("listbox.vscroll")
+	
+	local nScrollPos = objScrollBar:GetScrollPos()
 	local nItemHeight = objRootCtrl:GetItemHeight()
 		
     if distance > 0 then
-		self:SetScrollPos( nScrollPos - nItemHeight, true )
+		objScrollBar:SetScrollPos( nScrollPos - nItemHeight, true )
     else		
-		self:SetScrollPos( nScrollPos + nItemHeight, true )
+		objScrollBar:SetScrollPos( nScrollPos + nItemHeight, true )
     end
 
-	local nNewScrollPos = self:GetScrollPos()
+	local nNewScrollPos = objScrollBar:GetScrollPos()
 	objRootCtrl:MoveItemListPanel(nNewScrollPos)
-	return true	
+end
+
+
+
+function CLB__OnScrollBarMouseWheel(self, name, x, y, distance)
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:ProcessScrollWhenWheel(x, y, distance)
 end
 
 
