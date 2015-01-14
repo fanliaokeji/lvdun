@@ -64,10 +64,10 @@ Var str_ChannelID
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
+!define PRODUCT_MAININFO_FORSELF "Software\DDCalendar"
 
 ;卸载包开关（请不要轻易打开）
-; !define SWITCH_CREATE_UNINSTALL_PAKAGE 1
+;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -175,9 +175,8 @@ Function CloseExe
 	${Next}
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
-	MessageBox MB_OK|MB_ICONSTOP "$0"
 	${If} $0 != 0
-		SendMessage $0 1344 0 100
+		SendMessage $0 1344 100 100
 	${EndIf}
 	Sleep 250
 FunctionEnd
@@ -267,7 +266,7 @@ Function DoInstall
   ${If} $Bool_IsUpdate == 0
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	;System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t "install", t "$R0")'
   ${Else}
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
@@ -373,7 +372,7 @@ Function CmdSilentInstall
 	${GetParameters} $R1
 	${GetOptions} $R1 "/setboot"  $R0
 	IfErrors +2 0
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	${GetParameters} $R1
@@ -462,7 +461,7 @@ Function CmdUnstall
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	;System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t "uninstall", t "$str_ChannelID")'
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
@@ -690,7 +689,7 @@ Function ClickSure2
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
 	${If} $0 != 0
-		SendMessage $0 1344 0 100
+		SendMessage $0 1344 100 100
 	${EndIf}
 	Sleep 250
 	StrCpy $R9 1 ;Goto the next page
@@ -1718,7 +1717,7 @@ Function un.OnClick_CruelRefused
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	;System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t "uninstall", t "$str_ChannelID")'
 	${For} $R3 0 6
 		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 		${If} $R3 == 6
@@ -1735,7 +1734,7 @@ Function un.OnClick_CruelRefused
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
 	${If} $0 != 0
-		SendMessage $0 1344 0 100
+		SendMessage $0 1344 100 100
 	${EndIf}
 	Sleep 250
 	
@@ -1896,7 +1895,7 @@ Function un.ClickSure
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
 	${If} $0 != 0
-		SendMessage $0 1344 0 100
+		SendMessage $0 1344 100 100
 	${EndIf}
 	Sleep 250
 	StrCpy $9 "userchoice"
@@ -1959,7 +1958,7 @@ Function un.MyUnstall
     SkinBtn::onClick $1 $3
 	
 	;卸载完成
-	${NSD_CreateButton} 183 265 80 30 ""
+	${NSD_CreateButton} 198 265 80 30 ""
  	Pop	$Btn_FinishUnstall
  	StrCpy $1 $Btn_FinishUnstall
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_xiezaiwancheng.bmp $1
