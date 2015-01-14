@@ -1,0 +1,23 @@
+----这是示例配置文件，用于记录配置的结构，不要发在外网。
+function GetSubTable()
+	local t = {
+		["tNewVersionInfo"] = {
+			["strVersion"] = "1.0.0.2",
+			["strPacketURL"] = "http://down.didarili.com/client/DIDASetup_0001.exe",
+			["strMD5"] = "19E733B5709BFBC4F060DF3D6FE4049A",
+			["tInroduce"] = {
+				"1.修复部分bug",
+				"2.添加家长控制",
+				"",
+			},
+			
+			["tForceUpdate"] = {
+				["strVersion"] = "1.0.0.2",
+				["tVersion"] = {"0"},
+				["strPacketURL"] = "http://down.didarili.com/client/DIDASetup_0001.exe",
+				["strMD5"] = "19E733B5709BFBC4F060DF3D6FE4049A",
+			},
+		},
+	}
+	return t
+end
