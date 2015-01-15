@@ -137,7 +137,12 @@ void DiDaClockDraw::DrawClock(HWND hWnd, HDC hdc)
 				DrawText(hMemDC, second_line, second_line_length, &rcSecondLine, DT_CALCRECT);
 				LONG firstLineHeight = rcFirstLine.bottom - rcFirstLine.top;
 				LONG secondLineHeight = rcSecondLine.bottom - rcSecondLine.top;
-				LONG lineGap = 1;
+				LONG lineGap = 0;
+				if (backHeight < 35) {
+					if (dwMajorVersion >= 6) {
+						lineGap = -3;
+					}
+				}
 				LONG drawTextHeight = firstLineHeight + lineGap + secondLineHeight;
 
 				LONG firstLineWidth = rcFirstLine.right - rcFirstLine.left;
@@ -147,10 +152,9 @@ void DiDaClockDraw::DrawClock(HWND hWnd, HDC hdc)
 					drawTextWidth = secondLineWidth;
 				}
 
-				if(drawTextHeight < backHeight) {
-					rcFirstLine.top = (backHeight - drawTextHeight) / 2;
-					rcFirstLine.bottom = rcFirstLine.top + firstLineHeight;
-				}
+				rcFirstLine.top = (backHeight - drawTextHeight) / 2;
+				rcFirstLine.bottom = rcFirstLine.top + firstLineHeight;
+				
 				if(firstLineWidth < drawTextWidth) {
 					rcFirstLine.left = (drawTextWidth - firstLineWidth) / 2;
 					rcFirstLine.right = rcFirstLine.left + firstLineWidth;
