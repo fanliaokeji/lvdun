@@ -12,10 +12,10 @@ function SetClndrInfo(self, tClndrContent)
 	local strLunarDate = tostring(tClndrContent.cmonth)..tostring(tClndrContent.cday)
 	SetTextObjContent(objRootCtrl, "LeftBar.LunarDate", strLunarDate)
 
-	local strChineseYear = tostring(tClndrContent.yearganzhi).."年【"..tostring(tClndrContent.shengxiao).."年】"
+	local strChineseYear = tostring(tClndrContent.yearganzhi).."年 【"..tostring(tClndrContent.shengxiao).."年】"
 	SetTextObjContent(objRootCtrl, "LeftBar.ChineseYear", strChineseYear)
 	
-	local strChineseDate = tostring(tClndrContent.monthganzhi).."月"..tostring(tClndrContent.dayganzhi).."日"
+	local strChineseDate = tostring(tClndrContent.monthganzhi).."月 "..tostring(tClndrContent.dayganzhi).."日"
 	SetTextObjContent(objRootCtrl, "LeftBar.ChineseDate", strChineseDate)
 	
 	local strWeek = "星期"..tostring(tClndrContent.weekday)
