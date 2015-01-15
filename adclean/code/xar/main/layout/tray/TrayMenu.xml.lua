@@ -1,5 +1,5 @@
-local tipUtil = XLGetObject("GS.Util")
-local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+local tFunctionHelper = XLGetGlobal("Project.FunctionHelper")
+local tipUtil = tFunctionHelper.tipUtil
 local g_bFilterOpen = false
 
 -------事件---
@@ -8,9 +8,16 @@ function OnSelect_Update(self)
 end
 
 
-function OnSelect_Website(self)
-	OpenConfigURL("strIndexURL")
+function OnSelect_Sysboot(self)
+	-- OpenConfigURL("strIndexURL")
 end
+
+
+function OnInit_Sysboot(self)
+	
+end
+
+
 
 function OnSelect_Introduce(self)
 	tFunctionHelper.ShowPopupWndByName("TipIntroduceWnd.Instance", true)
@@ -126,7 +133,7 @@ end
 
 
 function SendReport(tStatInfo)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	if type(FunctionObj.TipConvStatistic) == "function" then
 		FunctionObj.TipConvStatistic(tStatInfo)
 	end

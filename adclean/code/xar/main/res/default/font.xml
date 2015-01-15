@@ -2,19 +2,28 @@
 	<resource>
 		<font id="default.font" height="12" facename="微软雅黑" />
 		
-		<font id="font.yahei10" height="10" facename="微软雅黑" /> 
+		<font id="font.yahei9" height="9" facename="微软雅黑" /> 
 		<font id="font.yahei11" height="11" facename="微软雅黑" /> 
 		<font id="font.yahei12" height="12" facename="微软雅黑" /> 
 		<font id="font.yahei13" height="13" facename="微软雅黑" /> 
-		<font id="font.yahei14" height="14" facename="微软雅黑" /> 
-		<font id="font.yahei15" height="15" facename="微软雅黑" /> 
 		<font id="font.yahei16" height="16" facename="微软雅黑" /> 
-		<font id="font.yahei24" height="24" facename="微软雅黑" /> 
 		
-		<font id="font.yahei12.bold" height="12" facename="微软雅黑" weight="bold"/>
-		<font id="font.yahei11.underline" height="11" facename="微软雅黑" underline="1"/> 
+		<font id="font.dsdigital28" height="28" facename="DS-Digital" /> 
+		<font id="font.fzlt10" height="10" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt11" height="11" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt12" height="12" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt13" height="13" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt14" height="14" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt15" height="15" facename="方正兰亭黑简体" /> 
+		<font id="font.fzlt21" height="21" facename="方正兰亭黑简体" /> 
 		
-		<font id="font.haetten53" height="53" facename="Haettenschweiler" /> 
+		<font id="font.dincond18" height="18" facename="DINCondensedC" /> 
+		
+		<font id="font.dsdigital28.bold" height="28" facename="DS-Digital" weight="bold"/> 
+		<font id="font.tnroman38.bold" height="38" facename="Times New Roman" weight="bold" /> 
+		<font id="font.tnroman18.bold" height="18" facename="Times New Roman" weight="bold" /> 
+		
+		<font id="font.yahei22.bold" height="22" facename="微软雅黑" weight="bold" /> 
 		
 	</resource>
 </XLUE>

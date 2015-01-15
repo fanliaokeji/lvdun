@@ -1,77 +1,16 @@
 <XLUE>
 	<resource>
-		<texture id="GreenWall.MainWnd.TopShadow" image="bitmap\GreenWall.MainWnd.TopShadow.png" />
-		<texture id="GreenWall.MainWndCenter.Bkg" type="NineInOne" image="bitmap\GreenWall.MainWndCenter.Bkg.png" />
+		<texture id="MainWnd.Up.Bkg" image="bitmap\MainWnd.Up.Bkg.png" />
+		<texture id="MainWnd.Low.Bkg" image="bitmap\MainWnd.Low.Bkg.png" />
+		<texture id="MainWnd.BtnClose.Normal" image="bitmap\MainWnd.BtnClose.Normal.png" />
+		<texture id="MainWnd.BtnMin.Normal" image="bitmap\MainWnd.BtnMin.Normal.png" />
+		<texture id="MainWnd.BtnClose.Hover" image="bitmap\MainWnd.BtnClose.Hover.png" />
+		<texture id="MainWnd.BtnMin.Hover" image="bitmap\MainWnd.BtnMin.Hover.png" />
 		
-		<texture id="GreenWall.FilterRemind.Bkg" image="bitmap\GreenWall.FilterRemind.Bkg.png" />
-		<texture id="GreenWall.ExitRemind.Bkg" image="bitmap\GreenWall.ExitRemind.Bkg.png" />
-		<texture id="GreenWall.AboutWnd.Bkg" image="bitmap\GreenWall.AboutWnd.Bkg.png" />
-		<texture id="GreenWall.UpdateWnd.Bkg" image="bitmap\GreenWall.UpdateWnd.Bkg.png" />
-		<texture id="GreenWall.BubbleWnd.Bkg" image="bitmap\GreenWall.BubbleWnd.Bkg.png" />
+		<texture id="SwitchFilter.Open" image="bitmap\SwitchFilter.Open.png" />
+		<texture id="SwitchFilter.Close" image="bitmap\SwitchFilter.Close.png" />
+		<texture id="AdvCountElem.Bkg" image="bitmap\AdvCountElem.Bkg.png" />
 		
-		<texture id="GreenWall.BubbleWnd.CheckBox.Empty" image="bitmap\GreenWall.BubbleWnd.CheckBox.Empty.png" />
-		<texture id="GreenWall.BubbleWnd.CheckBox.Check" image="bitmap\GreenWall.BubbleWnd.CheckBox.Check.png" />
-		
-		<texture id="GreenWall.IntroduceWnd.Panel1" image="bitmap\GreenWall.IntroduceWnd.Panel1.png" />
-		<texture id="GreenWall.IntroduceWnd.Panel2" image="bitmap\GreenWall.IntroduceWnd.Panel2.png" />
-		<texture id="GreenWall.IntroduceWnd.Panel3" image="bitmap\GreenWall.IntroduceWnd.Panel3.png" />
-		<texture id="GreenWall.IntroduceWnd.Panel4" image="bitmap\GreenWall.IntroduceWnd.Panel4.png" />
-		<texture id="GreenWall.IntroduceWnd.TryBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.TryBtn.Hover.png" />
-		<texture id="GreenWall.IntroduceWnd.TryBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.TryBtn.Normal.png" />
-		<texture id="GreenWall.IntroduceWnd.CloseBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Normal.png" />
-		<texture id="GreenWall.IntroduceWnd.CloseBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Hover.png" />
-		
-		<texture id="GreenWall.UpdateWnd.EnterBtn.Hover" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Hover.png" />
-		<texture id="GreenWall.UpdateWnd.EnterBtn.Normal" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Normal.png" />
-		<texture id="GreenWall.UpdateWnd.CloseBtn.Normal" image="bitmap\GreenWall.UpdateWnd.CloseBtn.Normal.png" />
-		<texture id="GreenWall.UpdateWnd.CloseBtn.Hover" image="bitmap\GreenWall.UpdateWnd.CloseBtn.Hover.png" />
-		<texture id="GreenWall.UpdateWnd.MinBtn.Normal" image="bitmap\GreenWall.UpdateWnd.MinBtn.Normal.png" />
-		<texture id="GreenWall.UpdateWnd.MinBtn.Hover" image="bitmap\GreenWall.UpdateWnd.MinBtn.Hover.png" />
-		<texture id="GreenWall.UpdateWnd.ProgressBar.Bkg" image="bitmap\GreenWall.UpdateWnd.ProgressBar.Bkg.png" />
-		<texture id="GreenWall.UpdateWnd.ProgressBar" type="ThreeInOneH" image="bitmap\GreenWall.UpdateWnd.ProgressBar.png" />
-		<texture id="GreenWall.UpdateWnd.ProgressBar.Light" image="bitmap\GreenWall.UpdateWnd.ProgressBar.Light.png" />
-		
-		<texture id="GreenWall.PopupWnd.CancleBtn.Normal" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.png" />
-		<texture id="GreenWall.PopupWnd.CancleBtn.Hover" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.png" />
-		<texture id="GreenWall.PopupWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />
-		<texture id="GreenWall.PopupWnd.EnterBtn.Hover" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.png" />
-	
-		<texture id="GreenWall.PopupWnd.CancleBtn.Normal.Little" image="bitmap\GreenWall.PopupWnd.CancleBtn.Normal.Little.png" />
-		<texture id="GreenWall.PopupWnd.CancleBtn.Hover.Little" image="bitmap\GreenWall.PopupWnd.CancleBtn.Hover.Little.png" />
-		<texture id="GreenWall.PopupWnd.EnterBtn.Normal.Little" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.Little.png" />
-		<texture id="GreenWall.PopupWnd.EnterBtn.Hover.Little" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.Little.png" />
-	
-		<texture id="GreenWall.TrayMenu.Select" image="bitmap\GreenWall.TrayMenu.Select.png" />
-	
-		<texture id="GreenWall.MainWndLow.Bkg" image="bitmap\GreenWall.MainWndLow.Bkg.png" />
-		<texture id="GreenWall.MainWndLow.Splitter" image="bitmap\GreenWall.MainWndLow.Splitter.png" />
-		<texture id="GreenWall.MainWndBottom.Bkg" image="bitmap\GreenWall.MainWndBottom.Bkg.png" />
-		
-		<texture id="GreenWall.Caption.Bkg" image="bitmap\GreenWall.Caption.Bkg.png" />
-		<texture id="GreenWall.AdvCount.Bkg" image="bitmap\GreenWall.AdvCount.Bkg.png" />
-		<texture id="GreenWall.AdvCountElem.Bkg" image="bitmap\GreenWall.AdvCount.NumberBkg.png" />
-		
-		<texture id="Greenwall.ConfigElem.ElemBkg.Normal" image="bitmap\GreenWall.ConfigElem.ElemBkg.Normal.png" />
-		<texture id="Greenwall.ConfigElem.ElemBkg.Hover" image="bitmap\GreenWall.ConfigElem.ElemBkg.Hover.png" />
-		
-		<texture id="GreenWall.FilterConfig.Menu.Bkg" image="bitmap\GreenWall.FilterConfig.Menu.Bkg.png" />
-		<texture id="GreenWall.FilterConfig.Menu.Select" image="bitmap\GreenWall.FilterConfig.Menu.Select.png" />
-		
-		<texture id="GreenWall.AdvFilter.ActionBtn.Normal" image="bitmap\GreenWall.AdvFilter.ActionBtn.Normal.png" />
-		<texture id="GreenWall.AdvFilter.ActionBtn.Hover" image="bitmap\GreenWall.AdvFilter.ActionBtn.Hover.png" />
-	
-		<texture id="Greenwall.AdvFilter.ElemBkg.Normal" image="bitmap\Greenwall.AdvFilter.ElemBkg.Normal.png" />
-		<texture id="Greenwall.AdvFilter.ElemBkg.Hover" image="bitmap\Greenwall.AdvFilter.ElemBkg.Hover.png" />
-		<texture id="Greenwall.AdvFilter.ElemBkg.Disable.Normal" image="bitmap\Greenwall.AdvFilter.ElemBkg.Disable.Normal.png" />
-		<texture id="Greenwall.AdvFilter.ElemBkg.Disable.Hover" image="bitmap\Greenwall.AdvFilter.ElemBkg.Disable.Hover.png" />
-		<texture id="Greenwall.AdvFilter.PopupPanel.Bkg" image="bitmap\Greenwall.AdvFilter.PopupPanel.Bkg.png" />
-		<texture id="Greenwall.AdvFilter.PopupPanel.InputBkg" image="bitmap\Greenwall.AdvFilter.PopupPanel.InputBkg.png" />
-		<texture id="GreenWall.AdvFilter.PopupPanel.AddBtn.Normal" image="bitmap\GreenWall.AdvFilter.PopupPanel.AddBtn.Normal.png" />
-		<texture id="GreenWall.AdvFilter.PopupPanel.AddBtn.Hover" image="bitmap\GreenWall.AdvFilter.PopupPanel.AddBtn.Hover.png" />
-		<texture id="GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal" image="bitmap\GreenWall.AdvFilter.Vscroll.ThumbBtn.Normal.png" />
-				
-				
-		<bitmap id="GreenWall.Logo" path="bitmap\GreenWall.Logo.png"/>
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
 		<bitmap id="Number_2" path="bitmap\number_2.png"/>
@@ -82,59 +21,21 @@
 		<bitmap id="Number_7" path="bitmap\number_7.png"/>
 		<bitmap id="Number_8" path="bitmap\number_8.png"/>
 		<bitmap id="Number_9" path="bitmap\number_9.png"/>
-
-		<bitmap id="GreenWall.UpdateWnd.Checking_1" path="bitmap\GreenWall.UpdateWnd.Checking_1.png"/>
-		<bitmap id="GreenWall.UpdateWnd.Checking_2" path="bitmap\GreenWall.UpdateWnd.Checking_2.png"/>
-		<bitmap id="GreenWall.UpdateWnd.Checking_3" path="bitmap\GreenWall.UpdateWnd.Checking_3.png"/>
-		<bitmap id="GreenWall.UpdateWnd.Checking_4" path="bitmap\GreenWall.UpdateWnd.Checking_4.png"/>
 		
-		<bitmap id="GreenWall.Bulb" path="bitmap\GreenWall.Bulb.png"/>
+		<texture id="Number.Bkg_1" image="bitmap\Number.Bkg_1.png"/>
+		<texture id="Number.Bkg_2" image="bitmap\Number.Bkg_2.png"/>
+		<texture id="Number.Bkg_3" image="bitmap\Number.Bkg_3.png"/>
+		<texture id="Number.Bkg_4" image="bitmap\Number.Bkg_4.png"/>
+		<texture id="Number.Bkg_5" image="bitmap\Number.Bkg_5.png"/>
+		<texture id="Number.Bkg_6" image="bitmap\Number.Bkg_6.png"/>
 		
-		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
-		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
-		<texture id="GreenWall.BtnClose.Down"   image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
-		<texture id="GreenWall.BtnClose.Disable" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
-
-		<texture id="GreenWall.BtnMin.Normal" image="bitmap\GreenWall.Caption.BtnMin.Normal.png" />
-		<texture id="GreenWall.BtnMin.Hover"  image="bitmap\GreenWall.Caption.BtnMin.Hover.png" />
-		<texture id="GreenWall.BtnMin.Down"   image="bitmap\GreenWall.Caption.BtnMin.Hover.png" />
-		<texture id="GreenWall.BtnMin.Disable"  image="bitmap\GreenWall.Caption.BtnMin.Normal.png" />
-			
-		<texture id="GreenWall.Config.Normal" image="bitmap\GreenWall.Caption.Config.Normal.png" />
-		<texture id="GreenWall.Config.Hover"  image="bitmap\GreenWall.Caption.Config.Hover.png" />
-		<texture id="GreenWall.Config.Down"   image="bitmap\GreenWall.Caption.Config.Hover.png" />
-		<texture id="GreenWall.Config.Disable"  image="bitmap\GreenWall.Caption.Config.Normal.png" />
-			
-		<imagelist id="GreenWall.Caption.Skin" splitter="1" varyblock="1" image="bitmap\GreenWall.Skin.png"/>
-			<texture id="GreenWall.Skin.Normal" imagelist="GreenWall.Caption.Skin" index="1" />
-			<texture id="GreenWall.Skin.Hover"  imagelist="GreenWall.Caption.Skin" index="2" />
-			<texture id="GreenWall.Skin.Down"   imagelist="GreenWall.Caption.Skin" index="3" />
-			<texture id="GreenWall.Skin.Disable"   imagelist="GreenWall.Caption.Skin" index="1" />
-			
-		<texture id="GreenWall.SwitchFilter.Open" image="bitmap\GreenWall.SwitchFilter.Open.png" />
-		<texture id="GreenWall.SwitchFilter.Close" image="bitmap\GreenWall.SwitchFilter.Close.png" />
-	
-		<texture id="GreenWall.MainWndLow.MainPage.Normal" image="bitmap\GreenWall.MainWndLow.MainPage.Normal.png" />
-		<texture id="GreenWall.MainWndLow.MainPage.Hover" image="bitmap\GreenWall.MainWndLow.MainPage.Hover.png"/>
-		<texture id="GreenWall.MainWndLow.MainPage.Down" image="bitmap\GreenWall.MainWndLow.MainPage.Hover.png" />
-		<texture id="GreenWall.MainWndLow.MainPage.Disable" image="bitmap\GreenWall.MainWndLow.MainPage.Normal.png" />
-
-		<texture id="GreenWall.MainWndLow.App.Normal" image="bitmap\GreenWall.MainWndLow.App.Normal.png" />
-		<texture id="GreenWall.MainWndLow.App.Hover" image="bitmap\GreenWall.MainWndLow.App.Hover.png" />
-		<texture id="GreenWall.MainWndLow.App.Down" image="bitmap\GreenWall.MainWndLow.App.Hover.png" />
-		<texture id="GreenWall.MainWndLow.App.Disable" image="bitmap\GreenWall.MainWndLow.App.Normal.png" />
-
-		<texture id="GreenWall.MainWndLow.FilterConfig.Normal" image="bitmap\GreenWall.MainWndLow.FilterConfig.Normal.png" />
-		<texture id="GreenWall.MainWndLow.FilterConfig.Hover" image="bitmap\GreenWall.MainWndLow.FilterConfig.Hover.png" />
-		<texture id="GreenWall.MainWndLow.FilterConfig.Down" image="bitmap\GreenWall.MainWndLow.FilterConfig.Hover.png" />
-		<texture id="GreenWall.MainWndLow.FilterConfig.Disable" image="bitmap\GreenWall.MainWndLow.FilterConfig.Normal.png" />
-
-		<texture id="GreenWall.Common.SwitchButton.Open" image="bitmap\GreenWall.Common.SwitchButton.Open.png"/>
-		<texture id="GreenWall.Common.SwitchButton.Close" image="bitmap\GreenWall.Common.SwitchButton.Close.png" />		
-			
-		<gif id="FilterBubble.GifBkg" file="bitmap\GreenWall.FilterBubble.GifBkg.gif" />
-		<texture id="FilterBubble.Low.Bkg" image="bitmap\GreenWall.FilterBubble.Low.Bkg.png" />
-		<texture id="GreenWall.FilterBubble.CheckBox.Empty" image="bitmap\GreenWall.FilterBubble.CheckBox.Empty.png" />
-		<texture id="GreenWall.FilterBubble.CheckBox.Check" image="bitmap\GreenWall.FilterBubble.CheckBox.Check.png" />
+		<gif id="MainWnd.Up.Gif.Bkg" file="bitmap\MainWnd.Up.Gif.Bkg.gif" />
 	</resource>
 </XLUE>
+
+
+
+
+
+
+

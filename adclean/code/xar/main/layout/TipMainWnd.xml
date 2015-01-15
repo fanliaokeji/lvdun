@@ -28,16 +28,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>320</width>
-			<height>337</height>
+			<width>350</width>
+			<height>261</height>
 		</attr>
 
 		<obj id="root.layout" class="TipMainWndRootCtrl">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>320</width>
-				<height>337</height>
+				<width>350</width>
+				<height>261</height>
 			</attr>		
 		</obj>
 	</objtreetemplate>
@@ -47,19 +47,15 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>320</width>
-            <height>337</height>
-            <cacheleft>0</cacheleft>
-            <cachetop>0</cachetop>
+            <width>350</width>
+            <height>261</height>
 
-            <center>1</center>
             <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
-            <active>0</active>
             <maxbox>0</maxbox>
             <minbox>1</minbox>
-            <minwidth>50</minwidth>
+            <minwidth>250</minwidth>
             <minheight>50</minheight>
 			<sysmenu>0</sysmenu>
 			<appwindow>1</appwindow>
