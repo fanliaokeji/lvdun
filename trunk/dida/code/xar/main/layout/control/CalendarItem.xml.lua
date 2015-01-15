@@ -32,17 +32,17 @@ function SetAllTextGray(self)
 end
 
 function SetAllTextWeekend(self)
-	 SetAllTextColorRes(self, "59ACFF", "59ACFF")
+	 SetAllTextColorRes(self, "4B99F2", "4B99F2")
 end
 
 
 function SetTextSpecialday(self)
-	SetAllTextColorRes(self, "", "FF9933")
+	SetAllTextColorRes(self, "", "4B99F2")
 end
 
 
 function SetCHNTextTermDay(self)
-	SetAllTextColorRes(self, "", "59ACFF")
+	SetAllTextColorRes(self, "", "4B99F2")
 end
 
 

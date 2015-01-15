@@ -214,7 +214,7 @@
 												<DisableBkgID>DiDa.UpdateWnd.UpdateBtn.Normal</DisableBkgID>
 												<Text>立即更新</Text>
 												<TextFont>font.yahei11</TextFont>
-												<TextColor>59ACFF</TextColor>
+												<TextColor>4B99F2</TextColor>
 												<LeftTextPos>15</LeftTextPos>
 											</attr>
 											<eventlist>

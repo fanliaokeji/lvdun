@@ -48,7 +48,7 @@
 						<valign>center</valign>
 						<halign>left</halign>
 						<font>font.fzlt12</font>
-						<textcolor>59ACFF</textcolor>
+						<textcolor>4B99F2</textcolor>
 						<text>退出后，</text>
 					</attr>
 				</obj>		
@@ -62,7 +62,7 @@
 						<valign>center</valign>
 						<halign>left</halign>
 						<font>font.fzlt12</font>
-						<textcolor>59ACFF</textcolor>
+						<textcolor>4B99F2</textcolor>
 						<text>就不能随时查看日历信息哦～</text>
 					</attr>
 				</obj>	

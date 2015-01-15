@@ -139,7 +139,7 @@
 						<valign>center</valign>
 						<halign>left</halign>
 						<font>font.fzlt13</font>
-						<textcolor>59ACFF</textcolor>
+						<textcolor>4B99F2</textcolor>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLClickToday" />

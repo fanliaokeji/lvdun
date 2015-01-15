@@ -51,9 +51,12 @@ function ShowHostWnd()
 		local hWnd = objHostWnd:GetWndHandle()
 		if hWnd then
 			tipUtil:SetForegroundWindow(hWnd)
+			tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
 		else
 			objHostWnd:Show(5)
 		end
+		
+		objMainWnd:SetTopMost(true)
 	end
 end
 
