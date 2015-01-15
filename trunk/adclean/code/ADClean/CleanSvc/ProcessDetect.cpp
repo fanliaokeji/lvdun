@@ -77,7 +77,7 @@ bool ProcessDetect::IsBrowerFileName(const wchar_t* szFileName)
 
 static bool IsGreenShiledFileName(const wchar_t* szFileName)
 {
-	const wchar_t* greenShieldFileName = L"greenshield.exe";
+	const wchar_t* greenShieldFileName = L"adclean.exe";
 	std::size_t i = 0;
 	for(;; ++i) {
 		if(std::towlower(szFileName[i]) != greenShieldFileName[i]) {
@@ -92,7 +92,7 @@ static bool IsGreenShiledFileName(const wchar_t* szFileName)
 
 static bool IsGreenShiledSetupFileName(const wchar_t* szFileName)
 {
-	const wchar_t* setupFileNamePrefix = L"gssetup_";
+	const wchar_t* setupFileNamePrefix = L"adcleansetup_";
 	for (std::size_t i = 0;; ++i) {
 		if (szFileName[i] == L'\0') {
 			break;
@@ -151,7 +151,7 @@ bool ProcessDetect::IsGreenShieldRunning()
 
 bool ProcessDetect::IsGreenShieldSetupRunning()
 {
-	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\LVDUNSETUP_INSTALL_MUTEX");
+	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{F3DAF570-0C73-45e6-8D92-82D300ABBEDF}_INSTALL_MUTEX");
 	if(hMutex != NULL) {
 		::CloseHandle(hMutex);
 		hMutex = NULL;
@@ -162,7 +162,7 @@ bool ProcessDetect::IsGreenShieldSetupRunning()
 
 bool ProcessDetect::IsGreenShieldOrGreenShieldSetupRunning()
 {
-	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\LVDUNSETUP_INSTALL_MUTEX");
+	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{F3DAF570-0C73-45e6-8D92-82D300ABBEDF}_INSTALL_MUTEX");
 	if(hMutex != NULL) {
 		::CloseHandle(hMutex);
 		hMutex = NULL;

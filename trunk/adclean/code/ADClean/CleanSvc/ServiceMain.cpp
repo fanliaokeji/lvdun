@@ -11,7 +11,7 @@
 #include "ScopeResourceHandle.h"
 #include "LaunchGreenShieldConfig.h"
 
-static const wchar_t* szServiceName = L"GreenShieldService";
+static const wchar_t* szServiceName = L"ADCleanService";
 #define SVC_ERROR	((DWORD)0xC0020001L)
 
 SERVICE_STATUS          gSvcStatus; 
@@ -109,7 +109,7 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 							BOOL fSaclDefaulted = FALSE;
 							if(::GetSecurityDescriptorSacl(pSD, &fSaclPresent, &pSacl, &fSaclDefaulted)) {
 								if(::SetSecurityDescriptorSacl(sa.lpSecurityDescriptor, TRUE, pSacl, FALSE)) {
-									hMutex = ::CreateMutex(&sa, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
+									hMutex = ::CreateMutex(&sa, TRUE, L"Global\\{88813F63-0986-40f9-B224-DBCDDC75E731}-cleanaddin");
 									if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
 										::CloseHandle(hMutex);
 										hMutex = NULL;
@@ -123,7 +123,7 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 				}
 			}
 			else {
-				hMutex = ::CreateMutex(NULL, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
+				hMutex = ::CreateMutex(NULL, TRUE, L"Global\\{88813F63-0986-40f9-B224-DBCDDC75E731}-cleanaddin");
 				if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
 					::CloseHandle(hMutex);
 					hMutex = NULL;
