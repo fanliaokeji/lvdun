@@ -100,6 +100,7 @@ function ShowMainTipWnd(objMainWnd)
 		else
 			objMainWnd:Show(5)
 		end
+		
 	end
 	
 	SendStartupReport(true)
