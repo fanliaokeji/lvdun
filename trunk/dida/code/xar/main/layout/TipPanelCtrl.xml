@@ -37,9 +37,9 @@
 							<children>	
 								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
 									<attr>
-										<left>5</left>
+										<left>10</left>
 										<top>5</top>
-										<width>135</width> 
+										<width>132</width> 
 										<height>372</height>
 									</attr>			
 								</obj>	
