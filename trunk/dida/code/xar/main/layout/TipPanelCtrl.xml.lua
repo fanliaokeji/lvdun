@@ -10,7 +10,7 @@ end
 
 ---事件--
 function OnCloseWnd(self)
-	tipUtil:Exit("test")
+	-- tipUtil:Exit()
 end
 
 
