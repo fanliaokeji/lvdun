@@ -6,6 +6,8 @@
 #include <string.h>
 #include <iostream>
 
+extern ConfigRuleMap map_VideoState;
+extern rwmutex rw_cfgmutex;
 static std::string parseDomain(std::string host)
 {
 	int spos=0;
@@ -54,13 +56,28 @@ static std::string parseDomain(std::string host)
 	return host;
 }
 
+//ä¸å¼¹è¿‡æ»¤æ¡†ï¼Œåªæœ‰åœ¨VideoStateé‡Œå­˜åœ¨ä¸”ç­‰äº2çš„æ‰ä¸å¼¹
+static bool isMatchState(std::vector<std::string> & v_domain)
+{
+	readLock rdLock(rw_cfgmutex);
+	for (std::vector<std::string>::const_iterator c_iter = v_domain.begin();c_iter!= v_domain.end();c_iter++)
+	{
+		ConfigRuleMap::iterator map_iter =map_VideoState.find(*c_iter);
+		if (map_iter != map_VideoState.end() && map_iter->second == 2)
+		{
+			return false;
+		}
+		
+	}
+	return true; 
+}
 /*
-  Ê×ÏÈmanagerÒÑ¾­ÅĞ¶Ï¹ıÊÇ¹ıÂË¶ø²»ÊÇÒş²Ø¹æÔòÁË
-  ÒÔ@@¿ªÊ¼£¬ÔòÊÇ°×Ãûµ¥£¬manager»áÓÅÏÈ¿¼ÂÇ
-  ÒÔ||¿ªÊ¼ÔòÊÇ²»Æ¥ÅäĞ­ÒéÃûµÄ¹ıÂË£¬²¢È¥µô||
-  ÒÔ|¿ªÊ¼£¬ÔòÈ¥µô|£¬·ñÔòÔÚ¿ªÊ¼´¦Ìí¼Ó*
-  º¬ÓĞ$ÀàĞÍÖ¸¶¨¹æÔò£¬È¥µôÕâĞ©×Ö·û´®£¬²¢´¦ÀíÀàĞÍ
-  ÒÔ|½áÎ²£¬È¥µô|£¬·ñÔòÔÚ½áÎ²´¦Ìí¼Ó*
+  é¦–å…ˆmanagerå·²ç»åˆ¤æ–­è¿‡æ˜¯è¿‡æ»¤è€Œä¸æ˜¯éšè—è§„åˆ™äº†
+  ä»¥@@å¼€å§‹ï¼Œåˆ™æ˜¯ç™½åå•ï¼Œmanagerä¼šä¼˜å…ˆè€ƒè™‘
+  ä»¥||å¼€å§‹åˆ™æ˜¯ä¸åŒ¹é…åè®®åçš„è¿‡æ»¤ï¼Œå¹¶å»æ‰||
+  ä»¥|å¼€å§‹ï¼Œåˆ™å»æ‰|ï¼Œå¦åˆ™åœ¨å¼€å§‹å¤„æ·»åŠ *
+  å«æœ‰$ç±»å‹æŒ‡å®šè§„åˆ™ï¼Œå»æ‰è¿™äº›å­—ç¬¦ä¸²ï¼Œå¹¶å¤„ç†ç±»å‹
+  ä»¥|ç»“å°¾ï¼Œå»æ‰|ï¼Œå¦åˆ™åœ¨ç»“å°¾å¤„æ·»åŠ *
   */
 
 FilterRule::FilterRule( const std::string & r)
@@ -163,7 +180,7 @@ void FilterRule::print()
 }
 
 /*
- * »ñÈ¡¸Ã¹æÔòÆÚÍû¹ıÂËµÄÓòÃû
+ * è·å–è¯¥è§„åˆ™æœŸæœ›è¿‡æ»¤çš„åŸŸå
  */
 void FilterRule::getDomains(StringVector & domains)
 {
@@ -270,6 +287,10 @@ static bool adbMatch(const char * s,  const char *  p,bool caseSensitivie=false)
 
 bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
 {
+	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	{
+		return false;
+	}
 	std::string url=u.GetString();
 	bool ret;
     if(!this->m_isMatchProtocol) {
@@ -309,7 +330,7 @@ inline char getCaseChar( char c,bool caseSensitive)
 }
 /*
   Separator character is anything but a letter,
-a digit, or one of the following: ¨C . %.
+a digit, or one of the following: â€“ . %.
   */
 static int  isSeperator( char ch)
 {
@@ -375,10 +396,10 @@ static inline int  patternStep( const char * s, const  char * p)
     strncpy_s(temp,p,abpmin(sizeof(temp)-1,step));
     //printf("temp=%s,step=%d\n",temp,step);
     const char * res=strfind(s,temp);
-    if(!res) //Ã»ÓĞÕÒµ½
-        return strlen(s); //ÒÆ¶¯Õû¸ö×Ö·û´®
+    if(!res) //æ²¡æœ‰æ‰¾åˆ°
+        return strlen(s); //ç§»åŠ¨æ•´ä¸ªå­—ç¬¦ä¸²
     else
-        return abpmax(1,res-s); //ÕÒµ½µÚÒ»¸öÆ¥ÅäµÄ×Ö·û´®µÄÎ»ÖÃ
+        return abpmax(1,res-s); //æ‰¾åˆ°ç¬¬ä¸€ä¸ªåŒ¹é…çš„å­—ç¬¦ä¸²çš„ä½ç½®
 }
 /*
    test if a given string  and a pattern  matches use adblock plus rule
@@ -421,6 +442,31 @@ static bool adbMatch(const char *  s,  const char *  p,bool caseSensitivie) {
     }
 }
 
+HideRule::HideRule(const std::string & r)
+{
+	std::string rule=boost::trim_copy(r);
+	int pos=rule.find("##",0);
+	std::string temp;
+	for(int i=0;i<pos;i++) {
+		if(rule[i]==',') {
+			if(!temp.empty()) {
+				m_domains.push_back(temp);
+				temp="";
+			}
+			continue;
+		}
+		temp += rule[i];
+		if(i==pos-1)
+			m_domains.push_back(temp);
+	}
+	m_sel=rule.substr(pos+2);
+}
+
+void HideRule::print()
+{
+
+}
+
 ReplaceRule::ReplaceRule(const std::string & r)
 {
 
@@ -461,6 +507,11 @@ ReplaceRule::ReplaceRule(const std::string & r)
 
 bool ReplaceRule::shouldReplace(const Url & u)
 {
+	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	{
+		return false;
+	}
+
 	std::string url=u.GetString();
 	bool ret;
 	if(!this->m_isMatchProtocol) 

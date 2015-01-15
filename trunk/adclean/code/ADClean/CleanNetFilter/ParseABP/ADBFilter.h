@@ -35,6 +35,7 @@ private:
 	bool m_isMatchProtocol;
     bool m_isException;
 	std::string m_reFilter;
+	//std::string m_reFilter;
     std::string m_rule;
     FilterType m_type;
     bool m_filterThirdParty;
@@ -43,10 +44,25 @@ private:
 	std::vector<std::string> m_inverseDomains;
 	std::vector<std::string> m_stateDomains;
 private:
+	bool isMatchStateDomain();
     bool isMatchType(const Url & url,FilterType t);
     bool isMatchThirdParty(const Url & host,const Url & other);
     bool isMatchDomains( const Url & url);
     void processDomains(std::string & ds);
+};
+
+class HideRule {
+public:
+
+	HideRule(const std::string & r);
+	const StringVector & domains() { return m_domains;}
+	//example.com,~foo.example.com##*.sponsor
+	//*.sponsor就是selector
+	const std::string & selector() { return m_sel;}
+	void print();
+private:
+	std::string m_sel;
+	std::vector<std::string> m_domains;
 };
 
 class ReplaceRule {
