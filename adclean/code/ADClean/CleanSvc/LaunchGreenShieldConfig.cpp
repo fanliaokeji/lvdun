@@ -65,7 +65,7 @@ bool LaunchGreenShieldConfig::GetConfigFilePath(wchar_t* szPathBuffer, std::size
 		return false;
 	}
 	wchar_t tmpBuffer[MAX_PATH];
-	if(::PathCombine(tmpBuffer, szPathBuffer, L"GreenShield\\startcfg.ini") == NULL) {
+	if(::PathCombine(tmpBuffer, szPathBuffer, L"ADClean\\startcfg.ini") == NULL) {
 		return false;
 	}
 	std::size_t length = std::wcslen(tmpBuffer) + 1;

@@ -27,7 +27,7 @@ bool IsVistaOrLatter()
 bool GetGreenShiledExeFilePath(wchar_t* buffer, std::size_t bufferLength)
 {
 	ATL::CRegKey key;
-	if(key.Open(HKEY_LOCAL_MACHINE, L"Software\\GreenShield", KEY_QUERY_VALUE) != ERROR_SUCCESS) {
+	if(key.Open(HKEY_LOCAL_MACHINE, L"Software\\ADClean", KEY_QUERY_VALUE) != ERROR_SUCCESS) {
 		return false;
 	}
 	ULONG size = bufferLength;
