@@ -43,7 +43,7 @@ bool CFilterMsgWindow::HandleSingleton()
 	if(iSingleTon)
 	{
 		static TCHAR szMutex[_MAX_PATH] = {0};
-		_sntprintf(szMutex, _MAX_PATH, _T("#mutex%s_%s"), _T("DS_{283D6A81-4D36-4f09-A297-AC1ADE33F18A}"),_T("1.0"));
+		_sntprintf(szMutex, _MAX_PATH, _T("#mutex%s_%s"), _T("ADC_{AF78EE96-9716-455c-B89E-BC1CA0AEC7F1}"),_T("1.0"));
 		m_hMutex = CreateMutex(NULL, true, szMutex);
 		bool bExist = (ERROR_ALREADY_EXISTS == ::GetLastError() || ERROR_ACCESS_DENIED == ::GetLastError());
 		if(bExist)
@@ -51,7 +51,7 @@ bool CFilterMsgWindow::HandleSingleton()
 			TSERROR4CXX("startup failed");				//	ATLASSERT(false && "WaitForSingleObject 前");//
 			WaitForSingleObject(m_hMutex, INFINITE);//等其它进程的这个窗口建完
 			
-			HWND hWnd = ::FindWindow(_T("{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"), NULL);
+			HWND hWnd = ::FindWindow(_T("{AF78EE96-9716-455c-B89E-BC1CA0AEC7F1}_cleanmainmsg"), NULL);
 			if(hWnd)
 			{
 				if(!SendMessageTimeout(hWnd, WM_COPYDATA, (WPARAM)0, (LPARAM) (LPVOID) &cds, SMTO_ABORTIFHUNG, 10000, NULL))

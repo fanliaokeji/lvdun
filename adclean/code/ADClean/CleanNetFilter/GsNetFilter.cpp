@@ -88,29 +88,32 @@ BOOL GsSetHook(const std::wstring& dllPath)
 
 bool GsUpdateConfigVideoHost(const std::string& url,int istate)
 {
-	FilterManager* m = FilterManager::getManager();
-	if(m == NULL) {
-		return false;
-	}
-	return m->updateConfigVideoHost(url.c_str(), istate);
+	//FilterManager* m = FilterManager::getManager();
+	//if(m == NULL) {
+	//	return false;
+	//}
+	//return m->updateConfigVideoHost(url.c_str(), istate);
+	return true;
 }
 
 bool GsUpdateConfigWhiteHost(const std::string& url,bool bEnable)
 {
-	FilterManager* m = FilterManager::getManager();
-	if(m == NULL) {
-		return false;
-	}
-	return m->updateConfigWhiteHost(url.c_str(), bEnable);
+	//FilterManager* m = FilterManager::getManager();
+	//if(m == NULL) {
+	//	return false;
+	//}
+	//return m->updateConfigWhiteHost(url.c_str(), bEnable);
+	return true;
 }
 
 bool GsGetWebRules(const std::wstring& filename)
 {
-	FilterManager* m = FilterManager::getManager();
-	if(m == NULL) {
-		return false;
-	}
-	return m->getWebRules(filename);
+	//FilterManager* m = FilterManager::getManager();
+	//if(m == NULL) {
+	//	return false;
+	//}
+	//return m->getWebRules(filename);
+	return true;
 }
 
 bool GsGetVideoRules(const std::wstring& filename)
@@ -124,9 +127,10 @@ bool GsGetVideoRules(const std::wstring& filename)
 
 bool GsGetUsersRules(const std::wstring& filename)
 {
-	FilterManager* m = FilterManager::getManager();
-	if(m == NULL) {
-		return false;
-	}
-	return m->getUsersRules(filename);
+	//FilterManager* m = FilterManager::getManager();
+	//if(m == NULL) {
+	//	return false;
+	//}
+	//return m->getUsersRules(filename);
+	return true;
 }
