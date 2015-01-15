@@ -199,7 +199,7 @@ Function DoInstall
   Call OnClickQuitOK
   
   SetOutPath "$0"
-  SetOverwrite on
+  SetOverwrite off
   File /r "input_config\*.*"
   ;先删再装
   RMDir /r "$INSTDIR\program"
@@ -491,17 +491,15 @@ Function UpdateChanel
 		Push "\"
 		Call GetLastPart
 		Pop $R1
-		${WordReplace} "$R1" "DIDASetup_" "" "+" $R3
-		${WordReplace} "$R3" ".exe" "" "+" $R4
-		;MessageBox MB_ICONINFORMATION|MB_OK $R4
-		${If} $R4 == 0
-		${OrIf} $R4 == ""
+		
+		${WordFind2X} "$R1" "_" "." +1 $R3
+		${If} $R3 == 0
+		${OrIf} $R3 == ""
 			StrCpy $str_ChannelID ${INSTALL_CHANNELID}
 		${ElseIf} $R1 == $R3
-		${OrIf} $R3 == $R4
 			StrCpy $str_ChannelID "unknown"
 		${Else}
-			StrCpy $str_ChannelID $R4
+			StrCpy $str_ChannelID $R3
 		${EndIf}
 	${EndIf}
 FunctionEnd
@@ -823,8 +821,6 @@ Function OnClick_CheckSysstup
         IntOp $Bool_Sysstup $Bool_Sysstup + 1
         SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_sysstup
     ${EndIf}
-	ShowWindow $ck_sysstup ${SW_HIDE}
-	ShowWindow $ck_sysstup ${SW_SHOW}
 FunctionEnd
 
 
@@ -1336,9 +1332,9 @@ Function NSD_TimerFun
 	${EndIf}
 	
 	${If} $Bool_Sysstup == 1
-		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
 	${Else}
-		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
 	${EndIf}
 	
 	
@@ -1636,6 +1632,17 @@ Function un.Random
 	Exch $0
 FunctionEnd
 
+Function un.RenameDeleteFile
+	IfFileExists $R0 0 RenameOK
+	BeginRename:
+	Push "1000" 
+	Call un.Random
+	Pop $0
+	IfFileExists "$R0.$0" BeginRename
+	Rename $R0 "$R0.$0"
+	Delete /REBOOTOK "$R0.$0"
+	RenameOK:
+FunctionEnd
 
 Function un.DoUninstall
 	;删除
@@ -1645,26 +1652,17 @@ Function un.DoUninstall
 	RMDir /r "$INSTDIR\res"
 	
 	 ;文件被占用则改一下名字
-	StrCpy $R4 "$INSTDIR\program\DiDaCalendar64.dll"
-	IfFileExists $R4 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call un.Random
-	Pop $0
-	IfFileExists "$R4.$0" BeginRename
-	Rename $R4 "$R4.$0"
-	Delete /REBOOTOK "$R4.$0"
-	RenameOK:
-	StrCpy $R4 "$INSTDIR\program\DiDaCalendar.dll"
-	IfFileExists $R4 0 RenameOK2
-	BeginRename2:
-	Push "1000" 
-	Call un.Random
-	Pop $0
-	IfFileExists "$R4.$0" BeginRename2
-	Rename $R4 "$R4.$0"
-	Delete /REBOOTOK "$R4.$0"
-	RenameOK2:
+	StrCpy $R0 "$INSTDIR\program\DiDaCalendar64.dll"
+	Call un.RenameDeleteFile
+	StrCpy $R0 "$INSTDIR\program\DiDaCalendar.dll"
+	Call un.RenameDeleteFile
+	StrCpy $R0 "$INSTDIR\res\font\DINCondensedC.otf"
+	Call un.RenameDeleteFile
+	StrCpy $R0 "$INSTDIR\res\font\DS-DIGIT.TTF"
+	Call un.RenameDeleteFile
+	StrCpy $R0 "$INSTDIR\res\font\FZLTHJW.TTF"
+	Call un.RenameDeleteFile
+	
 	
 	StrCpy "$R0" "$INSTDIR"
 	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
