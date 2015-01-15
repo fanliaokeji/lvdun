@@ -4,7 +4,27 @@
 			<ItemTop>0</ItemTop>
 		</attr>
 		<children>
-			<obj id="gsupdate" class="MenuItemObject" templateid="menu.context.item">
+			<obj id="sysboot" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>开机启动</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Sysboot" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Sysboot" />
+				</eventlist>
+			</obj>
+			
+			<obj id="filterstate" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>开启实时拦截</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Filter" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Filter" />
+				</eventlist>
+			</obj>
+			
+			<obj id="update" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
 					<Text>软件升级</Text>
 				</attr>
@@ -12,43 +32,10 @@
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Update" />
 				</eventlist>
 			</obj>
-			<obj id="officialwebsite" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>官方网站</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Website" />
-				</eventlist>
-			</obj>
-			<obj id="introduce" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>功能特性</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Introduce" />
-				</eventlist>
-			</obj>
 			
-			<obj id="filterstate" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>过滤已开启</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Filter" />
-					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Filter" />
-				</eventlist>
-			</obj>
-			<obj id="contact" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>问题反馈</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Contact" />
-				</eventlist>
-			</obj>
 			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>关于绿盾广告管家</Text>
+					<Text>关于广告清道夫</Text>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_About" />
@@ -90,22 +77,13 @@
 						<texture>GreenWall.FilterConfig.Menu.Bkg</texture>
 					</attr>
 					<children>
-						<obj id="TrayMenu.Title.ImgLogo" class="ImageObject">
-							<attr>
-								<left>10</left>
-								<top>5</top>
-								<width>19</width>
-								<height>22</height>
-								<image>GreenWall.Logo</image>
-							</attr>
-						</obj>
 						<obj id="TrayMenu.Title.Text" class="TextObject">
 							<attr>
 								<left>29+5</left>
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
-								<text>今天为您过滤广告 次</text>
+								<text>当天累计拦截广告 次</text>
 								<textcolor>system.white</textcolor>
 								<font>font.yahei12</font>
 								<valign>center</valign>
@@ -121,7 +99,7 @@
 						<width>210</width>
 						<height>196</height>
 						<ContextID>menu.context</ContextID>
-						<BknID>GreenWall.MainWndCenter.Bkg</BknID>
+						<BknID>Tray.Main.Bkg</BknID>
 					</attr>
 				</obj>
 			</children>

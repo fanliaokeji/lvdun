@@ -9,6 +9,8 @@
 			<attr name="Enable" type="bool" ><default>true</default></attr>
 			<attr name="Visible" type="bool" ><default>true</default></attr>
 			<attr name="Text" type="string" />
+			<attr name="LeftTextPos" type="int" ><default>0</default></attr>
+			<attr name="TopTextPos" type="int" ><default>0</default></attr>
 			<attr name="TextFont" type="string"><default>default.font</default></attr>
 			<attr name="TextColor" type="string"><default>system.black</default></attr>
 			<attr name="DisableTextColor" type="string"><default>system.gray</default></attr>

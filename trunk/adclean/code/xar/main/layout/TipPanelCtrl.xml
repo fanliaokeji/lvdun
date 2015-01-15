@@ -4,61 +4,69 @@
         </attr_def>
 		<method_def>
 			<SetTipData file="TipPanelCtrl.xml.lua" func="SetTipData"/>
+			<UpdateMainWndBkg file="TipPanelCtrl.xml.lua" func="UpdateMainWndBkg"/>
 		</method_def>
         <event_def>
         </event_def>
 		<objtemplate>
             <children>				
-				<obj id="root.layout" class="CaptionObject">
+				<obj id="root.layout" class="LayoutObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>320</width>
-						<height>337</height>
+						<width>father.width</width>
+						<height>father.height</height>
 					</attr>				
-					<children>					
-						<!--标题栏-->
-						<obj id="TipCtrl.Caption" class="TextureObject">
+					<children>	
+						<obj id="root.Caption" class="CaptionObject">
 							<attr>
 								<left>0</left>
 								<top>0</top>
 								<width>father.width</width>
-								<height>29</height>
-								<texture>GreenWall.Caption.Bkg</texture>
-							</attr>
-							<children>
-								<obj id="TipCtrl.Caption.ImgLogo" class="ImageObject">
+								<height>father.height</height>
+							</attr>	
+						</obj>
+					
+						<obj id="MainWnd.Up.Layout" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>182</height>
+							</attr>		
+							<children>	
+								<obj id="MainWnd.Up.Bkg.CloseFilter" class="TextureObject">
 									<attr>
-										<left>10</left>
-										<top>5</top>
-										<width>19</width>
-										<height>22</height>
-										<image>GreenWall.Logo</image>
-									</attr>
-								</obj>
-								<obj id="TipCtrl.Caption.Text" class="TextObject">
-									<attr>
-										<left>29+5</left>
+										<left>0</left>
 										<top>0</top>
-										<width>100</width>
-										<height>father.height</height>
-										<text>绿盾广告管家</text>
-										<textcolor>caption.black</textcolor>
-										<font>font.yahei12</font>
-										<valign>center</valign>
-									</attr>
+										<width>father.width</width> 
+										<height>182</height>
+										<texture>MainWnd.Up.Bkg</texture>
+									</attr>		
 								</obj>
-								
+							
+								<obj id="MainWnd.Up.Bkg.OpenFilter" class="SeqImageObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width> 
+										<height>182</height>
+										<gif>MainWnd.Up.Gif.Bkg</gif>
+										<loop>1</loop>
+										<reverse>0</reverse>
+									</attr>
+								</obj>	
+							
 								<obj id="TipCtrl.Caption.CloseBtn" class="TipAddin.Button">
 									<attr>
 										<left>father.width-22</left>
 										<top>9</top>
-										<width>12</width>
-										<height>12</height>
-										<NormalBkgID>GreenWall.BtnClose.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.BtnClose.Down</DownBkgID>
-										<HoverBkgID>GreenWall.BtnClose.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.BtnClose.Normal</DisableBkgID>
+										<width>14</width>
+										<height>14</height>
+										<NormalBkgID>MainWnd.BtnClose.Normal</NormalBkgID>
+										<DownBkgID>MainWnd.BtnClose.Normal</DownBkgID>
+										<HoverBkgID>MainWnd.BtnClose.Hover</HoverBkgID>
+										<DisableBkgID>MainWnd.BtnClose.Normal</DisableBkgID>
 									</attr>
 									<eventlist>
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickCloseBtn" />
@@ -67,60 +75,32 @@
 								
 								<obj id="TipCtrl.Caption.BtnMin" class="TipAddin.Button">
 									<attr>
-										<left>father.width-22*2</left>
+										<left>father.width-23*2</left>
 										<top>9</top>
-										<width>12</width>
-										<height>12</height>
-										<NormalBkgID>GreenWall.BtnMin.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.BtnMin.Down</DownBkgID>
-										<HoverBkgID>GreenWall.BtnMin.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.BtnMin.Normal</DisableBkgID>
+										<width>14</width>
+										<height>14</height>
+										<NormalBkgID>MainWnd.BtnMin.Normal</NormalBkgID>
+										<DownBkgID>MainWnd.BtnMin.Normal</DownBkgID>
+										<HoverBkgID>MainWnd.BtnMin.Hover</HoverBkgID>
+										<DisableBkgID>MainWnd.BtnMin.Normal</DisableBkgID>
 									</attr>
 									<eventlist>
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickMinBtn" />
 									</eventlist>
 								</obj>
-								
-								<obj id="TipCtrl.Caption.Config" class="TipAddin.Button">
-									<attr>
-										<left>father.width-22*2-24</left>
-										<top>8</top>
-										<width>14</width>
-										<height>14</height>
-										<NormalBkgID>GreenWall.Config.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.Config.Down</DownBkgID>
-										<HoverBkgID>GreenWall.Config.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.Config.Normal</DisableBkgID>
-									</attr>
-									<eventlist>
-										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickConfigBtn" />
-									</eventlist>
-								</obj>
-							</children>				
-						</obj>
-						<!--顶部阴影背景-->
-						<obj id="TipCtrl.MainWnd.TopShadow" class="TextureObject">
-							<attr>
-								<left>0</left>
-								<top>29</top>
-								<width>father.width</width>
-								<height>13</height>
-								<texture>GreenWall.MainWnd.TopShadow</texture>
-								<zorder>2000</zorder>
-							</attr>	
-						</obj>
+							</children>
+						</obj><!--bkgup end-->
 						
-						<!--中央-->
-						<obj id="TipCtrl.MainWndCenter.Bkg" class="TextureObject">
+						<obj id="MainWnd.Low" class="TextureObject">
 							<attr>
 								<left>0</left>
-								<top>29</top>
-								<width>father.width</width>
-								<height>245</height>
-								<texture>GreenWall.MainWndCenter.Bkg</texture>
-							</attr>	
-							<children>
-								<obj id="TipCtrl.MainWnd.MainBody" class="MainBodyCtrl">
+								<top>182</top>
+								<width>father.width</width> 
+								<height>79</height>
+								<texture>MainWnd.Low.Bkg</texture>
+							</attr>		
+							<children>	
+								<obj id="MainWnd.Low.AdvCount" class="AdvCountCtrl">
 									<attr>
 										<left>0</left>
 										<top>0</top>
@@ -129,133 +109,13 @@
 									</attr>
 								</obj>
 							</children>
-						</obj>
+						</obj><!--bkglow end-->
 						
-						<!--主面板下半部分背景-->
-						<obj id="TipCtrl.MainWndLow.Bkg" class="TextureObject">
-							<attr>
-								<left>0</left>
-								<top>father.height-58-5</top>
-								<width>father.width</width>
-								<height>58</height>
-								<texture>GreenWall.MainWndLow.Bkg</texture>
-							</attr>
-							<children>
-								<obj id="TipCtrl.MainWndLow.Splitter" class="TextureObject">
-									<attr>
-										<left>0</left>
-										<top>0</top>
-										<width>father.width</width>
-										<height>1</height>
-										<texture>GreenWall.MainWndLow.Splitter</texture>
-									</attr>
-								</obj>
-							
-								<obj id="TipCtrl.MainWndLow.MainPage.Img" class="TipAddin.Button">
-									<attr>
-										<left>42</left>
-										<top>10</top>
-										<width>27</width>
-										<height>26</height>
-										<NormalBkgID>GreenWall.MainWndLow.MainPage.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.MainWndLow.MainPage.Down</DownBkgID>
-										<HoverBkgID>GreenWall.MainWndLow.MainPage.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.MainWndLow.MainPage.Normal</DisableBkgID>
-									</attr>									
-									<eventlist>
-										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickMainPage" />
-										
-									</eventlist>
-								</obj>
-								<obj id="TipCtrl.MainWndLow.MainPage.Text" class="TextObject">
-									<attr>
-										<left>34</left>
-										<top>10+26+3</top>
-										<width>40</width>
-										<height>20</height>
-										<valign>center</valign>
-										<halign>center</halign>
-										<font>font.yahei12</font>
-										<textcolor>4D4D4D</textcolor>
-										<text>主界面</text>
-									</attr>
-								</obj>	
-								
-								<obj id="TipCtrl.MainWndLow.App.Img" class="TipAddin.Button">
-									<attr>
-										<left>father.width/2-12</left>
-										<top>12</top>
-										<width>24</width>
-										<height>24</height>
-										<NormalBkgID>GreenWall.MainWndLow.App.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.MainWndLow.App.Down</DownBkgID>
-										<HoverBkgID>GreenWall.MainWndLow.App.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.MainWndLow.App.Normal</DisableBkgID>
-									</attr>
-								    <eventlist>
-										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickApp" />
-									</eventlist>
-								</obj>
-								<obj id="TipCtrl.MainWndLow.App.Text" class="TextObject">
-									<attr>
-										<left>father.width/2-21</left>
-										<top>10+26+3</top>
-										<width>40</width>
-										<height>20</height>
-										<valign>center</valign>
-										<halign>center</halign>
-										<font>font.yahei12</font>
-										<textcolor>4D4D4D</textcolor>
-										<text>应用</text>
-									</attr>
-								</obj>	
-										
-								<obj id="TipCtrl.MainWndLow.FilterConfig.Img" class="TipAddin.Button">
-									<attr>
-										<left>father.width-45-25</left>
-										<top>12</top>
-										<width>25</width>
-										<height>24</height>
-										<NormalBkgID>GreenWall.MainWndLow.FilterConfig.Normal</NormalBkgID>
-										<DownBkgID>GreenWall.MainWndLow.FilterConfig.Down</DownBkgID>
-										<HoverBkgID>GreenWall.MainWndLow.FilterConfig.Hover</HoverBkgID>
-										<DisableBkgID>GreenWall.MainWndLow.FilterConfig.Normal</DisableBkgID>
-									</attr>
-									<eventlist>
-										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickFilterConfig" />
-									</eventlist>
-								</obj>
-								<obj id="TipCtrl.MainWndLow.FilterConfig.Text" class="TextObject">
-									<attr>
-										<left>father.width-45-38</left>
-										<top>10+26+3</top>
-										<width>50</width>
-										<height>20</height>
-										<valign>center</valign>
-										<halign>center</halign>
-										<font>font.yahei12</font>
-										<textcolor>4D4D4D</textcolor>
-										<text>过滤设置</text>
-									</attr>
-								</obj>	
-							</children>							
-						</obj>
-						
-						<obj id="TipCtrl.MainWndBottom.Bkg" class="TextureObject">
-							<attr>
-								<left>0</left>
-								<top>father.height-5</top>
-								<width>father.width</width>
-								<height>5</height>
-								<texture>GreenWall.MainWndBottom.Bkg</texture>
-							</attr>
-						</obj>
-						
-					</children><!--TipCtrl.MainWnd.Bkg-->
-				</obj>
+					</children>
+					<eventlist>
+					</eventlist>
+				</obj><!--root layout end-->
 			</children>
-			<eventlist>
-			</eventlist>
         </objtemplate>
 	</control>
 
@@ -263,15 +123,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>320</width>
-			<height>337</height>
+			<width>350</width>
+			<height>261</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>320</width>
-				<height>337</height>
+				<width>350</width>
+				<height>261</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >

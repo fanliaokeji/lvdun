@@ -72,7 +72,7 @@
 						<height>19</height>
 						<alpha>255</alpha>
 						<visible>false</visible>
-						<texture>GreenWall.TrayMenu.Select</texture>
+						<texture>TrayMenu.Select</texture>
 					</attr>
 				</obj>
 			</children>

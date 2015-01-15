@@ -77,11 +77,13 @@ function SetText(self, text)
 	end
 	local textObj = self:GetControlObject("Recomment")
 	textObj:SetText(text)
+	
+	SetTextStyle(self)
 end
 
-function GetText(self, text)
+function GetText(self)
 	local textObj = self:GetControlObject("Recomment")
-	textObj:SetText(text)
+	return textObj:GetText()
 end
 
 function SetTextColor(self, color)
@@ -194,14 +196,27 @@ function OnInitControl(self)
 		foreground:SetObjPos(attr.ForegroundLeftPos, (height - attr.ForegroundHeight) / 2, attr.ForegroundLeftPos + attr.ForegroundWidth, (height + attr.ForegroundHeight) / 2)
 	end
 	
-    self:SetText(attr.Text)
-	self:SetTextColor(attr.TextColor)
-	self:SetTextFont(attr.TextFont)
-	
+	self:SetText(attr.Text)
+	    
 	SetState(self, 0, true, true)
 	self:Enable(attr.Enable)
     self:Show(attr.Visible)
 end
+
+
+function SetTextStyle(objRootCtrl)
+	local attr = objRootCtrl:GetAttribute()
+	objRootCtrl:SetTextColor(attr.TextColor)
+	objRootCtrl:SetTextFont(attr.TextFont)
+	
+	local textObj = objRootCtrl:GetControlObject("Recomment")
+	local nLeftPos = attr.LeftTextPos
+	local nTopPos = attr.TopTextPos
+	
+	local nWidth = textObj:GetTextExtent()
+	textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, "father.height-"..tostring(nTopPos))
+end
+
 
 function OnEditFocusChange(edit, bFocus)
 	if not bFocus and edit:GetVisible() then

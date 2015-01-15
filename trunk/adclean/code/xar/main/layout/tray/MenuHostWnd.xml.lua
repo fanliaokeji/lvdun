@@ -31,7 +31,7 @@ function SetTitleText(self)
 		return
 	end
 	
-	local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tFunctionHelper = XLGetGlobal("Project.FunctionHelper")
 	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return
 	end
