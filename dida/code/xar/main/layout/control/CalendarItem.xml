@@ -101,12 +101,12 @@
 								<obj id="Calendar.Work.Text" class="TextObject">
 									<attr>
 										<left>0</left>
-										<top>-1</top>
+										<top>0</top>
 										<width>father.width</width> 
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.yahei9</font>
+										<font>font.fzlt9</font>
 										<textcolor>system.white</textcolor>
 										<text>班</text>
 										<zorder>999999</zorder>
@@ -128,12 +128,12 @@
 								<obj id="Calendar.Vacation.Text" class="TextObject">
 									<attr>
 										<left>0</left>
-										<top>-1</top>
+										<top>0</top>
 										<width>father.width</width> 
 										<height>father.height</height>
 										<valign>center</valign>
 										<halign>center</halign>
-										<font>font.yahei9</font>
+										<font>font.fzlt9</font>
 										<textcolor>system.white</textcolor>
 										<text>休</text>
 										<zorder>999999</zorder>
