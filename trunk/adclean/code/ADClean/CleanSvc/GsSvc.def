@@ -1,4 +1,4 @@
-LIBRARY	"GsSvc"
+LIBRARY	"CleanSvc"
 EXPORTS
 	DllMain					PRIVATE
 	ServiceMain				PRIVATE
