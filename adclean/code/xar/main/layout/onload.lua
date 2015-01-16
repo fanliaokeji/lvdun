@@ -443,10 +443,40 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
 	TryForceUpdate(tServerConfig)
-	-- FixStartConfig(tServerConfig)
+	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
 end
+
+
+function FixStartConfig(tServerConfig)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+
+	local tStartConfig = tServerConfig["tStartConfig"]
+	if type(tStartConfig) ~= "table" then
+		return
+	end
+	
+	local strStartCfgPath = FunctionObj.GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local noremindspanday = tonumber(tStartConfig["noremindspanday"])
+	local intervaltime = tonumber(tStartConfig["intervaltime"])
+	local maxcntperday = tonumber(tStartConfig["maxcntperday"])
+
+	if not IsNilString(noremindspanday) then
+		tipUtil:WriteINI("pusher", "noremindspanday", noremindspanday, strStartCfgPath)
+	end
+	if not IsNilString(intervaltime) then
+		tipUtil:WriteINI("pusher", "intervaltime", intervaltime, strStartCfgPath)
+	end
+	if not IsNilString(maxcntperday) then
+		tipUtil:WriteINI("pusher", "maxcntperday", maxcntperday, strStartCfgPath)
+	end
+end
+
 
 
 function StartRunCountTimer()
@@ -504,9 +534,6 @@ function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local cmdString = tipUtil:GetCommandLine()
 	--to do 
-	--test xlmess
-	FunctionObj.ShowPopupWndByName("TipBubbleWnd.Instance", true)
-	
 end
 
 
