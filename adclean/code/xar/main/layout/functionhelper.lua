@@ -430,15 +430,15 @@ end
 
 
 
-function SwitchFuncFilter(bOpen)
-	-- local bSucc = tipUtil:GSFilter(bOpen)
-	-- if not bSucc then
-		-- MessageBox(tostring("文件被损坏，请重新安装"))
-		-- TipLog("[SwitchGSFilter] GSFilter failed ")
-		-- FunctionObj:FailExitTipWnd(3)
-	-- end	
+function SwitchADCFilter(bOpen)
+	local bSucc = tipUtil:GSFilter(bOpen)
+	if not bSucc then
+		MessageBox(tostring("文件被损坏，请重新安装"))
+		TipLog("[SwitchGSFilter] GSFilter failed ")
+		FailExitTipWnd(3)
+	end
 	
-	-- return bSucc
+	return bSucc
 end
 
 
@@ -1072,7 +1072,7 @@ obj.GetProjectVersion = GetProjectVersion
 obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
 
-obj.SwitchFuncFilter = SwitchFuncFilter
+obj.SwitchADCFilter = SwitchADCFilter
 obj.GetFilterState = GetFilterState
 
 

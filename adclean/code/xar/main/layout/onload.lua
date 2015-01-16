@@ -139,6 +139,7 @@ function CheckForceVersion(tForceVersion)
 end
 
 
+
 function TryForceUpdate(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	if FunctionObj.CheckIsUpdating() then
@@ -199,17 +200,246 @@ function FixUserConfig(tServerConfig)
 end
 
 
+function SendFileDataToFilterThread()
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local bSucc = SendRuleListtToFilterThread()
+	if not bSucc then
+		FunctionObj.MessageBox(tostring("文件被损坏，请重新安装"))
+		return false
+	end	
+
+	local bSucc = SendWhiteListToFilterThread()
+	if not bSucc then
+		return false
+	end
+	
+	return true
+end
+
+
+function GenDecFilePath(strEncFilePath)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local strKey = "adS5m9PE8avRxmbs"
+	local strDecString = tipUtil:DecryptFileAES(strEncFilePath, strKey)
+	if type(strDecString) ~= "string" then
+		FunctionObj.TipLog("[GenDecFilePath] DecryptFileAES failed : "..tostring(strEncFilePath))
+		return ""
+	end
+	
+	local strTmpDir = tipUtil:GetSystemTempPath()
+	if not tipUtil:QueryFileExists(strTmpDir) then
+		TipLog("[GenDecFilePath] GetSystemTempPath failed strTmpDir: "..tostring(strTmpDir))
+		return ""
+	end
+	
+	local strCfgName = tipUtil:GetTmpFileName() or "data.dat"
+	local strCfgPath = tipUtil:PathCombine(strTmpDir, strCfgName)
+	tipUtil:WriteStringToFile(strCfgPath, strDecString)
+	return strCfgPath
+end
+
+
+function GetRulePath(strServerFile, strLocalFile)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+
+	local strServerRulePath = FunctionObj.GetCfgPathWithName(strServerFile)
+	if IsRealString(strServerRulePath) and tipUtil:QueryFileExists(strServerRulePath) then
+		return strServerRulePath
+	end
+
+	local strLocalRulePath = FunctionObj.GetCfgPathWithName(strLocalFile)
+	if IsRealString(strLocalRulePath) and tipUtil:QueryFileExists(strLocalRulePath) then
+		return strLocalRulePath
+	end
+	
+	return ""
+end
+
+
+function SendRuleListtToFilterThread()
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+
+	local strWebRulePath = GetRulePath("ServerADCWeb.dat", "ADCWeb.dat")
+	local strVideoRulePath = GetRulePath("ServerADCVideo.dat", "ADCVideo.dat")
+	if not IsRealString(strWebRulePath) or not tipUtil:QueryFileExists(strWebRulePath) 
+	   or not IsRealString(strVideoRulePath) or not tipUtil:QueryFileExists(strVideoRulePath) then
+		return false
+	end
+
+	local strDecWebRulePath = GenDecFilePath(strWebRulePath)
+	if not IsRealString(strDecWebRulePath) then
+		return false	
+	end
+	
+	local bSucc = tipUtil:LoadWebRules(strDecWebRulePath)
+	if not bSucc then
+		FunctionObj.TipLog("[SendRuleListtToFilterThread] LoadWebRules failed")
+		return false
+	end
+	tipUtil:DeletePathFile(strDecWebRulePath)
+	
+	local strDecVideoRulePath = GenDecFilePath(strVideoRulePath)
+	if not IsRealString(strDecVideoRulePath) then
+		return false	
+	end
+	local bSucc = tipUtil:LoadVideoRules(strDecVideoRulePath)
+	if not bSucc then
+		FunctionObj.TipLog("[SendRuleListtToFilterThread] LoadVideoRules failed")
+		return false
+	end
+	tipUtil:DeletePathFile(strDecVideoRulePath)
+	
+	return true
+end
+
+
+function SendWhiteListToFilterThread()
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+
+	local strWhiteListPath = GetRulePath("ServerADCWhite.dat", "ADCWhite.dat")
+	if not IsRealString(strWhiteListPath) or not tipUtil:QueryFileExists(strWhiteListPath) then
+		return false
+	end		
+	
+	local tFileInfo = FunctionObj.LoadTableFromFile(strWhiteListPath) or {}
+	local tWhiteList = tFileInfo["tWhiteList"] 
+	if type(tWhiteList) ~= "table" then
+		return false
+	end
+			
+	for key, tWhiteElem in pairs(tWhiteList) do
+		local strWhiteDomain = key
+		local bStateOpen = tWhiteElem["bState"]
+		if IsRealString(strWhiteDomain) and bStateOpen then
+			AddWhiteDomain(strWhiteDomain)
+		end
+	end
+	
+	return true
+end
+
+
+function AddWhiteDomain(strDomain)
+	local strDomainWithFix = FormatDomain(strDomain)
+
+	if not IsRealString(strDomainWithFix) then
+		return
+	end
+
+	tipUtil:AddWhiteHost(strDomainWithFix)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	FunctionObj.TipLog("[AddWhiteDomain] strDomainWithFix: "..tostring(strDomainWithFix))
+end
+
+
+function FormatDomain(strDomain)
+	if not IsRealString(strDomain) then
+		return ""
+	end
+
+	local strDomainWithFix = string.gsub(strDomain, "^www%.", "")
+	return strDomainWithFix
+end
+
+
+function DownLoadServerRule(tDownRuleList)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local nDownFlag = #tDownRuleList
+	if nDownFlag == 0 then
+		FunctionObj.TipLog("[DownLoadServerRule] no rule to down, start tipmain ")
+		TipMain()
+		return
+	end	
+	
+	for key, tDownInfo in pairs(tDownRuleList) do 
+		local strURL = tDownInfo["strURL"]
+		local strPath = tDownInfo["strPath"]
+	
+		FunctionObj.NewAsynGetHttpFile(strURL, strPath, false
+		, function(bRet, strVideoPath)
+			FunctionObj.TipLog("[DownLoadServerRule] bRet:"..tostring(bRet)
+					.." strVideoPath:"..tostring(strVideoPath))
+					
+			nDownFlag = nDownFlag - 1 
+			if nDownFlag < 1 then
+				FunctionObj.TipLog("[DownLoadServerRule] download finish, start tipmain ")
+				TipMain()
+			end
+
+		end, 5*1000)
+	end
+end
+
+
+
+function CheckServerRuleFile(tServerConfig)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
+	
+	local strServerVideoURL = FetchValueByPath(tServerData, {"tServerDataV", "strURL"})
+	local strServerVideoMD5 = FetchValueByPath(tServerData, {"tServerDataV", "strMD5"})
+	local strServerWebURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
+	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
+	local strServerWhiteURL = FetchValueByPath(tServerData, {"tServerWhite", "strURL"})
+	local strServerWhiteMD5 = FetchValueByPath(tServerData, {"tServerWhite", "strMD5"})
+		
+	local strVideoSavePath = FunctionObj.GetCfgPathWithName("ServerADCVideo.dat")
+	local strWebSavePath = FunctionObj.GetCfgPathWithName("ServerADCWeb.dat")
+	local strWhiteListPath = FunctionObj.GetCfgPathWithName("ServerADCWhite.dat")
+	
+	if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
+		strVideoSavePath = FunctionObj.GetCfgPathWithName("ADCVideo.dat")
+	end
+	if not IsRealString(strWebSavePath) or not tipUtil:QueryFileExists(strWebSavePath) then
+		strWebSavePath = FunctionObj.GetCfgPathWithName("ADCWeb.dat")
+	end
+	if not IsRealString(strWhiteListPath) or not tipUtil:QueryFileExists(strWhiteListPath) then
+		strWhiteListPath = FunctionObj.GetCfgPathWithName("ADCWhite.dat")
+	end
+	
+	local strDataVMD5 = tipUtil:GetMD5Value(strVideoSavePath)
+	local strDataWMD5 = tipUtil:GetMD5Value(strWebSavePath)
+	local strWhiteMD5 = tipUtil:GetMD5Value(strWhiteListPath)
+	local tDownRuleList = {}
+	
+	if IsRealString(strServerVideoURL) and tostring(strDataVMD5) ~= tostring(strServerVideoMD5) then
+		local nIndex = #tDownRuleList+1
+		tDownRuleList[nIndex] = {}
+		tDownRuleList[nIndex]["strURL"] = strServerVideoURL
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCVideo.dat")
+	end
+	
+	if IsRealString(strServerWebURL) and tostring(strDataWMD5) ~= tostring(strServerWebMD5) then
+		local nIndex = #tDownRuleList+1
+		tDownRuleList[nIndex] = {}
+		tDownRuleList[nIndex]["strURL"] = strServerWebURL
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCWeb.dat")
+	end
+	
+	if IsRealString(strServerWhiteURL) and tostring(strWhiteMD5) ~= tostring(strServerWhiteMD5) then
+		local nIndex = #tDownRuleList+1
+		tDownRuleList[nIndex] = {}
+		tDownRuleList[nIndex]["strURL"] = strServerWhiteURL
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCWhite.dat")
+	end
+	
+	DownLoadServerRule(tDownRuleList)
+end
+
 
 function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
+		TipMain()
 		return	
 	end
 	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
 	TryForceUpdate(tServerConfig)
+	-- FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
+	CheckServerRuleFile(tServerConfig)
 end
 
 
@@ -285,8 +515,27 @@ function CreateMainTipWnd()
 end
 
 
+function InitADCFilter()
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
+	local bFilterOpen = tUserConfig["bFilterOpen"]
+
+	return FunctionObj.SwitchADCFilter(bFilterOpen)
+end
+
+
 function TipMain() 
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
+	local bSucc = SendFileDataToFilterThread()
+	if not bSucc then
+		FunctionObj:FailExitTipWnd(2)
+		return
+	end
+	
+	local bSucc = InitADCFilter()  --里面退出
+	if not bSucc then
+		return
+	end 
 	
 	CreateMainTipWnd()
 	FunctionObj.CreatePopupTipWnd()
@@ -308,7 +557,7 @@ function PreTipMain()
 	SendStartReportLocal()
 	SendStartupReportGgl(false)
 	
-	TipMain()
+	-- TipMain()
 	
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
 end
