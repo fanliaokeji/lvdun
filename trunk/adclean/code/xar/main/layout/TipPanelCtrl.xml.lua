@@ -50,9 +50,9 @@ end
 
 --监听事件
 function CreateFilterListener(objRootCtrl)
-	local objFactory = XLGetObject("APIListen.Factory")
+	local objFactory = XLGetObject("GSListen.Factory")
 	if not objFactory then
-		tFunHelper.TipLog("[CreateFilterListener] not support APIListen.Factory")
+		tFunHelper.TipLog("[CreateFilterListener] not support GSListen.Factory")
 		return
 	end
 	
@@ -63,9 +63,13 @@ function CreateFilterListener(objRootCtrl)
 			tFunHelper.TipLog("[CreateFilterListener] key: " .. tostring(key))
 			
 			local tParam = {...}	
-			if tostring(key) == "OnCommandLine" then
+			if tostring(key) == "OnFilterResult" then
+				OnFilterResult(tParam)
+			elseif tostring(key) == "OnCommandLine" then
 				OnCommandLine(tParam)
 			end
+			
+			return
 		end)
 end
 
@@ -74,6 +78,7 @@ function ShowHostWnd()
 	local objHostWnd = tFunHelper.GetMainWndInst()
 	if objHostWnd then
 		objHostWnd:Show(5)
+		objHostWnd:BringWindowToTop(true)
 	end
 end
 
@@ -86,6 +91,21 @@ end
 
 function OnCommandLine(tParam)
 	ShowHostWnd()
+end
+
+function OnFilterResult(tParam)
+	local bFilterSucc = tParam[1]
+	if not bFilterSucc then
+		return
+	end 
+		
+	local objAdvCount = tFunHelper.GetMainCtrlChildObj("MainWnd.Low.AdvCount")
+	if objAdvCount == nil then
+		tFunHelper.TipLog("[OnFilterResult] get ChildCtrl_AdvCount failed")
+		return
+	end
+	
+	objAdvCount:AddAdvCount()
 end
 
 

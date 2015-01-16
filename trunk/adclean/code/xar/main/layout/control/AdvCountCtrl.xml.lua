@@ -313,11 +313,11 @@ function Inner_ChangeSwitchFilter(objFilterSwitch)
 	if g_bFilterOpen then
 		objFilterSwitch:SetTextureID("SwitchFilter.Close")
 		g_bFilterOpen = false
-		tFunHelper.SwitchFuncFilter(false)
+		tFunHelper.SwitchADCFilter(false)
 	else
 		objFilterSwitch:SetTextureID("SwitchFilter.Open")
 		g_bFilterOpen = true
-		tFunHelper.SwitchFuncFilter(true)
+		tFunHelper.SwitchADCFilter(true)
 	end
 end
 
