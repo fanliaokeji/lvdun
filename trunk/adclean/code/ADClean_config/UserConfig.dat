@@ -1,13 +1,10 @@
 function GetSubTable()
 	local t = {
-		["nLastCommonUpdateUTC"] = 1421389060, 
-		["nFilterCountTotal"] = 1641, 
+		["nLastCommonUpdateUTC"] = 0, 
+		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
-		["nLastShowIntroduce"] = 1418899577, 
 		["strServerConfigURL"] = "http://dl.aizhuomian.com/qdf/1.0/ADCleanServerConfig.dat", 
-		["nLastBubbleUTC"] = 1420420094, 
-		["nNoShowFilterBubble"] = 1420420100, 
-		["nLastClearUTC"] = 1421371866, 
+		["nLastClearUTC"] = 0, 
 		["bFilterOpen"] = true, 
 		["nHideBubblePopWndInSec"] = 5, 
 	}
