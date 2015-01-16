@@ -8,26 +8,42 @@ function OnSelect_Update(self)
 end
 
 
+--设置开机启动
+local g_bHasAutoStup = true
 function OnSelect_Sysboot(self)
-	-- OpenConfigURL("strIndexURL")
+	local bHasAutoStup = g_bHasAutoStup
+	local strExePath = tFunctionHelper.GetExePath()
+	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\ADClean"
+	
+	if not bHasAutoStup then 
+		if IsRealString(strExePath) and tipUtil:QueryFileExists(strExePath) then
+			local strCommandline = "\""..strExePath.."\"".." /embedding /sstartfrom sysboot "
+			bRetCode = tFunctionHelper.RegSetValue(strRegPath, strCommandline)
+		end
+		
+	else
+		tFunctionHelper.RegDeleteValue(strRegPath)
+	end
 end
 
 
 function OnInit_Sysboot(self)
+	local bHasAutoStup = false
+	local strExePath = tFunctionHelper.GetExePath()
+	local szCmdLine = tFunctionHelper.RegQueryValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\ADClean") or ""
+	if IsRealString(szCmdLine) 
+		and string.find(string.lower(szCmdLine), string.lower(tostring(strExePath)), 1, true) then
+		bHasAutoStup = true  -- 已经开机启动
+	end
 	
-end
-
-
-
-function OnSelect_Introduce(self)
-	tFunctionHelper.ShowPopupWndByName("TipIntroduceWnd.Instance", true)
+	ShowCheckIco(self, bHasAutoStup)
+	g_bHasAutoStup = bHasAutoStup
 end
 
 
 function OnSelect_Filter(self)
 	ChangeFilterState()
-	SetFilterText(self)
-	
+		
 	local tStatInfo = {}
 	tStatInfo.strEC = "TrayMenu"
 	tStatInfo.strEA = "filteropen"
@@ -43,13 +59,9 @@ end
 
 
 function OnInit_Filter(self)
-	SetFilterText(self)
+	SetFilterIcoState(self)
 end
 
-
-function OnSelect_Contact(self)
-	OpenConfigURL("strContactURL")
-end
 
 
 function OnSelect_About(self)
@@ -89,19 +101,15 @@ function OpenConfigURL(strUrlKey)
 end
 
 
-function SetFilterText(self)
+function SetFilterIcoState(self)
 	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
 		return
 	end
 	
 	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
-	if bFilterOpen then
-		-- self:SetText("过滤已开启")
-	else
-		-- self:SetText("过滤已关闭")
-	end	
-	
+	ShowCheckIco(self, bFilterOpen)
+
 	g_bFilterOpen = bFilterOpen
 end
 
@@ -112,6 +120,16 @@ function ChangeFilterState()
 		return
 	end
 	objAdvCntCtrl:ChangeSwitchFilter()
+end
+
+
+
+function ShowCheckIco(objMenuItem, bShowCheck)
+	if bShowCheck then
+		objMenuItem:SetIconID("MenuItem.Check")
+	else
+		objMenuItem:SetIconID("MenuItem.UnCheck")
+	end
 end
 
 
