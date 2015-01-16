@@ -5,7 +5,7 @@ function OnCreate( self )
 	PopupInDeskRight(self)
 end
 
-function OnClickCancle(self)
+function OnClickContinue(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	objHostWnd:Show(0)
@@ -13,7 +13,6 @@ end
 
 
 function OnClickQuit(self)
-	tFunHelper.KillClockWindow()
 	tFunHelper.ReportAndExit()
 end
 

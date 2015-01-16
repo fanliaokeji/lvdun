@@ -48,10 +48,10 @@ function SendStartupReportGgl(bShowWnd)
 	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
-		tStatInfo.strEC = "startup"  --½øÈëÉÏ±¨
+		tStatInfo.strEC = "startup"  --è¿›å…¥ä¸ŠæŠ¥
 		tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
 	else
-		tStatInfo.strEC = "showui" 	 --Õ¹Ê¾ÉÏ±¨
+		tStatInfo.strEC = "showui" 	 --å±•ç¤ºä¸ŠæŠ¥
 		tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""
 	end
 	tStatInfo.strEV = 1
@@ -95,6 +95,7 @@ function ShowMainTipWnd(objMainWnd)
 		objMainWnd:Show(5)
 	end
 	
+	objMainWnd:SetTitle("å¹¿å‘Šæ¸…é“å¤«")
 	SendStartupReportGgl(true)
 end
 
@@ -254,7 +255,7 @@ function PopTipWnd(OnCreateFunc)
 		FunctionObj.FailExitTipWnd(4)
 	end
 	
-	---³õÊ¼»¯ÍĞÅÌ
+	---åˆå§‹åŒ–æ‰˜ç›˜
     if frameHostWnd then
 	    FunctionObj.InitTrayTipWnd(frameHostWnd)
 	end

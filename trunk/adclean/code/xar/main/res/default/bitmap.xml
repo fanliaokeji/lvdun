@@ -7,9 +7,22 @@
 		<texture id="MainWnd.BtnClose.Hover" image="bitmap\MainWnd.BtnClose.Hover.png" />
 		<texture id="MainWnd.BtnMin.Hover" image="bitmap\MainWnd.BtnMin.Hover.png" />
 		
+		<texture id="PopWnd.BtnClose.Normal" image="bitmap\PopWnd.BtnClose.Normal.png" />
+		<texture id="PopWnd.BtnClose.Hover" image="bitmap\PopWnd.BtnClose.Hover.png" />
+		
+		<texture id="TrayMenu.Select" image="bitmap\TrayMenu.Select.png" />
+		<texture id="Tray.Main.Bkg" image="bitmap\Tray.Main.Bkg.png" />
+		
 		<texture id="SwitchFilter.Open" image="bitmap\SwitchFilter.Open.png" />
 		<texture id="SwitchFilter.Close" image="bitmap\SwitchFilter.Close.png" />
 		<texture id="AdvCountElem.Bkg" image="bitmap\AdvCountElem.Bkg.png" />
+		
+		<texture id="AboutWnd.Bkg" image="bitmap\AboutWnd.Bkg.png" />
+		<texture id="ExitRemind.Bkg" image="bitmap\ExitRemind.Bkg.png" />
+		<texture id="PopupWnd.EnterBtn.Normal" image="bitmap\PopupWnd.EnterBtn.Normal.png" />
+		<texture id="PopupWnd.EnterBtn.Hover" image="bitmap\PopupWnd.EnterBtn.Hover.png" />
+		<texture id="PopupWnd.CancleBtn.Normal" image="bitmap\PopupWnd.CancleBtn.Normal.png" />
+		<texture id="PopupWnd.CancleBtn.Hover" image="bitmap\PopupWnd.CancleBtn.Hover.png" />
 		
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
@@ -21,6 +34,12 @@
 		<bitmap id="Number_7" path="bitmap\number_7.png"/>
 		<bitmap id="Number_8" path="bitmap\number_8.png"/>
 		<bitmap id="Number_9" path="bitmap\number_9.png"/>
+		
+		<bitmap id="MenuItem.About" path="bitmap\MenuItem.About.png"/>
+		<bitmap id="MenuItem.Check" path="bitmap\MenuItem.Check.png"/>
+		<bitmap id="MenuItem.Quit" path="bitmap\MenuItem.Quit.png"/>
+		<bitmap id="MenuItem.UnCheck" path="bitmap\MenuItem.UnCheck.png"/>
+		<bitmap id="MenuItem.Update" path="bitmap\MenuItem.Update.png"/>
 		
 		<texture id="Number.Bkg_1" image="bitmap\Number.Bkg_1.png"/>
 		<texture id="Number.Bkg_2" image="bitmap\Number.Bkg_2.png"/>
