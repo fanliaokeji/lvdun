@@ -46,7 +46,7 @@ HRESULT CreateGreenShieldService(const wchar_t* szDllPath)
 	}
 
 	ScopeResourceHandle<SC_HANDLE, BOOL (WINAPI*)(SC_HANDLE)> autoCloseServiceHandle(schService, ::CloseServiceHandle);
-	SERVICE_DESCRIPTION description = { L"清道夫实时过滤服务。" };
+	SERVICE_DESCRIPTION description = { L"广告清道夫实时过滤服务。" };
 	ChangeServiceConfig2(schService, SERVICE_CONFIG_DESCRIPTION, &description);
 
 	// HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\ADCleanService
