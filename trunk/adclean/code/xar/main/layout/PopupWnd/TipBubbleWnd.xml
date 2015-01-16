@@ -1,0 +1,102 @@
+<xlue>
+	<objtreetemplate id="TipBubbleTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>176</width>
+			<height>42</height>
+		</attr>
+
+		<obj id="root.layout" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>176</width>
+				<height>42</height>
+				<texture>BubbleWnd.Bkg</texture>
+			</attr>				
+			<children>					
+				<obj id="BubbleWnd.Text" class="TextObject">
+					<attr>
+						<left>5</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<text>不再开启实时拦截</text>
+						<textcolor>333333</textcolor>
+						<font>font.yahei14</font>
+						<valign>center</valign>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="BubbleWnd.CloseBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-20</left>
+						<top>6</top>
+						<width>13</width>
+						<height>13</height>
+						<NormalBkgID>Bubble.BtnClose.Normal</NormalBkgID>
+						<DownBkgID>Bubble.BtnClose.Normal</DownBkgID>
+						<HoverBkgID>Bubble.BtnClose.Hover</HoverBkgID>
+						<DisableBkgID>Bubble.BtnClose.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipBubbleWnd.xml.lua" func="OnClickCloseBtn" />
+						<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+						<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+					</eventlist>
+				</obj>
+				
+				<obj id="BubbleWnd.CheckBox" class="TextureObject">
+					<attr>
+						<left>10</left>
+						<top>(father.height-23)/2+1</top>
+						<width>22</width>
+						<height>22</height>
+						<texture>BubbleWnd.CheckBox.Empty</texture>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="TipBubbleWnd.xml.lua" func="OnClickCheckBox" />
+						<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+						<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="RouteToFather" />
+					</eventlist>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnMouseEnter" file="TipBubbleWnd.xml.lua" func="OnMouseEnter" />
+				<event name="OnMouseLeave" file="TipBubbleWnd.xml.lua" func="OnMouseLeave" />
+			</eventlist>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipBubbleWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>176</width>
+            <height>42</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>1</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipBubbleWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="TipBubbleWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

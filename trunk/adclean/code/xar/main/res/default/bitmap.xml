@@ -27,6 +27,12 @@
 		<texture id="UpdateWnd.UpdateBtn.Hover" image="bitmap\UpdateWnd.UpdateBtn.Hover.png" />
 		<texture id="UpdateWnd.Bkg" image="bitmap\UpdateWnd.Bkg.png" />
 		
+		<texture id="BubbleWnd.Bkg" image="bitmap\BubbleWnd.Bkg.png" />
+		<texture id="BubbleWnd.CheckBox.Check" image="bitmap\BubbleWnd.CheckBox.Check.png" />
+		<texture id="BubbleWnd.CheckBox.Empty" image="bitmap\BubbleWnd.CheckBox.Empty.png" />
+		<texture id="Bubble.BtnClose.Hover" image="bitmap\Bubble.BtnClose.Hover.png" />
+		<texture id="Bubble.BtnClose.Normal" image="bitmap\Bubble.BtnClose.Normal.png" />
+		
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
 		<bitmap id="Number_2" path="bitmap\number_2.png"/>

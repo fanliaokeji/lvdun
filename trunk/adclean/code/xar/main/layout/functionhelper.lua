@@ -780,6 +780,7 @@ local g_tPopupWndList = {
 	[1] = {"TipAboutWnd", "TipAboutTree"},
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipUpdateWnd", "TipUpdateTree"},
+	[4] = {"TipBubbleWnd", "TipBubbleTree"},
 }
 
 function CreatePopupTipWnd()
