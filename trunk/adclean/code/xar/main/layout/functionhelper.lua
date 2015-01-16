@@ -89,6 +89,7 @@ function ReportAndExit()
 	local tStatInfo = {}
 	HideMainWindow()	
 	DestroyPopupWnd()	
+	WriteLastPullTime()
 	SendRunTimeReport(0, true)
 	
 	tStatInfo.strEC = "exit"	
@@ -844,6 +845,7 @@ local g_tConfigFileStruct = {
 	["tUserConfig"] = {
 		["strFileName"] = "UserConfig.dat",
 		["tContent"] = {}, 
+		["fnMergeOldFile"] = function(infoTable, strFileName) return MergeOldUserCfg(infoTable, strFileName) end,
 	},
 }
 
@@ -874,6 +876,36 @@ function ReadAllConfigInfo()
 	g_bLoadCfgSucc = true
 	TipLog("[ReadAllConfigInfo] success!")
 	return true
+end
+
+
+function MergeOldUserCfg(tCurrentCfg, strFileName)
+	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
+	if type(tOldCfg) ~= "table" then
+		return false, tCurrentCfg
+	end
+	
+	tCurrentCfg["nFilterCountTotal"] = tOldCfg["nFilterCountTotal"] or 0
+	tCurrentCfg["nFilterCountOneDay"] = tOldCfg["nFilterCountOneDay"] or 0
+	tCurrentCfg["bFilterOpen"] = tOldCfg["bFilterOpen"]
+	tCurrentCfg["nHideBubblePopWndInSec"] = tOldCfg["nHideBubblePopWndInSec"]
+	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
+	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
+		
+	tipUtil:DeletePathFile(strOldCfgPath)
+	return true, tCurrentCfg
+end
+
+
+function GetOldCfgContent(strCurFileName)
+	local strOldFileName = strCurFileName..".bak"
+	local strOldCfgPath = GetCfgPathWithName(strOldFileName)
+	if not IsRealString(strOldCfgPath) or not tipUtil:QueryFileExists(strOldCfgPath) then
+		return nil
+	end
+	
+	local tOldCfg = LoadTableFromFile(strOldCfgPath)
+	return tOldCfg, strOldCfgPath
 end
 
 
@@ -1043,6 +1075,16 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	end, nTime)
 end
 --
+
+function WriteLastPullTime()
+	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
+	if not IsRealString(strStartCfgPath) then
+		return
+	end
+
+	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
+	tipUtil:WriteINI("pusher", "lastpull", nCurrnetTime, strStartCfgPath)
+end
 
 ------------------文件--
 
