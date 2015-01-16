@@ -416,7 +416,7 @@ int LuaGSUtil::FGSFilter(lua_State* pLuaState)
 
 		if (!bOnce)
 		{	
-			if (GsSetHook(L"GsNet32.dll"))
+			if (GsSetHook(L"CleanNet32.dll"))
 			{
 				HANDLE hThread = GsStartProxy(&listen_port);
 
