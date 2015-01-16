@@ -84,11 +84,17 @@ end
 
 
 function ShowMainTipWnd(objMainWnd)
-	local bHideMainPage = false
+	local bHideMainPage = true
 	local cmdString = tipUtil:GetCommandLine()
-	local bRet = string.find(tostring(cmdString), "/embedding")
+	
+	local bRet = string.find(tostring(cmdString), "/forceshow")
 	if bRet then
-		bHideMainPage = true
+		bHideMainPage = false
+	else
+		local bRet = string.find(tostring(cmdString), "/embedding")
+		if bRet then
+			bHideMainPage = true
+		end
 	end
 	
 	if bHideMainPage then
@@ -498,6 +504,9 @@ function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local cmdString = tipUtil:GetCommandLine()
 	--to do 
+	--test xlmess
+	FunctionObj.ShowPopupWndByName("TipBubbleWnd.Instance", true)
+	
 end
 
 
