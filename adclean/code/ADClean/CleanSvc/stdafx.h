@@ -19,5 +19,5 @@
 
 // TODO: reference additional headers your program requires here
 #define TSLOG
-#define TSLOG_GROUP "GSSVC"
+#define TSLOG_GROUP "CLEANSVC"
 #include <tslog/tslog.h>
