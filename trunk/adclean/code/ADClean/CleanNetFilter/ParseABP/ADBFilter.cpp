@@ -94,7 +94,7 @@ FilterRule::FilterRule( const std::string & r)
 	{
 		std::string::size_type pos = range.begin()-rule.begin();
 		std::string strState = rule.substr(pos+3);
-		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
+		//boost::split(m_stateDomains,strState,boost::is_any_of("|"));
 		rule = rule.substr(0,pos);
 	}
 
@@ -287,10 +287,10 @@ static bool adbMatch(const char * s,  const char *  p,bool caseSensitivie=false)
 
 bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
 {
-	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
-	{
-		return false;
-	}
+	//if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	//{
+	//	return false;
+	//}
 	std::string url=u.GetString();
 	bool ret;
     if(!this->m_isMatchProtocol) {
@@ -478,7 +478,7 @@ ReplaceRule::ReplaceRule(const std::string & r)
 	{
 		std::string::size_type pos = range.begin()-rule.begin();
 		std::string strState = rule.substr(pos+3);
-		boost::split(m_stateDomains,strState,boost::is_any_of("|"));
+		//boost::split(m_stateDomains,strState,boost::is_any_of("|"));
 		rule = rule.substr(0,pos);
 	}
 	m_rule=rule;
@@ -507,10 +507,10 @@ ReplaceRule::ReplaceRule(const std::string & r)
 
 bool ReplaceRule::shouldReplace(const Url & u)
 {
-	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
-	{
-		return false;
-	}
+	//if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
+	//{
+	//	return false;
+	//}
 
 	std::string url=u.GetString();
 	bool ret;
