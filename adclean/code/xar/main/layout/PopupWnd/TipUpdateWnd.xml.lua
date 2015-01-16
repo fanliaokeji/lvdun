@@ -17,7 +17,7 @@ function OnShowWindow(self, bVisible)
 	local objTree = self:GetBindUIObjectTree()
 	local objHostWnd = objTree:GetBindHostWnd()
 	if objHostWnd then
-		objHostWnd:SetTitle("嘀嗒在线升级")
+		objHostWnd:SetTitle("广告清道夫在线升级")
 	end
 	
 	local objRootCtrl = objTree:GetUIObject("root.layout")
@@ -88,9 +88,9 @@ function ShowInstallPanel(self, strInstallPath)
 	objTitle:SetVisible(true)
 	objTitle:SetChildrenVisible(true)
 	
-	strText = "已经下载完毕"
+	strText = "下载完毕，点击更新"
 	objTitle:SetText(strText)
-	objEnterBtn:SetText("立即安装")
+	-- objEnterBtn:SetText("立即安装")
 	
 	local attr = objRootCtrl:GetAttribute()
 	attr.bInstall = true
@@ -184,7 +184,7 @@ function ShowReadyUpdate(objRootCtrl)
 	local objEnterBtn = objRootCtrl:GetControlObject("TipUpdate.EnterBtn") 
 	objEnterBtn:SetVisible(true)
 	objEnterBtn:SetChildrenVisible(true)
-	objEnterBtn:SetText("立即下载")
+	-- objEnterBtn:SetText("立即下载")
 
 	ShowLayout(objRootCtrl, "TipUpdate.CheckUpdate.Layout", false)
 	ShowLayout(objRootCtrl, "TipUpdate.Update.Layout", true)
@@ -225,7 +225,7 @@ function ShowErrorPanel(objRootCtrl)
 	objTitle:SetChildrenVisible(true)
 	
 	objTitle:SetText("新版本下载失败")
-	objEnterBtn:SetText("重新下载")
+	-- objEnterBtn:SetText("重新下载")
 end
 
 
@@ -275,7 +275,7 @@ function SetVersionText(objRootCtrl)
 	
 	local strVersion = tNewVersionInfo.strVersion
 	
-	local strText = "发现新版本嘀嗒日历V"..tostring(strVersion)
+	local strText = "发现新版本广告清道夫V"..tostring(strVersion)
 	objVersion:SetText(strText)
 	
 	local objText1 = objContent:GetObject("TipUpdate.Content.Text1")

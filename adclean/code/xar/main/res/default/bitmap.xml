@@ -23,6 +23,9 @@
 		<texture id="PopupWnd.EnterBtn.Hover" image="bitmap\PopupWnd.EnterBtn.Hover.png" />
 		<texture id="PopupWnd.CancleBtn.Normal" image="bitmap\PopupWnd.CancleBtn.Normal.png" />
 		<texture id="PopupWnd.CancleBtn.Hover" image="bitmap\PopupWnd.CancleBtn.Hover.png" />
+		<texture id="UpdateWnd.UpdateBtn.Normal" image="bitmap\UpdateWnd.UpdateBtn.Normal.png" />
+		<texture id="UpdateWnd.UpdateBtn.Hover" image="bitmap\UpdateWnd.UpdateBtn.Hover.png" />
+		<texture id="UpdateWnd.Bkg" image="bitmap\UpdateWnd.Bkg.png" />
 		
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
@@ -49,6 +52,7 @@
 		<texture id="Number.Bkg_6" image="bitmap\Number.Bkg_6.png"/>
 		
 		<gif id="MainWnd.Up.Gif.Bkg" file="bitmap\MainWnd.Up.Gif.Bkg.gif" />
+		<gif id="UpdateWnd.Loading" file="bitmap\UpdateWnd.Loading.gif" />
 	</resource>
 </XLUE>
 

@@ -75,7 +75,9 @@ function SendStartReportLocal()
 	local strMACFix = string.gsub(strMAC, "-$", "")
 	local strChannelID = FunctionObj.GetInstallSrc()
 	
-	local strUrl = ""
+	local strUrl = "http://stat.aizhuomian.com:8084/?mac=" .. tostring(strMACFix) 
+					.."&op=start&cid=" .. (strChannelID)
+	
 	FunctionObj.TipLog("[SendStartReportLocal]: " .. tostring(strUrl))
 	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
 end
