@@ -42,7 +42,7 @@ private:
     bool m_matchFirstParty;
 	std::vector<std::string> m_domains;
 	std::vector<std::string> m_inverseDomains;
-	std::vector<std::string> m_stateDomains;
+	//std::vector<std::string> m_stateDomains;
 private:
 	bool isMatchStateDomain();
     bool isMatchType(const Url & url,FilterType t);
@@ -82,7 +82,7 @@ private:
 	std::string m_rule;
 	bool m_isMatchProtocol;
 
-	std::vector<std::string> m_stateDomains;
+	//std::vector<std::string> m_stateDomains;
 	
 };
 
