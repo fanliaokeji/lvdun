@@ -36,7 +36,7 @@ function PopupInDeskRight(self)
 	local nLayoutHeight = nLayoutB - nLayoutT
 	
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move( workright - nLayoutWidth+9, workbottom - nLayoutHeight+7, nLayoutWidth, nLayoutHeight)
+	self:Move( workright - nLayoutWidth, workbottom - nLayoutHeight, nLayoutWidth, nLayoutHeight)
 	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
 	-- objtree:AddAnimation(ani)
 	-- ani:Resume()

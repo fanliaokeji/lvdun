@@ -4,6 +4,8 @@ local tipUtil = tFunHelper.tipUtil
 function OnCreate( self )
 	PopupInDeskRight(self)
 	SetShowText(self)
+	
+	self:SetTitle("关于广告清道夫")
 end
 
 function OnClickCloseBtn(self)
@@ -16,13 +18,13 @@ function SetShowText(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
 
-	local objVersion = objRootLayout:GetObject("TipAbout.Caption:TipAbout.Version")
+	local objVersion = objRootLayout:GetObject("TipAbout.Version.Layout:TipAbout.Version.Text")
 	if not objVersion then
 		return
 	end
 	
 	local strVersion = tFunHelper.GetProjectVersion()
-	local strText = "版本号 ："..tostring(strVersion).." 正式版"
+	local strText = "版本号 : V"..tostring(strVersion).." 正式版本"
 	objVersion:SetText(strText)
 end
 

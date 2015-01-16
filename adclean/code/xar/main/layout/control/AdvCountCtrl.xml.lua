@@ -31,6 +31,7 @@ function ChangeSwitchFilter(objRootCtrl)
 	Inner_ChangeSwitchFilter(objFilterSwitch)
 	SaveAdvOpenState()
 	tFunHelper.SetNotifyIconState()
+	tFunHelper.UpdateMainWndBkg()
 end
 
 
@@ -48,10 +49,8 @@ end
 
 
 function OnClickSwitchFilter(self)
-	Inner_ChangeSwitchFilter(self)
-	SaveAdvOpenState()
-	tFunHelper.SetNotifyIconState()
-	tFunHelper.UpdateMainWndBkg()
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:ChangeSwitchFilter()
 	
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"

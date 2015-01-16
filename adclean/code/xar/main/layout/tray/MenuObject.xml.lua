@@ -43,6 +43,17 @@ function GetMaxWidth(self)
 end
 
 
+function FatherWidthWithFix(self)
+	local objRootCtrl = self:GetOwnerControl()
+	local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
+	local nRootW = nRootR - nRootL
+	
+	local attr = self:GetAttribute()
+	local nRightSpan = attr.ItemRight
+	return nRootW- nRightSpan
+end
+
+
 -- 遍历当前菜单项，从上到下设置每项菜单项的位置
 function AdjustItemPos( self )
 	local attr = self:GetAttribute()
@@ -50,7 +61,8 @@ function AdjustItemPos( self )
 	local pos_y = attr.ItemTop
 	
 	--local max_width = GetMaxWidth( self )  fix
-	local max_width = 210
+	-- local max_width = 185
+	local max_width = FatherWidthWithFix(self)
 	
 	IterateItems(self, function(item)
 		--Set item pos when it is visible

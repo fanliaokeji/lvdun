@@ -69,7 +69,7 @@
 						<left>0</left>
 						<top>0</top>
 						<width>father.width</width>
-						<height>19</height>
+						<height>26</height>
 						<alpha>255</alpha>
 						<visible>false</visible>
 						<texture>TrayMenu.Select</texture>

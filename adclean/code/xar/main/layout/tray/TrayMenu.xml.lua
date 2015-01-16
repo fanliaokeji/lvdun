@@ -58,17 +58,21 @@ end
 
 
 function OnSelect_Exit(self)
-	tFunctionHelper.ShowExitRemindWnd()
+	ShowExitRemindWnd()
 end
 
 -------
 
 function ShowAboutWnd()
-	tFunctionHelper.ShowPopupWndByName("TipAboutWnd.Instance")
+	tFunctionHelper.ShowPopupWndByName("TipAboutWnd.Instance", true)
 end
 
 function ShowUpdateWnd()
-	tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance")
+	tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance", true)
+end
+
+function ShowExitRemindWnd()
+	tFunctionHelper.ShowPopupWndByName("TipExitRemindWnd.Instance", true)
 end
 
 
@@ -93,9 +97,9 @@ function SetFilterText(self)
 	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 	if bFilterOpen then
-		self:SetText("过滤已开启")
+		-- self:SetText("过滤已开启")
 	else
-		self:SetText("过滤已关闭")
+		-- self:SetText("过滤已关闭")
 	end	
 	
 	g_bFilterOpen = bFilterOpen
@@ -103,28 +107,7 @@ end
 
 
 function ChangeFilterState()
-	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local frameHostWnd = hostwndManager:GetHostWnd("GreenWallTipWnd.MainFrame")
-	if nil == frameHostWnd then
-		return
-	end
-	
-	local objTree = frameHostWnd:GetBindUIObjectTree()
-	if nil == objTree then
-		return
-	end
-	
-	local objRootCtrl = objTree:GetUIObject("root.layout:root.ctrl")
-	if nil == objRootCtrl then
-		return
-	end
-	
-	local objBodyContainer = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
-	if nil == objBodyContainer then
-		return
-	end
-	
-	local objAdvCntCtrl = objBodyContainer:GetChildObjByCtrlName("ChildCtrl_AdvCount")
+	local objAdvCntCtrl = tFunctionHelper.GetMainCtrlChildObj("MainWnd.Low.AdvCount")
 	if nil == objAdvCntCtrl then
 		return
 	end

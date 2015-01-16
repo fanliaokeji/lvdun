@@ -16,17 +16,13 @@ function OnBindObjectTree(self, menuTree)
 	local objMainLayout = menuTree:GetUIObject("TrayMenu.Main")
 	local context = objMainLayout:GetObject("TrayMenu.Context")
 	context:OnInitControl()	
-	
-	local objTitle = objMainLayout:GetObject("TrayMenu.Title")
-	local left, top, right, bottom = objTitle:GetObjPos()
-	objTitle:SetObjPos(left, top, right, bottom)
 end
 
 ------------------
 function SetTitleText(self)
 	local menuTree = self:GetBindUIObjectTree()
 	local objMainLayout = menuTree:GetUIObject("TrayMenu.Main")
-	local objTitleText = objMainLayout:GetObject("TrayMenu.Title:TrayMenu.Title.Text")
+	local objTitleText = objMainLayout:GetObject("TrayMenu.Title.Text")
 	if objTitleText == nil then
 		return
 	end
@@ -38,6 +34,6 @@ function SetTitleText(self)
 
 	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
-	local strText = "今天为您过滤广告"..tostring(nFilterCount).."次"
+	local strText = "当天累计拦截广告"..tostring(nFilterCount).."次"
 	objTitleText:SetText(strText)	
 end

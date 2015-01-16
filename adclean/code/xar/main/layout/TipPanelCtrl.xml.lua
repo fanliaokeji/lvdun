@@ -29,9 +29,7 @@ end
 
 ---事件--
 function OnClickCloseBtn(self)
-	tipUtil:Exit("test")
-
-	-- HideWndToTray(self) xlmess
+	HideWndToTray(self)
 end
 
 function OnClickMinBtn(self)

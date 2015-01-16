@@ -20,6 +20,9 @@
 						<height>father.height</height>
 					</attr>
 					<children>	
+					
+					
+					</children>
 				</obj> <!--end of TipUpdate.MainPanel-->
 			</children>
 		</objtemplate>
@@ -29,16 +32,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>437</width>
-			<height>204</height>
+			<width>438</width>
+			<height>205</height>
 		</attr>
 
 		<obj id="root.layout" class="UpdateRootCtrl">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>437</width>
-				<height>204</height>
+				<width>438</width>
+				<height>205</height>
 			</attr>				
 		</obj>
 	</objtreetemplate>
@@ -48,8 +51,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>437</width>
-            <height>204</height>
+            <width>438</width>
+            <height>205</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

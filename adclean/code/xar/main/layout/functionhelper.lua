@@ -209,7 +209,9 @@ function TipConvStatistic(tStat)
 		strEV = 1
 	end
 	
-	local strUrl = ""
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-58613034-1&cid="..tostring(strCID)
+						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
+						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 	
 	TipLog("TipConvStatistic: " .. tostring(strUrl))
 	
@@ -640,9 +642,9 @@ function SetNotifyIconState(strText)
 	local strDefaultText = "广告清道夫\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
 	
 	local strResImageDir = __document .. "\\..\\..\\..\\..\\res"
-	local strImageName = "GreenWall.TrayIcon.Close.ico"
+	local strImageName = "ADClean.TrayIcon.Close.ico"
 	if bFilterOpen then
-		strImageName = "GreenWall.TrayIcon.Open.ico"
+		strImageName = "ADClean.TrayIcon.Open.ico"
 	end
 	
 	local strImagePath = strResImageDir.. "\\".. strImageName
@@ -775,9 +777,9 @@ end
 
 --弹出窗口--
 local g_tPopupWndList = {
-	-- [1] = {"TipAboutWnd", "TipAboutTree"},
-	-- [2] = {"TipExitRemindWnd", "TipExitRemindTree"},
-	-- [3] = {"TipUpdateWnd", "TipUpdateTree"},
+	[1] = {"TipAboutWnd", "TipAboutTree"},
+	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
+	[3] = {"TipUpdateWnd", "TipUpdateTree"},
 }
 
 function CreatePopupTipWnd()
