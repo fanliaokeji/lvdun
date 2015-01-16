@@ -533,7 +533,10 @@ end
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local cmdString = tipUtil:GetCommandLine()
-	--to do 
+	
+	if string.find(tostring(cmdString), "/showbubble") then
+		FunctionObj.ShowPopupWndByName("TipBubbleWnd.Instance", true)
+	end
 end
 
 
