@@ -15,6 +15,8 @@
 #define GS_GROUP "GS"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>				//如上配置,日志程序将根据 C:\TSLOG_CONFIG\TSLOG.ini 定义的策略打印
 #include <shellapi.h>
+#include <tlhelp32.h>
+#include <atlstr.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -30,6 +32,39 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		break;
 	}
 	return TRUE;
+}
+
+//程序退出保证所有子线程结束
+static HANDLE s_ListenHandle = CreateEvent(NULL,TRUE,TRUE,NULL);
+//引用计数,默认是0
+static int s_ListenCount = 0;
+static CRITICAL_SECTION s_csListen;
+static bool b_Init = false;
+
+void ResetUserHandle()
+{
+	if(!b_Init){
+		InitializeCriticalSection(&s_csListen);
+		b_Init = true;
+	}
+	EnterCriticalSection(&s_csListen);
+	if(s_ListenCount == 0)
+	{
+		ResetEvent(s_ListenHandle);
+	}
+	++s_ListenCount; //引用计数加1
+	LeaveCriticalSection(&s_csListen);
+}
+
+void SetUserHandle()
+{
+	EnterCriticalSection(&s_csListen);
+	--s_ListenCount;//引用计数减1
+	if (s_ListenCount == 0)
+	{
+		SetEvent(s_ListenHandle);
+	}
+	LeaveCriticalSection(&s_csListen);
 }
 
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
@@ -51,7 +86,7 @@ DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
 	}
 	::CoUninitialize();
-
+	SetUserHandle();
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
@@ -96,13 +131,74 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		str += szev;
 	}
 	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58613034-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
-
+	
+	ResetUserHandle();
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
 	CloseHandle(hThread);
 	//SendHttpStatThread((LPVOID)szURL);
 }
 
+BOOL FindAndKillProcessByName(LPCTSTR strProcessName)
+{
+        if(NULL == strProcessName)
+        {
+                return FALSE;
+        }
+		HANDLE handle32Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (INVALID_HANDLE_VALUE == handle32Snapshot)
+        {
+                        return FALSE;
+        }
+ 
+        PROCESSENTRY32 pEntry;       
+        pEntry.dwSize = sizeof( PROCESSENTRY32 );
+ 
+        //Search for all the process and terminate it
+        if(Process32First(handle32Snapshot, &pEntry))
+        {
+                BOOL bFound = FALSE;
+                if (!_tcsicmp(pEntry.szExeFile, strProcessName))
+                {
+                        bFound = TRUE;
+                        }
+                while((!bFound)&&Process32Next(handle32Snapshot, &pEntry))
+                {
+                        if (!_tcsicmp(pEntry.szExeFile, strProcessName))
+                        {
+                                bFound = TRUE;
+                        }
+                }
+                if(bFound)
+                {
+                        CloseHandle(handle32Snapshot);
+                        HANDLE handLe =  OpenProcess(PROCESS_TERMINATE , FALSE, pEntry.th32ProcessID);
+                        BOOL bResult = TerminateProcess(handLe,0);
+                        return bResult;
+                }
+        }
+ 
+        CloseHandle(handle32Snapshot);
+        return FALSE;
+}
+
+extern "C" __declspec(dllexport) void SoftExit()
+{
+	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
+	if (ret == WAIT_TIMEOUT){
+	}
+	else if (ret == WAIT_OBJECT_0){	
+	}
+	if(b_Init){
+		DeleteCriticalSection(&s_csListen);
+	}
+	TCHAR szFileFullPath[256];
+	::GetModuleFileName(NULL,static_cast<LPTSTR>(szFileFullPath),256);
+	CString szProcessName(szFileFullPath);
+	int nPos = szProcessName.ReverseFind('\\');
+	szProcessName = szProcessName.Right(szProcessName.GetLength() - nPos - 1); 
+	FindAndKillProcessByName(szProcessName);
+}
 
 extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CHAR * pszVersionString)
 {
@@ -136,7 +232,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
 	LPCSTR data_Set= "Software\\ADClean";
-	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
 		DWORD dwSize = sizeof(szValue);
@@ -155,7 +251,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	strcpy(pszPeerID,strPeerID.c_str());
 
 	HKEY hKey, hTempKey;
-	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER, "Software",0,KEY_SET_VALUE, &hKey))
 	{
 		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "ADClean", &hTempKey))
 		{
@@ -316,6 +412,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	memset(szURL, 0, MAX_PATH);
 	sprintf(szURL, "%s", str.c_str());
 	//SendHttpStatThread((LPVOID)szURL);
+	ResetUserHandle();
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
 	CloseHandle(hThread);
@@ -446,4 +543,44 @@ extern "C" __declspec(dllexport) bool PinToStartMenu4XP(bool bPin, char* szPath)
 	delete [] pwstr_Path;
 	::CoUninitialize();
 	return false;
+}
+
+extern "C" __declspec(dllexport) void RefleshIcon(char* szPath)
+{
+	wchar_t* pwstr_Path = AnsiToUnicode(szPath);
+	::SHChangeNotify(SHCNE_UPDATEDIR|SHCNE_INTERRUPT|SHCNE_ASSOCCHANGED, SHCNF_IDLIST |SHCNF_FLUSH | SHCNF_PATH|SHCNE_ASSOCCHANGED,
+								pwstr_Path,0);
+	delete [] pwstr_Path;
+
+}
+
+EXTERN_C const GUID DECLSPEC_SELECTANY FOLDERID_UserPin \
+	= { 0x9E3995AB, 0x1F9C, 0x4F13, { 0xB8, 0x27,  0x48,  0xB2,  0x4B,  0x6C,  0x71,  0x74 } };
+extern "C" __declspec(dllexport) void GetUserPinPath(char* szPath)
+{
+	static std::wstring strUserPinPath(_T(""));
+
+	if (strUserPinPath.length() <= 0)
+	{
+		HMODULE hModule = LoadLibrary( _T("shell32.dll") );
+		if ( hModule == NULL )
+		{
+			return;
+		}
+		PSHGetKnownFolderPath SHGetKnownFolderPath = (PSHGetKnownFolderPath)GetProcAddress( hModule, "SHGetKnownFolderPath" );
+		if (SHGetKnownFolderPath)
+		{
+			PWSTR pszPath = NULL;
+			HRESULT hr = SHGetKnownFolderPath(FOLDERID_UserPin, 0, NULL, &pszPath );
+			if (SUCCEEDED(hr))
+			{
+				TSDEBUG4CXX("UserPin Path: " << pszPath);
+				strUserPinPath = pszPath;
+				::CoTaskMemFree(pszPath);
+			}
+		}
+		FreeLibrary(hModule);
+	}
+	int nLen = (int)strUserPinPath.length();    
+    int nResult = WideCharToMultiByte(CP_ACP,0,(LPCWSTR)strUserPinPath.c_str(),nLen,szPath,nLen,NULL,NULL);
 }
