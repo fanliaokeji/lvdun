@@ -135,7 +135,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 		is_ipv4_tcp = reinterpret_cast<const sockaddr_in*>(name)->sin_family == AF_INET;
 	}
 	unsigned short proxy_port = 0;
-	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1")) {
+	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1") && !IsGreenShieldEnable()) {
 		unsigned short local_port = 0;
 		sockaddr_in local_addr;
 		std::memset(&local_addr, 0, sizeof(local_addr));
@@ -265,7 +265,7 @@ BOOL WSAAPI WinsockHooker::Hooked_ExtendConnectEx(SOCKET s, const struct sockadd
 	BOOL ret = FALSE;
 	if(real_connect_ex != NULL) {
 		unsigned short proxy_port = 0;
-		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1")) {
+		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1") && !IsGreenShieldEnable()) {
 			unsigned short local_port = 0;
 			sockaddr_in local_addr;
 			std::memset(&local_addr, 0, sizeof(local_addr));
@@ -400,5 +400,33 @@ bool WinsockHooker::IsEnable(unsigned short* proxy_port)
 	cvt.from[0] = sharedMemeryBuffer[6];
 	cvt.from[1] = sharedMemeryBuffer[7];
 	*proxy_port = cvt.to;
+	return true;
+}
+
+bool WinsockHooker::IsGreenShieldEnable()
+{
+	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{1469EA0A-0606-4C68-B120-062DC9CAD0C7}GSFilterEnable");
+	if(hFileMapping == NULL) {
+		return false;
+	}
+	// 自动关闭内存文件映射
+	ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseFileMapping(hFileMapping, ::CloseHandle);
+
+	char* sharedMemeryBuffer = reinterpret_cast<char*>(::MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 256));
+	if(sharedMemeryBuffer == NULL) {
+		return false;
+	}
+
+	// 自动关闭内存文件视图
+	ScopeResourceHandle<LPCVOID, BOOL (WINAPI*)(LPCVOID)> autoUnmapViewOfFile(sharedMemeryBuffer, ::UnmapViewOfFile);
+
+	if(sharedMemeryBuffer[0] != 'G' || sharedMemeryBuffer[1] != 'S') {
+		return false;
+	}
+
+	// 是否启用
+	if(sharedMemeryBuffer[2] != '\x01') {
+		return false;
+	}
 	return true;
 }
