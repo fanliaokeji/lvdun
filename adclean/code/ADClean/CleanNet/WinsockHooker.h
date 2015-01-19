@@ -25,6 +25,7 @@ private:
 	static bool IsHooked;
 private:
 	static bool IsEnable(unsigned short* proxy_port);
+	static bool IsGreenShieldEnable();
 public:
 	static SOCKET WSAAPI Hooked_socket(int af, int type, int protocol);
 	static SOCKET WSAAPI Hooked_WSASocket(int af, int type, int protocol, LPWSAPROTOCOL_INFO lpProtocolInfo, GROUP g, DWORD dwFlags);
