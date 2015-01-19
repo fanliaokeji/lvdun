@@ -220,12 +220,13 @@ end
 
 
 function StartRunCountTimer()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local nTimeSpanInSec = 10 * 60 
 	local nTimeSpanInMs = nTimeSpanInSec * 1000
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
 		gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
-		SendRunTimeReport(nTimeSpanInSec, false)
+		FunctionObj.SendRunTimeReport(nTimeSpanInSec, false)
 		XLSetGlobal("DiDa.LastReportRunTime", gnLastReportRunTmUTC) 
 	end, nTimeSpanInMs)
 end
