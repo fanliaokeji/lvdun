@@ -135,7 +135,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 		is_ipv4_tcp = reinterpret_cast<const sockaddr_in*>(name)->sin_family == AF_INET;
 	}
 	unsigned short proxy_port = 0;
-	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port)) {
+	if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1")) {
 		unsigned short local_port = 0;
 		sockaddr_in local_addr;
 		std::memset(&local_addr, 0, sizeof(local_addr));
@@ -265,7 +265,7 @@ BOOL WSAAPI WinsockHooker::Hooked_ExtendConnectEx(SOCKET s, const struct sockadd
 	BOOL ret = FALSE;
 	if(real_connect_ex != NULL) {
 		unsigned short proxy_port = 0;
-		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port)) {
+		if(is_ipv4_tcp && (remote_port >= 1024 || remote_port == 80) && IsEnable(&proxy_port) && remote_ip != inet_addr("127.0.0.1")) {
 			unsigned short local_port = 0;
 			sockaddr_in local_addr;
 			std::memset(&local_addr, 0, sizeof(local_addr));
