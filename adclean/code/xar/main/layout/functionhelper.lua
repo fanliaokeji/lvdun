@@ -126,6 +126,10 @@ function IsUserFullScreen()
 	return bRet
 end
 
+function GetBaseRegPath()
+	return "HKEY_LOCAL_MACHINE\\Software\\ADClean\\"
+end	
+
 
 function CheckIsNewVersion(strNewVer, strCurVer)
 	if not IsRealString(strNewVer) or not IsRealString(strCurVer) then
@@ -139,7 +143,9 @@ end
 
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\ADClean\\PeerId")
+	local strBaseRegPath = GetBaseRegPath()
+	local strPeerRegPath = tipUtil:PathCombine(strBaseRegPath, "PeerId")
+	local strPeerID = RegQueryValue(strPeerRegPath)
 	if IsRealString(strPeerID) then
 		return strPeerID
 	end
@@ -149,13 +155,16 @@ function GetPeerID()
 		return ""
 	end
 	
-	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\ADClean\\PeerId", strRandPeerID)
+	RegSetValue(strPeerRegPath, strRandPeerID)
 	return strRandPeerID
 end
 
 --渠道
 function GetInstallSrc()
-	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\ADClean\\InstallSource")
+	local strBaseRegPath = GetBaseRegPath()
+	local strSrcRegPath = tipUtil:PathCombine(strBaseRegPath, "InstallSource")
+
+	local strInstallSrc = RegQueryValue(strSrcRegPath)
 	if not IsNilString(strInstallSrc) then
 		return tostring(strInstallSrc)
 	end
@@ -364,7 +373,9 @@ function GetExePath()
 		return tipUtil:GetModuleExeName()
 	end
 	
-	local strExePath = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\ADClean\\path")
+	local strBaseRegPath = GetBaseRegPath()
+	local strExeRegPath = tipUtil:PathCombine(strBaseRegPath, "path")
+	local strExePath = RegQueryValue(strExeRegPath)
 	return strExePath
 end
 
@@ -1117,6 +1128,7 @@ obj.GetMinorVer = GetMinorVer
 
 obj.SwitchADCFilter = SwitchADCFilter
 obj.GetFilterState = GetFilterState
+obj.SendRunTimeReport = SendRunTimeReport
 
 
 --UI
