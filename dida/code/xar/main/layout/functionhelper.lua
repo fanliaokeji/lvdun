@@ -1115,6 +1115,7 @@ obj.LoadTableFromFile = LoadTableFromFile
 obj.CheckIsNewVersion = CheckIsNewVersion
 obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
 obj.CheckMD5 = CheckMD5
+obj.SendRunTimeReport = SendRunTimeReport
 
 obj.NewAsynGetHttpFile = NewAsynGetHttpFile
 obj.GetProgramTempDir = GetProgramTempDir
