@@ -83,9 +83,15 @@ function EndMenu(self)
 	-- local menuTree = self:GetOwner()
 	-- local menuHost = menuTree:GetBindHostWnd()
 	-- menuHost:EndMenu(true)
-	local objRootCtrl = self:GetOwnerControl()
-	objRootCtrl:SetVisible(false)
-	objRootCtrl:SetChildrenVisible(false)
+	local objMenuContext = self:GetOwnerControl()
+	objMenuContext:SetVisible(false)
+	objMenuContext:SetChildrenVisible(false)
+	
+	local objDropList = objMenuContext:GetOwnerControl()
+	if objDropList then
+		objDropList:SetVisible(false)
+		objDropList:SetChildrenVisible(false)
+	end
 end
 
 
