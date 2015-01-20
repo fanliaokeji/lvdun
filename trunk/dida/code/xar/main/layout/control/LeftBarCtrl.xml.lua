@@ -51,7 +51,7 @@ function InitClndrInfo(objRootCtrl)
 			end
 		
 			tClndrContent = tClndrContentList[1]
-			SetClndrInfo(objRootCtrl, tClndrContent)
+			objRootCtrl:SetClndrInfo(tClndrContent)
 		end)
 end
 

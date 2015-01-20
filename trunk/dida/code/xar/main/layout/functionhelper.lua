@@ -620,6 +620,16 @@ function GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
 end
 
 
+function UpdateBackTodayStyle(nFocusDayIdxInMonth)
+	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	if nFocusDayIdxInMonth == 0 then
+		objCalendarCtrl:SetBackTodayEnable(true)
+	else	
+		objCalendarCtrl:SetBackTodayEnable(false)
+	end
+end
+
+
 function CheckIsVacation(strDate)
 	return CheckIsDateInVacList(strDate, "tVacDay")
 end
@@ -685,6 +695,29 @@ function UpdateCalendarContent()
 	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarCtrl")
 	objCalendarCtrl:ShowClndrContent(strYearMonth)
 end
+
+
+function UpdateLeftBarContent()
+	local objLeftBarCtrl = GetMainCtrlChildObj("DiDa.LeftBarCtrl")
+	local strCurDate = os.date("%Y%m%d")
+	
+	GetClndrContent(strCurDate, 
+		function (tClndrContentList)
+			if type(tClndrContentList) ~= "table" then
+				return
+			end
+		
+			tClndrContent = tClndrContentList[1]
+			objLeftBarCtrl:SetClndrInfo(tClndrContent)
+		end)
+end
+
+
+function UpdateUIPanel()
+	UpdateLeftBarContent()
+	UpdateCalendarContent()
+end
+
 
 
 --天气
@@ -1126,6 +1159,7 @@ obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
 obj.GetDllPath = GetDllPath
 obj.KillClockWindow = KillClockWindow
+obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 
 
 --UI
@@ -1140,8 +1174,10 @@ obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
 obj.CheckIsVacation = CheckIsVacation
 obj.CheckIsWorkDay = CheckIsWorkDay
 obj.UpdateCalendarContent = UpdateCalendarContent
+obj.UpdateUIPanel = UpdateUIPanel
 obj.GetWeatherInfo = GetWeatherInfo
 obj.CheckIsYearInVacList = CheckIsYearInVacList
+obj.UpdateBackTodayStyle = UpdateBackTodayStyle
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName

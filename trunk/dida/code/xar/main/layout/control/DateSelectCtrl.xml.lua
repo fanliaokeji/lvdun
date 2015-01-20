@@ -105,6 +105,18 @@ function AddMonth(self, nDiff)
 end
 
 
+function SetBackTodayEnable(self, bEnable)
+	local objToday = self:GetControlObject("BackToToday.Text")
+	objToday:SetEnable(bEnable)
+	
+	if bEnable then
+		objToday:SetTextColorResID("4B99F2")
+	else
+		objToday:SetTextColorResID("808080")
+	end
+end
+
+
 ---事件
 function OnInitRootCtrl(self)
 	CreateTimeListener(self)
@@ -183,12 +195,14 @@ end
 
 function OnClickLeftArrow(self)
 	local objRootCtrl = self:GetOwnerControl()
-	objRootCtrl:AddMonth(-1)	
+	objRootCtrl:AddMonth(-1)
+	tFunHelper.UpdateCalendarContent()	
 end
 
 function OnClickRightArrow(self)
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:AddMonth(1)	
+	tFunHelper.UpdateCalendarContent()
 end
 
 
