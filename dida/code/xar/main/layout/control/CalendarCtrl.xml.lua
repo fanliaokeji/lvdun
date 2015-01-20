@@ -24,7 +24,9 @@ function ShowClndrContent(objRootCtrl, strYearMonth)
 		
 		ClearFocusDay(objRootCtrl)
 		ClearSelectBkg(objRootCtrl)
+		
 		local nFocusDayIdxInMonth = tFunHelper.GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
+		tFunHelper.UpdateBackTodayStyle(nFocusDayIdxInMonth)
 		if nFocusDayIdxInMonth == 0 then
 			return
 		end

@@ -232,6 +232,21 @@ function StartRunCountTimer()
 end
 
 
+function StartUITimer()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local nCurrentTime = tipUtil:GetCurrentUTCTime()
+	
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		if FunctionObj.CheckTimeIsAnotherDay(nCurrentTime) then
+			nCurrentTime = tipUtil:GetCurrentUTCTime()
+			FunctionObj.UpdateUIPanel()
+		end
+	end, 1000)
+end
+
+
+
 function PopTipWnd(OnCreateFunc)
 	local bSuccess = false
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
@@ -383,6 +398,8 @@ function TipMain()
 	CreateMainTipWnd()
 	FunctionObj.CreatePopupTipWnd()
 	ProcessCommandLine()
+	
+	StartUITimer()
 end
 
 function LoadJSONHelper()

@@ -11,6 +11,7 @@
 			<ResetFestivalText file="DateSelectCtrl.xml.lua" func="ResetFestivalText"/>
 			<AddMonth file="DateSelectCtrl.xml.lua" func="AddMonth"/>
 			<AddYear file="DateSelectCtrl.xml.lua" func="AddYear"/>
+			<SetBackTodayEnable file="DateSelectCtrl.xml.lua" func="SetBackTodayEnable"/>
 		</method_def>
 		<event_def>
 			
@@ -182,7 +183,6 @@
 					</eventlist>
 				</obj>
 				
-								
 			</children>
 			<eventlist>
 				<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitRootCtrl" />
