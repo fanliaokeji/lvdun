@@ -48,6 +48,7 @@ LRESULT CALLBACK DiDaClock::ClockWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			if(wParam == 100) {
 				::KillTimer(hWnd, TIMERID_UPDATETIME);
 				RestoreClockWndProc();
+				::PostMessage(hWnd, WM_TIMECHANGE, NULL, NULL);
 				::PostMessage(::GetParent(::GetParent(hWnd)), WM_SIZE, SIZE_RESTORED, 0);
 				::PostMessage(::GetParent(hWnd), WM_SIZE, SIZE_RESTORED, 0);
 				::InvalidateRect(hWnd, NULL, FALSE);
