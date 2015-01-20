@@ -21,16 +21,19 @@ end
 function SetYearText(self, strYear)
 	local objYearBox = self:GetControlObject("Combobox.Year")
 	objYearBox:SetText(strYear)
+	
+	self:ResetFestivalText()
 end
+
 
 function SetMonthText(self, strText)
 	local objMonthBox = self:GetControlObject("Combobox.Month")
 	local attr = objMonthBox:GetAttribute()
 	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
 	local nMonth = tonumber(strMonth)
-	attr.LeftTextPos = 12
+	attr.LeftTextPos = 8
 	if nMonth>9 then
-		attr.LeftTextPos = 7
+		attr.LeftTextPos = 3
 	end
 	
 	objMonthBox:SetText(strText)
@@ -58,11 +61,47 @@ function ResetFestivalText(self)
 end
 
 
-function HideAllDropList(self)
-	ShowDropList(self, "DropList.Year", false)
-	ShowDropList(self, "DropList.Month", false)
-	ShowDropList(self, "DropList.Festival", false)
+function AddYear(self, nDiff)
+	local strYear = self:GetYearText()
+	local nBeginYear, nEndYear = tFunHelper.GetYearScale()
+	local nYear = tonumber(strYear)
+	if nYear == nil then
+		return
+	end
+
+	local nCurYear = nYear+nDiff
+	if nCurYear < nBeginYear then
+		nCurYear = nEndYear
+	end
+	if nCurYear > nEndYear then
+		nCurYear = nBeginYear
+	end
 	
+	local strYearText = tostring(nCurYear).."年"
+	self:SetYearText(strYearText)
+end
+
+
+function AddMonth(self, nDiff)
+	local strMonth = self:GetMonthText()
+	local nMonth = tonumber(strMonth)
+	if nMonth == nil then
+		return
+	end
+
+	local nCurMonth = nMonth+nDiff
+	if nCurMonth < 1 then
+		nCurMonth = 12
+		self:AddYear(-1)
+	end
+	
+	if nCurMonth > 12 then
+		nCurMonth = 1
+		self:AddYear(1)
+	end
+	
+	local strMonthText = tostring(nCurMonth).."月"
+	self:SetMonthText(strMonthText)
 end
 
 
@@ -141,6 +180,18 @@ function OnInitMonthBox(self)
 end
 
 
+
+function OnClickLeftArrow(self)
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:AddMonth(-1)	
+end
+
+function OnClickRightArrow(self)
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:AddMonth(1)	
+end
+
+
 --假期
 function OnLButtonUpFestivalBox(self)
 	ProcessButtonUp(self, "DropList.Festival")
@@ -178,19 +229,6 @@ function ProcessButtonUp(objUIElem, strUIKey)
 	
 	objDropList:SetFocus(true)
 	objDropList:SetDefaultItemHover()
-end
-
-
-function ShowDropList(objRootCtrl, strDropListKey, bShow)
-	local objDropList = objRootCtrl:GetControlObject(strDropListKey) 
-	if objDropList then
-		local objMenuContext = objDropList:GetControlObject("Menu.Context")
-		objDropList:SetVisible(bShow)
-		objDropList:SetChildrenVisible(bShow)
-		
-		objMenuContext:SetVisible(bShow)
-		objMenuContext:SetChildrenVisible(bShow)
-	end		
 end
 
 

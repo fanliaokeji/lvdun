@@ -489,7 +489,6 @@ function KillClockWindow()
 end
 
 ----UI相关---
-
 function GetMainWndInst()
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local objMainWnd = hostwndManager:GetHostWnd("DiDaTipWnd.MainFrame")
@@ -549,6 +548,11 @@ function ShowPopupWndByName(strWndName, bSetTop)
 	end
 	
 	frameHostWnd:Show(5)
+end
+
+
+function GetYearScale()
+	return 1900, 2100
 end
 
 
@@ -674,8 +678,6 @@ function CheckIsYearInVacList(strYear)
 	
 	return true
 end
-
-
 
 
 function UpdateCalendarContent()
@@ -1132,6 +1134,7 @@ obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.ShowPopupWndByName = ShowPopupWndByName
 obj.CreatePopupTipWnd = CreatePopupTipWnd
 obj.GetYearMonthFromUI = GetYearMonthFromUI
+obj.GetYearScale = GetYearScale
 obj.GetClndrContent = GetClndrContent
 obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
 obj.CheckIsVacation = CheckIsVacation

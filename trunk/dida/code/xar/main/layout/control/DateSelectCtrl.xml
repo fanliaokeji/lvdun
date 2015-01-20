@@ -9,7 +9,8 @@
 			<GetMonthText file="DateSelectCtrl.xml.lua" func="GetMonthText"/>
 			<SetMonthText file="DateSelectCtrl.xml.lua" func="SetMonthText"/>
 			<ResetFestivalText file="DateSelectCtrl.xml.lua" func="ResetFestivalText"/>
-			<HideAllDropList file="DateSelectCtrl.xml.lua" func="HideAllDropList"/>
+			<AddMonth file="DateSelectCtrl.xml.lua" func="AddMonth"/>
+			<AddYear file="DateSelectCtrl.xml.lua" func="AddYear"/>
 		</method_def>
 		<event_def>
 			
@@ -18,18 +19,18 @@
 			<children>
 				<obj id="Combobox.Year" class="TipAddin.Button">
 					<attr>
-						<left>15</left>
+						<left>18</left>
 						<top>0</top>
-						<width>89</width>
+						<width>70</width>
 						<height>20</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Long.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Long.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Long.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Long.Normal</DisableBkgID>
+						<NormalBkgID>DiDa.Combobox.Bkg.Year.Normal</NormalBkgID>
+						<DownBkgID>DiDa.Combobox.Bkg.Year.Hover</DownBkgID>
+						<HoverBkgID>DiDa.Combobox.Bkg.Year.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.Combobox.Bkg.Year.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
 						<TextFont>font.fzlt12</TextFont>
-						<LeftTextPos>14</LeftTextPos>
+						<LeftTextPos>5</LeftTextPos>
 						<TopTextPos>2</TopTextPos>
 					</attr>
 					<eventlist>
@@ -40,10 +41,10 @@
 				
 				<obj id="DropList.Year" class="YearDropList">
 					<attr>
-						<left>15</left>
+						<left>18</left>
 						<top>20</top>
-						<width>90</width>
-						<height>204</height>
+						<width>51</width>
+						<height>207</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
@@ -53,20 +54,38 @@
 				</obj>
 				
 				
-				<obj id="Combobox.Month" class="TipAddin.Button">
+				<obj id="Combobox.LeftArrow" class="TipAddin.Button">
 					<attr>
-						<left>15+89+5</left>
+						<left>18+70+10</left>
 						<top>0</top>
-						<width>62</width>
+						<width>20</width>
 						<height>20</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Short.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Short.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Short.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Short.Normal</DisableBkgID>
+						<NormalBkgID>DiDa.ArrowLeft.Month.Normal</NormalBkgID>
+						<DownBkgID>DiDa.ArrowLeft.Month.Hover</DownBkgID>
+						<HoverBkgID>DiDa.ArrowLeft.Month.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.ArrowLeft.MonthNormal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnClickLeftArrow" />
+					</eventlist>
+				</obj>
+				
+				
+				<obj id="Combobox.Month" class="TipAddin.Button">
+					<attr>
+						<left>18+70+30</left>
+						<top>0</top>
+						<width>43</width>
+						<height>20</height>
+						<cursor>IDC_HAND</cursor>
+						<NormalBkgID>DiDa.Combobox.Bkg.Month.Normal</NormalBkgID>
+						<DownBkgID>DiDa.Combobox.Bkg.Month.Hover</DownBkgID>
+						<HoverBkgID>DiDa.Combobox.Bkg.Month.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.Combobox.Bkg.Month.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
 						<TextFont>font.fzlt12</TextFont>
-						<LeftTextPos>12</LeftTextPos>
+						<LeftTextPos>8</LeftTextPos>
 						<TopTextPos>4</TopTextPos>
 					</attr>
 					<eventlist>
@@ -75,13 +94,30 @@
 					</eventlist>
 				</obj>
 				
+				<obj id="Combobox.RightArrow" class="TipAddin.Button">
+					<attr>
+						<left>18+70+30+43</left>
+						<top>0</top>
+						<width>20</width>
+						<height>20</height>
+						<cursor>IDC_HAND</cursor>
+						<NormalBkgID>DiDa.ArrowRight.Month.Normal</NormalBkgID>
+						<DownBkgID>DiDa.ArrowRight.Month.Hover</DownBkgID>
+						<HoverBkgID>DiDa.ArrowRight.Month.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.ArrowRight.Month.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnClickRightArrow" />
+					</eventlist>
+				</obj>
+				
 				
 				<obj id="DropList.Month" class="MonthDropList">
 					<attr>
-						<left>15+89+5</left>
+						<left>18+70+30</left>
 						<top>20</top>
-						<width>62</width>
-						<height>206</height>
+						<width>43</width>
+						<height>207</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
@@ -93,15 +129,15 @@
 				
 				<obj id="Combobox.Festival" class="TipAddin.Button">
 					<attr>
-						<left>15+89+5+62+5</left>
+						<left>18+70+60+43</left>
 						<top>0</top>
-						<width>89</width>
+						<width>90</width>
 						<height>20</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Long.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Long.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Long.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Long.Normal</DisableBkgID>
+						<NormalBkgID>DiDa.Combobox.Bkg.Festival.Normal</NormalBkgID>
+						<DownBkgID>DiDa.Combobox.Bkg.Festival.Hover</DownBkgID>
+						<HoverBkgID>DiDa.Combobox.Bkg.Festival.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.Combobox.Bkg.Festival.Normal</DisableBkgID>
 						<TextColor>808080</TextColor>
 						<TextFont>font.fzlt12</TextFont>
 						<LeftTextPos>12</LeftTextPos>
@@ -115,10 +151,10 @@
 				
 				<obj id="DropList.Festival" class="FestivalDropList">
 					<attr>
-						<left>15+89+5+62+5</left>
-						<top>20</top>
-						<width>90</width>
-						<height>204</height>
+						<left>18+70+60+44</left>
+						<top>21</top>
+						<width>70</width>
+						<height>137</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>

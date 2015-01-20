@@ -7,9 +7,9 @@ function SetDefaultItemHover(self)
 	local objNormalMenu = self:GetControlObject("Menu.Context")
 	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
 	
-	local nBaseYear = 1900
+	local nBeginYear, nEndYear = tFunHelper.GetYearScale()
 	local nCurYear = GetYearFromComboBox(objMenuContainer)
-	local nCurDiff = nCurYear - nBaseYear
+	local nCurDiff = nCurYear - nBeginYear
 	
 	local nShowDiff = nCurDiff   --展示的时候，一并显示前三年的数字
 	if nCurDiff > 3 then
@@ -47,8 +47,10 @@ function ShowYearList(self)
 		return false
 	end
 	
+	local nBeginYear, nEndYear = tFunHelper.GetYearScale()
+	local nScale = nEndYear-nBeginYear+1
 	local nTotalCount = 0
-	for nIndex=1, 201 do
+	for nIndex=1, nScale do
 		local objMenuItem = CreateMenuItem(nIndex)	
 		if objMenuItem then
 			objMenuContainer:AddChild(objMenuItem)				
@@ -73,7 +75,7 @@ end
 
 
 function CreateMenuItem(nIndex)	
-	local nBaseYear = 1900
+	local nBeginYear, nEndYear = tFunHelper.GetYearScale()
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
 	local objMenuItemTempl = templateMananger:GetTemplate("menu.context.item", "ObjectTemplate")
 	if objMenuItemTempl == nil then
@@ -86,7 +88,7 @@ function CreateMenuItem(nIndex)
 	end
 
 	local attr = objMenuItem:GetAttribute()
-	attr.Text = tostring(nBaseYear+nIndex-1)
+	attr.Text = tostring(nBeginYear+nIndex-1)
 	
 	objMenuItem:AttachListener("OnSelect", false, OnSelectYear)
 	return objMenuItem
@@ -100,7 +102,6 @@ function BindMenuContainer(self, objMenuContainer, nMaxShowHistory, nTotalCount)
 
 	self:OnInitControl(objMenuContainer)
 end
-
 
 
 function OnSelectYear(objMenuItem)

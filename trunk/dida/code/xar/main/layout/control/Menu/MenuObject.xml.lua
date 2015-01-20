@@ -56,7 +56,7 @@ function AdjustItemPos( self )
 	
 	local max_width = g_nInitWidth
 	local max_widthfix = max_width - pos_shadowW
-		
+	
 	IterateItems(self, function(item)
 		if item:IsVisible() then
 			local left, top, right, bottom = item:GetObjPos()
