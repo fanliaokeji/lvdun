@@ -113,7 +113,7 @@
 								<ThumbBtnWidth>5</ThumbBtnWidth>
 								<ThumbBtnLength>30</ThumbBtnLength>
 								<SideBtnLength>0</SideBtnLength>
-								<left>father.width - 10</left>
+								<left>father.width - 8</left>
 								<top>5</top>
 								<width>5</width>
 								<height>father.height-9</height>
@@ -142,13 +142,13 @@
 		<attr>
 			<height>17</height>
 			<width>father.width</width>
-			<TextPos>10</TextPos>
+			<TextPos>0</TextPos>
 			<Font>font.fzlt11</Font>
 			<FontColorNormal>808080</FontColorNormal>
 			<FontColorHover>system.white</FontColorHover>
 			<RightTextColor>system.black</RightTextColor>
 			<RightTextFont>default.font</RightTextFont>
-			<RightTextPos>25</RightTextPos>
+			<RightTextPos>0</RightTextPos>
 		</attr>
 	</objtemplate>
 

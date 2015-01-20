@@ -2,7 +2,7 @@
 	<objtemplate id="menu.text" class="TextObject">
 		<attr>
 			<valign>center</valign>
-			<endellipsis>1</endellipsis>
+			<endellipsis>0</endellipsis>
 		</attr>
 	</objtemplate>
 	
@@ -45,7 +45,7 @@
 				<default>13</default>
 			</attr>
 			<attr name="TextRightSpan" type="int" desc="文本的左边起始位置">
-				<default>15</default>
+				<default>0</default>
 			</attr>
 			
 			<attr name="RightTextPos" type="int" desc="右侧文本的右边起始位置">

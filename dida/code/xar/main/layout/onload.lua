@@ -76,7 +76,7 @@ function SendDiDaStartReport()
 	local strMACFix = string.gsub(strMAC, "-$", "")
 	local strChannelID = FunctionObj.GetInstallSrc()
 	
-	local strUrl = "http://stat.didarili.com:8082/?mac=" .. tostring(strMACFix) 
+	local strUrl = "http://stat.didarili.com:8083/?mac=" .. tostring(strMACFix) 
 					.."&op=start&cid=" .. (strChannelID)
 	FunctionObj.TipLog("[SendDiDaStartReport]: " .. tostring(strUrl))
 	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)

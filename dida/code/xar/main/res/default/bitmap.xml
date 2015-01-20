@@ -4,13 +4,22 @@
 		<texture id="DiDa.MainWnd.Close" image="bitmap\DiDa.MainWnd.Close.png" />
 		
 		<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" image="bitmap\DiDa.Scroll.ThumbBtn.Normal.png" />
-		<texture id="DiDa.Combobox.Bkg.Long.Hover" image="bitmap\DiDa.Combobox.Bkg.Long.Hover.png" />
-		<texture id="DiDa.Combobox.Bkg.Long.Normal" image="bitmap\DiDa.Combobox.Bkg.Long.Normal.png" />
-		<texture id="DiDa.Combobox.Bkg.Short.Normal" image="bitmap\DiDa.Combobox.Bkg.Short.Normal.png" />
-		<texture id="DiDa.Combobox.Bkg.Short.Hover" image="bitmap\DiDa.Combobox.Bkg.Short.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Festival.Hover" image="bitmap\DiDa.Combobox.Bkg.Festival.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Festival.Normal" image="bitmap\DiDa.Combobox.Bkg.Festival.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Month.Normal" image="bitmap\DiDa.Combobox.Bkg.Month.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Month.Hover" image="bitmap\DiDa.Combobox.Bkg.Month.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Year.Normal" image="bitmap\DiDa.Combobox.Bkg.Year.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Year.Hover" image="bitmap\DiDa.Combobox.Bkg.Year.Hover.png" />
 		<texture id="DiDa.DropList.Bkg" image="bitmap\DiDa.DropList.Bkg.png" />
-		<texture id="DiDa.DropList.Big.Bkg" image="bitmap\DiDa.DropList.Big.Bkg.png" />
+		<texture id="DiDa.DropList.Festival" image="bitmap\DiDa.DropList.Festival.png" />
+		<texture id="DiDa.DropList.Month" image="bitmap\DiDa.DropList.Month.png" />
+		<texture id="DiDa.DropList.Year" image="bitmap\DiDa.DropList.Year.png" />
 		<texture id="DiDa.DropList.Select" image="bitmap\DiDa.DropList.Select.png" />
+		
+		<texture id="DiDa.ArrowLeft.Month.Normal" image="bitmap\DiDa.ArrowLeft.Month.Normal.png" />
+		<texture id="DiDa.ArrowLeft.Month.Hover" image="bitmap\DiDa.ArrowLeft.Month.Hover.png" />
+		<texture id="DiDa.ArrowRight.Month.Normal" image="bitmap\DiDa.ArrowRight.Month.Normal.png" />
+		<texture id="DiDa.ArrowRight.Month.Hover" image="bitmap\DiDa.ArrowRight.Month.Hover.png" />
 		
 		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
 		<texture id="DiDa.Canlender.Select" image="bitmap\DiDa.Canlender.Select.png" />
