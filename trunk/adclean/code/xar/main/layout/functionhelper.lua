@@ -647,11 +647,11 @@ function SetNotifyIconState(strText)
 	local bFilterOpen = tUserConfig["bFilterOpen"] or false
 	local nFilterCount = tUserConfig["nFilterCountOneDay"] or 0
 	
-	local strState = "正常过滤"
+	local strState = "正常拦截"
 	if not bFilterOpen then
-		strState = "停止过滤"
+		strState = "停止拦截"
 	end
-	local strDefaultText = "广告清道夫\r\n状态："..strState.."\r\n今日累计过滤："..tostring(nFilterCount).."次"
+	local strDefaultText = "广告清道夫\r\n状态："..strState.."\r\n今日累计拦截："..tostring(nFilterCount).."次"
 	
 	local strResImageDir = __document .. "\\..\\..\\..\\..\\res"
 	local strImageName = "ADClean.TrayIcon.Close.ico"
