@@ -580,6 +580,17 @@ int DDCTCalendar::ctcl_solar_to_lunar(int y,int m,int d,struct CTCalendar* ctc)
 		sprintf(buf, "%02d%02d", 1,ctc->day);
 	if(ctc->month>0)
 	{
+		if (abs(ctc->month) == 12 && (ctc->day == 29 || ctc->day == 30)) /*  "ÅÐ¶Ï³ýÏ¦"  */
+		{
+			int nextdate=ctcl_lunar_date(y,m,d+1);
+			int nextMonth=ctcl_lunar_month(y,m,d+1);
+			if ((nextMonth == 1 || nextMonth == 13) && nextdate == 1)
+			{
+				memset(buf,0,sizeof(buf));
+				strcpy_s(buf,10,"0100");
+			}
+		}
+		
 		sprintf(szSQLBuff, "select VALUE from choliday where DATA='%s'",buf);
 		ctc->choliday=ctcl_common_query("choliday",szSQLBuff);
     }
