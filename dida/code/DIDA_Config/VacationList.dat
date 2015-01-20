@@ -80,8 +80,8 @@ function GetSubTable()
 			["tVactionMap"] = {
 				["chunjie"] = "2",
 				["chuxi"] = "2",
-				["duanwu"] = "6",
-				["zhongqiu"] = "9",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
 			},
 			["1"] = {
 				["tWorkDay"] = {"5","6"},
@@ -115,8 +115,8 @@ function GetSubTable()
 			["tVactionMap"] = {
 				["chunjie"] = "1",
 				["chuxi"] = "1",
-				["duanwu"] = "6",
-				["zhongqiu"] = "9",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
 			},
 			["1"] = {
 				["tWorkDay"] = {"21","29"},
@@ -147,8 +147,8 @@ function GetSubTable()
 			["tVactionMap"] = {
 				["chunjie"] = "2",
 				["chuxi"] = "2",
-				["duanwu"] = "6",
-				["zhongqiu"] = "9",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
 			},
 			["1"] = {
 				["tWorkDay"] = {"30"},
@@ -182,8 +182,8 @@ function GetSubTable()
 			["tVactionMap"] = {
 				["chunjie"] = "2",
 				["chuxi"] = "2",
-				["duanwu"] = "6",
-				["zhongqiu"] = "9",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
 			},
 			["1"] = {
 				["tVacDay"] = {"1-3"},
