@@ -142,7 +142,7 @@
 						<left>0</left>
 						<top>0</top>
 						<width>father.width</width>
-						<height>12</height>
+						<height>15</height>
 						<Enable>true</Enable>
 					</attr>
 					<eventlist>

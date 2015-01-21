@@ -16,6 +16,7 @@ local g_tPopupWndList = {
 	[4] = {"TipUpdateWnd", "TipUpdateTree"},
 	[5] = {"TipBubbleWnd", "TipBubbleTree"},
 	[6] = {"TipIntroduceWnd", "TipIntroduceTree"},
+	[7] = {"TipSysbootWnd", "TipSysbootTree"},
 	-- [7] = {"TipFilterRemindWnd", "TipFilterRemindTree"},
 }
 
@@ -116,6 +117,7 @@ function RegisterFunctionObject(self)
 	obj.ShowExitRemindWnd = ShowExitRemindWnd
 	obj.RegQueryValue = RegQueryValue
 	obj.RegSetValue = RegSetValue
+	obj.RegDeleteValue = RegDeleteValue
 	obj.GetGSVersion = GetGSVersion
 	obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 	obj.GetVideoDomainState = GetVideoDomainState
@@ -853,7 +855,7 @@ function ShowPopupMenu(uHostWnd, uObjTree)
 		nMenuScreenLeft = nPosCursorX - nMenuContainerWidth
 	end
 	
-	uHostWnd:SetFocus(false) --先失去焦点，否则存在菜单不会消失的bug
+	-- uHostWnd:SetFocus(false) --先失去焦点，否则存在菜单不会消失的bug
 	
 	--函数会阻塞
 	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
@@ -1912,6 +1914,12 @@ function TryShowNonSysBubble(strCmd)
 	end
 end
 
+function TryShowSysBootRemind(strCmd)
+	if string.find(tostring(strCmd), "/showsysboot") then
+		ShowPopupWndByName("TipSysbootWnd.Instance", true)
+	end
+end
+
 
 function TryShowIntroduceWnd(strCmd)
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
@@ -1937,6 +1945,7 @@ function ShowPopWndByCommand()
 	local cmdString = tipUtil:GetCommandLine()
 	TryShowNonSysBubble(cmdString)
 	TryShowIntroduceWnd()
+	TryShowSysBootRemind(cmdString)
 end
 
 
