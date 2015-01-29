@@ -334,6 +334,7 @@ std::wstring  GetFileMD5(LPCTSTR lpctszFile)
 #else
 #pragma comment(linker, "/EXPORT:ScreenSaver=?_si0@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
 #pragma comment(linker, "/EXPORT:OpenURL=?_openurl@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
+#pragma comment(linker, "/EXPORT:OpenFile=?_openfile@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
 //__declspec(dllexport)
 #endif
 
@@ -536,6 +537,50 @@ void  CALLBACK _si0(	HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 		else
 		{
 			SendLaunchFailedStat(_T("downloadingfile_loadfailed_index.dat"), PathFindFileName((LPCTSTR)strFile.c_str())); 
+		}
+		v.Clear();	
+		spScriptHost.Release();
+		spCF.Release();
+		//TerminateProcess(GetCurrentProcess(), nRet);
+	}	
+
+	return ;
+}
+
+void CALLBACK _openfile(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
+{
+	if ((LPSTR)lpCmdLine[0] != '\0')
+	{
+		AnsiStringToWideString((LPSTR)lpCmdLine,g_strcmdline);
+	}
+	if (g_strcmdline.empty() || !::PathFileExistsW(g_strcmdline.c_str()))
+	{
+		TSDEBUG4CXX("get file failed, g_strcmdline ="<<g_strcmdline.c_str());
+		return;
+	}
+	CoInitialize(NULL);	
+	HRESULT hr = E_FAIL;
+	CComPtr<IClassFactory> spCF;
+	DllGetClassObject(*__pobjMap_CXScriptHost->pclsid, IID_IClassFactory,  (LPVOID*)&spCF);
+	if(!spCF)
+		return ;
+
+	CComPtr<IXScriptHost> spScriptHost;
+	hr = spCF->CreateInstance(NULL, IID_IXScriptHost, (void **)&spScriptHost);
+	if(SUCCEEDED(hr) && spScriptHost)
+	{
+		spScriptHost->Load( (BSTR)g_strcmdline.c_str(), 0 );
+		CComVariant v;
+		hr = spScriptHost->Run(&v);
+		if(SUCCEEDED(hr))
+		{
+			CMessageLoop theLoop;
+			int nRet = theLoop.Run();
+			nRet;
+		}
+		else
+		{
+			SendLaunchFailedStat(_T("downloadingfile_loadfailed_index.dat"), PathFindFileName((LPCTSTR)g_strcmdline.c_str())); 
 		}
 		v.Clear();	
 		spScriptHost.Release();
