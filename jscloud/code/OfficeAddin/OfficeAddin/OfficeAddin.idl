@@ -1,0 +1,26 @@
+// OfficeAddin.idl : IDL source for OfficeAddin
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (OfficeAddin.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(E248FC51-C4A3-46C8-B1D3-9F4EC93B7232),
+	version(1.0),
+	helpstring("OfficeAddinLib 1.0 Type Library")
+]
+library OfficeAddinLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(32A6E740-C617-41F3-98A0-FC44D7D6874D),
+		helpstring("Connect Class")
+	]
+	coclass Connect
+	{
+		[default] interface IUnknown;
+	};
+};
