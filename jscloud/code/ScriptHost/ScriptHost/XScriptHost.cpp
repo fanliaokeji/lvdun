@@ -40,7 +40,7 @@ HRESULT CXScriptHost::FinalConstruct()
 	else
 	{
 
-		hr = m_spXSH.CoCreateInstance( L"SHhost.XSH" );	
+		hr = m_spXSH.CoCreateInstance( L"ScriptHost.XSH" );	
 
 	}
 
@@ -371,7 +371,7 @@ void CXScriptHost::OnUnload()
 
 BOOL CXScriptHost::PreLoadScript(IActiveScript* spEngine, IActiveScriptParse* spParse)
 {
-	CComBSTR bstrScript=L"var __XScriptHost_ActiveXObject=ActiveXObject; ActiveXObject=function(progid){ var o = createActiveX2('','{F858FC8D-20F0-4D88-8757-ADDFDD482A5D}','{985DB584-D7C7-4F98-BB8E-436E12B28662}'); o.object= new  __XScriptHost_ActiveXObject(progid); if(typeof o.object != 'object' ) return undefined; else return o;}";
+	CComBSTR bstrScript=L"var __XScriptHost_ActiveXObject=ActiveXObject; ActiveXObject=function(progid){ var o = createActiveX2('','{57E8D62C-95B9-4324-8CF6-C3AA0F9CDF4B}','{9DF97288-0CE2-441E-8A8C-B226384D3447}'); o.object= new  __XScriptHost_ActiveXObject(progid); if(typeof o.object != 'object' ) return undefined; else return o;}";
 	HRESULT hr = S_OK;
 	
 	hr = spParse->ParseScriptText(bstrScript,L"XSH", NULL, NULL, 0, 0, 0, NULL, NULL );	ATLASSERT( SUCCEEDED(hr) );
@@ -495,7 +495,7 @@ HRESULT CXScriptHost::CreateScriptDebugger()
 	}
 	if(SUCCEEDED(hr))
 	{
-		hr = mpDebugApp->SetName(L"SHostDebug");
+		hr = mpDebugApp->SetName(L"SHost Appliation Debug");
 	}
 	if(SUCCEEDED(hr))
 	{

@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="C:\Windows\SysWOW64\rundll32.exe"
 				WorkingDirectory=""
-				CommandArguments="&quot;F:\lvdun\trunk\jscloud\code\ScriptHost\Debug\ScriptHost.dll&quot;,ScreenSaver C:\Users\zhuweiwei\Desktop\config\js.dat"
+				CommandArguments="&quot;F:\lvdun\trunk\jscloud\code\ScriptHost\Debug\ScriptHost.dll&quot;,OpenFile C:\Users\zhuweiwei\Desktop\config\js.js"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
