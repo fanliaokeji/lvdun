@@ -29,7 +29,7 @@ static const wchar_t* OfficeProd[] = {
 	L"Excel"
 };
 
-static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& progName, const std::wstring& dllPath)
+static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& progName, const std::wstring& dllPath, const std::wstring& description, const std::wstring& friendlyName)
 {
 	std::wstring progClsidKey = progName + L"\\CLSID";
 	ATL::CRegKey key;
@@ -64,8 +64,8 @@ static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& prog
 		ATL::CRegKey key;
 		if (key.Create(HKEY_LOCAL_MACHINE, keyName.c_str()) == ERROR_SUCCESS) {
 			key.SetDWORDValue(L"CommandLineSafe", 1);
-			key.SetStringValue(L"Description", L"");
-			key.SetStringValue(L"FriendlyName", L"输入法增强加载项");
+			key.SetStringValue(L"Description", description.c_str());
+			key.SetStringValue(L"FriendlyName", friendlyName.c_str());
 			key.SetDWORDValue(L"LoadBehavior", 3);
 		}
 	}
@@ -119,13 +119,19 @@ STDAPI DllRegisterServer(void)
 	configFile += L"config.ini";
 	TSINFO4CXX("Dll Path: " << dllPath);
 	TSINFO4CXX("Config File Path: " << configFile);
-	wchar_t clsidBuff[100];
-	wchar_t progIDBuff[100];
-	::GetPrivateProfileString(L"Addin", L"CLSID", L"", clsidBuff, 100,configFile.c_str());
-	::GetPrivateProfileString(L"Addin", L"ProgID", L"", progIDBuff, 100, configFile.c_str());
-	std::wstring clsid = clsidBuff;
-	std::wstring progID = progIDBuff;
-	return RegisterAddin(clsid, progID, dllPath);
+	wchar_t buffer[100];
+	::GetPrivateProfileString(L"addin", L"clsid", L"", buffer, 100,configFile.c_str());
+	std::wstring clsid = buffer;
+	::GetPrivateProfileString(L"addin", L"progid", L"", buffer, 100, configFile.c_str());
+	std::wstring progID = buffer;
+	::GetPrivateProfileString(L"addin", L"description", L"", buffer, 100,configFile.c_str());
+	std::wstring description = buffer;
+	::GetPrivateProfileString(L"addin", L"friendlyname", L"", buffer, 100, configFile.c_str());
+	std::wstring friendlyName = buffer;
+	if (clsid.empty() || progID.empty()) {
+		return E_FAIL;
+	}
+	return RegisterAddin(clsid, progID, dllPath, description, friendlyName);
 }
 
 // DllUnregisterServer - Removes entries from the system registry
@@ -139,12 +145,11 @@ STDAPI DllUnregisterServer(void)
 		;
 	configFile += L"config.ini";
 	TSINFO4CXX("Config File Path: " << configFile);
-	wchar_t clsidBuff[100];
-	wchar_t progIDBuff[100];
-	::GetPrivateProfileString(L"Addin", L"CLSID", L"", clsidBuff, 100,configFile.c_str());
-	::GetPrivateProfileString(L"Addin", L"ProgID", L"", progIDBuff, 100, configFile.c_str());
-	std::wstring clsid = clsidBuff;
-	std::wstring progID = progIDBuff;
+	wchar_t buffer[100];
+	::GetPrivateProfileString(L"addin", L"clsid", L"", buffer, 100,configFile.c_str());
+	std::wstring clsid = buffer;
+	::GetPrivateProfileString(L"addin", L"progID", L"", buffer, 100, configFile.c_str());
+	std::wstring progID = buffer;
 	if (clsid.empty() || progID.empty()) {
 		return E_FAIL;
 	}
