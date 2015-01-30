@@ -247,7 +247,7 @@ STDMETHODIMP CUtility::GetEIVersion(BSTR* pver)
 	CRegKey key;
 	TCHAR szPath[_MAX_PATH] = {0};
 	ULONG nLen = _MAX_PATH;
-	HRESULT hr = key.Open(HKEY_CURRENT_USER, _T("SOFTWARE\\CloudScriptHost"), KEY_QUERY_VALUE);
+	HRESULT hr = key.Open(HKEY_CURRENT_USER,  LaunchConfig::Instance()->m_wstrRegisterPath.c_str(), KEY_QUERY_VALUE);
 	if(hr == ERROR_SUCCESS)
 	{
 		key.QueryStringValue(_T("Path"), szPath, &nLen);

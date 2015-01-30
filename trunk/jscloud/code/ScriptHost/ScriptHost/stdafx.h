@@ -24,6 +24,7 @@ using namespace ATL;
 #define TSLOG_GROUP "SH"
 #include <tslog/tslog.h>
 #include "CmdlineParser.h"
+//#define __SCRIPT_DEBUG
 
 inline LRESULT CreateInstanceFromHandle(HINSTANCE hModuleHandle, REFCLSID rclsid, REFIID riid, LPVOID * ppv)
 {

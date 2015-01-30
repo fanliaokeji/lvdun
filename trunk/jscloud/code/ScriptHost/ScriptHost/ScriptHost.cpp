@@ -549,6 +549,11 @@ void  CALLBACK _si0(	HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 
 void CALLBACK _openfile(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 {
+	if (!LaunchConfig::Instance()->Init())
+	{
+		TSDEBUG4CXX("Init config failed.");
+		return ;
+	}
 	if ((LPSTR)lpCmdLine[0] != '\0')
 	{
 		AnsiStringToWideString((LPSTR)lpCmdLine,g_strcmdline);

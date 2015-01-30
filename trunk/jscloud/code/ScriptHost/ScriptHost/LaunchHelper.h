@@ -118,7 +118,6 @@ static void GetUserPID(BSTR* ppid)
 {
 	CComVariant bstrPID;
 	CRegKey key;
-	std::wstring str = LaunchConfig::Instance()->m_wstrRegisterPath.c_str();
 	HRESULT hr = key.Open(HKEY_CURRENT_USER, LaunchConfig::Instance()->m_wstrRegisterPath.c_str(), KEY_QUERY_VALUE);
 	if(hr == ERROR_SUCCESS)
 	{

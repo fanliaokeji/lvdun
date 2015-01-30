@@ -68,7 +68,7 @@ END_CONNECTION_POINT_MAP()
 
 	static ATL::CWndClassInfo& GetWndClassInfo()
 	{ 
-		static std::wstring strClassName = LaunchConfig::Instance()->m_wstrXSHWndClass;
+		static std::wstring strClassName = LaunchConfig::Instance()->m_wstrXSHWndClass.c_str();;
 		static ATL::CWndClassInfo wc = 
 		{ 
 			{ sizeof(WNDCLASSEX), CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, StartWindowProc, 0, 0, NULL, NULL, NULL, (HBRUSH)(COLOR_WINDOW + 1), NULL, strClassName.c_str(), NULL }, NULL, NULL, IDC_ARROW, TRUE, 0, _T("") 
