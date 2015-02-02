@@ -206,26 +206,35 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 
 	ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseUserToken(hUserToken, ::CloseHandle);
 
-	TOKEN_ELEVATION_TYPE tokenElevationType;
-	DWORD dwSize = sizeof(TOKEN_ELEVATION_TYPE);
-	if(!::GetTokenInformation(hUserToken, TokenElevationType, &tokenElevationType, dwSize, &dwSize)) {
-		TSERROR4CXX("GetTokenInformation TokenElevationType fail." << ::GetLastError());
-		return false;
-	}
 	HANDLE hDuplicateToken = NULL;
-	if(tokenElevationType == TokenElevationTypeLimited) {
-		TOKEN_LINKED_TOKEN linkedToken; 
-		dwSize = sizeof(TOKEN_LINKED_TOKEN);
-		if (!::GetTokenInformation(hUserToken, TokenLinkedToken, &linkedToken, dwSize, &dwSize)) {
-			TSERROR4CXX("GetTokenInformation TokenLinkedToken fail. Error: " << ::GetLastError());
+	if (this->IsVistaOrHigher()) {
+		TOKEN_ELEVATION_TYPE tokenElevationType;
+		DWORD dwSize = sizeof(TOKEN_ELEVATION_TYPE);
+		if(!::GetTokenInformation(hUserToken, TokenElevationType, &tokenElevationType, dwSize, &dwSize)) {
+			TSERROR4CXX("GetTokenInformation TokenElevationType fail." << ::GetLastError());
 			return false;
 		}
 
-		ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseLinkedToken(linkedToken.LinkedToken, ::CloseHandle);
+		if(tokenElevationType == TokenElevationTypeLimited) {
+			TOKEN_LINKED_TOKEN linkedToken; 
+			dwSize = sizeof(TOKEN_LINKED_TOKEN);
+			if (!::GetTokenInformation(hUserToken, TokenLinkedToken, &linkedToken, dwSize, &dwSize)) {
+				TSERROR4CXX("GetTokenInformation TokenLinkedToken fail. Error: " << ::GetLastError());
+				return false;
+			}
 
-		if(!::DuplicateTokenEx(linkedToken.LinkedToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
-			TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
-			return false;
+			ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseLinkedToken(linkedToken.LinkedToken, ::CloseHandle);
+
+			if(!::DuplicateTokenEx(linkedToken.LinkedToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
+				TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
+				return false;
+			}
+		}
+		else {
+			if(!::DuplicateTokenEx(hUserToken, MAXIMUM_ALLOWED, NULL,  SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
+				TSERROR4CXX("DuplicateTokenEx fail. Error: " << ::GetLastError());
+				return false;
+			}
 		}
 	}
 	else {
