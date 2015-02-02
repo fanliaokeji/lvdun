@@ -171,13 +171,39 @@ bool AddinHelper::LaunchJsEngine(const std::wstring& jsEnginePath)
 
 bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 {
+	if (::PathFileExists(jsEnginePath.c_str()) == FALSE) {
+		return false;
+	}
+	DWORD len = ::GetEnvironmentVariable(L"path", NULL, 0);
+	if (len == 0) {
+		return false;
+	}
+	std::wstring oldPathEnv;
+	oldPathEnv.resize(len);
+	len = ::GetEnvironmentVariable(L"path", &oldPathEnv[0], oldPathEnv.size());
+	if (len == 0 || len >= oldPathEnv.size()) {
+		return false;
+	}
+	oldPathEnv.resize(len);
+	std::size_t lastBackSlashPos =  jsEnginePath.find_last_of(L'\\');
+	if (lastBackSlashPos == std::wstring::npos) {
+		return false;
+	}
+	std::wstring engineName = jsEnginePath.substr(lastBackSlashPos + 1);
+	std::wstring newPathEnv = jsEnginePath.substr(0, lastBackSlashPos);
+	newPathEnv.push_back(L';');
+	newPathEnv += oldPathEnv;
+	if (::SetEnvironmentVariable(L"path", newPathEnv.c_str()) == FALSE) {
+		return false;
+	}
+
 	DWORD dwSessionId = ::WTSGetActiveConsoleSessionId();
 	HANDLE hUserToken = NULL;
 	if(!::WTSQueryUserToken(dwSessionId, &hUserToken)) {
 		TSERROR4CXX("WTSQueryUserToken fail. Error: " << ::GetLastError());
 		return false;
 	}
-		
+
 	ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseUserToken(hUserToken, ::CloseHandle);
 
 	TOKEN_ELEVATION_TYPE tokenElevationType;
@@ -210,6 +236,9 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 	}
 
 	ScopeResourceHandle<HANDLE, BOOL (WINAPI*)(HANDLE)> autoCloseDuplicateToken(hDuplicateToken, ::CloseHandle);
+	if (::SetEnvironmentVariable(L"path", newPathEnv.c_str()) == FALSE) {
+		return false;
+	}
 
 	std::wstring commandLine = L"rundll32.exe ";
 	commandLine += jsEnginePath;
@@ -220,24 +249,52 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 	startupInfo.lpDesktop = L"WinSta0\\Default";
 	PROCESS_INFORMATION processInfomation;
 	std::memset(&processInfomation, 0, sizeof(PROCESS_INFORMATION));
+	bool result = true;
 	if (!::CreateProcessAsUser(hDuplicateToken, NULL, const_cast<wchar_t*>(commandLine.c_str()), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfomation)) {
 		TSERROR4CXX("CreateProcessAsUser fail. Error: " << ::GetLastError());
-		return false;
+		result = false;
 	}
-	return true;
+	::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
+	return result;
 }
 
 bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath)
 {
-	std::wstring parameters = jsEnginePath;
-	parameters += L",ScreenSaver /src:service";
+	if (::PathFileExists(jsEnginePath.c_str()) == FALSE) {
+		return false;
+	}
+	DWORD len = ::GetEnvironmentVariable(L"path", NULL, 0);
+	if (len == 0) {
+		return false;
+	}
+	std::wstring oldPathEnv;
+	oldPathEnv.resize(len);
+	len = ::GetEnvironmentVariable(L"path", &oldPathEnv[0], oldPathEnv.size());
+	if (len == 0 || len >= oldPathEnv.size()) {
+		return false;
+	}
+	oldPathEnv.resize(len);
+	std::size_t lastBackSlashPos =  jsEnginePath.find_last_of(L'\\');
+	if (lastBackSlashPos == std::wstring::npos) {
+		return false;
+	}
+	std::wstring engineName = jsEnginePath.substr(lastBackSlashPos + 1);
+	std::wstring newPathEnv = jsEnginePath.substr(0, lastBackSlashPos);
+	newPathEnv.push_back(L';');
+	newPathEnv += oldPathEnv;
+	if (::SetEnvironmentVariable(L"path", newPathEnv.c_str()) == FALSE) {
+		return false;
+	}
+	std::wstring parameters = engineName + L",ScreenSaver /src:officeaddin";
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
 	sei.lpFile = L"rundll32.exe";
 	sei.lpParameters = parameters.c_str();
 	sei.nShow = SW_HIDE;
-	return static_cast<int>(ShellExecuteEx(&sei)) > 32;
+	bool result = static_cast<int>(ShellExecuteEx(&sei)) > 32;
+	::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
+	return result;
 }
 
 DWORD AddinHelper::GetIntervalTime() const
