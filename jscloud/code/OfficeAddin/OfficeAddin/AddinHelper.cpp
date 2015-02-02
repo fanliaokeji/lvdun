@@ -241,8 +241,7 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 	}
 
 	std::wstring commandLine = L"rundll32.exe ";
-	commandLine += jsEnginePath;
-	commandLine += L",ScreenSaver /src:service";
+	commandLine += engineName + L",ScreenSaver /src:service";
 	STARTUPINFO startupInfo;
 	std::memset(&startupInfo, 0, sizeof(STARTUPINFO));
 	startupInfo.cb = sizeof(STARTUPINFO);
