@@ -77,7 +77,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				UACExecutionLevel="2"
+				UACExecutionLevel="0"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapExports="true"
@@ -164,7 +164,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				UACExecutionLevel="2"
+				UACExecutionLevel="0"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapExports="true"
