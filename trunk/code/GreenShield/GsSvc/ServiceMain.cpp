@@ -11,6 +11,8 @@
 #include "ScopeResourceHandle.h"
 #include "LaunchGreenShieldConfig.h"
 
+#include "AddinHelper.h"
+
 static const wchar_t* szServiceName = L"GreenShieldService";
 #define SVC_ERROR	((DWORD)0xC0020001L)
 
@@ -89,7 +91,31 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 		TSERROR4CXX(L"Load Config failed");
 	}
 
+	AddinHelper *pAddinHelper = NULL;
+	do {
+		std::wstring subKey = L"SOFTWARE\\GreenShield";
+		ATL::CRegKey key;
+		if (key.Open(HKEY_LOCAL_MACHINE, subKey.c_str(), KEY_READ) != ERROR_SUCCESS) {
+			break;
+		}
+		wchar_t path[MAX_PATH];
+		DWORD dwChars = MAX_PATH;
+		if (key.QueryStringValue(L"Path", path, &dwChars) != ERROR_SUCCESS) {
+			break;
+		}
+		std::wstring configFilePath(path);
+		for (; !configFilePath.empty() && configFilePath[configFilePath.size() - 1] != L'\\'; configFilePath.resize(configFilePath.size() - 1))
+			;
+		configFilePath += L"config.ini";
+		pAddinHelper = new AddinHelper();
+		pAddinHelper->Initialize(configFilePath, true);
+	} while (false);
+
 	bool isVistaOrLatter = IsVistaOrLatter();
+	if (pAddinHelper) {
+		TSINFO4CXX("AddinHelper Begin Task");
+		pAddinHelper->BeginTask();
+	}
 
     while(1) {
         DWORD dwTimeToWait = 1000;
@@ -242,6 +268,13 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 		}
     }
 	::CloseHandle(hMutex);
+
+	if (pAddinHelper) {
+		TSINFO4CXX("AddinHelper End Task");
+		pAddinHelper->EndTask();
+		delete pAddinHelper;
+		pAddinHelper = NULL;
+	}
 	ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
 }
 
