@@ -23,6 +23,6 @@
 using namespace ATL;
 #import "C:\Program Files (x86)\Common Files\Designer\MSADDNDR.DLL" raw_interfaces_only, raw_native_types, no_namespace, named_guids, auto_search
 
-#define GSLOG
-#define GSLOG_GROUP "OfficeAddin"
+#define TSLOG
+#define TSLOG_GROUP "OfficeAddin"
 #include <tslog\tslog.h>
