@@ -1,0 +1,33 @@
+说明： 字段值不能为空。EV字段默认值为1，其它字段默认值为"gs_null"
+
+ec：事件类别
+ea: 事件动作
+el: 事件标签
+ev: 事件价值
+
+
+
+上报示例：
+http://www.google-analytics.com/collect/v=1&tid=UA-42360423-1&cid=FC4DD4F733784635&t=event&ec=main&ea=exit&el=0&ev=1
+
+cid 为 pid
+
+1. 主程序启动后立即上报
+ec = main
+ea = start		(版本号的最后一位)
+el = null   (从本进程的命令行获取来源)
+ev = 0		    (默认值)	
+
+
+
+1. 主程序退出后立即上报
+ec = main		
+ea = exit		
+el = 0|1        (0:正常退出  1:检测到黑名单进程退出)
+ev = 1		    (默认值)	
+
+
+
+		
+		
+		
