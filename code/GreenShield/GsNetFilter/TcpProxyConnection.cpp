@@ -486,6 +486,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								else if(HttpRequestFilter::GetInstance().IsEnableRedirect()) {
 									std::pair<bool, boost::optional<std::string> > redirectResult = this->ShouldRedirect(this->m_absoluteUrl, referer);
 									if(redirectResult.first && redirectResult.second) {
+										this->SendRedirectNotify(this->m_absoluteUrl);
 										this->m_requestString = "HTTP/1.1 302 Found\r\n";
 										this->m_requestString += "Connection: close\r\n";
 										this->m_requestString += "Content-Length: 0\r\n";
@@ -2293,6 +2294,20 @@ void TcpProxyConnection::SendNotify(const std::string& url) const
 		std::copy(url.begin(), url.end(), szUrl);
 		szUrl[url.size()] = '\0';
 		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(szUrl))== FALSE) {
+			delete szUrl;
+		}
+	}
+}
+
+void TcpProxyConnection::SendRedirectNotify(const std::string& url) const
+{
+	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
+	if(hNotifyWnd != NULL) 
+	{
+		char* szUrl = new char[url.size() + 1];
+		std::copy(url.begin(), url.end(), szUrl);
+		szUrl[url.size()] = '\0';
+		if(::PostMessage(hNotifyWnd, WM_USER + 203, WPARAM(1), LPARAM(szUrl))== FALSE) {
 			delete szUrl;
 		}
 	}
