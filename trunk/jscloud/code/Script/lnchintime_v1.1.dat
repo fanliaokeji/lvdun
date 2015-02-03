@@ -11,24 +11,16 @@ function LnchInTime.GetExePath()
 }
 
 
-function LnchInTime.GetHistoryPath()
-{
-	var strHistoryName = "lnchhist.ini"
-	var strHistoryDir = CommonFun.GetCurrentDllDir()
-	var strHistPath = strHistoryDir+"\\"+strHistoryName
-	return strHistPath
-}
-
-
 function LnchInTime.CheckLaunchCond()
 {
 	function CheckProcess()
 	{
-		var tBlacklist=["WinTService", "AiZhuoMian"];
+		var tBlacklist=["WinTService"];
 		var objProcessFilter = new ClassProcessFilter()
 		var strProcessName = objProcessFilter.checkSpecifyPro(tBlacklist)
 		if (typeof strProcessName == "string")
 		{
+			LnchInTime.SaveHistory("exist")
 			return false
 		}		
 		
@@ -37,29 +29,40 @@ function LnchInTime.CheckLaunchCond()
 
 	function CheckHistory()
 	{
-		var strHistIniPath = LnchInTime.GetHistoryPath()
+		var strHistIniPath = CommonFun.GetHistoryPath()
 		if (!CommonFun.QueryFileExists(strHistIniPath))
 		{
 			return true
 		}
 		
-		var nLastUTC = CommonFun.ReadINIFile(strHistIniPath, "history", "last")
-		if (nLastUTC)
+		var nLastExist = CommonFun.ReadINIFile(strHistIniPath, "launchldt", "exist")
+		var bIsToday = CommonFun.CheckIsToday(nLastExist)
+		if ( bIsToday )
 		{
 			return false
 		}
+		
+		var nLastLaunch = CommonFun.ReadINIFile(strHistIniPath, "launchldt", "launch")
+		var bIsToday = CommonFun.CheckIsToday(nLastLaunch)
+		if ( bIsToday )
+		{
+			return false
+		}
+		
 		return true
 	}
 	
 	var bPassCheck = CheckProcess()
 	if (!bPassCheck)
 	{
+		CommonFun.log("[CheckLaunchCond] CheckProcess failed ")
 		return false
 	}
 	
 	var bPassCheck = CheckHistory()
 	if (!bPassCheck)
 	{
+		CommonFun.log("[CheckLaunchCond] CheckHistory failed ")
 		return false
 	}
 
@@ -88,11 +91,11 @@ function LnchInTime.SendStartReport()
 }
 
 
-function LnchInTime.SaveHistory()
+function LnchInTime.SaveHistory(strKey)
 {
-	var strHistIniPath = LnchInTime.GetHistoryPath()
+	var strHistIniPath = CommonFun.GetHistoryPath()
 	var nCurrentUTC = CommonFun.GetCurrentUTCTime()
-	CommonFun.WriteINIFile(strHistIniPath, "history", "last", nCurrentUTC.toString())
+	CommonFun.WriteINIFile(strHistIniPath, "launchldt", strKey, nCurrentUTC.toString())
 }
 
 
@@ -124,7 +127,7 @@ function LnchInTime.Main()
 	
 	if (0 == bRet)
 	{
-		LnchInTime.SaveHistory()
+		LnchInTime.SaveHistory("launch")
 		LnchInTime.Exit(9)
 	}
 	else
