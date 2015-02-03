@@ -2274,6 +2274,13 @@ std::vector<std::string> TcpProxyConnection::GetReplaceRule(const std::string& u
 
 std::pair<bool, boost::optional<std::string> > TcpProxyConnection::ShouldRedirect(const std::string& url, const std::string& referer) const
 {
+	FilterManager* m = FilterManager::getManager();
+	if(m != NULL) {
+		std::string redirectUrl;
+		if(m->shouldRedirect(referer, url, redirectUrl)) {
+			return std::make_pair(true, boost::optional<std::string>(redirectUrl));
+		}
+	}
 	return std::make_pair(false, boost::optional<std::string>());
 }
 

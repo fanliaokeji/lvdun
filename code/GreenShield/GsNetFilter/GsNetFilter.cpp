@@ -86,6 +86,11 @@ BOOL GsSetHook(const std::wstring& dllPath)
 	return ::SetWindowsHookEx(WH_CALLWNDPROC, hookProc, hinstDLL, 0) == NULL ? FALSE : TRUE;
 }
 
+VOID GsEnableRedirect(BOOL bEnable)
+{
+	HttpRequestFilter::GetInstance().EnableRedirect(bEnable == FALSE ? false : true);
+}
+
 bool GsUpdateConfigVideoHost(const std::string& url,int istate)
 {
 	FilterManager* m = FilterManager::getManager();
@@ -129,4 +134,13 @@ bool GsGetUsersRules(const std::wstring& filename)
 		return false;
 	}
 	return m->getUsersRules(filename);
+}
+
+bool GsGetRedirectRules(const std::wstring& filename)
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m == NULL) {
+		return false;
+	}
+	return m->getRedirectRules(filename);
 }
