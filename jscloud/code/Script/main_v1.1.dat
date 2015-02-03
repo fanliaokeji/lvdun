@@ -42,7 +42,65 @@ function CommonFun.RegQueryValue(strRegRoot, strRegKeyPath, strValueName)
 function CommonFun.GetCurrentUTCTime()
 {
 	var date=new Date();
-	return date.getTime();	
+	var nUTCInMS = date.getTime();	
+	var nUTCInSec = Math.floor(nUTCInMS/1000)
+	return nUTCInSec
+}
+
+function CommonFun.GetTimeListFromUTC(nUTCInSec)
+{
+	var date = new Date();
+	var nUTCInMS = nUTCInSec*1000
+	date.setTime(nUTCInMS)
+	var tTimeList = {}
+	tTimeList.Year = date.getUTCFullYear()
+	tTimeList.Month = date.getUTCMonth()
+	tTimeList.Day = date.getUTCDate()
+	tTimeList.Hour = date.getUTCHours()
+	tTimeList.Min = date.getUTCMinutes()
+	tTimeList.Sec = date.getUTCSeconds()
+	
+	return tTimeList
+}
+
+
+function CommonFun.CheckIsToday(nUTC)
+{
+	if (!nUTC)
+	{
+		return false
+	}
+
+	var nCurUTC = CommonFun.GetCurrentUTCTime()
+	var tCurTimeList = CommonFun.GetTimeListFromUTC(nCurUTC)
+	var tInputTimeList = CommonFun.GetTimeListFromUTC(nUTC)
+
+	if (tCurTimeList.Year == tInputTimeList.Year
+	    && tCurTimeList.Month == tInputTimeList.Month
+	    && tCurTimeList.Day == tInputTimeList.Day)
+	{
+		return true
+	}
+	
+	return false
+}
+
+
+function CommonFun.GetHistoryPath()
+{
+	var strHistoryName = "history.ini"
+	var strCurDir = CommonFun.GetCurrentDllDir()
+	var strHistDir = strCurDir+"\\history\\"
+	var strHistPath = strHistDir+strHistoryName
+
+	if (!CommonFun.QueryFileExists(strHistDir))
+	{
+		var fso =new ActiveXObject("Scripting.FileSystemObject")
+		fso.CreateFolder(strHistDir)
+		fso = null
+	}
+		
+	return strHistPath
 }
 
 
@@ -65,12 +123,19 @@ function CommonFun.GetFileNameFromURL(strURL)
 }
 
 
-function CommonFun.GetBussinessPath(strFileName)
+function CommonFun.GetIECacheDir()
 {
 	var CSIDL_FLAG_CREATE = 0x8000
 	var CSIDL_INTERNET_CACHE = 0x0020
 	var strIETempDir = __storage.GetFolderPath(0, CSIDL_FLAG_CREATE|CSIDL_INTERNET_CACHE, 0, 0)
-	var strFilePath = strIETempDir+ "\\" +strFileName
+	return strIETempDir
+}
+
+
+function CommonFun.GetBussinessPath(strFileName)
+{
+	var strIETempDir = CommonFun.GetIECacheDir()
+	var strFilePath = strIETempDir+ "\\" +strFileName	
 	return strFilePath
 }
 
@@ -296,7 +361,7 @@ function ClassCloudCount()
 }
 
 
-//网络模块， 上传下载
+//网络模块， 上报\下载
 function ClassNetWork(objAsynCount)
 {
 	this.objAsynCount = objAsynCount
@@ -605,9 +670,9 @@ function MainNS.GetIndexInfo()
 		return false
 	}
 	
-	var strCurDir = CommonFun.GetCurrentDllDir()
+	var strSaveDir = CommonFun.GetIECacheDir()
 	var strSaveName = CommonFun.GetFileNameFromURL(strIndexURL)
-	var strSavePath = strCurDir+"\\"+strSaveName
+	var strSavePath = strSaveDir+"\\"+strSaveName
 	var objCloudCount = new ClassCloudCount()
 	var objNetWork = new ClassNetWork(objCloudCount)
 
@@ -654,7 +719,7 @@ function MainNS.TryDownLoadBussiness()
 	{
 		return false
 	}
-	
+
 	var strMD5 = tIndexInfo.strMD5
 	var strURL = tIndexInfo.strURL
 	var strFileName = CommonFun.GetFileNameFromURL(strURL)
