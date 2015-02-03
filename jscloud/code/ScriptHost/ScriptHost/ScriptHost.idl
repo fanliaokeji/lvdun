@@ -44,7 +44,8 @@ interface IXSH : IDispatch{
 	[id(1164), helpstring("方法getAddin")] HRESULT getAddin([in] BSTR name, [out,retval] IDispatch** object);
 	[id(1165), helpstring("方法setAddin")] HRESULT setAddin([in] BSTR name, [in] IDispatch* object);
 	[id(1166), helpstring("方法trace")] HRESULT trace([in] BSTR msg);
-	
+	[id(1167), helpstring("方法UnZipFile")] HRESULT UnZipFile([in] BSTR src, [in] BSTR dest,[in] VARIANT expression);
+
 	[id(1190), helpstring("方法createActiveX")] HRESULT createActiveX( [in]BSTR progid,  [out, retval] IDispatch** ppax); 	
 	[id(1191), helpstring("方法createActiveX2")] HRESULT createActiveX2([in] BSTR path, [in]BSTR clsid, [in]BSTR iid, [out, retval] IDispatch** ppax);
 
@@ -101,7 +102,8 @@ interface IUtility : IDispatch{
  	[id(21), helpstring("方法IsSupportOpencl")] HRESULT IsSupportOpencl([out,retval] LONG* pl);
 	[id(22), helpstring("方法Open")] HRESULT Open([in] BSTR url);
 	[id(23), helpstring("方法OpenUrl")] HRESULT OpenUrl([in] BSTR url, [in] LONG mode);
- 
+	[id(24), helpstring("方法EncryptFile")] HRESULT EncryptFile([in] BSTR src, [in]BSTR dst);
+
 	[id(1201), helpstring("方法TerminateProcess")] HRESULT TerminateProcess([in] LONG processid, [in, defaultvalue(0)] LONG tree);
 	[id(1202), helpstring("方法GetOrganizationName")] HRESULT GetOrganizationName([in] BSTR path, [out,retval] BSTR* name);
 	[id(1203), helpstring("方法WaitForSingleObject")] HRESULT WaitForSingleObject([in] LONG h, [in] LONG ms, [out,retval] LONG* ret);

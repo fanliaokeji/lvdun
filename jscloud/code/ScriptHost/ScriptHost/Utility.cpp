@@ -13,6 +13,10 @@
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "Version.lib")
 #include "LaunchHelper.h"
+#include "AES.h"
+#include <fstream>
+#include <shlobj.h>
+
 // CUtility
 
 STDMETHODIMP CUtility::GetPID(BSTR* ppid)
@@ -524,6 +528,8 @@ STDMETHODIMP CUtility::DownloadURL(BSTR url, BSTR dest ,VARIANT expression,  VAR
 
 	return S_OK;
 }
+
+
 LRESULT	CUtility::OnDownloadFile(UINT /*uMsg*/, WPARAM  wParam , LPARAM  lParam , BOOL& /*bHandled*/)
 {
 	struct _tDownload *t = (struct _tDownload *)lParam;
@@ -534,6 +540,7 @@ LRESULT	CUtility::OnDownloadFile(UINT /*uMsg*/, WPARAM  wParam , LPARAM  lParam 
 	delete t;
 	return 0;
 }
+
 void KillProcessTree(DWORD dwProcessID, DWORD dwExceptPID); 
 
 STDMETHODIMP CUtility::TerminateProcess(LONG processid, LONG tree)
@@ -608,5 +615,56 @@ STDMETHODIMP CUtility::get___debugging(LONG* pVal)
 		*pVal = 0;
 	}
 
+	return S_OK;
+}
+
+STDMETHODIMP CUtility::EncryptFile(BSTR source,BSTR dest)
+{
+	// TODO: 在此添加实现代码
+	ifstream fs;
+	fs.open( CStringA(source), ios::in|ios::binary );
+	bool b = fs.fail();											ATLASSERT( !b );
+	if(b){
+		return MK_E_CANTOPENFILE;}
+	fs.seekg(0, ios::end);
+	unsigned long n = (unsigned long)fs.tellg();
+	fs.seekg(0, ios::beg);
+	CStringA strScript;
+	char * buf = strScript.GetBuffer( n+1 );
+	fs.read( buf, n );
+	buf[n] = '\0';
+	fs.close();  
+
+	int flen = ((n >> 4) + 1) << 4;
+	char* out_str = (char*)malloc(flen + 1);
+	memset(out_str, 0, flen + 1);
+	unsigned char key[] = 
+	{
+		0x2b, 0x7e, 0x15, 0x16, 
+		0x28, 0xae, 0xd2, 0xa6, 
+		0xab, 0xf7, 0x15, 0x88, 
+		0x09, 0xcf, 0x4f, 0x3c
+	};
+	try
+	{
+		strcpy(out_str,buf);
+		AES aes(key);
+		aes.Cipher((char*)out_str, n);
+
+	}
+	catch (...)
+	{
+		return S_OK;
+	}
+	TCHAR tszSaveDir[MAX_PATH] = {0};
+	_tcsncpy(tszSaveDir, dest, MAX_PATH);
+	::PathRemoveFileSpec(tszSaveDir);
+	if (!::PathFileExists(tszSaveDir))
+		::SHCreateDirectory(NULL, tszSaveDir);
+
+	std::ofstream of(dest, std::ios_base::out|std::ios_base::binary);
+	of.write((const char*)out_str, flen);
+
+	free(out_str);
 	return S_OK;
 }

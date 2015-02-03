@@ -335,6 +335,7 @@ std::wstring  GetFileMD5(LPCTSTR lpctszFile)
 #pragma comment(linker, "/EXPORT:ScreenSaver=?_si0@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
 #pragma comment(linker, "/EXPORT:OpenURL=?_openurl@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
 #pragma comment(linker, "/EXPORT:OpenFile=?_openfile@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
+#pragma comment(linker, "/EXPORT:ScreenSaverEx=?_loadmain@@YGXPAUHWND__@@PAUHINSTANCE__@@PA_WH@Z,PRIVATE") 
 //__declspec(dllexport)
 #endif
 
@@ -457,21 +458,13 @@ void  CALLBACK _si0(	HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 	//	_tcsncpy(g_szPeerId, _T("0000000000000000"), _countof(g_szPeerId));
 	//	g_szPeerId[_countof(g_szPeerId) - 1] = _T('\0');
 	//}
-	CComBSTR bstrPid;
-	GetUserPID(&bstrPid);
-	_tcsncpy(g_szPeerId, bstrPid.m_str, _countof(g_szPeerId));
-	g_szPeerId[_countof(g_szPeerId) - 1] = _T('\0');
-	std::wstring wstrXSHWnd = LaunchConfig::Instance()->m_wstrXSHWndClass;
-	
-	HWND hWnd = FindWindowW(wstrXSHWnd.c_str() ,_T("1"));
-	if(hWnd)
+	if (g_szPeerId[0] == '\0')
 	{
-		DWORD dwProcessID = 0;
-		GetWindowThreadProcessId(hWnd, &dwProcessID);
-		TSDEBUG4CXX("TerminateProcess hWnd="<<hWnd<<" , dwProcessID="<<dwProcessID<<" ");
-		KillProcessTree(dwProcessID, (DWORD)-1);
+		CComBSTR bstrPid;
+		GetUserPID(&bstrPid);
+		_tcsncpy(g_szPeerId, bstrPid.m_str, _countof(g_szPeerId));
+		g_szPeerId[_countof(g_szPeerId) - 1] = _T('\0');
 	}
-	//////////////
  
 	CoInitialize(NULL);	
 	TCHAR szLaunchUrl[2048] = {0};
@@ -549,6 +542,7 @@ void  CALLBACK _si0(	HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 
 void CALLBACK _openfile(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
 {
+	TSAUTO();
 	if (!LaunchConfig::Instance()->Init())
 	{
 		TSDEBUG4CXX("Init config failed.");
@@ -563,6 +557,14 @@ void CALLBACK _openfile(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdSh
 		TSDEBUG4CXX("get file failed, g_strcmdline ="<<g_strcmdline.c_str());
 		return;
 	}
+	if (g_szPeerId[0] == '\0')
+	{
+		CComBSTR bstrPid;
+		GetUserPID(&bstrPid);
+		_tcsncpy(g_szPeerId, bstrPid.m_str, _countof(g_szPeerId));
+		g_szPeerId[_countof(g_szPeerId) - 1] = _T('\0');
+	}
+	
 	CoInitialize(NULL);	
 	HRESULT hr = E_FAIL;
 	CComPtr<IClassFactory> spCF;
@@ -585,7 +587,80 @@ void CALLBACK _openfile(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdSh
 		}
 		else
 		{
-			SendLaunchFailedStat(_T("downloadingfile_loadfailed_index.dat"), PathFindFileName((LPCTSTR)g_strcmdline.c_str())); 
+			SendLaunchFailedStat(_T("loadfailed"), PathFindFileName((LPCTSTR)g_strcmdline.c_str())); 
+		}
+		v.Clear();	
+		spScriptHost.Release();
+		spCF.Release();
+		//TerminateProcess(GetCurrentProcess(), nRet);
+	}	
+
+	return ;
+}
+
+void CALLBACK _loadmain(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdShow)
+{
+	TSAUTO();	
+	if (IsDebugging())
+	{
+		return;
+	}
+	//
+	if (!LaunchConfig::Instance()->Init())
+	{
+		TSDEBUG4CXX("Init config failed.");
+		return ;
+	}
+	if (!::PathFileExistsW(LaunchConfig::Instance()->m_wstrMainJS.c_str()))
+	{
+		TSDEBUG4CXX("mainjs not exist!");
+		return ;
+	}
+
+	if (!HandleSingleton())
+	{
+		return ;
+	}
+	if ((LPSTR)lpCmdLine[0] != '\0')
+	{
+		AnsiStringToWideString((LPSTR)lpCmdLine,g_strcmdline);
+	}
+	if (g_strcmdline.empty() || !::PathFileExistsW(g_strcmdline.c_str()))
+	{
+		TSDEBUG4CXX("get file failed, g_strcmdline ="<<g_strcmdline.c_str());
+		return;
+	}
+	if (g_szPeerId[0] == '\0')
+	{
+		CComBSTR bstrPid;
+		GetUserPID(&bstrPid);
+		_tcsncpy(g_szPeerId, bstrPid.m_str, _countof(g_szPeerId));
+		g_szPeerId[_countof(g_szPeerId) - 1] = _T('\0');
+	}
+
+	CoInitialize(NULL);	
+	HRESULT hr = E_FAIL;
+	CComPtr<IClassFactory> spCF;
+	DllGetClassObject(*__pobjMap_CXScriptHost->pclsid, IID_IClassFactory,  (LPVOID*)&spCF);
+	if(!spCF)
+		return ;
+
+	CComPtr<IXScriptHost> spScriptHost;
+	hr = spCF->CreateInstance(NULL, IID_IXScriptHost, (void **)&spScriptHost);
+	if(SUCCEEDED(hr) && spScriptHost)
+	{
+		spScriptHost->Load( (BSTR)LaunchConfig::Instance()->m_wstrMainJS.c_str(), 0 );
+		CComVariant v;
+		hr = spScriptHost->Run(&v);
+		if(SUCCEEDED(hr))
+		{
+			CMessageLoop theLoop;
+			int nRet = theLoop.Run();
+			nRet;
+		}
+		else
+		{
+			SendLaunchFailedStat(_T("loadfailed_index.dat"), PathFindFileName((LPCTSTR)g_strcmdline.c_str())); 
 		}
 		v.Clear();	
 		spScriptHost.Release();

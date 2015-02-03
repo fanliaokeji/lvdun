@@ -15,26 +15,19 @@ public:
 	}
 	BOOL Init()
 	{			
-		static HINSTANCE hCurrentModule = 0;
-		if(NULL == hCurrentModule)
-		{
-			MEMORY_BASIC_INFORMATION m = { 0 };
-			VirtualQuery(&hCurrentModule, &m, sizeof(MEMORY_BASIC_INFORMATION));
-			hCurrentModule = (HINSTANCE) m.AllocationBase;
-		}
+		SetCurrentModulePathToEnvironment();
 
-
-		wchar_t szModulePath[MAX_PATH] = {0};
-		if (0 != GetModuleFileName(hCurrentModule, szModulePath, MAX_PATH))
+		if (!m_wstrCurrentModulePath.empty())
 		{
+			wchar_t dllDir [_MAX_PATH];
 			wchar_t drive[_MAX_PATH];
 			wchar_t dir[_MAX_PATH];
 			wchar_t fname[_MAX_PATH];
 			wchar_t ext [_MAX_PATH];
 			wchar_t szCfgPath [_MAX_PATH];
-			_wsplitpath(szModulePath, drive,dir,fname,ext);
-			::PathCombine(szCfgPath,drive,dir);
-			::PathCombine(szCfgPath,szCfgPath,L"Config.ini");
+			_wsplitpath(m_wstrCurrentModulePath.c_str(), drive,dir,fname,ext);
+			::PathCombine(dllDir,drive,dir);
+			::PathCombine(szCfgPath,dllDir,L"Config.ini");
 			if (::PathFileExistsW(szCfgPath))
 			{
 				m_wstrCfgPath = szCfgPath;
@@ -58,6 +51,10 @@ public:
 				m_wstrRegisterPath = m_wstrProduct + L"Host";
 				m_wstrRegisterPath = std::wstring(L"SOFTWARE\\")+m_wstrRegisterPath;
 				m_wstrHostMutex =m_wstrHostMutex + L"_ScriptHost_Mutex";
+				wchar_t szMainJSPath [_MAX_PATH];
+				std::wstring wstrName =  m_wstrProduct+L"main.js";
+				::PathCombine(szMainJSPath,dllDir,wstrName.c_str());
+				m_wstrMainJS = szMainJSPath;
 				return TRUE;
 			}
 		}
@@ -96,6 +93,41 @@ private:
 	//	return wstrOut;
 	//}
 private:
+	void SetCurrentModulePathToEnvironment()
+	{
+#define MY_MAX_ENV_STRING_BUF_SIZE	32768
+		LPCTSTR pszPathEnvComponent = NULL;
+		LPCTSTR pszPathEnvName = _T("Path");
+		MEMORY_BASIC_INFORMATION m = { 0 };
+		static HINSTANCE hCurrentModule = 0;
+		if(NULL == hCurrentModule)
+		{
+			MEMORY_BASIC_INFORMATION m = { 0 };
+			VirtualQuery(&hCurrentModule, &m, sizeof(MEMORY_BASIC_INFORMATION));
+			hCurrentModule = (HINSTANCE) m.AllocationBase;
+		}
+		wchar_t szModulePath[MAX_PATH] = {0};
+		if (0 != GetModuleFileName(hCurrentModule, szModulePath, MAX_PATH))
+		{
+			m_wstrCurrentModulePath = szModulePath;
+			PathRemoveFileSpec(szModulePath);
+			if (::PathFileExists(szModulePath) && ::PathIsDirectory(szModulePath))
+			{
+				TCHAR *szPathEnvOldValue = new TCHAR[MY_MAX_ENV_STRING_BUF_SIZE];
+				::ZeroMemory(szPathEnvOldValue, MY_MAX_ENV_STRING_BUF_SIZE * sizeof(TCHAR));
+				::GetEnvironmentVariable(pszPathEnvName, szPathEnvOldValue, MY_MAX_ENV_STRING_BUF_SIZE);
+
+				TCHAR *szPathEnvNewValue = new TCHAR[MY_MAX_ENV_STRING_BUF_SIZE];
+				::ZeroMemory(szPathEnvNewValue, MY_MAX_ENV_STRING_BUF_SIZE * sizeof(TCHAR));
+				_sntprintf(szPathEnvNewValue, MY_MAX_ENV_STRING_BUF_SIZE, _T("%s;%s"), szModulePath, szPathEnvOldValue);
+
+				::SetEnvironmentVariable(pszPathEnvName, szPathEnvNewValue);
+
+				delete [] szPathEnvNewValue;
+				delete [] szPathEnvOldValue;
+			}
+		}
+	}
 	void GetConfigValue(const wchar_t* szSection, const wchar_t* szKey,std::wstring &wstrOut)
 	{
 		TCHAR szValue[MAX_PATH] = {0};
@@ -112,6 +144,8 @@ public:
 	std::wstring m_wstrTID;
 	std::wstring m_wstrRegisterPath;
 	std::wstring m_wstrProduct;
+	std::wstring m_wstrMainJS;
+	std::wstring m_wstrCurrentModulePath;
 };
 
 static void GetUserPID(BSTR* ppid)
@@ -191,4 +225,27 @@ static void GetUserPID(BSTR* ppid)
 	}
 	*ppid = bstrpid.Detach();
 	return;
+}
+
+
+static bool WideStringToAnsiString(const std::wstring &strWide, std::string &strAnsi)
+{
+	bool bSuc = false;
+
+	int cchAnsi = ::WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), -1, NULL, 0, NULL, NULL);
+	if (cchAnsi)
+	{
+		char *pszAnsi = new (std::nothrow) char[cchAnsi];
+		if (pszAnsi)
+		{
+			::WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), -1, pszAnsi, cchAnsi, NULL, NULL);
+			strAnsi = pszAnsi;
+			bSuc = true;
+
+			delete [] pszAnsi;
+			pszAnsi = NULL;
+		}
+	}
+
+	return bSuc;
 }

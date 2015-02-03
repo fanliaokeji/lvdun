@@ -12,6 +12,7 @@
 #include "LaunchHelper.h"
 #define  WM_TIMER_0SECOND WM_USER+100
 #define WM_DOWNLOADFILE WM_USER+200
+#define WM_UNZIPFILE WM_USER+201
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
 #error "Single-threaded COM objects are not properly supported on Windows CE platform, such as the Windows Mobile platforms that do not include full DCOM support. Define _CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA to force ATL to support creating single-thread COM object's and allow use of it's single-threaded COM object implementations. The threading model in your rgs file was set to 'Free' as that is the only threading model supported in non DCOM Windows CE platforms."
@@ -112,6 +113,8 @@ public:
 	STDMETHOD(clearInterval)(LONG timerID);
 	STDMETHOD(clearTimeout)(LONG timerID);
 	STDMETHOD(SetActiveScript)(IUnknown* pActiveScript);
+	STDMETHOD(UnZipFile)(BSTR src, BSTR dest,VARIANT expression);
+
 private:
 	CComPtr<IActiveScript> m_spActiveScript;
 	DWORD GetTimerID()
@@ -185,11 +188,13 @@ public:
 		MESSAGE_HANDLER(WM_TIMER, OnTimer)
 		MESSAGE_HANDLER(WM_TIMER_0SECOND, OnTimer0Second)		
 		MESSAGE_HANDLER(WM_QUERYENDSESSION, OnQueryEndSession) 
+		MESSAGE_HANDLER(WM_QUERYENDSESSION, OnQueryEndSession) 
+		MESSAGE_HANDLER(WM_UNZIPFILE, OnUnZipFile) 
 	END_MSG_MAP()
 	LRESULT OnTimer(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnTimer0Second(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT	OnQueryEndSession(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-
+	LRESULT OnUnZipFile(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/); 
 
 	STDMETHOD(getAddin)(BSTR name, IDispatch** object);
 	STDMETHOD(setAddin)(BSTR name, IDispatch*  object);

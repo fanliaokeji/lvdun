@@ -6,8 +6,8 @@
 #include "atlstr.h"
 #include <fstream>
 #include "ScriptHost_i.h"
-
-
+#include "AES.h"
+#include "minizip/unzip.h"
 extern int __EXITCODE ;
 // CXSH
 
@@ -235,8 +235,90 @@ LRESULT	CXSH::OnQueryEndSession(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/,
 	return 0;
 }
 
+struct _tUnZip{
+	CComBSTR bstrSource;		
+	CComBSTR bstrDest;
+	CComVariant vexpression;
+	HWND hWnd;
+};
 
+typedef int (ZEXPORT*_mini_unzip_dll)(const char * zipfilename, const char * directroy );
 
+DWORD UnZipFileProc(void *p)
+{
+	struct _tUnZip *t = (struct _tUnZip*)p;
+
+	TCHAR tszShortPath[_MAX_PATH] = {0};
+	::PathCanonicalize(tszShortPath, t->bstrDest);
+	TCHAR tszPath[_MAX_PATH] = {0};
+	TCHAR tszDir[_MAX_PATH] = {0};
+	::ExpandEnvironmentStrings(tszShortPath, tszPath, MAX_PATH);
+	_tcscpy(tszDir, tszPath);
+	if(!PathFileExists(tszDir))
+		CreateDirectory(tszDir,0);
+	std::string strSrc;
+	std::string strDest;
+	WideStringToAnsiString(t->bstrSource.m_str,strSrc);
+	WideStringToAnsiString(tszDir,strDest);
+	int hr = -1;
+	HMODULE hMod = LoadLibraryA("minizip.dll");
+	if (NULL != hMod)
+	{
+		_mini_unzip_dll fun_ptr = (_mini_unzip_dll)::GetProcAddress(hMod,"mini_unzip_dll");
+		if (fun_ptr != NULL)
+		{
+			hr = fun_ptr(strSrc.c_str(), strDest.c_str());
+		}
+	}
+
+	if(0 == hr)
+	{
+		PostMessage(t->hWnd, WM_UNZIPFILE, (WPARAM)1,  (LPARAM)t);            
+	}
+	else
+	{
+		PostMessage(t->hWnd, WM_UNZIPFILE, (WPARAM)0,  (LPARAM)t);            
+	}
+	return 0;
+}
+
+STDMETHODIMP CXSH::UnZipFile(BSTR src, BSTR dest,VARIANT expression)
+{
+	struct _tUnZip *t = new struct _tUnZip;
+	t->bstrSource = src;
+	t->bstrDest = dest;
+	t->hWnd = m_hWnd;
+	t->vexpression = expression;
+	DWORD dwThreadId = 0;
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) UnZipFileProc, (void*)t, 0,&dwThreadId);		
+
+	return S_OK;
+}
+
+LRESULT	CXSH::OnUnZipFile(UINT /*uMsg*/, WPARAM  wParam , LPARAM  lParam , BOOL& /*bHandled*/)
+{
+	struct _tUnZip *t = (struct _tUnZip *)lParam;
+	CComVariant p1 = (long )wParam;
+	CComVariant p2 = t->bstrDest;
+	CComVariant v = t->vexpression;
+	HRESULT hr = S_OK;
+	if(VT_DISPATCH == v.vt)
+	{
+		VARIANT VarResult;
+		EXCEPINFO ExcepInfo;
+		UINT uArgErr;
+		CComVariant avarParams[2];
+		avarParams[1] = p1;
+		avarParams[0] = p2;
+		CComVariant varResult;
+		DISPPARAMS params = { avarParams, NULL, 2, 0 };
+		hr = v.pdispVal->Invoke(DISPID_VALUE, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params,
+			&VarResult,&ExcepInfo,&uArgErr);
+		ATLASSERT(SUCCEEDED(hr)); 
+	}
+	delete t;
+	return 0;
+}
 
 STDMETHODIMP CXSH::getAddin(BSTR name, IDispatch** object)
 {
@@ -440,9 +522,26 @@ STDMETHODIMP CXSH::evalFile(BSTR path, VARIANT* pVarRet)
 	buf[n] = '\0';
 	fs.close();  
 
-	if(isec(buf, n))
+	/*if(isec(buf, n))
 	{
 		dc(buf, n);		
+	}*/
+
+	unsigned char key[] = 
+	{
+		0x2b, 0x7e, 0x15, 0x16, 
+		0x28, 0xae, 0xd2, 0xa6, 
+		0xab, 0xf7, 0x15, 0x88, 
+		0x09, 0xcf, 0x4f, 0x3c
+	};
+	AES aes(key);
+	if(!('/' == buf[0] && '/' == buf[1] )) // ×¢ÊÍ·û¿ªÊ¼
+	{
+		aes.InvCipher((unsigned char*)buf, n);
+	}
+	else if(aes.IsCipher(buf))
+	{
+		aes.InvCipher((unsigned char*)buf, n);
 	}
 
 	CComBSTR bstr(strScript);
