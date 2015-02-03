@@ -86,12 +86,13 @@ interface IActiveXContainer : IDispatch{
 	pointer_default(unique)
 ]
 interface IUtility : IDispatch{
-		[id(1), helpstring("方法GetPID")] HRESULT GetPID([out,retval] BSTR* ppid);
+	[id(1), helpstring("方法GetPID")] HRESULT GetPID([out,retval] BSTR* ppid);
 	//fso.GetFileVersion(WshShell.ExpandEnvironmentStrings(filespec))
 	[id(5), helpstring("方法GetHostVersion")] HRESULT GetHostVersion([out,retval] BSTR* pver);
 	[id(6), helpstring("方法GetHostBuild")] HRESULT GetHostBuild([out,retval] LONG* pv);
 	[id(7), helpstring("方法GetEIVersion")] HRESULT GetEIVersion([out,retval] BSTR* pver);
 	[id(8), helpstring("方法GetEIBuild")] HRESULT GetEIBuild([out,retval] LONG* pv);
+	[id(9), helpstring("方法GetCurrentHostDllPath")] HRESULT GetCurrentHostDllPath([out,retval] BSTR* ppath);
 	//WshShell.run WshShell.exec
 	[id(12), helpstring("方法ShellExcute")] HRESULT ShellExcute([in] BSTR app, [in] BSTR param, [in] BSTR workdir, [in,defaultvalue( 0x00000080)] LONG startupflag, [out, retval]LONG *pProcessId);
  	[id(16), helpstring("方法GetLastInputInfo")] HRESULT GetLastInputInfo([out,retval] LONG* l);

@@ -63,7 +63,7 @@ END_COM_MAP()
 private:
 	std::vector<LONG> m_lChildProcesses;
 public:
-
+	STDMETHOD(GetCurrentHostDllPath)(BSTR* ppid);
 	STDMETHOD(GetPID)(BSTR* ppid);
 	STDMETHOD(GetHostVersion)(BSTR* pver);
 	STDMETHOD(GetHostBuild)(LONG* pv);
