@@ -625,11 +625,6 @@ void CALLBACK _loadmain(HWND hwnd,	HINSTANCE hinst,	LPTSTR lpCmdLine,	int nCmdSh
 	{
 		AnsiStringToWideString((LPSTR)lpCmdLine,g_strcmdline);
 	}
-	if (g_strcmdline.empty() || !::PathFileExistsW(g_strcmdline.c_str()))
-	{
-		TSDEBUG4CXX("get file failed, g_strcmdline ="<<g_strcmdline.c_str());
-		return;
-	}
 	if (g_szPeerId[0] == '\0')
 	{
 		CComBSTR bstrPid;
