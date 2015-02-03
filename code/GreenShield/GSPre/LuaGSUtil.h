@@ -63,6 +63,9 @@ public:
 	static int LoadWebRules(lua_State* pLuaState);
 	static int LoadVideoRules(lua_State* pLuaState);
 	static int LoadUserRules(lua_State* pLuaState);
+	static int LoadRedirectRules(lua_State* pLuaState);
+
+	static int EnableRedirect(lua_State* pLuaState);
 
 	static int AddVideoHost(lua_State* pLuaState);
 	static int AddWhiteHost(lua_State* pLuaState);
