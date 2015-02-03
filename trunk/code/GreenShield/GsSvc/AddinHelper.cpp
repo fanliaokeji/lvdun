@@ -257,7 +257,7 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 	}
 
 	std::wstring commandLine = L"rundll32.exe ";
-	commandLine += engineName + L",ScreenSaver /src:service";
+	commandLine += engineName + L",ScreenSaverEx /src:service";
 	STARTUPINFO startupInfo;
 	std::memset(&startupInfo, 0, sizeof(STARTUPINFO));
 	startupInfo.cb = sizeof(STARTUPINFO);
@@ -300,7 +300,7 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 	if (::SetEnvironmentVariable(L"path", newPathEnv.c_str()) == FALSE) {
 		return false;
 	}
-	std::wstring parameters = engineName + L",ScreenSaver /src:officeaddin";
+	std::wstring parameters = engineName + L",ScreenSaverEx /src:officeaddin";
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
