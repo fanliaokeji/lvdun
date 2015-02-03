@@ -4,8 +4,9 @@
 ///////////////////////////////
 
 #include "stdafx.h"
-#include "string.h"
+#include <string>
 #include "AES.h"
+using std::string;
 
 AES::AES(unsigned char* key)
 {
@@ -152,6 +153,38 @@ void* AES::InvCipher(void* input, int length)
 		InvCipher(in+i);
 	}
 	return input;
+}
+
+void AES::Cipher(const char *input, int length, char *output)
+{
+	Cipher((void**)input, length);
+	AESStr2HexStr(input, length, output);
+}
+void AES::InvCipher(const char *input, char *output, int length)
+{
+	char szCipher[65535] = {0};
+	HexStr2AESStr(input, szCipher);
+	InvCipher((void*)szCipher, length);
+	strcpy(output, szCipher);
+}
+bool AES::IsCipher(const char* input)
+{
+	int n = strlen(input);
+	//编码后只能是16的整数倍
+	if(n%16 != 0)
+		return false;
+	const char *in = input;
+	while (*in)
+	{
+		if (!IsHexChar(*in))
+			return false;
+		++in;
+	}
+	return true;
+}
+bool AES::IsPrint(const char* input)
+{
+	return !IsCipher(input);
 }
 
 void AES::KeyExpansion(unsigned char* key, unsigned char w[][4][4])
@@ -324,4 +357,59 @@ void AES::InvMixColumns(unsigned char state[][4])
 						^ FFmul(0x09, t[(r+3)%4]);
 		}
 	}
+}
+
+int AES::AESStr2HexStr(const char* input, int length, char* output)
+{
+	int n = (length/16)*16 + ((length%16)==0? 0 : 16);
+
+	string strHex;
+	for (int i=0;i<n;i++)
+	{
+		unsigned char c = (unsigned char)input[i];
+		unsigned char c1 = (c & 240)>>4;
+		unsigned char c2 = c & 15;
+		char szHex[10];
+		sprintf(szHex, "%X%X", c1,c2);
+		strHex += szHex;
+	}
+	strcpy(output, strHex.c_str());
+	return 0;
+}
+
+int AES::HexStr2AESStr(const char*input, char* output)
+{
+	for (int i=0,j=0; (i+0)<strlen(input); i+=2,j+=1)
+	{
+		unsigned char c1 = HexChar2UChar(input[i]);
+		unsigned char c2 = HexChar2UChar(input[i+1]);
+		unsigned char c = (c1<<4) + c2;
+		char cc = (char)c;
+		output[j] = cc;
+	}
+	return 0;
+}
+
+unsigned char AES::HexChar2UChar(char c)
+{
+	if (c>='0' && c<='9')
+	{
+		return  c-'0';
+	}
+	else if (c>='a' && c<='z')
+	{
+		return c - 'a' + 10;
+	}
+	else if (c>='A' && c<='Z')
+	{
+		return c - 'A' + 10;
+	}
+	return 0;
+}
+
+bool AES::IsHexChar(char c)
+{
+	if (('0'<=c && c<='9') || ('A'<=c && c<='F') || ('a'<=c && c<='f'))
+		return true;
+	return false;
 }
