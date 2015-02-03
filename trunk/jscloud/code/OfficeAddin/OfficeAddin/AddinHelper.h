@@ -11,7 +11,7 @@ class AddinHelper {
 	HANDLE m_hTaskThread;
 	std::wstring m_productName;
 	std::wstring m_mutexName;
-	std::wstring m_scriptHostName;
+	std::wstring m_scriptHostFullPath;
 public:
 	AddinHelper();
 	~AddinHelper();
@@ -26,7 +26,7 @@ public:
 	bool LaunchJsEngineFromService(const std::wstring& jsEnginePath);
 	bool LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath);
 private:
-	void Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostName, bool isService);
+	void Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostFullPath, bool isService);
 	DWORD GetExplorerPID() const;
 	DWORD GetIntervalTime() const;
 	bool IsVistaOrHigher() const;
