@@ -2277,7 +2277,7 @@ std::pair<bool, boost::optional<std::string> > TcpProxyConnection::ShouldRedirec
 	FilterManager* m = FilterManager::getManager();
 	if(m != NULL) {
 		std::string redirectUrl;
-		if(m->shouldRedirect(referer, url, redirectUrl)) {
+		if(m->shouldRedirect(Url(referer.c_str()), Url(url.c_str()), redirectUrl)) {
 			return std::make_pair(true, boost::optional<std::string>(redirectUrl));
 		}
 	}
