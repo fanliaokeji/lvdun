@@ -252,6 +252,7 @@ private:
 	std::vector<std::string> GetReplaceRule(const std::string& url) const;
 	std::pair<bool, boost::optional<std::string> > ShouldRedirect(const std::string& url, const std::string& referer) const;
 	void SendNotify(const std::string& url) const;
+	void SendRedirectNotify(const std::string& url) const;
 private:
 	static const std::size_t MAXIMUM_REQUEST_HEADER_LENGTH = 1048576;
 	static const std::size_t MAXIMUM_RESPONSE_HEADER_LENGTH = 1048576;
