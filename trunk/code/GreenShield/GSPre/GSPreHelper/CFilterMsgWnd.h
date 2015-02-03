@@ -7,9 +7,12 @@ typedef void (*funResultCallBack) (DWORD userdata1,DWORD userdata2, const char* 
 
 #define WM_FILTERRESULT WM_USER + 201
 #define WM_FILTERASK WM_USER + 202
+#define WM_REDIRECTRESULT WM_USER + 203
 
 #define WM_FILTEREXIT WM_USER + 300
 #define WM_FILTERLOCKING WM_USER + 301
+
+
 
 struct CallbackNode
 {
@@ -41,6 +44,7 @@ public:
 		MESSAGE_HANDLER(WM_FILTEREXIT, HandleFilterExit)
 
 		MESSAGE_HANDLER(WM_FILTERLOCKING, HandleFilterLocking)
+		MESSAGE_HANDLER(WM_REDIRECTRESULT, HandleRedirectResult)
 	END_MSG_MAP()
 private:
 	CFilterMsgWindow(void);
@@ -68,4 +72,6 @@ public:
 
 	LRESULT HandleFilterExit(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 	LRESULT HandleFilterLocking(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
+
+	LRESULT HandleRedirectResult(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 };
