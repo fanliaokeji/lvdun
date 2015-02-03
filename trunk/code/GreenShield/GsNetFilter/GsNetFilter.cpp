@@ -142,5 +142,5 @@ bool GsGetRedirectRules(const std::wstring& filename)
 	if(m == NULL) {
 		return false;
 	}
-	return m->getRedirectRules(filename);
+//	return m->getRedirectRules(filename);
 }
