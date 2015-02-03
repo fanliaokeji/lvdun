@@ -86,4 +86,23 @@ private:
 	
 };
 
+class RedirectRule {
+public:
+
+	RedirectRule(const std::string & r);
+
+	bool shouldRedirect(const Url & u);
+	const std::string & getRedirect(){ return m_reParse;};
+
+	void getDomains(std::string & domain);
+	const std::string & getRegularFilter(){ return m_reRedirect;}
+private:
+	std::string m_reParse;
+	std::string m_reRedirect;
+	std::vector<std::string> m_domains;
+	std::string m_rule;
+	bool m_isMatchProtocol;
+
+};
+
 #endif // FILTER_H

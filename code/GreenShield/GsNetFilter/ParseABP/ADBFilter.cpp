@@ -532,3 +532,62 @@ void ReplaceRule::getDomains(std::string &domain)
 	if(!s.empty())
 		domain = s;
 }
+
+RedirectRule::RedirectRule(const std::string & r)
+{
+	std::string rule=boost::trim_copy(r);
+	if(boost::istarts_with(rule,"@#@")) {
+		boost::erase_first(rule,"@#@");
+	}
+
+	boost::iterator_range<string::iterator> range = boost::ifind_last(rule,"$$$");
+	if (range.begin() != rule.end())
+	{
+		std::string::size_type pos = range.begin()-rule.begin();
+		rule = rule.substr(0,pos);
+	}
+	m_rule=rule;
+	this->m_isMatchProtocol=true;
+	if(boost::istarts_with(rule,"||")) {
+		this->m_isMatchProtocol=false;
+		boost::erase_first(rule,"||");
+	}
+	if(boost::istarts_with(rule,"|"))
+		boost::erase_first(rule,"|");
+	else
+		rule.insert(0,"*");
+	int dollarPos=rule.find_last_of('$');
+	if(dollarPos!= std::string::npos) {
+		std::string token;
+		rule=rule.substr(0,dollarPos);
+		this->m_reParse=m_rule.substr(dollarPos+2);
+	}
+	if (rule[rule.length() - 1] == '|')
+		rule = rule.substr(0,rule.length() - 1);
+	else
+		rule.append("*");
+	this->m_reRedirect=rule;
+}
+
+bool RedirectRule::shouldRedirect(const Url & u)
+{
+	std::string url=u.GetString();
+	bool ret;
+	if(!this->m_isMatchProtocol) 
+	{
+		//url=url.substr(url.length()-u.GetScheme().length());
+		if (!u.GetScheme().empty())
+		{
+			url=url.substr(u.GetScheme().length()+3);
+		}
+	}
+	ret=adbMatch(url.c_str(),m_reRedirect.c_str());
+	return ret;
+}
+
+void RedirectRule::getDomains(std::string &domain)
+{
+	std::string s=parseDomain(m_reRedirect);
+	if(!s.empty())
+		domain = s;
+}
