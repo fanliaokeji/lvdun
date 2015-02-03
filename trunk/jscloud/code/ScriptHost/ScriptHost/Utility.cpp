@@ -19,6 +19,13 @@
 
 // CUtility
 
+STDMETHODIMP CUtility::GetCurrentHostDllPath(BSTR* ppath)
+{
+	CComBSTR bstrpath(LaunchConfig::Instance()->m_wstrCurrentModulePath.c_str());
+	*ppath = bstrpath.Detach();
+	return S_OK;
+}
+
 STDMETHODIMP CUtility::GetPID(BSTR* ppid)
 {
 	// TODO: 在此添加实现代码
