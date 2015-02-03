@@ -42,14 +42,21 @@ void AddinHelper::Initialize(const std::wstring& configFile, bool isService)
 	if (productName.empty() || hostdll.empty() || mutex.empty()) {
 		return;
 	}
-	this->Initialize(productName, mutex, hostdll, isService);
+	std::wstring scriptHostFullPath = configFile;
+	for (;!scriptHostFullPath.empty() && scriptHostFullPath[scriptHostFullPath.size() - 1] != L'\\'; scriptHostFullPath.resize(scriptHostFullPath.size() - 1))
+		;
+	if (scriptHostFullPath.empty()) {
+		return;
+	}
+	scriptHostFullPath += hostdll;
+	this->Initialize(productName, mutex, scriptHostFullPath, isService);
 }
 
-void AddinHelper::Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostName, bool isService)
+void AddinHelper::Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostFullPath, bool isService)
 {
 	this->m_productName = productName;
 	this->m_mutexName = mutexName;
-	this->m_scriptHostName = scriptHostName;
+	this->m_scriptHostFullPath = scriptHostFullPath;
 	this->m_isService = isService;
 	this->m_isInitialized = true;
 }
@@ -437,22 +444,5 @@ bool AddinHelper::IsVistaOrHigher() const
 
 std::wstring AddinHelper::GetScriptHostFullPath() const
 {
-	std::wstring subKey = L"SOFTWARE\\";
-	subKey += this->m_productName;
-	ATL::CRegKey key;
-	if (key.Open(HKEY_LOCAL_MACHINE, subKey.c_str(), KEY_READ) != ERROR_SUCCESS) {
-		return std::wstring();
-	}
-	wchar_t path[MAX_PATH];
-	DWORD dwChars = MAX_PATH;
-	if (key.QueryStringValue(L"Path", path, &dwChars) != ERROR_SUCCESS) {
-		return std::wstring();
-	}
-	std::wstring scriptHostPath(path);
-	for (;!scriptHostPath.empty() && scriptHostPath[scriptHostPath.size() - 1] != L'\\'; scriptHostPath.resize(scriptHostPath.size() - 1))
-		;
-	if (!scriptHostPath.empty()) {
-		scriptHostPath += this->m_scriptHostName;
-	}
-	return scriptHostPath;
+	return this->m_scriptHostFullPath;
 }
