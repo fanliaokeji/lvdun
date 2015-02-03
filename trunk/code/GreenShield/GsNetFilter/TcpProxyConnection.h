@@ -36,7 +36,8 @@ enum ConnectionState {
 	CS_READ_HTTP_RESPONSE_CONTENT,	// 读取 响应的消息主体(response message body)
 	CS_WRITE_HTTP_RESPONSE_CONTENT, // 发送 响应
 	CS_WAIT_FOR_NEXT_HTTP_QUERY, // 等待下一个请求
-	CS_WRITE_BLOCK_RESPONSE // 发送阻止响应
+	CS_WRITE_BLOCK_RESPONSE, // 发送阻止响应
+	CS_WRITE_REDIRECT_RESPONSE // 发送重定向响应
 };
 
 enum TransferEncoding {
@@ -249,6 +250,7 @@ private:
 	std::string GetInsertCSSCode(const std::string& url) const;
 	bool NeedReplaceContent(const std::string& url) const;
 	std::vector<std::string> GetReplaceRule(const std::string& url) const;
+	std::pair<bool, boost::optional<std::string> > ShouldRedirect(const std::string& url, const std::string& referer) const;
 	void SendNotify(const std::string& url) const;
 private:
 	static const std::size_t MAXIMUM_REQUEST_HEADER_LENGTH = 1048576;
