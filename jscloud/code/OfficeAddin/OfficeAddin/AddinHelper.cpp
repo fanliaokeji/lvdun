@@ -95,7 +95,7 @@ bool AddinHelper::EnsureOwnerMutex()
 									this->m_hMutex = NULL;
 								}
 							}
-							::LocalFree(pSacl);
+							// ::LocalFree(pSacl);
 						}
 						::LocalFree(pSD);
 					}
