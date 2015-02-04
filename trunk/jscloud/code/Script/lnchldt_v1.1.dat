@@ -121,10 +121,10 @@ function LnchInTime.Main()
 		LnchInTime.Exit(2)
 		return false
 	}
-	var strCMD = strExePath+" -run"
+	var strCMD = "\""+strExePath+"\""+" -run"
 	var WshShell =  new ActiveXObject("WScript.Shell")
-	var bRet = WshShell.Run(strCMD)
 	
+	var bRet = WshShell.Run(strCMD)
 	if (0 == bRet)
 	{
 		LnchInTime.SaveHistory("launch")
