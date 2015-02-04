@@ -455,29 +455,36 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 
 								std::string referer = this->GetRequestReferer();
 
-								if(this->ShouldBlockRequest(this->m_absoluteUrl, referer)) {
+								bool blockUseForbiden = false;
+								if(this->ShouldBlockRequest(this->m_absoluteUrl, referer, blockUseForbiden)) {
 									this->SendNotify(this->m_absoluteUrl);
-									std::string content_to_response;
-									this->m_requestString = "HTTP/1.1 200 OK\r\n";
-									if(this->IsJavaScriptUrl(this->m_absoluteUrl)) {
-										this->m_requestString += "Content-Type: text/javascript\r\n";
-										content_to_response = ";window.onerror=function(){return!0};";
+									if (blockUseForbiden) {
+										this->m_requestString = "HTTP/1.1 403 Forbiden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 									}
 									else {
-										this->m_requestString += "Content-Type: image/gif\r\n";
-										const char* gif_data = "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xFF\xFF\xFF\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B";
-										content_to_response.append(gif_data, gif_data + 43);
+										std::string content_to_response;
+										this->m_requestString = "HTTP/1.1 200 OK\r\n";
+										if(this->IsJavaScriptUrl(this->m_absoluteUrl)) {
+											this->m_requestString += "Content-Type: text/javascript\r\n";
+											content_to_response = ";window.onerror=function(){return!0};";
+										}
+										else {
+											this->m_requestString += "Content-Type: image/gif\r\n";
+											const char* gif_data = "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xFF\xFF\xFF\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B";
+											content_to_response.append(gif_data, gif_data + 43);
+										}
+										std::string content_length;
+										{
+											std::stringstream ss;
+											ss << content_to_response.size();
+											ss >> content_length;
+										}
+										this->m_requestString += "Content-Length: ";
+										this->m_requestString += content_length;
+										this->m_requestString += "\r\nConnection: close\r\n\r\n";
+										this->m_requestString += content_to_response;
 									}
-									std::string content_length;
-									{
-										std::stringstream ss;
-										ss << content_to_response.size();
-										ss >> content_length;
-									}
-									this->m_requestString += "Content-Length: ";
-									this->m_requestString += content_length;
-									this->m_requestString += "\r\nConnection: close\r\n\r\n";
-									this->m_requestString += content_to_response;
+									
 									this->m_state = CS_WRITE_BLOCK_RESPONSE;
 									boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
 										boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
@@ -2208,7 +2215,7 @@ bool TcpProxyConnection::IsJavaScriptUrl(const std::string& url) const
 	return false;
 }
 
-bool TcpProxyConnection::ShouldBlockRequest(const std::string& url, const std::string& referer) const
+bool TcpProxyConnection::ShouldBlockRequest(const std::string& url, const std::string& referer, bool& blockUseForbiden) const
 {
 	FilterManager* m = FilterManager::getManager();
 	if(m == NULL) {
@@ -2216,7 +2223,14 @@ bool TcpProxyConnection::ShouldBlockRequest(const std::string& url, const std::s
 	}
 	else {
 		Url requestUrl(url.c_str()), refererUrl(referer.c_str());
-		return m->shouldFilter(refererUrl, requestUrl);
+		int blockPolicy = m->shouldFilter(refererUrl, requestUrl);
+		if (blockPolicy == 0) {
+			return false;
+		}
+		else if (blockPolicy == 2) {
+			blockUseForbiden = true;
+		}
+		return true;
 	}
 }
 

@@ -245,7 +245,7 @@ private:
 	// 重置状态等待下一次请求
 	void PrepareForNextHttpQuery();
 private:
-	bool ShouldBlockRequest(const std::string& url, const std::string& referer) const;
+	bool ShouldBlockRequest(const std::string& url, const std::string& referer, bool& blockUseForbiden) const;
 	bool NeedInsertCSSCode(const std::string& url) const;
 	std::string GetInsertCSSCode(const std::string& url) const;
 	bool NeedReplaceContent(const std::string& url) const;
