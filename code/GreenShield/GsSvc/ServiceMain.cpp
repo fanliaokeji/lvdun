@@ -141,7 +141,7 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
 										hMutex = NULL;
 									}
 								}
-								::LocalFree(pSacl);
+								// ::LocalFree(pSacl);
 							}
 							::LocalFree(pSD);
 						}
