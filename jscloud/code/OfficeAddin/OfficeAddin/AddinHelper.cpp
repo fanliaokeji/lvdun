@@ -9,6 +9,7 @@
 #include <Wtsapi32.h>
 #include <Userenv.h>
 #include <shellAPI.h>
+#include <ShlObj.h>
 
 #include "ScopeResourceHandle.h"
 
@@ -104,6 +105,32 @@ bool AddinHelper::EnsureOwnerMutex()
 		}
 	}
 	return this->m_hMutex != NULL;
+}
+
+#ifdef _WIN64
+#define SYSTEM32_X86 CSIDL_SYSTEMX86
+#define PROGRAM_FILES_COMMON_X86 CSIDL_PROGRAM_FILES_COMMONX86
+#else
+#define SYSTEM32_X86 CSIDL_SYSTEM
+#define PROGRAM_FILES_COMMON_X86 CSIDL_PROGRAM_FILES_COMMON
+#endif
+
+static BOOL GetAndCheckX86Rundll32ExeFilePath(LPTSTR pszFilePath, ULONG cchFilePath)
+{
+	BOOL bSuc = FALSE;
+
+	if (pszFilePath && cchFilePath > 0)
+	{
+		if (SUCCEEDED(::SHGetFolderPath(NULL, SYSTEM32_X86, NULL, 0, pszFilePath))
+			&& ::PathAppend(pszFilePath, L"rundll32.exe"))
+		{
+			if (::PathFileExists(pszFilePath) && !::PathIsDirectory(pszFilePath))
+			{
+				bSuc = TRUE;
+			}
+		}
+	}
+	return bSuc;
 }
 
 bool AddinHelper::BeginTask()
@@ -256,7 +283,12 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 		return false;
 	}
 
-	std::wstring commandLine = L"rundll32.exe ";
+	wchar_t rundll32Path[MAX_PATH];
+	if (::GetAndCheckX86Rundll32ExeFilePath(rundll32Path, MAX_PATH) == FALSE) {
+		return false;
+	}
+	std::wstring commandLine = rundll32Path;
+	commandLine.push_back(L' ');
 	commandLine += engineName + L",ScreenSaverEx /src:service";
 	STARTUPINFO startupInfo;
 	std::memset(&startupInfo, 0, sizeof(STARTUPINFO));
@@ -300,11 +332,16 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 	if (::SetEnvironmentVariable(L"path", newPathEnv.c_str()) == FALSE) {
 		return false;
 	}
+	wchar_t rundll32Path[MAX_PATH];
+	if (::GetAndCheckX86Rundll32ExeFilePath(rundll32Path, MAX_PATH) == FALSE) {
+		return false;
+	}
+
 	std::wstring parameters = engineName + L",ScreenSaverEx /src:officeaddin";
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
-	sei.lpFile = L"rundll32.exe";
+	sei.lpFile = rundll32Path;
 	sei.lpParameters = parameters.c_str();
 	sei.nShow = SW_HIDE;
 	bool result = static_cast<int>(ShellExecuteEx(&sei)) > 32;
