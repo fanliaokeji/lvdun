@@ -157,7 +157,7 @@ static void GetUserPID(BSTR* ppid)
 	{
 		TCHAR szPID[32] = {0};
 		ULONG nLen = sizeof szPID / sizeof szPID[0];
-		key.QueryStringValue(_T("PID"), szPID, &nLen);
+		key.QueryStringValue(_T("PeerId"), szPID, &nLen);
 		bstrPID = szPID;
 	}
 	if(bstrPID.vt == VT_BSTR && wcslen(bstrPID.bstrVal)==16)		
@@ -215,12 +215,12 @@ static void GetUserPID(BSTR* ppid)
 		{
 			if(ERROR_SUCCESS == key.Create(HKEY_CURRENT_USER, LaunchConfig::Instance()->m_wstrRegisterPath.c_str()))
 			{
-				key.SetStringValue(_T("PID"), bstrpid.m_str); 
+				key.SetStringValue(_T("PeerId"), bstrpid.m_str); 
 			}
 		} 
 		else
 		{
-			key.SetStringValue(_T("PID"), bstrpid.m_str);
+			key.SetStringValue(_T("PeerId"), bstrpid.m_str);
 		}
 	}
 	*ppid = bstrpid.Detach();
