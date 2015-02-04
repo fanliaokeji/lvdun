@@ -29,7 +29,7 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 // REGISTRY
 //
 
-IDR_CONNECT             REGISTRY                "Connect.rgs"
+
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -94,13 +94,9 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "TODO: <Company name>"
-            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "CompanyName", "?????????????"
             VALUE "FileVersion", "1.0.0.1"
-            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
-            VALUE "InternalName", "OfficeAddin.dll"
-            VALUE "OriginalFilename", "OfficeAddin.dll"
-            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "LegalCopyright", "Copyright (c) 2014-2016 ?????????????"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
