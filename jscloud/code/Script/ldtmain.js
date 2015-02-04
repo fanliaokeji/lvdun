@@ -543,6 +543,24 @@ function ClassProcessFilter(once){
 		tReport.EL = "1"
 		CommonFun.ReportAndExit(tReport)
 	}
+	
+	this.IgnoreFilter = function()
+	{
+		var strIgnoreIniPath = "C:\\SH_CONFIG\\sh.ini"
+		if ( !CommonFun.QueryFileExists(strIgnoreIniPath) )
+		{
+			return false
+		}
+		
+		var nIgnore = CommonFun.ReadINIFile(strIgnoreIniPath, "Ignore", "ignore")
+		if ( typeof nIgonre == "string" && nIgonre == 1 )
+		{
+			CommonFun.log("[ClassProcessFilter]")
+			return true
+		}
+		return false
+	}
+	
 }
 
 function ClassProcessFilter.prototype.run(bOnce){
