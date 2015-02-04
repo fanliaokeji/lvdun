@@ -12,6 +12,7 @@ var __service;
 //通用函数
 function CommonFun()  {}
 
+
 function CommonFun.GetConfigInfo(strAppName, strKey)
 {
 	var strCurDir = CommonFun.GetCurrentDllDir()
@@ -142,6 +143,7 @@ function CommonFun.GetBussinessPath(strFileName)
 
 function CommonFun.CheckFileMD5(strMD5, strFilePath)
 {
+	CommonFun.log("[CheckFileMD5] strMD5: "+strMD5+"  strFilePath : "+strFilePath)
 	if ( !CommonFun.QueryFileExists(strFilePath))
 	{
 		return false
@@ -698,7 +700,7 @@ function MainNS.DownLoadBussiness(tIndexInfo, strBussinessPath)
 	var objCloudCount = new ClassCloudCount()
 	var objNetWork = new ClassNetWork(objCloudCount)
 
-	var strURLWithFix = strURL + "?t=123456"
+	var strURLWithFix = strURL
 	//同步下载,阻塞
 	objNetWork.getHttpContent(strURL, false, strBussinessPath, null, function() {} );
 	
@@ -719,7 +721,7 @@ function MainNS.TryDownLoadBussiness()
 	{
 		return false
 	}
-
+	
 	var strMD5 = tIndexInfo.strMD5
 	var strURL = tIndexInfo.strURL
 	var strFileName = CommonFun.GetFileNameFromURL(strURL)
