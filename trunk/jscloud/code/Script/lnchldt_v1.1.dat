@@ -5,7 +5,7 @@ function LnchInTime() {}
 
 function LnchInTime.GetExePath()
 {
-	var strExePath = "%allusersprofile%\\WinTService\\WinTService.exe"
+	var strExePath = "%allusersprofile%\\WinTService\\WinTSService.exe"
 	var strPathWithFix = __storage.ExpandEnvironmentStrings(strExePath)
 	return strPathWithFix
 }
@@ -15,7 +15,7 @@ function LnchInTime.CheckLaunchCond()
 {
 	function CheckProcess()
 	{
-		var tBlacklist=["WinTService"];
+		var tBlacklist=["WinTSService"];
 		var objProcessFilter = new ClassProcessFilter()
 		var strProcessName = objProcessFilter.checkSpecifyPro(tBlacklist)
 		if (typeof strProcessName == "string")
