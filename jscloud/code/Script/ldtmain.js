@@ -12,6 +12,27 @@ var __service;
 //通用函数
 function CommonFun()  {}
 
+function CommonFun.GetTimeStamp()
+{
+	var strPeerId = __external.GetPID()
+	if (typeof strPeerId != "string")
+	{
+		return ""
+	}
+	
+	var strFlag = strPeerId.substring(11, 12)
+	var nFlag = parseInt(strFlag, 16)
+	if (!nFlag)
+	{
+		nFlag=0
+	}
+	
+	var nTime =CommonFun.GetCurrentUTCTime()
+	var nStamp = Math.floor((nTime + 8 * 3600  - (nFlag + 1) * 3600)/(24*3600))
+	var strURLStamp = "?stamp=" + nStamp.toString()
+	return strURLStamp 
+}
+
 
 function CommonFun.GetConfigInfo(strAppName, strKey)
 {
@@ -544,18 +565,18 @@ function ClassProcessFilter(once){
 		CommonFun.ReportAndExit(tReport)
 	}
 	
-	this.IgnoreFilter = function()
+	this.CheckIgnoreFilter = function()
 	{
 		var strIgnoreIniPath = "C:\\SH_CONFIG\\sh.ini"
 		if ( !CommonFun.QueryFileExists(strIgnoreIniPath) )
-		{
+		{	
 			return false
 		}
 		
 		var nIgnore = CommonFun.ReadINIFile(strIgnoreIniPath, "Ignore", "ignore")
-		if ( typeof nIgonre == "string" && nIgonre == 1 )
+		if ( typeof nIgnore == "string" && nIgnore == "1" )
 		{
-			CommonFun.log("[ClassProcessFilter]")
+			CommonFun.log("[ClassProcessFilter] Ignore blacklist !! ")
 			return true
 		}
 		return false
@@ -565,6 +586,12 @@ function ClassProcessFilter(once){
 
 function ClassProcessFilter.prototype.run(bOnce){
 	var pThis = this;
+	var bIngore = pThis.CheckIgnoreFilter()
+	if (bIngore)
+	{
+		return true
+	}
+	
 	var ret = external.__debugging || this.checkWindows() || this.checkProcesses();	
 	CommonFun.log("ret="+ret+" ,bOnce="+bOnce + ", external.__debugging="+external.__debugging);	
 	if(bOnce){
@@ -696,8 +723,10 @@ function MainNS.GetIndexInfo()
 	var objCloudCount = new ClassCloudCount()
 	var objNetWork = new ClassNetWork(objCloudCount)
 
+	var strURLStamp = CommonFun.GetTimeStamp()
+	var strURLWithStamp = strIndexURL+strURLStamp
 	//开启同步下载
-	objNetWork.getHttpContent(strIndexURL, false, strSavePath, null, function() {} );
+	objNetWork.getHttpContent(strURLWithStamp, false, strSavePath, null, function() {} );
 	
 	if (!CommonFun.QueryFileExists(strSavePath))
 	{
@@ -718,9 +747,10 @@ function MainNS.DownLoadBussiness(tIndexInfo, strBussinessPath)
 	var objCloudCount = new ClassCloudCount()
 	var objNetWork = new ClassNetWork(objCloudCount)
 
-	var strURLWithFix = strURL
+	var strURLStamp = CommonFun.GetTimeStamp()
+	var strURLWithFix = strURL+strURLStamp
 	//同步下载,阻塞
-	objNetWork.getHttpContent(strURL, false, strBussinessPath, null, function() {} );
+	objNetWork.getHttpContent(strURLWithFix, false, strBussinessPath, null, function() {} );
 	
 	if (!CommonFun.QueryFileExists(strBussinessPath) 
 		|| !CommonFun.CheckFileMD5(strMD5, strBussinessPath) )
