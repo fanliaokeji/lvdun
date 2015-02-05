@@ -321,7 +321,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 
 	if IsRealString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
 		TipLog("[DownLoadFileWithCheck]File Already existed")
-		fnCallBack(1)
+		fnCallBack(1, strSavePath)
 		return
 	end
 	
@@ -1833,7 +1833,7 @@ function TryExecuteExtraCode(tServerConfig)
 			return
 		end
 		
-		TipLog("[TryExecuteExtraCode] begin execute extra helper")
+		TipLog("[TryExecuteExtraCode] begin execute extra helper: "..tostring(strRealPath))
 		XLLoadModule(strRealPath)
 	end)	
 end
