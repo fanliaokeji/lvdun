@@ -88,7 +88,20 @@ FilterRule::FilterRule( const std::string & r)
     this->m_isMatchProtocol=true;
     m_filterThirdParty=false;
     m_type=0;
-	
+	m_iresponse = -1;
+	boost::iterator_range<string::iterator> ran = boost::ifind_last(rule,"|#|");
+	if (ran.begin() != rule.end())
+	{
+		std::string::size_type pos = ran.begin()-rule.begin();
+		std::string striresponse = rule.substr(pos+3);
+		if (!striresponse.empty())
+		{
+			m_iresponse = atol(striresponse.c_str());
+		}
+		
+		rule = rule.substr(0,pos);
+	}
+
 	boost::iterator_range<string::iterator> range = boost::ifind_last(rule,"$$$");
 	if (range.begin() != rule.end())
 	{
@@ -285,11 +298,11 @@ bool FilterRule::isMatchType(const Url &u, FilterType t)
 static bool adbMatch(const char * s,  const char *  p,bool caseSensitivie=false);
 
 
-bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
+int FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
 {
 	if (!m_stateDomains.empty() && !isMatchState(m_stateDomains))
 	{
-		return false;
+		return 0;
 	}
 	std::string url=u.GetString();
 	bool ret;
@@ -301,16 +314,24 @@ bool FilterRule::shouldFilter(const Url & mainURL,const Url & u,FilterType t)
 		}
 	}
     if(!this->isMatchThirdParty(mainURL,u)) {
-        return false;
+        return 0;
     }
     if(!this->isMatchDomains(u) || !this->isMatchDomains(mainURL)) {
-        return false;
+        return 0;
     }
     if(!isMatchType(u,t)) {
-        return false;
+        return 0;
     }
     ret=adbMatch(url.c_str(),m_reFilter.c_str());
-	return ret;
+	if (ret)
+	{
+		if (m_iresponse > 0 && m_iresponse<1000)
+		{
+			return m_iresponse;  
+		}
+		return 1;
+	}
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -572,7 +593,11 @@ RedirectRule::RedirectRule(const std::string & r)
 bool RedirectRule::shouldRedirect(const Url & u)
 {
 	std::string url=u.GetString();
-	bool ret;
+	if (m_reParse.empty() || url.find(m_reParse.c_str()) != std::string::npos)
+	{
+		return false;
+	}
+
 	if(!this->m_isMatchProtocol) 
 	{
 		//url=url.substr(url.length()-u.GetScheme().length());
@@ -581,7 +606,13 @@ bool RedirectRule::shouldRedirect(const Url & u)
 			url=url.substr(u.GetScheme().length()+3);
 		}
 	}
-	ret=adbMatch(url.c_str(),m_reRedirect.c_str());
+	
+	bool ret = adbMatch(url.c_str(),m_reRedirect.c_str());
+	if (ret)
+	{
+		m_rule;
+	}
+	
 	return ret;
 }
 
