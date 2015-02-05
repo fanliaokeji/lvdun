@@ -127,7 +127,6 @@ function GetCityInfo(fnSuccess,fnFail)
 			local strIP =  string.match(strContent,"(%d+.%d+.%d+.%d+)")
 			if IsRealString(strIP) then
 				local strQueryIPToCityUrl = strIPToCity .. tostring(strIP)
-				strQueryIPToCityUrl = strIPToCity .. tostring(strIP)
 				apiAsyn:AjaxGetHttpContent(strQueryIPToCityUrl, function(iRet, strContent, respHeaders)
 					Log("[GetCityInfo] strQueryIPToCityUrl = " .. GTV(strQueryIPToCityUrl) .. ", iRet = " .. GTV(iRet))
 					if iRet == 0 and IsRealString(strContent) then
