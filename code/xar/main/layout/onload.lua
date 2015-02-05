@@ -119,6 +119,7 @@ function RegisterFunctionObject(self)
 	obj.RegSetValue = RegSetValue
 	obj.RegDeleteValue = RegDeleteValue
 	obj.GetGSVersion = GetGSVersion
+	obj.GetGSMinorVer = GetGSMinorVer
 	obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 	obj.GetVideoDomainState = GetVideoDomainState
 	obj.EnableWhiteDomain = EnableWhiteDomain
