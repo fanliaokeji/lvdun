@@ -287,14 +287,18 @@ end
 
 
 function ReportAdvCountInfo()
+	local nMinorVer = tFunctionHelper.GetGSMinorVer()
+	
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"
-	tStatInfo.strEA = "countoneday"
-	tStatInfo.strEL = g_nFilterCountOneDay
+	tStatInfo.strEA = nMinorVer or ""
+	tStatInfo.strEL = "countoneday"
+	tStatInfo.strEV = g_nFilterCountOneDay
 	SendReport(tStatInfo)
 	
-	tStatInfo.strEA = "counttotal"
-	tStatInfo.strEL = g_nFilterCountTotal
+	tStatInfo.strEA = nMinorVer or ""
+	tStatInfo.strEL = "counttotal"
+	tStatInfo.strEV = g_nFilterCountTotal
 	SendReport(tStatInfo)
 end
 
