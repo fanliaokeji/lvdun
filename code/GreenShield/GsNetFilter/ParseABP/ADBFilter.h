@@ -22,7 +22,7 @@ typedef boost::unordered_map<std::string /*host*/, int /*state*/ > ConfigRuleMap
 class FilterRule {
 public:
 	FilterRule(const std::string & rule);
-    bool shouldFilter(const Url & mainURL,const Url & url, FilterType t);
+    int shouldFilter(const Url & mainURL,const Url & url, FilterType t);
     bool isWhiteFilter() { return m_isException;}
     bool isNeedMimeType() { return m_type!=0;}
     void getDomains(StringVector & domains);
@@ -32,6 +32,7 @@ public:
 	void print();
 
 private:
+	int m_iresponse;
 	bool m_isMatchProtocol;
     bool m_isException;
 	std::string m_reFilter;
