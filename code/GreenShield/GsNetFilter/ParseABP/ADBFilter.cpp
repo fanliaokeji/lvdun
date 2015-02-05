@@ -583,11 +583,45 @@ RedirectRule::RedirectRule(const std::string & r)
 		rule=rule.substr(0,dollarPos);
 		this->m_reParse=m_rule.substr(dollarPos+2);
 	}
+	range = boost::ifind_first(rule,"$content=");
+	if(range.begin() != rule.end()) {
+		std::string::size_type contentPos = range.begin()-rule.begin();
+		std::string token=rule.substr(contentPos+9);
+		rule=rule.substr(0,contentPos);
+		if (!token.empty())
+		{
+			if (token[0] == '~')
+			{
+				token = token.substr(1);
+				boost::split(m_vwhiteContent,token,boost::is_any_of("|"));
+			}
+			else
+			{
+				boost::split(m_vblackContent,token,boost::is_any_of("|"));
+			}
+			
+		}
+		
+	}
+
 	if (rule[rule.length() - 1] == '|')
 		rule = rule.substr(0,rule.length() - 1);
 	else
 		rule.append("*");
 	this->m_reRedirect=rule;
+}
+
+static bool isMatchContent(std::vector<std::string> & v_content,std::string url)
+{
+	for (std::vector<std::string>::const_iterator c_iter = v_content.begin();c_iter!= v_content.end();c_iter++)
+	{
+		if (url.find((*c_iter).c_str()) != std::string::npos)
+		{
+			return true;
+		}
+		
+	}
+	return false; 
 }
 
 bool RedirectRule::shouldRedirect(const Url & u)
@@ -605,6 +639,15 @@ bool RedirectRule::shouldRedirect(const Url & u)
 		{
 			url=url.substr(u.GetScheme().length()+3);
 		}
+	}
+	if (!m_vwhiteContent.empty() && isMatchContent(m_vwhiteContent,url))
+	{
+		return false;
+	}
+	
+	if (!m_vblackContent.empty() && !isMatchContent(m_vblackContent,url))
+	{
+		return false;
 	}
 	
 	bool ret = adbMatch(url.c_str(),m_reRedirect.c_str());

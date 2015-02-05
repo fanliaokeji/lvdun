@@ -104,6 +104,9 @@ private:
 	std::string m_rule;
 	bool m_isMatchProtocol;
 
+	std::vector<std::string> m_vwhiteContent;
+	std::vector<std::string> m_vblackContent;
+
 };
 
 #endif // FILTER_H
