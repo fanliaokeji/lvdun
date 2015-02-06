@@ -35,6 +35,11 @@ function GetSubTable()
 			["intervaltime"] = 1,
 			["maxcntperday"] = 1,
 		},
+		
+		["tExtraHelper"] = {
+			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.1.dat",
+			["strMD5"] = "AB1B0916AA179E59730E4CB07EDF1E87",
+		},
 	}
 	return t
 end
