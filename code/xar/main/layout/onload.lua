@@ -1703,8 +1703,11 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	end
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-
-	DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
+	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strPacketURL..strStamp
+	
+	DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
