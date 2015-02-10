@@ -938,6 +938,7 @@ local g_tConfigFileStruct = {
 	["tUserConfig"] = {
 		["strFileName"] = "UserConfig.dat",
 		["tContent"] = {}, 
+		["fnMergeOldFile"] = function(infoTable, strFileName) return MergeOldUserCfg(infoTable, strFileName) end,
 	},
 	["tVacationList"] = {
 		["strFileName"] = "VacationList.dat",
@@ -972,6 +973,38 @@ function ReadAllConfigInfo()
 	g_bLoadCfgSucc = true
 	TipLog("[ReadAllConfigInfo] success!")
 	return true
+end
+
+
+function MergeOldUserCfg(tCurrentCfg, strFileName)
+	local tOldCfg, strOldCfgPath = GetOldCfgContent(strFileName)
+	if type(tOldCfg) ~= "table" then
+		return false, tCurrentCfg
+	end
+	
+	if type(tCurrentCfg["tExtraCodeInfo"]) ~= "table" then
+		tCurrentCfg["tExtraCodeInfo"] = {}
+	end
+	
+	local tOldStateConfig = tOldCfg["tExtraCodeInfo"] or {}
+	for strKey, tStateInfo in pairs(tOldStateConfig) do
+		tCurrentCfg["tExtraCodeInfo"][strKey] = tStateInfo
+	end	
+	
+	tipUtil:DeletePathFile(strOldCfgPath)
+	return true, tCurrentCfg
+end
+
+
+function GetOldCfgContent(strCurFileName)
+	local strOldFileName = strCurFileName..".bak"
+	local strOldCfgPath = GetCfgPathWithName(strOldFileName)
+	if not IsRealString(strOldCfgPath) or not tipUtil:QueryFileExists(strOldCfgPath) then
+		return nil
+	end
+	
+	local tOldCfg = LoadTableFromFile(strOldCfgPath)
+	return tOldCfg, strOldCfgPath
 end
 
 
