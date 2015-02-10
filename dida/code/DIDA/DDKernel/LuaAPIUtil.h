@@ -190,6 +190,9 @@ public:
 	//资源相关
 	static int FAddFontResource(lua_State* pLuaState);
 	static int FRemoveFontResource(lua_State* pLuaState);
+
+	//修复360
+	static int TryToFix360(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

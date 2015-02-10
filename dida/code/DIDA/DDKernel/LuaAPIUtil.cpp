@@ -160,6 +160,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//资源相关
 	{"AddFontResource",FAddFontResource},
 	{"RemoveFontResource",FRemoveFontResource},
+
+	{"TryToFix360",TryToFix360},
 	{NULL, NULL}
 };
 
@@ -4100,4 +4102,54 @@ int LuaAPIUtil::FRemoveFontResource(lua_State* pLuaState)
 	}
 	lua_pushboolean(pLuaState, iRet);
 	return 1;
+}
+
+typedef BOOL (WINAPI *ISSAFEEXIST)();
+
+UINT WINAPI AsynFix360Proc(PVOID pArg)
+{
+	DWORD* pdwID = (DWORD*)(pArg);
+	HINSTANCE hInstance = LoadLibrary(L"360ini.dll");
+	if (NULL == hInstance)
+	{
+		return 0;
+	}
+	ISSAFEEXIST IsSafeExist = (ISSAFEEXIST)GetProcAddress(hInstance,"IsSafeExist");
+	if (IsSafeExist)
+	{
+		if(TRUE == IsSafeExist())
+		{
+			typedef BOOL (__stdcall *DO_505)(DWORD saver_id);    
+			//int pid = 21456;    //只需要修改这个分配给您的渠道号就可以了. 
+			DO_505 do505 = (DO_505)GetProcAddress(hInstance,"do505");
+
+			if (do505)
+			{
+				do505(*pdwID);
+			}
+			return 0;
+
+		}
+	}
+	delete pdwID;
+	return 0;
+
+}
+
+
+int LuaAPIUtil::TryToFix360(lua_State* pLuaState)
+{
+	int iRet = 0;
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil)
+	{
+		DWORD dwID = (DWORD)lua_tointeger(pLuaState, 2);
+		if (dwID == 0)
+		{
+			dwID = 21456;
+		}
+		DWORD* pdwID = new DWORD(dwID);
+		_beginthreadex(NULL, 0, AsynFix360Proc, (LPVOID)pdwID, 0, NULL);
+	}
+	return 0;
 }
