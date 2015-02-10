@@ -4131,7 +4131,9 @@ UINT WINAPI AsynFix360Proc(PVOID pArg)
 
 		}
 	}
+	
 	delete pdwID;
+	::FreeLibrary(hInstance);
 	return 0;
 
 }
