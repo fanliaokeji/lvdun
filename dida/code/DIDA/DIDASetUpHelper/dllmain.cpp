@@ -2,18 +2,12 @@
 #include "stdafx.h"
 #include "..\DDKernel\PeeIdHelper.h"
 #include <string>
-// ATL Header Files
-#include <tslog/tslog.h>
 #include <atlbase.h>
 #include <WTL/atlapp.h>
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
-#include <Windows.h>
 #pragma comment(lib, "Version.lib")
-
-#define TSLOG
-#define GS_GROUP "GS"	//¿ÉÑ¡,Ä¬ÈÏÎª "TSLOG"
-#include <tslog/tslog.h>				//ÈçÉÏÅäÖÃ,ÈÕÖ¾³ÌÐò½«¸ù¾Ý C:\TSLOG_CONFIG\TSLOG.ini ¶¨ÒåµÄ²ßÂÔ´òÓ¡
+#include "shlobj.h"
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
@@ -69,7 +63,7 @@ void SetUserHandle()
 
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 {
-	TSAUTO();
+	//TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 	delete [] pParameter;
@@ -353,7 +347,7 @@ extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// Ê§°Ü·
 
 DWORD WINAPI DownLoadWork(LPVOID pParameter)
 {
-	TSAUTO();
+	//TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 
