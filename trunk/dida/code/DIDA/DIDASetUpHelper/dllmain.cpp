@@ -681,7 +681,7 @@ static DWORD Do360SafeLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile)
 					param.sync = TRUE;
 					param.httprecord = TRUE;
 					param.timeout = 1000*60*60*30;
-					DWORD dwResult = pFnStart(&param);
+					dwResult = pFnStart(&param);
 				}
 			}
 		}
