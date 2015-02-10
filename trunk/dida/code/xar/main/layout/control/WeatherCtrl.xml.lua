@@ -41,7 +41,7 @@ end
 
 
 function SetUpdateTimer(objRootCtrl)
-	local nTimeSpanInMs = 6*3600*1000
+	local nTimeSpanInMs = 6*3600*1000  
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
 		UpdateWeatherContent(objRootCtrl)
@@ -74,10 +74,13 @@ function SetDetailText(objRootCtrl, strText)
 	local nTextExtent = objDetail:GetTextExtent()
 		
 	local nDiff = nTextExtent-nW
+	
 	objRootCtrl:SetObjPos(nRootL-nDiff, nRootT, nRootR, nRootB)
 	
 	local nL, nT, nR, nB = objDetail:GetObjPos()
-	objDetail:SetObjPos(nR-nTextExtent, nT, nR, nB)
+	local nFatherW = nRootR-nRootL+nDiff
+	local nNewR = nFatherW-20
+	objDetail:SetObjPos(nNewR-nTextExtent, nT, nNewR, nB)
 end
 
 
