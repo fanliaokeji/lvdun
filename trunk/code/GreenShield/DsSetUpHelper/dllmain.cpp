@@ -2,19 +2,16 @@
 #include "stdafx.h"
 #include "..\GSPre\PeeIdHelper.h"
 #include <string>
-// ATL Header Files
-#include <tslog/tslog.h>
+
 #include <atlbase.h>
 #include <WTL/atlapp.h>
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
-#include <Windows.h>
 #pragma comment(lib, "Version.lib")
-
-#define TSLOG
-#define GS_GROUP "GS"	//¿ÉÑ¡,Ä¬ÈÏÎª "TSLOG"
-#include <tslog/tslog.h>				//ÈçÉÏÅäÖÃ,ÈÕÖ¾³ÌÐò½«¸ù¾Ý C:\TSLOG_CONFIG\TSLOG.ini ¶¨ÒåµÄ²ßÂÔ´òÓ¡
+#include <shlobj.h>
 #include <shellapi.h>
+#include <tlhelp32.h>
+#include <atlstr.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -32,9 +29,43 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	return TRUE;
 }
 
+//³ÌÐòÍË³ö±£Ö¤ËùÓÐ×ÓÏß³Ì½áÊø
+static HANDLE s_ListenHandle = CreateEvent(NULL,TRUE,TRUE,NULL);
+//ÒýÓÃ¼ÆÊý,Ä¬ÈÏÊÇ0
+static int s_ListenCount = 0;
+static CRITICAL_SECTION s_csListen;
+static bool b_Init = false;
+
+void ResetUserHandle()
+{
+	if(!b_Init){
+		InitializeCriticalSection(&s_csListen);
+		b_Init = true;
+	}
+	EnterCriticalSection(&s_csListen);
+	if(s_ListenCount == 0)
+	{
+		ResetEvent(s_ListenHandle);
+	}
+	++s_ListenCount; //ÒýÓÃ¼ÆÊý¼Ó1
+	LeaveCriticalSection(&s_csListen);
+}
+
+void SetUserHandle()
+{
+	EnterCriticalSection(&s_csListen);
+	--s_ListenCount;//ÒýÓÃ¼ÆÊý¼õ1
+	if (s_ListenCount == 0)
+	{
+		SetEvent(s_ListenHandle);
+	}
+	LeaveCriticalSection(&s_csListen);
+}
+
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 {
-	TSAUTO();
+	ResetUserHandle();
+	//TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 	delete [] pParameter;
@@ -51,11 +82,10 @@ DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
 	}
 	::CoUninitialize();
-
+	SetUserHandle();
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
- 
  BOOL WStringToString(const std::wstring &wstr,std::string &str)
  {    
      int nLen = (int)wstr.length();    
@@ -71,13 +101,74 @@ DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
      return TRUE;
  }
 
+BOOL FindAndKillProcessByName(LPCTSTR strProcessName)
+{
+        if(NULL == strProcessName)
+        {
+                return FALSE;
+        }
+		HANDLE handle32Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (INVALID_HANDLE_VALUE == handle32Snapshot)
+        {
+                        return FALSE;
+        }
+ 
+        PROCESSENTRY32 pEntry;       
+        pEntry.dwSize = sizeof( PROCESSENTRY32 );
+ 
+        //Search for all the process and terminate it
+        if(Process32First(handle32Snapshot, &pEntry))
+        {
+                BOOL bFound = FALSE;
+                if (!_tcsicmp(pEntry.szExeFile, strProcessName))
+                {
+                        bFound = TRUE;
+                        }
+                while((!bFound)&&Process32Next(handle32Snapshot, &pEntry))
+                {
+                        if (!_tcsicmp(pEntry.szExeFile, strProcessName))
+                        {
+                                bFound = TRUE;
+                        }
+                }
+                if(bFound)
+                {
+                        CloseHandle(handle32Snapshot);
+                        HANDLE handLe =  OpenProcess(PROCESS_TERMINATE , FALSE, pEntry.th32ProcessID);
+                        BOOL bResult = TerminateProcess(handLe,0);
+                        return bResult;
+                }
+        }
+ 
+        CloseHandle(handle32Snapshot);
+        return FALSE;
+}
+
+extern "C" __declspec(dllexport) void SoftExit()
+{
+	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
+	if (ret == WAIT_TIMEOUT){
+	}
+	else if (ret == WAIT_OBJECT_0){	
+	}
+	if(b_Init){
+		DeleteCriticalSection(&s_csListen);
+	}
+	TCHAR szFileFullPath[256];
+	::GetModuleFileName(NULL,static_cast<LPTSTR>(szFileFullPath),256);
+	CString szProcessName(szFileFullPath);
+	int nPos = szProcessName.ReverseFind('\\');
+	szProcessName = szProcessName.Right(szProcessName.GetLength() - nPos - 1); 
+	FindAndKillProcessByName(szProcessName);
+}
+
 extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *el,long ev)
 {
 	if (ec == NULL || ea == NULL)
 	{
 		return ;
 	}
-	TSAUTO();
+	//TSAUTO();
 	CHAR* szURL = new CHAR[MAX_PATH];
 	memset(szURL, 0, MAX_PATH);
 	char szPid[256] = {0};
@@ -102,7 +193,6 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	CloseHandle(hThread);
 	//SendHttpStatThread((LPVOID)szURL);
 }
-
 
 extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CHAR * pszVersionString)
 {
@@ -175,7 +265,7 @@ extern "C" __declspec(dllexport) void NsisTSLOG(TCHAR* pszInfo)
 
 extern "C" __declspec(dllexport) void GetTime(LPDWORD pnTime)
 {
-	TSAUTO();
+	//TSAUTO();
 	if(pnTime == NULL)
 		return;
 	time_t t;
@@ -183,16 +273,19 @@ extern "C" __declspec(dllexport) void GetTime(LPDWORD pnTime)
 	*pnTime = (DWORD)t;
 }
 
-#ifndef FOLDERID_Public
-
 #ifndef DEFINE_KNOWN_FOLDER
 #define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
 	EXTERN_C const GUID DECLSPEC_SELECTANY name \
 	= { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 #endif
 
+#ifndef FOLDERID_Public
 DEFINE_KNOWN_FOLDER(FOLDERID_Public, 0xDFDF76A2, 0xC82A, 0x4D63, 0x90, 0x6A, 0x56, 0x44, 0xAC, 0x45, 0x73, 0x85);
 #endif
+
+EXTERN_C const GUID DECLSPEC_SELECTANY FOLDERID_UserPin \
+	= { 0x9E3995AB, 0x1F9C, 0x4F13, { 0xB8, 0x27,  0x48,  0xB2,  0x4B,  0x6C,  0x71,  0x74 } };
+
 
 extern "C" typedef HRESULT (__stdcall *PSHGetKnownFolderPath)(  const  GUID& rfid, DWORD dwFlags, HANDLE hToken, PWSTR* pszPath);
 
@@ -233,13 +326,14 @@ extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// Ê§°Ü·
 		}
 	}
 	strcpy(szMainDir, szAllUserDir);
+	TSERROR4CXX("GetProfileFolder, szMainDir = "<<szMainDir);
 	return true;
 }
 
 
 DWORD WINAPI DownLoadWork(LPVOID pParameter)
 {
-	TSAUTO();
+	//TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 
@@ -270,7 +364,7 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 
 extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
-	TSAUTO();
+	//TSAUTO();
 	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
@@ -292,7 +386,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	{
 		return ;
 	}
-	TSAUTO();	
+	//TSAUTO();	
 	char szPid[256] = {0};
 	extern void GetPeerID(CHAR * pszPeerID);
 	GetPeerID(szPid);
@@ -326,7 +420,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 typedef std::vector<std::wstring> VectorVerbName;
 VectorVerbName*  GetVerbNames(bool bPin)
 {
-	TSAUTO();
+	//TSAUTO();
 	static bool bInit = false;
 	static std::vector<std::wstring> vecPinStartMenuNames;
 	static std::vector<std::wstring> vecUnPinStartMenuNames;
@@ -342,7 +436,7 @@ VectorVerbName*  GetVerbNames(bool bPin)
 
 bool VerbNameMatch(TCHAR* tszName, bool bPin)
 {
-	TSAUTO();
+	//TSAUTO();
 	VectorVerbName *pVec = GetVerbNames(bPin);
 	
 	VectorVerbName::iterator iter = pVec->begin();
@@ -375,7 +469,7 @@ wchar_t* AnsiToUnicode( const char* szStr )
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 extern "C" __declspec(dllexport) bool PinToStartMenu4XP(bool bPin, char* szPath)
 {
-	TSAUTO();
+	//TSAUTO();
 
 	TCHAR file_dir[MAX_PATH + 1] = {0};
 	TCHAR *file_name;
@@ -446,4 +540,102 @@ extern "C" __declspec(dllexport) bool PinToStartMenu4XP(bool bPin, char* szPath)
 	delete [] pwstr_Path;
 	::CoUninitialize();
 	return false;
+}
+
+
+extern "C" __declspec(dllexport) void RefleshIcon(char* szPath)
+{
+	wchar_t* pwstr_Path = AnsiToUnicode(szPath);
+	::SHChangeNotify(SHCNE_UPDATEDIR|SHCNE_INTERRUPT|SHCNE_ASSOCCHANGED, SHCNF_IDLIST |SHCNF_FLUSH | SHCNF_PATH|SHCNE_ASSOCCHANGED,
+								pwstr_Path,0);
+	delete [] pwstr_Path;
+
+}
+
+extern "C" __declspec(dllexport) void GetUserPinPath(char* szPath)
+{
+	static std::wstring strUserPinPath(_T(""));
+
+	if (strUserPinPath.length() <= 0)
+	{
+		HMODULE hModule = LoadLibrary( _T("shell32.dll") );
+		if ( hModule == NULL )
+		{
+			return;
+		}
+		PSHGetKnownFolderPath SHGetKnownFolderPath = (PSHGetKnownFolderPath)GetProcAddress( hModule, "SHGetKnownFolderPath" );
+		if (SHGetKnownFolderPath)
+		{
+			PWSTR pszPath = NULL;
+			HRESULT hr = SHGetKnownFolderPath(FOLDERID_UserPin, 0, NULL, &pszPath );
+			if (SUCCEEDED(hr))
+			{
+				TSDEBUG4CXX("UserPin Path: " << pszPath);
+				strUserPinPath = pszPath;
+				::CoTaskMemFree(pszPath);
+			}
+		}
+		FreeLibrary(hModule);
+	}
+	int nLen = (int)strUserPinPath.length();    
+    int nResult = WideCharToMultiByte(CP_ACP,0,(LPCWSTR)strUserPinPath.c_str(),nLen,szPath,nLen,NULL,NULL);
+}
+
+bool IsVistaOrLatter()
+{
+	OSVERSIONINFOEX osvi = { sizeof(OSVERSIONINFOEX) };
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	if(!GetVersionEx( (LPOSVERSIONINFO)&osvi ))
+	{
+		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		if(!GetVersionEx( (LPOSVERSIONINFO)&osvi ))
+		{
+		}
+	}
+	return (osvi.dwMajorVersion >= 6);
+}
+
+#include <Sddl.h>
+extern "C" __declspec(dllexport) int QueryMutex()
+{
+	HANDLE hMutex;
+	int nRet = 0;
+	if(::IsVistaOrLatter()) {
+		SECURITY_ATTRIBUTES sa;
+		char sd[SECURITY_DESCRIPTOR_MIN_LENGTH];
+		sa.nLength = sizeof(sa);
+		sa.bInheritHandle = FALSE;
+		sa.lpSecurityDescriptor = &sd;
+		if(::InitializeSecurityDescriptor(sa.lpSecurityDescriptor, SECURITY_DESCRIPTOR_REVISION)) {
+			if(::SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE, 0, FALSE)) {
+				PSECURITY_DESCRIPTOR pSD = NULL;
+				if (::ConvertStringSecurityDescriptorToSecurityDescriptor(_T("S:(ML;;NW;;;LW)"), SDDL_REVISION_1, &pSD, NULL)) {
+					PACL pSacl = NULL;
+					BOOL fSaclPresent = FALSE;
+					BOOL fSaclDefaulted = FALSE;
+					if(::GetSecurityDescriptorSacl(pSD, &fSaclPresent, &pSacl, &fSaclDefaulted)) {
+						if(::SetSecurityDescriptorSacl(sa.lpSecurityDescriptor, TRUE, pSacl, FALSE)) {
+							hMutex = ::CreateMutex(&sa, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
+							if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
+								::CloseHandle(hMutex);
+								hMutex = NULL;
+								nRet = 1;
+							}
+						}
+						::LocalFree(pSacl);
+					}
+					::LocalFree(pSD);
+				}
+			}
+		}
+	}
+	else {
+		hMutex = ::CreateMutex(NULL, TRUE, L"Global\\{66CC0177-5EC0-4ce5-9BAF-F75038328275}-gsaddin");
+		if(hMutex != NULL && ::GetLastError() == ERROR_ALREADY_EXISTS) {
+			::CloseHandle(hMutex);
+			hMutex = NULL;
+			nRet = 1;
+		}
+	}
+	return nRet;
 }
