@@ -52,15 +52,15 @@ Var str_ChannelID
 !define INSTALL_CHANNELID "0001"
 
 !define PRODUCT_NAME "DIDA"
-!define SHORTCUT_NAME "滴答日历"
-!define PRODUCT_VERSION "1.0.0.1"
-!define VERSION_LASTNUMBER 1
+!define SHORTCUT_NAME "嘀嗒日历"
+!define PRODUCT_VERSION "1.0.0.4"
+!define VERSION_LASTNUMBER 4
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "DIDASetup_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "DIDA"
-!define PRODUCT_WEB_SITE "http://www.lvdun123.com/"
+!define PRODUCT_WEB_SITE ""
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -92,14 +92,14 @@ SetDatablockOptimize on
 !insertmacro MUI_LANGUAGE "SimpChinese"
 SetFont 宋体 9
 !define TEXTCOLOR "4D4D4D"
-RequestExecutionLevel highest
+RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "成都市灵智互动科技有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市天动网络技术有限公司"
 ;VIAddVersionKey /LANG=2052 "LegalTrademarks" "DIDA"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市天动网络技术有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
@@ -253,13 +253,15 @@ Function DoInstall
   
   ;上报统计
   SetOutPath "$TEMP\${PRODUCT_NAME}"
-  ${GetParameters} $R1
-  ${GetOptions} $R1 "/source"  $R0
+  System::Call "kernel32::GetCommandLineA() t.R1"
+  System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+  ${WordReplace} $R1 $R2 "" +1 $R3
+  ${StrFilter} "$R3" "-" "" "" $R4
+  ${GetOptions} $R4 "/source"  $R0
   IfErrors 0 +2
   StrCpy $R0 $str_ChannelID
   ;是否静默安装
-  ${GetParameters} $R1
-  ${GetOptions} $R1 "/s"  $R2
+  ${GetOptions} $R4 "/s"  $R2
   StrCpy $R3 "0"
   IfErrors 0 +2
   StrCpy $R3 "1"
@@ -277,7 +279,13 @@ Function DoInstall
   System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-  
+  ;写入安装包名字
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PackageName" "$R1"
   ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
   ${If} $0 == ""
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetPeerID(t) i(.r0).r1'
@@ -296,8 +304,11 @@ Function DoInstall
 FunctionEnd
 
 Function CmdSilentInstall
-	${GetParameters} $R1
-	${GetOptions} $R1 "/s"  $R0
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	${GetOptions} $R4 "/s"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	;SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -315,8 +326,11 @@ Function CmdSilentInstall
 		${If} $2 == "2" ;已安装的版本低于该版本
 			Goto StartInstall
 		${Else}
-			${GetParameters} $R1
-			${GetOptions} $R1 "/write"  $R0
+			System::Call "kernel32::GetCommandLineA() t.R1"
+			System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+			${WordReplace} $R1 $R2 "" +1 $R3
+			${StrFilter} "$R3" "-" "" "" $R4
+			${GetOptions} $R4 "/write"  $R0
 			IfErrors 0 +2
 			Abort
 			Goto StartInstall
@@ -335,7 +349,7 @@ Function CmdSilentInstall
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
+		;CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
@@ -344,13 +358,13 @@ Function CmdSilentInstall
 		Call GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 500
-			SetOutPath "$INSTDIR\program"
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
-			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			;ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			;StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			;Call RefreshIcon
+			;Sleep 500
+			;SetOutPath "$INSTDIR\program"
+			;CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
+			;ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
@@ -362,21 +376,27 @@ Function CmdSilentInstall
 		${EndIf}
 	${Endif}
 	
-	SetOutPath "$INSTDIR\program"
+	;SetOutPath "$INSTDIR\program"
 	;桌面快捷方式
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\shortcut.ico"
-	${RefreshShellIcons}
-	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	Call RefreshIcon
+	;CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\shortcut.ico"
+	;${RefreshShellIcons}
+	;StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	;Call RefreshIcon
 	;静默安装根据命令行开机启动
-	${GetParameters} $R1
-	${GetOptions} $R1 "/setboot"  $R0
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	${GetOptions} $R4 "/setboot"  $R0
 	IfErrors +2 0
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
-	${GetParameters} $R1
-	${GetOptions} $R1 "/run"  $R0
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	${GetOptions} $R4 "/run"  $R0
 	IfErrors +7 0
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
@@ -384,6 +404,10 @@ Function CmdSilentInstall
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
+	;捆绑360
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	;退出程序
 	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SoftExit()"
 	Abort
 	FunctionReturn:
@@ -419,7 +443,11 @@ FunctionEnd
 
 
 Function CmdUnstall
-	${GetOptions} $R1 "/uninstall"  $R0
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	${GetOptions} $R4 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
@@ -557,7 +585,6 @@ Function .onInit
 	File "/oname=$PLUGINSDIR\btn_quitreturn.bmp" "images\btn_quitreturn.bmp"   	
    	File "/oname=$PLUGINSDIR\loading1.bmp" "images\loading1.bmp"
     File "/oname=$PLUGINSDIR\loading2.bmp" "images\loading2.bmp"
-	File "/oname=$PLUGINSDIR\loading3.bmp" "images\loading3.bmp"
 	File "/oname=$PLUGINSDIR\loading_head.bmp" "images\loading_head.bmp"
 	File "/oname=$PLUGINSDIR\loading_finish.bmp" "images\loading_finish.bmp"
 	File "/oname=$PLUGINSDIR\btn_freeuse.bmp" "images\btn_freeuse.bmp"
@@ -715,8 +742,11 @@ Function CheckMessageBox
 	IfFileExists $0 0 StartInstall
 	${GetFileVersion} $0 $1
 	${VersionCompare} $1 ${PRODUCT_VERSION} $2
-	${GetParameters} $R1
-	${GetOptions} $R1 "/write"  $R0
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	${GetOptions} $R4 "/write"  $R0
 	IfErrors 0 +3
 	push "false"
 	pop $R0
@@ -725,7 +755,7 @@ Function CheckMessageBox
 	${ElseIf} $2 == "0" ;版本相同
 	${OrIf} $2 == "1"	;已安装的版本高于该版本
 		 ${If} $R0 == "false"
-			StrCpy $R6 "检测到已安装${SHORTCUT_NAME} $1，"
+			StrCpy $R6 "检测到已安装${SHORTCUT_NAME}$1，"
 			StrCpy $R8 "是否覆盖安装？"
 			GetFunctionAddress $R7 ClickSure1
 			Call GsMessageBox
@@ -1016,7 +1046,7 @@ Function onClickGuanbi
 
 	StrCpy $3 33
 	IntOp $3 $3 + $Int_FontOffset
-	${NSW_CreateLabel} 65 $3 190 45 "您确定要退出滴答日历安装程序？"
+	${NSW_CreateLabel} 65 $3 190 45 "您确定要退出嘀嗒日历安装程序？"
 	Pop $4
     SetCtlColors $4 "00A0F0" transparent ;背景设成透明
 	SendMessage $4 ${WM_SETFONT} $Handle_Font 0
@@ -1272,10 +1302,23 @@ Function WelcomePage
 	BringToFront
 FunctionEnd
 
+Var ck_bind360install
+Var lab_bind360install
+Var Bool_bind360install
+Function OnClick_bind360install
+	${IF} $Bool_bind360install == 1
+        IntOp $Bool_bind360install $Bool_bind360install - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bind360install
+    ${ELSE}
+        IntOp $Bool_bind360install $Bool_bind360install + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bind360install
+    ${EndIf}
+	ShowWindow $ck_bind360install ${SW_HIDE}
+	ShowWindow $ck_bind360install ${SW_SHOW}
+FunctionEnd
+
 Var Handle_Loading
-Var loadingbgWnd
-Var loadingForground
-Var loadingArrow
+Var PB_ProgressBar
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
@@ -1332,7 +1375,7 @@ Function NSD_TimerFun
 	${EndIf}
 	
 	${If} $Bool_Sysstup == 1
-		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	${Else}
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
 	${EndIf}
@@ -1347,66 +1390,52 @@ Function NSD_TimerFun
 	HideWindow
 	ShowWindow $Handle_Loading ${SW_HIDE}
 	ShowWindow $Lbl_Sumary ${SW_HIDE}
-	ShowWindow $loadingForground ${SW_HIDE}
-	ShowWindow $loadingbgWnd ${SW_HIDE}
+	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	
 	ShowWindow $Btn_Guanbi ${SW_SHOW}
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
 	ShowWindow $Handle_Loading ${SW_SHOW}
+	ShowWindow $ck_bind360install ${SW_SHOW}
+	ShowWindow $lab_bind360install ${SW_SHOW}
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	BringToFront
 FunctionEnd
 
 Function InstallationMainFun
-	Sleep 100
+	SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
+	Sleep 1
 	Call CloseExe
-	${NSW_SetWindowSize} $loadingForground 2 14
-	${NSW_SetWindowPos} $loadingArrow 19 268
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 2 0
 	Sleep 100
-    ${NSW_SetWindowSize} $loadingForground 5 14
-	${NSW_SetWindowPos} $loadingArrow 22 268
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 4 0
 	Sleep 100
-	${NSW_SetWindowSize} $loadingForground 11 14
-	${NSW_SetWindowPos} $loadingArrow 28 268
+	SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
     Sleep 100
-    ${NSW_SetWindowSize} $loadingForground 21 14
-	${NSW_SetWindowPos} $loadingArrow 38 268
-    Sleep 200
-    ${NSW_SetWindowSize} $loadingForground 41 14
-	${NSW_SetWindowPos} $loadingArrow 58 268
-	 Sleep 200
-   Call DoInstall
-    ${NSW_SetWindowSize} $loadingForground 71 14
-	${NSW_SetWindowPos} $loadingArrow 88 268
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 14 0
     Sleep 100
-    ${NSW_SetWindowSize} $loadingForground 111 14
-	${NSW_SetWindowPos} $loadingArrow 128 268
-    Sleep 200
-    ${NSW_SetWindowSize} $loadingForground 161 14
-	${NSW_SetWindowPos} $loadingArrow 178 268
-	 Sleep 200
-    ${NSW_SetWindowSize} $loadingForground 221 14
-	${NSW_SetWindowPos} $loadingArrow 238 268
-	 Sleep 200
-    ${NSW_SetWindowSize} $loadingForground 291 14
-	${NSW_SetWindowPos} $loadingArrow 308 268
-	 Sleep 2000
-    ${NSW_SetWindowSize} $loadingForground 371 14
-	${NSW_SetWindowPos} $loadingArrow 388 268
-	 Sleep 3000
-    ${NSW_SetWindowSize} $loadingForground 415 14
-	${NSW_SetWindowPos} $loadingArrow 432 268
-	 Sleep 3000
-    ${NSW_SetWindowSize} $loadingForground 440 14
-	ShowWindow $loadingArrow 0
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
+    Call DoInstall
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
+    Sleep 100
+    SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
 	Sleep 1000
 FunctionEnd
 
 Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow /sstartfrom installfinish" SW_SHOWNORMAL
-	Call OnClickQuitOK
+	${IF} $Bool_bind360install == 1
+		HideWindow
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		Call OnClickQuitOK
+	${ELSE}
+		Call OnClickQuitOK
+	${EndIf}
 FunctionEnd
 
 ;安装进度页面
@@ -1439,22 +1468,12 @@ Function LoadingPage
     SetCtlColors $Lbl_Sumary "${TEXTCOLOR}"  transparent ;背景设成透明
 	SendMessage $Lbl_Sumary ${WM_SETFONT} $Handle_Font 0
     
-	;进度条背景
-	${NSD_CreateBitmap} 17 267 440 16 ""
-    Pop $loadingbgWnd
-    ${NSD_SetImage} $loadingbgWnd $PLUGINSDIR\loading1.bmp $ImageHandle
-	
-	;进度条前景
-	${NSD_CreateBitmap} 17 268 440 14 ""
-    Pop $loadingForground
-    ${NSD_SetImage} $loadingForground $PLUGINSDIR\loading2.bmp $ImageHandle
-	${NSW_SetWindowSize} $loadingForground 0 14
-	
-	;进度条箭头
-	${NSD_CreateBitmap} 17 268 25 14 ""
-    Pop $loadingArrow
-    ${NSD_SetImage} $loadingArrow $PLUGINSDIR\loading3.bmp $ImageHandle
-	${NSW_SetWindowPos} $loadingArrow 17 268
+	;进度条
+	 ${NSD_CreateProgressBar} 17 267 440 16 ""
+    Pop $PB_ProgressBar
+    SkinProgress::Set $PB_ProgressBar "$PLUGINSDIR\loading2.bmp" "$PLUGINSDIR\loading1.bmp"
+    GetFunctionAddress $0 NSD_TimerFun
+    nsDialogs::CreateTimer $0 1
 	
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::CreateTimer $0 1
@@ -1477,6 +1496,25 @@ Function LoadingPage
 	GetFunctionAddress $3 OnClickQuitOK
 	SkinBtn::onClick $1 $3
 	ShowWindow $Btn_Guanbi ${SW_HIDE}
+	
+	;捆绑安装360
+	${NSD_CreateButton} 165 285 20 20 ""
+	Pop $ck_bind360install
+	StrCpy $1 $ck_bind360install
+	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
+	GetFunctionAddress $3 OnClick_bind360install
+    SkinBtn::onClick $1 $3
+	StrCpy $Bool_bind360install 1
+	
+	StrCpy $3 285
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 185 $3 150 18 "推荐使用360安全套装"
+    Pop $lab_bind360install
+	${NSD_OnClick} $lab_bind360install OnClick_bind360install
+    SetCtlColors $lab_bind360install "${TEXTCOLOR}" transparent ;背景设成透明
+	ShowWindow $ck_bind360install ${SW_HIDE}
+	ShowWindow $lab_bind360install ${SW_HIDE}
+	SendMessage $lab_bind360install ${WM_SETFONT} $Handle_Font 0
 	
 	
 	GetFunctionAddress $0 onGUICallback  
@@ -1534,6 +1572,7 @@ Function un.UpdateChanel
 	${EndIf}
 FunctionEnd
 
+Var Handle_Font2
 Function un.onInit
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "DIDASETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
@@ -1560,26 +1599,34 @@ Function un.onInit
 	
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
-	IfFileExists "$FONTS\msyh.ttf" 0 +3
+	CreateFont $Handle_Font2 "宋体" 8 0
+	IfFileExists "$FONTS\msyh.ttf" 0 +4
 	CreateFont $Handle_Font "微软雅黑" 10 0
+	CreateFont $Handle_Font2 "微软雅黑" 8 0
 	StrCpy $Int_FontOffset 0
 	
 	Call un.UpdateChanel
 	
 	InitPluginsDir
-    File `/ONAME=$PLUGINSDIR\un_startbg.bmp` `images\un_startbg.bmp`
-	File `/ONAME=$PLUGINSDIR\un_finishbg.bmp` `images\un_finishbg.bmp`
-	File `/ONAME=$PLUGINSDIR\btn_jixushiyong.bmp` `images\btn_jixushiyong.bmp`
-	File `/ONAME=$PLUGINSDIR\btn_canrenxiezai.bmp` `images\btn_canrenxiezai.bmp`
-	File `/ONAME=$PLUGINSDIR\btn_xiezaiwancheng.bmp` `images\btn_xiezaiwancheng.bmp`
+    File "/ONAME=$PLUGINSDIR\un_startbg.bmp" "images\un_startbg.bmp"
+	File "/ONAME=$PLUGINSDIR\un_finishbg.bmp" "images\un_finishbg.bmp"
+	File "/ONAME=$PLUGINSDIR\btn_jixushiyong.bmp" "images\btn_jixushiyong.bmp"
+	File "/ONAME=$PLUGINSDIR\btn_canrenxiezai.bmp" "images\btn_canrenxiezai.bmp"
+	File "/ONAME=$PLUGINSDIR\btn_xiezaiwancheng.bmp" "images\btn_xiezaiwancheng.bmp"
 	
+	File "/ONAME=$PLUGINSDIR\checkbox22.bmp" "images\checkbox22.bmp"
+	File "/ONAME=$PLUGINSDIR\checkbox11.bmp" "images\checkbox11.bmp"
+	
+	
+	SkinBtn::Init "$PLUGINSDIR\checkbox11.bmp"
+	SkinBtn::Init "$PLUGINSDIR\checkbox22.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_jixushiyong.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_canrenxiezai.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_xiezaiwancheng.bmp"
 	
-	File `/oname=$PLUGINSDIR\quit.bmp` `images\quit.bmp`
-	File `/oname=$PLUGINSDIR\btn_quitsure.bmp` `images\btn_quitsure.bmp`
-	File `/oname=$PLUGINSDIR\btn_quitreturn.bmp` `images\btn_quitreturn.bmp`
+	File "/oname=$PLUGINSDIR\quit.bmp" "images\quit.bmp"
+	File "/oname=$PLUGINSDIR\btn_quitsure.bmp" "images\btn_quitsure.bmp"
+	File "/oname=$PLUGINSDIR\btn_quitreturn.bmp" "images\btn_quitreturn.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_quitsure.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_quitreturn.bmp"
 FunctionEnd
@@ -1683,7 +1730,7 @@ Function un.UNSD_TimerFun
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
-		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+		;DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 
@@ -1697,6 +1744,27 @@ Function un.UNSD_TimerFun
 	ShowWindow $Btn_CruelRefused ${SW_HIDE}
 	ShowWindow $Bmp_FinishUnstall 1
 	ShowWindow $Btn_FinishUnstall 1
+	;是否显示捆绑位置
+	ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PackageName"
+	${If} $0 == "$INSTDIR"
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
+	${EndIf}
+	ReadRegStr $R1 ${PRODUCT_UNINST_ROOT_KEY} "SoftWare\GreenShield" "Path"
+	StrCpy $R2 "false"
+	IfFileExists $R1 0 +2
+	StrCpy $R2 "true"
+	
+	${If} $R0 == ""
+	${OrIf} $R0 == 0
+	${OrIf} $R0 == "DIDASetup${PRODUCT_VERSION}.exe"
+	${OrIf} $R2 == "true"
+		StrCpy $Bool_ToolBarLink 0
+		ShowWindow $ck_ToolBarLink ${SW_HIDE}
+		ShowWindow $Lbl_Sumary ${SW_HIDE}
+	${Else}
+		ShowWindow $ck_ToolBarLink 1
+		ShowWindow $Lbl_Sumary 1
+	${EndIf}
 FunctionEnd
 
 Function un.RefreshIcon
@@ -1788,6 +1856,9 @@ FunctionEnd
 
 Function un.OnClick_FinishUnstall
 	;SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
+	HideWindow
+	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SoftExit()"
 	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
 	Push $R2
 	Push "\"
@@ -1800,6 +1871,15 @@ Function un.OnClick_FinishUnstall
 	${If} $R0 != 0
 		KillProcDLL::KillProc $R1
 	${EndIf}
+FunctionEnd
+
+Function un.OnClick_FinishUnstall2
+	HideWindow
+	${If} $Bool_ToolBarLink == 1
+		IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::DownLoadLvDunAndInstall()"
+	${EndIf}
+	Call un.OnClick_FinishUnstall
 FunctionEnd
 
 Function un.GsMessageBox
@@ -1915,6 +1995,18 @@ Function un.MyUnstallMsgBox
 	${EndIf}
 FunctionEnd
 
+Function un.OnClick_CheckBindLvDun
+	${IF} $Bool_ToolBarLink == 1
+        IntOp $Bool_ToolBarLink $Bool_ToolBarLink - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox11.bmp $ck_ToolBarLink
+    ${ELSE}
+        IntOp $Bool_ToolBarLink $Bool_ToolBarLink + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox22.bmp $ck_ToolBarLink
+    ${EndIf}
+	ShowWindow $ck_ToolBarLink ${SW_HIDE}
+	ShowWindow $ck_ToolBarLink ${SW_SHOW}
+FunctionEnd
+
 Function un.MyUnstall
 	;push $HWNDPARENT
 	;call un.myGUIInit
@@ -1956,14 +2048,33 @@ Function un.MyUnstall
     SkinBtn::onClick $1 $3
 	
 	;卸载完成
-	${NSD_CreateButton} 198 265 80 30 ""
+	${NSD_CreateButton} 184 265 110 30 ""
  	Pop	$Btn_FinishUnstall
  	StrCpy $1 $Btn_FinishUnstall
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_xiezaiwancheng.bmp $1
-	GetFunctionAddress $3 un.OnClick_FinishUnstall
+	GetFunctionAddress $3 un.OnClick_FinishUnstall2
     SkinBtn::onClick $1 $3
 	ShowWindow $Btn_FinishUnstall ${SW_HIDE}
    
+	;捆绑位置（选择框）
+	${NSD_CreateButton} 25 286 20 20 ""
+	Pop $ck_ToolBarLink
+	StrCpy $1 $ck_ToolBarLink
+	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox22.bmp $1
+	GetFunctionAddress $3 un.OnClick_CheckBindLvDun
+    SkinBtn::onClick $1 $3
+	StrCpy $Bool_ToolBarLink 1
+	ShowWindow $ck_ToolBarLink ${SW_HIDE}
+	;捆绑位置（文字描述）
+	StrCpy $3 288
+	IntOp $3 $3 + $Int_FontOffset
+    ${NSD_CreateLabel} 50 $3 130 20 "视频广告过滤"
+    Pop $Lbl_Sumary
+	${NSD_OnClick} $Lbl_Sumary un.OnClick_CheckBindLvDun
+    SetCtlColors $Lbl_Sumary "B3B3B3"  transparent ;背景设成透明
+	SendMessage $Lbl_Sumary ${WM_SETFONT} $Handle_Font2 0
+	ShowWindow $Lbl_Sumary ${SW_HIDE}
+	
 	
 	GetFunctionAddress $0 un.onGUICallback  
 	;卸载完成背景
