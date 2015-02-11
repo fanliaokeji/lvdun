@@ -48,6 +48,8 @@ Var Btn_FreeUse
 
 ;动态获取渠道号
 Var str_ChannelID
+
+Var Bool_Bind360
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
 !define MUI_ABORTWARNING
@@ -61,8 +63,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.5"
-!define VERSION_LASTNUMBER 5
+!define PRODUCT_VERSION "1.0.0.8"
+!define VERSION_LASTNUMBER 8
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
@@ -75,7 +77,7 @@ Var str_ChannelID
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
 ;卸载包开关（请不要轻易打开）
-; !define SWITCH_CREATE_UNINSTALL_PAKAGE 1
+;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -100,7 +102,7 @@ SetDatablockOptimize on
 !insertmacro MUI_LANGUAGE "SimpChinese"
 SetFont 宋体 9
 !define TEXTCOLOR "4D4D4D"
-RequestExecutionLevel highest
+RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}广告管家"
@@ -202,6 +204,12 @@ Function DoInstall
   MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请加QQ群67542242寻求帮助"
   Call OnClickQuitOK
  
+  ;拷贝安装包到%public%目录
+  IfFileExists "$0\GreenShield\Setup\" +2 0
+  CreateDirectory "$0\GreenShield\Setup"
+  System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+  CopyFiles /silent "$R2" "$0\GreenShield\Setup\"
+  
   SetOutPath "$0\GreenShield"
   File "input_config\GreenShield\DataV.dat"
   File "input_config\GreenShield\DataW.dat"
@@ -262,13 +270,13 @@ Function DoInstall
   
   ;上报统计
   SetOutPath "$TEMP\${PRODUCT_NAME}"
-  ${GetParameters} $R1
-  ${GetOptions} $R1 "/source"  $R0
+  Call GetCommandLine
+  ${GetOptions} $R4 "/source"  $R0
   IfErrors 0 +2
   StrCpy $R0 $str_ChannelID
   ;是否静默安装
-  ${GetParameters} $R1
-  ${GetOptions} $R1 "/s"  $R2
+  Call GetCommandLine
+  ${GetOptions} $R4 "/s"  $R2
   StrCpy $R3 "0"
   IfErrors 0 +2
   StrCpy $R3 "1"
@@ -306,14 +314,21 @@ Function DoInstall
   ;WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
 FunctionEnd
 
+Function GetCommandLine
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+FunctionEnd
+
+Var boolIsSilent
 Function CmdSilentInstall
-	${GetParameters} $R1
-	${GetOptions} $R1 "/s"  $R0
-	IfErrors FunctionReturn 0
+	${If} $boolIsSilent == "false"
+		Call GetCommandLine
+		${GetOptions} $R4 "/s"  $R0
+		IfErrors FunctionReturn 0
+	${EndIf}
 	SetSilent silent
-	;SetOutPath "$TEMP\${PRODUCT_NAME}"
-	;SetOverwrite on
-	;File "bin\DsSetUpHelper.dll"
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
@@ -326,8 +341,8 @@ Function CmdSilentInstall
 		${If} $2 == "2" ;已安装的版本低于该版本
 			Goto StartInstall
 		${Else}
-			${GetParameters} $R1
-			${GetOptions} $R1 "/write"  $R0
+			Call GetCommandLine
+			${GetOptions} $R4 "/write"  $R0
 			IfErrors 0 +2
 			Abort
 			Goto StartInstall
@@ -336,15 +351,6 @@ Function CmdSilentInstall
 	
 	;发退出消息
 	Call CloseExe
-	 ;先卸载旧的
-	;ReadRegStr $4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	;${If} $4 != 0
-	;${AndIf} $4 != ""
-	;IfFileExists $4 0 NextAction
-	;StrCpy $1 $4
-	;Call UnstallOnlyFile
-	;NextAction:
-	;${EndIf}
 	Call DoInstall
 	;Sleep 2000
 	SetOutPath "$INSTDIR\program"
@@ -389,15 +395,22 @@ Function CmdSilentInstall
 	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	Call RefreshIcon
 	;静默安装根据命令行开机启动
-	${GetParameters} $R1
-	${GetOptions} $R1 "/setboot"  $R0
-	IfErrors +2 0
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	${If} $boolIsSilent == "false"
+		Call GetCommandLine
+		${GetOptions} $R4 "/setboot"  $R0
+		IfErrors +2 0
+	${EndIf}
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
-	${GetParameters} $R1
-	${GetOptions} $R1 "/run"  $R0
-	IfErrors +7 0
+	${If} $boolIsSilent == "false"
+		Call GetCommandLine
+		${GetOptions} $R4 "/run"  $R0
+		IfErrors 0 +2
+		Abort
+	${Else}
+		StrCpy $R0 "/embedding"
+	${EndIf}
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
 		StrCpy $R0 "/embedding"
@@ -439,7 +452,7 @@ FunctionEnd
 
 
 Function CmdUnstall
-	${GetOptions} $R1 "/uninstall"  $R0
+	${GetOptions} $R4 "/uninstall"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
 	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
@@ -503,32 +516,42 @@ Function CmdUnstall
 FunctionEnd
 
 Function UpdateChanel
+	StrCpy $boolIsSilent "false"
+	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 == "GSSetup${PRODUCT_VERSION}.exe" ;是否捆绑360
+		StrCpy $Bool_Bind360 "true"
+	${Else}
+		StrCpy $Bool_Bind360 "false"
+	${EndIf}
+	${WordFind} "$R1" "_silent" +1 $R5
+	${If} $R1 != $R5
+		StrCpy $boolIsSilent "true"
+	${Else}
+		StrCpy $boolIsSilent "false"
+	${EndIf}
+	${WordFind} "$R1" "_" +2 $R3
+	${If} $R3 == 0
+	${OrIf} $R3 == ""
+		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+	${ElseIf} $R1 == $R3
+		StrCpy $str_ChannelID "unknown"
+	${Else}
+		${WordFind} "$R3" "." +1 $R4
+		StrCpy $str_ChannelID $R4
+	${EndIf}
+	
 	ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R0 != 0
 	${AndIf} $R0 != ""
 	${AndIf} $R0 != "unknown"
 		StrCpy $str_ChannelID $R0
-	${Else}
-		System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
-		Push $R2
-		Push "\"
-		Call GetLastPart
-		Pop $R1
-		${WordReplace} "$R1" "GsSetup_" "" "+" $R3
-		${WordReplace} "$R3" ".exe" "" "+" $R4
-		;MessageBox MB_ICONINFORMATION|MB_OK $R4
-		${If} $R4 == 0
-		${OrIf} $R4 == ""
-			StrCpy $str_ChannelID ${INSTALL_CHANNELID}
-		${ElseIf} $R1 == $R3
-		${OrIf} $R3 == $R4
-			StrCpy $str_ChannelID "unknown"
-		${Else}
-			StrCpy $str_ChannelID $R4
-		${EndIf}
 	${EndIf}
 FunctionEnd
-	
+
 Function .onInit
 	${If} ${SWITCH_CREATE_UNINSTALL_PAKAGE} == 1 
 		WriteUninstaller "$EXEDIR\uninst.exe"
@@ -558,7 +581,7 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	Call CmdSilentInstall
-	Call CmdUnstall
+	;Call CmdUnstall
 	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
@@ -740,8 +763,8 @@ Function CheckMessageBox
 	IfFileExists $0 0 StartInstall
 	${GetFileVersion} $0 $1
 	${VersionCompare} $1 ${PRODUCT_VERSION} $2
-	${GetParameters} $R1
-	${GetOptions} $R1 "/write"  $R0
+	Call GetCommandLine
+	${GetOptions} $R4 "/write"  $R0
 	IfErrors 0 +3
 	push "false"
 	pop $R0
@@ -1306,7 +1329,7 @@ Function WelcomePage
 	
 	StrCpy $3 276
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 36 $3 100 18 "添加桌面快捷方式"
+    ${NSD_CreateLabel} 36 $3 120 18 "添加桌面快捷方式"
     Pop $Lbl_DeskTopLink
 	${NSD_OnClick} $Lbl_DeskTopLink OnClick_CheckDeskTopLink
     SetCtlColors $Lbl_DeskTopLink "${TEXTCOLOR}" transparent ;背景设成透明
@@ -1478,7 +1501,7 @@ Function NSD_TimerFun
 	${EndIf}
 	
 	${If} $Bool_Sysstup == 1
-		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	${Else}
 		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
@@ -1500,8 +1523,10 @@ Function NSD_TimerFun
 	
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
-	ShowWindow $ck_bind360install ${SW_SHOW}
-	ShowWindow $lab_bind360install ${SW_SHOW}
+	${If} $Bool_Bind360 == "true"
+		ShowWindow $ck_bind360install ${SW_SHOW}
+		ShowWindow $lab_bind360install ${SW_SHOW}
+	${EndIf}
 	;${NSW_SetWindowSize} $HWNDPARENT 478 320 ;改变自定义窗体大小
 	ShowWindow $Handle_Loading ${SW_SHOW}
 	ShowWindow $HWNDPARENT ${SW_SHOW}
@@ -1544,6 +1569,7 @@ Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow /sstartfrom installfinish" SW_SHOWNORMAL
 	${IF} $Bool_bind360install == 1
+	${AndIf} $Bool_Bind360 == "true"
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::DownLoadBundledSoftware() i.r1'
@@ -1735,7 +1761,7 @@ Function un.onInit
 	CopyFiles /silent "$INSTDIR\program\ATL90.dll" "$TEMP\${PRODUCT_NAME}\"
 	IfFileExists "$INSTDIR\program\Microsoft.VC90.ATL.manifest" 0 InitFailed
 	CopyFiles /silent "$INSTDIR\program\Microsoft.VC90.ATL.manifest" "$TEMP\${PRODUCT_NAME}\"
-	Goto +3
+	Goto +2
 	InitFailed:
 	Abort
 	
