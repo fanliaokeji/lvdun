@@ -11,6 +11,8 @@
 // Windows Header Files:
 #include <windows.h>
 
-
+#define TSLOG
+#define GS_GROUP "GS"	//可选,默认为 "TSLOG"
+#include <tslog/tslog.h>
 
 // TODO: reference additional headers your program requires here
