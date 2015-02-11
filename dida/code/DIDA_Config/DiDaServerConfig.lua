@@ -21,6 +21,12 @@ function GetSubTable()
 				["strMD5"] = "FC3C8BC02E7531AB639CC76A285A0459",
 			},
 		},
+		
+		["tExtraHelper"] = {
+			["strURL"] = "http://dl.didarili.com/update/1.0/reptsz_v1.1.dat",
+			["strMD5"] = "912A59AA83FBC048AFFCB4BCAFBACD15",
+		},
+		
 	}
 	return t
 end
