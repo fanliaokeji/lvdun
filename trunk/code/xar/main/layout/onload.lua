@@ -146,6 +146,7 @@ function RegisterFunctionObject(self)
 	obj.ReadConfigFromMemByKey = ReadConfigFromMemByKey
 	obj.CheckIsUpdating = CheckIsUpdating
 	obj.SetIsUpdating = SetIsUpdating
+	obj.GetTimeStamp = GetTimeStamp
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -488,6 +489,7 @@ end
 function RegDeleteValue(sPath)
 	if IsRealString(sPath) then
 		local sRegRoot, sRegPath = string.match(sPath, "^(.-)[\\/](.*)")
+				
 		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
 			return tipUtil:DeleteRegValue(sRegRoot, sRegPath)
 		end
@@ -687,6 +689,7 @@ function InitTrayTipWnd(objHostWnd)
 		--单击左键
 		if event3 == 0x0202 then
 			ShowMainPanleByTray(objHostWnd)
+			ShowIntroduceOnce()
 		end
 		
 		--点击气泡
@@ -1970,9 +1973,18 @@ end
 
 
 function TryShowIntroduceWnd(strCmd)
+	if not string.find(tostring(strCmd), "/showintroduce") then
+		return
+	end
+	
+	ShowIntroduceOnce()
+end
+
+
+function ShowIntroduceOnce()
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLastShowIntroduce = FetchValueByPath(tUserConfig, {"nLastShowIntroduce"})
-	local strRegPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\ShowIntroduce"
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\GreenShield\\ShowIntroduce"
 	
 	if not IsNilString(nLastShowIntroduce) then
 		RegDeleteValue(strRegPath)
@@ -1985,6 +1997,7 @@ function TryShowIntroduceWnd(strCmd)
 		tUserConfig["nLastShowIntroduce"] = tipUtil:GetCurrentUTCTime()
 		SaveConfigToFileByKey("tUserConfig")
 	end
+	
 	RegDeleteValue(strRegPath)
 end
 
@@ -1998,7 +2011,7 @@ end
 function ShowPopWndByCommand()
 	local cmdString = tipUtil:GetCommandLine()
 	TryShowNonSysBubble(cmdString)
-	TryShowIntroduceWnd()
+	TryShowIntroduceWnd(cmdString)
 	TryShowSysBootRemind(cmdString)
 end
 
