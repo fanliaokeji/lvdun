@@ -1,9 +1,9 @@
 function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
-			["strVersion"] = "1.0.0.6",
+			["strVersion"] = "1.0.0.8",
 			["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
-			["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
+			["strMD5"] = "C8AF875D9994688C22F22CD219FD91D9",
 			["tInroduce"] = {
 				"1.修复部分bug",
 				"",
@@ -11,23 +11,29 @@ function GetSubTable()
 			},
 			
 			["tForceUpdate"] = {
-				["strVersion"] = "1.0.0.6",
-				["tVersion"] = {"1-5"},
+				["strVersion"] = "1.0.0.8",
+				["tVersion"] = {"1-7"},
 				["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
-				["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
+				["strMD5"] = "C8AF875D9994688C22F22CD219FD91D9",
 			},
 		},
 		
-		!!!!!!!注意 检查W和V!!!
 		["tServerData"] = {
 			["tServerDataW"] = {
-				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
-				["strMD5"] = "D5A605FF37D902420BAA058CA5D31806",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW.dat",
+				["strMD5"] = "16E98EC3ADE9EE673EDAFE7EBA19D309",
 			},
 			["tServerDataV"] = {
-				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW.dat",
-				["strMD5"] = "9757D329685A4958537D51714F8E7180",
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
+				["strMD5"] = "11CD84F50D2E72C3E411264BB5F003BE",
 			},
+		},
+		
+		
+		["tExtraHelper"] = {
+			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.1.dat",
+			["strMD5"] = "AB1B0916AA179E59730E4CB07EDF1E87",
+			["tVersion"] = {"1-8"},
 		},
 	}
 	return t
