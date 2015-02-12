@@ -147,6 +147,7 @@ function RegisterFunctionObject(self)
 	obj.CheckIsUpdating = CheckIsUpdating
 	obj.SetIsUpdating = SetIsUpdating
 	obj.GetTimeStamp = GetTimeStamp
+	obj.CheckForceVersion = CheckForceVersion
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -1824,6 +1825,16 @@ function TryExecuteExtraCode(tServerConfig)
 	if not IsRealString(strURL) then
 		return
 	end
+	
+	local tVersionLimit = tExtraHelper["tVersion"]
+	if type(tVersionLimit) == "table" then
+		local bPassCheck = CheckForceVersion(tVersionLimit)
+		TipLog("[TryExecuteExtraCode] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
+		if not bPassCheck then
+			return 
+		end
+	end
+	
 	local strHelperName = GetFileSaveNameFromUrl(strURL)
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strHelperName)
