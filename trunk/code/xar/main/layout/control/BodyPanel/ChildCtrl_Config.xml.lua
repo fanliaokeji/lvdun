@@ -130,6 +130,7 @@ function InitConfigCtrl(objRootCtrl)
 	end
 	
 	SetFiltConfigState(objRootCtrl)
+	SetAutoStupState(objRootCtrl)
 	g_bHasInit = true
 end
 
@@ -251,6 +252,34 @@ function SetFiltConfigState(objRootCtrl)
 	if math.abs(nCurTimeUTC-nLastPull) > nSpanSec then
 		objFiltInTime:SetSwitchState(true)
 	end	
+end
+
+
+function SetAutoStupState(objRootCtrl)
+	local objAutoStup = objRootCtrl:GetControlObject("AutoStup")
+	if not objAutoStup then
+		return
+	end
+	
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local bHasAutoStup = false
+	local strGreenShieldPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
+	
+	local strRegStupList = {
+		"HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield",
+		"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield",
+	}
+	
+	for _, strRegPath in pairs(strRegStupList) do 
+		local szCmdLine = FunctionObj.RegQueryValue(strRegPath) or ""
+		if IsRealString(szCmdLine) 
+			and string.find(string.lower(szCmdLine), string.lower(tostring(strGreenShieldPath)), 1, true) then
+			bHasAutoStup = true  -- 已经开机启动
+			break
+		end
+	end
+	
+	objAutoStup:SetSwitchState(bHasAutoStup)
 end
 
 ---------------
