@@ -143,20 +143,29 @@ function StateChange_AutoStup(self, eventname)
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local bHasAutoStup = false
 	local strGreenShieldPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\path")
-	local szCmdLine = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield") or ""
-	if IsRealString(szCmdLine) 
-		and string.find(string.lower(szCmdLine), string.lower(tostring(strGreenShieldPath)), 1, true) then
-		bHasAutoStup = true  -- 已经开机启动
+	
+	local strRegStupList = {
+		"HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield",
+		"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield",
+	}
+	
+	for _, strRegPath in pairs(strRegStupList) do 
+		local szCmdLine = FunctionObj.RegQueryValue(strRegPath) or ""
+		if IsRealString(szCmdLine) 
+			and string.find(string.lower(szCmdLine), string.lower(tostring(strGreenShieldPath)), 1, true) then
+			bHasAutoStup = true  -- 已经开机启动
+			break
+		end
 	end
 	
 	if bState and not bHasAutoStup then   --bState == true 表示设置开机启动
 		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
 			local sCommandline = "\""..strGreenShieldPath.."\"".." /embedding /sstartfrom sysboot "
-			bRetCode = FunctionObj.RegSetValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
+			bRetCode = FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
 		end
 		
 	elseif bHasAutoStup then
-		RegDeleteValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield")
+		RegDeleteValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield")
 	end
 end
 
