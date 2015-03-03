@@ -25,7 +25,7 @@ function GetSubTable()
 			},
 			["tServerDataV"] = {
 				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV.dat",
-				["strMD5"] = "11CD84F50D2E72C3E411264BB5F003BE",
+				["strMD5"] = "40E37C3AA84EB234D9843A950406C10C",
 			},
 		},
 		
