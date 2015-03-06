@@ -20,8 +20,30 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 }
 
 
+int __stdcall LuaErrorHandle(lua_State* luaState,const wchar_t* pExtInfo, const wchar_t* luaErrorString,PXL_LRT_ERROR_STACK pStackInfo)
+{
+	TSTRACEAUTO();
+	static bool s_bEnter = false;
+	if (!s_bEnter)
+	{
+		s_bEnter = true;
+		if(pExtInfo != NULL)
+		{
+			TSDEBUG4CXX(L"LuaErrorHandle: " << luaErrorString << L" @ " << pExtInfo);
+		}
+		else
+		{
+			TSDEBUG4CXX(L"LuaErrorHandle: " << luaErrorString);
+		}
+		s_bEnter = false;
+	}
+	return 0;
+}
+
 extern "C" __declspec(dllexport) void RunLua(wchar_t* szLuaPath)
 {
+	XLLRT_ErrorHandle(LuaErrorHandle);
+
 	XL_LRT_ENV_HANDLE hEnv = XLLRT_GetEnv(NULL);
 	if (hEnv == NULL)//初始化LUA环境
 	{

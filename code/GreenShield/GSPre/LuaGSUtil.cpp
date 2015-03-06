@@ -163,6 +163,9 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	// Hook
 	{"SetLowLevelKeyboardHook", SetLowLevelKeyboardHook},
 	{"UnhookLowLevelKeyboard", UnhookLowLevelKeyboard},
+
+	//╠Дож
+	{"LaunchAiSvcs", LaunchAiSvcs},
 	
 	{NULL, NULL}
 };
@@ -4252,5 +4255,30 @@ int LuaGSUtil::Decrypt_AES_BASE64(lua_State* pLuaState)
 		return 1;
 	}
 	lua_pushnil(pLuaState);
+	return 1;
+}
+
+
+int LuaGSUtil::LaunchAiSvcs(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	BOOL bRet = FALSE;
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"AiDll.dll");
+	if(NULL != hDll)
+	{
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
+		{
+			bRet = TRUE;
+			pf();
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
