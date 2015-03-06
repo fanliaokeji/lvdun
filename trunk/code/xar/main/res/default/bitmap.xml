@@ -20,6 +20,8 @@
 		<texture id="GreenWall.IntroduceWnd.TryBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.TryBtn.Normal.png" />
 		<texture id="GreenWall.IntroduceWnd.CloseBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Normal.png" />
 		<texture id="GreenWall.IntroduceWnd.CloseBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.CloseBtn.Hover.png" />
+		<texture id="GreenWall.IntroduceWnd.MinBtn.Hover" image="bitmap\GreenWall.IntroduceWnd.MinBtn.Hover.png" />
+		<texture id="GreenWall.IntroduceWnd.MinBtn.Normal" image="bitmap\GreenWall.IntroduceWnd.MinBtn.Normal.png" />
 		
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Hover" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Hover.png" />
 		<texture id="GreenWall.UpdateWnd.EnterBtn.Normal" image="bitmap\GreenWall.UpdateWnd.EnterBtn.Normal.png" />
