@@ -186,6 +186,10 @@ public:
 	static int ReadSections(lua_State* pLuaState);
 	static int ReadKeyValueInSection(lua_State* pLuaState);
 	static int ReadINIInteger(lua_State* pLuaState);
+
+	//╠Дож
+
+	static int LaunchAiSvcs(lua_State* pLuaState);
 	
 private:
 	static LRESULT CALLBACK GsLowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
