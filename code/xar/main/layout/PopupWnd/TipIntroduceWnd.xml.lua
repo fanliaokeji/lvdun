@@ -1,7 +1,7 @@
 local tipUtil = XLGetObject( "GS.Util" )
 local g_nCurPanelIndex = 1
 local g_nTimer = nil
-local g_nAllPanelCount = 4
+local g_nAllPanelCount = 3
 
 function OnCreate( self )
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
@@ -38,6 +38,12 @@ function OnClickCloseBtn(self)
 	HideWnd(self)
 end
 
+function OnClickMinBtn(self)
+	local objTree = self:GetOwner()	
+	local objHostWnd = objTree:GetBindHostWnd()
+	objHostWnd:Min()
+end
+
 function OnMouseEnter(self)
 	StopTimer()
 	self:RouteToFather()
@@ -60,25 +66,23 @@ function OnMouseLeave(self)
 end
 
 
-function OnClickMenu(self, nPosX, nPosY)
-	local nIndex = GetPanelIndexByMousePos(self, nPosX)
-	if nIndex < 1 or nIndex > g_nAllPanelCount then
-		return
-	end
-	
+function OnClickMenu1(self, nPosX, nPosY)
 	local objtree = self:GetOwner()
 	local objRootLayout = objtree:GetUIObject("root.layout")
-	ShowPanel(objRootLayout, nIndex)
+	ShowPanel(objRootLayout, 1)
 end
 
 
-function GetPanelIndexByMousePos(objMenu, nPosX)
-	local nL, nT, nR, nB = objMenu:GetObjPos()
-	local nMenuW = nR - nL
-	local nItemW = nMenuW/g_nAllPanelCount
-	local nIndex = math.floor(nPosX/nItemW) + 1
+function OnClickMenu2(self, nPosX, nPosY)
+	local objtree = self:GetOwner()
+	local objRootLayout = objtree:GetUIObject("root.layout")
+	ShowPanel(objRootLayout, 2)
+end
 
-	return nIndex
+function OnClickMenu3(self, nPosX, nPosY)
+	local objtree = self:GetOwner()
+	local objRootLayout = objtree:GetUIObject("root.layout")
+	ShowPanel(objRootLayout, 3)
 end
 
 
@@ -97,21 +101,25 @@ function ShowPanel(objRootLayout, nPanelIndex)
 
 	objContainer:SetObjPos(nDestLeft, 0, nDestLeft+nWidth*g_nAllPanelCount, nHeight) 
 	g_nCurPanelIndex = nPanelIndex
+	
+	local objTree = objRootLayout:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	objHostWnd:UpdateWindow()
 end
 
 
 function StartPanelTimer(objRootLayout)
-	local nStopIndex = 4
+	local nStopIndex = g_nAllPanelCount
 
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-	local nTimeSpanInMs = 2*1000
+	local nTimeSpanInMs = 3*1000
 	
 	g_nTimer = timerManager:SetTimer(
 		function(item, id)
 		
 			local nNextPanel = math.mod(g_nCurPanelIndex+1, g_nAllPanelCount)
 			if nNextPanel == 0 then
-				nNextPanel = 4
+				nNextPanel = g_nAllPanelCount
 			end
 			ShowPanel(objRootLayout, nNextPanel)
 			if nNextPanel == nStopIndex then

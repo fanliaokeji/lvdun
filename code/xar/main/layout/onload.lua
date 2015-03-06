@@ -1468,19 +1468,9 @@ end
 
 function SendGSStartReport()
 	local strCID = GetPeerID()
-	local strMAC = ""
-	if IsRealString(strCID) then
-		local nIndex = 1
-		for i=1, 6 do 
-			local strTemp = string.sub(strCID, nIndex, nIndex+1)
-			strMAC = strMAC..strTemp.."-"
-			nIndex = nIndex+2
-		end
-	end
-	local strMACFix = string.gsub(strMAC, "-$", "")
 	local strChannelID = GetInstallSrc()
 	
-	local strUrl = "http://stat.lvdun123.com:8082/?mac=" .. tostring(strMACFix) 
+	local strUrl = "http://stat.lvdun123.com:8082/?mac=" .. tostring(strCID) 
 					.."&op=start&cid=" .. (strChannelID)
 	TipLog("SendGSStartReport: " .. tostring(strUrl))
 	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)

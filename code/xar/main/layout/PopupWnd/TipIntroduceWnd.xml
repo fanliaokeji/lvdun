@@ -9,7 +9,7 @@
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>father.width/4</width>
+						<width>father.width/3</width>
 						<height>father.height</height>
 						<texture>GreenWall.IntroduceWnd.Panel1</texture>
 					</attr>
@@ -17,9 +17,9 @@
 				
 				<obj id="TipIntroduce.Panel2" class="TextureObject">
 					<attr>
-						<left>father.width/4</left>
+						<left>father.width/3</left>
 						<top>0</top>
-						<width>father.width/4</width>
+						<width>father.width/3</width>
 						<height>father.height</height>
 						<texture>GreenWall.IntroduceWnd.Panel2</texture>
 					</attr>
@@ -27,29 +27,19 @@
 				
 				<obj id="TipIntroduce.Panel3" class="TextureObject">
 					<attr>
-						<left>father.width/4*2</left>
+						<left>father.width/3*2</left>
 						<top>0</top>
-						<width>father.width/4</width>
+						<width>father.width/3</width>
 						<height>father.height</height>
 						<texture>GreenWall.IntroduceWnd.Panel3</texture>
-					</attr>
-				</obj>
-				
-				<obj id="TipIntroduce.Panel4" class="TextureObject">
-					<attr>
-						<left>father.width/4*3</left>
-						<top>0</top>
-						<width>father.width/4</width>
-						<height>father.height</height>
-						<texture>GreenWall.IntroduceWnd.Panel4</texture>
 					</attr>
 					<children>
 						<obj id="TipIntroduce.TryBtn" class="TipAddin.Button">
 							<attr>
-								<left>391</left>
-								<top>216</top>
-								<width>145</width>
-								<height>56</height>
+								<left>(father.width-186)/2+10</left>
+								<top>290</top>
+								<width>186</width>
+								<height>52</height>
 								<NormalBkgID>GreenWall.IntroduceWnd.TryBtn.Normal</NormalBkgID>
 								<DownBkgID>GreenWall.IntroduceWnd.TryBtn.Hover</DownBkgID>
 								<HoverBkgID>GreenWall.IntroduceWnd.TryBtn.Hover</HoverBkgID>
@@ -70,16 +60,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>601</width>
-			<height>355</height>
+			<width>563</width>
+			<height>380</height>
 		</attr>
 
 		<obj id="root.layout" class="CaptionObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>601</width>
-				<height>355</height>
+				<width>563</width>
+				<height>380</height>
 				<limitchild>true</limitchild>
 			</attr>				
 			<children>						
@@ -87,31 +77,67 @@
 					<attr>
 						<left>0</left>  
 						<top>0</top>
-						<width>father.width*4</width>
+						<width>father.width*3</width>
 						<height>father.height</height>
 					</attr>
 				</obj>	
 
+				<!--下方小圆点-->
 				<obj id="TipIntroduce.Menu.Layout" class="LayoutObject">
 					<attr>
-						<left>30</left>  
-						<top>298</top>
-						<width>540</width>
-						<height>25</height>
-						<cursor>IDC_HAND</cursor>
+						<left>238</left>  
+						<top>345</top>
+						<width>90</width>
+						<height>30</height>
 					</attr>
-					<eventlist>
-						<event name="OnLButtonUp" file="TipIntroduceWnd.xml.lua" func="OnClickMenu" />
-						<event name="OnMouseEnter" file="TipIntroduceWnd.xml.lua" func="RouteToFather" />
-					</eventlist>
+					<children>
+						<obj id="TipIntroduce.Menu.Sub1" class="LayoutObject">
+							<attr>
+								<left>0</left>  
+								<top>0</top>
+								<width>25</width>
+								<height>20</height>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipIntroduceWnd.xml.lua" func="OnClickMenu1" />
+							</eventlist>
+						</obj>	
+						
+						<obj id="TipIntroduce.Menu.Sub2" class="LayoutObject">
+							<attr>
+								<left>father.width/2-10</left>  
+								<top>0</top>
+								<width>25</width>
+								<height>20</height>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipIntroduceWnd.xml.lua" func="OnClickMenu2" />
+							</eventlist>
+						</obj>
+						
+						<obj id="TipIntroduce.Menu.Sub3" class="LayoutObject">
+							<attr>
+								<left>father.width-25</left>  
+								<top>0</top>
+								<width>25</width>
+								<height>20</height>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipIntroduceWnd.xml.lua" func="OnClickMenu3" />
+							</eventlist>
+						</obj>
+					</children>
 				</obj>	
-				
+		
 				<obj id="TipIntroduce.CloseBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-5-12</left>
-						<top>5</top>
-						<width>12</width>
-						<height>12</height>
+						<left>father.width-20-13</left>
+						<top>10</top>
+						<width>13</width>
+						<height>13</height>
 						<NormalBkgID>GreenWall.IntroduceWnd.CloseBtn.Normal</NormalBkgID>
 						<DownBkgID>GreenWall.IntroduceWnd.CloseBtn.Hover</DownBkgID>
 						<HoverBkgID>GreenWall.IntroduceWnd.CloseBtn.Hover</HoverBkgID>
@@ -119,6 +145,22 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipIntroduceWnd.xml.lua" func="OnClickCloseBtn" />
+					</eventlist>
+				</obj>
+				
+				<obj id="TipIntroduce.MinBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-35-13*2</left>
+						<top>10</top>
+						<width>13</width>
+						<height>13</height>
+						<NormalBkgID>GreenWall.IntroduceWnd.MinBtn.Normal</NormalBkgID>
+						<DownBkgID>GreenWall.IntroduceWnd.MinBtn.Hover</DownBkgID>
+						<HoverBkgID>GreenWall.IntroduceWnd.MinBtn.Hover</HoverBkgID>
+						<DisableBkgID>GreenWall.IntroduceWnd.MinBtn.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipIntroduceWnd.xml.lua" func="OnClickMinBtn" />
 					</eventlist>
 				</obj>
 				
@@ -135,11 +177,12 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>601</width>
-            <height>355</height>
+            <width>563</width>
+            <height>380</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
-
+				
+			<title>绿盾功能特性</title>	
             <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
