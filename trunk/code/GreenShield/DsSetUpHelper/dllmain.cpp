@@ -12,12 +12,15 @@
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
+#include "LRTPretender.h"
+HINSTANCE gInstance = NULL;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
 					 )
 {
+	gInstance = (HINSTANCE)hModule;
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
@@ -144,7 +147,7 @@ BOOL FindAndKillProcessByName(LPCTSTR strProcessName)
         return FALSE;
 }
 
-extern "C" __declspec(dllexport) void SoftExit()
+extern "C" __declspec(dllexport) void WaitForStat()
 {
 	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
 	if (ret == WAIT_TIMEOUT){
@@ -154,12 +157,19 @@ extern "C" __declspec(dllexport) void SoftExit()
 	if(b_Init){
 		DeleteCriticalSection(&s_csListen);
 	}
+	/*
 	TCHAR szFileFullPath[256];
 	::GetModuleFileName(NULL,static_cast<LPTSTR>(szFileFullPath),256);
 	CString szProcessName(szFileFullPath);
 	int nPos = szProcessName.ReverseFind('\\');
 	szProcessName = szProcessName.Right(szProcessName.GetLength() - nPos - 1); 
 	FindAndKillProcessByName(szProcessName);
+	*/
+}
+
+extern "C" __declspec(dllexport) void SetUpExit()
+{
+	TerminateProcess(GetCurrentProcess(), 0);
 }
 
 extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *el,long ev)
@@ -392,7 +402,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	GetPeerID(szPid);
 	szPid[12] = '\0';
 	char szMac[128] = {0};
-	for(int i = 0; i < strlen(szPid); ++i)
+	for(int i = 0; i < (int)strlen(szPid); ++i)
 	{
 		if(i != 0 && i%2 == 0)
 		{
@@ -638,4 +648,33 @@ extern "C" __declspec(dllexport) int QueryMutex()
 		}
 	}
 	return nRet;
+}
+
+CAppModule _Module;
+
+extern "C" __declspec(dllexport) void LoadLuaRunTime(char* szInstallDir)
+{
+	TSTRACEAUTO();
+	HRESULT hr = ::CoInitialize(NULL);
+	hr = _Module.Init(NULL, gInstance);
+
+
+	CMessageLoop theLoop;
+	_Module.AddMessageLoop(&theLoop);
+
+	CLRTAgent lrtAgent;
+	//lrtAgent.InitLua(szInstallDir);
+	//g_hXappLuaToolDll = lrtAgent.GetXappLuaToolDllModuleHandle();
+	if (lrtAgent.InitLua(szInstallDir))
+	{
+		TSDEBUG4CXX(_T(">>>>>theLoop.Run()"));
+		theLoop.Run();
+		TSDEBUG4CXX(_T("<<<<<theLoop.Run()"));
+	}
+	_Module.RemoveMessageLoop();
+	_Module.Term();
+	::CoUninitialize();
+	TerminateProcess(::GetCurrentProcess(), S_OK);
+
+	return;
 }
