@@ -9,7 +9,7 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="F:\GreenShield\ParseABP\Debug\ParseABP.exe"
+				Command="F:\GreenShield\checkzone\checkzone\Debug\checkzone.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"

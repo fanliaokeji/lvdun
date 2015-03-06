@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="DsSetUpHelper"
-	ProjectGUID="{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}"
-	RootNamespace="DsSetUpHelper"
+	Name="LuaAgent"
+	ProjectGUID="{E2BCCF63-060A-4FC2-ACAF-1C987BF8663D}"
+	RootNamespace="LuaAgent"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -18,10 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)DsSetUpHelper\$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			UseOfATL="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -42,15 +41,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DSSETUPHELPER_EXPORTS"
+				AdditionalIncludeDirectories="../../boltsdk/include;../../inc"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LUAAGENT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				AssemblerOutput="2"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -63,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comsuppw.lib"
+				AdditionalDependencies="Wininet.lib Version.lib XLLuaRuntime.lib XLFSIO.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib "
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib;$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -96,7 +95,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
@@ -119,10 +118,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="1"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../../inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DSSETUPHELPER_EXPORTS"
+				AdditionalIncludeDirectories="../../boltsdk/include;../../inc"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LUAAGENT_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -141,8 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comsupp.lib"
+				AdditionalDependencies="Wininet.lib Version.lib XLLuaRuntime.lib XLFSIO.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib "
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib;$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapExports="true"
@@ -175,31 +175,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<AssemblyReference
-			RelativePath="System.dll"
-			AssemblyName="System, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="System.Data.dll"
-			AssemblyName="System.Data, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="System.Drawing.dll"
-			AssemblyName="System.Drawing, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="System.Windows.Forms.dll"
-			AssemblyName="System.Windows.Forms, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="System.XML.dll"
-			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
 	</References>
 	<Files>
 		<Filter
@@ -230,7 +205,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\DsSetUpHelper.cpp"
+				RelativePath=".\LuaAgent.cpp"
 				>
 			</File>
 			<File
@@ -260,10 +235,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\LRTPretender.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -282,7 +253,55 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\DsSetUpHelper.rc"
+				RelativePath=".\LuaAgent.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="LuaHelper"
+			>
+			<File
+				RelativePath=".\AjaxDownloadHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DatFileUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DatFileUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaAPIHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaAsynUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaAsynUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaHttpUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaSetUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaSetUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StringUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Util.h"
 				>
 			</File>
 		</Filter>
