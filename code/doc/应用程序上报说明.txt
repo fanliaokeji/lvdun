@@ -113,11 +113,17 @@ ea = 渠道号
 ev = 运行时长
 		
 		
-16.绿盾服务器上报
-op:  install 安装    start：启动  uninstall：卸载
-mac：机器mac
-cid：渠道号，0001 0002 0003
-http://stat.lvdun123.com:8082/?mac=00-00-00-00-00-00&op=install&cid=0000
+-------------绿盾服务器上报-----
+http://stat.lvdun123.com:8082/c?appid=1001&peerid=abc&proid=11&op=1&cid=0001&ver=1.0
+
+http://stat.didarili.com:8082/c?appid=1001&peerid=abc&proid=12&op=1&cid=0001&ver=1.0
+
+appid=1001这个值固定
+peerid：电脑peerid
+proid:  11为绿盾  12为滴答
+op:    1为安装  2为启动   3为卸载   10为心跳（心跳暂定2分钟上报一次）
+cid：渠道号（自行定义，以后配置到后台）
+ver: 版本号
 
 
 		
