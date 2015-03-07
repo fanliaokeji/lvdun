@@ -1977,7 +1977,7 @@ function TryShowIntroduceWnd(strCmd)
 	if not string.find(tostring(strCmd), "/showintroduce") then
 		return
 	end
-	
+
 	ShowIntroduceOnce()
 end
 
@@ -2005,6 +2005,12 @@ end
 
 function LoadJSONHelper()
 	local strJSONHelperPath = __document.."\\..\\JSON.lua"
+	local Module = XLLoadModule(strJSONHelperPath)
+end
+
+
+function LoadUIHelper()
+	local strJSONHelperPath = __document.."\\..\\uihelper.lua"
 	local Module = XLLoadModule(strJSONHelperPath)
 end
 
@@ -2043,6 +2049,7 @@ function PreTipMain()
 	
 	RegisterFunctionObject()
 	LoadJSONHelper()
+	LoadUIHelper()
 	
 	StartRunCountTimer()
 	SendGSStartReport()

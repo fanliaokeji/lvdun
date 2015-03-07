@@ -83,6 +83,29 @@ function OnDestroy(self)
 	SendReport(tStatInfo)
 end
 
+
+function OnClickMainPage(self)
+	tFunctionHelper.OpenPanel("ChildCtrl_AdvCount")
+	
+	local objTitleCtrl = tFunctionHelper.GetMainCtrlChildObj("TitleCtrl")
+	if objTitleCtrl == nil then
+		return
+	end
+	
+	local bMainPanel = true
+	objTitleCtrl:SetCaptionStyle(bMainPanel)
+	objTitleCtrl:SetCaptionText("绿盾广告管家")
+end
+
+function OnClickWebSite(self)
+	OpenConfigURL("strIndexURL")
+end
+
+function OnClickReport(self)
+	OpenConfigURL("strContactURL")
+end
+
+
 ----------
 function InitConfigCtrl(objRootCtrl)
 	objFather = objRootCtrl:GetControlObject("ChildCtrl_Config.MainWnd.Container")
@@ -134,6 +157,20 @@ function InitConfigCtrl(objRootCtrl)
 	g_bHasInit = true
 end
 
+
+function OpenConfigURL(strUrlKey)
+	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
+		return
+	end
+	
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local strIndexURL = tUserConfig[strUrlKey]
+	if IsRealString(strIndexURL) then
+		tipUtil:OpenURL(strIndexURL)
+	end	
+end
+
+
 ---------------
 --开机启动
 function StateChange_AutoStup(self, eventname)
@@ -151,14 +188,14 @@ function StateChange_AutoStup(self, eventname)
 	}
 	
 	for _, strRegPath in pairs(strRegStupList) do 
-		local szCmdLine = FunctionObj.RegQueryValue(strRegPath) or ""
+		local szCmdLine = FunctionObj.RegQueryValue(strRegPath) or ""	
 		if IsRealString(szCmdLine) 
 			and string.find(string.lower(szCmdLine), string.lower(tostring(strGreenShieldPath)), 1, true) then
 			bHasAutoStup = true  -- 已经开机启动
 			break
 		end
 	end
-	
+
 	if bState and not bHasAutoStup then   --bState == true 表示设置开机启动
 		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
 			local sCommandline = "\""..strGreenShieldPath.."\"".." /embedding /sstartfrom sysboot "
