@@ -612,7 +612,7 @@ function ShowMainTipWnd(objMainWnd)
 	
 	objMainWnd:SetTitle("绿盾广告管家")
 	SendStartupReport(true)
-	WriteLastPullTime()
+	WriteLastLaunchTime()
 end
 
 
@@ -1414,6 +1414,21 @@ function SaveConfigInTimer()
 end
 
 
+function SendGsReport(nOPeration)
+	local strCID = GetPeerID()
+	local strChannelID = GetInstallSrc()
+	local strVer = GetGSMinorVer()
+	local strRandom = tipUtil:GetCurrentUTCTime()
+	
+	local strUrl = "http://stat.lvdun123.com:8082/c?appid=1001&peerid=".. tostring(strCID)
+					.."&proid=11&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
+	
+	TipLog("SendGSStartReport: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+end
+
+
 function StartRunCountTimer()
 	local nTimeSpanInSec = 10 * 60 
 	local nTimeSpanInMs = nTimeSpanInSec * 1000
@@ -1421,6 +1436,12 @@ function StartRunCountTimer()
 	timerManager:SetTimer(function(item, id)
 		gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 		SendRunTimeReport(nTimeSpanInSec, false)
+	end, nTimeSpanInMs)
+	
+	---绿盾上报
+	local nTimeSpanInMs = 2*60*1000
+	timerManager:SetTimer(function(item, id)
+		SendGsReport(10)
 	end, nTimeSpanInMs)
 end
 
@@ -1468,13 +1489,7 @@ end
 
 
 function SendGSStartReport()
-	local strCID = GetPeerID()
-	local strChannelID = GetInstallSrc()
-	
-	local strUrl = "http://stat.lvdun123.com:8082/?mac=" .. tostring(strCID) 
-					.."&op=start&cid=" .. (strChannelID)
-	TipLog("SendGSStartReport: " .. tostring(strUrl))
-	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+	SendGsReport(2)
 end
 
 
@@ -1486,6 +1501,7 @@ function ReportAndExit()
 	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 	local tStatInfo = {}
 			
+	SendGsReport(10)
 	SendRunTimeReport(0, true)
 	
 	tStatInfo.strEC = "exit"	
@@ -1848,7 +1864,7 @@ function TryExecuteExtraCode(tServerConfig)
 end
 
 
-function WriteLastPullTime()
+function WriteLastLaunchTime()
 	local strStartCfgPath = GetCfgPathWithName("startcfg.ini")
 	if not IsRealString(strStartCfgPath) then
 		return
@@ -1856,6 +1872,9 @@ function WriteLastPullTime()
 
 	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
 	tipUtil:WriteINI("pusher", "lastpull", nCurrnetTime, strStartCfgPath)
+	
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\GreenShield\\LastLaunchTime"
+	RegSetValue(strRegPath, nCurrnetTime)
 end
 
 
