@@ -23,7 +23,7 @@ public:
 		PathRemoveFileSpec(szModulePath);
 
 		wchar_t szLuaPath[MAX_PATH] = {0};
-		::PathCombine(szLuaPath,szModulePath,_T("setupindex.dat"));
+		::PathCombine(szLuaPath,szModulePath,_T("gssetupload.dat"));
 
 		wchar_t szLuaAgent[MAX_PATH] = {0};
 		::PathCombine(szLuaAgent,szModulePath,_T("LuaAgent.dll"));
