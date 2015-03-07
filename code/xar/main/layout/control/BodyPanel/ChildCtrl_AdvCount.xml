@@ -14,68 +14,64 @@
 		</event_def>
 		<objtemplate>
 			<children>
-				<obj id="ChildCtrl_AdvCount.MainWnd" class="TextureObject">
+				<obj id="ChildCtrl_AdvCount.MainWnd.FilterClose" class="TextureObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
 						<width>father.width</width>
-						<height>188</height>
-						<texture>GreenWall.AdvCount.Bkg</texture>
-					</attr>
+						<height>257</height>
+						<texture>GreenWall.AdvCount.FilterClose.Bkg</texture>
+					</attr>				
+				</obj>	
 				
-					<children>		
-						<obj id="ChildCtrl_AdvCount.MainWnd.Container" class="LayoutObject">
-							<attr>
-								<left>0</left>
-								<top>50</top>
-								<width>father.width</width>
-								<height>55</height>
-							</attr>
-						</obj>					
-					
-						<obj id="ChildCtrl_AdvCount.MainWnd.Text" class="TextObject">
-							<attr>
-								<left>0</left>
-								<top>113</top>
-								<width>father.width</width>
-								<height>30</height>
-								<text>当天累计过滤广告次数</text>
-								<valign>center</valign>
-								<halign>center</halign>
-								<font>font.yahei24</font>
-								<textcolor>system.white</textcolor>
-							</attr>
-						</obj>							
-					</children>					
+				<obj id="ChildCtrl_AdvCount.MainWnd.FilterOpen" class="SeqImageObject">
+					<attr>
+						<left>0</left>  
+						<top>0</top>
+						<width>father.width</width>
+						<height>257</height>
+						<gif>GreenWall.AdvCount.FilterOpen.Bkg</gif>
+						<loop>1</loop>
+						<reverse>0</reverse>
+					</attr>
+				</obj>	
+				
+				<obj id="ChildCtrl_AdvCount.MainWnd.Container" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>200</top>
+						<width>father.width</width>
+						<height>55</height>
+					</attr>
 				</obj>	
 							
 				<obj id="ChildCtrl_AdvCount.LowBkg" class="TextureObject">
 					<attr>
 						<left>0</left>
-						<top>188</top>
+						<top>257</top>
 						<width>father.width</width>
-						<height>52</height>
+						<height>78</height>
+						<texture>GreenWall.AdvCount.Low.Bkg</texture>
 					</attr>
 					<children>
 						<obj id="ChildCtrl_AdvCount.Low.Text" class="TextObject">
 							<attr>
-								<left>34</left>
-								<top>0</top>
+								<left>21</left>
+								<top>20</top>
 								<width>father.width/2</width>
-								<height>father.height</height>
-								<text>广告过滤</text>
-								<font>font.yahei14</font>
-								<valign>center</valign>
-								<textcolor>filter.green</textcolor>
+								<height>20</height>
+								<text>累计节省广告时间</text>
+								<font>font.yahei13</font>
+								<textcolor>4D4D4D</textcolor>
 							</attr>
 						</obj>
 						
 						<obj id="ChildCtrl_AdvCount.Switch.Filter" class="TextureObject">
 							<attr>
-								<left>father.width-(34+85)</left>
+								<left>father.width-(18+101)</left>
 								<top>(father.height-35)/2</top>
-								<width>84</width>
-								<height>35</height>
+								<width>101</width>
+								<height>42</height>
 								<texture>GreenWall.SwitchFilter.Open</texture>
 								<cursor>IDC_HAND</cursor>
 							</attr>
@@ -85,7 +81,6 @@
 						</obj>
 					</children>
 				</obj>
-				
 			</children>
 		</objtemplate>
 	</control>
@@ -107,9 +102,9 @@
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>30</width>
+						<width>37</width>
 						<height>55</height>
-						<texture>GreenWall.AdvCountElem.Bkg</texture>
+						<texture></texture>
 						<limitchild>1</limitchild>
 					</attr>
 					<children>
@@ -126,8 +121,8 @@
 									<attr>
 										<left>5</left>
 										<top>9</top>
-										<width>20</width>
-										<height>38</height>
+										<width>27</width>
+										<height>36</height>
 									</attr>
 								</obj>	
 							</children>
@@ -145,8 +140,8 @@
 									<attr>
 										<left>5</left>
 										<top>9</top>
-										<width>20</width>
-										<height>38</height>
+										<width>27</width>
+										<height>36</height>
 									</attr>
 								</obj>	
 							</children>

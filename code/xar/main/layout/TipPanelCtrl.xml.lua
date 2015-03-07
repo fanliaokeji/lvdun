@@ -4,8 +4,8 @@ local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_tPanelCtrlList = {
 	"ChildCtrl_AdvCount",
 	"ChildCtrl_Config",
-	"ChildCtrl_App",
-	"ChildCtrl_FilterConfig",
+	-- "ChildCtrl_App",
+	-- "ChildCtrl_FilterConfig",
 }
 
 ----方法----
@@ -21,7 +21,6 @@ function SetTipData(self, infoTab)
 	end
 	
 	CreateFilterListener(self)
-	
 	return true
 end
 
@@ -45,49 +44,7 @@ function InitMainBodyCtrl(objRootCtrl)
 end
 
 ---------事件---------
-function OnClickCloseBtn(self)
-	HideWndToTray(self)
-end
 
-function OnClickMinBtn(self)
-	local objTree = self:GetOwner()
-	if nil == objTree then
-		return
-	end
-	
-	local objHostWnd = objTree:GetBindHostWnd()
-	if nil == objHostWnd then
-		return
-	end
-	
-	objHostWnd:Min()	
-end
-
-function OnClickConfigBtn(self)
-	SetCaptionText(self, "设置")
-	local bOpenSucc = OpenPanel(self, "ChildCtrl_Config")
-	
-	if not bOpenSucc then
-		OpenPanel(self, "ChildCtrl_AdvCount")
-		SetCaptionText(self, "绿盾广告管家")
-	end
-end
-
-
-function OnClickMainPage(self)
-	OpenPanel(self, "ChildCtrl_AdvCount")
-	SetCaptionText(self, "绿盾广告管家")
-end
-
-function OnClickApp(self)
-	OpenPanel(self, "ChildCtrl_App")
-	SetCaptionText(self, "应用")
-end
-
-function OnClickFilterConfig(self)
-	OpenPanel(self, "ChildCtrl_FilterConfig")
-	SetCaptionText(self, "过滤设置")
-end
 
 
 --------辅助函数----
@@ -124,7 +81,9 @@ function CreateFilterListener(objRootCtrl)
 				OnFilterASK(p1, p2)
 			elseif tostring(key) == "OnCommandLine" then
 				OnCommandLine(p1, p2)
-			end	
+			elseif tostring(key) == "OnFilterVideo" then
+				OnFilterVideo(p1, p2)
+			end		
 		end
 	)
 	
@@ -149,7 +108,6 @@ function CreateFilterListener(objRootCtrl)
 
 		objAdvCount:AddAdvCount()
 	end
-
 
 	function OnFilterASK(p1, p2)
 		local strDomain = p1
@@ -183,6 +141,38 @@ function CreateFilterListener(objRootCtrl)
 		objHostWnd:Show(4)
 		objHostWnd:BringWindowToTop(true)
 	end	
+end
+
+
+function OnFilterVideo(p1, p2)
+	local nVideoSec = GetVideoSec()
+end
+
+function GetVideoSec()
+	local nCurrentTime = tipUtil:GetCurrentUTCTime()
+	math.randomseed(nCurrentTime)
+	math.random(10)  --第一个值跳过，随机性低
+	local nRandom = math.random(10)
+
+	local tSecondZone = {
+		["45"] = {1,5},
+		["70"] = {6,7},
+		["90"] = {8,9},
+		["120"] = {10,10},
+	}
+
+	local nVideoSec = 0
+	for strVideoSec, tScale in pairs(tSecondZone) do
+		local nBegin = tScale[1]
+		local nEnd = tScale[2]
+		if nRandom >= nBegin and nRandom <= nEnd then
+			nVideoSec = tonumber(strVideoSec)
+			break
+		end	
+	end
+	
+	TipLog("[GetVideoSec] nRandom: "..tostring(nRandom).."  nVideoSec: "..tostring(nVideoSec))
+	return nVideoSec
 end
 
 
@@ -307,44 +297,6 @@ function CheckPopupCond(strDomain)
 end
 
 
-function OpenPanel(objButton, strNewCtrlName)
-	if objButton == nil then
-		return false
-	end
-
-	local objRootCtrl = objButton:GetOwnerControl()
-	if objRootCtrl == nil then
-		return false
-	end
-
-	local objMainBodyCtrl = objRootCtrl:GetControlObject("TipCtrl.MainWnd.MainBody")
-	if objMainBodyCtrl == nil then
-		return false
-	end
-	
-	local strCurCtrlName = objMainBodyCtrl:GetCurrentCtrlName()
-	if strCurCtrlName ~= strNewCtrlName then
-		objMainBodyCtrl:ChangePanel(strNewCtrlName)
-		return true
-	end
-	
-	return false
-end
-
-function SetCaptionText(objUIItem, strTitle)
-	if not IsRealString(strTitle) then
-		return
-	end
-
-	local objRootCtrl = objUIItem:GetOwnerControl()
-	local objCaptionText = objRootCtrl:GetControlObject("TipCtrl.Caption.Text")
-	if not objCaptionText then
-		return
-	end
-
-	objCaptionText:SetText(strTitle)
-end
-
 
 function IsNilString(AString)
 	if AString == nil or AString == "" then
@@ -375,12 +327,5 @@ function FetchValueByPath(obj, path)
 	end
 	return cursor
 end
-
-function HideWndToTray(objUIElement)
-	local objTree = objUIElement:GetOwner()
-	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0)
-end
-
 
 

@@ -15,11 +15,121 @@
 				<obj id="ChildCtrl_Config.MainWnd.Container" class="LayoutObject">
 					<attr>
 						<left>0</left>
-						<top>0</top>
+						<top>30</top>
 						<width>father.width</width>
 						<height>father.height</height>
 					</attr>
 				</obj>	
+				
+				
+				<!--主面板下半部分背景-->
+				<obj id="TipCtrl.MainWndLow.Bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>father.height-58</top>
+						<width>father.width</width>
+						<height>58</height>
+						<texture>GreenWall.MainWndLow.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="TipCtrl.MainWndLow.Splitter" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>1</height>
+								<texture>GreenWall.MainWndLow.Splitter</texture>
+							</attr>
+						</obj>
+					
+						<obj id="TipCtrl.MainWndLow.MainPage.Img" class="TipAddin.Button">
+							<attr>
+								<left>42</left>
+								<top>10</top>
+								<width>28</width>
+								<height>28</height>
+								<NormalBkgID>GreenWall.MainWndLow.MainPage.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.MainWndLow.MainPage.Down</DownBkgID>
+								<HoverBkgID>GreenWall.MainWndLow.MainPage.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.MainWndLow.MainPage.Normal</DisableBkgID>
+							</attr>									
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_Config.xml.lua" func="OnClickMainPage" />
+							</eventlist>
+						</obj>
+						<obj id="TipCtrl.MainWndLow.MainPage.Text" class="TextObject">
+							<attr>
+								<left>34</left>
+								<top>10+26+3</top>
+								<width>40</width>
+								<height>20</height>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.yahei12</font>
+								<textcolor>4D4D4D</textcolor>
+								<text>主界面</text>
+							</attr>
+						</obj>	
+						
+						<obj id="TipCtrl.MainWndLow.WebSite.Img" class="TipAddin.Button">
+							<attr>
+								<left>father.width/2-17</left>
+								<top>10</top>
+								<width>31</width>
+								<height>25</height>
+								<NormalBkgID>GreenWall.MainWndLow.WebSite.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.MainWndLow.WebSite.Down</DownBkgID>
+								<HoverBkgID>GreenWall.MainWndLow.WebSite.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.MainWndLow.WebSite.Normal</DisableBkgID>
+							</attr>
+						    <eventlist>
+								<event name="OnClick" file="ChildCtrl_Config.xml.lua" func="OnClickWebSite" />
+							</eventlist>
+						</obj>
+						<obj id="TipCtrl.MainWndLow.WebSite.Text" class="TextObject">
+							<attr>
+								<left>father.width/2-28</left>
+								<top>10+26+2</top>
+								<width>50</width>
+								<height>20</height>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.yahei12</font>
+								<textcolor>4D4D4D</textcolor>
+								<text>官方网站</text>
+							</attr>
+						</obj>	
+								
+						<obj id="TipCtrl.MainWndLow.Report.Img" class="TipAddin.Button">
+							<attr>
+								<left>father.width-45-28</left>
+								<top>10</top>
+								<width>30</width>
+								<height>26</height>
+								<NormalBkgID>GreenWall.MainWndLow.Report.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.MainWndLow.Report.Down</DownBkgID>
+								<HoverBkgID>GreenWall.MainWndLow.Report.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.MainWndLow.Report.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_Config.xml.lua" func="OnClickReport" />
+							</eventlist>
+						</obj>
+						<obj id="TipCtrl.MainWndLow.Report.Text" class="TextObject">
+							<attr>
+								<left>father.width-45-38</left>
+								<top>10+26+2</top>
+								<width>50</width>
+								<height>20</height>
+								<valign>center</valign>
+								<halign>center</halign>
+								<font>font.yahei12</font>
+								<textcolor>4D4D4D</textcolor>
+								<text>用户反馈</text>
+							</attr>
+						</obj>	
+					</children>							
+				</obj>
 			</children>
 			<eventlist>
 				<event name="OnDestroy" file="ChildCtrl_Config.xml.lua" func="OnDestroy" />

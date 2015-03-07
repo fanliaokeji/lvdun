@@ -29,13 +29,14 @@ function ChangeSwitchFilter(objRootCtrl)
 	Inner_ChangeSwitchFilter(objFilterSwitch)
 	SaveAdvOpenState()
 	tFunctionHelper.SetNotifyIconState()
+	SetBkgStyle(objRootCtrl)
 end
 
 ---事件---
+
 function OnClickSwitchFilter(self)
-	Inner_ChangeSwitchFilter(self)
-	SaveAdvOpenState()
-	tFunctionHelper.SetNotifyIconState()
+	local objRootCtrl = self:GetOwnerControl()
+	objRootCtrl:ChangeSwitchFilter()
 	
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"
@@ -243,7 +244,7 @@ function InitAdvCount(objRootCtrl)
 	
 	local nFatherLeft, nFatherTop, nFatherRight, nFatherBottom = objFather:GetObjPos(objElem)
 	local nFatherWidth = nFatherRight - nFatherLeft
-	local nElemWidth = 31
+	local nElemWidth = 32
 	
 	for nIndex=1, g_nElemCount do
 		strKey = "AdvCountElem_"..tostring(nIndex)
@@ -266,6 +267,7 @@ function InitAdvCount(objRootCtrl)
 	LoadAdvCountCfg(objRootCtrl)
 	BeginAnotherDayEvent(objRootCtrl)
 	StartAutoUpdateTimer()
+	SetBkgStyle(objRootCtrl)
 end
 
 
@@ -474,6 +476,25 @@ function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
 	tFunctionHelper.SaveCommonUpdateUTC()
 	tFunctionHelper.SaveAutoUpdateUTC()
 end
+
+
+function SetBkgStyle(objRootCtrl)
+	local objBkgClose = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.MainWnd.FilterClose")
+	local objBkgOpen = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.MainWnd.FilterOpen")
+	
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local bFilterOpen = tUserConfig["bFilterOpen"]
+	
+	objBkgClose:SetVisible(not bFilterOpen)
+	objBkgOpen:SetVisible(bFilterOpen)
+	
+	if bFilterOpen then
+		objBkgOpen:Play()
+	else
+		objBkgOpen:Stop()
+	end
+end
+
 
 ----------------------------------
 
