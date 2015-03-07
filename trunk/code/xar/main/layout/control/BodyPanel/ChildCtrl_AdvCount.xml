@@ -57,12 +57,21 @@
 						<obj id="ChildCtrl_AdvCount.Low.Text" class="TextObject">
 							<attr>
 								<left>21</left>
-								<top>20</top>
+								<top>17</top>
 								<width>father.width/2</width>
 								<height>20</height>
 								<text>累计节省广告时间</text>
 								<font>font.yahei13</font>
 								<textcolor>4D4D4D</textcolor>
+							</attr>
+						</obj>
+						
+						<obj id="ChildCtrl_AdvCount.Low.Time" class="ClockCtrl">
+							<attr>
+								<left>21</left>
+								<top>28</top>
+								<width>father.width/2</width>
+								<height>40</height>
 							</attr>
 						</obj>
 						

@@ -4,8 +4,6 @@ local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local g_tPanelCtrlList = {
 	"ChildCtrl_AdvCount",
 	"ChildCtrl_Config",
-	-- "ChildCtrl_App",
-	-- "ChildCtrl_FilterConfig",
 }
 
 ----方法----
@@ -144,21 +142,42 @@ function CreateFilterListener(objRootCtrl)
 end
 
 
+local g_nFilterFlag = false
 function OnFilterVideo(p1, p2)
-	local nVideoSec = GetVideoSec()
+	if g_nFilterFlag then
+		return
+	end
+	
+	local nVideoIncSec = GetVideoSec()
+	tFunctionHelper.IncVideoFiltTime(nVideoIncSec)
+	
+	g_nFilterFlag = true
+	SetFilterFlagDelay()
+end
+
+function SetFilterFlagDelay()
+	local nTimeSpanInMs = 5 * 1000
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		item:KillTimer(id)
+		g_nFilterFlag = false
+	end, nTimeSpanInMs)
 end
 
 function GetVideoSec()
 	local nCurrentTime = tipUtil:GetCurrentUTCTime()
 	math.randomseed(nCurrentTime)
-	math.random(10)  --第一个值跳过，随机性低
-	local nRandom = math.random(10)
+	math.random(100)  --第一个值跳过，随机性低
+	local nRandom = math.random(100)
 
 	local tSecondZone = {
-		["45"] = {1,5},
-		["70"] = {6,7},
-		["90"] = {8,9},
-		["120"] = {10,10},
+		["10"] = {1,5},
+		["20"] = {6,15},
+		["30"] = {16,35},
+		["45"] = {36,65},
+		["50"] = {66,85},
+		["60"] = {86,95},
+		["70"] = {96,100},
 	}
 
 	local nVideoSec = 0
