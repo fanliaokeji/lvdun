@@ -24,7 +24,7 @@
 						<height>father.height</height>
 						<text>绿盾是否开机启动</text>
 						<textcolor>caption.black</textcolor>
-						<font>font.yahei14</font>
+						<font>font.default14</font>
 						<valign>center</valign>
 						<halign>center</halign>
 					</attr>

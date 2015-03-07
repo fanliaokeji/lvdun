@@ -61,7 +61,7 @@
 								<width>father.width/2</width>
 								<height>20</height>
 								<text>累计节省广告时间</text>
-								<font>font.yahei13</font>
+								<font>font.default13</font>
 								<textcolor>4D4D4D</textcolor>
 							</attr>
 						</obj>

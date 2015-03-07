@@ -107,7 +107,7 @@
 								<height>father.height</height>
 								<text>今天为您过滤广告 次</text>
 								<textcolor>system.white</textcolor>
-								<font>font.yahei12</font>
+								<font>font.default12</font>
 								<valign>center</valign>
 							</attr>
 						</obj>
