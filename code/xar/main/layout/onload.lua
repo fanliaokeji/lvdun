@@ -148,6 +148,7 @@ function RegisterFunctionObject(self)
 	obj.SetIsUpdating = SetIsUpdating
 	obj.GetTimeStamp = GetTimeStamp
 	obj.CheckForceVersion = CheckForceVersion
+	obj.IsUACOS = IsUACOS
 
 	XLSetGlobal("GreenWallTip.FunctionHelper", obj)
 end
@@ -462,6 +463,16 @@ function GetGSVersion()
 	end
 
 	return tipUtil:GetFileVersionString(strGreenShieldPath)
+end
+
+
+function IsUACOS()
+	local bRet = true
+	local iMax, iMin = tipUtil:GetOSVersion()
+	if type(iMax) == "number" and iMax <= 5 then
+		bRet = false
+	end
+	return bRet
 end
 
 
@@ -2034,6 +2045,11 @@ function LoadUIHelper()
 	local Module = XLLoadModule(strJSONHelperPath)
 end
 
+function LoadDynamicFont()
+	local strFontPath = __document.."\\..\\dynamicfont.lua"
+	local Module = XLLoadModule(strFontPath)
+end
+
 
 function ShowPopWndByCommand()
 	local cmdString = tipUtil:GetCommandLine()
@@ -2068,6 +2084,7 @@ function PreTipMain()
 	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 	
 	RegisterFunctionObject()
+	LoadDynamicFont()
 	LoadJSONHelper()
 	LoadUIHelper()
 	

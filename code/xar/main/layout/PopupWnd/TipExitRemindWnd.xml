@@ -43,7 +43,7 @@
 						<height>29</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.yahei12</font>
+						<font>font.default12</font>
 						<textcolor>system.white</textcolor>
 						<text>绿盾广告管家-退出程序</text>
 					</attr>
@@ -57,7 +57,7 @@
 						<height>20</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.yahei12</font>
+						<font>font.default12</font>
 						<textcolor>4D4D4D</textcolor>
 						<text>退出绿盾广告管家后，您的电脑将不能过滤广告，</text>
 					</attr>
@@ -71,7 +71,7 @@
 						<height>20</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.yahei12</font>
+						<font>font.default12</font>
 						<textcolor>4D4D4D</textcolor>
 						<text>您确定要退出吗？</text>
 					</attr>
@@ -88,7 +88,7 @@
 						<HoverBkgID>GreenWall.PopupWnd.EnterBtn.Hover.Little</HoverBkgID>
 						<DisableBkgID>GreenWall.PopupWnd.EnterBtn.Normal.Little</DisableBkgID>
 						<Text>继续过滤</Text>
-						<TextFont>font.yahei11</TextFont>
+						<TextFont>font.default11</TextFont>
 						<TextColor>system.white</TextColor>
 					</attr>
 					<eventlist>
@@ -107,7 +107,7 @@
 						<HoverBkgID>GreenWall.PopupWnd.CancleBtn.Hover.Little</HoverBkgID>
 						<DisableBkgID>GreenWall.PopupWnd.CancleBtn.Normal.Little</DisableBkgID>
 						<Text>退出程序</Text>
-						<TextFont>font.yahei11</TextFont>
+						<TextFont>font.default11</TextFont>
 						<TextColor>999999</TextColor>
 					</attr>
 					<eventlist>

@@ -103,7 +103,7 @@
 			<height>27</height>
 			<width>father.width</width>
 			<TextPos>18</TextPos>
-			<Font>font.yahei12</Font>
+			<Font>font.default12</Font>
 			<FontColorNormal>4D4D4D</FontColorNormal>
 		</attr>
 	</objtemplate>

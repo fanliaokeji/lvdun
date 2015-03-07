@@ -3,7 +3,7 @@
 		<attr>
 			<height>father.height</height>
 			<textcolor>478613</textcolor>
-			<font>font.yahei16</font>
+			<font>font.default16</font>
 			<valign>center</valign>
 			<halign>center</halign>
 		</attr>

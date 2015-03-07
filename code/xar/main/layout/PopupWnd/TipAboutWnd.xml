@@ -42,7 +42,7 @@
 								<height>father.height</height>
 								<text>关于绿盾广告管家</text>
 								<textcolor>caption.black</textcolor>
-								<font>font.yahei12</font>
+								<font>font.default12</font>
 								<valign>center</valign>
 							</attr>
 						</obj>
@@ -83,7 +83,7 @@
 								<height>20</height>
 								<text>版本号 : </text>
 								<textcolor>system.white</textcolor>
-								<font>font.yahei12</font>
+								<font>font.default12</font>
 								<valign>top</valign>
 								<halign>left</halign>
 							</attr>
@@ -97,7 +97,7 @@
 								<height>20</height>
 								<text>绿盾广告管家 版权所有</text>
 								<textcolor>system.white</textcolor>
-								<font>font.yahei12</font>
+								<font>font.default12</font>
 								<valign>top</valign>
 								<halign>left</halign>
 							</attr>

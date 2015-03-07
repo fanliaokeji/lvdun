@@ -40,7 +40,7 @@
 								<height>father.height</height>
 								<text>绿盾广告管家</text>
 								<textcolor>system.white</textcolor>
-								<font>font.yahei12</font>
+								<font>font.default12</font>
 								<valign>center</valign>
 							</attr>
 						</obj>

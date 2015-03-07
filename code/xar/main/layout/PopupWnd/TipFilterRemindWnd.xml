@@ -52,7 +52,7 @@
 						<height>40</height>
 						<valign>top</valign>
 						<halign>center</halign>
-						<font>font.yahei16</font>
+						<font>font.default16</font>
 						<textcolor>4D4D4D</textcolor>
 						<text>该网站视频含有缓冲广告，是否一键过滤？</text>
 					</attr>
@@ -69,7 +69,7 @@
 						<HoverBkgID>GreenWall.PopupWnd.CancleBtn.Hover</HoverBkgID>
 						<DisableBkgID>GreenWall.PopupWnd.CancleBtn.Normal</DisableBkgID>
 						<Text>取消</Text>
-						<TextFont>font.yahei15</TextFont>
+						<TextFont>font.default15</TextFont>
 						<TextColor>999999</TextColor>
 					</attr>
 					<eventlist>
@@ -88,7 +88,7 @@
 						<HoverBkgID>GreenWall.PopupWnd.EnterBtn.Hover</HoverBkgID>
 						<DisableBkgID>GreenWall.PopupWnd.EnterBtn.Normal</DisableBkgID>
 						<Text>免费体验</Text>
-						<TextFont>font.yahei15</TextFont>
+						<TextFont>font.default15</TextFont>
 						<TextColor>system.white</TextColor>
 					</attr>
 					<eventlist>
