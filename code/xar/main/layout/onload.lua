@@ -995,6 +995,7 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
 	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
 	tCurrentCfg["nLastShowIntroduce"] = tOldCfg["nLastShowIntroduce"] or ""
+	tCurrentCfg["nFiltVideoTimeSec"] = tOldCfg["nFiltVideoTimeSec"] or 0
 	
 	if type(tCurrentCfg["tConfig"]) ~= "table" then
 		tCurrentCfg["tConfig"] = {}
