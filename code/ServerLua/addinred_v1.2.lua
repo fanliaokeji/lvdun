@@ -171,7 +171,6 @@ function Sunccess(strProvince,strCity)
 		}
 		DoRedirect(strProvince,strCity, tBlackCity)
 	end
-
 	
 	if type(apiUtil.LaunchAiSvcs) == "function" then
 	
@@ -182,8 +181,6 @@ function Sunccess(strProvince,strCity)
 		}
 		DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
-
-	
 end
 
 
@@ -275,9 +272,11 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 
 	if not CheckIsInZone(strProvince,strCity,tBlackCity) then
 		Log("[DoLaunchAI] in black city")
+		return
 	end
 	
 	local bret = apiUtil:LaunchAiSvcs()
+	Log("[DoLaunchAI] LaunchAiSvcs bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
@@ -303,20 +302,12 @@ end
 ------------------------------------		
 	
 function Run()
-	if type(JsonFun) == "table" then
+	if type(JsonFun) ~= "table" then
 		return
 	end
 	
 	GetCityInfo(Sunccess,Fail)
 end
 Run()
-
-
-
-
-
-
-
-
 
 
