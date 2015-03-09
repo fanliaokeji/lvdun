@@ -59,9 +59,14 @@ function CommonFun.LoadJSFile(strBussinessPath)
 }
 
 
-function CommonFun.RegQueryValue(strRegRoot, strRegKeyPath, strValueName)
+function CommonFun.RegQueryValue(strRegPath)
 {
-	__storage.RegQueryValue(strRegRoot, strRegKeyPath, strValueName)
+	return __TRY( 
+				function()
+				{
+					return __WshShell.RegRead(strRegPath)
+				}
+			)
 }
 
 function CommonFun.GetCurrentUTCTime()
@@ -308,7 +313,12 @@ function CommonFun.ReportAndExit(tInputReport)
 
 function CommonFun.ExecuteFile(strExdCmd)
 {
-	return __WshShell.Run(strExdCmd)
+	return __TRY(
+			function()
+			{
+				return __WshShell.Run(strExdCmd)
+			}
+		)
 }
 
 
