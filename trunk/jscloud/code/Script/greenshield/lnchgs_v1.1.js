@@ -14,13 +14,13 @@ function LnchInTime.GetExePath(strProcName)
 	
 	if (strProcName == "GreenShield")
 	{
-		var strExePath = __Try(__WshShell.RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\path"))
+		var strExePath = CommonFun.RegQueryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\path")
 		return strExePath
 	}
 	
 	if (strProcName == "DiDa")
 	{
-		var strExePath = __Try(__WshShell.RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\DiDa\\path"))
+		var strExePath = CommonFun.RegQueryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\DDCalendar\\path")
 		return strExePath
 	}
 }
@@ -46,6 +46,31 @@ function LnchInTime.GetLaunchCmd(strProcName, strExePath)
 		return strCMD
 	}
 }
+
+
+function LnchInTime.GetProcLastLaunchTime(strProcName, strHistIniPath)
+{
+	if (strProcName == "GreenShield")
+	{	
+		var nLastLaunch = CommonFun.RegQueryValue("HKEY_CURRENT_USER\\SOFTWARE\\GreenShield\\LastLaunchTime")		
+		if (typeof(nLastLaunch) == "number")
+		{
+			return nLastLaunch
+		}
+	}
+	
+	if (strProcName == "DiDa")
+	{
+		var nLastLaunch = CommonFun.RegQueryValue("HKEY_CURRENT_USER\\SOFTWARE\\DDCalendar\\LastLaunchTime")
+		if (typeof(nLastLaunch) == "number")
+		{
+			return nLastLaunch
+		}
+	}
+	
+	return CommonFun.ReadINIFile(strHistIniPath, strProcName, "launch")	
+}
+
 
 
 function LnchInTime.CheckLaunchCond(strProcName)
@@ -79,7 +104,7 @@ function LnchInTime.CheckLaunchCond(strProcName)
 			return false
 		}
 		
-		var nLastLaunch = CommonFun.ReadINIFile(strHistIniPath, strProcName, "launch")	
+		var nLastLaunch = LnchInTime.GetProcLastLaunchTime(strProcName, strHistIniPath)		
 		var bIsToday = CommonFun.CheckIsToday(nLastLaunch)
 		if ( bIsToday )
 		{
