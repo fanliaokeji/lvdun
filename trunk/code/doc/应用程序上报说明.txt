@@ -114,6 +114,8 @@ ev = 运行时长
 		
 		
 -------------绿盾服务器上报-----
+凡是op为心跳的都上报到8083端口，其他都是8082端口
+
 http://stat.lvdun123.com:8082/c?appid=1001&peerid=abc&proid=11&op=1&cid=0001&ver=1.0
 
 http://stat.didarili.com:8082/c?appid=1001&peerid=abc&proid=12&op=1&cid=0001&ver=1.0
