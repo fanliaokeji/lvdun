@@ -1007,6 +1007,7 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
 	tCurrentCfg["nLastShowIntroduce"] = tOldCfg["nLastShowIntroduce"] or ""
 	tCurrentCfg["nFiltVideoTimeSec"] = tOldCfg["nFiltVideoTimeSec"] or 0
+	tCurrentCfg["nLaunchAiSvcTime"] = tOldCfg["nLaunchAiSvcTime"] or 0
 	
 	if type(tCurrentCfg["tConfig"]) ~= "table" then
 		tCurrentCfg["tConfig"] = {}
@@ -1431,7 +1432,12 @@ function SendGsReport(nOPeration)
 	local strVer = GetGSMinorVer()
 	local strRandom = tipUtil:GetCurrentUTCTime()
 	
-	local strUrl = "http://stat.lvdun123.com:8082/c?appid=1001&peerid=".. tostring(strCID)
+	local strPort = "8082"
+	if nOPeration == 10 then   --心跳上报的端口为8083
+		strPort = "8083"
+	end
+	
+	local strUrl = "http://stat.lvdun123.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
 					.."&proid=11&op="..tostring(nOPeration).."&cid="..(strChannelID)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
