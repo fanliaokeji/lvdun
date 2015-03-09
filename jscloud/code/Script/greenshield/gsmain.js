@@ -1,6 +1,6 @@
 //
 
-var __DEBUG = 1 // !!!
+var __DEBUG = 0 // !!!
 var __ThisJSVersion = 1
 var __external = external
 var __windows = windows
@@ -855,14 +855,6 @@ function onload(stragr)
 	{
 		return false //在 run() 函数中杀进程
 	}
-	
-	////////////////debug
-	if (__DEBUG)
-	{
-		evalFile("E:\\jscloud_svn\\code\\Script\\greenshield\\lnchgs_v1.1.js")
-	}
-	//////////////
-	
 	
 	MainNS.TryDownLoadBussiness()
 	
