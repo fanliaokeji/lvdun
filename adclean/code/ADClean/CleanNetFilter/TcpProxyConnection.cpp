@@ -490,6 +490,27 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 										boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
 									return;
 								}
+								else if(HttpRequestFilter::GetInstance().IsEnableRedirect()) {
+									std::pair<bool, boost::optional<std::string> > redirectResult = this->ShouldRedirect(this->m_absoluteUrl, referer);
+									if(redirectResult.first && redirectResult.second) {
+										this->SendRedirectNotify(this->m_absoluteUrl);
+										this->m_requestString = "HTTP/1.1 302 Found\r\n";
+										this->m_requestString += "Connection: close\r\n";
+										this->m_requestString += "Content-Length: 0\r\n";
+										this->m_requestString += "Location: ";
+										this->m_requestString += *(redirectResult.second);
+										this->m_requestString += "\r\n\r\n";
+										this->m_state = CS_WRITE_REDIRECT_RESPONSE;
+										boost::system::error_code ec;
+										if (this->m_targetServerSocket.is_open()) {
+											this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+											this->m_targetServerSocket.close(ec);
+										}
+										boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
+											boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
+										return;
+									}
+								}
 								
 								if(this->m_httpRequestMethod == HTTP_GET && this->NeedInsertCSSCode(this->m_absoluteUrl)) {
 									this->m_isThisRequestNeedModifyResponse = true;
@@ -586,6 +607,9 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
 	if(this->m_state == CS_WRITE_BLOCK_RESPONSE) {
+		return;
+	}
+	else if(this->m_state == CS_WRITE_REDIRECT_RESPONSE) {
 		return;
 	}
 	if(!error) {
@@ -2262,6 +2286,18 @@ std::vector<std::string> TcpProxyConnection::GetReplaceRule(const std::string& u
 	}
 }
 
+std::pair<bool, boost::optional<std::string> > TcpProxyConnection::ShouldRedirect(const std::string& url, const std::string& referer) const
+{
+	FilterManager* m = FilterManager::getManager();
+	if(m != NULL) {
+		std::string redirectUrl;
+		if(m->shouldRedirect(Url(referer.c_str()), Url(url.c_str()), redirectUrl)) {
+			return std::make_pair(true, boost::optional<std::string>(redirectUrl));
+		}
+	}
+	return std::make_pair(false, boost::optional<std::string>());
+}
+
 void TcpProxyConnection::SendNotify(const std::string& url) const
 {
 	static HWND hNotifyWnd = ::FindWindow(L"{AF78EE96-9716-455c-B89E-BC1CA0AEC7F1}_cleanmainmsg", NULL);
@@ -2271,6 +2307,20 @@ void TcpProxyConnection::SendNotify(const std::string& url) const
 		std::copy(url.begin(), url.end(), szUrl);
 		szUrl[url.size()] = '\0';
 		if(::PostMessage(hNotifyWnd, WM_USER + 201, WPARAM(1), LPARAM(szUrl))== FALSE) {
+			delete szUrl;
+		}
+	}
+}
+
+void TcpProxyConnection::SendRedirectNotify(const std::string& url) const
+{
+	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
+	if(hNotifyWnd != NULL) 
+	{
+		char* szUrl = new char[url.size() + 1];
+		std::copy(url.begin(), url.end(), szUrl);
+		szUrl[url.size()] = '\0';
+		if(::PostMessage(hNotifyWnd, WM_USER + 203, WPARAM(1), LPARAM(szUrl))== FALSE) {
 			delete szUrl;
 		}
 	}
