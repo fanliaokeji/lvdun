@@ -9,27 +9,30 @@ function SetClndrInfo(self, tClndrContent)
 		return
 	end
 
-	local strLunarDate = tostring(tClndrContent.cmonth)..tostring(tClndrContent.cday)
-	SetTextObjContent(objRootCtrl, "LeftBar.LunarDate", strLunarDate)
-
-	local strChineseYear = tostring(tClndrContent.yearganzhi).."年 【"..tostring(tClndrContent.shengxiao).."年】"
-	SetTextObjContent(objRootCtrl, "LeftBar.ChineseYear", strChineseYear)
-	
-	local strChineseDate = tostring(tClndrContent.monthganzhi).."月 "..tostring(tClndrContent.dayganzhi).."日"
-	SetTextObjContent(objRootCtrl, "LeftBar.ChineseDate", strChineseDate)
-	
-	local strWeek = "星期"..tostring(tClndrContent.weekday)
-	SetTextObjContent(objRootCtrl, "LeftBar.Week", strWeek)
-
 	local _, _, strYear, strMonth, strDay = string.find(tClndrContent.solarcalendar, "(%d%d%d%d)(%d%d)(%d%d)")
 	local nMonth = tonumber(strMonth)
 	local nDay = tonumber(strDay)
 	strMonth = string.format("%02d", nMonth)
-	local strYearText = tostring(strYear).."/"..tostring(strMonth)
-	SetTextObjContent(objRootCtrl, "LeftBar.Year", strYearText)
-	
 	strDay = string.format("%02d", nDay)
-	SetTextObjContent(objRootCtrl, "LeftBar.Day", strDay)
+	local strText = tostring(strYear).."年"..tostring(strMonth).."月"..tostring(strDay).."日"
+	SetTextObjContent(objRootCtrl, "LeftBar.Date", strText)
+	
+	local strWeek = "星期"..tostring(tClndrContent.weekday)
+	SetTextObjContent(objRootCtrl, "LeftBar.Week", strWeek)
+	
+	local strZodiac = tClndrContent.zodiac
+	SetTextObjContent(objRootCtrl, "LeftBar.Zodiac", strZodiac)
+	
+	SetZodiacImage(objRootCtrl, strZodiac)
+	
+	local strLunarDate = "农历"..tostring(tClndrContent.cmonth)..tostring(tClndrContent.cday)
+	SetTextObjContent(objRootCtrl, "LeftBar.LunarDate", strLunarDate)
+	
+	local strChineseDate = tostring(tClndrContent.monthganzhi).."月 "..tostring(tClndrContent.dayganzhi).."日"
+	SetTextObjContent(objRootCtrl, "LeftBar.ChineseDate", strChineseDate)
+	
+	local strChineseYear = tostring(tClndrContent.yearganzhi).."年 【"..tostring(tClndrContent.shengxiao).."年】"
+	SetTextObjContent(objRootCtrl, "LeftBar.ChineseYear", strChineseYear)
 end
 
 
@@ -76,6 +79,21 @@ function SetTextObjContent(objRootCtrl, strObjKey, strText)
 	local objText = objRootCtrl:GetControlObject(strObjKey)
 	if objText and IsRealString(strText) then
 		objText:SetText(strText) 
+	end
+end
+
+
+function SetZodiacImage(objRootCtrl, strZodiac)
+	local objXarManager = XLGetObject("Xunlei.UIEngine.XARManager")
+	local objXar = objXarManager:GetXAR("main")
+	if not objXar then
+		return nil
+	end
+	
+	local objImage = objRootCtrl:GetControlObject("LeftBar.Zodiac.Image")
+	objBitmap = objXar:GetBitmap(strZodiac)
+	if objBitmap then
+		objImage:SetBitmap(objBitmap)
 	end
 end
 

@@ -37,19 +37,19 @@
 							<children>	
 								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
 									<attr>
-										<left>10</left>
-										<top>5</top>
-										<width>132</width> 
-										<height>372</height>
+										<left>20</left>
+										<top>130</top>
+										<width>150</width> 
+										<height>father.height-130</height>
 									</attr>			
 								</obj>	
 								
 								<obj id="DiDa.WeatherCtrl" class="WeatherCtrl">
 									<attr>
-										<left>277</left>
-										<top>8</top>
-										<width>father.width-277-5</width> 
-										<height>50</height>
+										<left>20</left>
+										<top>40</top>
+										<width>135</width> 
+										<height>110</height>
 									</attr>			
 								</obj>	
 								
@@ -95,15 +95,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>520</width>
-			<height>390</height>
+			<width>610</width>
+			<height>432</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>520</width>
-				<height>390</height>
+				<width>610</width>
+				<height>432</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >

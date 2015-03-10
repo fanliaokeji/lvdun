@@ -25,49 +25,49 @@
 			
 				<obj id="WeatherCtrl.Image" class="ImageObject">
 					<attr>
-						<left>0</left>
-						<top>father.height-51+5</top>
-						<width>51</width> 
-						<height>51</height>
+						<left>20</left>
+						<top>10</top>
+						<width>54</width> 
+						<height>54</height>
 					</attr>		
 				</obj>	
 				
-				<obj id="WeatherCtrl.Average" class="TextObject">
-					<attr>
-						<left>51+5</left>
-						<top>0</top>
-						<width>50</width> 
-						<height>father.height</height>
-						<valign>bottom</valign>
-						<halign>center</halign>
-						<font>font.fzlt21</font>
-						<textcolor>4B99F2</textcolor>
-					</attr>		
-				</obj>
-				
 				<obj id="WeatherCtrl.Zone" class="TextObject">
 					<attr>
-						<left>father.width-20-30</left>
-						<top>18</top>
-						<width>30</width> 
+						<left>20+60</left>
+						<top>20</top>
+						<width>60</width> 
 						<height>12</height>
 						<valign>center</valign>
 						<halign>right</halign>
-						<font>font.fzlt13</font>
-						<textcolor>4B99F2</textcolor>
+						<font>font.text11</font>
+						<textcolor>069DD5</textcolor>
+					</attr>		
+				</obj>
+				
+				<obj id="WeatherCtrl.Average" class="TextObject">
+					<attr>
+						<left>20+60</left>
+						<top>30</top>
+						<width>60</width> 
+						<height>30</height>
+						<valign>center</valign>
+						<halign>right</halign>
+						<font>font.text18</font>
+						<textcolor>069DD5</textcolor>
 					</attr>		
 				</obj>
 				
 				<obj id="WeatherCtrl.Detail" class="TextObject">
 					<attr>
-						<left>father.width-95-20</left>
-						<top>30+5</top>
-						<width>95</width> 
+						<left>25</left>
+						<top>62</top>
+						<width>father.width-20</width> 
 						<height>14</height>
 						<valign>center</valign>
-						<halign>right</halign>
-						<font>font.fzlt13</font>
-						<textcolor>4B99F2</textcolor>
+						<halign>left</halign>
+						<font>font.text11</font>
+						<textcolor>808080</textcolor>
 					</attr>		
 				</obj>
 				

@@ -1008,7 +1008,6 @@ function GetOldCfgContent(strCurFileName)
 end
 
 
-
 function GetCfgPathWithName(strCfgName)
 	local bOk, strBaseDir = QueryAllUsersDir()
 	if not bOk then
