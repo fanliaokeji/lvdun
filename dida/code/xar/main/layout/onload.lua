@@ -277,7 +277,6 @@ function StartUITimer()
 end
 
 
-
 function PopTipWnd(OnCreateFunc)
 	local bSuccess = false
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")

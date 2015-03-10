@@ -67,16 +67,24 @@
 		<bitmap id="中台风" path="bitmap\weather\Weather.ZhongTaiFeng.png" />
 		<bitmap id="中雪" path="bitmap\weather\Weather.ZhongXue.png" />
 		<bitmap id="中雨" path="bitmap\weather\Weather.ZhongYu.png" />
+		
+		<bitmap id="牡羊座" path="bitmap\zodiac\baiyangzuo.png" />
+		<bitmap id="处女座" path="bitmap\zodiac\chunvzuo.png" />
+		<bitmap id="金牛座" path="bitmap\zodiac\jinniuzuo.png" />
+		<bitmap id="巨蟹座" path="bitmap\zodiac\juxiezuo.png" />
+		<bitmap id="魔羯座" path="bitmap\zodiac\mojiezuo.png" />
+		<bitmap id="射手座" path="bitmap\zodiac\sheshouzuo.png" />
+		<bitmap id="狮子座" path="bitmap\zodiac\shizizuo.png" />
+		<bitmap id="双鱼座" path="bitmap\zodiac\shuangyuzuo.png" />
+		<bitmap id="双子座" path="bitmap\zodiac\shuangzizuo.png" />
+		<bitmap id="宝瓶座" path="bitmap\zodiac\shuipingzuo.png" />
+		<bitmap id="天秤座" path="bitmap\zodiac\tianpingzuo.png" />
+		<bitmap id="天蝎座" path="bitmap\zodiac\tianxiezuo.png" />
 	
 		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
 		<gif id="DiDa.UpdateWnd.Loading" file="bitmap\DiDa.UpdateWnd.Loading.gif" />
-
 	</resource>
 </XLUE>
-
-
-
-
 
 
 

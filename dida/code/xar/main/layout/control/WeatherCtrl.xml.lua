@@ -68,19 +68,19 @@ function SetDetailText(objRootCtrl, strText)
 		objDetail:SetText(strText)
 	end
 
-	local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
-	local nL, nT, nR, nB = objDetail:GetObjPos()
-	local nW = nR - nL
-	local nTextExtent = objDetail:GetTextExtent()
+	-- local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
+	-- local nL, nT, nR, nB = objDetail:GetObjPos()
+	-- local nW = nR - nL
+	-- local nTextExtent = objDetail:GetTextExtent()
 		
-	local nDiff = nTextExtent-nW
+	-- local nDiff = nTextExtent-nW
 	
-	objRootCtrl:SetObjPos(nRootL-nDiff, nRootT, nRootR, nRootB)
+	-- objRootCtrl:SetObjPos(nRootL-nDiff, nRootT, nRootR, nRootB)
 	
-	local nL, nT, nR, nB = objDetail:GetObjPos()
-	local nFatherW = nRootR-nRootL+nDiff
-	local nNewR = nFatherW-20
-	objDetail:SetObjPos(nNewR-nTextExtent, nT, nNewR, nB)
+	-- local nL, nT, nR, nB = objDetail:GetObjPos()
+	-- local nFatherW = nRootR-nRootL+nDiff
+	-- local nNewR = nFatherW-20
+	-- objDetail:SetObjPos(nNewR-nTextExtent, nT, nNewR, nB)
 end
 
 

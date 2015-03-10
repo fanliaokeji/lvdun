@@ -10,26 +10,83 @@
 			
 		</event_def>
 		<objtemplate>
-			<children>
-				<obj id="LeftBar.ClockText" class="ClockCtrl">
+			<children>		
+				<obj id="LeftBar.Date" class="TextObject">
 					<attr>
-						<left>(father.width-98)/2</left>
-						<top>120</top>
-						<width>98</width> 
-						<height>26</height>
+						<left>0</left>
+						<top>18</top>
+						<width>father.width</width> 
+						<height>15</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+					</attr>		
+				</obj>
+			
+				<obj id="LeftBar.Week" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>35</top>
+						<width>father.width</width> 
+						<height>15</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+				
+				<obj id="LeftBar.Zodiac.Image" class="ImageObject">
+					<attr>
+						<left>(father.width-83)/2</left>
+						<top>68</top>
+						<width>83</width> 
+						<height>83</height>
 					</attr>		
 				</obj>	
 				
-				<obj id="LeftBar.LunarDate" class="TextObject">
+				
+				<obj id="LeftBar.Zodiac" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>164</top>
+						<top>153</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.fzlt15</font>
-						<textcolor>system.white</textcolor>
+						<font>font.text14</font>
+						<textcolor>069DD5</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+				<obj id="LeftBar.LunarDate" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>186</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+					
+				<obj id="LeftBar.ChineseDate" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>211</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
@@ -37,69 +94,13 @@
 				<obj id="LeftBar.ChineseYear" class="TextObject">
 					<attr>
 						<left>3</left>
-						<top>190</top>
+						<top>father.height-69</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.fzlt15</font>
-						<textcolor>system.white</textcolor>
-						<text></text>
-					</attr>		
-				</obj>
-				
-				<obj id="LeftBar.ChineseDate" class="TextObject">
-					<attr>
-						<left>0</left>
-						<top>210</top>
-						<width>father.width</width> 
-						<height>20</height>
-						<valign>center</valign>
-						<halign>center</halign>
-						<font>font.fzlt15</font>
-						<textcolor>system.white</textcolor>
-						<text></text>
-					</attr>		
-				</obj>
-				
-				<obj id="LeftBar.Week" class="TextObject">
-					<attr>
-						<left>0</left>
-						<top>258+3</top>
-						<width>father.width</width> 
-						<height>26</height>
-						<valign>center</valign>
-						<halign>center</halign>
-						<font>font.fzlt14</font>
-						<textcolor>4B99F2</textcolor>
-						<text></text>
-					</attr>		
-				</obj>
-				
-				<obj id="LeftBar.Day" class="TextObject">
-					<attr>
-						<left>0</left>
-						<top>285+3</top>
-						<width>father.width</width> 
-						<height>35</height>
-						<valign>center</valign>
-						<halign>center</halign>
-						<font>font.tnroman38.bold</font>
-						<textcolor>system.white</textcolor>
-						<text></text>
-					</attr>		
-				</obj>
-				
-				<obj id="LeftBar.Year" class="TextObject">
-					<attr>
-						<left>0</left>
-						<top>321+3</top>
-						<width>father.width</width> 
-						<height>18</height>
-						<valign>center</valign>
-						<halign>center</halign>
-						<font>font.tnroman18.bold</font>
-						<textcolor>system.white</textcolor>
+						<font>font.text13</font>
+						<textcolor>069DD5</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
