@@ -30,8 +30,8 @@ function GetSubTable()
 		},
 		
 		["tExtraHelper"] = {
-			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.1.dat",
-			["strMD5"] = "AB1B0916AA179E59730E4CB07EDF1E87",
+			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.2.dat",
+			["strMD5"] = "07182D50DA1131191438B2A55E253BB4",
 		},
 	}
 	return t
