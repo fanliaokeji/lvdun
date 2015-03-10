@@ -2314,7 +2314,7 @@ void TcpProxyConnection::SendNotify(const std::string& url) const
 
 void TcpProxyConnection::SendRedirectNotify(const std::string& url) const
 {
-	HWND hNotifyWnd = ::FindWindow(L"{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg", NULL);
+	HWND hNotifyWnd = ::FindWindow(L"{AF78EE96-9716-455c-B89E-BC1CA0AEC7F1}_cleanmainmsg", NULL);
 	if(hNotifyWnd != NULL) 
 	{
 		char* szUrl = new char[url.size() + 1];
