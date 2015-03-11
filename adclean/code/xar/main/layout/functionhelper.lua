@@ -90,7 +90,9 @@ function ReportAndExit()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	WriteLastPullTime()
+	
 	SendRunTimeReport(0, true)
+	SendReportLocal(10)
 	
 	tStatInfo.strEC = "exit"	
 	tStatInfo.strEA = GetInstallSrc() or ""
@@ -118,6 +120,26 @@ function SendRunTimeReport(nTimeSpanInSec, bExit)
 end
 
 
+function SendReportLocal(nOPeration)
+	local strCID = GetPeerID()
+	local strChannelID = GetInstallSrc()
+	local strVer = GetMinorVer()
+	local strRandom = tipUtil:GetCurrentUTCTime()
+	
+	local strPort = "8082"
+	if nOPeration == 10 then   --心跳上报的端口为8083
+		strPort = "8083"
+	end
+	
+	local strUrl = "http://stat.52jsqx.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+					.."&proid=13&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
+	
+	TipLog("SendReportLocal: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+end
+
+
 function IsUserFullScreen()
 	local bRet = false
 	if type(tipUtil.IsNowFullScreen) == "function" then
@@ -138,6 +160,17 @@ function CheckIsNewVersion(strNewVer, strCurVer)
 
 	local a,b,c,d = string.match(strNewVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
 	local A,B,C,D = string.match(strCurVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	
+	a = tonumber(a)
+	b = tonumber(b)
+	c = tonumber(c)
+	d = tonumber(d)
+	
+	A = tonumber(A)
+	B = tonumber(B)
+	C = tonumber(C)
+	D = tonumber(D)
+	
 	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>D)))))
 end
 
@@ -300,7 +333,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 
 	if IsRealString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
 		TipLog("[DownLoadFileWithCheck]File Already existed")
-		fnCallBack(1)
+		fnCallBack(1, strSavePath)
 		return
 	end
 	
@@ -1112,6 +1145,7 @@ obj.FailExitTipWnd = FailExitTipWnd
 obj.TipConvStatistic = TipConvStatistic
 obj.ExitProcess = ExitProcess
 obj.ReportAndExit = ReportAndExit
+obj.SendReportLocal = SendReportLocal
 obj.GetCommandStrValue = GetCommandStrValue
 obj.GetExePath = GetExePath
 obj.LoadTableFromFile = LoadTableFromFile
