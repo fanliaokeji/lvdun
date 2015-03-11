@@ -243,6 +243,17 @@ function CheckIsNewVersion(strNewVer, strCurVer)
 
 	local a,b,c,d = string.match(strNewVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
 	local A,B,C,D = string.match(strCurVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	
+	a = tonumber(a)
+	b = tonumber(b)
+	c = tonumber(c)
+	d = tonumber(d)
+	
+	A = tonumber(A)
+	B = tonumber(B)
+	C = tonumber(C)
+	D = tonumber(D)
+	
 	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>D)))))
 end
 
