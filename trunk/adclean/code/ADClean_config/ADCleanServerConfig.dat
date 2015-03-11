@@ -2,7 +2,7 @@ function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
 			["strVersion"] = "1.0.0.2",
-			["strPacketURL"] = "http://down.aizhuomian.com/qdf/adcleansetup__0001.exe",
+			["strPacketURL"] = "http://down.52jsqx.com/client/adcleansetup__0001.exe",
 			["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
 			["tInroduce"] = {
 				"1.修复部分bug",
@@ -13,7 +13,7 @@ function GetSubTable()
 			["tForceUpdate"] = {
 				["strVersion"] = "1.0.0.2",
 				["tVersion"] = {"1"},
-				["strPacketURL"] = "http://down.aizhuomian.com/qdf/adcleansetup__0001.exe",
+				["strPacketURL"] = "http://down.52jsqx.com/client/adcleansetup__0001.exe",
 				["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
 			},
 		},

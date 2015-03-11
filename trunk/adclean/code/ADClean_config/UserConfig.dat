@@ -3,7 +3,7 @@ function GetSubTable()
 		["nLastCommonUpdateUTC"] = 0, 
 		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
-		["strServerConfigURL"] = "http://dl.aizhuomian.com/qdf/1.0/ADCleanServerConfig.dat", 
+		["strServerConfigURL"] = "http://dl.52jsqx.com/update/1.0/ADCleanServerConfig.dat", 
 		["nLastClearUTC"] = 0, 
 		["bFilterOpen"] = true, 
 		["nHideBubblePopWndInSec"] = 5, 
