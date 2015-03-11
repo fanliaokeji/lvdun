@@ -59,30 +59,6 @@ function SendStartupReportGgl(bShowWnd)
 end
 
 
-function SendStartReportLocal()
-	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
-	local strCID = FunctionObj.GetPeerID()
-	local strMAC = ""
-	
-	if IsRealString(strCID) then
-		local nIndex = 1
-		for i=1, 6 do 
-			local strTemp = string.sub(strCID, nIndex, nIndex+1)
-			strMAC = strMAC..strTemp.."-"
-			nIndex = nIndex+2
-		end
-	end
-	local strMACFix = string.gsub(strMAC, "-$", "")
-	local strChannelID = FunctionObj.GetInstallSrc()
-	
-	local strUrl = "http://stat.aizhuomian.com:8084/?mac=" .. tostring(strMACFix) 
-					.."&op=start&cid=" .. (strChannelID)
-	
-	FunctionObj.TipLog("[SendStartReportLocal]: " .. tostring(strUrl))
-	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
-end
-
-
 function ShowMainTipWnd(objMainWnd)
 	local bHideMainPage = true
 	local cmdString = tipUtil:GetCommandLine()
@@ -490,6 +466,12 @@ function StartRunCountTimer()
 		FunctionObj.SendRunTimeReport(nTimeSpanInSec, false)
 		XLSetGlobal("Project.LastReportRunTime", gnLastReportRunTmUTC) 
 	end, nTimeSpanInMs)
+	
+	---清道夫上报
+	local nTimeSpanInMs = 2*60*1000
+	timerManager:SetTimer(function(item, id)
+		FunctionObj.SendReportLocal(10)
+	end, nTimeSpanInMs)
 end
 
 
@@ -595,7 +577,7 @@ function PreTipMain()
 	StartRunCountTimer()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	FunctionObj.ReadAllConfigInfo()
-	SendStartReportLocal()
+	FunctionObj.SendReportLocal(2)
 	SendStartupReportGgl(false)
 	
 	-- TipMain()
