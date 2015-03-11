@@ -86,7 +86,11 @@ function OnSelectMonth(objMenuItem)
 	local strText = objMenuItem:GetText()
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
 	
-	objDateSelect:SetMonthText(strText)
+	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
+	local nMonth = tonumber(strMonth) 
+	strMonth = string.format("%02d", nMonth)
+	
+	objDateSelect:SetMonthText(strMonth.."月")
 	objDateSelect:ResetFestivalText()
 	tFunHelper.UpdateCalendarContent()
 end

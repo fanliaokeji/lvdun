@@ -1,0 +1,50 @@
+<xlue>
+	<control class="TitleCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+		
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>		
+				<obj id="TitleCtrl.Text" class="TextObject">
+					<attr>
+						<left>33</left>
+						<top>4</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+						<valign>center</valign>
+						<font>font.text10</font>
+						<textcolor>262624</textcolor>
+						<text>嘀嗒日历</text>
+					</attr>		
+				</obj>
+
+				<obj id="TitleCtrl.Close" class="TipAddin.Button">
+					<attr>
+						<left>father.width-49+3</left>
+						<top>1</top>
+						<width>49</width>
+						<height>23</height>
+						<cursor>IDC_HAND</cursor>
+						<NormalBkgID>DiDa.Title.CloseBtn.Normal</NormalBkgID>
+						<DownBkgID>DiDa.Title.CloseBtn.Hover</DownBkgID>
+						<HoverBkgID>DiDa.Title.CloseBtn.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.Title.CloseBtn.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="TitleCtrl.xml.lua" func="OnClickCloseBtn" />
+					</eventlist>
+				</obj>
+				
+				
+			</children>
+			<eventlist>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

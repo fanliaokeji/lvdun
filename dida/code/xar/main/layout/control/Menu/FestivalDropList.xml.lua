@@ -128,9 +128,9 @@ function OnSelectFestival(objMenuItem)
 		
 	local attr = objFestivalBox:GetAttribute()
 	local nFestIndex = GetFestIndex(strText)
-	attr.LeftTextPos = 24
+	attr.LeftTextPos = -7
 	if nFestIndex>3 then
-		attr.LeftTextPos = 17
+		attr.LeftTextPos = -13
 	end
 	
 	objFestivalBox:SetText(strText)

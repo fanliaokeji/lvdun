@@ -98,6 +98,7 @@ function HideMainWindow()
 	end
 end
 
+
 function ReportAndExit()
 	local tStatInfo = {}
 	HideMainWindow()	
@@ -636,9 +637,9 @@ end
 function UpdateBackTodayStyle(nFocusDayIdxInMonth)
 	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.DateSelectCtrl")
 	if nFocusDayIdxInMonth == 0 then
-		objCalendarCtrl:SetBackTodayEnable(true)
+		objCalendarCtrl:SetBackTodayVisible(true)
 	else	
-		objCalendarCtrl:SetBackTodayEnable(false)
+		objCalendarCtrl:SetBackTodayVisible(false)
 	end
 end
 
@@ -1216,6 +1217,7 @@ obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 
 --UI
 obj.GetMainWndInst = GetMainWndInst
+obj.HideMainWindow = HideMainWindow
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.ShowPopupWndByName = ShowPopupWndByName
 obj.CreatePopupTipWnd = CreatePopupTipWnd

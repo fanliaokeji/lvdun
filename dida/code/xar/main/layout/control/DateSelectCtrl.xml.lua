@@ -27,15 +27,7 @@ end
 
 
 function SetMonthText(self, strText)
-	local objMonthBox = self:GetControlObject("Combobox.Month")
-	local attr = objMonthBox:GetAttribute()
-	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
-	local nMonth = tonumber(strMonth)
-	attr.LeftTextPos = 8
-	if nMonth>9 then
-		attr.LeftTextPos = 3
-	end
-	
+	local objMonthBox = self:GetControlObject("Combobox.Month")	
 	objMonthBox:SetText(strText)
 end
 
@@ -48,15 +40,15 @@ end
 function ResetFestivalText(self)
 	local objFestival = self:GetControlObject("Combobox.Festival")
 	local attr = objFestival:GetAttribute()
-	attr.LeftTextPos = 12
+	attr.LeftTextPos = -20
 	objFestival:SetText("假期安排")
 	objFestival:SetEnable(true)
-	objFestival:SetAlpha(255, true)
+	objFestival:SetTextColor("B8181D")
 	
 	local strYear = self:GetYearText()
 	if not tFunHelper.CheckIsYearInVacList(strYear) then
 		objFestival:SetEnable(false)
-		objFestival:SetAlpha(180, true)
+		objFestival:SetTextColor("999999")
 	end
 end
 
@@ -77,7 +69,7 @@ function AddYear(self, nDiff)
 		nCurYear = nBeginYear
 	end
 	
-	local strYearText = tostring(nCurYear).."年"
+	local strYearText = tostring(nCurYear).." 年"
 	self:SetYearText(strYearText)
 end
 
@@ -100,20 +92,16 @@ function AddMonth(self, nDiff)
 		self:AddYear(1)
 	end
 	
-	local strMonthText = tostring(nCurMonth).."月"
+	local strMonth = string.format("%02d", nCurMonth)
+	local strMonthText = tostring(strMonth).."月"
 	self:SetMonthText(strMonthText)
 end
 
 
-function SetBackTodayEnable(self, bEnable)
-	local objToday = self:GetControlObject("BackToToday.Text")
-	objToday:SetEnable(bEnable)
-	
-	if bEnable then
-		objToday:SetTextColorResID("4B99F2")
-	else
-		objToday:SetTextColorResID("808080")
-	end
+function SetBackTodayVisible(self, bVisible)
+	local objToday = self:GetControlObject("BackToToday.Button")
+	objToday:SetVisible(bVisible)
+	objToday:SetChildrenVisible(bVisible)
 end
 
 
@@ -140,8 +128,9 @@ function OnFocusYearDropList(self, bFocus)
 	local nTreeX, nTreeY = objHostWnd:HostWndPtToTreePt(nWndX, nWndY)
 
 	local nLeft, nTop, nRight, nBottom = self:GetAbsPos()
-
-	if nTreeX > nLeft-5 and nTreeX < nRight+5 and nTreeY < nBottom+5 and nTreeY > nTop-25 then	
+	
+	--鼠标在下拉箭头区域时
+	if nTreeX > nLeft-5 and nTreeX < nRight+5 and nTreeY < nBottom+5 and nTreeY > nTop-20 then	
 		self:SetFocus(true)
 		return
 	end
@@ -168,7 +157,7 @@ end
 
 function OnInitYearBox(self)
 	local nCurYear = os.date("%Y")
-	local strText = tostring(nCurYear)..tostring("年")
+	local strText = tostring(nCurYear)..tostring(" 年")
 	self:SetText(strText)
 end
 
@@ -184,7 +173,7 @@ end
 
 function OnInitMonthBox(self)
 	local nCurMonth = os.date("%m")
-	local strMonth = string.format("%1d", nCurMonth)
+	local strMonth = string.format("%02d", nCurMonth)
 	local strText = tostring(strMonth)..tostring("月")
 	
 	local objRootCtrl = self:GetOwnerControl()
@@ -263,13 +252,13 @@ end
 
 function ResetCtrlText(objRootCtrl)
 	local strYear = os.date("%Y")
-	objRootCtrl:SetYearText(strYear.."年")
+	objRootCtrl:SetYearText(strYear.." 年")
 	
 	local strMonth = os.date("%m")
 	local nMonth = tonumber(strMonth)
-	strMonth = string.format("%1d", nMonth)
+	strMonth = string.format("%02d", nMonth)
 	objRootCtrl:SetMonthText(strMonth.."月")
-
+	
 	objRootCtrl:ResetFestivalText()
 end	
 

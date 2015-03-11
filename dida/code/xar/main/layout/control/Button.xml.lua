@@ -119,6 +119,7 @@ function IsVisible(self)
     return attr.Visible
 end
 
+
 function OnLButtonDown(self, x, y)
 	local attr = self:GetAttribute()
 	if attr.Enable then
@@ -142,7 +143,7 @@ function OnLButtonUp(self, x, y)
 	end
 end
 
-function OnMouseMove(self, x, y)
+function OnMouseEnter(self, x, y)
     local left, top, right, bottom = self:GetObjPos()
     local width, height = right - left, bottom - top
     
@@ -158,6 +159,12 @@ function OnMouseMove(self, x, y)
 	end
 	self:FireExtEvent("OnButtonMouseMove", x, y)
 end
+
+
+function RoutToFather(self)
+	self:RouteToFather()
+end
+
 
 function OnMouseLeave(self)
 	local attr = self:GetAttribute()
@@ -212,9 +219,14 @@ function SetTextStyle(objRootCtrl)
 	local textObj = objRootCtrl:GetControlObject("Recomment")
 	local nLeftPos = attr.LeftTextPos
 	local nTopPos = attr.TopTextPos
+	local nHeight = attr.TextHeight
 	
 	local nWidth = textObj:GetTextExtent()
-	textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, "father.height-"..tostring(nTopPos))
+	if nHeight > 0 then
+		textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, nTopPos+nHeight)
+	else
+		textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, "father.height-"..tostring(nTopPos))
+	end
 end
 
 
@@ -271,3 +283,36 @@ function OnEditKeyDown(self, uChar)
 		end
 	end
 end
+
+--文本可能超出父控件的范围。获取控件的最大可视范围。
+function GetVisiblePos(self)
+	local objRootCtrl = self
+	local objText = objRootCtrl:GetControlObject("Recomment")
+	local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
+	local nTextL, nTextT, nTextR, nTextB = objText:GetObjPos()
+	
+	if nTextL < 0 then
+		nRootL = nRootL + nTextL
+	end
+	
+	if nTextT < 0 then
+		nRootT = nRootT + nTextT
+	end 
+	
+	if nTextR > nRootR then
+		nRootR = nTextR
+	end 
+	
+	if nTextB > nRootB then
+		nRootB = nTextB
+	end 
+	
+	return nRootL, nRootT, nRootR, nRootB
+end
+
+
+
+
+
+
+

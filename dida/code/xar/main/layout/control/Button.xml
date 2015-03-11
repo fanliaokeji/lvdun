@@ -11,6 +11,7 @@
 			<attr name="Text" type="string" />
 			<attr name="LeftTextPos" type="int" ><default>0</default></attr>
 			<attr name="TopTextPos" type="int" ><default>0</default></attr>
+			<attr name="TextHeight" type="int" ><default>0</default></attr>
 			<attr name="TextFont" type="string"><default>default.font</default></attr>
 			<attr name="TextColor" type="string"><default>system.black</default></attr>
 			<attr name="DisableTextColor" type="string"><default>system.gray</default></attr>
@@ -31,6 +32,7 @@
 			<SetTextFont file="Button.xml.lua" func="SetTextFont" />
 			<Show file="Button.xml.lua" func="Show" />
 			<IsVisible file="Button.xml.lua" func="IsVisible" />
+			<GetVisiblePos file="Button.xml.lua" func="GetVisiblePos" />
 		</method_def>
 		<event_def>
 			<OnClick>
@@ -115,15 +117,22 @@
 				<valign>center</valign>
 				<zorder>500</zorder>
 			</attr>
+			<eventlist>
+				<event name="OnMouseEnter" file="Button.xml.lua" func="RoutToFather" />
+				<event name="OnLButtonUp" file="Button.xml.lua" func="RoutToFather" />
+				<event name="OnMouseLeave" file="Button.xml.lua" func="RoutToFather" />
+				<event name="OnLButtonDown" file="Button.xml.lua" func="RoutToFather" />
+			</eventlist>
+			
 		</obj>
 	</children>
 	<eventlist>
 		<event name="OnLButtonDown" file="Button.xml.lua" func="OnLButtonDown" />
 		<event name="OnLButtonUp" file="Button.xml.lua" func="OnLButtonUp" />
-		<event name="OnMouseMove" file="Button.xml.lua" func="OnMouseMove" />
+		<event name="OnMouseEnter" file="Button.xml.lua" func="OnMouseEnter" />
 		<event name="OnMouseLeave" file="Button.xml.lua" func="OnMouseLeave" />
 		<event name="OnMouseHover" file="Button.xml.lua" func="OnMouseHover" />
-		<event name="OnRButtonDbClick" file="Button.xml.lua" func="OnRButtonDbClick" />
+		<!--event name="OnRButtonDbClick" file="Button.xml.lua" func="OnRButtonDbClick" /-->
 		<event name="OnFocusChange" file="Button.xml.lua" func="OnFocusChange" />
 		<event name="OnInitControl" file="Button.xml.lua" func="OnInitControl" />
 	</eventlist>

@@ -13,8 +13,8 @@
 			<children>
 				<obj id="WeatherCtrl.Loading" class="SeqImageObject">
 					<attr>
-						<left>0</left>  
-						<top>0</top>
+						<left>20</left>  
+						<top>20</top>
 						<width>73</width>
 						<height>52</height>
 						<gif>DiDa.Weather.Loading</gif>
