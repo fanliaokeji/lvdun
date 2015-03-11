@@ -11,7 +11,7 @@
 			<ResetFestivalText file="DateSelectCtrl.xml.lua" func="ResetFestivalText"/>
 			<AddMonth file="DateSelectCtrl.xml.lua" func="AddMonth"/>
 			<AddYear file="DateSelectCtrl.xml.lua" func="AddYear"/>
-			<SetBackTodayEnable file="DateSelectCtrl.xml.lua" func="SetBackTodayEnable"/>
+			<SetBackTodayVisible file="DateSelectCtrl.xml.lua" func="SetBackTodayVisible"/>
 		</method_def>
 		<event_def>
 			
@@ -20,19 +20,20 @@
 			<children>
 				<obj id="Combobox.Year" class="TipAddin.Button">
 					<attr>
-						<left>18</left>
-						<top>0</top>
-						<width>70</width>
-						<height>20</height>
+						<left>105</left>
+						<top>25</top>
+						<width>12</width>
+						<height>6</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Year.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Year.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Year.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Year.Normal</DisableBkgID>
-						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt12</TextFont>
-						<LeftTextPos>5</LeftTextPos>
-						<TopTextPos>2</TopTextPos>
+						<NormalBkgID>DiDa.DropDown.Arrow.Normal</NormalBkgID>
+						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
+						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
+						<TextColor>262624</TextColor>
+						<TextFont>font.text14</TextFont>
+						<LeftTextPos>-12</LeftTextPos>
+						<TopTextPos>-20</TopTextPos>
+						<TextHeight>15</TextHeight>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpYearBox" />
@@ -42,10 +43,10 @@
 				
 				<obj id="DropList.Year" class="YearDropList">
 					<attr>
-						<left>18</left>
-						<top>20</top>
+						<left>86</left>
+						<top>22</top>
 						<width>51</width>
-						<height>207</height>
+						<height>204</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
@@ -57,10 +58,10 @@
 				
 				<obj id="Combobox.LeftArrow" class="TipAddin.Button">
 					<attr>
-						<left>18+70+10</left>
-						<top>0</top>
-						<width>20</width>
-						<height>20</height>
+						<left>52</left>
+						<top>8</top>
+						<width>8</width>
+						<height>13</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.ArrowLeft.Month.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ArrowLeft.Month.Hover</DownBkgID>
@@ -75,19 +76,20 @@
 				
 				<obj id="Combobox.Month" class="TipAddin.Button">
 					<attr>
-						<left>18+70+30</left>
-						<top>0</top>
-						<width>43</width>
-						<height>20</height>
+						<left>105+45</left>
+						<top>25</top>
+						<width>12</width>
+						<height>6</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Month.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Month.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Month.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Month.Normal</DisableBkgID>
-						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt12</TextFont>
-						<LeftTextPos>8</LeftTextPos>
-						<TopTextPos>4</TopTextPos>
+						<NormalBkgID>DiDa.DropDown.Arrow.Normal</NormalBkgID>
+						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
+						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
+						<TextColor>262624</TextColor>
+						<TextFont>font.text14</TextFont>
+						<LeftTextPos>-3</LeftTextPos>
+						<TopTextPos>-20</TopTextPos>
+						<TextHeight>15</TextHeight>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpMonthBox" />
@@ -97,10 +99,10 @@
 				
 				<obj id="Combobox.RightArrow" class="TipAddin.Button">
 					<attr>
-						<left>18+70+30+43</left>
-						<top>0</top>
-						<width>20</width>
-						<height>20</height>
+						<left>212</left>
+						<top>7</top>
+						<width>8</width>
+						<height>13</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.ArrowRight.Month.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ArrowRight.Month.Hover</DownBkgID>
@@ -115,8 +117,8 @@
 				
 				<obj id="DropList.Month" class="MonthDropList">
 					<attr>
-						<left>18+70+30</left>
-						<top>20</top>
+						<left>140</left>
+						<top>22</top>
 						<width>43</width>
 						<height>207</height>
 						<zorder>9999999</zorder>
@@ -130,19 +132,20 @@
 				
 				<obj id="Combobox.Festival" class="TipAddin.Button">
 					<attr>
-						<left>18+70+60+43</left>
-						<top>0</top>
-						<width>90</width>
-						<height>20</height>
+						<left>285</left>
+						<top>25</top>
+						<width>12</width>
+						<height>6</height>
 						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.Combobox.Bkg.Festival.Normal</NormalBkgID>
-						<DownBkgID>DiDa.Combobox.Bkg.Festival.Hover</DownBkgID>
-						<HoverBkgID>DiDa.Combobox.Bkg.Festival.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.Combobox.Bkg.Festival.Normal</DisableBkgID>
-						<TextColor>808080</TextColor>
-						<TextFont>font.fzlt12</TextFont>
-						<LeftTextPos>12</LeftTextPos>
-						<TopTextPos>2</TopTextPos>
+						<NormalBkgID>DiDa.DropDown.Arrow.Normal</NormalBkgID>
+						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
+						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
+						<TextColor>B8181D</TextColor>
+						<TextFont>font.text12</TextFont>
+						<LeftTextPos>-12</LeftTextPos>
+						<TopTextPos>-19</TopTextPos>
+						<TextHeight>15</TextHeight>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpFestivalBox" />
@@ -152,8 +155,8 @@
 				
 				<obj id="DropList.Festival" class="FestivalDropList">
 					<attr>
-						<left>18+70+60+44</left>
-						<top>21</top>
+						<left>256</left>
+						<top>22</top>
 						<width>70</width>
 						<height>137</height>
 						<zorder>9999999</zorder>
@@ -165,24 +168,24 @@
 				</obj>
 				
 				
-				<obj id="BackToToday.Text" class="TextObject">
+				
+				<obj id="BackToToday.Button" class="TipAddin.Button">
 					<attr>
-						<left>father.width-60-20</left>
+						<left>370</left>
 						<top>0</top>
-						<width>60</width>
-						<height>father.height</height>
+						<width>27</width>
+						<height>27</height>
 						<cursor>IDC_HAND</cursor>
-						<text>返回今天</text>
-						<valign>center</valign>
-						<halign>left</halign>
-						<font>font.fzlt13</font>
-						<textcolor>4B99F2</textcolor>
+						<NormalBkgID>DiDa.BackToToday.Normal</NormalBkgID>
+						<DownBkgID>DiDa.BackToToday.Hover</DownBkgID>
+						<HoverBkgID>DiDa.BackToToday.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.BackToToday.Normal</DisableBkgID>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLClickToday" />
 					</eventlist>
 				</obj>
-				
+								
 			</children>
 			<eventlist>
 				<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitRootCtrl" />

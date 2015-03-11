@@ -19,7 +19,7 @@ local g_tWeatherResList = {
 
 ---事件
 function OnInitWeatherCtrl(self)
-	ShowLoadingGif(self, true)
+	ShowLoadingGif(self, false)
 	UpdateWeatherContent(self)
 	SetUpdateTimer(self)
 end

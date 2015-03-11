@@ -105,7 +105,7 @@ end
 
 
 function OnSelectYear(objMenuItem)
-	local strText = objMenuItem:GetText() .. "年"
+	local strText = objMenuItem:GetText() .. " 年"
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
 	objDateSelect:SetYearText(strText)
 	objDateSelect:ResetFestivalText()
@@ -127,7 +127,7 @@ function GetYearFromComboBox(objMenuContainer)
 	if not IsRealString(strText) then
 		return
 	end
-	local _, _, strYear = string.find(strText, "(%d*)年")
+	local _, _, strYear = string.find(strText, "(%d*)[^%d]*")
 	return tonumber(strYear)
 end
 

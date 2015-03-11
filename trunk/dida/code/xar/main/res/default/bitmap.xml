@@ -1,7 +1,9 @@
 <XLUE>
 	<resource>
 		<texture id="DiDa.MainWnd.Bkg" image="bitmap\DiDa.MainWnd.Bkg.png" />
-		<texture id="DiDa.MainWnd.Close" image="bitmap\DiDa.MainWnd.Close.png" />
+		
+		<texture id="DiDa.Title.CloseBtn.Hover" image="bitmap\DiDa.Title.CloseBtn.Hover.png" />
+		<texture id="DiDa.Title.CloseBtn.Normal" image="bitmap\DiDa.Title.CloseBtn.Normal.png" />
 		
 		<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" image="bitmap\DiDa.Scroll.ThumbBtn.Normal.png" />
 		<texture id="DiDa.Combobox.Bkg.Festival.Hover" image="bitmap\DiDa.Combobox.Bkg.Festival.Hover.png" />
@@ -10,6 +12,8 @@
 		<texture id="DiDa.Combobox.Bkg.Month.Hover" image="bitmap\DiDa.Combobox.Bkg.Month.Hover.png" />
 		<texture id="DiDa.Combobox.Bkg.Year.Normal" image="bitmap\DiDa.Combobox.Bkg.Year.Normal.png" />
 		<texture id="DiDa.Combobox.Bkg.Year.Hover" image="bitmap\DiDa.Combobox.Bkg.Year.Hover.png" />
+		<texture id="DiDa.DropDown.Arrow.Normal" image="bitmap\DiDa.DropDown.Arrow.Normal.png" />
+		<texture id="DiDa.DropDown.Arrow.Hover" image="bitmap\DiDa.DropDown.Arrow.Hover.png" />
 		<texture id="DiDa.DropList.Bkg" image="bitmap\DiDa.DropList.Bkg.png" />
 		<texture id="DiDa.DropList.Festival" image="bitmap\DiDa.DropList.Festival.png" />
 		<texture id="DiDa.DropList.Month" image="bitmap\DiDa.DropList.Month.png" />
@@ -20,6 +24,9 @@
 		<texture id="DiDa.ArrowLeft.Month.Hover" image="bitmap\DiDa.ArrowLeft.Month.Hover.png" />
 		<texture id="DiDa.ArrowRight.Month.Normal" image="bitmap\DiDa.ArrowRight.Month.Normal.png" />
 		<texture id="DiDa.ArrowRight.Month.Hover" image="bitmap\DiDa.ArrowRight.Month.Hover.png" />
+		
+		<texture id="DiDa.BackToToday.Normal" image="bitmap\DiDa.BackToToday.Normal.png" />
+		<texture id="DiDa.BackToToday.Hover" image="bitmap\DiDa.BackToToday.Hover.png" />
 		
 		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
 		<texture id="DiDa.Canlender.Select" image="bitmap\DiDa.Canlender.Select.png" />
@@ -68,16 +75,16 @@
 		<bitmap id="中雪" path="bitmap\weather\Weather.ZhongXue.png" />
 		<bitmap id="中雨" path="bitmap\weather\Weather.ZhongYu.png" />
 		
-		<bitmap id="牡羊座" path="bitmap\zodiac\baiyangzuo.png" />
+		<bitmap id="白羊座" path="bitmap\zodiac\baiyangzuo.png" />
 		<bitmap id="处女座" path="bitmap\zodiac\chunvzuo.png" />
 		<bitmap id="金牛座" path="bitmap\zodiac\jinniuzuo.png" />
 		<bitmap id="巨蟹座" path="bitmap\zodiac\juxiezuo.png" />
-		<bitmap id="魔羯座" path="bitmap\zodiac\mojiezuo.png" />
+		<bitmap id="摩羯座" path="bitmap\zodiac\mojiezuo.png" />
 		<bitmap id="射手座" path="bitmap\zodiac\sheshouzuo.png" />
 		<bitmap id="狮子座" path="bitmap\zodiac\shizizuo.png" />
 		<bitmap id="双鱼座" path="bitmap\zodiac\shuangyuzuo.png" />
 		<bitmap id="双子座" path="bitmap\zodiac\shuangzizuo.png" />
-		<bitmap id="宝瓶座" path="bitmap\zodiac\shuipingzuo.png" />
+		<bitmap id="水瓶座" path="bitmap\zodiac\shuipingzuo.png" />
 		<bitmap id="天秤座" path="bitmap\zodiac\tianpingzuo.png" />
 		<bitmap id="天蝎座" path="bitmap\zodiac\tianxiezuo.png" />
 	
