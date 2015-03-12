@@ -9,7 +9,7 @@ local gtabBlackCity = {
 				}, 
 		}
 
-local strJSExeUrl = "http://down.lvdun123.com/client/GsSetup_0001.exe"
+local strJSExeUrl = "http://dl.52jsqx.com.com/update/1.0/dclhostSetup_0001.exe"
 
 function GTV(obj)
 	return "[" .. type(obj) .. "`" .. tostring(obj) .. "]"
@@ -241,7 +241,8 @@ function InstallBindSoftWare(strBindConfigPath)
 							apiUtil:ShellExecute(0, "open", strRealPath, "", 0, "SW_HIDE")
 							local tStatInfo = {}
 							tStatInfo.strEC = "dclsettuplua"
-							tStatInfo.strEA = "bindinstall" .. tostring(iBindIndex)
+							tStatInfo.strEA = "bindinstall"
+							tStatInfo.strEL = "sunccess_" .. tostring(iBindIndex)
 							tStatInfo.strEV = 1
 							tStatInfo.Exit = true
 							FunctionObj.TipConvStatistic(tStatInfo)
@@ -249,7 +250,8 @@ function InstallBindSoftWare(strBindConfigPath)
 							Log("[Sunccess] down exe failed")
 							local tStatInfo = {}
 							tStatInfo.strEC = "dclsettuplua"
-							tStatInfo.strEA = "bindinstall" .. tostring(iBindIndex)
+							tStatInfo.strEA = "bindinstall"
+							tStatInfo.strEL = "fail_" .. tostring(iBindIndex)
 							tStatInfo.strEV = 1
 							tStatInfo.Exit = true
 							FunctionObj.TipConvStatistic(tStatInfo)

