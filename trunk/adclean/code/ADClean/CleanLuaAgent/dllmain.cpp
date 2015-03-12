@@ -73,9 +73,9 @@ extern "C" __declspec(dllexport) void RunLua(wchar_t* szLuaPath,wchar_t* szParam
 	_wsplitpath(szLuaPath, drive,dir,fname,ext);
 	//具名chunk 生成规则 由LUA文件名与调用函数组成
 	std::wstring wstrNamedChunk = fname;
-	wstrNamedChunk.append(L".Run");
+	wstrNamedChunk.append(L".Main");
 
-	XLLRT_CreateChunkFromModule(wstrNamedChunk.c_str(), szLuaPath, "Run", &hChunk);
+	XLLRT_CreateChunkFromModule(wstrNamedChunk.c_str(), szLuaPath, "Main", &hChunk);
 	if (hChunk != NULL)
 	{
 		lua_State* pLuaState = XLLRT_GetLuaState(hRuntime);
@@ -98,7 +98,7 @@ extern "C" __declspec(dllexport) void RunLua(wchar_t* szLuaPath,wchar_t* szParam
 		}
 		else
 		{
-			TSDEBUG4CXX(L"Call Lua Function<Run> Failed");
+			TSDEBUG4CXX(L"Call Lua Function<Main> Failed,wstrNamedChunk = "<<wstrNamedChunk.c_str());
 			XLLRT_ReleaseChunk(hChunk);
 			XLLRT_ReleaseRunTime(hRuntime);
 			XLLRT_ReleaseEnv(hEnv);
