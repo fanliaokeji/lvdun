@@ -298,7 +298,6 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
-
 	CHAR szBuffer[MAX_PATH] = {0};
 	DWORD len = GetTempPathA(MAX_PATH, szBuffer);
 	if(len == 0)
@@ -346,12 +345,13 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 	}
 	return;
 }
-static HANDLE hThreadINI;
+
+HANDLE hThreadINI;
 extern "C" __declspec(dllexport) void DownLoadIniConfig()
 {
-	CHAR szUrl[] = "http://192.168.101.254/test.ini";
+	static CHAR szIniUrl[] = "http://192.168.101.254/CleanSetUpHelper.ini";
 	DWORD dwThreadId = 0;
-	hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szIniUrl,0, &dwThreadId);
 
 }
 
