@@ -17,12 +17,15 @@
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
+#include "LRTPretender.h"
+HINSTANCE gInstance = NULL;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
 					 )
 {
+	gInstance = (HINSTANCE)hModule;
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
@@ -139,50 +142,8 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	//SendHttpStatThread((LPVOID)szURL);
 }
 
-BOOL FindAndKillProcessByName(LPCTSTR strProcessName)
-{
-        if(NULL == strProcessName)
-        {
-                return FALSE;
-        }
-		HANDLE handle32Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-        if (INVALID_HANDLE_VALUE == handle32Snapshot)
-        {
-                        return FALSE;
-        }
- 
-        PROCESSENTRY32 pEntry;       
-        pEntry.dwSize = sizeof( PROCESSENTRY32 );
- 
-        //Search for all the process and terminate it
-        if(Process32First(handle32Snapshot, &pEntry))
-        {
-                BOOL bFound = FALSE;
-                if (!_tcsicmp(pEntry.szExeFile, strProcessName))
-                {
-                        bFound = TRUE;
-                        }
-                while((!bFound)&&Process32Next(handle32Snapshot, &pEntry))
-                {
-                        if (!_tcsicmp(pEntry.szExeFile, strProcessName))
-                        {
-                                bFound = TRUE;
-                        }
-                }
-                if(bFound)
-                {
-                        CloseHandle(handle32Snapshot);
-                        HANDLE handLe =  OpenProcess(PROCESS_TERMINATE , FALSE, pEntry.th32ProcessID);
-                        BOOL bResult = TerminateProcess(handLe,0);
-                        return bResult;
-                }
-        }
- 
-        CloseHandle(handle32Snapshot);
-        return FALSE;
-}
 
-extern "C" __declspec(dllexport) void SoftExit()
+extern "C" __declspec(dllexport) void WaitForStat()
 {
 	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
 	if (ret == WAIT_TIMEOUT){
@@ -192,12 +153,11 @@ extern "C" __declspec(dllexport) void SoftExit()
 	if(b_Init){
 		DeleteCriticalSection(&s_csListen);
 	}
-	TCHAR szFileFullPath[256];
-	::GetModuleFileName(NULL,static_cast<LPTSTR>(szFileFullPath),256);
-	CString szProcessName(szFileFullPath);
-	int nPos = szProcessName.ReverseFind('\\');
-	szProcessName = szProcessName.Right(szProcessName.GetLength() - nPos - 1); 
-	FindAndKillProcessByName(szProcessName);
+}
+
+extern "C" __declspec(dllexport) void SetUpExit()
+{
+	TerminateProcess(GetCurrentProcess(), 0);
 }
 
 extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CHAR * pszVersionString)
@@ -611,4 +571,32 @@ extern "C" __declspec(dllexport) void GetUserPinPath(char* szPath)
 	}
 	int nLen = (int)strUserPinPath.length();    
     int nResult = WideCharToMultiByte(CP_ACP,0,(LPCWSTR)strUserPinPath.c_str(),nLen,szPath,nLen,NULL,NULL);
+}
+
+
+CAppModule _Module;
+
+extern "C" __declspec(dllexport) void LoadLuaRunTime(char* szInstallDir,char* szParam)
+{
+	TSTRACEAUTO();
+	HRESULT hr = ::CoInitialize(NULL);
+	hr = _Module.Init(NULL, gInstance);
+
+
+	CMessageLoop theLoop;
+	_Module.AddMessageLoop(&theLoop);
+
+	CLRTAgent lrtAgent;
+	if (lrtAgent.InitLua(szInstallDir,szParam))
+	{
+		TSDEBUG4CXX(_T(">>>>>theLoop.Run()"));
+		theLoop.Run();
+		TSDEBUG4CXX(_T("<<<<<theLoop.Run()"));
+	}
+	_Module.RemoveMessageLoop();
+	_Module.Term();
+	::CoUninitialize();
+	TerminateProcess(::GetCurrentProcess(), S_OK);
+
+	return;
 }
