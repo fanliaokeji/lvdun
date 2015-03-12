@@ -915,14 +915,12 @@ function Main()
 	local nTime = 60*1000
 	local strSavePath = apiUtil:GetSystemTempPath()
 	strSavePath = apiUtil:PathCombine(strSavePath,"GSSetupAddin.dat") 
-	--strURLFix = "http://dl.lvdun123.com/update/1.0/ServerConfig11.dat"
 	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
 		Log("[Main] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
 				
 		if 0 == bRet then
-			--strRealPath = "F:\\lvdun\\trunk\\code\\ServerLua\\gssetupaddin.lua"
 			local tMod = XLLoadModule(strRealPath)
 			if type(tMod) == "table" and type(tMod.Run) == "function" then
 				local tDat = tMod.Run()
