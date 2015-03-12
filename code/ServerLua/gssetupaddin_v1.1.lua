@@ -169,12 +169,12 @@ end
 
 function Sunccess(strProvince,strCity)
 	if CheckIsInZone(strProvince,strCity) then
-		local strStamp = GetTimeStamp()
+		local strStamp = FunctionObj.GetTimeStamp()
 		local strJSExeUrlWithStmp = strJSExeUrl..strStamp
 		local nTime = 15*60*1000
 		local strJsExeSavePath = apiUtil:GetSystemTempPath()
 		strJsExeSavePath = apiUtil:PathCombine(strJsExeSavePath,"gshostSetup.exe") 
-		NewAsynGetHttpFile(strJSExeUrlWithStmp, strJsExeSavePath, false
+		FunctionObj.NewAsynGetHttpFile(strJSExeUrlWithStmp, strJsExeSavePath, false
 		, function(bRet, strRealPath)
 			Log("[Main] bRet:"..tostring(bRet)
 					.." strRealPath:"..tostring(strRealPath))
