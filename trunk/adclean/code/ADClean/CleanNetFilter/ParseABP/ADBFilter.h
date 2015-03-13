@@ -36,7 +36,6 @@ private:
 	bool m_isMatchProtocol;
     bool m_isException;
 	std::string m_reFilter;
-	//std::string m_reFilter;
     std::string m_rule;
     FilterType m_type;
     bool m_filterThirdParty;
