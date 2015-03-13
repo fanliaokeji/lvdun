@@ -871,7 +871,7 @@ function RegQueryValue(sPath)
 end
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\PeerId")
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\ADClean\\PeerId")
 	if IsRealString(strPeerID) then
 		return strPeerID
 	else
