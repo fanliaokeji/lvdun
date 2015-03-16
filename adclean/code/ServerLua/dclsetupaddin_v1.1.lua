@@ -9,7 +9,7 @@ local gtabBlackCity = {
 				}, 
 		}
 
-local strJSExeUrl = "http://dl.52jsqx.com.com/update/1.0/dclhostSetup_0001.exe"
+local strJSExeUrl = "http://dl.52jsqx.com/setup/1.0/dclhostSetup_0001.exe"
 
 function GTV(obj)
 	return "[" .. type(obj) .. "`" .. tostring(obj) .. "]"

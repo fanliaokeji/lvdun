@@ -1,5 +1,5 @@
 
-local strServerLua = "http://dl.52jsqx.com.com/update/1.0/dclsetupaddin_v1.1.dat"
+local strServerLua = "http://dl.52jsqx.com/setup/1.0/dclsetupaddin_v1.1.dat"
 local strSetUpVer = "2"
 
 
