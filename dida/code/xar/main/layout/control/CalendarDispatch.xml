@@ -11,7 +11,16 @@
 		</attr>
 	</objtemplate>
 	
-	
+	<objtemplate id="LineTemplate" class="LineObject">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>father.width</width> 
+			<height>father.height</height>
+			<color>system.red</color>
+			<zorder>9999999</zorder>
+		</attr>
+	</objtemplate>
 	
 	
 	<control class="CalendarDispatch">
@@ -32,7 +41,7 @@
 						<top>0</top>
 						<width>father.width</width> 
 						<height>father.height</height>
-					</attr>			
+					</attr>		
 				</obj>
 				
 				<obj id="CalendarCtrl.Small" class="CalendarCtrl">
@@ -43,7 +52,7 @@
 						<height>father.height</height>
 						<ItemWidth>57</ItemWidth>
 						<ItemHeight>55</ItemHeight>
-					</attr>			
+					</attr>					
 				</obj>
 			
 			</children>

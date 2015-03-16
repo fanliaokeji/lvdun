@@ -45,6 +45,7 @@
 		<texture id="DiDa.AboutWnd.CloseBtn.Normal" image="bitmap\DiDa.AboutWnd.CloseBtn.Normal.png" />
 		<texture id="DiDa.AboutWnd.CloseBtn.Hover" image="bitmap\DiDa.AboutWnd.CloseBtn.Hover.png" />
 		
+		
 		<texture id="DiDa.UpdateWnd.Bkg" image="bitmap\DiDa.UpdateWnd.Bkg.png" />
 		<texture id="DiDa.UpdateWnd.CloseBtn.Hover" image="bitmap\DiDa.UpdateWnd.CloseBtn.Hover.png" />
 		<texture id="DiDa.UpdateWnd.CloseBtn.Normal" image="bitmap\DiDa.UpdateWnd.CloseBtn.Normal.png" />

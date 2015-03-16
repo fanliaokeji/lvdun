@@ -3,16 +3,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>253</width>
-			<height>121</height>
+			<width>275</width>
+			<height>132</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>253</width>
-				<height>121</height>
+				<width>275</width>
+				<height>132</height>
 				<texture>DiDa.ExitRemind.Bkg</texture>
 			</attr>		
 			<children>					
@@ -27,13 +27,13 @@
 				
 				<obj id="ExitRemind.Title" class="TextObject">
 					<attr>
-						<left>10</left>
-						<top>0</top>
+						<left>18</left>
+						<top>2</top>
 						<width>father.width-30</width>
 						<height>24</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.fzlt10</font>
+						<font>font.text10</font>
 						<textcolor>626262</textcolor>
 						<text>嘀嗒-任务栏日历</text>
 					</attr>
@@ -41,46 +41,46 @@
 			
 				<obj id="ExitRemind.Text1" class="TextObject">
 					<attr>
-						<left>85</left>
-						<top>24+10</top>
+						<left>25</left>
+						<top>28+10</top>
 						<width>father.width-75</width>
 						<height>20</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.fzlt12</font>
-						<textcolor>4B99F2</textcolor>
+						<font>font.text13</font>
+						<textcolor>626262</textcolor>
 						<text>退出后，</text>
 					</attr>
 				</obj>		
 				
 				<obj id="ExitRemind.Text2" class="TextObject">
 					<attr>
-						<left>85</left>
-						<top>24+10+15</top>
+						<left>25</left>
+						<top>28+30</top>
 						<width>father.width-75</width>
 						<height>20</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.fzlt12</font>
-						<textcolor>4B99F2</textcolor>
+						<font>font.text13</font>
+						<textcolor>626262</textcolor>
 						<text>就不能随时查看日历信息哦～</text>
 					</attr>
 				</obj>	
 
 				<obj id="ExitRemind.CancleBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-20-67</left>
-						<top>father.height-13-22</top>
-						<width>67</width>
-						<height>22</height>
+						<left>father.width-15-69</left>
+						<top>father.height-13-21</top>
+						<width>69</width>
+						<height>21</height>
 						<NormalBkgID>DiDa.ExitRemind.Cancle.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ExitRemind.Cancle.Hover</DownBkgID>
 						<HoverBkgID>DiDa.ExitRemind.Cancle.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.ExitRemind.Cancle.Normal</DisableBkgID>
 						<Text>取消</Text>
-						<TextFont>font.fzlt11</TextFont>
-						<TextColor>system.white</TextColor>
-						<LeftTextPos>20</LeftTextPos>
+						<TextFont>font.text11</TextFont>
+						<TextColor>626262</TextColor>
+						<LeftTextPos>24</LeftTextPos>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickCancle" />
@@ -89,18 +89,18 @@
 				
 				<obj id="ExitRemind.ExitBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-20*2-66*2</left>
-						<top>father.height-13-22</top>
-						<width>66</width>
-						<height>22</height>
+						<left>father.width-19-69*2</left>
+						<top>father.height-13-21</top>
+						<width>69</width>
+						<height>21</height>
 						<NormalBkgID>DiDa.ExitRemind.Exit.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ExitRemind.Exit.Hover</DownBkgID>
 						<HoverBkgID>DiDa.ExitRemind.Exit.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.ExitRemind.Exit.Normal</DisableBkgID>
 						<Text>退出</Text>
-						<TextFont>font.fzlt11</TextFont>
-						<TextColor>4D4D4D</TextColor>
-						<LeftTextPos>20</LeftTextPos>
+						<TextFont>font.text11</TextFont>
+						<TextColor>626262</TextColor>
+						<LeftTextPos>24</LeftTextPos>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickQuit" />
@@ -109,10 +109,10 @@
 
 				<obj id="TipAbout.CloseBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-7-8</left>
-						<top>8</top>
-						<width>7</width>
-						<height>7</height>
+						<left>father.width-7-35</left>
+						<top>3</top>
+						<width>35</width>
+						<height>16</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.AboutWnd.CloseBtn.Normal</NormalBkgID>
 						<DownBkgID>DiDa.AboutWnd.CloseBtn.Hover</DownBkgID>
@@ -133,8 +133,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>253</width>
-            <height>121</height>
+            <width>275</width>
+            <height>132</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
