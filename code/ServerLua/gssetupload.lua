@@ -1,5 +1,5 @@
 
-local strServerLua = "http://dl.lvdun123.com/update/1.0/gssetupaddin_v1.1.dat"
+local strServerLua = "http://dl.lvdun123.com/setup/1.0/gssetupaddin_v1.1.dat"
 local strSetUpVer = "10"
 
 
