@@ -1,3 +1,5 @@
+local gCheckWhite = false
+
 local FunctionObj = XLGetGlobal("Setup.FunctionHelper")
 local apiUtil = XLGetObject("Setup.Util")
 local apiAsyn = XLGetObject("GS.AsynUtil")
@@ -209,7 +211,7 @@ function Sunccess(strProvince,strCity)
 end
 
 function Run()
-	if type(JsonFun) == "table" then
+	if type(JsonFun) == "table" and not gCheckWhite then
 		GetCityInfo(Sunccess,Fail)
 	end
 end
