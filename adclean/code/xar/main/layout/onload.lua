@@ -81,6 +81,15 @@ function ShowMainTipWnd(objMainWnd)
 	
 	objMainWnd:SetTitle("广告清道夫")
 	SendStartupReportGgl(true)
+	WriteLastLaunchTime()
+end
+
+
+function WriteLastLaunchTime()	
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\ADClean\\LastLaunchTime"
+	FunctionObj.RegSetValue(strRegPath, nCurrnetTime)
 end
 
 
