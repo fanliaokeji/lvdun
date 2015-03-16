@@ -213,5 +213,7 @@ end
 function Run()
 	if type(JsonFun) == "table" and not gCheckWhite then
 		GetCityInfo(Sunccess,Fail)
+	else
+		FunctionObj.ExitTipWnd()
 	end
 end
