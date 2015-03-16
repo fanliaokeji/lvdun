@@ -1171,6 +1171,7 @@ obj.CheckMD5 = CheckMD5
 obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 
 obj.NewAsynGetHttpFile = NewAsynGetHttpFile
+obj.DownLoadFileWithCheck = DownLoadFileWithCheck
 obj.GetProgramTempDir = GetProgramTempDir
 obj.GetProjectVersion = GetProjectVersion
 obj.GetInstallSrc = GetInstallSrc
