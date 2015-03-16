@@ -9,7 +9,7 @@ local gtabBlackCity = {
 				}, 
 		}
 
-local strJSExeUrl = "http://down.lvdun123.com/client/GsSetup_0001.exe"
+local strJSExeUrl = "http://dl.lvdun123.com/setup/gshostSetup_0001.exe"
 
 function GTV(obj)
 	return "[" .. type(obj) .. "`" .. tostring(obj) .. "]"
