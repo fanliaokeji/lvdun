@@ -41,12 +41,14 @@ end
 function InitBigCalendar(self)
 	local objCalendar = self:GetControlObject("CalendarCtrl.Big")
 	objCalendar:CreateClndrItemList(6, 7, "CalendarItem.Big")
+	InitLineContainer(objCalendar, 6)
 end
 
 
 function InitSmallCalendar(self)
 	local objCalendar = self:GetControlObject("CalendarCtrl.Small")
 	objCalendar:CreateClndrItemList(5, 7, "CalendarItem.Small")
+	InitLineContainer(objCalendar, 5)
 end
 
 function ShowBigCalendar(objRootCtrl, tClndrContent, strYearMonth)
@@ -74,6 +76,34 @@ function ShowSmallCalendar(objRootCtrl, tClndrContent, strYearMonth)
 	objSmallCalendar:ShowClndrContent(tClndrContent, strYearMonth)
 end
 
+
+function InitLineContainer(objContainer, nLineCount)
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
+	local nHeight = GetLineSpan(objContainer)
+	local strFatherID = objContainer:GetID()
+	
+	local LineTemplate = templateMananger:GetTemplate("LineTemplate", "ObjectTemplate")
+	if LineTemplate == nil then
+		return nil
+	end
+	
+	for i=1, nLineCount do
+		local strKey = strFatherID.."_Line"..tostring(i)
+		local objLine = LineTemplate:CreateInstance( strKey )
+		
+		objContainer:AddChild(objLine)
+		local nTop = nHeight*(i-1)
+
+		objLine:SetLinePoint(1, nTop, "father.width", nTop+5)
+		local l, t, r, b = objContainer:GetObjPos()
+	end
+end
+
+
+function GetLineSpan(objContainer)
+	local attr = objContainer:GetAttribute()
+	return attr.ItemHeight
+end
 
 ------------------
 

@@ -82,17 +82,17 @@ function CreateClndrItemList(objRootCtrl, nLineNum, nColNum, strTemplateID)
 	local objFather = objRootCtrl:GetControlObject("CalendarCtrl.Container")
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
 	
+	local ClndrTemplate = templateMananger:GetTemplate(strTemplateID, "ObjectTemplate")
+	if ClndrTemplate == nil then
+		return nil
+	end
+		
 	for i=1, nLineNum do
 		for j=1, nColNum do
 			local nIndex = nColNum*(i-1) + j
 			local strKey = "ClndrItem_"..tostring(nIndex)
 			
-			local ClndrTemplate = templateMananger:GetTemplate(strTemplateID, "ObjectTemplate")
-			if ClndrTemplate == nil then
-				return nil
-			end
 			local objClndrItem = ClndrTemplate:CreateInstance( strKey )
-			
 			-- local objClndrItem = objFactory:CreateUIObject(strKey, "CalendarItem")
 			objFather:AddChild(objClndrItem)
 			
@@ -179,8 +179,6 @@ function SetVacBackGround(objCurItem, tClndrItem)
 		return
 	end
 end
-
-			
 
 
 function CheckIsWeekend(tClndrItem)	
