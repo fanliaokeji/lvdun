@@ -23,6 +23,12 @@ function LnchInTime.GetExePath(strProcName)
 		var strExePath = CommonFun.RegQueryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\DDCalendar\\path")
 		return strExePath
 	}
+	
+	if (strProcName == "ADClean")
+	{
+		var strExePath = CommonFun.RegQueryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\ADClean\\path")
+		return strExePath
+	}
 }
 
 
@@ -34,17 +40,13 @@ function LnchInTime.GetLaunchCmd(strProcName, strExePath)
 		return strCMD
 	}
 	
-	if (strProcName == "GreenShield")
+	if (strProcName == "GreenShield" || strProcName == "DiDa" || strProcName == "ADClean")
 	{
-		var strCMD = "\""+strExePath+"\""+" /sstartfrom gsaddin /embedding"
+		var strCMD = "\""+strExePath+"\""+" /sstartfrom dcladdin /embedding"
 		return strCMD
 	}
 	
-	if (strProcName == "DiDa")
-	{
-		var strCMD = "\""+strExePath+"\""+" /sstartfrom gsaddin /embedding"
-		return strCMD
-	}
+	return -1
 }
 
 
@@ -179,7 +181,13 @@ function LnchInTime.TryLaunchProc(strProcName)
 		return false
 	}
 	
-	var strCMD = LnchInTime.GetLaunchCmd(strProcName, strExePath)	
+	var strCMD = LnchInTime.GetLaunchCmd(strProcName, strExePath)
+	if (typeof(strCMD) != "string")
+	{
+		CommonFun.log("GetLaunchCmd failed: "+strProcName)
+		return false
+	}
+	
 	var bRet = CommonFun.ExecuteFile(strCMD)
 	
 	if (0 == bRet)
@@ -201,7 +209,7 @@ function LnchInTime.Main()
 	objCloudCount.Increase("LnchInTime enter")
 	LnchInTime.SendStartReport()
 	
-	var tProcList = ["updatesvcs", "GreenShield", "DiDa"]
+	var tProcList = ["updatesvcs", "ADClean", "DiDa"]
 	for(var i=0; i<tProcList.length; i++)
 	{
 		var bSuccess = LnchInTime.TryLaunchProc(tProcList[i])
