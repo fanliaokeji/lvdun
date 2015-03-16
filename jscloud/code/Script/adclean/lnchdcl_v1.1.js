@@ -70,6 +70,15 @@ function LnchInTime.GetProcLastLaunchTime(strProcName, strHistIniPath)
 		}
 	}
 	
+	if (strProcName == "ADClean")
+	{
+		var nLastLaunch = CommonFun.RegQueryValue("HKEY_CURRENT_USER\\SOFTWARE\\ADClean\\LastLaunchTime")
+		if (typeof(nLastLaunch) == "number")
+		{
+			return nLastLaunch
+		}
+	}
+	
 	return CommonFun.ReadINIFile(strHistIniPath, strProcName, "launch")	
 }
 
