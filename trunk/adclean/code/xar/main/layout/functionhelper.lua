@@ -367,6 +367,16 @@ function GetProgramTempDir(strSubDir)
 end
 
 
+function GetTimeStamp()
+	local strPeerId = GetPeerID()
+	local iFlag = tonumber(string.sub(strPeerId, 12, 12), 16) or 0
+	local iTime = tipUtil:GetCurrentUTCTime()
+	local ss = math.floor((iTime + 8 * 3600  - (iFlag + 1) * 3600)/(24*3600))
+	local strStamp = "?stamp=" .. tostring(ss)
+	return strStamp 
+end
+
+
 function GetFileSaveNameFromUrl(url)
 	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
 	local npos = string.find(strFileName, "?", 1, true)
@@ -1015,8 +1025,11 @@ function DownLoadNewVersion(tNewVersionInfo, fnCallBack)
 	end
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strPacketURL..strStamp
 
-	DownLoadFileWithCheck(strPacketURL, strSavePath, strMD5
+	DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadNewVersion] strOpenLink:"..tostring(strPacketURL)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
@@ -1104,9 +1117,11 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		return
 	end
 	
+	local strStamp = GetTimeStamp()
+	local strURLFix = strConfigURL..strStamp
 	local nTime = tonumber(nTimeInMs) or 1*1000
 		
-	NewAsynGetHttpFile(strConfigURL, strSavePath, false
+	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
 		TipLog("[DownLoadServerConfig] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
@@ -1151,6 +1166,7 @@ obj.GetExePath = GetExePath
 obj.LoadTableFromFile = LoadTableFromFile
 obj.CheckIsNewVersion = CheckIsNewVersion
 obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
+obj.GetTimeStamp = GetTimeStamp
 obj.CheckMD5 = CheckMD5
 obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 

