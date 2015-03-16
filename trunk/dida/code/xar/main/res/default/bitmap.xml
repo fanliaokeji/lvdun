@@ -29,7 +29,9 @@
 		<texture id="DiDa.BackToToday.Hover" image="bitmap\DiDa.BackToToday.Hover.png" />
 		
 		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
-		<texture id="DiDa.Canlender.Select" image="bitmap\DiDa.Canlender.Select.png" />
+		<texture id="DiDa.Canlender.Current.Work" image="bitmap\DiDa.Canlender.Current.Work.png" />
+		<texture id="DiDa.Canlender.Select.Big" image="bitmap\DiDa.Canlender.Select.Big.png" />
+		<texture id="DiDa.Canlender.Select.Small" image="bitmap\DiDa.Canlender.Select.Small.png" />
 		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
 		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
 		

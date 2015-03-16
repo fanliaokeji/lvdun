@@ -23,7 +23,7 @@ end
 
 
 function SetAllTextNormal(self)
-	 SetAllTextColorRes(self, "262624", "808080")
+	 SetAllTextColorRes(self, "262624", "999999")
 end
 
 
@@ -32,29 +32,37 @@ function SetAllTextGray(self)
 end
 
 function SetAllTextWeekend(self)
-	 SetAllTextColorRes(self, "4B99F2", "4B99F2")
+	 SetAllTextColorRes(self, "E6151C", "E6151C")
 end
 
 
 function SetTextSpecialday(self)
-	SetAllTextColorRes(self, "", "4B99F2")
+	SetAllTextColorRes(self, "", "E6151C")
 end
 
 
 function SetCHNTextTermDay(self)
-	SetAllTextColorRes(self, "", "4B99F2")
+	SetAllTextColorRes(self, "", "E6151C")
 end
-
 
 
 function SetCurrentDayBkg(self, bShowBkg)
+	local bIsWorkDay = CheckIsWorkDay(self)
 	local objCurDayImg = self:GetControlObject("Calendar.Current")
+	
+	if bIsWorkDay then
+		objCurDayImg:SetTextureID("DiDa.Canlender.Current.Work")
+	else
+		objCurDayImg:SetTextureID("DiDa.Canlender.Current")
+	end
+	
 	objCurDayImg:SetVisible(bShowBkg)
 
-	if bShowBkg then
+	if bShowBkg and not bIsWorkDay then
 		SetAllTextColorRes(self, "system.white", "system.white")
 	end
 end
+
 
 function SetContent(self, tClndrContent)
 	local attr = self:GetAttribute()
@@ -92,7 +100,24 @@ function SetWorkBkg(self, bShowBkg)
 end
 
 
+function SetCHNDayPos(objRootCtrl)
+	local objDayText = objRootCtrl:GetControlObject("Calendar.Day")
+	local objCHNDayText = objRootCtrl:GetControlObject("Calendar.CHNDay")
+	
+	local DayL, DayT, DayR, DayB = objDayText:GetObjPos()
+	local CHNDayL, CHNDayT, CHNDayR, CHNDayB = objCHNDayText:GetObjPos()
+	local CHNDayH = 13
+	local CHNDayNewT = DayB/2+10
+	
+	objCHNDayText:SetObjPos(CHNDayL, CHNDayNewT, CHNDayR, CHNDayNewT+CHNDayH)
+end
+
+
 ---事件
+function OnInitControl(self)
+	InitSelectImage(self)
+end
+
 function OnMouseEnter(self)
 	ShowSelectImage(self, true)
 end
@@ -121,6 +146,16 @@ end
 
 
 ----
+function InitSelectImage(objRootCtrl)
+	local attr = objRootCtrl:GetAttribute()
+	local SelectBkgResID = attr.SelectBkgResID
+	
+	local objSelectImg = objRootCtrl:GetControlObject("Calendar.Select")
+	if IsRealString(SelectBkgResID) then
+		objSelectImg:SetResID(SelectBkgResID)
+	end
+end
+
 function ShowSelectImage(objRootCtrl, bSelect)
 	local objSelectImg = objRootCtrl:GetControlObject("Calendar.Select")
 	objSelectImg:SetVisible(bSelect)
@@ -140,7 +175,16 @@ function SetAllTextColorRes(self, strDayClr, strCHNDayClr)
 end
 
 
-
+function CheckIsWorkDay(objRootCtrl)
+	local attr = objRootCtrl:GetAttribute()
+	local tContent = attr.tClndrContent
+	if type(tContent) ~= "table" then
+		return false
+	end
+	
+	local strDate = tContent.solarcalendar
+	return tFunHelper.CheckIsWorkDay(strDate)
+end
 ------------------
 
 function IsRealString(str)

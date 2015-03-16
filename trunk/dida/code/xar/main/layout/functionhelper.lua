@@ -644,6 +644,17 @@ function UpdateBackTodayStyle(nFocusDayIdxInMonth)
 end
 
 
+function CheckIsInMonth(tClndrItem, strQryYearMonth)		
+	local strSolarcalendar = tClndrItem.solarcalendar
+	local strYearMonth = string.sub(strSolarcalendar, 1, 6)
+	if strYearMonth == strQryYearMonth then
+		return true
+	end
+	
+	return false	
+end
+
+
 function CheckIsVacation(strDate)
 	return CheckIsDateInVacList(strDate, "tVacDay")
 end
@@ -706,8 +717,8 @@ end
 
 function UpdateCalendarContent()
 	local strYearMonth = GetYearMonthFromUI()
-	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarCtrl")
-	objCalendarCtrl:ShowClndrContent(strYearMonth)
+	local objCalendarDisp = GetMainCtrlChildObj("DiDa.CalendarDispatch")
+	objCalendarDisp:ShowCalendarInfo(strYearMonth)
 end
 
 
@@ -1226,6 +1237,7 @@ obj.GetYearScale = GetYearScale
 obj.GetClndrContent = GetClndrContent
 obj.GetFocusDayIdxInMonth = GetFocusDayIdxInMonth
 obj.CheckIsVacation = CheckIsVacation
+obj.CheckIsInMonth = CheckIsInMonth
 obj.CheckIsWorkDay = CheckIsWorkDay
 obj.UpdateCalendarContent = UpdateCalendarContent
 obj.UpdateUIPanel = UpdateUIPanel

@@ -64,17 +64,17 @@
 								
 								<obj id="DiDa.WeekNumCtrl" class="WeekNumCtrl">
 									<attr>
-										<left>158</left>
-										<top>93</top>
+										<left>187</left>
+										<top>96</top>
 										<width>336</width> 
 										<height>27</height>
 									</attr>			
 								</obj>
 								
-								<obj id="DiDa.CalendarCtrl" class="CalendarCtrl">
+								<obj id="DiDa.CalendarDispatch" class="CalendarDispatch">
 									<attr>
-										<left>152+10</left>
-										<top>112+8</top>
+										<left>152+30</left>
+										<top>123</top>
 										<width>332</width> 
 										<height>246</height>
 									</attr>			

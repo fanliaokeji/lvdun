@@ -4,51 +4,47 @@ local tipUtil = tFunHelper.tipUtil
 --方法  
 
 --strYearMonth：年月查询
-function ShowClndrContent(objRootCtrl, strYearMonth)
-	function ProcessCalendar(tClndrContent)
-		if type(tClndrContent) ~= "table" then
-			return
-		end
-	
-		for nIndex, tContent in ipairs(tClndrContent) do
-			local strKey = "ClndrItem_"..tostring(nIndex)
-			local objCurItem = objRootCtrl:GetControlObject(strKey)
-			if objCurItem then
-				SetItemText(objCurItem, tContent)
-				SetTextColor(objCurItem, tContent, strYearMonth)
-				SetVacBackGround(objCurItem, tContent)   --放假或上班的背景
-				
-				objCurItem:SetContent(tContent)
-			end		
-		end
-		
-		ClearFocusDay(objRootCtrl)
-		ClearSelectBkg(objRootCtrl)
-		
-		local nFocusDayIdxInMonth = tFunHelper.GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
-		tFunHelper.UpdateBackTodayStyle(nFocusDayIdxInMonth)
-		if nFocusDayIdxInMonth == 0 then
-			return
-		end
-		
-		--设置当前日为焦点
-		SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
-		
-		local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
-		if objLeftBarCtrl then
-			objLeftBarCtrl:SetClndrInfo(tClndrContent[nFocusDayIdxInMonth])
-		end
+function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
+	if type(tClndrContent) ~= "table" then
+		return
 	end
 	
-	tFunHelper.GetClndrContent(strYearMonth, ProcessCalendar)
+	for nIndex, tContent in ipairs(tClndrContent) do
+		local strKey = "ClndrItem_"..tostring(nIndex)
+		local objCurItem = objRootCtrl:GetControlObject(strKey)
+		if objCurItem then
+			SetItemText(objCurItem, tContent)
+			SetTextColor(objCurItem, tContent, strYearMonth)
+			SetVacBackGround(objCurItem, tContent)   --放假或上班的背景
+			
+			objCurItem:SetContent(tContent)
+		end		
+	end
+	
+	ClearFocusDay(objRootCtrl)
+	ClearSelectBkg(objRootCtrl)
+	
+	local nFocusDayIdxInMonth = tFunHelper.GetFocusDayIdxInMonth(tClndrContent, strYearMonth)
+	tFunHelper.UpdateBackTodayStyle(nFocusDayIdxInMonth)
+	if nFocusDayIdxInMonth == 0 then
+		return
+	end
+	
+	--设置当前日为焦点
+	SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
+	
+	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
+	if objLeftBarCtrl then
+		objLeftBarCtrl:SetClndrInfo(tClndrContent[nFocusDayIdxInMonth])
+	end
 end
 
 
 
 ---事件
 function OnInitCalendarCtrl(self)
-	CreateClndrItem(self)
-	InitClndrContent(self)
+	-- CreateClndrItemList(self)
+	-- InitClndrContent(self)
 end
 
 
@@ -81,21 +77,28 @@ function InitClndrContent(objRootCtrl)
 	objRootCtrl:ShowClndrContent(strCurYearMonth)
 end
 
-function CreateClndrItem(objRootCtrl)
-	local nLineNum = 6
-	local nColNum = 7
+function CreateClndrItemList(objRootCtrl, nLineNum, nColNum, strTemplateID)
 	local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 	local objFather = objRootCtrl:GetControlObject("CalendarCtrl.Container")
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
 	
 	for i=1, nLineNum do
 		for j=1, nColNum do
 			local nIndex = nColNum*(i-1) + j
 			local strKey = "ClndrItem_"..tostring(nIndex)
-			local objClndrItem = objFactory:CreateUIObject(strKey, "CalendarItem")
+			
+			local ClndrTemplate = templateMananger:GetTemplate(strTemplateID, "ObjectTemplate")
+			if ClndrTemplate == nil then
+				return nil
+			end
+			local objClndrItem = ClndrTemplate:CreateInstance( strKey )
+			
+			-- local objClndrItem = objFactory:CreateUIObject(strKey, "CalendarItem")
 			objFather:AddChild(objClndrItem)
 			
 			SetClndrItemPos(objRootCtrl, objClndrItem, i, j)
 			objClndrItem:SetItemIndex(nIndex)
+			objClndrItem:SetCHNDayPos()
 			objClndrItem:AttachListener("OnClick", false, OnClickClndrItem)
 		end	
 	end
@@ -110,10 +113,7 @@ function SetClndrItemPos(objRootCtrl, objClndrItem, nLine, nCol)
 	local nSpanH = attr.ItemSpanH
 	
 	local nNewLeft = (nCol-1)*(nWidth+nSpanW)
-	local nNewTop = (nLine-1)*(nHeight+nSpanH)+nLine-1
-	if nLine > 2 then
-		nNewTop = (nLine-1)*(nHeight+nSpanH)+nLine-2 --微调
-	end
+	local nNewTop = (nLine-1)*(nHeight+nSpanH)
 	
 	objClndrItem:SetObjPos(nNewLeft, nNewTop, nNewLeft+nWidth, nNewTop+nHeight)
 end
@@ -137,7 +137,7 @@ end
 
 
 function SetTextColor(objCurItem, tClndrItem, strYearMonth)
-	local bIsInCurMonth = CheckIsInCurMonth(tClndrItem, strYearMonth)
+	local bIsInCurMonth = tFunHelper.CheckIsInMonth(tClndrItem, strYearMonth)
 	if not bIsInCurMonth then  --不在当月， 灰化
 		objCurItem:SetAllTextGray()
 		return
@@ -181,15 +181,7 @@ function SetVacBackGround(objCurItem, tClndrItem)
 end
 
 			
-function CheckIsInCurMonth(tClndrItem, strQryYearMonth)		
-	local strSolarcalendar = tClndrItem.solarcalendar
-	local strYearMonth = string.sub(strSolarcalendar, 1, 6)
-	if strYearMonth == strQryYearMonth then
-		return true
-	end
-	
-	return false	
-end
+
 
 function CheckIsWeekend(tClndrItem)	
 	local strWeekday = tClndrItem.weekday

@@ -153,7 +153,9 @@ function ChangeCalendarState(nFestIndex)
 		strMonth = FetchValueByPath(tVacationList, {strYear, "tVactionMap", strText})
 	end
 	
-	if IsRealString(strMonth) then
+	local nMoutn = tonumber(strMonth)
+	if nMoutn then
+		strMonth = string.format("%02d", nMoutn)
 		objDateSelect:SetMonthText(strMonth.."月")
 		tFunHelper.UpdateCalendarContent()
 	end		

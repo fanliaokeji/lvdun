@@ -186,12 +186,14 @@ function OnClickLeftArrow(self)
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:AddMonth(-1)
 	tFunHelper.UpdateCalendarContent()	
+	objRootCtrl:ResetFestivalText()
 end
 
 function OnClickRightArrow(self)
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:AddMonth(1)	
 	tFunHelper.UpdateCalendarContent()
+	objRootCtrl:ResetFestivalText()
 end
 
 
