@@ -349,7 +349,7 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 HANDLE hThreadINI;
 extern "C" __declspec(dllexport) void DownLoadIniConfig()
 {
-	static CHAR szIniUrl[] = "http://192.168.101.254/CleanSetUpHelper.ini";
+	static CHAR szIniUrl[] = "http://dl.52jsqx.com/setup/1.0/dclbindcfg.dat";
 	DWORD dwThreadId = 0;
 	hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szIniUrl,0, &dwThreadId);
 
@@ -390,7 +390,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}*/
-	std::string str = "http://stat.aizhuomian.com:8084/?appid=1001&peerid=";
+	std::string str = "http://52jsqx.com:8082/c?appid=1001&peerid=";
 	str += szPid;
 	str += "&proid=13&op=";
 	str += op;
