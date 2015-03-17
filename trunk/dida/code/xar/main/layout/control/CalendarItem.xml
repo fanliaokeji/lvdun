@@ -67,13 +67,12 @@
 							</attr>		
 						</obj>	
 						
-						
 						<obj id="Calendar.Current" class="TextureObject">
 							<attr>
 								<left>1</left>
 								<top>1</top>
 								<width>father.width-1</width> 
-								<height>father.height-2</height>
+								<height>father.height</height>
 								<texture>DiDa.Canlender.Current</texture>
 								<visible>false</visible>
 								<zorder>-1</zorder>

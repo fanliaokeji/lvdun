@@ -104,6 +104,7 @@ function ReportAndExit()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
+	SendDiDaReport(10)
 	
 	tStatInfo.strEC = "exit"	
 	tStatInfo.strEA = GetInstallSrc() or ""
@@ -147,6 +148,17 @@ function CheckIsNewVersion(strNewVer, strCurVer)
 
 	local a,b,c,d = string.match(strNewVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
 	local A,B,C,D = string.match(strCurVer, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	
+	a = tonumber(a)
+	b = tonumber(b)
+	c = tonumber(c)
+	d = tonumber(d)
+	
+	A = tonumber(A)
+	B = tonumber(B)
+	C = tonumber(C)
+	D = tonumber(D)
+	
 	return a>A or (a==A and (b>B or (b==B and (c>C or (c==C and d>D)))))
 end
 
@@ -248,6 +260,26 @@ function TipConvStatistic(tStat)
 			ExitProcess()
 		end, 15000 * iStatCount)
 	end
+end
+
+
+function SendDiDaReport(nOPeration)
+	local strCID = GetPeerID()
+	local strChannelID = GetInstallSrc()
+	local strVer = GetMinorVer()
+	local strRandom = tipUtil:GetCurrentUTCTime()
+	
+	local strPort = "8082"
+	if nOPeration == 10 then   --心跳上报的端口为8083
+		strPort = "8083"
+	end
+	
+	local strUrl = "http://stat.didarili.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+					.."&proid=12&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
+	
+	TipLog("SendDiDaReport: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
 end
 
 
@@ -1224,6 +1256,7 @@ obj.GetMinorVer = GetMinorVer
 obj.GetDllPath = GetDllPath
 obj.KillClockWindow = KillClockWindow
 obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
+obj.SendDiDaReport = SendDiDaReport
 
 
 --UI

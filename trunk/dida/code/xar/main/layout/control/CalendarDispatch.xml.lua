@@ -94,8 +94,7 @@ function InitLineContainer(objContainer, nLineCount)
 		objContainer:AddChild(objLine)
 		local nTop = nHeight*(i-1)
 
-		objLine:SetLinePoint(1, nTop, "father.width", nTop+5)
-		local l, t, r, b = objContainer:GetObjPos()
+		objLine:SetObjPos(0, nTop, "father.width", nTop+1)
 	end
 end
 
