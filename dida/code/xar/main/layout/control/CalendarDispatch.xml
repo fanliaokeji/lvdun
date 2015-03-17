@@ -10,18 +10,20 @@
 			<SelectBkgResID>DiDa.Canlender.Select.Small</SelectBkgResID>
 		</attr>
 	</objtemplate>
+
 	
-	<objtemplate id="LineTemplate" class="LineObject">
+	<objtemplate id="LineTemplate" class="FillObject">
 		<attr>
 			<left>0</left>
-			<top>0</top>
-			<width>father.width</width> 
-			<height>father.height</height>
-			<color>system.red</color>
-			<zorder>9999999</zorder>
+            <top>0</top>
+            <width>father.width</width>
+            <height>1</height>
+			<srccolor>color.calendar.line</srccolor>
+			<destcolor>color.calendar.line</destcolor>
+			<filltype>Monochrome</filltype>
+			<blendtype>Source</blendtype>
 		</attr>
 	</objtemplate>
-	
 	
 	<control class="CalendarDispatch">
 		<attr_def>

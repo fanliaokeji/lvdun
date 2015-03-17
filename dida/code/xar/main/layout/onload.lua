@@ -60,29 +60,6 @@ function SendStartupReport(bShowWnd)
 end
 
 
-function SendDiDaStartReport()
-	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
-	local strCID = FunctionObj.GetPeerID()
-	local strMAC = ""
-	
-	if IsRealString(strCID) then
-		local nIndex = 1
-		for i=1, 6 do 
-			local strTemp = string.sub(strCID, nIndex, nIndex+1)
-			strMAC = strMAC..strTemp.."-"
-			nIndex = nIndex+2
-		end
-	end
-	local strMACFix = string.gsub(strMAC, "-$", "")
-	local strChannelID = FunctionObj.GetInstallSrc()
-	
-	local strUrl = "http://stat.didarili.com:8083/?mac=" .. tostring(strMACFix) 
-					.."&op=start&cid=" .. (strChannelID)
-	FunctionObj.TipLog("[SendDiDaStartReport]: " .. tostring(strUrl))
-	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
-end
-
-
 function ShowMainTipWnd(objMainWnd)
 	local bHideMainPage = false
 	local cmdString = tipUtil:GetCommandLine()
@@ -105,6 +82,15 @@ function ShowMainTipWnd(objMainWnd)
 	
 	SendStartupReport(true)
 	InjectDLL()
+	WriteLastLaunchTime()
+end
+
+
+function WriteLastLaunchTime()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\DDCalendar\\LastLaunchTime"
+	FunctionObj.RegSetValue(strRegPath, nCurrnetTime)
 end
 
 
@@ -260,6 +246,14 @@ function StartRunCountTimer()
 		FunctionObj.SendRunTimeReport(nTimeSpanInSec, false)
 		XLSetGlobal("DiDa.LastReportRunTime", gnLastReportRunTmUTC) 
 	end, nTimeSpanInMs)
+	
+	
+	---DIDA…œ±®
+	local nTimeSpanInMs = 2*60*1000
+	timerManager:SetTimer(function(item, id)
+		FunctionObj.SendDiDaReport(10)
+	end, nTimeSpanInMs)
+	
 end
 
 
@@ -422,7 +416,7 @@ function PreTipMain()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
 	FunctionObj.ReadAllConfigInfo()
 	
-	SendDiDaStartReport()
+	FunctionObj.SendDiDaReport(2)
 	SendStartupReport(false)
 	TipMain()
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)

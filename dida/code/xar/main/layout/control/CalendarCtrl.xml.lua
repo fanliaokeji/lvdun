@@ -70,7 +70,6 @@ function OnClickClndrItem(self)
 end
 
 
-
 ------
 function InitClndrContent(objRootCtrl)
 	local strCurYearMonth = os.date("%Y%m")
