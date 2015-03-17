@@ -925,7 +925,7 @@ function RegisterFunctionObject(self)
 			strEV = 1
 		end
 
-		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-55122790-1&cid="..tostring(strCID)
+		local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-58613034-1&cid="..tostring(strCID)
 						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
 						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 		Log("TipConvStatistic: " .. tostring(strUrl))
