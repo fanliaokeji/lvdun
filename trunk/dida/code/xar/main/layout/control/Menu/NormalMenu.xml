@@ -143,7 +143,7 @@
 			<height>17</height>
 			<width>father.width</width>
 			<TextPos>0</TextPos>
-			<Font>font.fzlt11</Font>
+			<Font>font.text11</Font>
 			<FontColorNormal>808080</FontColorNormal>
 			<FontColorHover>system.white</FontColorHover>
 			<RightTextColor>system.black</RightTextColor>

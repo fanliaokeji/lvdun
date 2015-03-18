@@ -70,7 +70,7 @@
 										<height>25</height>
 										<text>嘀嗒日历在线升级</text>
 										<textcolor>system.white</textcolor>
-										<font>font.yahei22.bold</font>
+										<font>font.text22.bold</font>
 										<valign>center</valign>
 										<halign>left</halign>
 									</attr>
@@ -93,7 +93,7 @@
 												<height>25</height>
 												<text>正在为您检测更新</text>
 												<textcolor>system.white</textcolor>
-												<font>font.yahei16</font>
+												<font>font.text16</font>
 												<valign>center</valign>
 												<halign>left</halign>
 											</attr>
@@ -132,7 +132,7 @@
 												<height>20</height>
 												<text>发现新版本嘀嗒日历</text>
 												<textcolor>system.white</textcolor>
-												<font>font.yahei15</font>
+												<font>font.text15</font>
 												<valign>center</valign>
 												<halign>left</halign>
 											</attr>
@@ -154,7 +154,7 @@
 														<height>18</height>
 														<text>主要特性：</text>
 														<textcolor>system.white</textcolor>
-														<font>font.yahei12</font>
+														<font>font.text12</font>
 														<valign>center</valign>
 														<halign>left</halign>
 													</attr>
@@ -167,7 +167,7 @@
 														<height>18</height>
 														<text></text>
 														<textcolor>system.white</textcolor>
-														<font>font.yahei12</font>
+														<font>font.text12</font>
 														<valign>top</valign>
 														<halign>left</halign>
 													</attr>
@@ -180,7 +180,7 @@
 														<height>18</height>
 														<text></text>
 														<textcolor>system.white</textcolor>
-														<font>font.yahei12</font>
+														<font>font.text12</font>
 														<valign>top</valign>
 														<halign>left</halign>
 													</attr>
@@ -193,7 +193,7 @@
 														<height>18</height>
 														<text></text>
 														<textcolor>system.white</textcolor>
-														<font>font.yahei12</font>
+														<font>font.text12</font>
 														<valign>top</valign>
 														<halign>left</halign>
 													</attr>
@@ -213,7 +213,7 @@
 												<HoverBkgID>DiDa.UpdateWnd.UpdateBtn.Hover</HoverBkgID>
 												<DisableBkgID>DiDa.UpdateWnd.UpdateBtn.Normal</DisableBkgID>
 												<Text>立即更新</Text>
-												<TextFont>font.yahei11</TextFont>
+												<TextFont>font.text11</TextFont>
 												<TextColor>4B99F2</TextColor>
 												<LeftTextPos>15</LeftTextPos>
 											</attr>
@@ -239,7 +239,7 @@
 														<height>25</height>
 														<text>下载中，请稍候</text>
 														<textcolor>system.white</textcolor>
-														<font>font.yahei16</font>
+														<font>font.text16</font>
 														<valign>center</valign>
 														<halign>left</halign>
 													</attr>
