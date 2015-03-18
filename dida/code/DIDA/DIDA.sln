@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiDaCalendar", "DiDaCalenda
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DIDASetUpHelper", "DIDASetUpHelper\DIDASetUpHelper.vcproj", "{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DIDALuaAgent", "DIDALuaAgent\DIDALuaAgent.vcproj", "{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,12 @@ Global
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.ActiveCfg = Release|Win32
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.Build.0 = Release|Win32
 		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|x64.ActiveCfg = Release|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Debug|Win32.Build.0 = Debug|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Debug|x64.ActiveCfg = Debug|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|Win32.ActiveCfg = Release|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|Win32.Build.0 = Release|Win32
+		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
