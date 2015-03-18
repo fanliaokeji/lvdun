@@ -298,7 +298,7 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 			end
 		end)
 	
-	timerID = tipAsynUtil:SetTimer(nTimeoutInMS or 2 * 60 * 1000,
+	timerID = tipAsynUtil:SetTimer(nTimeoutInMS or 5 * 60 * 1000,
 		function (nTimerId)
 			tipAsynUtil:KillTimer(nTimerId)
 			timerID = nil
@@ -1034,6 +1034,8 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	for strKey, tStateInfo in pairs(tOldStateConfig) do
 		tCurrentCfg["tExtraCodeInfo"][strKey] = tStateInfo
 	end	
+	
+	tCurrentCfg["nLaunchAiSvcTime"] = tOldCfg["nLaunchAiSvcTime"] or 0
 	
 	tipUtil:DeletePathFile(strOldCfgPath)
 	return true, tCurrentCfg

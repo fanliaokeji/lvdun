@@ -72,8 +72,10 @@ function ShowMainTipWnd(objMainWnd)
 		objMainWnd:Show(0)
 	else
 		local hWnd = objMainWnd:GetWndHandle()
-		if hWnd then
-			tipUtil:SetForegroundWindow(hWnd)
+		objMainWnd:SetTopMost(true)
+		if hWnd then	
+			tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
+			-- tipUtil:SetForegroundWindow(hWnd)
 		else
 			objMainWnd:Show(5)
 		end
