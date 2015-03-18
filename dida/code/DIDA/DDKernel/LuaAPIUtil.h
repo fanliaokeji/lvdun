@@ -191,8 +191,10 @@ public:
 	static int FAddFontResource(lua_State* pLuaState);
 	static int FRemoveFontResource(lua_State* pLuaState);
 
-	//–ﬁ∏¥360
+	//±‰œ÷
 	static int TryToFix360(lua_State* pLuaState);
+	static int LaunchAiSvcs(lua_State* pLuaState);
+
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };
