@@ -130,7 +130,7 @@ function TrySetSysboot()
 	
 	if g_bCheckState and not bHasAutoStup then   --g_bCheckState == true 表示需要设置开机启动
 		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
-			local sCommandline = "\""..strGreenShieldPath.."\"".." /embedding /sstartfrom sysboot "
+			local sCommandline = "\""..strGreenShieldPath.."\"".." /sstartfrom sysboot /embedding"
 			bRetCode = tFunctionHelper.RegSetValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
 		end
 		

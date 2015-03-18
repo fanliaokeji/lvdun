@@ -1481,7 +1481,7 @@ function GetCommandStrValue(strKey)
 	if string.find(cmdString, strKey .. " ") then
 		local cmdList = tipUtil:CommandLineToList(cmdString)
 		if cmdList ~= nil then	
-			for i = 1, #cmdList, 2 do
+			for i = 1, #cmdList, 1 do
 				local strTmp = tostring(cmdList[i])
 				if strTmp == strKey 
 					and not string.find(tostring(cmdList[i + 1]), "^/") then		
