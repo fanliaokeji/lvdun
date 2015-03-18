@@ -162,6 +162,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"RemoveFontResource",FRemoveFontResource},
 
 	{"TryToFix360",TryToFix360},
+	{"LaunchAiSvcs", LaunchAiSvcs},
 	{NULL, NULL}
 };
 
@@ -4154,4 +4155,28 @@ int LuaAPIUtil::TryToFix360(lua_State* pLuaState)
 		_beginthreadex(NULL, 0, AsynFix360Proc, (LPVOID)pdwID, 0, NULL);
 	}
 	return 0;
+}
+
+int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	BOOL bRet = FALSE;
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"AiDll.dll");
+	if(NULL != hDll)
+	{
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
+		{
+			bRet = TRUE;
+			pf();
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
 }
