@@ -17,7 +17,7 @@ function OnSelect_Sysboot(self)
 	
 	if not bHasAutoStup then 
 		if IsRealString(strExePath) and tipUtil:QueryFileExists(strExePath) then
-			local strCommandline = "\""..strExePath.."\"".." /embedding /sstartfrom sysboot "
+			local strCommandline = "\""..strExePath.."\"".." /sstartfrom sysboot /embedding"
 			bRetCode = tFunctionHelper.RegSetValue(strRegPath, strCommandline)
 		end
 		
