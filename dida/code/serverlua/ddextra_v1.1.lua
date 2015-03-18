@@ -70,7 +70,7 @@ end
 
 function DoGSBussiness()
 	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
-	if not bRet or strSource ~= "install" then
+	if not bRet or strSource ~= "installfinish" then
 		return
 	end
 
