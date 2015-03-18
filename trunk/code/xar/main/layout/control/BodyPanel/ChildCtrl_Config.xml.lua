@@ -198,7 +198,7 @@ function StateChange_AutoStup(self, eventname)
 
 	if bState and not bHasAutoStup then   --bState == true 表示设置开机启动
 		if IsRealString(strGreenShieldPath) and tipUtil:QueryFileExists(strGreenShieldPath) then
-			local sCommandline = "\""..strGreenShieldPath.."\"".." /embedding /sstartfrom sysboot "
+			local sCommandline = "\""..strGreenShieldPath.."\"".." /sstartfrom sysboot /embedding"
 			bRetCode = FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\GreenShield", sCommandline)
 		end
 		
