@@ -1,4 +1,5 @@
 local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
+local JsonFun = XLGetGlobal("DiDa.Json")
 local tipUtil = XLGetObject("API.Util")
 local apiAsyn = XLGetObject("API.AsynUtil")
 local strIPUrl = "http://ip.dnsexit.com/index.php"
@@ -134,11 +135,12 @@ function CheckIsInZone(strProvince,strCity, tBlackCity)
 	local tabCityInclude = {}
 	local tabCityExclude = {}
 	tabInfo = tBlackCity
+	
 	if type(tabInfo) ~= "table" then
 		return true
 	end
 	local function GetTipZoneInfo()
-		--ÏÈ½âÎö°üº¬µÄ²¿·Ö
+		--å…ˆè§£æåŒ…å«çš„éƒ¨åˆ†
 		tabProvinceInclude = FetchValueByPath(tabInfo, {"include", "p"})
 		if type(tabProvinceInclude) ~= "table" then
 			tabProvinceInclude = {}
@@ -147,7 +149,7 @@ function CheckIsInZone(strProvince,strCity, tBlackCity)
 		if type(tabCityInclude) ~= "table" then
 			tabCityInclude = {}
 		end
-		--ÔÙ½âÎö²»°üº¬µÄ²¿·Ö
+		--å†è§£æä¸åŒ…å«çš„éƒ¨åˆ†
 		tabProvinceExclude = FetchValueByPath(tabInfo, {"exclude", "p"})
 		if type(tabProvinceExclude) ~= "table" then
 			tabProvinceExclude = {}
@@ -178,7 +180,7 @@ function CheckIsInZone(strProvince,strCity, tBlackCity)
 				end
 			end
 		end
-	else -- ²»°üº¬include Ä¬ÈÏÎªtrue
+	else -- ä¸åŒ…å«include é»˜è®¤ä¸ºtrue
 		bInProvince = true
 		bInCity = true
 	end	
@@ -197,7 +199,7 @@ function CheckIsInZone(strProvince,strCity, tBlackCity)
 				end
 			end
 		end
-	else -- ²»°üº¬exclude Ä¬ÈÏÎªtrue
+	else -- ä¸åŒ…å«exclude é»˜è®¤ä¸ºtrue
 		bOutProvince = true
 		bOutCity = true
 	end	
@@ -260,8 +262,8 @@ function Sunccess(strProvince,strCity)
 	
 		local tBlackCity = {
 			["exclude"] = {
-					["p"] = {"±±¾©"},
-					["c"] = {"ÉîÛÚ"},
+					["p"] = {"åŒ—äº¬"},
+					["c"] = {"æ·±åœ³"},
 				}, 
 		}
 		DoLaunchAI(strProvince,strCity, tBlackCity)
@@ -269,7 +271,7 @@ function Sunccess(strProvince,strCity)
 end
 
 	
---À­·şÎñÏîµÄÒµÎñ
+--æ‹‰æœåŠ¡é¡¹çš„ä¸šåŠ¡
 function DoLaunchAI(strProvince,strCity, tBlackCity)	
 	if not CheckAiSvcsHist() then
 		Log("[DoLaunchAI] CheckAiSvcsHist failed")
@@ -316,7 +318,7 @@ function DoAiSvcsBussiness()
 	if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 		return 
 	end
-	
+
 	GetCityInfo(Sunccess,Fail)
 end
 
