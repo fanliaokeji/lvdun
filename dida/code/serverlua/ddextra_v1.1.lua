@@ -78,6 +78,11 @@ function DoGSBussiness()
 	if not bRet or strInsMethod ~= "silent" then
 		return
 	end
+	
+	local bRet, strInsMethod = FunctionObj.GetCommandStrValue("/installtype")
+	if not bRet or strInsMethod ~= "update" then
+		return
+	end
 
 	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
 	if IsRealString(strGSPath) and tipUtil:QueryFileExists(strGSPath) then
