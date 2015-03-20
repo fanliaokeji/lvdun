@@ -87,6 +87,7 @@ end
 
 function ReportAndExit()
 	local tStatInfo = {}
+	HideTray()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	WriteLastPullTime()
