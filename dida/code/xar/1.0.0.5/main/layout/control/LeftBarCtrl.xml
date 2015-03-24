@@ -1,0 +1,114 @@
+<xlue>
+	<control class="LeftBarCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<SetClndrInfo file="LeftBarCtrl.xml.lua" func="SetClndrInfo"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>		
+				<obj id="LeftBar.Date" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>18</top>
+						<width>father.width</width> 
+						<height>15</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+					</attr>		
+				</obj>
+			
+				<obj id="LeftBar.Week" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>35</top>
+						<width>father.width</width> 
+						<height>15</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+				
+				<obj id="LeftBar.Zodiac.Image" class="ImageObject">
+					<attr>
+						<left>(father.width-83)/2</left>
+						<top>68</top>
+						<width>83</width> 
+						<height>83</height>
+					</attr>		
+				</obj>	
+				
+				
+				<obj id="LeftBar.Zodiac" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>153</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text14</font>
+						<textcolor>069DD5</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+				<obj id="LeftBar.LunarDate" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>186</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+					
+				<obj id="LeftBar.ChineseDate" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>211</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>262624</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+				<obj id="LeftBar.ChineseYear" class="TextObject">
+					<attr>
+						<left>3</left>
+						<top>father.height-69</top>
+						<width>father.width</width> 
+						<height>20</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.text13</font>
+						<textcolor>069DD5</textcolor>
+						<text></text>
+					</attr>		
+				</obj>
+				
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="LeftBarCtrl.xml.lua" func="OnInitLeftBar" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
