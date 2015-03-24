@@ -87,7 +87,7 @@ function InitLineContainer(objContainer, nLineCount)
 		return nil
 	end
 	
-	for i=1, nLineCount do
+	for i=2, nLineCount do
 		local strKey = strFatherID.."_Line"..tostring(i)
 		local objLine = LineTemplate:CreateInstance( strKey )
 		
