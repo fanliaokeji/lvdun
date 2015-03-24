@@ -42,12 +42,12 @@
 						<obj id="Calendar.Day" class="TextObject">
 							<attr>
 								<left>0</left>
-								<top>0</top>
+								<top>-4</top>
 								<width>father.width</width> 
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.number18</font>
+								<font>font.number19</font>
 								<textcolor>262624</textcolor>
 								<zorder>999999</zorder>
 							</attr>		
@@ -61,7 +61,7 @@
 								<height>father.height</height>
 								<valign>bottom</valign>
 								<halign>center</halign>
-								<font>font.text10</font>
+								<font>font.text11</font>
 								<textcolor>999999</textcolor>
 								<zorder>999999</zorder>
 							</attr>		

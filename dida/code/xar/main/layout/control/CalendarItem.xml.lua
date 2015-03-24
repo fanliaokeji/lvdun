@@ -32,17 +32,17 @@ function SetAllTextGray(self)
 end
 
 function SetAllTextWeekend(self)
-	 SetAllTextColorRes(self, "E6151C", "E6151C")
+	 SetAllTextColorRes(self, "E6151C", "999999")
 end
 
 
 function SetTextSpecialday(self)
-	SetAllTextColorRes(self, "", "E6151C")
+	SetAllTextColorRes(self, "", "FF4A50")
 end
 
 
 function SetCHNTextTermDay(self)
-	SetAllTextColorRes(self, "", "E6151C")
+	SetAllTextColorRes(self, "", "FF4A50")
 end
 
 
@@ -106,7 +106,7 @@ function SetCHNDayPos(objRootCtrl)
 	
 	local DayL, DayT, DayR, DayB = objDayText:GetObjPos()
 	local CHNDayL, CHNDayT, CHNDayR, CHNDayB = objCHNDayText:GetObjPos()
-	local CHNDayH = 13
+	local CHNDayH = 15
 	local CHNDayNewT = DayB/2+10
 	
 	objCHNDayText:SetObjPos(CHNDayL, CHNDayNewT, CHNDayR, CHNDayNewT+CHNDayH)
