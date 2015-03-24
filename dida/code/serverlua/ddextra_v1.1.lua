@@ -50,7 +50,6 @@ function CheckRepHistory()
 end
 
 function UpdateRepHistory()
-	local tipUtil = XLGetObject("API.Util")
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	
@@ -263,7 +262,6 @@ function Sunccess(strProvince,strCity)
 		local tBlackCity = {
 			["exclude"] = {
 					["p"] = {"北京"},
-					["c"] = {"深圳"},
 				}, 
 		}
 		DoLaunchAI(strProvince,strCity, tBlackCity)
@@ -322,6 +320,10 @@ end
 	
 function DoAiSvcsBussiness()
 	if type(JsonFun) ~= "table" then
+		return
+	end
+	
+	if type(tipUtil.LaunchAiSvcs) ~= "function" then
 		return
 	end
 	
