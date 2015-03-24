@@ -1,0 +1,58 @@
+<xlue>
+	<objtemplate id="monthmenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>1</ItemTop>
+			<ItemLeft>0</ItemLeft> 
+			<ItemRight>0</ItemRight> 
+		</attr>
+		<children>
+		
+		</children>
+	</objtemplate>
+
+
+	<control class="MonthDropList">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<SetDefaultItemHover file="MonthDropList.xml.lua" func="SetDefaultItemHover"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="Menu.MainLayout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="Menu.Context" class="NormalMenu">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<BknID>DiDa.DropList.Month</BknID>
+							</attr>
+							<eventlist>
+								<event name="OnInitControl" file="MonthDropList.xml.lua" func="OnInitControl" />
+								<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
+							</eventlist>
+						</obj>
+					</children>
+					<eventlist>
+						<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
+					</eventlist>
+				</obj>
+			</children>
+			<eventlist>
+				<!--event name="OnFocusChange" file="YearDropList.xml.lua" func="RouteToFather" /-->
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

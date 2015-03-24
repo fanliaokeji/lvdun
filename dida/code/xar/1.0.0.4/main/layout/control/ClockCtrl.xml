@@ -1,0 +1,96 @@
+<xlue>
+	 <objtemplate id="clockctrl.item" class="TextObject">
+        <attr>
+			<top>0</top>
+			<width>14</width> 
+			<height>father.height</height>
+			<valign>center</valign>
+			<font>font.dsdigital28.bold</font>
+			<textcolor>system.white</textcolor>
+        </attr>
+    </objtemplate>
+	
+	<control class="ClockCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="hour1" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>0</left>
+						<text>3</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="hour2" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14</left>
+						<text>2</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="split1" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*2</left>
+						<width>7</width> 
+						<text>:</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="min1" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*3-7</left>
+						<text>2</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="min2" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*4-7</left>
+						<text>2</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="split2" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*5-7</left>
+						<width>7</width> 
+						<text>:</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="sec1" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*6-14</left>
+						<text>2</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+				
+				<obj id="sec2" class="TextObject" templateid="clockctrl.item">
+					<attr>
+						<left>14*7-14</left>
+						<text>2</text>
+						<halign>center</halign>
+					</attr>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ClockCtrl.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

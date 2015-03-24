@@ -1,0 +1,159 @@
+<xlue>
+	<objtreetemplate id="TipExitRemindTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>253</width>
+			<height>121</height>
+		</attr>
+
+		<obj id="root.layout" class="TextureObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>253</width>
+				<height>121</height>
+				<texture>DiDa.ExitRemind.Bkg</texture>
+			</attr>		
+			<children>					
+				<obj id="ExitRemind.Caption" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>	
+				</obj>
+				
+				<obj id="ExitRemind.Title" class="TextObject">
+					<attr>
+						<left>10</left>
+						<top>0</top>
+						<width>father.width-30</width>
+						<height>24</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.fzlt10</font>
+						<textcolor>626262</textcolor>
+						<text>嘀嗒-任务栏日历</text>
+					</attr>
+				</obj>	
+			
+				<obj id="ExitRemind.Text1" class="TextObject">
+					<attr>
+						<left>85</left>
+						<top>24+10</top>
+						<width>father.width-75</width>
+						<height>20</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.fzlt12</font>
+						<textcolor>4B99F2</textcolor>
+						<text>退出后，</text>
+					</attr>
+				</obj>		
+				
+				<obj id="ExitRemind.Text2" class="TextObject">
+					<attr>
+						<left>85</left>
+						<top>24+10+15</top>
+						<width>father.width-75</width>
+						<height>20</height>
+						<valign>center</valign>
+						<halign>left</halign>
+						<font>font.fzlt12</font>
+						<textcolor>4B99F2</textcolor>
+						<text>就不能随时查看日历信息哦～</text>
+					</attr>
+				</obj>	
+
+				<obj id="ExitRemind.CancleBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-20-67</left>
+						<top>father.height-13-22</top>
+						<width>67</width>
+						<height>22</height>
+						<NormalBkgID>DiDa.ExitRemind.Cancle.Normal</NormalBkgID>
+						<DownBkgID>DiDa.ExitRemind.Cancle.Hover</DownBkgID>
+						<HoverBkgID>DiDa.ExitRemind.Cancle.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.ExitRemind.Cancle.Normal</DisableBkgID>
+						<Text>取消</Text>
+						<TextFont>font.fzlt11</TextFont>
+						<TextColor>system.white</TextColor>
+						<LeftTextPos>20</LeftTextPos>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickCancle" />
+					</eventlist>
+				</obj>		
+				
+				<obj id="ExitRemind.ExitBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-20*2-66*2</left>
+						<top>father.height-13-22</top>
+						<width>66</width>
+						<height>22</height>
+						<NormalBkgID>DiDa.ExitRemind.Exit.Normal</NormalBkgID>
+						<DownBkgID>DiDa.ExitRemind.Exit.Hover</DownBkgID>
+						<HoverBkgID>DiDa.ExitRemind.Exit.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.ExitRemind.Exit.Normal</DisableBkgID>
+						<Text>退出</Text>
+						<TextFont>font.fzlt11</TextFont>
+						<TextColor>4D4D4D</TextColor>
+						<LeftTextPos>20</LeftTextPos>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickQuit" />
+					</eventlist>
+				</obj>	
+
+				<obj id="TipAbout.CloseBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-7-8</left>
+						<top>8</top>
+						<width>7</width>
+						<height>7</height>
+						<cursor>IDC_HAND</cursor>
+						<NormalBkgID>DiDa.AboutWnd.CloseBtn.Normal</NormalBkgID>
+						<DownBkgID>DiDa.AboutWnd.CloseBtn.Hover</DownBkgID>
+						<HoverBkgID>DiDa.AboutWnd.CloseBtn.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.AboutWnd.CloseBtn.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="TipExitRemindWnd.xml.lua" func="OnClickCancle" />
+					</eventlist>
+				</obj>				
+				
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipExitRemindWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>253</width>
+            <height>121</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipExitRemindWnd.xml.lua" func="OnCreate"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
