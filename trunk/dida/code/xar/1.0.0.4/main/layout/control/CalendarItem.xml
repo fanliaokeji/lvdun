@@ -1,0 +1,159 @@
+<xlue>
+	<control class="CalendarItem">
+		<attr_def>
+			<attr name="tClndrContent" />
+			<attr name="bSelect" type="bool" ><default>false</default></attr>
+			<attr name="nItemIndex" type="int" ><default>0</default></attr>
+		</attr_def>
+		<method_def>
+			<SetContent file="CalendarItem.xml.lua" func="SetContent"/>
+			<SetDayText file="CalendarItem.xml.lua" func="SetDayText"/>
+			<SetCHNDayText file="CalendarItem.xml.lua" func="SetCHNDayText"/>
+			<SetAllTextNormal file="CalendarItem.xml.lua" func="SetAllTextNormal"/>
+			<SetAllTextGray file="CalendarItem.xml.lua" func="SetAllTextGray"/>
+			<SetAllTextWeekend file="CalendarItem.xml.lua" func="SetAllTextWeekend"/>
+			<SetTextSpecialday file="CalendarItem.xml.lua" func="SetTextSpecialday"/>
+			<SetCHNTextTermDay file="CalendarItem.xml.lua" func="SetCHNTextTermDay"/>
+			<SetCurrentDayBkg file="CalendarItem.xml.lua" func="SetCurrentDayBkg"/>
+			<SetSelectState file="CalendarItem.xml.lua" func="SetSelectState"/>
+			<SetItemIndex file="CalendarItem.xml.lua" func="SetItemIndex"/>
+			<GetItemIndex file="CalendarItem.xml.lua" func="GetItemIndex"/>
+			<SetVacationBkg file="CalendarItem.xml.lua" func="SetVacationBkg"/>
+			<SetWorkBkg file="CalendarItem.xml.lua" func="SetWorkBkg"/>
+		</method_def>
+		<event_def>
+			<OnClick>
+				<param>
+				</param>
+			</OnClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="Calendar.Layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+					</attr>		
+					<children>
+						<obj id="Calendar.Day" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>3</top>
+								<width>father.width</width> 
+								<height>father.height/2</height>
+								<valign>bottom</valign>
+								<halign>center</halign>
+								<font>font.dincond18</font>
+								<textcolor>4D4D4D</textcolor>
+								<zorder>999999</zorder>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.CHNDay" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>father.height/2+3</top>
+								<width>father.width</width> 
+								<height>father.height/2</height>
+								<valign>top</valign>
+								<halign>center</halign>
+								<font>font.fzlt12</font>
+								<textcolor>808080</textcolor>
+								<zorder>999999</zorder>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.Current" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>2</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.Canlender.Current</texture>
+								<visible>false</visible>
+								<zorder>-1</zorder>
+							</attr>		
+						</obj>	
+						
+						<obj id="Calendar.Select" class="TextureObject">
+							<attr>
+								<left>1</left>
+								<top>1</top>
+								<width>38</width> 
+								<height>38</height>
+								<texture>DiDa.Canlender.Select</texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>
+						
+						<obj id="Calendar.Work" class="TextureObject">
+							<attr>
+								<left>-3</left>
+								<top>0</top>
+								<width>16</width> 
+								<height>16</height>
+								<texture>DiDa.Canlender.Work</texture>
+								<visible>false</visible>
+							</attr>	
+							<children>
+								<obj id="Calendar.Work.Text" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width> 
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.fzlt9</font>
+										<textcolor>system.white</textcolor>
+										<text>班</text>
+										<zorder>999999</zorder>
+									</attr>		
+								</obj>	
+							</children>
+						</obj>
+						
+						<obj id="Calendar.Vacation" class="TextureObject">
+							<attr>
+								<left>-3</left>
+								<top>0</top>
+								<width>16</width> 
+								<height>16</height>
+								<texture>DiDa.Canlender.Holiday</texture>
+								<visible>false</visible>
+							</attr>		
+							<children>
+								<obj id="Calendar.Vacation.Text" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width> 
+										<height>father.height</height>
+										<valign>center</valign>
+										<halign>center</halign>
+										<font>font.fzlt9</font>
+										<textcolor>system.white</textcolor>
+										<text>休</text>
+										<zorder>999999</zorder>
+									</attr>		
+								</obj>	
+							</children>
+						</obj>
+					
+					</children>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnLButtonUp" file="CalendarItem.xml.lua" func="OnLButtonUp"/>
+				<event name="OnMouseEnter" file="CalendarItem.xml.lua" func="OnMouseEnter"/>
+				<event name="OnMouseLeave" file="CalendarItem.xml.lua" func="OnMouseLeave"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
+
+
+
+

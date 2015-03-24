@@ -1,0 +1,321 @@
+<xlue>
+	<control class="UpdateRootCtrl">
+		<attr_def>
+			<attr name="bInstall" type="bool"><default>false</default></attr>
+			<attr name="strInstallPath" type="string"><default>false</default></attr>
+		</attr_def>
+		<method_def>
+			<ShowInstallPanel file="TipUpdateWnd.xml.lua" func="ShowInstallPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="TipUpdate.MainPanel" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>	
+						<obj id="TipUpdate.Bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>DiDa.UpdateWnd.Bkg</texture>
+							</attr>
+							<children>					
+								<obj id="TipUpdate.CloseBtn" class="TipAddin.Button">
+									<attr>
+										<left>father.width-18</left>
+										<top>5</top>
+										<width>9</width>
+										<height>9</height>
+										<NormalBkgID>DiDa.UpdateWnd.CloseBtn.Normal</NormalBkgID>
+										<DownBkgID>DiDa.UpdateWnd.CloseBtn.Hover</DownBkgID>
+										<HoverBkgID>DiDa.UpdateWnd.CloseBtn.Hover</HoverBkgID>
+										<DisableBkgID>DiDa.UpdateWnd.CloseBtn.Normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickCloseBtn" />
+									</eventlist>
+								</obj>
+								
+								<obj id="TipUpdate.MinBtn" class="TipAddin.Button">
+									<attr>
+										<left>father.width-18*2</left>
+										<top>8</top>
+										<width>9</width>
+										<height>3</height>
+										<NormalBkgID>DiDa.UpdateWnd.MinBtn.Normal</NormalBkgID>
+										<DownBkgID>DiDa.UpdateWnd.MinBtn.Hover</DownBkgID>
+										<HoverBkgID>DiDa.UpdateWnd.MinBtn.Hover</HoverBkgID>
+										<DisableBkgID>DiDa.UpdateWnd.MinBtn.Normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickMinBtn" />
+									</eventlist>
+								</obj>
+								
+								
+								<obj id="TipUpdate.Title.Caption" class="TextObject">
+									<attr>
+										<left>189</left>
+										<top>20</top>
+										<width>215</width>
+										<height>25</height>
+										<text>嘀嗒日历在线升级</text>
+										<textcolor>system.white</textcolor>
+										<font>font.yahei22.bold</font>
+										<valign>center</valign>
+										<halign>left</halign>
+									</attr>
+								</obj>
+								
+								<!--正在检测-->
+								<obj id="TipUpdate.CheckUpdate.Layout" class="LayoutObject">
+									<attr>
+										<left>189</left>
+										<top>30+25</top>
+										<width>250</width>
+										<height>140</height>
+									</attr>
+									<children>
+										<obj id="TipUpdate.CheckUpdate.Text" class="TextObject">
+											<attr>
+												<left>0</left>
+												<top>30</top>
+												<width>150</width>
+												<height>25</height>
+												<text>正在为您检测更新</text>
+												<textcolor>system.white</textcolor>
+												<font>font.yahei16</font>
+												<valign>center</valign>
+												<halign>left</halign>
+											</attr>
+										</obj>
+										
+										<obj id="TipUpdate.CheckUpdate.Loading" class="SeqImageObject">
+											<attr>
+												<left>140</left>  
+												<top>36</top>
+												<width>66</width>
+												<height>15</height>
+												<gif>DiDa.UpdateWnd.Loading</gif>
+												<loop>1</loop>
+												<reverse>0</reverse>
+												<antialias>2</antialias>
+												<alpha>255</alpha>
+											</attr>
+										</obj>	
+									</children>
+								</obj>
+								
+								<!--更新升级-->
+								<obj id="TipUpdate.Update.Layout" class="LayoutObject">
+									<attr>
+										<left>189</left>
+										<top>30+25</top>
+										<width>250</width>
+										<height>140</height>
+									</attr>
+									<children>
+										<obj id="TipUpdate.Title.Text" class="TextObject">
+											<attr>
+												<left>0</left>
+												<top>0</top>
+												<width>father.width</width>
+												<height>20</height>
+												<text>发现新版本嘀嗒日历</text>
+												<textcolor>system.white</textcolor>
+												<font>font.yahei15</font>
+												<valign>center</valign>
+												<halign>left</halign>
+											</attr>
+										</obj>
+										
+										<obj id="TipUpdate.Content.Layout" class="LayoutObject">
+											<attr>
+												<left>0</left>
+												<top>20</top>
+												<width>father.width</width>
+												<height>father.height-20</height>
+											</attr>
+											<children>
+												<obj id="TipUpdate.Content" class="TextObject">
+													<attr>
+														<left>0</left>
+														<top>3</top>
+														<width>father.width</width>
+														<height>18</height>
+														<text>主要特性：</text>
+														<textcolor>system.white</textcolor>
+														<font>font.yahei12</font>
+														<valign>center</valign>
+														<halign>left</halign>
+													</attr>
+												</obj>
+												<obj id="TipUpdate.Content.Text1" class="TextObject">
+													<attr>
+														<left>0</left>
+														<top>23</top>
+														<width>father.width</width>
+														<height>18</height>
+														<text></text>
+														<textcolor>system.white</textcolor>
+														<font>font.yahei12</font>
+														<valign>top</valign>
+														<halign>left</halign>
+													</attr>
+												</obj>
+												<obj id="TipUpdate.Content.Text2" class="TextObject">
+													<attr>
+														<left>0</left>
+														<top>20*2+1</top>
+														<width>father.width</width>
+														<height>18</height>
+														<text></text>
+														<textcolor>system.white</textcolor>
+														<font>font.yahei12</font>
+														<valign>top</valign>
+														<halign>left</halign>
+													</attr>
+												</obj>
+												<obj id="TipUpdate.Content.Text3" class="TextObject">
+													<attr>
+														<left>0</left>
+														<top>20*3</top>
+														<width>father.width</width>
+														<height>18</height>
+														<text></text>
+														<textcolor>system.white</textcolor>
+														<font>font.yahei12</font>
+														<valign>top</valign>
+														<halign>left</halign>
+													</attr>
+												</obj>	
+											</children>
+										</obj>	<!--TipUpdate.Content.Layout-->
+										
+										
+										<obj id="TipUpdate.EnterBtn" class="TipAddin.Button">
+											<attr>
+												<left>father.width-76-15</left>
+												<top>father.height-22-10</top>
+												<width>76</width>
+												<height>22</height>
+												<NormalBkgID>DiDa.UpdateWnd.UpdateBtn.Normal</NormalBkgID>
+												<DownBkgID>DiDa.UpdateWnd.UpdateBtn.Hover</DownBkgID>
+												<HoverBkgID>DiDa.UpdateWnd.UpdateBtn.Hover</HoverBkgID>
+												<DisableBkgID>DiDa.UpdateWnd.UpdateBtn.Normal</DisableBkgID>
+												<Text>立即更新</Text>
+												<TextFont>font.yahei11</TextFont>
+												<TextColor>4B99F2</TextColor>
+												<LeftTextPos>15</LeftTextPos>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickEnterBtn" />
+											</eventlist>
+										</obj>
+									
+										<!--正在下载-->
+										<obj id="TipUpdate.DownLoading.Layout" class="LayoutObject">
+											<attr>
+												<left>0</left>
+												<top>father.height-65</top>
+												<width>250</width>
+												<height>20</height>
+											</attr>
+											<children>
+												<obj id="TipUpdate.DownLoading.Text" class="TextObject">
+													<attr>
+														<left>0</left>
+														<top>30</top>
+														<width>150</width>
+														<height>25</height>
+														<text>下载中，请稍候</text>
+														<textcolor>system.white</textcolor>
+														<font>font.yahei16</font>
+														<valign>center</valign>
+														<halign>left</halign>
+													</attr>
+												</obj>
+												
+												<obj id="TipUpdate.DownLoading.Loading" class="SeqImageObject">
+													<attr>
+														<left>120</left>  
+														<top>36</top>
+														<width>66</width>
+														<height>15</height>
+														<gif>DiDa.UpdateWnd.Loading</gif>
+														<loop>1</loop>
+														<reverse>0</reverse>
+													</attr>
+												</obj>	
+											</children>
+										</obj>
+										
+									</children>
+								</obj>	<!--TipUpdate.Update.Layout-->
+								
+							</children>
+						</obj>  <!--end of TipUpdate.Bkg-->
+						
+					</children>
+				</obj> <!--end of TipUpdate.MainPanel-->
+			</children>
+		</objtemplate>
+	</control>
+
+	<objtreetemplate id="TipUpdateTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>437</width>
+			<height>204</height>
+		</attr>
+
+		<obj id="root.layout" class="UpdateRootCtrl">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>437</width>
+				<height>204</height>
+			</attr>				
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipUpdateWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>437</width>
+            <height>204</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipUpdateWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="TipUpdateWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
