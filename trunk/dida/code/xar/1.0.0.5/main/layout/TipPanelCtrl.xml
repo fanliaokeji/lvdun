@@ -1,0 +1,122 @@
+<xlue>
+	<control class="TipMainPanelRootCtrl">
+		<attr_def>
+        </attr_def>
+		<method_def>
+			<SetTipData file="TipPanelCtrl.xml.lua" func="SetTipData"/>
+		</method_def>
+        <event_def>
+        </event_def>
+		<objtemplate>
+            <children>				
+				<obj id="root.layout" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>				
+					<children>	
+						<obj id="bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+								<texture>DiDa.MainWnd.Bkg</texture>
+							</attr>		
+							<children>	
+								<obj id="DiDa.TitleCtrl" class="TitleCtrl">
+									<attr>
+										<left>20</left>
+										<top>10</top>
+										<width>father.width-40</width> 
+										<height>30</height>
+									</attr>			
+								</obj>	
+							
+								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
+									<attr>
+										<left>20</left>
+										<top>130</top>
+										<width>150</width> 
+										<height>father.height-130</height>
+									</attr>			
+								</obj>	
+								
+								<obj id="DiDa.WeatherCtrl" class="WeatherCtrl">
+									<attr>
+										<left>20</left>
+										<top>40</top>
+										<width>135</width> 
+										<height>110</height>
+									</attr>			
+								</obj>	
+								
+								<obj id="DiDa.DateSelectCtrl" class="DateSelectCtrl">
+									<attr>
+										<left>40+135</left>
+										<top>60</top>
+										<width>father.width-135-40</width> 
+										<height>20</height>
+									</attr>
+								</obj>
+								
+								<obj id="DiDa.WeekNumCtrl" class="WeekNumCtrl">
+									<attr>
+										<left>187</left>
+										<top>96</top>
+										<width>336</width> 
+										<height>27</height>
+									</attr>			
+								</obj>
+								
+								<obj id="DiDa.CalendarDispatch" class="CalendarDispatch">
+									<attr>
+										<left>152+30</left>
+										<top>123</top>
+										<width>332+65</width> 
+										<height>246</height>
+									</attr>			
+								</obj>
+								
+							</children>
+						</obj><!--bkg end-->
+					</children>
+					<eventlist>
+						<event name="OnLButtonUp" file="TipPanelCtrl.xml.lua" func="OnLButtonUp" />
+					</eventlist>
+				</obj><!--root layout end-->
+			</children>
+        </objtemplate>
+	</control>
+
+	<objtreetemplate id="TipPanelTree" class="ObjectTreeTemplate" templateid="TipMainWndTree">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>610</width>
+			<height>432</height>
+		</attr>
+		<obj id="root.layout" class="TipMainWndRootCtrl" >
+			<attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>610</width>
+				<height>432</height>
+			</attr>
+			<children>
+				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
+
+
