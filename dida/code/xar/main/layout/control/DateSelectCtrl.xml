@@ -171,7 +171,7 @@
 				
 				<obj id="BackToToday.Button" class="TipAddin.Button">
 					<attr>
-						<left>370</left>
+						<left>363</left>
 						<top>0</top>
 						<width>27</width>
 						<height>27</height>
