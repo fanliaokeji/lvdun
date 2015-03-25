@@ -1,5 +1,7 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
+
+local g_bLoadImageSucc = false
 local g_tWeatherResList = {
 	[1] = {
 		["strKey"] = "霾",
@@ -19,8 +21,11 @@ local g_tWeatherResList = {
 
 ---事件
 function OnInitWeatherCtrl(self)
-	ShowLoadingGif(self, false)
+	ShowLoadingGif(self, true)
+	ShowLoadFailImg(self, false)
 	UpdateWeatherContent(self)
+	
+	SetLoadWeatherTimer(self)
 	SetUpdateTimer(self)
 end
 
@@ -29,11 +34,14 @@ end
 function UpdateWeatherContent(objRootCtrl)
 	function Sunccess(strCity,strTemp1,strWeather1)
 		ShowLoadingGif(objRootCtrl, false)
+		ShowLoadFailImg(objRootCtrl, false)
 		SetWeatherContent(objRootCtrl, strCity,strTemp1,strWeather1)
 	end
 	
 	function Fail()
+		g_bLoadImageSucc = false
 		ShowLoadingGif(objRootCtrl, false)
+		ShowLoadFailImg(objRootCtrl, true)
 	end
 	
 	tFunHelper.GetWeatherInfo(Sunccess, Fail)
@@ -45,6 +53,23 @@ function SetUpdateTimer(objRootCtrl)
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	timerManager:SetTimer(function(item, id)
 		UpdateWeatherContent(objRootCtrl)
+	end, nTimeSpanInMs)
+end
+
+
+function SetLoadWeatherTimer(objRootCtrl)
+	local nTimeSpanInMs = 10*1000  
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	
+	timerManager:SetTimer(function(item, id)
+		ShowLoadingGif(objRootCtrl, false)
+		if g_bLoadImageSucc then
+			ShowLoadFailImg(objRootCtrl, false)
+		else
+			ShowLoadFailImg(objRootCtrl, true)
+		end		
+		
+		item:KillTimer(id)
 	end, nTimeSpanInMs)
 end
 
@@ -67,20 +92,6 @@ function SetDetailText(objRootCtrl, strText)
 	if objDetail then
 		objDetail:SetText(strText)
 	end
-
-	-- local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
-	-- local nL, nT, nR, nB = objDetail:GetObjPos()
-	-- local nW = nR - nL
-	-- local nTextExtent = objDetail:GetTextExtent()
-		
-	-- local nDiff = nTextExtent-nW
-	
-	-- objRootCtrl:SetObjPos(nRootL-nDiff, nRootT, nRootR, nRootB)
-	
-	-- local nL, nT, nR, nB = objDetail:GetObjPos()
-	-- local nFatherW = nRootR-nRootL+nDiff
-	-- local nNewR = nFatherW-20
-	-- objDetail:SetObjPos(nNewR-nTextExtent, nT, nNewR, nB)
 end
 
 
@@ -105,6 +116,7 @@ function SetWeatherImage(objRootCtrl, strWeather)
 	local objImage = objRootCtrl:GetControlObject("WeatherCtrl.Image")
 	if objImage then
 		objImage:SetBitmap(objBitmap)
+		g_bLoadImageSucc = true
 	end
 end
 
@@ -176,6 +188,25 @@ function ShowLoadingGif(objRootCtrl, bShow)
 	end
 end
 
+
+function ShowLoadFailImg(objRootCtrl, bShow)
+	local objLoadFail = objRootCtrl:GetControlObject("WeatherCtrl.Image.Fail")
+	local objLayout = objRootCtrl:GetControlObject("WeatherCtrl.Layout")
+	if not objLoadFail or not objLayout then
+		return
+	end
+
+	if g_bLoadImageSucc then
+		objLoadFail:SetVisible(false)
+		objLayout:SetVisible(true)
+		objLayout:SetChildrenVisible(true)
+		return
+	end
+	
+	objLoadFail:SetVisible(bShow)
+	objLayout:SetVisible(not bShow)
+	objLayout:SetChildrenVisible(not bShow)
+end
 
 ------------------
 function IsRealString(str)
