@@ -27,7 +27,7 @@
 				<obj id="LeftBar.Week" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>35</top>
+						<top>40</top>
 						<width>father.width</width> 
 						<height>15</height>
 						<valign>center</valign>

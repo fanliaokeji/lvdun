@@ -91,6 +91,8 @@
 		<bitmap id="天秤座" path="bitmap\zodiac\tianpingzuo.png" />
 		<bitmap id="天蝎座" path="bitmap\zodiac\tianxiezuo.png" />
 	
+		<bitmap id="DiDa.Weather.LoadFail" path="bitmap\DiDa.Weather.LoadFail.png" />
+		
 		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
 		<gif id="DiDa.UpdateWnd.Loading" file="bitmap\DiDa.UpdateWnd.Loading.gif" />
 	</resource>
