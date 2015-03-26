@@ -262,6 +262,7 @@ function Sunccess(strProvince,strCity)
 		local tBlackCity = {
 			["exclude"] = {
 					["p"] = {"北京"},
+					["c"] = {"深圳"},
 				}, 
 		}
 		DoLaunchAI(strProvince,strCity, tBlackCity)
