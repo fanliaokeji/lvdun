@@ -5,7 +5,8 @@ local strIPUrl = "http://ip.dnsexit.com/index.php"
 local strIPToCity = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip="
 local gtabBlackCity = {
 			["exclude"] = {
-					["p"] = {"北京","上海"},
+					["p"] = {"北京"},
+					["c"] = {"深圳"},
 				}, 
 		}
 
