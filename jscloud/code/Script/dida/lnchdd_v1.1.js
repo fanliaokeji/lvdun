@@ -36,13 +36,13 @@ function LnchInTime.GetLaunchCmd(strProcName, strExePath)
 	
 	if (strProcName == "GreenShield")
 	{
-		var strCMD = "\""+strExePath+"\""+" /sstartfrom gsaddin /embedding"
+		var strCMD = "\""+strExePath+"\""+" /sstartfrom ddaddin /embedding"
 		return strCMD
 	}
 	
 	if (strProcName == "DiDa")
 	{
-		var strCMD = "\""+strExePath+"\""+" /sstartfrom gsaddin /embedding"
+		var strCMD = "\""+strExePath+"\""+" /sstartfrom ddaddin /embedding"
 		return strCMD
 	}
 }
