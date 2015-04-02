@@ -283,7 +283,7 @@ Function DoInstall
   ${If} $Bool_IsUpdate == 0
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "1", t "$R0")'
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
   ${Else}
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
@@ -2000,7 +2000,7 @@ Function un.OnClick_CruelRefused
 	File "bin\DsSetUpHelper.dll"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +3
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "3", t "$str_ChannelID")'
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
 		SendMessage $R0 1324 0 0
