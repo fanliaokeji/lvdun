@@ -1,0 +1,93 @@
+<xlue>
+	<objtemplate id="timestyle" class="TextObject">
+		<attr>
+			<height>father.height</height>
+			<textcolor>478613</textcolor>
+			<font>font.default16</font>
+			<valign>center</valign>
+			<halign>center</halign>
+		</attr>
+	</objtemplate>
+
+	<control class="ClockCtrl">
+		<attr_def>
+		
+		</attr_def>
+		<method_def>
+			<SetTime file="ClockCtrl.xml.lua" func="SetTime"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ClockCtrl.Hour" class="TextObject" templateid="timestyle">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>20</width>
+						<text>00</text>
+					</attr>
+				</obj>	
+				
+				<obj id="ClockCtrl.Layout" class="LayoutObject">
+					<attr>
+						<left>20</left>
+						<top>0</top>
+						<width>father.width-20</width>
+						<height>father.height</height>
+					</attr>
+						<children>
+						<obj id="ClockCtrl.HourText" class="TextObject" templateid="timestyle">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>32</width>
+								<text>小时</text>
+							</attr>
+						</obj>	
+						
+						<obj id="ClockCtrl.Min" class="TextObject" templateid="timestyle">
+							<attr>
+								<left>32</left>
+								<top>0</top>
+								<width>20</width>
+								<text>00</text>
+							</attr>
+						</obj>	
+						
+						<obj id="ClockCtrl.MinText" class="TextObject" templateid="timestyle">
+							<attr>
+								<left>32+20</left>
+								<top>0</top>
+								<width>16</width>
+								<text>分</text>
+							</attr>
+						</obj>	
+						
+						<obj id="ClockCtrl.Sec" class="TextObject" templateid="timestyle">
+							<attr>
+								<left>68</left>
+								<top>0</top>
+								<width>20</width>
+								<text>00</text>
+							</attr>
+						</obj>	
+						
+						<obj id="ClockCtrl.SecText" class="TextObject" templateid="timestyle">
+							<attr>
+								<left>68+20</left>
+								<top>0</top>
+								<width>16</width>
+								<text>秒</text>
+							</attr>
+						</obj>	
+					</children>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ClockCtrl.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
