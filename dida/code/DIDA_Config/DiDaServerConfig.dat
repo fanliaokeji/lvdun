@@ -1,0 +1,23 @@
+function GetSubTable()
+	local t = {
+		["tNewVersionInfo"] = {
+			["strVersion"] = "1.0.0.7",
+			["strPacketURL"] = "http://down.didarili.com/client/DIDASetup_0001.exe",
+			["strMD5"] = "1D536B51ED3B28889F79913D18673979",
+			["tInroduce"] = {
+				"1.修复部分bug",
+				"",
+				"",
+			},
+			
+			["tForceUpdate"] = {
+				["strVersion"] = "1.0.0.7",
+				["tVersion"] = {"1-6"},
+				["strPacketURL"] = "http://down.didarili.com/client/DIDASetup_0001.exe",
+				["strMD5"] = "1D536B51ED3B28889F79913D18673979",
+			},
+		},
+	}
+	return t
+end
+
