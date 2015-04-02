@@ -400,7 +400,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	char szPid[256] = {0};
 	extern void GetPeerID(CHAR * pszPeerID);
 	GetPeerID(szPid);
-	szPid[12] = '\0';
+	/*szPid[12] = '\0';
 	char szMac[128] = {0};
 	for(int i = 0; i < (int)strlen(szPid); ++i)
 	{
@@ -409,10 +409,10 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 			strcat(szMac, "-");
 		}
 		szMac[strlen(szMac)] = szPid[i];
-	}
-	std::string str = "http://stat.lvdun123.com:8082/?mac=";
-	str += szMac;
-	str += "&op=";
+	}*/
+	std::string str = "http://stat.lvdun123.com:8082/c?appid=1001&peerid=";
+	str += szPid;
+	str += "&proid=11&op=";
 	str += op;
 	str += "&cid=";
 	str += cid;
