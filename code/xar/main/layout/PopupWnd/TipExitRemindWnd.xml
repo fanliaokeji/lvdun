@@ -102,13 +102,13 @@
 						<top>father.height-13-23</top>
 						<width>71</width>
 						<height>23</height>
-						<NormalBkgID>GreenWall.PopupWnd.CancleBtn.Normal.Little</NormalBkgID>
-						<DownBkgID>GreenWall.PopupWnd.CancleBtn.Hover.Little</DownBkgID>
-						<HoverBkgID>GreenWall.PopupWnd.CancleBtn.Hover.Little</HoverBkgID>
-						<DisableBkgID>GreenWall.PopupWnd.CancleBtn.Normal.Little</DisableBkgID>
+						<NormalBkgID>GreenWall.PopupWnd.EnterBtn.Normal.Little</NormalBkgID>
+						<DownBkgID>GreenWall.PopupWnd.EnterBtn.Hover.Little</DownBkgID>
+						<HoverBkgID>GreenWall.PopupWnd.EnterBtn.Hover.Little</HoverBkgID>
+						<DisableBkgID>GreenWall.PopupWnd.EnterBtn.Normal.Little</DisableBkgID>
 						<Text>退出程序</Text>
 						<TextFont>font.default11</TextFont>
-						<TextColor>999999</TextColor>
+						<TextColor>system.white</TextColor>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickQuit" />
