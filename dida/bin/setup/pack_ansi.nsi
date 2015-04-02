@@ -53,8 +53,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "DIDA"
 !define SHORTCUT_NAME "嘀嗒日历"
-!define PRODUCT_VERSION "1.0.0.4"
-!define VERSION_LASTNUMBER 4
+!define PRODUCT_VERSION "1.0.0.7"
+!define VERSION_LASTNUMBER 7
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "DIDASetup_${INSTALL_CHANNELID}.exe"
 
@@ -97,9 +97,9 @@ RequestExecutionLevel admin
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "深圳市天动网络技术有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市烦了科技有限公司"
 ;VIAddVersionKey /LANG=2052 "LegalTrademarks" "DIDA"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市天动网络技术有限公司"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市烦了科技有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
@@ -230,15 +230,13 @@ Function DoInstall
   RenameOK2:
   
   ;释放主程序文件到安装目录
-  SetOutPath "$INSTDIR\program"
+  SetOutPath "$INSTDIR"
   SetOverwrite on
-  File /r "input_main\program\*.*"
-  SetOutPath "$INSTDIR\xar"
-  SetOverwrite on
-  File /r "input_main\xar\*.*"
-  SetOutPath "$INSTDIR\res"
-  SetOverwrite off
-  File /r "input_main\res\*.*"
+  ;${If} ${PRODUCT_VERSION} == "1.0.0.5"
+	 File /r "input_main\*.*"
+  ;${Else}
+  ;	 File /r "input_main2\*.*"
+  ;${EndIf}
   ;WriteUninstaller "$INSTDIR\uninst.exe"
   
   SetOutPath "$INSTDIR"
@@ -268,7 +266,7 @@ Function DoInstall
   ${If} $Bool_IsUpdate == 0
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t "install", t "$R0")'
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
   ${Else}
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
@@ -303,6 +301,7 @@ Function DoInstall
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 FunctionEnd
 
+Var bNeedInstallOffice
 Function CmdSilentInstall
 	System::Call "kernel32::GetCommandLineA() t.R1"
 	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
@@ -333,6 +332,7 @@ Function CmdSilentInstall
 			${GetOptions} $R4 "/write"  $R0
 			IfErrors 0 +2
 			Abort
+			StrCpy $bNeedInstallOffice "true"
 			Goto StartInstall
 		${EndIf}
 	StartInstall:
@@ -340,6 +340,12 @@ Function CmdSilentInstall
 	;发退出消息
 	Call CloseExe
 	Call DoInstall
+	;静默的时候释放360ini.dll
+	;SetOutPath "$INSTDIR\program"
+	;SetOverwrite on
+	;File "360\360ini.dll"
+	;将安装方式写入注册表
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
 	;Sleep 2000
 	SetOutPath "$INSTDIR\program"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
@@ -388,8 +394,9 @@ Function CmdSilentInstall
 	${WordReplace} $R1 $R2 "" +1 $R3
 	${StrFilter} "$R3" "-" "" "" $R4
 	${GetOptions} $R4 "/setboot"  $R0
-	IfErrors +2 0
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
+	IfErrors +3 0
+	StrCpy $bNeedInstallOffice "true"
+	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /sstartfrom sysboot /embedding'
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	System::Call "kernel32::GetCommandLineA() t.R1"
@@ -397,20 +404,39 @@ Function CmdSilentInstall
 	${WordReplace} $R1 $R2 "" +1 $R3
 	${StrFilter} "$R3" "-" "" "" $R4
 	${GetOptions} $R4 "/run"  $R0
-	IfErrors +7 0
+	IfErrors ExitInstal 0
+	StrCpy $bNeedInstallOffice "true"
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
 		StrCpy $R0 "/embedding"
 	${EndIf}
+	${If} $Bool_IsUpdate == 1 
+		StrCpy $R1 "update"
+	${Else}
+		StrCpy $R1 "noupdate"
+	${EndIf}
+	
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
+	ExecShell open "${PRODUCT_NAME}.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
 	;捆绑360
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-	;退出程序
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SoftExit()"
+	;${If} ${PRODUCT_VERSION} == "1.0.0.5"
+	;	IfFileExists "$INSTDIR\program\360ini.dll" 0 +3
+	;	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	;	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	;${EndIf}
+	ExitInstal:
+	Call ExitWithCheck
 	Abort
 	FunctionReturn:
+FunctionEnd
+
+Function ExitWithCheck
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
+	${If} $bNeedInstallOffice == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::LoadLuaRunTime(t '$INSTDIR\program')"
+	${Else}
+		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
+	${EndIf}
 FunctionEnd
 
 Function UnstallOnlyFile
@@ -496,7 +522,7 @@ Function CmdUnstall
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
-		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
+		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
 	${EndIf}
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
 		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
@@ -552,6 +578,8 @@ Function .onInit
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DIDASetUpHelper.dll"
+	File "bin\DIDALuaAgent.dll"
+	File "bin\ddsetupload.dat"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
@@ -559,7 +587,7 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	Call CmdSilentInstall
-	Call CmdUnstall
+	;Call CmdUnstall
 	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
@@ -1065,7 +1093,8 @@ FunctionEnd
 
 Function OnClickQuitOK
 	HideWindow
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SoftExit()"
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -1396,8 +1425,9 @@ Function NSD_TimerFun
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
 	ShowWindow $Handle_Loading ${SW_SHOW}
-	ShowWindow $ck_bind360install ${SW_SHOW}
-	ShowWindow $lab_bind360install ${SW_SHOW}
+	;ShowWindow $ck_bind360install ${SW_SHOW}
+	;ShowWindow $lab_bind360install ${SW_SHOW}
+	StrCpy $Bool_bind360install 0
 	ShowWindow $HWNDPARENT ${SW_SHOW}
 	BringToFront
 FunctionEnd
@@ -1416,6 +1446,17 @@ Function InstallationMainFun
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
     Call DoInstall
+	;将安装方式写入注册表
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 == "DIDASetup${PRODUCT_VERSION}.exe" 
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
+	${Else}
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "nosilent"
+	${EndIf}
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
@@ -1426,14 +1467,19 @@ FunctionEnd
 
 Function OnClick_FreeUse
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow /sstartfrom installfinish" SW_SHOWNORMAL
+	${If} $Bool_IsUpdate == 1 
+		StrCpy $R1 "update"
+	${Else}
+		StrCpy $R1 "noupdate"
+	${EndIf}
+	ExecShell open "${PRODUCT_NAME}.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
 	${IF} $Bool_bind360install == 1
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		;System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		;System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
 		Call OnClickQuitOK
-	${ELSE}
+	${Else}
 		Call OnClickQuitOK
 	${EndIf}
 FunctionEnd
@@ -1703,12 +1749,6 @@ Function un.DoUninstall
 	Call un.RenameDeleteFile
 	StrCpy $R0 "$INSTDIR\program\DiDaCalendar.dll"
 	Call un.RenameDeleteFile
-	StrCpy $R0 "$INSTDIR\res\font\DINCondensedC.otf"
-	Call un.RenameDeleteFile
-	StrCpy $R0 "$INSTDIR\res\font\DS-DIGIT.TTF"
-	Call un.RenameDeleteFile
-	StrCpy $R0 "$INSTDIR\res\font\FZLTHJW.TTF"
-	Call un.RenameDeleteFile
 	
 	
 	StrCpy "$R0" "$INSTDIR"
@@ -1731,7 +1771,7 @@ Function un.UNSD_TimerFun
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
 		;DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
-		DeleteRegValue ${PRODUCT_UNINST_ROOT_KEY} "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
@@ -1783,7 +1823,7 @@ Function un.OnClick_CruelRefused
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	${For} $R3 0 6
 		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
 		${If} $R3 == 6
@@ -1857,8 +1897,9 @@ FunctionEnd
 Function un.OnClick_FinishUnstall
 	;SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 	HideWindow
-	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SoftExit()"
+	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +3
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
 	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
 	Push $R2
 	Push "\"
