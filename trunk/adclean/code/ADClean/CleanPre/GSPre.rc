@@ -62,8 +62,8 @@ IDI_ICON1               ICON                    "icon1.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,2
- PRODUCTVERSION 1,0,0,2
+ FILEVERSION 1,0,0,3
+ PRODUCTVERSION 1,0,0,3
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -78,14 +78,14 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "深圳市天动网络技术有限公司"
+            VALUE "CompanyName", "深圳市烦了科技有限公司"
             VALUE "FileDescription", "CleanPre Module"
-            VALUE "FileVersion", "1, 0, 0, 2"
+            VALUE "FileVersion", "1, 0, 0, 3"
             VALUE "InternalName", "CleanPre"
-            VALUE "LegalCopyright", "Copyright (c) 2015 深圳市天动网络技术有限公司"
+            VALUE "LegalCopyright", "Copyright (c) 2015 深圳市烦了科技有限公司"
             VALUE "OriginalFilename", "CleanPre.dll"
             VALUE "ProductName", "广告清道夫"
-            VALUE "ProductVersion", "1, 0, 0, 2"
+            VALUE "ProductVersion", "1, 0, 0, 3"
         END
     END
     BLOCK "VarFileInfo"
