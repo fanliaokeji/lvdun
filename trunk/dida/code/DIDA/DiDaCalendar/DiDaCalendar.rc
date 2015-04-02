@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,2
- PRODUCTVERSION 1,0,0,2
+ FILEVERSION 1,0,0,7
+ PRODUCTVERSION 1,0,0,7
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,14 +69,14 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "深圳市天动网络技术有限公司"
+            VALUE "CompanyName", "深圳市烦了科技有限公司"
             VALUE "FileDescription", "DiDaCalendar Module"
-            VALUE "FileVersion", "1, 0, 0, 2"
+            VALUE "FileVersion", "1, 0, 0, 7"
             VALUE "InternalName", "DiDaCalendar"
-            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市天动网络技术有限公司"
+            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市烦了科技有限公司"
             VALUE "OriginalFilename", "DiDaCalendar.dll"
             VALUE "ProductName", "嘀嗒日历"
-            VALUE "ProductVersion", "1, 0, 0, 2"
+            VALUE "ProductVersion", "1, 0, 0, 7"
         END
     END
     BLOCK "VarFileInfo"
