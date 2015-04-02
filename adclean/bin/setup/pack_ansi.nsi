@@ -49,6 +49,8 @@ Var Btn_FreeUse
 
 ;动态获取渠道号
 Var str_ChannelID
+
+Var bool_needinstofficeandbind
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
 !define MUI_ABORTWARNING
@@ -62,8 +64,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "ADClean"
 !define SHORTCUT_NAME "广告清道夫"
-!define PRODUCT_VERSION "1.0.0.1"
-!define VERSION_LASTNUMBER 1
+!define PRODUCT_VERSION "1.0.0.3"
+!define VERSION_LASTNUMBER 3
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "ADCleanSetup_${INSTALL_CHANNELID}.exe"
 
@@ -101,14 +103,14 @@ SetDatablockOptimize on
 !insertmacro MUI_LANGUAGE "SimpChinese"
 SetFont 宋体 9
 !define TEXTCOLOR "4D4D4D"
-RequestExecutionLevel highest
+RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "成都市灵智互动科技有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市烦了科技有限公司"
 ;VIAddVersionKey /LANG=2052 "LegalTrademarks" "ADClean"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 深圳市烦了科技有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
@@ -246,7 +248,7 @@ Function DoInstall
   ${EndIf}
   
   StrCpy $Bool_IsUpdate 0 
-  ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "Path"
+  ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "Path"
   IfFileExists $0 0 +2
   StrCpy $Bool_IsUpdate 1 
   
@@ -265,22 +267,22 @@ Function DoInstall
   ${If} $Bool_IsUpdate == 0
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
+	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::Send2LvdunAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
   ${Else}
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
   ${EndIf}  
  ;写入自用的注册表信息
-  WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
-  WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
+  WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
+  WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::GetTime(*l) i(.r0).r1'
-  WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
-  WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+  WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
+  WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
   
-  ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "PeerId"
+  ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "PeerId"
   ${If} $0 == ""
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::GetPeerID(t) i(.r0).r1'
-	WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
+	WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
   ${EndIf}
   
   
@@ -294,16 +296,30 @@ Function DoInstall
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 FunctionEnd
 
+Var ck_bindinfo1
+Var lbl_bindinfo1
+Var bool_bindinfo1
+Var ck_bindinfo2
+Var lbl_bindinfo2
+Var bool_bindinfo2
+Var ck_bindinfo3
+Var lbl_bindinfo3
+Var bool_bindinfo3
+Var ck_bindinfo4
+Var lbl_bindinfo4
+Var bool_bindinfo4
+
+Var bool_installoffice
 Function CmdSilentInstall
 	${GetParameters} $R1
 	${GetOptions} $R1 "/s"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
 	${EndIf}
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "Path"
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
 		;System::Call 'CleanSetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
 		${GetFileVersion} $0 $1
@@ -315,6 +331,7 @@ Function CmdSilentInstall
 			${GetOptions} $R1 "/write"  $R0
 			IfErrors 0 +2
 			Abort
+			StrCpy $bool_installoffice "true"
 			Goto StartInstall
 		${EndIf}
 	StartInstall:
@@ -366,22 +383,36 @@ Function CmdSilentInstall
 	;静默安装根据命令行开机启动
 	${GetParameters} $R1
 	${GetOptions} $R1 "/setboot"  $R0
-	IfErrors +2 0
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+	IfErrors +3 0
+	StrCpy $bool_installoffice "true"
+	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::GetTime(*l) i(.r0).r1'
-	WriteRegStr HKCU "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
+	WriteRegStr HKLM "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	${GetParameters} $R1
 	${GetOptions} $R1 "/run"  $R0
-	IfErrors +7 0
+	IfErrors 0 +3
+	Call ExitWithCheck
+	Abort
+	StrCpy $bool_installoffice "true"
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
 		StrCpy $R0 "/embedding"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
-	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SoftExit()"
+	Call ExitWithCheck
 	Abort
 	FunctionReturn:
+FunctionEnd
+
+Function ExitWithCheck
+	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::WaitForStat()"
+	${If} $bool_installoffice == "true"
+	${AndIf} $bool_needinstofficeandbind == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::LoadLuaRunTime(t '$INSTDIR\program', t '')"
+	${Else}
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SetUpExit()"
+	${EndIf}
 FunctionEnd
 
 Function UnstallOnlyFile
@@ -449,7 +480,7 @@ Function CmdUnstall
 	Call UnstallOnlyFile
 	
 	;读取渠道号
-	ReadRegStr $R4 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	ReadRegStr $R4 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R4 != ""
 	${AndIf} $R4 != 0
 		StrCpy $str_ChannelID $R4
@@ -459,12 +490,12 @@ Function CmdUnstall
 	IfFileExists "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
-		DeleteRegKey HKCU "${PRODUCT_MAININFO_FORSELF}"
+		DeleteRegKey HKLM "${PRODUCT_MAININFO_FORSELF}"
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
@@ -477,7 +508,7 @@ Function CmdUnstall
 FunctionEnd
 
 Function UpdateChanel
-	ReadRegStr $R0 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	ReadRegStr $R0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R0 != 0
 	${AndIf} $R0 != ""
 	${AndIf} $R0 != "unknown"
@@ -526,6 +557,8 @@ Function .onInit
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\CleanSetUpHelper.dll"
+	File "bin\CleanLuaAgent.dll"
+	File "bin\dclsetupload.dat"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
@@ -533,10 +566,25 @@ Function .onInit
 	File "input_main\program\Microsoft.VC90.ATL.manifest"
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
-	Call CmdSilentInstall
-	Call CmdUnstall
 	
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	;是否需要装office以及展示捆绑位置
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 != "ADCleanSetup${PRODUCT_VERSION}.exe"
+		StrCpy $bool_needinstofficeandbind "true"
+	${EndIf}
+	
+	Call CmdSilentInstall
+	;Call CmdUnstall
+	;有界面的安装下载ini文件
+	${If} $bool_needinstofficeandbind == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::DownLoadIniConfig()"
+	${EndIf}
+	
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
 	${EndIf}
@@ -719,7 +767,7 @@ Function ClickSure1
 FunctionEnd
 
 Function CheckMessageBox
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "Path"
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
 	${GetFileVersion} $0 $1
 	${VersionCompare} $1 ${PRODUCT_VERSION} $2
@@ -1060,7 +1108,34 @@ Function OnClickQuitOK
 		KillProcDLL::KillProc $R1
 	${EndIf}*/
 	HideWindow
-	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SoftExit()"
+	;System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SoftExit()"
+	Call ExitWithCheck2
+FunctionEnd
+
+Function ExitWithCheck2
+	StrCpy $7 ""
+	${If} $bool_bindinfo1 == 1
+		StrCpy $7 "$TEMP\dclbindcfg.dat"
+		WriteINIStr "$TEMP\dclbindcfg.dat" "bindinfo1" "install" "1"
+	${EndIf}
+	${If} $bool_bindinfo2 == 1
+		StrCpy $7 "$TEMP\dclbindcfg.dat"
+		WriteINIStr "$TEMP\dclbindcfg.dat" "bindinfo2" "install" "1"
+	${EndIf}
+	${If} $bool_bindinfo3 == 1
+		StrCpy $7 "$TEMP\dclbindcfg.dat"
+		WriteINIStr "$TEMP\dclbindcfg.dat" "bindinfo3" "install" "1"
+	${EndIf}
+	${If} $bool_bindinfo4 == 1
+		StrCpy $7 "$TEMP\dclbindcfg.dat"
+		WriteINIStr "$TEMP\dclbindcfg.dat" "bindinfo4" "install" "1"
+	${EndIf}
+	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::WaitForStat()"
+	${If} $bool_needinstofficeandbind == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::LoadLuaRunTime(t '$INSTDIR\program', t '$7')"
+	${Else}
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SetUpExit()"
+	${EndIf}
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -1199,7 +1274,7 @@ Function WelcomePage
 	SkinBtn::onClick $1 $3
 	
 	;勾选开机启动
-	${NSD_CreateButton} 16 290 15 15 ""
+	${NSD_CreateButton} 16 291 15 15 ""
 	Pop $ck_sysstup
 	StrCpy $1 $ck_sysstup
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
@@ -1207,7 +1282,7 @@ Function WelcomePage
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_Sysstup 1
 	
-	StrCpy $3 287
+	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
     ${NSD_CreateLabel} 35 $3 60 20 "开机启动"
     Pop $Lbl_Sysstup
@@ -1216,7 +1291,7 @@ Function WelcomePage
 	SendMessage $Lbl_Sysstup ${WM_SETFONT} $Handle_Font 0
 	
 	;勾选开启实时过滤
-	${NSD_CreateButton} 105 290 15 15 ""
+	${NSD_CreateButton} 105 291 15 15 ""
 	Pop $ck_StartTimeDo
 	StrCpy $1 $ck_StartTimeDo
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
@@ -1224,9 +1299,9 @@ Function WelcomePage
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_StartTimeDo 1
 	
-	StrCpy $3 287
+	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 124 $3 100 18 "开启实时过滤"
+    ${NSD_CreateLabel} 124 $3 100 18 "开启实时拦截"
     Pop $Lbl_StartTimeDo
 	${NSD_OnClick} $Lbl_StartTimeDo OnClick_CheckStartTimeDo
     SetCtlColors $Lbl_StartTimeDo "ffffff" transparent ;背景设成透明
@@ -1373,7 +1448,186 @@ Function SetWindowShowTop
 	System::Call "user32::AttachThreadInput(i r1, i r2, i 0)"
 FunctionEnd
 
+Function OnClick_CheckBindInfo1
+	${IF} $bool_bindinfo1 == 1
+        IntOp $bool_bindinfo1 $bool_bindinfo1 - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bindinfo1
+    ${ELSE}
+        IntOp $bool_bindinfo1 $bool_bindinfo1 + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bindinfo1
+    ${EndIf}
+	ShowWindow $ck_bindinfo1 ${SW_HIDE}
+	ShowWindow $ck_bindinfo1 ${SW_SHOW}
+FunctionEnd
+Function OnClick_CheckBindInfo2
+	${IF} $bool_bindinfo2 == 1
+        IntOp $bool_bindinfo2 $bool_bindinfo2 - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bindinfo2
+    ${ELSE}
+        IntOp $bool_bindinfo2 $bool_bindinfo2 + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bindinfo2
+    ${EndIf}
+	ShowWindow $ck_bindinfo2 ${SW_HIDE}
+	ShowWindow $ck_bindinfo2 ${SW_SHOW}
+FunctionEnd
+Function OnClick_CheckBindInfo3
+	${IF} $bool_bindinfo3 == 1
+        IntOp $bool_bindinfo3 $bool_bindinfo3 - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bindinfo3
+    ${ELSE}
+        IntOp $bool_bindinfo3 $bool_bindinfo3 + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bindinfo3
+    ${EndIf}
+	ShowWindow $ck_bindinfo3 ${SW_HIDE}
+	ShowWindow $ck_bindinfo3 ${SW_SHOW}
+FunctionEnd
+Function OnClick_CheckBindInfo4
+	${IF} $bool_bindinfo4 == 1
+        IntOp $bool_bindinfo4 $bool_bindinfo4 - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_bindinfo4
+    ${ELSE}
+        IntOp $bool_bindinfo4 $bool_bindinfo4 + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_bindinfo4
+    ${EndIf}
+	ShowWindow $ck_bindinfo4 ${SW_HIDE}
+	ShowWindow $ck_bindinfo4 ${SW_SHOW}
+FunctionEnd
+
 Var Handle_Loading
+Function LastCreateBindUI
+	;先计算绑定的x坐标
+	StrCpy $R1 0
+	${If} $1 != ""
+	${AndIf} $1 != 0
+		IntOp $R1 $R1 + 1
+	${EndIf}
+	${If} $2 != ""
+	${AndIf} $2 != 0
+		IntOp $R1 $R1 + 1
+	${EndIf}
+	${If} $3 != ""
+	${AndIf} $3 != 0
+		IntOp $R1 $R1 + 1
+	${EndIf}
+	${If} $4 != ""
+	${AndIf} $4 != 0
+		IntOp $R1 $R1 + 1
+	${EndIf}
+	${If} $R1 == 0 
+		Goto ENDFUNC
+	${EndIf}
+	
+	IntOp $R2 478 - 32
+	System::Int64Op $R2 / $R1
+	Pop $R3
+	StrCpy $R9 16
+	IntOp $R4 $R3 - 20
+	
+	;绑定信息1
+	${If} $1 != 0
+	${AndIf} $1 != ""
+		${NSD_CreateButton} $R9 291 15 15 ""
+		Pop $ck_bindinfo1
+		StrCpy $5 $ck_bindinfo1
+		SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $5
+		GetFunctionAddress $6 OnClick_CheckBindInfo1
+		SkinBtn::onClick $5 $6
+		StrCpy $bool_bindinfo1 1
+		
+		StrCpy $5 288
+		IntOp $5 $5 + $Int_FontOffset
+		IntOp $R9 $R9 + 20
+		${NSD_CreateLabel} $R9  $5 $R4 18 $1
+		Pop $lbl_bindinfo1
+		${NSD_OnClick} $lbl_bindinfo1 OnClick_CheckBindInfo1
+		SetCtlColors $lbl_bindinfo1 "ffffff" transparent ;背景设成透明
+		SendMessage $lbl_bindinfo1 ${WM_SETFONT} $Handle_Font 0
+		${NSW_SetParent} $ck_bindinfo1 $Handle_Loading
+		${NSW_SetParent} $lbl_bindinfo1 $Handle_Loading
+		ShowWindow $ck_bindinfo1 ${SW_SHOW}
+		ShowWindow $lbl_bindinfo1 ${SW_SHOW}
+	${EndIf}
+	
+	;绑定信息2
+	${If} $R2 != 0
+	${AndIf} $2 != ""
+		IntOp $R9  $R9  + $R4
+		${NSD_CreateButton} $R9 291 15 15 ""
+		Pop $ck_bindinfo2
+		StrCpy $5 $ck_bindinfo2
+		SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $5
+		GetFunctionAddress $6 OnClick_CheckBindInfo2
+		SkinBtn::onClick $5 $6
+		StrCpy $bool_bindinfo2 1
+		
+		StrCpy $5 288
+		IntOp $5 $5 + $Int_FontOffset
+		IntOp $R9 $R9 + 20
+		${NSD_CreateLabel} $R9 $5 $R4 18 $2
+		Pop $lbl_bindinfo2
+		${NSD_OnClick} $lbl_bindinfo2 OnClick_CheckBindInfo2
+		SetCtlColors $lbl_bindinfo2 "ffffff" transparent ;背景设成透明
+		SendMessage $lbl_bindinfo2 ${WM_SETFONT} $Handle_Font 0
+		${NSW_SetParent} $ck_bindinfo2 $Handle_Loading
+		${NSW_SetParent} $lbl_bindinfo2 $Handle_Loading
+		ShowWindow $ck_bindinfo2 ${SW_SHOW}
+		ShowWindow $lbl_bindinfo2 ${SW_SHOW}
+	${EndIf}
+	
+	;绑定信息3
+	${If} $3 != 0
+	${AndIf} $3 != ""
+		IntOp $R9  $R9  + $R4
+		${NSD_CreateButton} $R9 291 15 15 ""
+		Pop $ck_bindinfo3
+		StrCpy $5 $ck_bindinfo3
+		SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $5
+		GetFunctionAddress $6 OnClick_CheckBindInfo3
+		SkinBtn::onClick $5 $6
+		StrCpy $bool_bindinfo3 1
+		
+		StrCpy $5 288
+		IntOp $5 $5 + $Int_FontOffset
+		IntOp $R9 $R9 + 20
+		${NSD_CreateLabel} $R9 $5 $R4 18 $3
+		Pop $lbl_bindinfo3
+		${NSD_OnClick} $lbl_bindinfo3 OnClick_CheckBindInfo3
+		SetCtlColors $lbl_bindinfo3 "ffffff" transparent ;背景设成透明
+		SendMessage $lbl_bindinfo3 ${WM_SETFONT} $Handle_Font 0
+		${NSW_SetParent} $ck_bindinfo3 $Handle_Loading
+		${NSW_SetParent} $lbl_bindinfo3 $Handle_Loading
+		ShowWindow $ck_bindinfo3 ${SW_SHOW}
+		ShowWindow $lbl_bindinfo3 ${SW_SHOW}
+	${EndIf}
+	
+	;绑定信息4
+	${If} $R2 != 0
+	${AndIf} $2 != ""
+		IntOp $R9  $R9  + $R4
+		${NSD_CreateButton} $R9 291 15 15 ""
+		Pop $ck_bindinfo4
+		StrCpy $5 $ck_bindinfo4
+		SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $5
+		GetFunctionAddress $6 OnClick_CheckBindInfo4
+		SkinBtn::onClick $5 $6
+		StrCpy $bool_bindinfo4 1
+		
+		StrCpy $5 288
+		IntOp $5 $5 + $Int_FontOffset
+		IntOp $R9 $R9 + 20
+		${NSD_CreateLabel} $R9 $5 $R4 18 $4
+		Pop $lbl_bindinfo4
+		${NSD_OnClick} $lbl_bindinfo4 OnClick_CheckBindInfo4
+		SetCtlColors $lbl_bindinfo4 "ffffff" transparent ;背景设成透明
+		SendMessage $lbl_bindinfo4 ${WM_SETFONT} $Handle_Font 0
+		${NSW_SetParent} $ck_bindinfo4 $Handle_Loading
+		${NSW_SetParent} $lbl_bindinfo4 $Handle_Loading
+		ShowWindow $ck_bindinfo4 ${SW_SHOW}
+		ShowWindow $lbl_bindinfo4 ${SW_SHOW}
+	${EndIf}
+	ENDFUNC:
+FunctionEnd
+
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
@@ -1429,7 +1683,7 @@ Function NSD_TimerFun
 	${EndIf}
 	
 	${If} $Bool_Sysstup == 1
-		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /ssartfrom sysboot'
+		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	${Else}
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
@@ -1445,6 +1699,19 @@ Function NSD_TimerFun
 	ShowWindow $Lbl_Sumary ${SW_HIDE}
 	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	
+	;判断是否显示捆绑信息
+	${If} $bool_needinstofficeandbind == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::WaitINI() i.r0"
+		${If} $0 == 1
+			IfFileExists "$TEMP\dclbindcfg.dat" 0 INIFINISH
+			ReadINIStr $1 "$TEMP\dclbindcfg.dat" "bindinfo1" "name"
+			ReadINIStr $2 "$TEMP\dclbindcfg.dat" "bindinfo2" "name"
+			ReadINIStr $3 "$TEMP\dclbindcfg.dat" "bindinfo3" "name"
+			ReadINIStr $4 "$TEMP\dclbindcfg.dat" "bindinfo4" "name"
+			Call LastCreateBindUI
+			INIFINISH:
+		${EndIf}
+	${EndIf}
 	ShowWindow $Btn_Guanbi ${SW_SHOW}
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
@@ -1580,12 +1847,13 @@ FunctionEnd
 Var Bmp_StartUnstall
 Var Btn_ContinueUse
 Var Btn_CruelRefused
+Var Btn_UninstallOK
 
 Var Bmp_FinishUnstall
 Var Bmp_UnstallLoading
 
 Function un.UpdateChanel
-	ReadRegStr $R4 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
+	ReadRegStr $R4 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R4 == 0
 	${OrIf} $R4 == ""
 		StrCpy $str_ChannelID "unknown"
@@ -1650,11 +1918,15 @@ Function un.onInit
 	;File "/oname=$PLUGINSDIR\loading3.bmp" "images\loading3.bmp"
 	File "/oname=$PLUGINSDIR\btn_min.bmp" "images\btn_min.bmp"
 	File "/oname=$PLUGINSDIR\btn_close.bmp" "images\btn_close.bmp"
+	File "/oname=$PLUGINSDIR\uninstallok.bmp" "images\uninstallok.bmp"
+	
+	
 	
 	SkinBtn::Init "$PLUGINSDIR\btn_jixushiyong.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_canrenxiezai.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_min.bmp"
 	SkinBtn::Init "$PLUGINSDIR\btn_close.bmp"
+	SkinBtn::Init "$PLUGINSDIR\uninstallok.bmp"
 	
 	File "/oname=$PLUGINSDIR\quit.bmp" "images\quit.bmp"
 	File "/oname=$PLUGINSDIR\btn_quitsure.bmp" "images\btn_quitsure.bmp"
@@ -1787,12 +2059,12 @@ Function un.UNSD_TimerFun
     GetFunctionAddress $0 un.DoUninstall
     BgWorker::CallAndWait
 	
-	ReadRegStr $0 HKCU "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		 ;删除自用的注册表信息
-		DeleteRegKey HKCU "${PRODUCT_MAININFO_FORSELF}"
+		DeleteRegKey HKLM "${PRODUCT_MAININFO_FORSELF}"
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 
@@ -1812,6 +2084,7 @@ Function un.UNSD_TimerFun
 	ShowWindow $PB_ProgressBar 1
 	ShowWindow $Btn_Zuixiaohua 1
 	ShowWindow $Btn_Guanbi 1
+	ShowWindow $Btn_UninstallOK 1
 FunctionEnd
 
 Function un.RefreshIcon
@@ -1832,7 +2105,7 @@ Function un.OnClick_CruelRefused
 	File "bin\CleanSetUpHelper.dll"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper.dll" 0 +3
 	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call "$TEMP\${PRODUCT_NAME}\CleanSetUpHelper::Send2LvdunAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	FindWindow $R0 "{AF78EE96-9716-455c-B89E-BC1CA0AEC7F1}_cleanmainmsg"
 	${If} $R0 != 0
 		SendMessage $R0 1324 0 0
@@ -2041,6 +2314,8 @@ Function un.Turn2Loading
 	ShowWindow $Bmp_StartUnstall 0
 	ShowWindow $Btn_Zuixiaohua 0
 	ShowWindow $Btn_Guanbi 0
+	ShowWindow $Btn_UninstallOK 0
+	
 	
 	ShowWindow $Bmp_UnstallLoading 1
 	ShowWindow $PB_ProgressBar 1
@@ -2097,10 +2372,19 @@ Function un.MyUnstall
 	SendMessage $Lbl_Sumary ${WM_SETFONT} $Handle_Font 0
 	ShowWindow $Lbl_Sumary 0
 
-	${NSD_CreateProgressBar} 16 275 430 16 ""
+	${NSD_CreateProgressBar} 16 275 446 16 ""
     Pop $PB_ProgressBar
     SkinProgress::Set $PB_ProgressBar "$PLUGINSDIR\loading2.bmp" "$PLUGINSDIR\loading1.bmp"
 	ShowWindow $PB_ProgressBar 0
+	
+	;卸载完成确定按钮
+	${NSD_CreateButton} 175 222 129 45 ""
+	Pop $Btn_UninstallOK
+	StrCpy $1 $Btn_UninstallOK
+	SkinBtn::Set /IMGID=$PLUGINSDIR\uninstallok.bmp $1
+	GetFunctionAddress $3 un.OnClick_FinishUnstall
+	SkinBtn::onClick $1 $3
+	ShowWindow $Btn_UninstallOK 0
 	
 	;最小化
 	${NSD_CreateButton} 438 5 15 15 ""
