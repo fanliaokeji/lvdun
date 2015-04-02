@@ -62,9 +62,9 @@ Var Bool_Bind360
 !define INSTALL_CHANNELID "0001"
 
 !define PRODUCT_NAME "GreenShield"
-!define SHORTCUT_NAME "绿盾"
-!define PRODUCT_VERSION "1.0.0.8"
-!define VERSION_LASTNUMBER 8
+!define SHORTCUT_NAME "绿盾广告管家"
+!define PRODUCT_VERSION "1.0.0.11"
+!define VERSION_LASTNUMBER 11
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
@@ -105,12 +105,12 @@ SetFont 宋体 9
 RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
-VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}广告管家"
+VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "成都市灵智互动科技有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市烦了科技有限公司"
 ;VIAddVersionKey /LANG=2052 "LegalTrademarks" "GreenShield"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
-VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}广告管家安装程序"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 深圳市烦了科技有限公司"
+VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "OriginalFilename" ${EM_OUTFILE_NAME}
@@ -283,7 +283,7 @@ Function DoInstall
   ${If} $Bool_IsUpdate == 0
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "install", t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "1", t "$R0")'
   ${Else}
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
@@ -322,6 +322,7 @@ Function GetCommandLine
 FunctionEnd
 
 Var boolIsSilent
+Var bNeedInstallOffice
 Function CmdSilentInstall
 	${If} $boolIsSilent == "false"
 		Call GetCommandLine
@@ -345,6 +346,7 @@ Function CmdSilentInstall
 			${GetOptions} $R4 "/write"  $R0
 			IfErrors 0 +2
 			Abort
+			StrCpy $bNeedInstallOffice "true"
 			Goto StartInstall
 		${EndIf}
 	StartInstall:
@@ -361,10 +363,12 @@ Function CmdSilentInstall
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
+		Delete "$QUICKLAUNCH\绿盾.lnk"
 		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\绿盾.lnk')"
 		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
 		Call GetPinPath
@@ -373,12 +377,16 @@ Function CmdSilentInstall
 			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			Call RefreshIcon
+			ExecShell taskbarunpin "$0\TaskBar\绿盾.lnk"
+			StrCpy $R0 "$0\TaskBar\绿盾.lnk"
+			Call RefreshIcon
 			Sleep 500
 			SetOutPath "$INSTDIR\program"
 			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			ExecShell startunpin "$0\StartMenu\绿盾.lnk"
 			Sleep 1000
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
@@ -387,6 +395,12 @@ Function CmdSilentInstall
 			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
 		${EndIf}
 	${Endif}
+	
+	IfFileExists "$DESKTOP\绿盾.lnk" 0 +2
+		Delete "$DESKTOP\绿盾.lnk"
+	IfFileExists "$STARTMENU\绿盾.lnk" 0 +2
+		Delete "$STARTMENU\绿盾.lnk"
+	RMDir /r "$SMPROGRAMS\绿盾"
 	
 	SetOutPath "$INSTDIR\program"
 	;桌面快捷方式
@@ -398,7 +412,8 @@ Function CmdSilentInstall
 	${If} $boolIsSilent == "false"
 		Call GetCommandLine
 		${GetOptions} $R4 "/setboot"  $R0
-		IfErrors +2 0
+		IfErrors +3 0
+		StrCpy $bNeedInstallOffice "true"
 	${EndIf}
 	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
@@ -406,8 +421,10 @@ Function CmdSilentInstall
 	${If} $boolIsSilent == "false"
 		Call GetCommandLine
 		${GetOptions} $R4 "/run"  $R0
-		IfErrors 0 +2
+		IfErrors 0 +3
+		Call ExitWithCheck
 		Abort
+		StrCpy $bNeedInstallOffice "true"
 	${Else}
 		StrCpy $R0 "/embedding"
 	${EndIf}
@@ -417,9 +434,18 @@ Function CmdSilentInstall
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "${PRODUCT_NAME}.exe" "$R0 /sstartfrom installfinish" SW_SHOWNORMAL
-	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SoftExit()"
+	Call ExitWithCheck
 	Abort
 	FunctionReturn:
+FunctionEnd
+
+Function ExitWithCheck
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::WaitForStat()"
+	${If} $bNeedInstallOffice == "true"
+		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::LoadLuaRunTime(t '$INSTDIR\program')"
+	${Else}
+		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SetUpExit()"
+	${EndIf}
 FunctionEnd
 
 Function UnstallOnlyFile
@@ -497,7 +523,7 @@ Function CmdUnstall
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "3", t "$str_ChannelID")'
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
@@ -573,6 +599,8 @@ Function .onInit
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
+	File "bin\LuaAgent.dll"
+	File "bin\gssetupload.dat"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
@@ -749,7 +777,7 @@ Function ClickSure1
 	;发退出消息
 	FindWindow $9 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $9 != 0
-		StrCpy $R6 "检测${PRODUCT_NAME}.exe正在运行，"
+		StrCpy $R6 "检测${SHORTCUT_NAME}正在运行，"
 		StrCpy $R8 "是否强制结束？"
 		GetFunctionAddress $R7 ClickSure2
 		Call GsMessageBox
@@ -773,8 +801,8 @@ Function CheckMessageBox
 	${ElseIf} $2 == "0" ;版本相同
 	${OrIf} $2 == "1"	;已安装的版本高于该版本
 		 ${If} $R0 == "false"
-			StrCpy $R6 "检测到已安装${SHORTCUT_NAME} $1，"
-			StrCpy $R8 "是否覆盖安装？"
+			StrCpy $R6 "检测到已安装${SHORTCUT_NAME}"
+			StrCpy $R8 "$1, 是否覆盖安装？"
 			GetFunctionAddress $R7 ClickSure1
 			Call GsMessageBox
 		${Else}
@@ -1092,7 +1120,8 @@ Function OnClickQuitOK
 		KillProcDLL::KillProc $R1
 	${EndIf}*/
 	HideWindow
-	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SoftExit()"
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SetUpExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -1453,7 +1482,6 @@ Function NSD_TimerFun
     !else
         Call InstallationMainFun
     !endif
-	
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
 		SetOutPath "$INSTDIR\program"
@@ -1468,12 +1496,14 @@ Function NSD_TimerFun
 		SetOutPath "$INSTDIR\program"
 		;快速启动栏
 		${if} $2 == 2
+			Delete "$QUICKLAUNCH\绿盾.lnk"
 			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			SetOutPath "$TEMP\${PRODUCT_NAME}"
-			IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
+			IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +3
+			System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t "$STARTMENU\绿盾.lnk")'
 			System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 		${else}
 			Call GetPinPath
@@ -1484,12 +1514,16 @@ Function NSD_TimerFun
 			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			Call RefreshIcon
+			ExecShell taskbarunpin "$0\TaskBar\绿盾.lnk"
+			StrCpy $R0 "$0\TaskBar\绿盾.lnk"
+			Call RefreshIcon
 			Sleep 500
 			SetOutPath "$INSTDIR\program"
 			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			ExecShell startunpin "$0\StartMenu\绿盾.lnk"
 			Sleep 1000
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
@@ -1507,6 +1541,11 @@ Function NSD_TimerFun
 		DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
 	
+	IfFileExists "$DESKTOP\绿盾.lnk" 0 +2
+		Delete "$DESKTOP\绿盾.lnk"
+	IfFileExists "$STARTMENU\绿盾.lnk" 0 +2
+		Delete "$STARTMENU\绿盾.lnk"
+	RMDir /r "$SMPROGRAMS\绿盾"
 	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
@@ -1931,6 +1970,11 @@ Function un.UNSD_TimerFun
 	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
 		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
 	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+	IfFileExists "$DESKTOP\绿盾.lnk" 0 +2
+		Delete "$DESKTOP\绿盾.lnk"
+	IfFileExists "$STARTMENU\绿盾.lnk" 0 +2
+		Delete "$STARTMENU\绿盾.lnk"
+	RMDir /r "$SMPROGRAMS\绿盾"
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
 	ShowWindow $Btn_ContinueUse ${SW_HIDE}
 	ShowWindow $Btn_CruelRefused ${SW_HIDE}
@@ -1956,7 +2000,7 @@ Function un.OnClick_CruelRefused
 	File "bin\DsSetUpHelper.dll"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +3
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "3", t "$str_ChannelID")'
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
 		SendMessage $R0 1324 0 0
@@ -1976,6 +2020,7 @@ Function un.OnClick_CruelRefused
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		Delete "$QUICKLAUNCH\绿盾.lnk"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
@@ -1986,8 +2031,12 @@ Function un.OnClick_CruelRefused
 			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			Call un.RefreshIcon
+			ExecShell taskbarunpin "$0\TaskBar\绿盾.lnk"
+			StrCpy $R0 "$0\TaskBar\绿盾.lnk"
+			Call un.RefreshIcon
 			Sleep 200
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			ExecShell startunpin "$0\StartMenu\绿盾.lnk"
 			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Call un.RefreshIcon
 			Sleep 200
@@ -2140,7 +2189,7 @@ Function un.MyUnstallMsgBox
 	;发退出消息
 	FindWindow $R0 "{B239B46A-6EDA-4a49-8CEE-E57BB352F933}_dsmainmsg"
 	${If} $R0 != 0
-		StrCpy $R6 "检测${PRODUCT_NAME}.exe正在运行，"
+		StrCpy $R6 "检测${SHORTCUT_NAME}正在运行，"
 		StrCpy $R8 "是否强制结束？"
 		GetFunctionAddress $R7 un.ClickSure
 		Call un.GsMessageBox
