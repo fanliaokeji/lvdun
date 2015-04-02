@@ -1,0 +1,163 @@
+<xlue>
+	<control class="NormalMenu">
+		<attr_def>
+			<attr name="ContextID" type="string" desc="菜单的内容obj的id"/>
+			<attr name="ShadeID" type="string" desc="">
+				<!--default>texture.menu.shade</default-->
+			</attr>
+			<attr name="BknID" type="string" desc="菜单的背景obj对应的纹理id" >
+				<!--default>texture.menu.bkg</default-->
+			</attr>
+			<attr name="ShadingID" type="string" desc="菜单的背景底图对应的图片id"/>
+			<attr name="BottomLineID" type="string" desc="下拉菜单底边线"/>
+			<attr name="UpBknID" type="string" desc="上拉菜单时背景id"/>
+			<attr name="SrcColorID" type="string" >
+				<!--default>color.menu.bkg.src</default-->
+			</attr>
+			<attr name="DestColorID" type="string" >
+				<!--default>color.menu.bkg.dest</default-->
+			</attr>
+			<attr name="FillAlpha" type="int" >
+				<default>255</default>
+			</attr>
+			<attr name="DefaultItemTemplate" type="string" />
+			<attr name="DefaultSpliterTemplate" type="string" />
+		</attr_def>
+		
+		<method_def>
+			<AnimateShow/>
+			<AnimateHide/>
+			<!--GetScreenPos/-->
+			<SetPopStatus file="NormalMenu.xml.lua" func="SetPopStatus" />
+			<EndMenu file="NormalMenu.xml.lua" func="EndMenu" />
+			<UpdateSize file="NormalMenu.xml.lua" func="UpdateSize" />
+			<InsertItem file="NormalMenu.xml.lua" func="InsertItem" />
+			<RemoveItem file="NormalMenu.xml.lua" func="RemoveItem" />
+			<GetItemCount file="NormalMenu.xml.lua" func="GetItemCount" />
+			<GetItem file="NormalMenu.xml.lua" func="GetItem" />
+			<GetItembyID file="NormalMenu.xml.lua" func="GetItembyID" />
+			<AddItem file="NormalMenu.xml.lua" func="AddItem" />
+			<MoveNextItem file="NormalMenu.xml.lua" func="MoveNextItem" />
+			<MovePrevItem file="NormalMenu.xml.lua" func="MovePrevItem" />
+			<GetCurItem file="NormalMenu.xml.lua" func="GetCurItem" />
+			<SetMenuBar file="NormalMenu.xml.lua" func="SetMenuBar" />
+			<GetParentItem file="NormalMenu.xml.lua" func="GetParentItem" />
+			<AdjustItemPos file="NormalMenu.xml.lua" func="AdjustItemPos" />
+			<OnInitControl file="NormalMenu.xml.lua" func="OnInitControl" />
+		</method_def>
+		
+		<objtemplate>
+			<children>
+				<obj id="menu.frame" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<limitchild>1</limitchild>
+					</attr>	
+					<children>
+						<obj id="menu.shade" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+						</obj>
+						<obj id="menu.bkn" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<!-- <alpha>250</alpha> -->
+							</attr>
+							<children>
+								<obj id="menu.shading" class="ImageObject">
+									<attr>
+										<left>(father.width - 161) / 2</left>
+										<top>father.bottom - 31</top>
+										<width>161</width>
+										<height>28</height>
+										<zorder>-10</zorder>
+										<alpha>127</alpha>
+										<drawmode>1</drawmode>
+										<visible>false</visible>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>	
+			</children>
+				
+			<eventlist>
+				<!--event name="OnInitControl"/-->
+				<event name="OnKeyDown" file="NormalMenu.xml.lua" func="OnKeyDown" />
+				<event name="OnFocusChange" file="NormalMenu.xml.lua" func="OnFocusChange" />
+			</eventlist>
+		</objtemplate>
+	</control>
+	
+	<objtemplate class="MenuItemObject" id="menu.context.item">
+		<attr>
+			<height>27</height>
+			<width>father.width</width>
+			<TextPos>18</TextPos>
+			<Font>font.default12</Font>
+			<FontColorNormal>4D4D4D</FontColorNormal>
+		</attr>
+	</objtemplate>
+
+<!-- 	<objtemplate id="menu.context.splitter" class="MenuItemObject">
+		<attr>
+			<height>12</height>
+			<SeparatorHeight>1</SeparatorHeight>
+			<width>140</width>
+			<Type>1</Type>
+			<Icon>menu.splitter</Icon>
+		</attr>
+	</objtemplate> -->
+    <objtemplate id="menu.main.itemex" class="MenuItemObject">
+        <attr>
+            <height>20</height>
+            <width>155</width>
+			<IconPos>0</IconPos>
+			<TextPos>13</TextPos>
+			<IconWidth>16</IconWidth>
+			<IconHeight>16</IconHeight>
+        </attr>
+    </objtemplate>
+	<objtemplate id="menu.object.template" >
+		<attr>
+			<ItemLeft>2</ItemLeft>
+			<ItemTop>0</ItemTop>
+			<ItemRight>2</ItemRight>
+			<ItemBottom>5</ItemBottom>
+		</attr>
+	</objtemplate>
+	<objtemplate id="menu.splitter" class="MenuItemObject">
+        <attr>
+            <height>4</height>
+			<SeparatorHeight>2</SeparatorHeight>
+            <width>155</width>
+			<Type>1</Type>
+			<Icon>bitmap.menu.splitter</Icon>
+        </attr>
+    </objtemplate>
+	
+	<!-- 通用的空菜单模板 -->
+	<objtemplate id="submenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+		</attr>
+		<children>
+		</children>
+	</objtemplate>
+	
+	<objtemplate id="submenu.template" class="NormalMenu">
+		<attr>
+			<width>180</width>
+			<height>230</height>
+ 			<ContextID>submenu.context</ContextID>
+		</attr>
+	</objtemplate>
+</xlue>

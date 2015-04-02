@@ -1,0 +1,130 @@
+<xlue>
+	<control class="TipAddin.Button">
+		<attr_def>
+			<attr name="NormalBkgID" type="string" />
+			<attr name="DownBkgID" type="string" />
+			<attr name="DisableBkgID" type="string" />
+			<attr name="HoverBkgID" type="string" />
+			<attr name="Bkg4In1ID" type="string" desc="自动扩展成4态ID"><default>general.button</default></attr>
+			<attr name="Enable" type="bool" ><default>true</default></attr>
+			<attr name="Visible" type="bool" ><default>true</default></attr>
+			<attr name="Text" type="string" />
+			<attr name="TextFont" type="string"><default>default.font</default></attr>
+			<attr name="TextColor" type="string"><default>system.black</default></attr>
+			<attr name="DisableTextColor" type="string"><default>system.gray</default></attr>
+			<attr name="BoardResID" type="string" />
+			<attr name="ForegroundResID" type="string" />
+			<attr name="ForegroundLeftPos" type="int" ><default>0</default></attr>
+			<attr name="ForegroundWidth" type="int" />
+			<attr name="ForegroundHeight" type="int" />
+		</attr_def>
+		<method_def>
+			<SetState file="Button.xml.lua" func="SetState"/>
+			<Updata file="Button.xml.lua" func="Updata"/>
+			<Enable file="Button.xml.lua" func="Enable" />
+			<IsEnable file="Button.xml.lua" func="IsEnable" />
+			<SetText file="Button.xml.lua" func="SetText" />
+			<GetText file="Button.xml.lua" func="GetText" />
+			<SetTextColor file="Button.xml.lua" func="SetTextColor" />
+			<SetTextFont file="Button.xml.lua" func="SetTextFont" />
+			<Show file="Button.xml.lua" func="Show" />
+			<IsVisible file="Button.xml.lua" func="IsVisible" />
+		</method_def>
+		<event_def>
+			<OnClick>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnClick>
+			<OnButtonMouseMove>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnButtonMouseMove>
+			<OnButtonMouseLeave>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnButtonMouseLeave>
+			<OnButtonMouseDown />
+		</event_def>
+    <objtemplate>
+	<children>
+		<!-- 边框 -->
+		<obj id="Board" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+			</attr>
+			<children>
+				<!-- 背景 -->
+				<obj id="Background" class="TextureObject">
+					<attr>
+						<left>1</left>
+						<top>1</top>
+						<width>father.width-2</width>
+						<height>father.height-2</height>
+					</attr>
+					<children>
+						<!-- 前景 -->
+						<obj id="Foreground" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+						</obj>
+						<obj id="button.edit" class="EditObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<transparent>1</transparent>
+								<font>default.font</font>
+								<visible>false</visible>
+								<zorder>100</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnFocusChange" file="Button.xml.lua" func="OnEditFocusChange" />
+								<event name="OnKeyDown" file="Button.xml.lua" func="OnEditKeyDown" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+			</children>
+		</obj>
+		<!-- 文字 -->
+		<obj id="Recomment" class="TextObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+				<font>default.font</font>
+				<textcolor>system.black</textcolor>
+				<halign>center</halign>
+				<valign>center</valign>
+				<zorder>500</zorder>
+			</attr>
+		</obj>
+	</children>
+	<eventlist>
+		<event name="OnLButtonDown" file="Button.xml.lua" func="OnLButtonDown" />
+		<event name="OnLButtonUp" file="Button.xml.lua" func="OnLButtonUp" />
+		<event name="OnMouseMove" file="Button.xml.lua" func="OnMouseMove" />
+		<event name="OnMouseLeave" file="Button.xml.lua" func="OnMouseLeave" />
+		<event name="OnMouseHover" file="Button.xml.lua" func="OnMouseHover" />
+		<event name="OnRButtonDbClick" file="Button.xml.lua" func="OnRButtonDbClick" />
+		<event name="OnFocusChange" file="Button.xml.lua" func="OnFocusChange" />
+		<event name="OnInitControl" file="Button.xml.lua" func="OnInitControl" />
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>
