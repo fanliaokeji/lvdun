@@ -184,6 +184,7 @@ function Sunccess(strProvince,strCity)
 					["p"] = {"北京","上海"},
 				}, 
 		}
+		
 		DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
 end
@@ -269,7 +270,7 @@ end
 	
 	
 --拉服务项的业务
-function DoLaunchAI(strProvince,strCity, tBlackCity)	
+function DoLaunchAI(strProvince,strCity, tBlackCity)
 	if not CheckAiSvcsHist() then
 		Log("[DoLaunchAI] CheckAiSvcsHist failed")
 		return
@@ -279,7 +280,7 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 		Log("[DoLaunchAI] in black city")
 		return
 	end
-	
+
 	local bret = apiUtil:LaunchAiSvcs()
 	Log("[DoLaunchAI] LaunchAiSvcs bret:"..tostring(bret))
 	WriteAiSvcsHistory()
@@ -291,8 +292,8 @@ function CheckAiSvcsHist()
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLaunchAiSvcTime = tUserConfig["nLaunchAiSvcTime"] or 0
 	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 3*24*3600
-	local nCurrentTime = tipUtil:GetCurrentUTCTime()
-	
+	local nCurrentTime = apiUtil:GetCurrentUTCTime()
+
 	if math.abs(nCurrentTime-nLaunchAiSvcTime) > nSpanTimeInSec then
 		return true
 	else
