@@ -1,9 +1,9 @@
 function GetSubTable()
 	local t = {
 		["tNewVersionInfo"] = {
-			["strVersion"] = "1.0.0.10",
+			["strVersion"] = "1.0.0.11",
 			["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
-			["strMD5"] = "0060E47BCBDD8588F05C729D6139C085",
+			["strMD5"] = "E62C51B44398508553D6CF457E98BBFD",
 			["tInroduce"] = {
 				"1.修复部分bug",
 				"",
@@ -11,10 +11,10 @@ function GetSubTable()
 			},
 			
 			["tForceUpdate"] = {
-				["strVersion"] = "1.0.1.0",
-				["tVersion"] = {"1-9"},
+				["strVersion"] = "1.0.1.11",
+				["tVersion"] = {"1-10"},
 				["strPacketURL"] = "http://down.lvdun123.com/client/GsSetup_0001.exe",
-				["strMD5"] = "0060E47BCBDD8588F05C729D6139C085",
+				["strMD5"] = "E62C51B44398508553D6CF457E98BBFD",
 			},
 		},
 		
@@ -31,7 +31,10 @@ function GetSubTable()
 		
 		["tExtraHelper"] = {
 			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.2.dat",
-			["strMD5"] = "76339E284B1C8A3FC3019B81FB07E4EA",
+			["strMD5"] = "",
+			["param"] = {
+				["nAISpanTimeInSec"] = 3*24*3600,
+			},
 		},
 	}
 	return t
