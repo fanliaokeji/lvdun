@@ -173,6 +173,11 @@ function Sunccess(strProvince,strCity)
 	end
 	
 	if type(apiUtil.LaunchAiSvcs) == "function" then
+		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
+		if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
+		
+			return 
+		end
 	
 		local tBlackCity = {
 			["exclude"] = {
@@ -282,14 +287,25 @@ end
 
 
 function CheckAiSvcsHist()
+	local tServerParam = LoadServerConfig() or {}
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLaunchAiSvcTime = tUserConfig["nLaunchAiSvcTime"] or 0
+	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 3*24*3600
+	local nCurrentTime = tipUtil:GetCurrentUTCTime()
 	
-	if FunctionObj.CheckTimeIsAnotherDay(nLaunchAiSvcTime) then
+	if math.abs(nCurrentTime-nLaunchAiSvcTime) > nSpanTimeInSec then
 		return true
 	else
 		return false
 	end
+end
+
+
+function LoadServerConfig()
+	local strCfgPath = FunctionObj.GetCfgPathWithName("ServerConfig.dat")
+	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath) or {}
+	local tParam = FetchValueByPath(infoTable, {"tExtraHelper", "param"})
+	return tParam
 end
 
 
