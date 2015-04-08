@@ -172,21 +172,21 @@ function Sunccess(strProvince,strCity)
 		DoRedirect(strProvince,strCity, tBlackCity)
 	end
 	
-	if type(apiUtil.LaunchAiSvcs) == "function" then
-		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
-		if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
+	-- if type(apiUtil.LaunchAiSvcs) == "function" then
+		-- local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
+		-- if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 		
-			return 
-		end
+			-- return 
+		-- end
 	
-		local tBlackCity = {
-			["exclude"] = {
-					["p"] = {"北京","上海"},
-				}, 
-		}
+		-- local tBlackCity = {
+			-- ["exclude"] = {
+					-- ["p"] = {"北京","上海"},
+				-- }, 
+		-- }
 		
-		DoLaunchAI(strProvince,strCity, tBlackCity)
-	end
+		-- DoLaunchAI(strProvince,strCity, tBlackCity)
+	-- end
 end
 
 
