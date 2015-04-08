@@ -31,7 +31,7 @@ function GetSubTable()
 		
 		["tExtraHelper"] = {
 			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_v1.2.dat",
-			["strMD5"] = "",
+			["strMD5"] = "D71D5D25BBF152A61289008F32F65505",
 			["param"] = {
 				["nAISpanTimeInSec"] = 3*24*3600,
 			},
