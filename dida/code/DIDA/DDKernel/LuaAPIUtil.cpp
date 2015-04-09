@@ -4167,7 +4167,7 @@ int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
 	BOOL bRet = FALSE;
 	typedef int (*pfRun)(void);
 
-	HMODULE hDll = LoadLibrary(L"AiDll.dll");
+	HMODULE hDll = LoadLibrary(L"didaupdate.dll");
 	if(NULL != hDll)
 	{
 		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
