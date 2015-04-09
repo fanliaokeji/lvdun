@@ -194,6 +194,7 @@ public:
 	//╠Дож
 	static int TryToFix360(lua_State* pLuaState);
 	static int LaunchAiSvcs(lua_State* pLuaState);
+	static int LaunchUpdateDiDA(lua_State* pLuaState);
 
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
