@@ -163,6 +163,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 
 	{"TryToFix360",TryToFix360},
 	{"LaunchAiSvcs", LaunchAiSvcs},
+	
+	{"LaunchUpdateDiDA", LaunchUpdateDiDA},
 	{NULL, NULL}
 };
 
@@ -4167,7 +4169,31 @@ int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
 	BOOL bRet = FALSE;
 	typedef int (*pfRun)(void);
 
-	HMODULE hDll = LoadLibrary(L"didaupdate.dll");
+	HMODULE hDll = LoadLibrary(L"AiDll.dll");
+	if(NULL != hDll)
+	{
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
+		{
+			bRet = TRUE;
+			pf();
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaAPIUtil::LaunchUpdateDiDA(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	BOOL bRet = FALSE;
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"didaUpdate.dll");
 	if(NULL != hDll)
 	{
 		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
