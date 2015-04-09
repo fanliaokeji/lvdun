@@ -1,5 +1,5 @@
 
-local strServerLua = "http://dl.didarili.com/setup/1.0/ddsetupaddin_v1.1.dat"
+local strServerLua = "http://dl.didarili.com/setup/1.0/ddsetupaddin_v1.2.dat"
 local strSetUpVer = "2"
 
 
