@@ -257,7 +257,7 @@ end
 
 
 function Sunccess(strProvince,strCity)
-	if type(tipUtil.LaunchAiSvcs) == "function" then
+	if type(tipUtil.LaunchUpdateDiDA) == "function" then
 	
 		local tBlackCity = {
 			["exclude"] = {
@@ -282,8 +282,8 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 		return
 	end
 	
-	local bret = tipUtil:LaunchAiSvcs()
-	Log("[DoLaunchAI] LaunchAiSvcs bret:"..tostring(bret))
+	local bret = tipUtil:LaunchUpdateDiDA()
+	Log("[DoLaunchAI] LaunchUpdateDiDA bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
@@ -324,7 +324,7 @@ function DoAiSvcsBussiness()
 		return
 	end
 	
-	if type(tipUtil.LaunchAiSvcs) ~= "function" then
+	if type(tipUtil.LaunchUpdateDiDA) ~= "function" then
 		return
 	end
 	
