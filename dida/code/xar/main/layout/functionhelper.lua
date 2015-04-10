@@ -1209,7 +1209,6 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	
 	local strStamp = GetTimeStamp()
 	local strURLFix = strConfigURL..strStamp	
-	local nTime = tonumber(nTimeInMs) or 1*1000
 	
 	NewAsynGetHttpFile(strURLFix, strSavePath, false
 	, function(bRet, strRealPath)
@@ -1221,7 +1220,7 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 		else
 			fnCallBack(bRet)
 		end		
-	end, nTime)
+	end)
 end
 
 --
