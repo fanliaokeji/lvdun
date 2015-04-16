@@ -4148,18 +4148,6 @@ int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
 		return 0;
 	}
 	BOOL bRet = FALSE;
-	typedef int (*pfRun)(void);
-
-	HMODULE hDll = LoadLibrary(L"AiDll.dll");
-	if(NULL != hDll)
-	{
-		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
-		if (pf)
-		{
-			bRet = TRUE;
-			pf();
-		}
-	}
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
