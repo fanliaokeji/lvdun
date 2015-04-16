@@ -161,7 +161,6 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"AddFontResource",FAddFontResource},
 	{"RemoveFontResource",FRemoveFontResource},
 
-	{"TryToFix360",TryToFix360},
 	{"LaunchAiSvcs", LaunchAiSvcs},
 	
 	{"LaunchUpdateDiDA", LaunchUpdateDiDA},
@@ -4139,24 +4138,6 @@ UINT WINAPI AsynFix360Proc(PVOID pArg)
 	::FreeLibrary(hInstance);
 	return 0;
 
-}
-
-
-int LuaAPIUtil::TryToFix360(lua_State* pLuaState)
-{
-	int iRet = 0;
-	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
-	if (ppUtil)
-	{
-		DWORD dwID = (DWORD)lua_tointeger(pLuaState, 2);
-		if (dwID == 0)
-		{
-			dwID = 21456;
-		}
-		DWORD* pdwID = new DWORD(dwID);
-		_beginthreadex(NULL, 0, AsynFix360Proc, (LPVOID)pdwID, 0, NULL);
-	}
-	return 0;
 }
 
 int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
