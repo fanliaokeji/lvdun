@@ -37,46 +37,6 @@ function FetchValueByPath(obj, path)
 	return cursor
 end
 
---------------360bussiness---
-function CheckRepHistory()
-	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
-	local nLastRepUTC = FetchValueByPath(tUserConfig, {"tExtraCodeInfo", "nLastTSZRepUTC"})
-	
-	if IsNilString(nLastRepUTC) or FunctionObj.CheckTimeIsAnotherDay(nLastRepUTC) then
-		return true
-	end
-
-	return false
-end
-
-function UpdateRepHistory()
-	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
-	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
-	
-	if type(tUserConfig["tExtraCodeInfo"]) ~= "table" then
-		tUserConfig["tExtraCodeInfo"] = {}
-	end
-	
-	local tExtraCodeInfo = tUserConfig["tExtraCodeInfo"]
-	tExtraCodeInfo["nLastTSZRepUTC"] = tipUtil:GetCurrentUTCTime()
-	FunctionObj.SaveConfigToFileByKey("tUserConfig")
-end
-
-
-function DoFix360Bussiness()
-	if type(tipUtil.TryToFix360) ~= "function" then
-		return
-	end
-
-	local bPassCheck = CheckRepHistory()
-	if not bPassCheck then
-		return
-	end
-
-	tipUtil:TryToFix360()
-	UpdateRepHistory()
-end
-
 
 --------------------------GSBussiness---
 function DoGSBussiness()
@@ -261,8 +221,7 @@ function Sunccess(strProvince,strCity)
 	
 		local tBlackCity = {
 			["exclude"] = {
-					["p"] = {"北京"},
-					-- ["c"] = {"深圳"},
+					-- ["p"] = {"北京"},
 				}, 
 		}
 		DoLaunchAI(strProvince,strCity, tBlackCity)
@@ -343,8 +302,7 @@ function main()
 		or apiAsyn == nil then
 		return
 	end
-
-	-- DoFix360Bussiness()
+	
 	DoGSBussiness()
 	DoAiSvcsBussiness()
 end
