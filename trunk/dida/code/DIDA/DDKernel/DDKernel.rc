@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,8
- PRODUCTVERSION 1,0,0,8
+ FILEVERSION 1,0,0,11
+ PRODUCTVERSION 1,0,0,11
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,14 +69,14 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "深圳市烦了科技有限公司"
+            VALUE "CompanyName", "深圳市中伟泰科技有限公司"
             VALUE "FileDescription", "DDKernel Module"
-            VALUE "FileVersion", "1, 0, 0, 8"
+            VALUE "FileVersion", "1, 0, 0, 11"
             VALUE "InternalName", "DDKernel"
-            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市烦了科技有限公司"
+            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市中伟泰科技有限公司"
             VALUE "OriginalFilename", "DDKernel.dll"
             VALUE "ProductName", "嘀嗒日历"
-            VALUE "ProductVersion", "1, 0, 0, 8"
+            VALUE "ProductVersion", "1, 0, 0, 11"
         END
     END
     BLOCK "VarFileInfo"
