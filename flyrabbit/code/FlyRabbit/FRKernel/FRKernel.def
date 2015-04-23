@@ -1,0 +1,6 @@
+LIBRARY	"FRKernel"
+
+EXPORTS
+InitXLUE
+UnInitXLUE
+HandleSingleton
