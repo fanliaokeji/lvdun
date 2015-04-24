@@ -66,5 +66,4 @@ for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') d
 )
 
 :done
-pause
 @echo on
