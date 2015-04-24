@@ -1,0 +1,88 @@
+<xlue>
+	<control class="DownLoadList">
+		<attr_def>
+			<attr name="ItemWidth" type="int">
+				<default>705</default>
+			</attr>
+			<attr name="ItemHeight" type="int">
+				<default>52</default>
+			</attr>
+			<attr name="ItemSpanW" type="int">
+				<default>0</default>
+			</attr>
+			<attr name="ItemSpanH" type="int">
+				<default>7</default>
+			</attr>
+			<attr name="SelectItemIndex" type="int">
+				<default>0</default>
+			</attr>
+			<attr name="nLinePerPage" type="int">
+				<default>5</default>
+			</attr>
+		</attr_def>
+		<method_def>
+			<UpdateFileList file="DownLoadList.xml.lua" func="UpdateFileList"/>
+			<MoveItemListPanel file="DownLoadList.xml.lua" func="MoveItemListPanel"/>
+			<GetSelectItemIndex file="DownLoadList.xml.lua" func="GetSelectItemIndex"/>
+			<GetSelectItemObject file="DownLoadList.xml.lua" func="GetSelectItemObject"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="DownLoadList.MainLayout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height-100</height>
+						<limitchild>1</limitchild>
+					</attr>		
+					<children>
+						<obj id="DownLoadList.Container" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>father.height</height>
+							</attr>		
+							<eventlist>
+								<event name="OnMouseWheel" file="DownLoadList.xml.lua" func="RouteToFather"/>
+							</eventlist>
+						</obj>
+					</children>
+				</obj>	
+				
+				<obj id="listbox.vscroll" class="TipAddin.ScrollBar">
+					<attr>
+						<Type>1</Type>
+						<ThumbBtn_normal>Scroll.ThumbBtn.Normal</ThumbBtn_normal>
+						<ThumbBtn_hover>Scroll.ThumbBtn.Normal</ThumbBtn_hover>
+						<ThumbBtn_down>Scroll.ThumbBtn.Normal</ThumbBtn_down>
+						<ThumbRightMagrin>0</ThumbRightMagrin>
+						<ThumbBtnWidth>11</ThumbBtnWidth>
+						<ThumbBtnLength>16</ThumbBtnLength>
+						<SideBtnLength>0</SideBtnLength>
+						<left>father.width - 11</left>
+						<top>0</top>
+						<width>11</width>
+						<height>father.height-2</height>
+						<zorder>99999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnScrollBarMouseWheel" file="DownLoadList.xml.lua" func="CLB__OnScrollBarMouseWheel"/>
+						<event name="OnMousePosEvent" file="DownLoadList.xml.lua" func="CLB__OnScrollMousePosEvent"/>
+					</eventlist>
+				</obj>	
+			
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="DownLoadList.xml.lua" func="OnInitControl"/>
+				<event name="OnLButtonUp" file="DownLoadList.xml.lua" func="OnLButtonUp"/>
+				<event name="OnMouseWheel" file="DownLoadList.xml.lua" redirect="listbox.vscroll"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
+

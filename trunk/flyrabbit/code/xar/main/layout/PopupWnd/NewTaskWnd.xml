@@ -1,0 +1,283 @@
+<xlue>
+	<control class="NewTaskCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="NewTaskWnd.xml.lua" func="SetData"/>
+			<MoveWindowToCenter file="NewTaskWnd.xml.lua" func="MoveWindowToCenter"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="NewTask.MainPanel" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="NewTask.MainBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>Download.MainBkg.Texture</texture>
+							</attr>
+							<children>
+								<obj id="NewTask.MainTitle" class="TextObject">
+									<attr>
+										<left>15</left>
+										<top>3</top>
+										<width>80</width>
+										<height>20</height>
+										<text>新建任务</text>
+										<font>DeleteTask.Font13</font>
+										<textcolor>F0F0F0</textcolor>
+									</attr>
+								</obj>
+								<obj id="NewTask.CloseBtn" class="TipAddin.Button">
+									<attr>
+										<left>319</left>
+										<top>0</top>
+										<width>24</width>
+										<height>24</height>
+										<NormalBkgID>Caption.CloseBtn.Normal</NormalBkgID>
+										<HoverBkgID>Caption.CloseBtn.Hover</HoverBkgID>
+										<DownBkgID>Caption.CloseBtn.Down</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NewTaskWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+							
+								<!--下载地址-->
+								<obj id="NewTask.Url.Text" class="TextObject">
+									<attr>
+										<left>15</left>
+										<top>50+3</top>
+										<width>70</width>
+										<height>20</height>
+										<text>下载地址：</text>
+										<textcolor>28313A</textcolor>
+										<font>DeleteTask.Font13</font>
+									</attr>
+								</obj>
+								<obj id="NewTask.Url.Bkg" class="TextureObject">
+									<attr>
+										<left>91</left>
+										<top>52</top>
+										<width>251</width>
+										<height>26</height>
+										<texture>edit.251.normal</texture>
+									</attr>
+									<children>
+										<obj id="NewTask.Url.edit" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>3</top>
+												<width>father.width-2</width>
+												<height>20</height>
+												<text></text>
+												<textcolor>28313A</textcolor>
+												<font>DeleteTask.Font12</font>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								<!--保存位置-->
+								<obj id="NewTask.SavePath.Text" class="TextObject">
+									<attr>
+										<left>15</left>
+										<top>90+3</top>
+										<width>70</width>
+										<height>20</height>
+										<text>保存位置：</text>
+										<textcolor>28313A</textcolor>
+										<font>DeleteTask.Font13</font>
+									</attr>
+								</obj>
+								<obj id="NewTask.SavePath.Bkg" class="TextureObject">
+									<attr>
+										<left>91</left>
+										<top>91</top>
+										<width>229</width>
+										<height>26</height>
+										<texture>edit.229.normal</texture>
+									</attr>
+									<children>
+										<obj id="NewTask.SavePath.edit" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>3</top>
+												<width>father.width-2</width>
+												<height>20</height>
+												<text>E:\飞兔下载\Download\</text>
+												<textcolor>28313A</textcolor>
+												<font>DeleteTask.Font12</font>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								<obj id="NewTask.SavePath.Btn" class="TipAddin.Button">
+									<attr>
+										<left>319+6</left>
+										<top>90+6</top>
+										<width>16</width>
+										<height>14</height>
+										<NormalBkgID>SavePicture.Dir</NormalBkgID>
+										<HoverBkgID>SavePicture.Dir</HoverBkgID>
+										<DownBkgID>SavePicture.Dir</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NewTaskWnd.xml.lua" func="OnPopDirSelectDialog" />
+									</eventlist>
+								</obj>
+								<!--文件名-->
+								<obj id="NewTask.FileName.Text" class="TextObject">
+									<attr>
+										<left>28</left>
+										<top>130+3</top>
+										<width>57</width>
+										<height>20</height>
+										<text>文件名：</text>
+										<textcolor>28313A</textcolor>
+										<font>DeleteTask.Font13</font>
+									</attr>
+								</obj>
+								<obj id="NewTask.FileName.Bkg" class="TextureObject">
+									<attr>
+										<left>91</left>
+										<top>132</top>
+										<width>229</width>
+										<height>26</height>
+										<texture>edit.229.normal</texture>
+									</attr>
+									<children>
+										<obj id="NewTask.FileName.edit" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>3</top>
+												<width>father.width-2</width>
+												<height>20</height>
+												<text></text>
+												<textcolor>28313A</textcolor>
+												<font>DeleteTask.Font12</font>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								<obj id="NewTask.FileDesc.Text" class="TextObject">
+									<attr>
+										<left>91+9</left>
+										<top>155+4</top>
+										<width>father.width</width>
+										<height>20</height>
+										<text></text>
+										<textcolor>7C8D9F</textcolor>
+										<font>DeleteTask.Font12</font>
+									</attr>
+								</obj>
+									<obj id="NewTask.OKBtn" class="TipAddin.Button">
+									<attr>
+										<left>155</left>
+										<top>191</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.OKBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.OKBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.OKBtn.Normal</DownBkgID>
+										<Text>保存</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NewTaskWnd.xml.lua" func="OnClickOK" />
+									</eventlist>
+								</obj>
+								<obj id="NewTask.CancelBtn" class="TipAddin.Button">
+									<attr>
+										<left>257</left>
+										<top>191</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.CancelBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.CancelBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.CancelBtn.Normal</DownBkgID>
+										<Text>取消</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NewTaskWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj> <!--end of TipUpdate.MainPanel-->
+			</children>
+		</objtemplate>
+	</control>
+
+	<objtreetemplate id="NewTaskTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>350</width>
+			<height>225</height>
+		</attr>
+
+		<obj id="root.layout" class="NewTaskCtrl">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>350</width>
+				<height>225</height>
+			</attr>				
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipNewTaskWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>350</width>
+            <height>225</height>
+ 
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="NewTaskWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="NewTaskWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

@@ -1,0 +1,237 @@
+<xlue>
+	<control class="DownloadFileCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="DownloadFileWnd.xml.lua" func="SetData"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="DownloadFile.MainPanel" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="DownloadFile.MainBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>Download.MainBkg.Texture</texture>
+							</attr>
+							<children>
+								<obj id="DownloadFile.MainTitle" class="TextObject">
+									<attr>
+										<left>15</left>
+										<top>3</top>
+										<width>80</width>
+										<height>20</height>
+										<text>下载文件</text>
+										<font>DeleteTask.Font13</font>
+										<textcolor>F0F0F0</textcolor>
+									</attr>
+								</obj>
+								<obj id="DownloadFile.CloseBtn" class="TipAddin.Button">
+									<attr>
+										<left>319</left>
+										<top>0</top>
+										<width>24</width>
+										<height>24</height>
+										<NormalBkgID>Caption.CloseBtn.Hover</NormalBkgID>
+										<HoverBkgID>Caption.CloseBtn.Hover</HoverBkgID>
+										<DownBkgID>Caption.CloseBtn.Down</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+								<obj id="DownloadFile.Picture" class="TextureObject">
+									<attr>
+										<left>21</left>
+										<top>54</top>
+										<width>38</width>
+										<height>29</height>
+										<texture>Download.picture</texture>
+									</attr>
+								</obj>
+								<obj id="DownloadFile.FileDesc.Name" class="TextObject">
+									<attr>
+										<left>74</left>
+										<top>53</top>
+										<width>father.width</width>
+										<height>20</height>
+										<text>文件名.jpg</text>
+										<textcolor>28313A</textcolor>
+										<font>DeleteTask.Font13</font>
+									</attr>
+								</obj>
+								<obj id="DownloadFile.FileDesc.Size" class="TextObject">
+									<attr>
+										<left>74</left>
+										<top>71</top>
+										<width>father.width</width>
+										<height>20</height>
+										<text>800X600 | 17KB</text>
+										<textcolor>28313A</textcolor>
+										<font>DeleteTask.Font13</font>
+									</attr>
+								</obj>
+								<obj id="DownloadFile.DirChange.Bkg" class="TextureObject">
+									<attr>
+										<left>24</left>
+										<top>102</top>
+										<width>287</width>
+										<height>26</height>
+										<texture>edit.long.normal</texture>
+									</attr>
+									<children>
+										<obj id="DownloadFile.DirChange.edit" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>3</top>
+												<width>father.width-2</width>
+												<height>20</height>
+												<text>E:\飞兔下载\Download\</text>
+												<textcolor>28313A</textcolor>
+												<font>DeleteTask.Font12</font>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="DownloadFileWnd.xml.lua" func="OnEditFocusChange" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								<obj id="DownloadFile.ChangeDir" class="TipAddin.Button">
+									<attr>
+										<left>318</left>
+										<top>107</top>
+										<width>16</width>
+										<height>14</height>
+										<NormalBkgID>SavePicture.Dir</NormalBkgID>
+										<HoverBkgID>SavePicture.Dir</HoverBkgID>
+										<DownBkgID>SavePicture.Dir</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnPopDirSelectDialog" />
+									</eventlist>
+								</obj>
+								<obj id="DownloadFile.SelectBtn" class="TipAddin.Button">
+									<attr>
+										<left>25</left>
+										<top>father.height-71-24</top>
+										<width>131</width>
+										<height>24</height>
+										<ForegroundResID>DeleteTask.Select.Texture</ForegroundResID>
+										<ForegroundWidth>18</ForegroundWidth>
+										<ForegroundHeight>18</ForegroundHeight>
+										<Text>自动保存到此目录</Text>
+										<LeftTextPos>27</LeftTextPos>
+										<TopTextPos>0</TopTextPos>
+										<TextFont>DeleteTask.Font12</TextFont>
+										<TextColor>28313A</TextColor>
+										<NormalBkgID>DeleteTask.Null</NormalBkgID>
+										<HoverBkgID>DeleteTask.Null</HoverBkgID>
+										<DownBkgID>DeleteTask.Null</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnSelect" />
+									</eventlist>
+								</obj>
+								<obj id="DownloadFile.OKBtn" class="TipAddin.Button">
+									<attr>
+										<left>155</left>
+										<top>187</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.OKBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.OKBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.OKBtn.Normal</DownBkgID>
+										<Text>保存</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnClickOK" />
+									</eventlist>
+								</obj>
+								<obj id="DownloadFile.CancelBtn" class="TipAddin.Button">
+									<attr>
+										<left>259</left>
+										<top>187</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.CancelBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.CancelBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.CancelBtn.Normal</DownBkgID>
+										<Text>取消</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj> <!--end of TipUpdate.MainPanel-->
+			</children>
+		</objtemplate>
+	</control>
+
+	<objtreetemplate id="DownloadFileTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>350</width>
+			<height>225</height>
+		</attr>
+
+		<obj id="root.layout" class="DownloadFileCtrl">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>350</width>
+				<height>225</height>
+			</attr>				
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipDownloadFileWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>350</width>
+            <height>225</height>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="DownloadFileWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="DownloadFileWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

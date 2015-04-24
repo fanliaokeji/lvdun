@@ -1,0 +1,74 @@
+<xlue>
+	<animationtemplate id="tip.pos.animation" class="PosChangeAnimation">
+		<attr>
+			<totaltime>800</totaltime>
+		</attr>
+	</animationtemplate>
+
+	<control class="TipMainWndRootCtrl">
+		<attr_def>
+		    <attr name="popanitime" type="int">
+				<default>800</default>
+			</attr>
+			<attr name="hidanitime" type="int">
+				<default>3000</default>
+			</attr>
+			<attr name="holdseconds" type="int">
+				<default>15</default>
+			</attr>
+		</attr_def>
+    	<objtemplate>
+    		<children>
+
+    		</children>
+    	</objtemplate>
+    </control>
+
+	<objtreetemplate id="TipMainWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>710</width>
+			<height>455</height>
+		</attr>
+
+		<obj id="root.layout" class="TipMainWndRootCtrl">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>710</width>
+				<height>455</height>
+			</attr>		
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipMainWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>705</width>
+            <height>455</height>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>250</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipMainWnd.xml.lua" func="OnCreate"/>
+            <event name="OnSize" file="TipMainWnd.xml.lua" func="OnSize"/>
+			<event name="OnShowWindow" file="TipMainWnd.xml.lua" func="OnShowWindow"/>
+			<event name="OnDestroy" file="TipMainWnd.xml.lua" func="OnDestroy"/>
+			<event name="OnClose" file="TipMainWnd.xml.lua" func="OnClose"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

@@ -1,0 +1,218 @@
+<xlue>
+	<objtemplate id="textlinktemplate" class="TipAddin.TextLink">
+		<attr>
+			<left>0</left>
+			<top>(father.height-30)/2</top>
+			<width>father.width</width> 
+			<height>30</height>
+			<VAlign>center</VAlign>
+			<HAlign>center</HAlign>
+			<Font>font.text13</Font>
+			<HoverFont>font.text13.underline</HoverFont>
+			<TextColor>09AB84</TextColor>
+		</attr>	
+	</objtemplate>
+
+
+	<control class="DownLoadItem">
+		<attr_def>
+			<attr name="tFileInfo" />
+			<attr name="bSelect" type="bool" ><default>false</default></attr>
+			<attr name="nItemIndex" type="int" ><default>0</default></attr>
+		</attr_def>
+		<method_def>
+			<SetFileContent file="DownLoadItem.xml.lua" func="SetFileContent"/>
+			<SetItemIndex file="DownLoadItem.xml.lua" func="SetItemIndex"/>
+			<GetItemIndex file="DownLoadItem.xml.lua" func="GetItemIndex"/>
+			<SetSelectState file="DownLoadItem.xml.lua" func="SetSelectState"/>
+			<UpdateFileItemStyle file="DownLoadItem.xml.lua" func="UpdateFileItemStyle"/>
+		</method_def>
+		<event_def>
+			 <OnClick />
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="DownLoad.Layout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+						<texture>DownLoad.WhiteBkg</texture>
+					</attr>		
+					<children>
+						<obj id="DownLoad.SelectBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width> 
+								<height>49</height>
+								<texture>DownLoad.Select</texture>
+								<zorder>0</zorder>
+								<visible>false</visible>
+							</attr>
+						</obj>
+					
+						<obj id="DownLoad.FileImage" class="ImageObject">
+							<attr>
+								<left>15</left>
+								<top>(father.height-35)/2</top>
+								<width>35</width> 
+								<height>35</height>
+								<image>FileImage.Default</image>
+								<zorder>9</zorder>
+							</attr>		
+						</obj>	
+					
+						<obj id="DownLoad.FileName" class="TextObject">
+							<attr>
+								<left>38+15*2</left>
+								<top>0</top>
+								<width>father.width/2</width> 
+								<height>father.height/2</height>
+								<valign>bottom</valign>
+								<halign>left</halign>
+								<font>font.text14</font>
+								<textcolor>28313A</textcolor>
+								<endellipsis>1</endellipsis>
+								<zorder>999999</zorder>
+								<text>文件名称</text>
+							</attr>		
+						</obj>	
+						
+						<obj id="DownLoad.FileSize" class="TextObject">
+							<attr>
+								<left>38+15*2</left>
+								<top>father.height/2</top>
+								<width>father.width/2</width> 
+								<height>father.height/2</height>
+								<valign>top</valign>
+								<halign>left</halign>
+								<font>font.text13</font>
+								<textcolor>7C8D9F</textcolor>
+								<endellipsis>1</endellipsis>
+								<zorder>999999</zorder>
+								<text>100%   520KB / 1.2MB</text>
+							</attr>		
+						</obj>	
+						
+						
+						<obj id="DownLoad.ReDownLoad" class="TipAddin.TextLink" templateid="textlinktemplate">
+							<attr>
+								<left>father.width-145</left>
+								<width>70</width> 
+								<Text>重新下载</Text>
+							</attr>		
+							<eventlist>
+								<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickReDownLoad" />
+							</eventlist>
+						</obj>	
+						
+						
+						<obj id="DownLoad.DownLoadFinish" class="LayoutObject">
+							<attr>
+								<left>father.width-230</left>
+								<top>0</top>
+								<width>140</width> 
+								<height>father.height</height>
+							</attr>		
+							<children>
+								<obj id="DownLoad.OpenFile" class="TipAddin.TextLink" templateid="textlinktemplate">
+									<attr>
+										<left>0</left>
+										<width>40</width> 
+										<Text>打开</Text>
+									</attr>		
+									<eventlist>
+										<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickOpenFile" />
+									</eventlist>
+								</obj>	
+								
+								<obj id="DownLoad.OpenDir" class="TipAddin.TextLink" templateid="textlinktemplate">
+									<attr>
+										<left>75</left>
+										<width>70</width> 
+										<Text>打开文件夹</Text>
+									</attr>		
+									<eventlist>
+										<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickOpenDir" />
+									</eventlist>
+								</obj>	
+							</children>
+						</obj>	
+						
+						<obj id="DownLoad.StartBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-85-28</left>
+								<top>(father.height-28)/2</top>
+								<width>28</width> 
+								<height>28</height>
+								<NormalBkgID>DownLoad.StartBtn.Normal</NormalBkgID>
+								<DownBkgID>DownLoad.StartBtn.Down</DownBkgID>
+								<HoverBkgID>DownLoad.StartBtn.Hover</HoverBkgID>
+								<DisableBkgID>DownLoad.StartBtn.Disable</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickStart" />
+							</eventlist>
+						</obj>
+						
+						<obj id="DownLoad.PauseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-85-28</left>
+								<top>(father.height-28)/2</top>
+								<width>28</width> 
+								<height>28</height>
+								<NormalBkgID>DownLoad.PauseBtn.Normal</NormalBkgID>
+								<DownBkgID>DownLoad.PauseBtn.Down</DownBkgID>
+								<HoverBkgID>DownLoad.PauseBtn.Hover</HoverBkgID>
+								<DisableBkgID>DownLoad.PauseBtn.Disable</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickPause" />
+							</eventlist>
+						</obj>
+						
+						<obj id="DownLoad.DeleteBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-36-28</left>
+								<top>(father.height-28)/2</top>
+								<width>28</width> 
+								<height>28</height>
+								<NormalBkgID>DownLoad.DeleteBtn.Normal</NormalBkgID>
+								<DownBkgID>DownLoad.DeleteBtn.Down</DownBkgID>
+								<HoverBkgID>DownLoad.DeleteBtn.Hover</HoverBkgID>
+								<DisableBkgID>DownLoad.DeleteBtn.Disable</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnClickDelete" />
+							</eventlist>
+						</obj>
+						
+						<obj id="DownLoad.ProgressBar" class="TipAddin.ProgressBar">
+							<attr>
+								<left>0</left>
+								<top>father.height-3</top>
+								<width>father.width</width>
+								<height>3</height>
+								<BkgID>DownLoad.ProgressBar.Bkg</BkgID>
+								<ProgressID>DownLoad.ProgressBar</ProgressID>
+							</attr>
+						</obj>
+					</children>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="DownLoadItem.xml.lua" func="OnInitControl"/>
+				<event name="OnControlMouseWheel" file="DownLoadItem.xml.lua" func="RouteToFather"/>
+				<event name="OnControlMouseEnter" file="DownLoadItem.xml.lua" func="OnControlMouseEnter"/>
+				<event name="OnControlMouseLeave" file="DownLoadItem.xml.lua" func="OnControlMouseLeave"/>
+				<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="OnLButtonUp"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
+
+
+
+

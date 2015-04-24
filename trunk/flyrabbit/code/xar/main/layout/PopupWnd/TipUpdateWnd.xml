@@ -1,0 +1,72 @@
+<xlue>
+	<control class="UpdateRootCtrl">
+		<attr_def>
+			<attr name="bInstall" type="bool"><default>false</default></attr>
+			<attr name="strInstallPath" type="string"><default>false</default></attr>
+		</attr_def>
+		<method_def>
+			<ShowInstallPanel file="TipUpdateWnd.xml.lua" func="ShowInstallPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="TipUpdate.MainPanel" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>	
+				</obj> <!--end of TipUpdate.MainPanel-->
+			</children>
+		</objtemplate>
+	</control>
+
+	<objtreetemplate id="TipUpdateTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>437</width>
+			<height>204</height>
+		</attr>
+
+		<obj id="root.layout" class="UpdateRootCtrl">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>437</width>
+				<height>204</height>
+			</attr>				
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipUpdateWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>437</width>
+            <height>204</height>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipUpdateWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="TipUpdateWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

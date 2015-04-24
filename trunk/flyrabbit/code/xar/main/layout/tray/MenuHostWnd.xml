@@ -1,0 +1,21 @@
+<xlue>
+	<animationtemplate id="menu.showani" class="PosChangeAnimation">
+		<attr>
+			<totaltime>800</totaltime>
+		</attr>
+	</animationtemplate>
+	
+	<hostwndtemplate id="TipTrayWnd" class="MenuHostWnd">
+		<attr> 
+			<!--mode>auto</mode-->
+			<topmost>1</topmost>
+			<layered>1</layered>
+		</attr>
+		<eventlist>
+			<event name="OnPopupMenu" />
+			<event name="OnEndMenu" />
+			<event name="OnBindObjectTree" />
+		</eventlist>
+	</hostwndtemplate>
+
+</xlue>

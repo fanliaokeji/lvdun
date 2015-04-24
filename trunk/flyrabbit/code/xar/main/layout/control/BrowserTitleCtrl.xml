@@ -1,0 +1,74 @@
+<xlue>
+    <control class="BrowserTitleCtrl">
+        <method_def>
+			<SetTitleText file="BrowserTitleCtrl.xml.lua" func="SetTitleText"/>
+        </method_def>
+		
+        <event_def>
+		
+        </event_def>
+        <objtemplate>
+            <children>
+				<obj id="root.layout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture></texture>
+					</attr>		
+					<children>							
+						<obj id="BrowserTitleCtrl.Title" class="TextObject" >
+							<attr>
+								<left>28</left>
+								<top>1</top>
+								<width>father.width-100</width>
+								<height>father.height</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<textcolor>system.white</textcolor>
+								<endellipsis>1</endellipsis>
+							</attr>
+						</obj>
+						
+						<obj id="BrowserTitleCtrl.Caption.CloseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-24-16</left>
+								<top>0</top>
+								<width>24</width>
+								<height>24</height>
+								<NormalBkgID>Caption.CloseBtn.Normal</NormalBkgID>
+								<DownBkgID>Caption.CloseBtn.Down</DownBkgID>
+								<HoverBkgID>Caption.CloseBtn.Hover</HoverBkgID>
+								<DisableBkgID>Caption.CloseBtn.Disable</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BrowserTitleCtrl.xml.lua" func="OnClickCpationClose" />
+							</eventlist>
+						</obj>			
+						
+						<obj id="BrowserTitleCtrl.Caption.MinBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-24*2-21</left>
+								<top>0</top>
+								<width>24</width>
+								<height>24</height>
+								<NormalBkgID>Caption.MinBtn.Normal</NormalBkgID>
+								<DownBkgID>Caption.MinBtn.Down</DownBkgID>
+								<HoverBkgID>Caption.MinBtn.Hover</HoverBkgID>
+								<DisableBkgID>Caption.MinBtn.Disable</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BrowserTitleCtrl.xml.lua" func="OnClickCpationMin" />
+							</eventlist>
+						</obj>
+						
+					</children>
+				</obj> <!--end root.layout-->
+            </children>
+			<eventlist>
+				<event name="OnInitControl" file="BrowserTitleCtrl.xml.lua" func="OnInitControl" />
+			</eventlist>
+        </objtemplate>
+    </control>
+</xlue>
