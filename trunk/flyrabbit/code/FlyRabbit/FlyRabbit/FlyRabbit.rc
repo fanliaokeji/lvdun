@@ -54,7 +54,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "F:\\lvdun\\trunk\\flyrabbit\\code\\res\\FlyRabbit.ico"
+IDI_ICON1               ICON                    "res\\FlyRabbit.ico"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
