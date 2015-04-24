@@ -142,7 +142,7 @@
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapExports="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
