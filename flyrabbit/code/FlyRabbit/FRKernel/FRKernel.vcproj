@@ -336,6 +336,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CNotifyIcon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CNotifyIcon.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DatFileUtility.cpp"
 				>
 			</File>
@@ -389,6 +397,14 @@
 			</File>
 			<File
 				RelativePath=".\LuaMiniTPUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaNotifyIcon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaNotifyIcon.h"
 				>
 			</File>
 		</Filter>
