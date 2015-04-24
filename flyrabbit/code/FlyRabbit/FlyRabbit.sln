@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlyRabbit", "FlyRabbit\FlyR
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FRKernel", "FRKernel\FRKernel.vcproj", "{D7E68230-D58E-487A-AD2E-45B61ABA6AD8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlyRabbitSetupHelper", "FlyRabbitSetupHelper\FlyRabbitSetUpHelper.vcproj", "{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{D7E68230-D58E-487A-AD2E-45B61ABA6AD8}.Debug|Win32.Build.0 = Debug|Win32
 		{D7E68230-D58E-487A-AD2E-45B61ABA6AD8}.Release|Win32.ActiveCfg = Release|Win32
 		{D7E68230-D58E-487A-AD2E-45B61ABA6AD8}.Release|Win32.Build.0 = Release|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Debug|Win32.Build.0 = Debug|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.ActiveCfg = Release|Win32
+		{065B86A4-3F01-4C50-BAB6-4A1D8ECA325E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
