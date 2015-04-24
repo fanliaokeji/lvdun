@@ -62,15 +62,15 @@ int LuaMiniTPUtil::MiniTPLoadXLDL(lua_State* pLuaState)
 	{
 		return 0;
 	}
-	if (!lua_isstring(pLuaState,2))
-	{
-		return 0;
-	}
-	const char* utf8Path = luaL_checkstring(pLuaState, 2);
+	//if (!lua_isstring(pLuaState,2))
+	//{
+	//	return 0;
+	//}
+	//const char* utf8Path = luaL_checkstring(pLuaState, 2);
 
-	CComBSTR bstrPath;
-	LuaStringToCComBSTR(utf8Path,bstrPath);
-	BOOL bRet = gMiniTPWrapper.LoadXLDL(bstrPath.m_str);
+	//CComBSTR bstrPath;
+	//LuaStringToCComBSTR(utf8Path,bstrPath);
+	BOOL bRet = gMiniTPWrapper.LoadXLDL(L"xldl.dll");
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }

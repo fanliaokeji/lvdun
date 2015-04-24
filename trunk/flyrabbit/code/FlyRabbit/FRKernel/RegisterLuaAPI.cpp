@@ -2,6 +2,7 @@
 #include "RegisterLuaAPI.h"
 #include "LuaAPIUtil.h"
 #include "LuaAsynAPIUtil.h"
+#include "LuaNotifyIcon.h"
 #include "FRKernelHelper/LuaListenPre.h"
 #include "FRKernelHelper/LuaPrefactory.h"
 #include "LuaMiniTPUtil.h"
@@ -26,6 +27,8 @@ BOOL CRegisterLuaAPI::Init(LPCTSTR lpCmdLine, LPVOID lpHookObj)
 	}
 	LuaAPIUtil::RegisterObj(hEnv);
 	LuaAsynUtil::RegisterSelf(hEnv);
+	LuaNotifyIcon::RegisterSelf(hEnv);
+
 	LuaMiniTPUtil::RegisterSelf(hEnv);
 
 	LuaListenPreFactory::RegisterObj(hEnv);
