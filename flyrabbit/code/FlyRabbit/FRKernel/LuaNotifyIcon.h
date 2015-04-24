@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NotifyIcon.h"
+#include "CNotifyIcon.h"
 #include "LuaEventContainer.h"
 
 #define NOTIFYICON_OBJ		"FR.NotifyIcon"
