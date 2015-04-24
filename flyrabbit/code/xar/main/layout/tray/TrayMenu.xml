@@ -1,0 +1,100 @@
+<xlue>
+	<objtemplate id="menu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>4</ItemTop>
+			<ItemLeft>3</ItemLeft>
+			<ItemRight>5</ItemRight>
+		</attr>
+		<children>
+			<obj id="sysboot" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>开机启动</Text>
+					<Icon>MenuItem.Check</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Sysboot" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Sysboot" />
+				</eventlist>
+			</obj>
+			
+			<obj id="pictureset" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>图片保存设置</Text>
+					<Enable>0</Enable>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_PictureSet" />
+				</eventlist>
+			</obj>
+			
+			<obj id="officialweb" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>官方网站</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_OfficialWeb" />
+				</eventlist>
+			</obj>
+			
+			<obj id="update" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>软件升级</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Update" />
+				</eventlist>
+			</obj>
+			
+			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>关于飞兔下载</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_About" />
+				</eventlist>
+			</obj>
+			<obj id="exit" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>退出</Text>
+					<Icon>MenuItem.Quit</Icon>
+					<IconWidth>12</IconWidth>
+					<IconPos>8</IconPos>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Exit" />
+				</eventlist>
+			</obj>
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="TrayMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>139</width>
+			<height>134</height>
+		</attr>
+		
+		<obj id="TrayMenu.Main" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>139</width>
+				<height>134</height>
+				<texture>Tray.Main.Bkg</texture>
+			</attr>
+			<children>
+				<obj id="TrayMenu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<ContextID>menu.context</ContextID>
+						<!--BknID>Tray.Main.Bkg</BknID-->
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>

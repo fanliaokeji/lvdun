@@ -1,0 +1,89 @@
+<XLUE>
+	<resource>
+		<texture id="MainWnd.Bkg" image="bitmap\MainWnd.Bkg.png" />
+		<texture id="Scroll.ThumbBtn.Normal" type="ThreeInOneV" image="bitmap\Scroll.ThumbBtn.Normal.png" />
+		<bitmap id="MainLogo" path="bitmap\MainLogo.png" />
+		
+		<texture id="Caption.MaxBtn.Normal" image="bitmap\Caption.MaxBtn.Normal.png" />
+		<texture id="Caption.MaxBtn.Hover" image="bitmap\Caption.MaxBtn.Normal.png" />
+		<texture id="Caption.MaxBtn.Down" image="bitmap\Caption.MaxBtn.Normal.png" />
+		<texture id="Caption.MaxBtn.Disable" image="bitmap\Caption.MaxBtn.Normal.png" />
+		
+		<texture id="Caption.CloseBtn.Normal" image="bitmap\Caption.CloseBtn.Normal.png" />
+		<texture id="Caption.CloseBtn.Hover" image="bitmap\Caption.CloseBtn.Hover.png" />
+		<texture id="Caption.CloseBtn.Down" image="bitmap\Caption.CloseBtn.Normal.png" />
+		<texture id="Caption.CloseBtn.Disable" image="bitmap\Caption.CloseBtn.Normal.png" />
+		
+		<texture id="Caption.RestoreBtn.Normal" image="bitmap\Caption.RestoreBtn.Normal.png" />
+		<texture id="Caption.RestoreBtn.Hover" image="bitmap\Caption.RestoreBtn.Normal.png" />
+		<texture id="Caption.RestoreBtn.Down" image="bitmap\Caption.RestoreBtn.Normal.png" />
+		<texture id="Caption.RestoreBtn.Disable" image="bitmap\Caption.RestoreBtn.Normal.png" />
+		
+		<texture id="Caption.MinBtn.Normal" image="bitmap\Caption.MinBtn.Normal.png" />
+		<texture id="Caption.MinBtn.Hover" image="bitmap\Caption.MinBtn.Hover.png" />
+		<texture id="Caption.MinBtn.Down" image="bitmap\Caption.MinBtn.Normal.png" />
+		<texture id="Caption.MinBtn.Disable" image="bitmap\Caption.MinBtn.Normal.png" />
+		
+		<texture id="DownLoad.Select" image="bitmap\DownLoad.Select.png" />
+		<texture id="DownLoad.WhiteBkg" image="bitmap\null.png" />
+		
+		<texture id="DownLoad.StartBtn.Normal" image="bitmap\DownLoad.StartBtn.Normal.png" />
+		<texture id="DownLoad.StartBtn.Hover" image="bitmap\DownLoad.StartBtn.Hover.png" />
+		<texture id="DownLoad.StartBtn.Down" image="bitmap\DownLoad.StartBtn.Normal.png" />
+		<texture id="DownLoad.StartBtn.Disable" image="bitmap\DownLoad.StartBtn.Normal.png" />
+		
+		<texture id="DownLoad.PauseBtn.Normal" image="bitmap\DownLoad.PauseBtn.Normal.png" />
+		<texture id="DownLoad.PauseBtn.Hover" image="bitmap\DownLoad.PauseBtn.Hover.png" />
+		<texture id="DownLoad.PauseBtn.Down" image="bitmap\DownLoad.PauseBtn.Normal.png" />
+		<texture id="DownLoad.PauseBtn.Disable" image="bitmap\DownLoad.PauseBtn.Normal.png" />
+		
+		<texture id="DownLoad.DeleteBtn.Normal" image="bitmap\DownLoad.DeleteBtn.Normal.png" />
+		<texture id="DownLoad.DeleteBtn.Hover" image="bitmap\DownLoad.DeleteBtn.Hover.png" />
+		<texture id="DownLoad.DeleteBtn.Down" image="bitmap\DownLoad.DeleteBtn.Normal.png" />
+		<texture id="DownLoad.DeleteBtn.Disable" image="bitmap\DownLoad.DeleteBtn.Normal.png" />
+		
+		<texture id="DownLoad.ProgressBar.Bkg" image="bitmap\DownLoad.ProgressBar.Bkg.png" />
+		<texture id="DownLoad.ProgressBar" type="ThreeInOneH" image="bitmap\DownLoad.ProgressBar.png" />
+		
+		<texture id="Bottom.NewTaskBtn.Hover" image="bitmap\Bottom.NewTaskBtn.Hover.png" />
+		<texture id="Bottom.NewTaskBtn.Normal" image="bitmap\Bottom.NewTaskBtn.Normal.png" />
+		
+		<bitmap id="FileImage.Default" path="bitmap\FileImage.Default.png" />
+		
+		<texture id="Bottom.StartBtn.Normal" image="bitmap\Bottom.StartBtn.Normal.png" />
+		<texture id="Bottom.StartBtn.Hover" image="bitmap\Bottom.StartBtn.Hover.png" />
+		
+		<texture id="Bottom.PauseBtn.Normal" image="bitmap\Bottom.PauseBtn.Normal.png" />
+		<texture id="Bottom.PauseBtn.Hover" image="bitmap\Bottom.PauseBtn.Hover.png" />
+		
+		<texture id="Bottom.DeleteAllBtn.Normal" image="bitmap\Bottom.DeleteAllBtn.Normal.png" />
+		<texture id="Bottom.DeleteAllBtn.Hover" image="bitmap\Bottom.DeleteAllBtn.Hover.png" />
+		
+		<texture id="TrayMenu.Select" image="bitmap\TrayMenu.Select.png" />
+		<texture id="Tray.Main.Bkg" image="bitmap\Tray.Main.Bkg.png" />
+		<bitmap id="MenuItem.Check" path="bitmap\MenuItem.Check.png" />
+		<bitmap id="MenuItem.UnCheck" path="bitmap\MenuItem.UnCheck.png" />
+		<bitmap id="MenuItem.Quit" path="bitmap\MenuItem.Quit.png" />
+		
+		<texture id="DeleteTask.MainBkg.Texture" image="bitmap\DeleteTask.MainBkg.Texture.png" />
+		<texture id="DeleteTask.Select.Texture" image="bitmap\select.png" />
+		<texture id="DeleteTask.UnSelect.Texture" image="bitmap\unselect.png" />
+		<texture id="DeleteTask.OKBtn.Normal" image="bitmap\DeleteTask.OKBtn.Normal.png" />
+		<texture id="DeleteTask.OKBtn.Hover" image="bitmap\DeleteTask.OKBtn.Hover.png" />
+		<texture id="DeleteTask.CancelBtn.Normal" image="bitmap\DeleteTask.CancelBtn.Normal.png" />
+		<texture id="DeleteTask.CancelBtn.Hover" image="bitmap\DeleteTask.CancelBtn.Hover.png" />
+		<texture id="DeleteTask.Null" image="bitmap\null.png" />
+		<texture id="SavePicture.Dir" image="bitmap\dir.png" />
+		<texture id="edit.long.normal" image="bitmap\edit.long.normal.png" />
+		<texture id="edit.long.select" image="bitmap\edit.long.select.png" />
+		<texture id="Download.MainBkg.Texture" image="bitmap\Download.MainBkg.Texture.png" />
+		<texture id="Download.picture" image="bitmap\picture.png" />
+		<texture id="edit.251.normal" image="bitmap\edit.251.normal.png" />
+		<texture id="edit.251.select" image="bitmap\edit.251.select.png" />
+		<texture id="edit.229.normal" image="bitmap\edit.229.normal.png" />
+		<texture id="edit.229.select" image="bitmap\edit.229.select.png" />
+	
+	</resource>
+</XLUE>
+
+

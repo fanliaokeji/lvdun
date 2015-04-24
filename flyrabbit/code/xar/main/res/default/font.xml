@@ -1,0 +1,20 @@
+<XLUE>
+	<resource>
+		<font id="default.font" height="12" facename="微软雅黑" />
+		
+		<font id="font.text12" height="12" facename="微软雅黑" />  
+		<font id="font.text13" height="13" facename="微软雅黑" />  
+		<font id="font.text14" height="14" facename="微软雅黑" />  
+		
+		<font id="font.text22.bold" height="22" facename="微软雅黑" weight="bold" /> 
+		<font id="font.text13.underline" height="13" facename="微软雅黑" underline="1" /> 
+		
+		
+		<font id="DeleteTask.Font13" height="13" facename="微软雅黑" />
+		<font id="DeleteTask.Font14" height="14" facename="微软雅黑" />
+		<font id="DeleteTask.Font12" height="12" facename="微软雅黑" />
+		<font id="NewTask.Font10" height="10" facename="微软雅黑" />
+		<font id="About.Font16" height="16" facename="微软雅黑" />
+		
+	</resource>
+</XLUE>

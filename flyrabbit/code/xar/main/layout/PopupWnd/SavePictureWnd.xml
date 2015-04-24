@@ -1,0 +1,206 @@
+<xlue>
+	<control class="SavePictureCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="SavePictureWnd.xml.lua" func="SetData"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="SavePicture.MainPanel" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="SavePicture.MainBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>DeleteTask.MainBkg.Texture</texture>
+							</attr>
+							<children>
+								<obj id="SavePicture.MainTitle" class="TextObject">
+									<attr>
+										<left>15</left>
+										<top>3</top>
+										<width>80</width>
+										<height>20</height>
+										<text>图片保存设置</text>
+										<font>DeleteTask.Font13</font>
+										<textcolor>F0F0F0</textcolor>
+									</attr>
+								</obj>
+								<obj id="SavePicture.CloseBtn" class="TipAddin.Button">
+									<attr>
+										<left>319</left>
+										<top>0</top>
+										<width>24</width>
+										<height>24</height>
+										<NormalBkgID>Caption.CloseBtn.Hover</NormalBkgID>
+										<HoverBkgID>Caption.CloseBtn.Hover</HoverBkgID>
+										<DownBkgID>Caption.CloseBtn.Down</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="SavePictureWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+								<obj id="SavePicture.DirChange.Bkg" class="TextureObject">
+									<attr>
+										<left>15</left>
+										<top>52</top>
+										<width>287</width>
+										<height>26</height>
+										<texture>edit.long.normal</texture>
+									</attr>
+									<children>
+										<obj id="SavePicture.DirChange.edit" class="EditObject">
+											<attr>
+												<left>1</left>
+												<top>3</top>
+												<width>father.width-2</width>
+												<height>20</height>
+												<text>E:\飞兔下载\Download\</text>
+												<textcolor>28313A</textcolor>
+												<font>DeleteTask.Font12</font>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="SavePictureWnd.xml.lua" func="OnEditFocusChange" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								<obj id="SavePicture.ChangeDir" class="TipAddin.Button">
+									<attr>
+										<left>father.width-31</left>
+										<top>52+4</top>
+										<width>16</width>
+										<height>14</height>
+										<NormalBkgID>SavePicture.Dir</NormalBkgID>
+										<HoverBkgID>SavePicture.Dir</HoverBkgID>
+										<DownBkgID>SavePicture.Dir</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="SavePictureWnd.xml.lua" func="OnPopDirSelectDialog" />
+									</eventlist>
+								</obj>
+								<obj id="SavePicture.SelectBtn" class="TipAddin.Button">
+									<attr>
+										<left>15</left>
+										<top>80</top>
+										<width>140</width>
+										<height>24</height>
+										<ForegroundResID>DeleteTask.Select.Texture</ForegroundResID>
+										<ForegroundWidth>18</ForegroundWidth>
+										<ForegroundHeight>18</ForegroundHeight>
+										<Text>自动保存到此目录</Text>
+										<LeftTextPos>29</LeftTextPos>
+										<TopTextPos>0</TopTextPos>
+										<TextFont>DeleteTask.Font13</TextFont>
+										<TextColor>7C8D9F</TextColor>
+										<NormalBkgID>DeleteTask.Null</NormalBkgID>
+										<HoverBkgID>DeleteTask.Null</HoverBkgID>
+										<DownBkgID>DeleteTask.Null</DownBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="SavePictureWnd.xml.lua" func="OnSelect" />
+									</eventlist>
+								</obj>
+								<obj id="SavePicture.OKBtn" class="TipAddin.Button">
+									<attr>
+										<left>156</left>
+										<top>107</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.OKBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.OKBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.OKBtn.Normal</DownBkgID>
+										<Text>确定</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="SavePictureWnd.xml.lua" func="OnClickOK" />
+									</eventlist>
+								</obj>
+								<obj id="SavePicture.CancelBtn" class="TipAddin.Button">
+									<attr>
+										<left>259</left>
+										<top>107</top>
+										<width>78</width>
+										<height>24</height>
+										<NormalBkgID>DeleteTask.CancelBtn.Normal</NormalBkgID>
+										<HoverBkgID>DeleteTask.CancelBtn.Hover</HoverBkgID>
+										<DownBkgID>DeleteTask.CancelBtn.Normal</DownBkgID>
+										<Text>取消</Text>
+										<LeftTextPos>24</LeftTextPos>
+										<TopTextPos>3</TopTextPos>
+										<TextFont>DeleteTask.Font14</TextFont>
+										<TextColor>FFFFFF</TextColor>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="SavePictureWnd.xml.lua" func="OnClose" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj> <!--end of TipUpdate.MainPanel-->
+			</children>
+		</objtemplate>
+	</control>
+
+	<objtreetemplate id="SavePictureTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>350</width>
+			<height>141</height>
+		</attr>
+
+		<obj id="root.layout" class="SavePictureCtrl">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>350</width>
+				<height>141</height>
+			</attr>				
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipSavePictureWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>350</width>
+            <height>141</height>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="SavePictureWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="SavePictureWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

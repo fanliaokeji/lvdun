@@ -1,0 +1,96 @@
+﻿<xlue>
+    <control class="TipAddin.TextLink">
+        <attr_def>
+            <attr name="Text" type="string" />
+			<attr name="Font" type="string" >
+				<default>default.font</default>
+			</attr>
+			<attr name="HoverFont" type="string" >
+				<default>default.font.underline</default>
+			</attr>
+			<attr name="TextColor" type="string" >
+				<!--default>color.linktext</default-->
+			</attr>
+        	<attr name="HoverTextColor" type="string">
+        		<!--default>color.linktext</default-->
+        	</attr>
+			<attr name="DisableTextColor" type="string" >
+				<default>system.gray</default>
+			</attr>
+			<attr name="VAlign" type="string" >
+				<default>center</default>
+			</attr>
+			<attr name="HAlign" type="string" >
+				<default>left</default>
+			</attr>
+			<attr name="Multiline" type="bool" >
+				<default>false</default>
+			</attr>
+            <attr name="TabID" type="int"/>
+        	<attr name="NoHand" type="bool"/>
+        </attr_def>
+        <method_def>
+            <GetText file="TextLink.xml.lua" func="GetText"/>
+            <SetText file="TextLink.xml.lua" func="SetText"/>
+			<GetTextColorID file="TextLink.xml.lua" func="GetTextColorID"/>
+            <SetTextColorID file="TextLink.xml.lua" func="SetTextColorID"/>
+			<GetDisableTextColorID file="TextLink.xml.lua" func="GetDisableTextColorID"/>
+            <SetDisableTextColorID file="TextLink.xml.lua" func="SetDisableTextColorID"/>
+			<GetVAlign file="TextLink.xml.lua" func="GetVAlign"/>
+            <SetVAlign file="TextLink.xml.lua" func="SetVAlign"/>
+			<GetHAlign file="TextLink.xml.lua" func="GetHAlign"/>
+            <SetHAlign file="TextLink.xml.lua" func="SetHAlign"/>
+			<SetLinkTextEffectColorResID file="TextLink.xml.lua" func="SetLinkTextEffectColorResID" />
+			<GetTextExtent file="TextLink.xml.lua" func="GetTextExtent"/>
+			<SetMultilineTextLimitWidth file="TextLink.xml.lua" func="SetMultilineTextLimitWidth"/>
+			<SetMultiline file="TextLink.xml.lua" func="SetMultiline"/>
+			<SetLineGap file="TextLink.xml.lua" func="SetLineGap" />
+			<SetFont file="TextLink.xml.lua" func="SetFont" />
+			<GetEndEllipsis file="TextLink.xml.lua" func="GetEndEllipsis"/>
+			<SetEndEllipsis file="TextLink.xml.lua" func="SetEndEllipsis" />
+        </method_def>
+        <event_def>
+            <OnClick />
+			<OnTextLinkMouseHover>
+				<param>
+					<int/>
+					<int/>
+				</param>
+			</OnTextLinkMouseHover>
+			<OnTextLinkMouseMove/>
+			<OnTextLinkMouseLeave/>
+        </event_def>
+        <objtemplate>
+            <children>
+                <obj id="textlink.text" class="TextObject">
+                    <attr>
+                        <left>0</left>
+                        <top>0</top>
+                        <width>father.width</width>
+                        <height>father.height</height>
+                        <textcolor>system.blue</textcolor>
+                        <font>default.font</font>
+                        <valign>top</valign>
+                        <cursor>IDC_HAND</cursor>
+						<endellipsis>1</endellipsis>
+                    </attr>
+                    <eventlist>
+                        <event name="OnBind" file="TextLink.xml.lua" func="OnBind" />
+						<event name="OnInitControl" file="TextLink.xml.lua" func="OnInitControl" />
+                        <event name="OnMouseHover" file="TextLink.xml.lua" func="OnMouseHover" />
+                        <event name="OnMouseLeave" file="TextLink.xml.lua" func="OnMouseLeave" />
+                        <event name="OnLButtonDown" file="TextLink.xml.lua" func="OnLButtonDown" />
+                        <event name="OnLButtonUp" file="TextLink.xml.lua" func="OnLButtonUp" />
+						<event name="OnMouseMove" file="TextLink.xml.lua" func="OnMouseMove" />
+						
+                    </eventlist>
+                </obj>
+            </children>
+			<eventlist>
+				<event name="OnInitControl" file="TextLink.xml.lua" func="control_OnInitControl" />
+				<event name="OnEnableChange" file="TextLink.xml.lua" func="OnEnableChange" />
+				<event name="OnVisibleChange" file="TextLink.xml.lua" func="OnVisibleChange" />
+			</eventlist>
+        </objtemplate>
+    </control>
+</xlue>

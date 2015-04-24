@@ -1,0 +1,139 @@
+<xlue>
+	<objtemplate id="texttemplate" class="TextObject">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>father.width</width> 
+			<height>father.height</height>
+			<valign>center</valign>
+			<halign>center</halign>
+			<font>font.text12</font>
+			<textcolor>F0F0F0</textcolor>
+		</attr>	
+	</objtemplate>
+
+
+	<control class="BottomCtrl">
+		<attr_def>
+		
+		</attr_def>
+		<method_def>
+			<UpdateBottomStyle file="BottomCtrl.xml.lua" func="UpdateBottomStyle"/>
+		</method_def>
+		<event_def>
+
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="BottomCtrl.Layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+					</attr>		
+					<children>
+						<obj id="BottomCtrl.NewTaskBtn" class="TipAddin.Button">
+							<attr>
+								<left>17</left>
+								<top>(father.height-9)/2</top>
+								<width>9</width> 
+								<height>9</height>
+								<NormalBkgID>Bottom.NewTaskBtn.Normal</NormalBkgID>
+								<DownBkgID>Bottom.NewTaskBtn.Normal</DownBkgID>
+								<HoverBkgID>Bottom.NewTaskBtn.Hover</HoverBkgID>
+								<DisableBkgID>Bottom.NewTaskBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BottomCtrl.xml.lua" func="OnClickNewTask" />
+							</eventlist>
+						</obj>			
+		
+						<obj id="BottomCtrl.NewTaskText" class="TextObject" templateid="texttemplate">
+							<attr>
+								<left>35</left>
+								<top>0</top>
+								<width>30</width> 
+								<height>father.height</height>
+								<text>新建</text>
+								<cursor>IDC_HAND</cursor>
+							</attr>	
+							<eventlist>
+								<event name="OnLButtonUp" file="BottomCtrl.xml.lua" func="OnClickNewTask" />
+							</eventlist>							
+						</obj>	
+						
+						<obj id="BottomCtrl.FileManage" class="TextObject" templateid="texttemplate">
+							<attr>
+								<left>109</left>
+								<top>0</top>
+								<width>80</width> 
+								<height>father.height</height>
+								<text>下载文件管理</text>
+								<cursor>IDC_HAND</cursor>
+							</attr>	
+							<eventlist>
+								<event name="OnLButtonUp" file="BottomCtrl.xml.lua" func="OnClickFileManage" />
+							</eventlist>							
+						</obj>
+						
+						<obj id="BottomCtrl.StartBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-250</left>
+								<top>(father.height-22)/2</top>
+								<width>61</width> 
+								<height>25</height>
+								<NormalBkgID>Bottom.StartBtn.Normal</NormalBkgID>
+								<DownBkgID>Bottom.StartBtn.Normal</DownBkgID>
+								<HoverBkgID>Bottom.StartBtn.Hover</HoverBkgID>
+								<DisableBkgID>Bottom.StartBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BottomCtrl.xml.lua" func="OnClickStartBtn" />
+							</eventlist>
+						</obj>	
+						
+						<obj id="BottomCtrl.PauseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-170</left>
+								<top>(father.height-22)/2</top>
+								<width>61</width> 
+								<height>25</height>
+								<NormalBkgID>Bottom.PauseBtn.Normal</NormalBkgID>
+								<DownBkgID>Bottom.PauseBtn.Normal</DownBkgID>
+								<HoverBkgID>Bottom.PauseBtn.Hover</HoverBkgID>
+								<DisableBkgID>Bottom.PauseBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BottomCtrl.xml.lua" func="OnClickPauseBtn" />
+							</eventlist>
+						</obj>	
+						
+						<obj id="BottomCtrl.DeleteAllBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-75</left>
+								<top>(father.height-22)/2</top>
+								<width>61</width> 
+								<height>25</height>
+								<NormalBkgID>Bottom.DeleteAllBtn.Normal</NormalBkgID>
+								<DownBkgID>Bottom.DeleteAllBtn.Normal</DownBkgID>
+								<HoverBkgID>Bottom.DeleteAllBtn.Hover</HoverBkgID>
+								<DisableBkgID>Bottom.DeleteAllBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnClick" file="BottomCtrl.xml.lua" func="OnClickDeleteAll" />
+							</eventlist>
+						</obj>	
+					</children>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="BottomCtrl.xml.lua" func="OnInitControl"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
+
+
+
+
