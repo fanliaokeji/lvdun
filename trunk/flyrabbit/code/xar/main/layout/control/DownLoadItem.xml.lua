@@ -9,8 +9,7 @@ function SetFileContent(self, tFileContent)
 	end
 
 	SetFileName(self, tFileContent.strFileName)
-	SetFileSize(self, tFileContent)
-	SetFileStateUI(self, tFileContent.nFileState)
+	SetFileStateUI(self, tFileContent)
 end
 
 
@@ -34,10 +33,9 @@ end
 
 function UpdateFileItemStyle(objRootCtrl)
 	local nIndex = objRootCtrl:GetItemIndex()
-	local nState = tRabbitFileList:GetFileItemState(nIndex)
-	SetFileStateUI(objRootCtrl, nState)
+	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
+	SetFileStateUI(objRootCtrl, tFileItem)
 end
-
 
 
 ---事件
@@ -91,8 +89,7 @@ end
 
 
 function OnClickDelete(self)
-	tFunHelper.SetPopupWndCenterByName("TipDeleteTaskWnd.Instance")	
-	tFunHelper.ShowPopupWndByName("TipDeleteTaskWnd.Instance", true)	
+	tFunHelper.ShowModalDialog("TipDeleteTaskWnd", "TipDeleteTaskWnd.Instance", "DeleteTaskTree", "DeleteTaskTree.Instance")	
 	RouteToFather(self)
 end
 
@@ -138,7 +135,6 @@ end
 
 
 function SetFileSize(objRootCtrl, tFileContent)
-	local objFileName = objRootCtrl:GetControlObject("DownLoad.FileSize")
 	local nDownSizeInKB = tFileContent.nDownSizeInKB
 	local nFileSizeInKB = tFileContent.nFileSizeInKB
 	
@@ -156,15 +152,40 @@ function SetFileSize(objRootCtrl, tFileContent)
 	local strFileSize = tFunHelper.FormatFileSize(tFileContent.nFileSizeInKB)
 	
 	local strText = strPercent.."%   "..strDownSize.." / "..strFileSize
-	objFileName:SetText(strText)
+	SetFileStateText(objRootCtrl, strText)
 end
 
 
-function SetFileStateUI(objRootCtrl, nSetStart)
-	if tonumber(nSetStart) == nil or nSetStart < 0 then
+function SetFileStateText(objRootCtrl, strText)
+	local objFileName = objRootCtrl:GetControlObject("DownLoad.FileSize")
+	objFileName:SetText(strText or "")
+end
+
+
+function ShowErrorBkg(objRootCtrl, bShow)
+	local objErrorBkg = objRootCtrl:GetControlObject("DownLoad.ErrorBkg")
+	objErrorBkg:SetVisible(bShow)
+end
+
+
+function ShowProgressBar(objRootCtrl, bShow)
+	local objProgressBar = objRootCtrl:GetControlObject("DownLoad.ProgressBar")
+	objProgressBar:SetVisible(bShow)
+	objProgressBar:SetChildrenVisible(bShow)
+end
+
+
+function SetFileStateUI(objRootCtrl, tFileContent)
+	if type(tFileContent) ~= "table" or
+		tonumber(tFileContent.nFileState) == nil or tFileContent.nFileState < 0 then
 		return
 	end
 
+	SetFileSize(objRootCtrl, tFileContent)
+	ShowErrorBkg(objRootCtrl, false)
+	ShowProgressBar(objRootCtrl, true)
+	
+	local nFileState = tFileContent.nFileState
 	local objStartBtn = objRootCtrl:GetControlObject("DownLoad.StartBtn")
 	local objPauseBtn = objRootCtrl:GetControlObject("DownLoad.PauseBtn")
 	local objReDownLoad = objRootCtrl:GetControlObject("DownLoad.ReDownLoad")
@@ -179,25 +200,32 @@ function SetFileStateUI(objRootCtrl, nSetStart)
 	objDownLoadFinish:SetVisible(false)
 	objDownLoadFinish:SetChildrenVisible(false)
 	
-	if nSetStart == tRabbitFileList.FILESTATE_START then
+	if nFileState == tRabbitFileList.FILESTATE_START then
 		objPauseBtn:SetVisible(true)
 		objPauseBtn:SetChildrenVisible(true)
-	elseif nSetStart == tRabbitFileList.FILESTATE_PAUSE then
+	elseif nFileState == tRabbitFileList.FILESTATE_PAUSE then
 		objStartBtn:SetVisible(true)
 		objStartBtn:SetChildrenVisible(true)
-	elseif nSetStart == tRabbitFileList.FILESTATE_FINISH then
+		SetFileStateText(objRootCtrl, "暂停")
+		
+	elseif nFileState == tRabbitFileList.FILESTATE_FINISH then
 		objDownLoadFinish:SetVisible(true)
 		objDownLoadFinish:SetChildrenVisible(true)
-	elseif nSetStart == tRabbitFileList.FILESTATE_ERROR then
+		ShowProgressBar(objRootCtrl, false)
+		
+	elseif nFileState == tRabbitFileList.FILESTATE_ERROR then
 		objReDownLoad:SetVisible(true)
 		objReDownLoad:SetChildrenVisible(true)
+		SetFileStateText(objRootCtrl, "目标文件不存在")
+		ShowErrorBkg(objRootCtrl, true)
+		ShowProgressBar(objRootCtrl, false)
 	end
 end
 
 
-function UpdateFileState(objRootCtrl, nSetStart)
+function UpdateFileState(objRootCtrl, nFileState)
 	local nIndex = objRootCtrl:GetItemIndex()
-	tRabbitFileList:SetFileItemState(nIndex, nSetStart)
+	tRabbitFileList:SetFileItemState(nIndex, nFileState)
 end
 
 

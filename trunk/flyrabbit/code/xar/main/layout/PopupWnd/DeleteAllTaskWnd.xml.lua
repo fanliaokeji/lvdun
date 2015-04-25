@@ -4,7 +4,12 @@ local tipUtil = tFunHelper.tipUtil
 local tipAsynUtil = tFunHelper.tipAsynUtil
 
 function OnCreate( self )
-	SetWindowPos(self)
+	PopupInDeskRight(self)
+	
+	local objMainWnd = tFunHelper.GetMainWndInst()
+	if objMainWnd:GetVisible() then
+		PopupInMainWndCenter(self)
+	end	
 end
 
 -----
@@ -31,7 +36,7 @@ end
 function OnClose(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0)
+	objHostWnd:EndDialog(0)
 end
 
 function OnSelect(self)
@@ -76,7 +81,22 @@ end
 
 
 ------
-function SetWindowPos(objSelfWnd)
+function PopupInDeskRight(self)
+	local objtree = self:GetBindUIObjectTree()
+	local objRootLayout = objtree:GetUIObject("root.layout")
+    local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	
+	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+	local nLayoutWidth = nLayoutR - nLayoutL
+	local nLayoutHeight = nLayoutB - nLayoutT
+	
+	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
+	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
+	return true
+end
+
+
+function PopupInMainWndCenter(objSelfWnd)
 	local objtree = objSelfWnd:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
 	
@@ -90,8 +110,6 @@ function SetWindowPos(objSelfWnd)
 	local nMainWndH = workbottom - worktop
 	
 	objSelfWnd:Move((nMainWndW-nLayoutWidth)/2+workleft, (nMainWndH-nLayoutHeight)/2+worktop, nLayoutWidth, nLayoutHeight)
-	objSelfWnd:SetCacheRect((nMainWndW-nLayoutWidth)/2+workleft, (nMainWndH-nLayoutHeight)/2+worktop, nLayoutWidth, nLayoutHeight)
-	objSelfWnd:UpdateWindow()
 end
 
 

@@ -153,7 +153,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="TipDeleteAllTaskWnd" class="FrameHostWnd">
+    <hostwndtemplate id="TipDeleteAllTaskWnd" class="ModalHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>

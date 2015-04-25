@@ -4,15 +4,7 @@ local tipUtil = tFunHelper.tipUtil
 local tipAsynUtil = tFunHelper.tipAsynUtil
 
 function OnCreate( self )
-	local objtree = self:GetBindUIObjectTree()
-	local objRootLayout = objtree:GetUIObject("root.layout")
-	
-	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
-	local nLayoutWidth = nLayoutR - nLayoutL
-	local nLayoutHeight = nLayoutB - nLayoutT
-	
-	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move((workright + workleft-nLayoutWidth)/2, (worktop + workbottom-nLayoutHeight)/2, nLayoutWidth, nLayoutHeight)
+	PopupInMainWndCenter(self)
 end
 
 ----
@@ -29,14 +21,14 @@ end
 function MoveWindowToCenter(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	SetWindowPos(objHostWnd)
+	PopupInMainWndCenter(objHostWnd)
 end
 ---
 
 function OnClose(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0)
+	objHostWnd:EndDialog(0)
 end
 
 function OnSelect(self)
@@ -76,7 +68,7 @@ function OnShowWindow(self, bVisible)
 end
 
 --------------------------
-function SetWindowPos(objSelfWnd)
+function PopupInMainWndCenter(objSelfWnd)
 	local objtree = objSelfWnd:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
 	

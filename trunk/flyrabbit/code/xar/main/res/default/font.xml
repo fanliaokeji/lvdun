@@ -5,8 +5,10 @@
 		<font id="font.text12" height="12" facename="微软雅黑" />  
 		<font id="font.text13" height="13" facename="微软雅黑" />  
 		<font id="font.text14" height="14" facename="微软雅黑" />  
+		<font id="font.text15" height="15" facename="微软雅黑" />  
+		<font id="font.text16" height="16" facename="微软雅黑" />  
 		
-		<font id="font.text22.bold" height="22" facename="微软雅黑" weight="bold" /> 
+		<font id="font.text20.bold" height="20" facename="微软雅黑" weight="bold" /> 
 		<font id="font.text13.underline" height="13" facename="微软雅黑" underline="1" /> 
 		
 		

@@ -6,6 +6,11 @@ local g_tNewVersionInfo = {}
 
 function OnCreate( self )
 	PopupInDeskRight(self)
+	
+	local objMainWnd = tFunHelper.GetMainWndInst()
+	if objMainWnd:GetVisible() then
+		PopupInMainWndCenter(self)
+	end	
 end
 
 
@@ -17,7 +22,7 @@ function OnShowWindow(self, bVisible)
 	local objTree = self:GetBindUIObjectTree()
 	local objHostWnd = objTree:GetBindHostWnd()
 	if objHostWnd then
-		objHostWnd:SetTitle("嘀嗒在线升级")
+		objHostWnd:SetTitle("飞兔在线升级")
 	end
 	
 	local objRootCtrl = objTree:GetUIObject("root.layout")
@@ -32,7 +37,7 @@ function OnShowWindow(self, bVisible)
 	
 	local function InitMainWnd(nRet, strCfgPath)	
 		HideCheckingImage(objRootCtrl)
-		
+
 		if 0 ~= nRet then
 			ShowNoUpdate(objRootCtrl)
 			return
@@ -90,7 +95,7 @@ function ShowInstallPanel(self, strInstallPath)
 	
 	strText = "已经下载完毕"
 	objTitle:SetText(strText)
-	objEnterBtn:SetText("立即安装")
+	-- objEnterBtn:SetText("立即安装")
 	
 	local attr = objRootCtrl:GetAttribute()
 	attr.bInstall = true
@@ -102,7 +107,7 @@ end
 function OnClickCloseBtn(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Show(0)
+	objHostWnd:EndDialog(0)
 end
 
 
@@ -184,7 +189,7 @@ function ShowReadyUpdate(objRootCtrl)
 	local objEnterBtn = objRootCtrl:GetControlObject("TipUpdate.EnterBtn") 
 	objEnterBtn:SetVisible(true)
 	objEnterBtn:SetChildrenVisible(true)
-	objEnterBtn:SetText("立即下载")
+	-- objEnterBtn:SetText("立即下载")
 
 	ShowLayout(objRootCtrl, "TipUpdate.CheckUpdate.Layout", false)
 	ShowLayout(objRootCtrl, "TipUpdate.Update.Layout", true)
@@ -205,7 +210,7 @@ function ShowDownLoading(objRootCtrl, tNewVersionInfo)
 	
 	local objText = objRootCtrl:GetControlObject("TipUpdate.DownLoading.Text")
 	objText:SetVisible(true)
-	objText:SetText("下载中，请稍候")
+	objText:SetText("下载中...")
 end
 
 
@@ -225,7 +230,7 @@ function ShowErrorPanel(objRootCtrl)
 	objTitle:SetChildrenVisible(true)
 	
 	objTitle:SetText("新版本下载失败")
-	objEnterBtn:SetText("重新下载")
+	-- objEnterBtn:SetText("重新下载")
 end
 
 
@@ -251,7 +256,7 @@ function HideCurrentWnd(objUIItem)
 	local objTree = objUIItem:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	if objHostWnd then
-		objHostWnd:Show(0)
+		objHostWnd:EndDialog(0)
 	end
 end
 
@@ -274,8 +279,7 @@ function SetVersionText(objRootCtrl)
 	objContent:SetChildrenVisible(true)
 	
 	local strVersion = tNewVersionInfo.strVersion
-	
-	local strText = "发现新版本嘀嗒日历V"..tostring(strVersion)
+	local strText = "发现新版本飞兔下载V"..tostring(strVersion)
 	objVersion:SetText(strText)
 	
 	local objText1 = objContent:GetObject("TipUpdate.Content.Text1")
@@ -322,6 +326,23 @@ function PopupInDeskRight(self)
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
 	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
 	return true
+end
+
+
+function PopupInMainWndCenter(objSelfWnd)
+	local objtree = objSelfWnd:GetBindUIObjectTree()
+	local objRootLayout = objtree:GetUIObject("root.layout")
+	
+	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+	local nLayoutWidth = nLayoutR - nLayoutL
+	local nLayoutHeight = nLayoutB - nLayoutT
+	
+	local objMainWnd = tFunHelper.GetMainWndInst()
+	local workleft, worktop, workright, workbottom = objMainWnd:GetWindowRect()
+	local nMainWndW = workright - workleft
+	local nMainWndH = workbottom - worktop
+	
+	objSelfWnd:Move((nMainWndW-nLayoutWidth)/2+workleft, (nMainWndH-nLayoutHeight)/2+worktop, nLayoutWidth, nLayoutHeight)
 end
 
 
