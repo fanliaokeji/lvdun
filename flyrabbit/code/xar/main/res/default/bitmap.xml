@@ -44,6 +44,7 @@
 		
 		<texture id="DownLoad.ProgressBar.Bkg" image="bitmap\DownLoad.ProgressBar.Bkg.png" />
 		<texture id="DownLoad.ProgressBar" type="ThreeInOneH" image="bitmap\DownLoad.ProgressBar.png" />
+		<bitmap id="DownLoad.ErrorBkg" path="bitmap\DownLoad.ErrorBkg.png" />
 		
 		<texture id="Bottom.NewTaskBtn.Hover" image="bitmap\Bottom.NewTaskBtn.Hover.png" />
 		<texture id="Bottom.NewTaskBtn.Normal" image="bitmap\Bottom.NewTaskBtn.Normal.png" />
@@ -65,6 +66,10 @@
 		<bitmap id="MenuItem.UnCheck" path="bitmap\MenuItem.UnCheck.png" />
 		<bitmap id="MenuItem.Quit" path="bitmap\MenuItem.Quit.png" />
 		
+		<texture id="UpdateWnd.Bkg" image="bitmap\UpdateWnd.Bkg.png" />
+		<texture id="UpdateWnd.UpdateBtn.Normal" image="bitmap\UpdateWnd.UpdateBtn.Normal.png" />
+		<texture id="UpdateWnd.UpdateBtn.Hover" image="bitmap\UpdateWnd.UpdateBtn.Hover.png" />
+				
 		<texture id="DeleteTask.MainBkg.Texture" image="bitmap\DeleteTask.MainBkg.Texture.png" />
 		<texture id="DeleteTask.Select.Texture" image="bitmap\select.png" />
 		<texture id="DeleteTask.UnSelect.Texture" image="bitmap\unselect.png" />
@@ -83,6 +88,7 @@
 		<texture id="edit.229.normal" image="bitmap\edit.229.normal.png" />
 		<texture id="edit.229.select" image="bitmap\edit.229.select.png" />
 	
+		<gif id="UpdateWnd.Loading" file="bitmap\UpdateWnd.Loading.gif" />
 	</resource>
 </XLUE>
 

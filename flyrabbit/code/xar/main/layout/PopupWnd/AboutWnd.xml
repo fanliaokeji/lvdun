@@ -111,7 +111,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="TipAboutWnd" class="FrameHostWnd">
+    <hostwndtemplate id="TipAboutWnd" class="ModalHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>

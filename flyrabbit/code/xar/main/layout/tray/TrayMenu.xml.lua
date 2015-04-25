@@ -56,22 +56,21 @@ end
 
 
 function OnSelect_Exit(self)
-	-- ShowExitRemindWnd()
 	tFunctionHelper.ReportAndExit()
 end
 
 -------
 
 function ShowAboutWnd()
-	tFunctionHelper.ShowPopupWndByName("TipAboutWnd.Instance", true)
+	tFunctionHelper.ShowModalDialog("TipAboutWnd", "TipAboutWnd.Instance", "AboutTree", "AboutTree.Instance")
 end
 
 function ShowUpdateWnd()
-	tFunctionHelper.ShowPopupWndByName("TipUpdateWnd.Instance", true)
+	tFunctionHelper.ShowModalDialog("TipUpdateWnd", "TipUpdateWnd.Instance", "TipUpdateTree", "TipUpdateTree.Instance")
 end
 
 function ShowExitRemindWnd()
-	tFunctionHelper.ShowPopupWndByName("TipExitRemindWnd.Instance", true)
+
 end
 
 function OpenConfigURL(strUrlKey)

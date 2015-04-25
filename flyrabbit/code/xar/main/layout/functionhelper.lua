@@ -87,6 +87,7 @@ end
 
 function ReportAndExit()
 	local tStatInfo = {}
+	HideTray()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
@@ -398,9 +399,7 @@ end
 
 
 function GetExePath()
-	if type(tipUtil.GetModuleExeName) == "function" then
-		return tipUtil:GetModuleExeName()
-	end
+	return tipUtil:GetModuleExeName()
 end
 
 
@@ -548,15 +547,51 @@ function SetPopupWndCenterByName(strWndName)
 end
 
 
+function ShowModalDialog(wndClass, wndID, treeClass, treeID, userData, xarName)
+ 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+    local modalHostWndTemplate = templateMananger:GetTemplate(wndClass,"HostWndTemplate")
+    if modalHostWndTemplate == nil then
+        return false
+    end
+    local modalHostWnd = modalHostWndTemplate:CreateInstance(wndID)
+    if modalHostWnd == nil then
+        return false
+    end
+
+    local objectTreeTemplate = templateMananger:GetTemplate(treeClass,"ObjectTreeTemplate")
+    if objectTreeTemplate == nil then
+        return false
+    end
+    local uiObjectTree = objectTreeTemplate:CreateInstance(treeID, xarName)
+    if uiObjectTree == nil then
+        return false
+    end
+
+	modalHostWnd:SetUserData(userData)
+    modalHostWnd:BindUIObjectTree(uiObjectTree)
+	local objMainWnd = GetMainWndInst()
+	
+	AsynCall(function ()
+		local nRes = modalHostWnd:DoModal(objMainWnd)
+		hostwndManager:RemoveHostWnd(modalHostWnd:GetID())
+		local objtreeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
+		objtreeManager:DestroyTree(uiObjectTree)
+	end)
+	
+	-- return nRes
+end
+
 
 --弹出窗口--
 local g_tPopupWndList = {
-	[1] = {"TipDeleteTaskWnd", "DeleteTaskTree"},
-	[2] = {"TipSavePictureWnd", "SavePictureTree"},
-	[3] = {"TipAboutWnd", "AboutTree"},
-	[4] = {"TipDownloadFileWnd", "DownloadFileTree"},
-	[5] = {"TipDeleteAllTaskWnd", "DeleteAllTaskTree"},
-	[6] = {"TipNewTaskWnd", "NewTaskTree"},
+	-- [1] = {"TipDeleteTaskWnd", "DeleteTaskTree"},
+	-- [2] = {"TipSavePictureWnd", "SavePictureTree"},
+	-- [3] = {"TipAboutWnd", "AboutTree"},
+	-- [4] = {"TipDownloadFileWnd", "DownloadFileTree"},
+	-- [5] = {"TipDeleteAllTaskWnd", "DeleteAllTaskTree"},
+	-- [6] = {"TipNewTaskWnd", "NewTaskTree"},
+	-- [7] = {"TipUpdateWnd", "TipUpdateTree"},
 }
 
 function CreatePopupTipWnd()
@@ -847,7 +882,7 @@ function InitTrayTipWnd(objHostWnd)
 	end
 
 	--创建托盘
-    local tipNotifyIcon = XLGetObject("GS.NotifyIcon")
+    local tipNotifyIcon = XLGetObject("FR.NotifyIcon")
 	if not tipNotifyIcon then
 		TipLog("[InitTrayTipWnd] not support NotifyIcon")
 	    return
@@ -946,31 +981,6 @@ function PopupNotifyIconTip(strText, bShowWndByTray)
 	end
 	
 	g_bShowWndByTray = bShowWndByTray
-end
-
-
-function PopupBubbleOneDay()
-	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
-	local nLastBubbleUTC = tonumber(tUserConfig["nLastBubbleUTC"]) 
-	
-	if not IsNilString(nLastBubbleUTC) and not CheckTimeIsAnotherDay(nLastBubbleUTC) then
-		return
-	end
-	
-	local nNoShowFilterBubble = tonumber(tUserConfig["nNoShowFilterBubble"]) 
-	if not IsNilString(nNoShowFilterBubble) then
-		return
-	end
-	
-	-- if g_tipNotifyIcon then
-		-- PopupNotifyIconTip("广告清道夫\r\n已开始为您过滤骚扰广告", true)
-		-- tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
-		-- SaveConfigToFileByKey("tUserConfig")
-	-- end
-	
-	ShowPopupWndByName("TipFilterBubbleWnd.Instance", true)
-	tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
-	SaveConfigToFileByKey("tUserConfig")
 end
 
 
@@ -1181,6 +1191,7 @@ obj.GetMainCtrlChildObj = GetMainCtrlChildObj
 obj.ShowPopupWndByName = ShowPopupWndByName
 obj.SetPopupWndCenterByName = SetPopupWndCenterByName
 obj.CreatePopupTipWnd = CreatePopupTipWnd
+obj.ShowModalDialog = ShowModalDialog
 
 
 --托盘

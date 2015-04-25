@@ -64,11 +64,12 @@
 						<ThumbBtnWidth>11</ThumbBtnWidth>
 						<ThumbBtnLength>16</ThumbBtnLength>
 						<SideBtnLength>0</SideBtnLength>
+						<ShowOnPosChange>false</ShowOnPosChange>
 						<left>father.width - 11</left>
 						<top>0</top>
 						<width>11</width>
 						<height>father.height-2</height>
-						<zorder>99999</zorder>
+						<zorder>999</zorder>
 					</attr>
 					<eventlist>
 						<event name="OnScrollBarMouseWheel" file="DownLoadList.xml.lua" func="CLB__OnScrollBarMouseWheel"/>

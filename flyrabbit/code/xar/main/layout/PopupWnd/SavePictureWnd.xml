@@ -177,7 +177,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="TipSavePictureWnd" class="FrameHostWnd">
+    <hostwndtemplate id="TipSavePictureWnd" class="ModalHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>

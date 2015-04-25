@@ -208,7 +208,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="TipDownloadFileWnd" class="FrameHostWnd">
+    <hostwndtemplate id="TipDownloadFileWnd" class="ModalHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>

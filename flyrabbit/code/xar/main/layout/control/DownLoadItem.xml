@@ -53,6 +53,17 @@
 							</attr>
 						</obj>
 					
+						<obj id="DownLoad.ErrorBkg" class="ImageObject">
+							<attr>
+								<left>10</left>
+								<top>(father.height-45)/2</top>
+								<width>45</width> 
+								<height>45</height>
+								<image>DownLoad.ErrorBkg</image>
+								<zorder>99999</zorder>
+							</attr>
+						</obj>
+					
 						<obj id="DownLoad.FileImage" class="ImageObject">
 							<attr>
 								<left>15</left>

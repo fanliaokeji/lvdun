@@ -36,8 +36,7 @@ end
 
 
 function OnClickNewTask(self)
-	tFunHelper.SetPopupWndCenterByName("TipNewTaskWnd.Instance")
-	tFunHelper.ShowPopupWndByName("TipNewTaskWnd.Instance", true)
+	tFunHelper.ShowModalDialog("TipNewTaskWnd", "TipNewTaskWnd.Instance", "NewTaskTree", "NewTaskTree.Instance")
 end
 
 
@@ -63,8 +62,7 @@ end
 
 
 function OnClickDeleteAll(self)
-	tFunHelper.SetPopupWndCenterByName("TipDeleteAllTaskWnd.Instance")	
-	tFunHelper.ShowPopupWndByName("TipDeleteAllTaskWnd.Instance", true)	
+	tFunHelper.ShowModalDialog("TipDeleteAllTaskWnd", "TipDeleteAllTaskWnd.Instance", "DeleteAllTaskTree", "DeleteAllTaskTree.Instance")
 end
 
 

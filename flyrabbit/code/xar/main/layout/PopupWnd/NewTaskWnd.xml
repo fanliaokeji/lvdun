@@ -254,7 +254,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="TipNewTaskWnd" class="FrameHostWnd">
+    <hostwndtemplate id="TipNewTaskWnd" class="ModalHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>
