@@ -147,10 +147,10 @@ LRESULT CFRMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BO
 	else if (wParam == 1)
 	{
 		FRBrowserTaskInfo * info = (FRBrowserTaskInfo*)pcs->lpData;
-		if (!info->wstrUrl.empty())
+		if (info->wszUrl && wcslen(info->wszUrl) > 0)
 		{
 			CComVariant vParam[4];
-			vParam[0] = (LPWSTR)(info->wstrUrl.c_str());
+			vParam[0] = (LPWSTR)(info->wszUrl);
 			vParam[1] = (int)(info->type);
 			vParam[2] = (int)(info->pos.x);
 			vParam[2] = (int)(info->pos.y);
