@@ -90,6 +90,10 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"CreateDir", CreateDir},
 	{"CopyPathFile", CopyPathFile},
 	{"DeletePathFile", DeletePathFile},
+	{"GetFileTypeIcon", GetFileTypeIcon},
+	{"DestroyIcon", FDestroyIconByHandle},	
+	{"GetDiskFreeSpaceEx", FnGetDiskFreeSpaceEx},
+
 	//¶ÁÐ´UTF8ÎÄ¼þ
 	{"ReadFileToString", ReadFileToString},
 	{"WriteStringToFile", WriteStringToFile},
@@ -2401,6 +2405,81 @@ int LuaAPIUtil::DeletePathFile(lua_State* pLuaState)
 	}
 	lua_pushboolean(pLuaState, 0);
 	return 1;
+}
+
+int LuaAPIUtil::GetFileTypeIcon(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	
+	if (ppUtil != NULL)
+	{
+		::CoInitialize(NULL);
+		const char* utf8FileName = luaL_checkstring(pLuaState, 2);
+		if (utf8FileName != NULL)
+		{
+			int uFlags = (int)lua_tointeger(pLuaState, 3);
+			if (0 == uFlags)
+			{
+				uFlags = SHGFI_USEFILEATTRIBUTES|SHGFI_ICON;
+			}
+			CComBSTR bstrFileName;
+			LuaStringToCComBSTR(utf8FileName,bstrFileName);
+
+			SHFILEINFOW sfi;
+			ZeroMemory(&sfi, sizeof(SHFILEINFOW));
+			SHGetFileInfo(bstrFileName.m_str, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(SHFILEINFOW),uFlags);
+			if (NULL != sfi.hIcon)
+			{
+				lua_pushlightuserdata(pLuaState,sfi.hIcon);
+				::CoUninitialize();
+				return 1;
+			}
+		}
+		::CoUninitialize();
+		return 0;
+	}
+	return 0;
+}
+
+int LuaAPIUtil::FDestroyIconByHandle(lua_State* pLuaState)
+{
+	DWORD dwPID = 0;
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		HICON hIcon = (HICON)lua_touserdata(pLuaState, 2);
+		if (NULL != hIcon)
+		{
+			::DestroyIcon(hIcon);
+		}
+	}
+	return 0;
+}
+
+int LuaAPIUtil::FnGetDiskFreeSpaceEx(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* utf8FileName = luaL_checkstring(pLuaState, 2);
+		if (utf8FileName != NULL)
+		{
+			CComBSTR bstrFileName;
+			LuaStringToCComBSTR(utf8FileName,bstrFileName);
+
+			ULARGE_INTEGER nFreeBytesAvailable;
+			ULARGE_INTEGER nTotalNumberOfBytes;
+			ULARGE_INTEGER nTotalNumberOfFreeBytes;
+			if (::GetDiskFreeSpaceEx(bstrFileName.m_str, &nFreeBytesAvailable, &nTotalNumberOfBytes, &nTotalNumberOfFreeBytes))
+			{
+				lua_pushnumber(pLuaState, (lua_Number)nFreeBytesAvailable.QuadPart);
+				lua_pushnumber(pLuaState, (lua_Number)nTotalNumberOfBytes.QuadPart);
+				lua_pushnumber(pLuaState, (lua_Number)nTotalNumberOfFreeBytes.QuadPart);
+				return 3;
+			}
+		}
+	}
+	return 0;
 }
 
 int LuaAPIUtil::ReadFileToString(lua_State* pLuaState)
