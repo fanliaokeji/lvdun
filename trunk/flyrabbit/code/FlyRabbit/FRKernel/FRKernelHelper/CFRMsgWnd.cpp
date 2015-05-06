@@ -125,34 +125,39 @@ int CFRMsgWindow::DetachListener(DWORD userData1, const void* pfun)
 	return 0;
 }
 
-LRESULT CFRMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& /*bHandled*/)
+//wParam:0表示命令行，1表示Agent
+LRESULT CFRMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
 {
 	TSAUTO();
 	USES_CONVERSION;
 	COPYDATASTRUCT * pcs = (COPYDATASTRUCT *)lParam;
-	LPCWSTR pcszCommandLine = (LPCWSTR)pcs->lpData;
-	TSDEBUG4CXX(" commandline : "<<pcszCommandLine);	
-	if(pcszCommandLine && wcslen(pcszCommandLine) > 0)
+	if(wParam == 1)
 	{
-		CComVariant vParam[1];
-		vParam[0] = (LPWSTR)pcszCommandLine;
+		LPCWSTR pcszCommandLine = (LPCWSTR)pcs->lpData;
+		TSDEBUG4CXX(" commandline : "<<pcszCommandLine);	
+		if(pcszCommandLine && wcslen(pcszCommandLine) > 0)
+		{
+			CComVariant vParam[1];
+			vParam[0] = (LPWSTR)pcszCommandLine;
 
-		DISPPARAMS params = { vParam, NULL, 1, 0 };
-		Fire_LuaEvent("OnCommandLine", &params);
-	}	
-
-	return 0;
-}
-
-LRESULT CFRMsgWindow::OnExplorerNotify(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-{
-	TSAUTO();	
-	
-	CComVariant vParam[1];
-	vParam[0] = (UINT)wParam;
-
-	DISPPARAMS params = { vParam, NULL, 1, 0 };
-	Fire_LuaEvent("OnExplorerNotify", &params);
+			DISPPARAMS params = { vParam, NULL, 1, 0 };
+			Fire_LuaEvent("OnCommandLine", &params);
+		}	
+	}
+	else if (wParam == 1)
+	{
+		FRBrowserTaskInfo * info = (FRBrowserTaskInfo*)pcs->lpData;
+		if (!info->wstrUrl.empty())
+		{
+			CComVariant vParam[4];
+			vParam[0] = (LPWSTR)(info->wstrUrl.c_str());
+			vParam[1] = (int)(info->type);
+			vParam[2] = (int)(info->pos.x);
+			vParam[2] = (int)(info->pos.y);
+			DISPPARAMS params = { vParam, NULL, 4, 0 };
+			Fire_LuaEvent("OnAddTask", &params);
+		}
+	}
 
 	return 0;
 }

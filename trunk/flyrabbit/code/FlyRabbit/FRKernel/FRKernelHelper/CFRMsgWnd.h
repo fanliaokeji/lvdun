@@ -16,6 +16,19 @@ struct CallbackNode
 	const void* luaFunction;
 };
 
+enum BrowserTaskType
+{
+	IMAGE=0,
+	OTHER
+};
+struct FRBrowserTaskInfo
+{
+	std::wstring wstrUrl;
+	BrowserTaskType type;
+	POINT pos;
+	
+};
+
 class CFRMsgWindow : public  CWindowImpl<CFRMsgWindow>
 {
 public:
@@ -33,8 +46,6 @@ public:
 	DECLARE_WND_CLASS(L"{1DA1F328-DB3D-4f6a-A62E-E9B2B22F2B9A}_frmainmsg")
 	BEGIN_MSG_MAP(CFRMsgWindow)
 		MESSAGE_HANDLER(WM_COPYDATA, OnCopyData)
-		MESSAGE_HANDLER(WM_EXPLORER, OnExplorerNotify)
-
 	END_MSG_MAP()
 private:
 	CFRMsgWindow(void);
