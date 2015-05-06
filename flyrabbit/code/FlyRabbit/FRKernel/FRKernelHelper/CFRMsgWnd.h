@@ -23,7 +23,7 @@ enum BrowserTaskType
 };
 struct FRBrowserTaskInfo
 {
-	std::wstring wstrUrl;
+	wchar_t wszUrl[1024];
 	BrowserTaskType type;
 	POINT pos;
 	
@@ -73,5 +73,4 @@ public:
 	//关于滴答日历:WPARAM 2
 	//退出:WPARAM 3
 	//拉起:WPARAM 0
-	LRESULT OnExplorerNotify(UINT , WPARAM , LPARAM , BOOL&);
 };
