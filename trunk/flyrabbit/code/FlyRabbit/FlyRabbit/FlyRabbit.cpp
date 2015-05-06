@@ -22,8 +22,6 @@ int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	return nRet;
 }
 
-#define WM_EXPLORER WM_USER + 200
-
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
 	TSTRACEAUTO();
@@ -49,7 +47,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	if (m_pfnChangeWindowMessageFilter)
 	{
 		m_pfnChangeWindowMessageFilter(WM_COPYDATA, MSGFLT_ADD);
-		m_pfnChangeWindowMessageFilter(WM_EXPLORER, MSGFLT_ADD);
 	}	
 
 	// this resolves ATL window thunking problem when Microsoft Layer for Unicode (MSLU) is used
