@@ -326,7 +326,7 @@ int LuaAPIUtil::GetCommandLine(lua_State* pLuaState)
 	 
 	if (!wstrCommandLine.empty())
 	{	
-		wchar_t szCmd[MAX_PATH] = {0};
+		wchar_t szCmd[1024*4] = {0};
 		wcsncpy(szCmd,wstrCommandLine.c_str(),wstrCommandLine.size());
 		BSTRToLuaString(szCmd, strUtf8);
 	}
