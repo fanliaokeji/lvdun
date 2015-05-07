@@ -1,0 +1,10 @@
+; FlyRabbitAgent.def : Declares the module parameters.
+
+LIBRARY      "FlyRabbitAgent.DLL"
+
+EXPORTS
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+	DllInstall		PRIVATE
