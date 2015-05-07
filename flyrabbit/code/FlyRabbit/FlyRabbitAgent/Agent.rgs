@@ -1,0 +1,26 @@
+HKCR
+{
+	FlyRabbitAgent.Agent.1 = s 'Agent Class'
+	{
+		CLSID = s '{A56E6D74-8D3A-4D2F-BC1A-D1AB4E178915}'
+	}
+	FlyRabbitAgent.Agent = s 'Agent Class'
+	{
+		CLSID = s '{A56E6D74-8D3A-4D2F-BC1A-D1AB4E178915}'
+		CurVer = s 'FlyRabbitAgent.Agent.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {A56E6D74-8D3A-4D2F-BC1A-D1AB4E178915} = s 'Agent Class'
+		{
+			ProgID = s 'FlyRabbitAgent.Agent.1'
+			VersionIndependentProgID = s 'FlyRabbitAgent.Agent'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{E5C7E84A-4F2E-45F2-91FF-C27CDBD313D9}'
+		}
+	}
+}

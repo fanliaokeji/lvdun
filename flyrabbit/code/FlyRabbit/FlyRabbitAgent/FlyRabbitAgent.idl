@@ -1,0 +1,37 @@
+// FlyRabbitAgent.idl : IDL source for FlyRabbitAgent
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (FlyRabbitAgent.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(00BBDF1E-F34E-46DC-925E-842E2C606AC3),
+	dual,
+	nonextensible,
+	helpstring("IAgent Interface"),
+	pointer_default(unique)
+]
+interface IAgent : IDispatch{
+	[id(1), helpstring("method AddTask")] HRESULT AddTask([in] VARIANT varUrl, [in] VARIANT varType, [in] VARIANT varPoint);
+};
+[
+	uuid(E5C7E84A-4F2E-45F2-91FF-C27CDBD313D9),
+	version(1.0),
+	helpstring("FlyRabbitAgent 1.0 Type Library")
+]
+library FlyRabbitAgentLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(A56E6D74-8D3A-4D2F-BC1A-D1AB4E178915),
+		helpstring("Agent Class")
+	]
+	coclass Agent
+	{
+		[default] interface IAgent;
+	};
+};
