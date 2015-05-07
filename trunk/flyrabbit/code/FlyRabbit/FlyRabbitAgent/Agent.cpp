@@ -93,7 +93,7 @@ unsigned int __stdcall ThreadFun(PVOID pM)
 	cpd.lpData = (void*)pM;
 	HWND hwnd = CreateProcessAndGetHwnd();
 	if(hwnd != NULL){
-		::SendMessageA(hwnd, WM_COPYDATA, NULL, (LPARAM)&cpd);
+		::SendMessageA(hwnd, WM_COPYDATA, 1, (LPARAM)&cpd);
 		delete []pM;
 	} else {
 		delete []pM;
@@ -106,20 +106,22 @@ STDMETHODIMP CAgent::AddTask(VARIANT varUrl, VARIANT varType, VARIANT varPoint)
 {
 	// TODO: Add your implementation code here
 	//
-	/*CComDispatchDriver spData = varPoint.pdispVal;
-	CComVariant varValueX, varValueY;
-	spData.GetPropertyByName(L"x", &varValueX);
-	spData.GetPropertyByName(L"y", &varValueY);
-	char msg[128] = {0};
-	sprintf(msg, "point = %d,%d", varValueX.intVal, varValueY.intVal);
-	::MessageBoxA(0, msg, "commsg", 0);
-	*/
 	_bstr_t bstrUrl = varUrl.bstrVal;
 	FRBrowserTaskInfo *psBTI = new FRBrowserTaskInfo;
 	wcscpy(psBTI->wszUrl, bstrUrl);
-	psBTI->type = OTHER;
-	psBTI->posX = 56;
-	psBTI->posY = 88;
+	if(varPoint.vt == VT_DISPATCH){
+		CComDispatchDriver spData = varPoint.pdispVal;
+		CComVariant varValueX, varValueY;
+		spData.GetPropertyByName(L"x", &varValueX);
+		spData.GetPropertyByName(L"y", &varValueY);
+		psBTI->posX = varValueX.intVal;
+		psBTI->posY = varValueY.intVal;
+		psBTI->type = IMAGE;
+	} else {
+		psBTI->posX = 0;
+		psBTI->posY = 0;
+		psBTI->type = OTHER;
+	}
 	_beginthreadex(NULL, 0, ThreadFun, psBTI, 0, NULL);
 	return S_OK;
 }
