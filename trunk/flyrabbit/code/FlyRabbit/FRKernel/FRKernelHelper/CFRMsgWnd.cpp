@@ -131,7 +131,7 @@ LRESULT CFRMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BO
 	TSAUTO();
 	USES_CONVERSION;
 	COPYDATASTRUCT * pcs = (COPYDATASTRUCT *)lParam;
-	if(wParam == 1)
+	if(wParam == 0)
 	{
 		LPCWSTR pcszCommandLine = (LPCWSTR)pcs->lpData;
 		TSDEBUG4CXX(" commandline : "<<pcszCommandLine);	
