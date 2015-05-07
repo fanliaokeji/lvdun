@@ -109,6 +109,9 @@ STDMETHODIMP CAgent::AddTask(VARIANT varUrl, VARIANT varType, VARIANT varPoint)
 	_bstr_t bstrUrl = varUrl.bstrVal;
 	FRBrowserTaskInfo *psBTI = new FRBrowserTaskInfo;
 	wcscpy(psBTI->wszUrl, bstrUrl);
+	psBTI->posX = 0;
+	psBTI->posY = 0;
+	psBTI->type = OTHER;
 	if(varPoint.vt == VT_DISPATCH){
 		CComDispatchDriver spData = varPoint.pdispVal;
 		CComVariant varValueX, varValueY;
@@ -117,21 +120,7 @@ STDMETHODIMP CAgent::AddTask(VARIANT varUrl, VARIANT varType, VARIANT varPoint)
 		psBTI->posX = varValueX.intVal;
 		psBTI->posY = varValueY.intVal;
 		psBTI->type = IMAGE;
-	} else {
-		psBTI->posX = 0;
-		psBTI->posY = 0;
-		psBTI->type = OTHER;
 	}
 	_beginthreadex(NULL, 0, ThreadFun, psBTI, 0, NULL);
 	return S_OK;
 }
-
-/*BOOL CMFCAppDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
-{
-	// TODO: Add your message handler code here and/or call default
-	FRBrowserTaskInfo* pBTI = (FRBrowserTaskInfo*)pCopyDataStruct->lpData;
-	wchar_t msg[2048] = {0};
-	wsprintf(msg, L"%d,%d,%s, %d, %ld,%ld", pCopyDataStruct->dwData, pCopyDataStruct->cbData, pBTI->wszUrl, pBTI->type, pBTI->posX, pBTI->posX);
-	AfxMessageBox(msg);
-	return CDialog::OnCopyData(pWnd, pCopyDataStruct);
-}*/
