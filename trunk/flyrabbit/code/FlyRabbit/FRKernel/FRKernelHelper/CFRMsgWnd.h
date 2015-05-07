@@ -25,7 +25,8 @@ struct FRBrowserTaskInfo
 {
 	wchar_t wszUrl[1024];
 	BrowserTaskType type;
-	POINT pos;
+	int posX;
+	int posY;
 	
 };
 
