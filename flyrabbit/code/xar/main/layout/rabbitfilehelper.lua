@@ -34,15 +34,22 @@ local tRabbitFileList = {}
 tRabbitFileList.data = {}
 tRabbitFileList.data.tFileList = {}
 
-local FILESTATE_START = 1
+local FILESTATE_NOITEM = 0
+local FILESTATE_ERROR = 1
 local FILESTATE_PAUSE = 2
-local FILESTATE_FINISH = 3
-local FILESTATE_ERROR = 4
+local FILESTATE_START = 3
+local FILESTATE_FINISH = 4
+local FILESTATE_STARTPENDING = 5
+local FILESTATE_STOPPENDING = 6
 
+
+tRabbitFileList.FILESTATE_NOITEM = FILESTATE_NOITEM
 tRabbitFileList.FILESTATE_START = FILESTATE_START
 tRabbitFileList.FILESTATE_PAUSE = FILESTATE_PAUSE
 tRabbitFileList.FILESTATE_FINISH = FILESTATE_FINISH
 tRabbitFileList.FILESTATE_ERROR = FILESTATE_ERROR
+tRabbitFileList.FILESTATE_STARTPENDING = FILESTATE_STARTPENDING
+tRabbitFileList.FILESTATE_STOPPENDING = FILESTATE_STOPPENDING
 
 function tRabbitFileList:GetFileList()
 	return self.data.tFileList
@@ -364,22 +371,48 @@ end
 
 
 function tRabbitFileList:StartTask(tFileItem)
+	if type(tFileItem) ~= "table" then
+		return false
+	end
+
 	local hTaskHandle = tFileItem.hTaskHandle
 	
 	if hTaskHandle == nil or hTaskHandle == -1 then
 		Log("[StartTask] hTaskHandle not valid")
 		return false
 	end
-	
+		
 	local bRet = miniTPUtil:TaskStart(hTaskHandle)
 	Log("[StartTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+		
+	return bRet
+end
+
+
+function tRabbitFileList:PauseTask(tFileItem)
+	if type(tFileItem) ~= "table" then
+		return false
+	end
 	
+	local hTaskHandle = tFileItem.hTaskHandle
 	
+	if hTaskHandle == nil or hTaskHandle == -1 then
+		Log("[PauseTask] hTaskHandle not valid")
+		return false
+	end
+		
+	local bRet = miniTPUtil:TaskPause(hTaskHandle)
+	Log("[PauseTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+		
 	return bRet
 end
 
 
 function tRabbitFileList:QueryTask(tFileItem)
+	if type(tFileItem) ~= "table" then
+		return false
+	end
+
 	local hTaskHandle = tFileItem.hTaskHandle
 	
 	if hTaskHandle == nil or hTaskHandle == -1 then
@@ -388,6 +421,25 @@ function tRabbitFileList:QueryTask(tFileItem)
 	end
 	
 	local bRet, tTaskInfo = miniTPUtil:TaskQueryEx(hTaskHandle)
+	Log("[QueryTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+	
+	return bRet, tTaskInfo
+end
+
+
+function tRabbitFileList:DeleteTask(tFileItem)
+	if type(tFileItem) ~= "table" then
+		return false
+	end
+
+	local hTaskHandle = tFileItem.hTaskHandle
+	
+	if hTaskHandle == nil or hTaskHandle == -1 then
+		Log("[QueryTask] hTaskHandle not valid")
+		return false
+	end
+	
+	local bRet = miniTPUtil:TaskDelete(hTaskHandle)
 	Log("[QueryTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
 	
 	return bRet, tTaskInfo
