@@ -19,6 +19,7 @@
 			<attr name="tFileInfo" />
 			<attr name="bSelect" type="bool" ><default>false</default></attr>
 			<attr name="nItemIndex" type="int" ><default>0</default></attr>
+			<attr name="hQueryTimer" type="userdata" ></attr>
 		</attr_def>
 		<method_def>
 			<SetFileContent file="DownLoadItem.xml.lua" func="SetFileContent"/>
@@ -103,7 +104,7 @@
 								<textcolor>7C8D9F</textcolor>
 								<endellipsis>1</endellipsis>
 								<zorder>999999</zorder>
-								<text>100%   520KB / 1.2MB</text>
+								<text></text>
 							</attr>		
 						</obj>	
 						

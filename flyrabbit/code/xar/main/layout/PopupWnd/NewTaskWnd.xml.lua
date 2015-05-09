@@ -50,8 +50,6 @@ function OnClickOK(self)
 	local bRet = CreateNewTask(ctrl)
 	if bRet then
 		OnClose(self)
-	else
-		ShowErrorMessage(ctrl)
 	end
 end
 
@@ -61,7 +59,38 @@ function OnClose(self)
 	objHostWnd:EndDialog(0)
 end
 
-function OnEditFocusChange(self, isfocus)
+
+function OnFocusURL(self, bFocus)
+	SetEditBkg(self, bFocus)
+			
+	if not bFocus then
+		local objRootCtrl = self:GetOwnerControl()
+		AsynCall(function ()
+			ShowDiskInfo(objRootCtrl)
+		end)
+	end
+end
+
+
+function OnFocusSavePath(self, bFocus)
+	SetEditBkg(self, bFocus)
+	
+	if not bFocus then
+		local objRootCtrl = self:GetOwnerControl()
+		AsynCall(function ()
+			ShowDiskInfo(objRootCtrl)
+		end)
+	end
+end
+
+
+function OnFocusFileName(self, bFocus)
+	SetEditBkg(self, bFocus)
+
+end
+
+
+function SetEditBkg(self, isfocus)
 	local bkg = self:GetParent()
 	if isfocus then
 		if bkg then
@@ -81,6 +110,7 @@ function OnEditFocusChange(self, isfocus)
 		end
 	end
 end
+
 
 function OnPopDirSelectDialog(self)
 	local strDir = tFunHelper.OpenFolderDialog()
@@ -151,19 +181,30 @@ function CreateNewTask(objRootCtrl)
 	
 	if not IsRealString(strURL) or not IsRealString(strSaveDir) 
 	   or not tipUtil:QueryFileExists(strSaveDir) or not IsRealString(strFileName) then
+	    ShowDescMessage(objRootCtrl, "请填写完整信息")
 		return false
 	end
 	
+	-- local bSucc, nFileSizeInKB = tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
+	-- if not bSucc then
+		-- ShowDescMessage(objRootCtrl, "请检查下载链接")
+		-- return false
+	-- end
+	
 	local tFileItem = {}
-	tFileItem.strFileName = strFileName
 	tFileItem.strICOPath = ""
-	tFileItem.nFileSizeInKB = 0
-	tFileItem.nDownSizeInKB = 0
-	tFileItem.nFinishPercent = 0
-	tFileItem.strFilePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	tFileItem.strFileURL = strURL
-	tFileItem.nFileState = tRabbitFileList.FILESTATE_START
-		
+	tFileItem.hTaskHandle = -1
+	
+	tFileItem.tDownLoadConfig = {}
+	tFileItem.tDownLoadConfig.strFileName = strFileName
+	tFileItem.tDownLoadConfig.nFileSizeInKB = nFileSizeInKB or 0
+	tFileItem.tDownLoadConfig.nDownSizeInKB = 0
+	tFileItem.tDownLoadConfig.nFinishPercent = 0
+	tFileItem.tDownLoadConfig.strFilePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	tFileItem.tDownLoadConfig.strFileURL = strURL
+	tFileItem.tDownLoadConfig.bIsResume = true
+	tFileItem.tDownLoadConfig.nFileState = tRabbitFileList.FILESTATE_START
+
 	tRabbitFileList:PushFileItem(tFileItem)
 	tFunHelper.UpdateFileList()
 	
@@ -171,9 +212,61 @@ function CreateNewTask(objRootCtrl)
 end
 
 
-function ShowErrorMessage(objRootCtrl, strMessage)
+function ShowDiskInfo(objRootCtrl)
+	local strFileSize = "文件大小未知,"
+	local bSucc, strSize = GetFileSizeFromUI(objRootCtrl)	
+	if bSucc then
+		strFileSize = "文件大小"..tostring(strSize)..","
+	end
+
+	local strDiskInfo = "未知路径"
+	local objDirEdit = objRootCtrl:GetControlObject("NewTask.SavePath.edit")
+	local strPath = objDirEdit:GetText()
+	local _, _, strDiskName = string.find(tostring(strPath), "^(.):\\.*")
+	local bRet, strFormatSize = GetDiskSizeFromUI(objRootCtrl)
+			
+	if bRet and IsRealString(strDiskName) then
+		strDiskInfo = strDiskName.."盘剩余空间:"..strFormatSize
+	end
+	
+	local strMessage = strFileSize..strDiskInfo
+	ShowDescMessage(objRootCtrl,strMessage)
+end
+
+
+function GetFileSizeFromUI(objRootCtrl)
+	local objURLEdit = objRootCtrl:GetControlObject("NewTask.Url.edit")	
+	local strURL = objURLEdit:GetText()
+	-- local bSucc, nFileSizeInKB = tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
+	local strSize = ""
+	
+	if bSucc then
+		local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
+	end
+	
+	return bSucc, strSize
+end
+
+
+function GetDiskSizeFromUI(objRootCtrl)
+	local bRet = false
+	local objDirEdit = objRootCtrl:GetControlObject("NewTask.SavePath.edit")
+	local strPath = objDirEdit:GetText()
+	
+	local strFormatSize = ""
+	local nDiskSizeInKB = tFunHelper.GetDiskSizeInKB(strPath)
+	if nDiskSizeInKB >= 0 then
+		strFormatSize = tFunHelper.FormatFileSize(nDiskSizeInKB)
+		bRet = true
+	end
+	
+	return bRet, strFormatSize
+end
+
+
+function ShowDescMessage(objRootCtrl, strMessage)
 	local objFileDesc = objRootCtrl:GetControlObject("NewTask.FileDesc.Text")
-	objFileDesc:SetText("请填写完整信息")
+	objFileDesc:SetText(strMessage)
 end
 
 -----------

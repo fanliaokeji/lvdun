@@ -4,12 +4,13 @@ local tipUtil = tFunHelper.tipUtil
 
 --方法
 function SetFileContent(self, tFileContent)
-	if type(tFileContent) ~= "table" then
+	if type(tFileContent) ~= "table" or type(tFileContent.tDownLoadConfig) ~= "table" then
 		return
 	end
 
-	SetFileName(self, tFileContent.strFileName)
+	SetFileNameUI(self, tFileContent.tDownLoadConfig.strFileName)
 	SetFileStateUI(self, tFileContent)
+	StartQueryTimer(self)
 end
 
 
@@ -69,15 +70,7 @@ function OnClickStart(self)
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_START)
 	RouteToFather(self)
 	
-	-- local objProgress = self:GetOwnerControl():GetControlObject("DownLoad.ProgressBar")
-	
-	-- local nProg = 1
-	-- local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-	-- timerManager:SetTimer(function(item, id)
-		-- objProgress:SetProgress(nProg)
-		-- nProg = nProg+1
-	-- end, 100)
-
+	StartQueryTimer(objRootCtrl)
 end
 
 
@@ -127,17 +120,87 @@ end
 
 
 ----
+function StartQueryTimer(objRootCtrl)
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local attr = objRootCtrl:GetAttribute()
+	
+	local nIndex = objRootCtrl:GetItemIndex()
+	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
+	local nState = tRabbitFileList:GetFileItemState(nIndex)
+	
+	if nState ~= tRabbitFileList.FILESTATE_START then
+		return
+	end
+	
+	if attr.hQueryTimer ~= nil then
+		timerManager:KillTimer(attr.hQueryTimer)
+		attr.hQueryTimer = nil
+	end
+	
+	attr.hQueryTimer = timerManager:SetTimer(function(item, id)
+		local bRet, tQueryInfo = tRabbitFileList:QueryTask(tFileItem)
 
-function SetFileName(objRootCtrl, strFileName)
+		if bRet and type(tQueryInfo) == "table" then
+			UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
+		end		
+	end, 1*1000)
+end
+
+
+function UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
+    UpdateFileName(nIndex, tQueryInfo.szFilename)
+	UpdateDownSize(nIndex, tQueryInfo.nTotalDownload)
+	UpdateFileSize(nIndex, tQueryInfo.nTotalSize)
+	
+	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
+	SetFileStateUI(objRootCtrl, tFileItem)
+end
+
+
+function UpdateFileName(nIndex, strQueryName)
+	local strFileName = tRabbitFileList:GetFileItemText(nIndex)
+	if tostring(strFileName) ~= tostring(strQueryName) then
+		tRabbitFileList:SetFileItemText(strQueryName)
+	end
+end
+
+
+function UpdateDownSize(nIndex, nQuerySizeInByte)
+	local nOldDownSize = tRabbitFileList:GetDownSizeInKB(nIndex)
+	local nQuerySizeInKB = 1 
+	if nQuerySizeInByte > 1024 then
+		nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
+	end
+	if nOldDownSize < nQuerySizeInKB then
+		tRabbitFileList:SetDownSizeInKB(nIndex, nQuerySizeInKB)
+	end
+end
+
+
+function UpdateFileSize(nIndex, nQuerySizeInByte)
+	local nOldFileSize = tRabbitFileList:GetFileSizeInKB(nIndex)
+	local nQuerySizeInKB = 1 
+	if nQuerySizeInByte > 1024 then
+		nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
+	end
+	if nOldFileSize < nQuerySizeInKB then
+		tRabbitFileList:SetFileSizeInKB(nIndex, nQuerySizeInKB)
+	end
+end
+
+
+function SetFileNameUI(objRootCtrl, strFileName)
 	local objFileName = objRootCtrl:GetControlObject("DownLoad.FileName")
 	objFileName:SetText(strFileName)
 end
 
 
-function SetFileSize(objRootCtrl, tFileContent)
-	local nDownSizeInKB = tFileContent.nDownSizeInKB
-	local nFileSizeInKB = tFileContent.nFileSizeInKB
-	
+function SetFileSizeUI(objRootCtrl, tFileContent)
+	local tDownLoadConfig = tFileContent.tDownLoadConfig
+
+	local nDownSizeInKB = tDownLoadConfig.nDownSizeInKB
+	local nFileSizeInKB = tDownLoadConfig.nFileSizeInKB
+		
 	if tonumber(nDownSizeInKB) == nil or tonumber(nFileSizeInKB) == nil then
 		return
 	end
@@ -148,11 +211,12 @@ function SetFileSize(objRootCtrl, tFileContent)
 	end
 	
 	local strPercent = string.format("%.1f", nPercent)
-	local strDownSize = tFunHelper.FormatFileSize(tFileContent.nDownSizeInKB)
-	local strFileSize = tFunHelper.FormatFileSize(tFileContent.nFileSizeInKB)
+	local strDownSize = tFunHelper.FormatFileSize(tDownLoadConfig.nDownSizeInKB)
+	local strFileSize = tFunHelper.FormatFileSize(tDownLoadConfig.nFileSizeInKB)
 	
 	local strText = strPercent.."%   "..strDownSize.." / "..strFileSize
 	SetFileStateText(objRootCtrl, strText)
+	SetProgressBarState(objRootCtrl, nPercent)
 end
 
 
@@ -176,16 +240,21 @@ end
 
 
 function SetFileStateUI(objRootCtrl, tFileContent)
-	if type(tFileContent) ~= "table" or
-		tonumber(tFileContent.nFileState) == nil or tFileContent.nFileState < 0 then
+	if type(tFileContent) ~= "table" or type(tFileContent.tDownLoadConfig) ~= "table" then
+		return false
+	end
+
+	local tDownLoadConfig = tFileContent.tDownLoadConfig
+
+	if tonumber(tDownLoadConfig.nFileState) == nil or tDownLoadConfig.nFileState < 0 then
 		return
 	end
 
-	SetFileSize(objRootCtrl, tFileContent)
+	SetFileSizeUI(objRootCtrl, tFileContent)
 	ShowErrorBkg(objRootCtrl, false)
 	ShowProgressBar(objRootCtrl, true)
 	
-	local nFileState = tFileContent.nFileState
+	local nFileState = tDownLoadConfig.nFileState
 	local objStartBtn = objRootCtrl:GetControlObject("DownLoad.StartBtn")
 	local objPauseBtn = objRootCtrl:GetControlObject("DownLoad.PauseBtn")
 	local objReDownLoad = objRootCtrl:GetControlObject("DownLoad.ReDownLoad")
@@ -220,6 +289,13 @@ function SetFileStateUI(objRootCtrl, tFileContent)
 		ShowErrorBkg(objRootCtrl, true)
 		ShowProgressBar(objRootCtrl, false)
 	end
+end
+
+
+function SetProgressBarState(objRootCtrl, nPercent)
+	local objProgress = objRootCtrl:GetControlObject("DownLoad.ProgressBar")
+	local nProg = nPercent
+	objProgress:SetProgress(nProg)
 end
 
 
