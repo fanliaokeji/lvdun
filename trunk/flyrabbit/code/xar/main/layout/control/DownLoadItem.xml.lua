@@ -68,15 +68,23 @@ end
 function OnClickStart(self)
 	local objRootCtrl = self:GetOwnerControl()
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_START)
-	RouteToFather(self)
+	
+	local nIndex = objRootCtrl:GetItemIndex()
+	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
+	local bRet = tRabbitFileList:StartTask(tFileItem)
 	
 	StartQueryTimer(objRootCtrl)
+	RouteToFather(self)
 end
 
 
 function OnClickPause(self)
 	local objRootCtrl = self:GetOwnerControl()
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_PAUSE)
+	
+	
+	StopQueryTimer(objRootCtrl)
+	
 	RouteToFather(self)
 end
 
@@ -131,19 +139,33 @@ function StartQueryTimer(objRootCtrl)
 	if nState ~= tRabbitFileList.FILESTATE_START then
 		return
 	end
-	
-	if attr.hQueryTimer ~= nil then
-		timerManager:KillTimer(attr.hQueryTimer)
-		attr.hQueryTimer = nil
-	end
+	XLMessageBox(tostring(nState))
+	StopQueryTimer(objRootCtrl)
 	
 	attr.hQueryTimer = timerManager:SetTimer(function(item, id)
 		local bRet, tQueryInfo = tRabbitFileList:QueryTask(tFileItem)
 
 		if bRet and type(tQueryInfo) == "table" then
-			UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
-		end		
+			UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)	
+
+			if tQueryInfo.stat ~= tRabbitFileList.FILESTATE_START 
+				and tQueryInfo.stat ~= tRabbitFileList.FILESTATE_STARTPENDING 
+				and tQueryInfo.stat ~= tRabbitFileList.FILESTATE_STOPPENDING then
+			
+				StopQueryTimer(objRootCtrl)
+			end
+		end
 	end, 1*1000)
+end
+
+
+function StopQueryTimer(objRootCtrl)
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local attr = objRootCtrl:GetAttribute()
+	if attr.hQueryTimer ~= nil then
+		timerManager:KillTimer(attr.hQueryTimer)
+		attr.hQueryTimer = nil
+	end
 end
 
 
@@ -151,6 +173,7 @@ function UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
     UpdateFileName(nIndex, tQueryInfo.szFilename)
 	UpdateDownSize(nIndex, tQueryInfo.nTotalDownload)
 	UpdateFileSize(nIndex, tQueryInfo.nTotalSize)
+	UpdateFileState(objRootCtrl, tQueryInfo.stat)
 	
 	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
 	SetFileStateUI(objRootCtrl, tFileItem)
