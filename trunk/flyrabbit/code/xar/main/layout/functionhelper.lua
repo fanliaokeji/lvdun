@@ -86,12 +86,16 @@ function HideMainWindow()
 end
 
 function ReportAndExit()
-	local tStatInfo = {}
 	HideTray()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
 	
+	local tRabbitFileList = XLGetGlobal("Project.RabbitFileList")
+	tRabbitFileList:UnInit()
+	tRabbitFileList:SaveListToFile()
+	
+	local tStatInfo = {}
 	tStatInfo.strEC = "exit"	
 	tStatInfo.strEA = GetInstallSrc() or ""
 	tStatInfo.Exit = true
@@ -730,7 +734,9 @@ end
 function SaveAllConfig()
 	if g_bLoadCfgSucc then
 		for strKey, tContent in pairs(g_tConfigFileStruct) do
-			SaveConfigToFileByKey(strKey)
+			if strKey ~= "tFileList" then
+				SaveConfigToFileByKey(strKey)
+			end
 		end
 	end
 end
@@ -1094,6 +1100,25 @@ function FormatFileSize(nFileSizeInKB)
 end
 
 
+function GetDiskSizeInKB(strDirPath)
+	if not IsRealString(strDirPath) or not tipUtil:QueryFileExists(strDirPath) then
+		return -1
+	end
+
+	local nAvailableInByte = tipUtil:GetDiskFreeSpaceEx(strDirPath)
+	if tonumber(nAvailableInByte) == nil then
+		return -1
+	end
+	
+	local nFreeSizeInKB = 1
+	if nAvailableInByte > 1024 then
+		nFreeSizeInKB = math.floor(nAvailableInByte/1024)
+	end
+	
+	return nFreeSizeInKB
+end
+
+
 function GetDefaultSaveDir()
 	local strExePath = GetExePath()
 	if not IsRealString(strExePath) or not tipUtil:QueryFileExists(strExePath) then
@@ -1223,6 +1248,7 @@ obj.RegSetValue = RegSetValue
 
 --其他
 obj.FormatFileSize = FormatFileSize
+obj.GetDiskSizeInKB = GetDiskSizeInKB
 obj.GetDefaultSaveDir = GetDefaultSaveDir
 obj.GetSelectItemObject = GetSelectItemObject
 obj.UpdateFileStateUI = UpdateFileStateUI

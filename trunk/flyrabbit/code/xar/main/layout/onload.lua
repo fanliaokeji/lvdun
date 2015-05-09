@@ -26,6 +26,7 @@ function RegisterRabbitFileObject()
 		return false
 	end
 	
+	tRabbitFileList:Init()
 	tRabbitFileList:LoadListFromFile()
 	
 	return true

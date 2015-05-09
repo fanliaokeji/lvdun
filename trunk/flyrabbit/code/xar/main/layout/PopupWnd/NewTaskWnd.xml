@@ -86,7 +86,7 @@
 												<font>DeleteTask.Font12</font>
 											</attr>
 											<eventlist>
-												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusURL" />
 											</eventlist>
 										</obj>
 									</children>
@@ -118,12 +118,12 @@
 												<top>3</top>
 												<width>father.width-2</width>
 												<height>20</height>
-												<text>E:\飞兔下载\Download\</text>
+												<text></text>
 												<textcolor>28313A</textcolor>
 												<font>DeleteTask.Font12</font>
 											</attr>
 											<eventlist>
-												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusSavePath" />
 											</eventlist>
 										</obj>
 									</children>
@@ -174,7 +174,7 @@
 												<font>DeleteTask.Font12</font>
 											</attr>
 											<eventlist>
-												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnEditFocusChange" />
+												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusFileName" />
 											</eventlist>
 										</obj>
 									</children>
