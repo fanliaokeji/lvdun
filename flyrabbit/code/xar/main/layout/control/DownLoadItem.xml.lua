@@ -139,7 +139,7 @@ function StartQueryTimer(objRootCtrl)
 	if nState ~= tRabbitFileList.FILESTATE_START then
 		return
 	end
-	XLMessageBox(tostring(nState))
+	
 	StopQueryTimer(objRootCtrl)
 	
 	attr.hQueryTimer = timerManager:SetTimer(function(item, id)
