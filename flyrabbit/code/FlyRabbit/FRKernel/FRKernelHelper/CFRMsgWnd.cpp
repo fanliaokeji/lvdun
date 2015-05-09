@@ -153,7 +153,7 @@ LRESULT CFRMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BO
 			vParam[0] = (LPWSTR)(info->wszUrl);
 			vParam[1] = (int)(info->type);
 			vParam[2] = (int)(info->posX);
-			vParam[2] = (int)(info->posY);
+			vParam[3] = (int)(info->posY);
 			DISPPARAMS params = { vParam, NULL, 4, 0 };
 			Fire_LuaEvent("OnAddTask", &params);
 		}
