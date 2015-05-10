@@ -11,15 +11,15 @@ public:
 
 
 		const TCHAR *rgszFileName[] = {
-			//_T("zlib1.dll"), 
-			//_T("minizip.dll"),  
+			_T("zlib1.dll"), 
+			_T("minizip.dll"),  
 			//_T("xlfsio.dll"), 
-			_T("xlluaruntime.dll"), 
+			//_T("xlluaruntime.dll"), 
 			//_T("libexpat.dll"), 
 			//_T("libpng13.dll"), 
 			//_T("xlgraphic.dll"), 
 			//_T("xlgraphicplus.dll"),
-			_T("xlue.dll")
+			//_T("xlue.dll")
 		};
 		HMODULE rghmodDeps[_countof(rgszFileName)] = {NULL};
 		PreLoadDll(rgszFileName, _countof(rgszFileName), rghmodDeps);
