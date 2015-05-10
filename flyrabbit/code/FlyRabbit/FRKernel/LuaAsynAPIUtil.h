@@ -18,6 +18,7 @@
 #define WM_HTTPFILEGOTPROGRESS		WM_USER + 2023
 #define WM_KILLPROCESS					WM_USER + 2024
 #define WM_SQLITE3			WM_USER + 2025
+#define WM_GETFILESIZEWITHURL			WM_USER + 2026
 
 enum AjaxTaskFlag
 {
@@ -68,6 +69,8 @@ public:
 	static int AsynKillProcess(lua_State* pLuaState);
 
 	static int AsynExecuteSqlite3DML(lua_State* pLuaState);
+	static int AsynGetFileSizeWithUrl(lua_State* pLuaState);
+
 private:
 	static XLLRTGlobalAPI  s_functionlist[];
 };
@@ -594,6 +597,37 @@ public:
 	  BOOL m_bQuery;
 };
 
+
+struct GetFileSizeWithUrlData
+{
+	LuaCallInfo m_callInfo;
+	std::wstring m_strUrl;
+	__int64 m_iFileSize;
+	GetFileSizeWithUrlData(lua_State* pLuaState, const char* pUrl) :  m_callInfo(pLuaState, luaL_ref(pLuaState, LUA_REGISTRYINDEX))
+	{
+		TSTRACEAUTO();
+		CComBSTR bstrUrl;
+		LuaStringToCComBSTR(pUrl,bstrUrl);
+		m_strUrl = bstrUrl.m_str;
+		m_iFileSize = 0;
+	}
+
+	~GetFileSizeWithUrlData()
+	{
+		TSTRACEAUTO();
+	}
+
+	void Notify(int nErrCode)
+	{
+		lua_rawgeti(m_callInfo.GetLuaState(), LUA_REGISTRYINDEX, m_callInfo.GetRefFn());
+		lua_pushinteger(m_callInfo.GetLuaState(), nErrCode);
+		lua_pushnumber(m_callInfo.GetLuaState(), (lua_Number)m_iFileSize);
+		XLLRT_LuaCall(m_callInfo.GetLuaState(), 2, 0, L"GetFileSizeWithUrl Callback");
+	}
+
+	void Work();
+};
+
 class CAsynMsgWindow : public CMsgWindow
 {
 public:
@@ -648,6 +682,7 @@ public:
 		MESSAGE_HANDLER(WM_HTTPFILEGOTPROGRESS, OnHttpFileGotProgress)
 		MESSAGE_HANDLER(WM_KILLPROCESS, OnKillProcessFinish)
 		MESSAGE_HANDLER(WM_SQLITE3, OnSqlite3DMLFinish)
+		MESSAGE_HANDLER(WM_GETFILESIZEWITHURL, OnGetFileSizeFinish)
 		CHAIN_MSG_MAP(CMsgWindow)
 	END_MSG_MAP()
 
@@ -750,6 +785,14 @@ protected:
 	LRESULT OnSqlite3DMLFinish(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 	{
 		ExecuteDMLData* pData = (ExecuteDMLData*)lParam;
+		pData->Notify((int)wParam);
+		delete pData;
+		return 0;
+	}
+
+	LRESULT OnGetFileSizeFinish(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		GetFileSizeWithUrlData* pData = (GetFileSizeWithUrlData*)lParam;
 		pData->Notify((int)wParam);
 		delete pData;
 		return 0;
