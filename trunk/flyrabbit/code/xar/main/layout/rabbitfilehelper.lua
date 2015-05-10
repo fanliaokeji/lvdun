@@ -292,11 +292,9 @@ function tRabbitFileList:SaveListToFile()
 	local tFileList = tRabbitFileList:GetFileList()
 	local tFileListFromDisk = tFunHelper.ReadConfigFromMemByKey("tFileList") or {}
 	tFileListFromDisk.tConfigList = {}
-	
 	for nIndex, tFileItem in ipairs(tFileList) do
 		tFileListFromDisk.tConfigList[nIndex] = tFileItem.tDownLoadConfig
 	end
-	
 	tFunHelper.SaveConfigToFileByKey("tFileList")
 	return true
 end
@@ -465,6 +463,17 @@ function tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
 	return bRet, nFileSizeInKB
 end
 
+function tRabbitFileList:AsynGetFileSizeWithUrlInKB(strURL,fnCallBack)
+	if not IsRealString(strURL) then
+		return
+	end
+	tipAsynUtil:AsynGetFileSizeWithUrl(strURL,function(iRet, nFileSizeInByte)
+		if iRet == 0 and nFileSizeInByte > 0 then
+			nFileSizeInKB = nFileSizeInByte/1024
+			fnCallBack(iRet,nFileSizeInKB)
+		end
+	end)
+end
 
 function GetFileSaveNameFromUrl(url)
 	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")

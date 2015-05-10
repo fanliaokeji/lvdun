@@ -9,7 +9,7 @@ function OnCreate( self )
 	local objMainWnd = tFunHelper.GetMainWndInst()
 	if objMainWnd:GetVisible() then
 		PopupInMainWndCenter(self)
-	end	
+	end
 end
 
 ---
@@ -66,7 +66,17 @@ function OnFocusURL(self, bFocus)
 	if not bFocus then
 		local objRootCtrl = self:GetOwnerControl()
 		AsynCall(function ()
+			local strText = self:GetText()
+			if IsRealString(strText) then
+				local strSaveName = GetFileSaveNameFromUrl(strText)
+				if IsRealString(strSaveName) then
+					local objRootLayout = self:GetOwnerControl()
+					local objFileNameEdit = objRootLayout:GetControlObject("NewTask.FileName.edit")
+					objFileNameEdit:SetText(strSaveName)
+				end
+			end
 			ShowDiskInfo(objRootCtrl)
+			SetFileSizeFromUI(objRootCtrl)
 		end)
 	end
 end
@@ -114,6 +124,11 @@ end
 
 function OnPopDirSelectDialog(self)
 	local strDir = tFunHelper.OpenFolderDialog()
+	if IsRealString(strDir) then
+		local objRootLayout = self:GetOwnerControl()
+		local objDirEdit = objRootLayout:GetControlObject("NewTask.SavePath.edit")
+		objDirEdit:SetText(strDir)
+	end
 end
 
 
@@ -214,10 +229,14 @@ end
 
 function ShowDiskInfo(objRootCtrl)
 	local strFileSize = "文件大小未知,"
-	local bSucc, strSize = GetFileSizeFromUI(objRootCtrl)	
-	if bSucc then
-		strFileSize = "文件大小"..tostring(strSize)..","
+	local attr = objRootCtrl:GetAttribute()
+	if IsRealString(attr.strFileSize) then
+		strFileSize = "文件大小"..tostring(attr.strFileSize)..","
 	end
+	-- local bSucc, strSize = GetFileSizeFromUI(objRootCtrl)	
+	-- if bSucc then
+		-- strFileSize = "文件大小"..tostring(strSize)..","
+	-- end
 
 	local strDiskInfo = "未知路径"
 	local objDirEdit = objRootCtrl:GetControlObject("NewTask.SavePath.edit")
@@ -234,17 +253,25 @@ function ShowDiskInfo(objRootCtrl)
 end
 
 
-function GetFileSizeFromUI(objRootCtrl)
+function SetFileSizeFromUI(objRootCtrl)
 	local objURLEdit = objRootCtrl:GetControlObject("NewTask.Url.edit")	
 	local strURL = objURLEdit:GetText()
+	tRabbitFileList:AsynGetFileSizeWithUrlInKB(strURL,function(iRet, nFileSizeInKB)
+		if iRet == 0 and nFileSizeInKB > 0 then
+			local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
+			local attr = objRootCtrl:GetAttribute()
+			attr.strFileSize = strSize
+			ShowDiskInfo(objRootCtrl)
+		end
+	end)
 	-- local bSucc, nFileSizeInKB = tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
-	local strSize = ""
+	-- local strSize = ""
 	
-	if bSucc then
-		local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
-	end
+	-- if bSucc then
+		-- local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
+	-- end
 	
-	return bSucc, strSize
+	-- return bSucc, strSize
 end
 
 
@@ -282,3 +309,14 @@ function TipLog(strLog)
 	end
 end
 
+function GetFileSaveNameFromUrl(url)
+	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
+	if not IsRealString(strFileName) then
+		return url
+	end
+	local npos = string.find(strFileName, "?", 1, true)
+	if npos ~= nil then
+		strFileName = string.sub(strFileName, 1, npos-1)
+	end
+	return strFileName
+end
