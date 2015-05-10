@@ -10,8 +10,13 @@ extern CFRApp theApp;
 #include <setupapi.h>
 #pragma comment (lib, "setupapi.lib")
 
+#include "miniTP/xldl.h"
+#include "miniTP/MiniTPWrapper.h"
+
 CAsynMsgWindow g_wndMsg;
 CMsgWindow* g_pWndMsg = &g_wndMsg;
+
+extern DownWrapper gMiniTPWrapper;
 
 XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] = 
 {
@@ -35,7 +40,8 @@ XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] =
 	{"AsynCreateProcess", AsynCreateProcess},
 	{"AsynKillProcess", AsynKillProcess},
 	{"AsynExecuteSqlite3DML", AsynExecuteSqlite3DML},
-
+	
+	{"AsynGetFileSizeWithUrl", AsynGetFileSizeWithUrl},
 	{NULL, NULL}
 };
 
@@ -656,7 +662,7 @@ int LuaAsynUtil::AsynCreateProcess(lua_State* pLuaState)
 		pData = new CProcessParam(pExePath, pParams, pWorkDir, dwPriority, nShow, pLuaState, luaL_ref(pLuaState, LUA_REGISTRYINDEX));
 		_beginthreadex(NULL, 0, CreateProcessProc, pData, 0, NULL);
 	}
-
+	
 	return 0;
 }
 
@@ -870,4 +876,54 @@ void LuaAsynUtil::RegisterSelf( XL_LRT_ENV_HANDLE hEnv )
 	theObject.pfnGetObject = (fnGetObject)LuaAsynUtil::GetInstance;
 
 	XLLRT_RegisterGlobalObj(hEnv,theObject);
+}
+
+
+void GetFileSizeWithUrlData::Work()
+{
+
+	TSTRACEAUTO();
+	INT64 iFileSize = 0;
+	BOOL bRet = gMiniTPWrapper.GetFileSizeWithUrl(m_strUrl.c_str(),m_iFileSize);
+	WPARAM wParam = bRet?0:1;
+	g_wndMsg.PostMessage(WM_GETFILESIZEWITHURL, wParam, (LPARAM)this);
+}
+
+static unsigned __stdcall GetFileSizeWithUrlProc(LPVOID pThreadParam)
+{
+	GetFileSizeWithUrlData* pData = (GetFileSizeWithUrlData*)pThreadParam;
+	pData->Work();
+	return 0;
+}
+
+int LuaAsynUtil::AsynGetFileSizeWithUrl( lua_State* pLuaState )
+{
+	BOOL bErrCode = FALSE;
+	LuaAsynUtil** ppAsynUtil = (LuaAsynUtil**)luaL_checkudata(pLuaState, 1, XMPTIPWND_ASYNCUTIL_CLASS);
+	if (ppAsynUtil && *ppAsynUtil)
+	{
+		const char* pUrl = lua_tostring(pLuaState, 2);
+		if (pUrl != NULL && lua_isfunction(pLuaState, 3))
+		{
+			GetFileSizeWithUrlData* pData = new GetFileSizeWithUrlData(pLuaState, pUrl);
+			if (pData)
+			{
+				if (_beginthreadex(NULL, 0, GetFileSizeWithUrlProc, pData, 0, NULL))
+				{
+					bErrCode = TRUE;
+				}
+				else
+				{
+					TSERROR(_T("Begin GetFileSizeWithUrl thread failed, GetLastError() return 0x%X"), GetLastError());
+				}
+			}
+			else
+			{
+				TSERROR(_T("new GetFileSizeWithUrl failed, GetLastError() return 0x%X"), GetLastError());
+			}
+		}
+	}
+
+	lua_pushboolean(pLuaState, bErrCode);
+	return 1;
 }
