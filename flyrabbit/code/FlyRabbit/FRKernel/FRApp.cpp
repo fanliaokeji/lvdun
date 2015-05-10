@@ -83,9 +83,9 @@ BOOL CFRApp::IniEnv()
 	XL_InitGraphicLib(&param);
 	//XL_SetFreeTypeEnabled(TRUE);
 	
-	//XLGraphicPlusParam plusParam;
-	//XLGP_PrepareGraphicPlusParam(&plusParam);
-	//XLGP_InitGraphicPlus(&plusParam);
+	XLGraphicPlusParam plusParam;
+	XLGP_PrepareGraphicPlusParam(&plusParam);
+	XLGP_InitGraphicPlus(&plusParam);
 	// 2)初始化XLUE,这函数是一个符合初始化函数
 	// 完成了初始化Lua环境,标准对象,XLUELoader的工作
 	//XLFS_Init();

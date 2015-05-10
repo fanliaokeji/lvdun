@@ -138,7 +138,9 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"OpenURL", OpenURL},
 	{"OpenURLIE", OpenURLIE},
 	{"ShellExecute", ShellExecuteEX},
-
+	{"FileDialog", FileDialog},
+	{"FolderDialog", FolderDialog},
+	{"BrowserForFile", BrowserForFile},
 
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
@@ -4030,6 +4032,58 @@ int LuaAPIUtil::FileDialog(lua_State* pLuaState)
 			std::string utf8FilePath;
 			BSTRToLuaString(dlg.m_szFileName,utf8FilePath);
 			lua_pushstring(pLuaState, utf8FilePath.c_str());
+			return 1;
+		}
+	}
+	lua_pushnil(pLuaState);
+	return 1;
+}
+
+int LuaAPIUtil::FolderDialog(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		CComBSTR bstrTitle;
+		if (lua_type(pLuaState, 2) == LUA_TSTRING)
+		{
+			const char* utf8Title = lua_tostring(pLuaState, 2);
+			LuaStringToCComBSTR(utf8Title, bstrTitle);
+		}
+		WTL::CFolderDialog dlg(0, bstrTitle.m_str, BIF_RETURNONLYFSDIRS|BIF_USENEWUI);
+		std::string utf8InitialFolder;
+		if (lua_type(pLuaState, 3) == LUA_TSTRING)
+		{
+			utf8InitialFolder = lua_tostring(pLuaState,3);
+		}
+		// 判断目录是否存在不存时指向上一级目录
+		std::string strInitialFolder2 = utf8InitialFolder;
+		while( !PathFileExistsA(strInitialFolder2.c_str()) )
+		{
+			std::string::size_type nPos = strInitialFolder2.find_last_of("\\");
+			if( nPos != std::string::npos )
+			{
+				strInitialFolder2 = strInitialFolder2.substr(0,nPos);
+			}
+			else
+			{
+				break;
+			}
+		}
+		//根目录如果没有"\"会不能定位到根目录．
+		if(strInitialFolder2.length() == 0 || strInitialFolder2[strInitialFolder2.length() - 1] != '\\')
+			strInitialFolder2 += "\\";
+
+		std::wstring wstrInitialFolder;
+		CComBSTR bstrInitialFolder;
+		LuaStringToCComBSTR(strInitialFolder2.c_str(), bstrInitialFolder);
+		dlg.SetInitialFolder(bstrInitialFolder.m_str, true);
+
+		if (IDOK == dlg.DoModal())
+		{
+			std::string strPath;
+			BSTRToLuaString(dlg.m_szFolderPath,strPath);
+			lua_pushstring(pLuaState, strPath.c_str());
 			return 1;
 		}
 	}

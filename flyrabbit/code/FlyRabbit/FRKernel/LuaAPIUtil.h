@@ -181,7 +181,7 @@ public:
 	
 	//文件对话框操作
 	static int FileDialog(lua_State* pLuaState);
-	//static int FolderDialog(lua_State* pLuaState);
+	static int FolderDialog(lua_State* pLuaState);
 	static int BrowserForFile(lua_State* pLuaState);
 
 	//资源相关
