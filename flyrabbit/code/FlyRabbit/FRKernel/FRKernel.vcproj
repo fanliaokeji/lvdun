@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib"
+				AdditionalDependencies="Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLGraphicPlus.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib;$(SolutionDir)$(ConfigurationName)"
 				ModuleDefinitionFile="FRKernel.def"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib"
+				AdditionalDependencies="Version.lib gdiplus.lib XLUE.lib XLGraphic.lib XLGraphicPlus.lib XLLuaRuntime.lib XLFSIO.lib libexpat.lib comsuppw.lib minizip.lib psapi.lib Winmm.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../boltsdk/lib;../../lib;$(SolutionDir)$(ConfigurationName)"
 				ModuleDefinitionFile="FRKernel.def"
