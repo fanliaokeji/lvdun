@@ -215,11 +215,10 @@ function CreateNewTask(objRootCtrl)
 	tFileItem.tDownLoadConfig.nFileSizeInKB = nFileSizeInKB or 0
 	tFileItem.tDownLoadConfig.nDownSizeInKB = 0
 	tFileItem.tDownLoadConfig.nFinishPercent = 0
-	tFileItem.tDownLoadConfig.strFilePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	tFileItem.tDownLoadConfig.strFilePath = strSaveDir -- tipUtil:PathCombine(strSaveDir, strFileName)
 	tFileItem.tDownLoadConfig.strFileURL = strURL
 	tFileItem.tDownLoadConfig.bIsResume = true
 	tFileItem.tDownLoadConfig.nFileState = tRabbitFileList.FILESTATE_START
-
 	tRabbitFileList:PushFileItem(tFileItem)
 	tFunHelper.UpdateFileList()
 	
@@ -228,6 +227,21 @@ end
 
 
 function ShowDiskInfo(objRootCtrl)
+	if objRootCtrl == nil then
+		local hostWndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+		local objNewTaskWnd = hostWndManager:GetHostWnd("TipNewTaskWnd.Instance")
+		if objNewTaskWnd == nil then
+			return
+		end
+		local objtree = objNewTaskWnd:GetBindUIObjectTree()
+		if objtree == nil then
+			return
+		end
+		objRootCtrl = objtree:GetUIObject("root.layout")
+		if objRootCtrl == nil then
+			return
+		end
+	end
 	local strFileSize = "文件大小未知,"
 	local attr = objRootCtrl:GetAttribute()
 	if IsRealString(attr.strFileSize) then
@@ -261,7 +275,7 @@ function SetFileSizeFromUI(objRootCtrl)
 			local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
 			local attr = objRootCtrl:GetAttribute()
 			attr.strFileSize = strSize
-			ShowDiskInfo(objRootCtrl)
+			ShowDiskInfo(nil)
 		end
 	end)
 	-- local bSucc, nFileSizeInKB = tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
