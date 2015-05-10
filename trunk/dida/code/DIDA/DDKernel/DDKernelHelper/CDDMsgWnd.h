@@ -31,7 +31,7 @@ public:
 	bool HandleSingleton();
 
 	DECLARE_WND_CLASS(L"{10808D97-3494-4c5d-857F-0ADFA04FA721}_ddmainmsg")
-	BEGIN_MSG_MAP(CFilterMsgWindow)
+	BEGIN_MSG_MAP(CDDMsgWindow)
 		MESSAGE_HANDLER(WM_COPYDATA, OnCopyData)
 		MESSAGE_HANDLER(WM_EXPLORER, OnExplorerNotify)
 

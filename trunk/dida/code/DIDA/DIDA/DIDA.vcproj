@@ -68,6 +68,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
+				MapExports="true"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
