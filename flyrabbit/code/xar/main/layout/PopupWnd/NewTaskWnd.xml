@@ -84,6 +84,7 @@
 												<text></text>
 												<textcolor>28313A</textcolor>
 												<font>DeleteTask.Font12</font>
+												<autourldetect>0</autourldetect>
 											</attr>
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusURL" />
@@ -190,7 +191,7 @@
 										<font>DeleteTask.Font12</font>
 									</attr>
 								</obj>
-									<obj id="NewTask.OKBtn" class="TipAddin.Button">
+								<obj id="NewTask.OKBtn" class="TipAddin.Button">
 									<attr>
 										<left>155</left>
 										<top>191</top>

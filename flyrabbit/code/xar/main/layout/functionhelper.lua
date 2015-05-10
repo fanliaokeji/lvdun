@@ -90,7 +90,6 @@ function ReportAndExit()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
-	
 	local tRabbitFileList = XLGetGlobal("Project.RabbitFileList")
 	tRabbitFileList:UnInit()
 	tRabbitFileList:SaveListToFile()
@@ -214,7 +213,7 @@ function OpenFolderDialog()
 	local strExtName  = nil
 	local strDefName = nil
 	local strFilter = "HTML Files (*.htm, *.html, *.mht)|*.htm, *.html, *.mht|Text Files (*.txt)|*.txt|GIF Files (*.gif)|*.gif|JPGE Files (*.jpg, *.jpge)|*.jpg, *.jpge|All Files (*.*)|*.*||"
-	-- return tipUtil:OpenFolderDialog(bOpenFileDialog, strFilter, strExtName, strDefName)
+	return tipUtil:FolderDialog(bOpenFileDialog, strFilter, strExtName, strDefName)
 end
 
 
@@ -701,8 +700,11 @@ function GetCfgPathWithName(strCfgName)
 	if not bOk then
 		return ""
 	end
-	
-	local strCfgFilePath = tipUtil:PathCombine(strBaseDir, "FlyRabbit\\"..tostring(strCfgName))
+	local strCfgDir = tipUtil:PathCombine(strBaseDir, "FlyRabbit")
+	if not tipUtil:QueryFileExists(strCfgDir) then
+		tipUtil:CreateDir(strCfgDir)
+	end
+	local strCfgFilePath = tipUtil:PathCombine(strCfgDir, tostring(strCfgName))
 	return strCfgFilePath or ""
 end
 
