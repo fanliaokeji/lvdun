@@ -31,6 +31,12 @@ function GetSelectItemObject(objRootCtrl)
 	return GetFileItemByIndex(objRootCtrl, nIndex)
 end
 
+
+function GetFileItemUIByIndex(objRootCtrl, nIndex)
+	return GetFileItemByIndex(objRootCtrl, nIndex)
+end
+
+
 ---事件
 function OnInitControl(self)
 	UpdateFileList(self)

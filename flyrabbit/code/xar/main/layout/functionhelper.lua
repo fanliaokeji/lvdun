@@ -1149,6 +1149,16 @@ function GetSelectItemObject()
 end
 
 
+function GetFileItemUIByIndex(nIndex)
+	local objDownloadList = GetMainCtrlChildObj("DownLoadList")
+	if not objDownloadList then
+		return nil
+	end
+	
+	return objDownloadList:GetFileItemUIByIndex(nIndex)
+end
+
+
 function UpdateFileList()
 	local objDownloadList = GetMainCtrlChildObj("DownLoadList")
 	objDownloadList:UpdateFileList()
@@ -1253,6 +1263,7 @@ obj.FormatFileSize = FormatFileSize
 obj.GetDiskSizeInKB = GetDiskSizeInKB
 obj.GetDefaultSaveDir = GetDefaultSaveDir
 obj.GetSelectItemObject = GetSelectItemObject
+obj.GetFileItemUIByIndex = GetFileItemUIByIndex
 obj.UpdateFileStateUI = UpdateFileStateUI
 obj.UpdateBottomStyle = UpdateBottomStyle
 obj.UpdateFileList = UpdateFileList

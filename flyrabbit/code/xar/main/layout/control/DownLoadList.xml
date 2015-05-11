@@ -25,6 +25,7 @@
 			<MoveItemListPanel file="DownLoadList.xml.lua" func="MoveItemListPanel"/>
 			<GetSelectItemIndex file="DownLoadList.xml.lua" func="GetSelectItemIndex"/>
 			<GetSelectItemObject file="DownLoadList.xml.lua" func="GetSelectItemObject"/>
+			<GetFileItemUIByIndex file="DownLoadList.xml.lua" func="GetFileItemUIByIndex"/>
 		</method_def>
 		<event_def>
 			

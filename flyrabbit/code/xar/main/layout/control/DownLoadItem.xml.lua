@@ -7,9 +7,8 @@ function SetFileContent(self, tFileContent)
 	if type(tFileContent) ~= "table" or type(tFileContent.tDownLoadConfig) ~= "table" then
 		return
 	end
-
-	SetFileNameUI(self, tFileContent.tDownLoadConfig.strFileName)
-	SetFileStateUI(self, tFileContent)
+	
+	SetFileShowInfoUI(self, tFileContent)
 	StartQueryTimer(self)
 end
 
@@ -35,7 +34,17 @@ end
 function UpdateFileItemStyle(objRootCtrl)
 	local nIndex = objRootCtrl:GetItemIndex()
 	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
-	SetFileStateUI(objRootCtrl, tFileItem)
+	SetFileShowInfoUI(objRootCtrl, tFileItem)
+end
+
+
+function StopQueryTimer(objRootCtrl)
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local attr = objRootCtrl:GetAttribute()
+	if attr.hQueryTimer ~= nil then
+		timerManager:KillTimer(attr.hQueryTimer)
+		attr.hQueryTimer = nil
+	end
 end
 
 
@@ -82,14 +91,18 @@ function OnClickPause(self)
 	local objRootCtrl = self:GetOwnerControl()
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_PAUSE)
 	
-	
-	StopQueryTimer(objRootCtrl)
+	local nIndex = objRootCtrl:GetItemIndex()
+	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
+	local bRet = tRabbitFileList:PauseTask(tFileItem)
+	objRootCtrl:StopQueryTimer()
 	
 	RouteToFather(self)
 end
 
 
 function OnClickDelete(self)
+	local objRootCtrl = self:GetOwnerControl()
+		
 	tFunHelper.ShowModalDialog("TipDeleteTaskWnd", "TipDeleteTaskWnd.Instance", "DeleteTaskTree", "DeleteTaskTree.Instance")	
 	RouteToFather(self)
 end
@@ -105,7 +118,10 @@ end
 function OnClickOpenFile(self)
 	local objRootCtrl = self:GetOwnerControl()
 	local nIndex = objRootCtrl:GetItemIndex()
-	local strFilePath = tRabbitFileList:GetFilePath(nIndex)
+	local strFileDir = tRabbitFileList:GetFileDir(nIndex) or ""
+	local strFileName = tRabbitFileList:GetFileName(nIndex) or ""
+	local strFilePath = tipUtil:PathCombine(strFileDir, strFileName)
+	
 	if IsRealString(strFilePath) and tipUtil:QueryFileExists(strFilePath) then
 		local bRet = tipUtil:ShellExecute(0, "open", strFilePath, "", 0, "SW_SHOW")
 	end	
@@ -115,14 +131,10 @@ end
 function OnClickOpenDir(self)
 	local objRootCtrl = self:GetOwnerControl()
 	local nIndex = objRootCtrl:GetItemIndex()
-	local strFilePath = tRabbitFileList:GetFilePath(nIndex)
-	if not IsRealString(strFilePath) then
-		return
-	end
+	local strFileDir = tRabbitFileList:GetFileDir(nIndex)
 	
-	local strDir = tFunHelper.GetFileDirFromPath(strFilePath)
-	if IsRealString(strDir) and tipUtil:QueryFileExists(strDir) then
-		tipUtil:ShellExecute(0, "open", strDir, "", 0, "SW_SHOW")
+	if IsRealString(strFileDir) and tipUtil:QueryFileExists(strFileDir) then
+		tipUtil:ShellExecute(0, "open", strFileDir, "", 0, "SW_SHOW")
 	end	
 end
 
@@ -140,9 +152,13 @@ function StartQueryTimer(objRootCtrl)
 		return
 	end
 	
-	StopQueryTimer(objRootCtrl)
+	objRootCtrl:StopQueryTimer()
 	
 	attr.hQueryTimer = timerManager:SetTimer(function(item, id)
+		if objRootCtrl == nil then
+			item:KillTimer(id)
+		end
+	
 		local bRet, tQueryInfo = tRabbitFileList:QueryTask(tFileItem)
 
 		if bRet and type(tQueryInfo) == "table" then
@@ -150,22 +166,12 @@ function StartQueryTimer(objRootCtrl)
 
 			if tQueryInfo.stat ~= tRabbitFileList.FILESTATE_START 
 				and tQueryInfo.stat ~= tRabbitFileList.FILESTATE_STARTPENDING 
-				and tQueryInfo.stat ~= tRabbitFileList.FILESTATE_STOPPENDING then
+				and tQueryInfo.stat ~= tRabbitFileList.FILESTATE_PAUSEPENDING then
 			
-				StopQueryTimer(objRootCtrl)
+				objRootCtrl:StopQueryTimer()		
 			end
 		end
 	end, 1*1000)
-end
-
-
-function StopQueryTimer(objRootCtrl)
-	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
-	local attr = objRootCtrl:GetAttribute()
-	if attr.hQueryTimer ~= nil then
-		timerManager:KillTimer(attr.hQueryTimer)
-		attr.hQueryTimer = nil
-	end
 end
 
 
@@ -176,14 +182,14 @@ function UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
 	UpdateFileState(objRootCtrl, tQueryInfo.stat)
 	
 	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
-	SetFileStateUI(objRootCtrl, tFileItem)
+	SetFileShowInfoUI(objRootCtrl, tFileItem)
 end
 
 
 function UpdateFileName(nIndex, strQueryName)
-	local strFileName = tRabbitFileList:GetFileItemText(nIndex)
+	local strFileName = tRabbitFileList:GetFileName(nIndex)
 	if tostring(strFileName) ~= tostring(strQueryName) then
-		tRabbitFileList:SetFileItemText(strQueryName)
+		tRabbitFileList:SetFileName(nIndex, strQueryName)
 	end
 end
 
@@ -262,7 +268,7 @@ function ShowProgressBar(objRootCtrl, bShow)
 end
 
 
-function SetFileStateUI(objRootCtrl, tFileContent)
+function SetFileShowInfoUI(objRootCtrl, tFileContent)
 	if type(tFileContent) ~= "table" or type(tFileContent.tDownLoadConfig) ~= "table" then
 		return false
 	end
@@ -273,6 +279,7 @@ function SetFileStateUI(objRootCtrl, tFileContent)
 		return
 	end
 
+	SetFileNameUI(objRootCtrl, tDownLoadConfig.strFileName)
 	SetFileSizeUI(objRootCtrl, tFileContent)
 	ShowErrorBkg(objRootCtrl, false)
 	ShowProgressBar(objRootCtrl, true)

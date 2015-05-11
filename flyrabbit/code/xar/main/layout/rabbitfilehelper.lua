@@ -15,7 +15,7 @@
 			["nFileSizeInKB"] = "",
 			["nDownSizeInKB"] = "",
 			["nFinishPercent"] = "",
-			["strFilePath"] = "",
+			["strFileDir"] = "",
 			["strFileURL"] = "",
 			["bIsResume"] = "",
 			["nFileState"] = FILESTATE_START | FILESTATE_PAUSE | FILESTATE_FINISH | FILESTATE_ERROR,
@@ -30,9 +30,11 @@ local tipUtil = XLGetObject("API.Util")
 local tipAsynUtil = XLGetObject("API.AsynUtil")
 local miniTPUtil = XLGetObject("MiniTP.Util")
 
+local g_tDeleteItemList = {}
 local tRabbitFileList = {}
 tRabbitFileList.data = {}
 tRabbitFileList.data.tFileList = {}
+
 
 local FILESTATE_NOITEM = 0
 local FILESTATE_ERROR = 1
@@ -40,7 +42,7 @@ local FILESTATE_PAUSE = 2
 local FILESTATE_START = 3
 local FILESTATE_FINISH = 4
 local FILESTATE_STARTPENDING = 5
-local FILESTATE_STOPPENDING = 6
+local FILESTATE_PAUSEPENDING = 6
 
 
 tRabbitFileList.FILESTATE_NOITEM = FILESTATE_NOITEM
@@ -49,7 +51,7 @@ tRabbitFileList.FILESTATE_PAUSE = FILESTATE_PAUSE
 tRabbitFileList.FILESTATE_FINISH = FILESTATE_FINISH
 tRabbitFileList.FILESTATE_ERROR = FILESTATE_ERROR
 tRabbitFileList.FILESTATE_STARTPENDING = FILESTATE_STARTPENDING
-tRabbitFileList.FILESTATE_STOPPENDING = FILESTATE_STOPPENDING
+tRabbitFileList.FILESTATE_PAUSEPENDING = FILESTATE_PAUSEPENDING
 
 function tRabbitFileList:GetFileList()
 	return self.data.tFileList
@@ -91,7 +93,30 @@ function tRabbitFileList:PushFileItem(tFileItem)
 end
 
 
-function tRabbitFileList:RemoveFileItem(nFileItemIndex)
+function tRabbitFileList:PushDeleteItem(tFileItem)
+	if type(tFileItem) ~= "table" then
+		Log("[PushDeleteItem] param error")
+		return false
+	end
+	
+	if tFileItem.hTaskHandle == nil or tFileItem.hTaskHandle == -1 then
+		Log("[PushDeleteItem] hTaskHandle not valid")
+		return false
+	end
+	
+	g_tDeleteItemList[#g_tDeleteItemList+1] = tFileItem
+	tRabbitFileList:DealWithDeleteList()
+	
+	return true
+end
+
+
+function tRabbitFileList:GetDeleteItemList(tFileItem)
+	return g_tDeleteItemList
+end
+
+
+function tRabbitFileList:RemoveFileItem(nFileItemIndex, bDeleteFile)
 	if type(nFileItemIndex) ~= "number" then
 		Log("[RemoveFileItem] param error")
 		return false
@@ -103,20 +128,24 @@ function tRabbitFileList:RemoveFileItem(nFileItemIndex)
 		return false
 	end
 	
+	local tDeleteItem = tFileList[nFileItemIndex]
+	tDeleteItem.bDeleteFile = bDeleteFile
+	tRabbitFileList:PushDeleteItem(tDeleteItem)
+	
 	table.remove(tFileList, nFileItemIndex)
 	return true
 end
 
 
-function tRabbitFileList:SetFileItemText(nIndex, strFileName)
+function tRabbitFileList:SetFileName(nIndex, strFileName)
 	if type(nIndex) ~= "number" or not IsRealString(strFileName) then
-		Log("[SetFileItemText] param error")
+		Log("[SetFileName] param error")
 		return false
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[SetFileItemText] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[SetFileName] GetFileItemByIndex failed"..tostring(nIndex))
 		return false
 	end
 	
@@ -125,15 +154,15 @@ function tRabbitFileList:SetFileItemText(nIndex, strFileName)
 end
 
 
-function tRabbitFileList:GetFileItemText(nIndex)
+function tRabbitFileList:GetFileName(nIndex)
 	if type(nIndex) ~= "number" then
-		Log("[GetFileItemText] param error")
+		Log("[GetFileName] param error")
 		return ""
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[SetFileItemText] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[GetFileName] GetFileItemByIndex failed"..tostring(nIndex))
 		return ""
 	end
 	
@@ -174,19 +203,19 @@ function tRabbitFileList:GetFileItemState(nIndex)
 end
 
 
-function tRabbitFileList:GetFilePath(nIndex)
+function tRabbitFileList:GetFileDir(nIndex)
 	if type(nIndex) ~= "number" then
-		Log("[GetFilePath] param error")
+		Log("[GetFileDir] param error")
 		return ""
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[GetFilePath] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[GetFileDir] GetFileItemByIndex failed"..tostring(nIndex))
 		return ""
 	end
 	
-	return tFileItem.tDownLoadConfig.strFilePath
+	return tFileItem.tDownLoadConfig.strFileDir
 end
 
 
@@ -254,8 +283,6 @@ function tRabbitFileList:SetDownSizeInKB(nIndex, nDownSizeInKB)
 	tFileItem.tDownLoadConfig.nDownSizeInKB = nDownSizeInKB
 	return true
 end
-
-
 
 
 ---文件读写
@@ -357,7 +384,7 @@ function tRabbitFileList:CreateTask(tFileItem)
 	local bOnlyOriginal = nil
 	local nDisableAutoRename = 1  --0是不重命名
 	
-	local hTaskHandle = miniTPUtil:TaskCreate(tDownLoadConfig.strFileURL, tDownLoadConfig.strFilePath
+	local hTaskHandle = miniTPUtil:TaskCreate(tDownLoadConfig.strFileURL, tDownLoadConfig.strFileDir
 						, tDownLoadConfig.strFileName, strRefURL, strCookies, strCookies
 						, bOnlyOriginal, nDisableAutoRename, tDownLoadConfig.bIsResume)
 					
@@ -392,6 +419,7 @@ function tRabbitFileList:PauseTask(tFileItem)
 		return false
 	end
 	
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	local hTaskHandle = tFileItem.hTaskHandle
 	
 	if hTaskHandle == nil or hTaskHandle == -1 then
@@ -399,10 +427,41 @@ function tRabbitFileList:PauseTask(tFileItem)
 		return false
 	end
 		
-	local bRet = miniTPUtil:TaskPause(hTaskHandle)
-	Log("[PauseTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+	if tFileItem.hPauseTimer ~= nil then
+		Log("[PauseTask] already try pausing")
+		return false
+	end
 		
-	return bRet
+	local  bQueryRet, tTaskInfo = tRabbitFileList:QueryTask(tFileItem)
+	Log("[PauseTask] first QueryTask  strFileState: " ..tostring(tTaskInfo.stat).." bQueryRet: "..tostring(bQueryRet))		
+	if bQueryRet and tTaskInfo.stat == tRabbitFileList.FILESTATE_PAUSE then	
+		Log("[PauseTask] already in puase state")
+		return true
+	end
+		
+	miniTPUtil:TaskPause(hTaskHandle)
+	
+	tFileItem.hPauseTimer = timerManager:SetTimer(function(item, id)
+		local  bQueryRet, tTaskInfo = tRabbitFileList:QueryTask(tFileItem)
+		Log("[PauseTask] trypauseing QueryTask  strFileState: " ..tostring(tTaskInfo.stat).." bQueryRet: "..tostring(bQueryRet))
+				
+		if bQueryRet then
+			if tTaskInfo.stat == tRabbitFileList.FILESTATE_PAUSE then
+				item:KillTimer(id)
+				tFileItem.hPauseTimer = nil
+				return
+			end
+		
+			if tTaskInfo.stat ~= tRabbitFileList.FILESTATE_PAUSEPENDING	and tTaskInfo.stat ~= tRabbitFileList.FILESTATE_STARTPENDING then
+				local bRet = miniTPUtil:TaskPause(hTaskHandle)
+				Log("[PauseTask] execute pause,  strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
+				item:KillTimer(id)
+				tFileItem.hPauseTimer = nil
+			end
+		end
+	end, 1*1000)	
+		
+	return true
 end
 
 
@@ -419,10 +478,59 @@ function tRabbitFileList:QueryTask(tFileItem)
 	end
 	
 	local bRet, tTaskInfo = miniTPUtil:TaskQueryEx(hTaskHandle)
-	Log("[QueryTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+	Log("[QueryTask] strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
 	
 	return bRet, tTaskInfo
 end
+
+
+local g_DeleteTimer = nil
+function tRabbitFileList:DealWithDeleteList()
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+
+	local tDeleteItemList = tRabbitFileList:GetDeleteItemList()
+	if g_DeleteTimer ~= nil then
+		timerManager:KillTimer(g_DeleteTimer)
+		g_DeleteTimer = nil 
+		
+		if #tDeleteItemList < 1 then
+			return
+		end
+	end
+	
+	g_DeleteTimer = timerManager:SetTimer(function(item, id)
+		for nIndex, tFileItem in pairs(tDeleteItemList) do 
+		
+			tRabbitFileList:PauseTask(tFileItem)
+			
+			local  bQueryRet, tTaskInfo = tRabbitFileList:QueryTask(tFileItem)
+			Log("[DealWithDeleteList] strFileName: ".. tostring(tFileItem.tDownLoadConfig.strFileName) .. "  strFileState: " ..tostring(tTaskInfo.stat).." bQueryRet: "..tostring(bQueryRet))
+			
+			if bQueryRet and tTaskInfo.stat == tRabbitFileList.FILESTATE_PAUSE then
+				local hTaskHandle = tFileItem.hTaskHandle
+				local bDeleteFile = tFileItem.bDeleteFile
+
+				local bDeleteRet = miniTPUtil:TaskDelete(hTaskHandle)
+				Log("[DealWithDeleteList] TaskDelete strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bDeleteRet))
+								
+				if bDeleteFile then
+					local bRet = tRabbitFileList:DelTempFile(tFileItem)
+					Log("[DealWithDeleteList] DelTempFile strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
+				end	
+				
+				if bDeleteRet then
+					table.remove(tDeleteItemList, nIndex)
+				end
+			end
+		end
+		
+		if #tDeleteItemList < 1 then
+			item:KillTimer(id)
+		end
+		
+	end, 1*1000)
+end
+
 
 
 function tRabbitFileList:DeleteTask(tFileItem)
@@ -433,14 +541,36 @@ function tRabbitFileList:DeleteTask(tFileItem)
 	local hTaskHandle = tFileItem.hTaskHandle
 	
 	if hTaskHandle == nil or hTaskHandle == -1 then
-		Log("[QueryTask] hTaskHandle not valid")
+		Log("[DeleteTask] hTaskHandle not valid")
 		return false
 	end
 	
 	local bRet = miniTPUtil:TaskDelete(hTaskHandle)
-	Log("[QueryTask] strFileURL: " ..tostring(tFileItem.tDownLoadConfig.strFileURL).." bRet: "..tostring(bRet))
+	Log("[DeleteTask] strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
+							
+	return bRet
+end
+
+
+function tRabbitFileList:DelTempFile(tFileItem)
+	if type(tFileItem) ~= "table" or type(tFileItem.tDownLoadConfig) ~= "table" then
+		Log("[DelTempFile] tFileItem param error")
+		return false
+	end
+
+	local strFileDir = tFileItem.tDownLoadConfig.strFileDir or ""
+	local strFileName = tFileItem.tDownLoadConfig.strFileName or ""
+	local strFilePath = tipUtil:PathCombine(strFileDir, strFileName)
 	
-	return bRet, tTaskInfo
+	local bRet = miniTPUtil:DelTempFile(strFileDir, strFileName)
+	Log("[DelTempFile] strFileName: " ..tostring(strFileName).. "  strDir:" ..tostring(strFileDir) .. " bRet: "..tostring(bRet))
+	
+	local strTempFile = strFilePath..".td"
+	tipUtil:DeletePathFile(strTempFile)
+	strTempFile = strFilePath..".td.cfg"
+	tipUtil:DeletePathFile(strTempFile)
+	
+	return bRet
 end
 
 
@@ -493,12 +623,9 @@ function CheckFileItemForDownload(tFileItem)
 	local tDownLoadConfig = tFileItem.tDownLoadConfig
 
 	if not IsRealString(tDownLoadConfig.strFileURL) 
-		or not IsRealString(tDownLoadConfig.strFilePath) then
+		or not IsRealString(tDownLoadConfig.strFileDir) 
+		or not IsRealString(tDownLoadConfig.strFileName) then
 		return false
-	end
-
-	if not IsRealString(tDownLoadConfig.strFileName) then
-		tDownLoadConfig.strFileName =	GetFileSaveNameFromUrl(tDownLoadConfig.strFileURL)
 	end
 	
 	if type(tDownLoadConfig.bIsResume) ~= "boolean" then

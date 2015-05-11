@@ -24,11 +24,12 @@ function RegisterRabbitFileObject()
 	if type(tRabbitFileList) ~= "table" then
 		return false
 	end
+	
 	if not tRabbitFileList:Init() then
 		return false
 	end
 	if not tRabbitFileList:LoadListFromFile() then
-		return false
+		-- return false
 	end
 	return true
 end
@@ -66,10 +67,10 @@ function SendStartupReportGgl(bShowWnd)
 	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
-		tStatInfo.strEC = "startup"  --ËøõÂÖ•‰∏äÊä•
+		tStatInfo.strEC = "startup"  --Ω¯»Î…œ±®
 		tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
 	else
-		tStatInfo.strEC = "showui" 	 --Â±ïÁ§∫‰∏äÊä•
+		tStatInfo.strEC = "showui" 	 --’π æ…œ±®
 		tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""
 	end
 	
@@ -229,6 +230,26 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 end
 
 
+
+
+function SendRunTimeReport(nTimeSpanInSec, bExit)
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local tStatInfo = {}
+	tStatInfo.strEC = "runtime"
+	tStatInfo.strEA = GetInstallSrc() or ""
+	
+	local nRunTime = 0
+	if bExit and gnLastReportRunTmUTC ~= 0 then
+		nRunTime = math.abs(tipUtil:GetCurrentUTCTime() - gnLastReportRunTmUTC)
+	else
+		nRunTime = nTimeSpanInSec
+	end
+	tStatInfo.strEV = nRunTime
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+
 function StartRunCountTimer()
 	local nTimeSpanInSec = 10 * 60 
 	local nTimeSpanInMs = nTimeSpanInSec * 1000
@@ -273,7 +294,7 @@ function PopTipWnd(OnCreateFunc)
 		FunctionObj:FailExitTipWnd(4)
 	end
 	
-	--ÂàùÂßãÂåñÊâòÁõò
+	--≥ı ºªØÕ–≈Ã
     if frameHostWnd then
 	    FunctionObj.InitTrayTipWnd(frameHostWnd)
 	end

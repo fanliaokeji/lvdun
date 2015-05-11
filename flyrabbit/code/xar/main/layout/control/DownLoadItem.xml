@@ -27,6 +27,7 @@
 			<GetItemIndex file="DownLoadItem.xml.lua" func="GetItemIndex"/>
 			<SetSelectState file="DownLoadItem.xml.lua" func="SetSelectState"/>
 			<UpdateFileItemStyle file="DownLoadItem.xml.lua" func="UpdateFileItemStyle"/>
+			<StopQueryTimer file="DownLoadItem.xml.lua" func="StopQueryTimer"/>
 		</method_def>
 		<event_def>
 			 <OnClick />
