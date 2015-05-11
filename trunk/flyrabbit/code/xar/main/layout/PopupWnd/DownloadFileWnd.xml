@@ -52,7 +52,7 @@
 										<event name="OnClick" file="DownloadFileWnd.xml.lua" func="OnClose" />
 									</eventlist>
 								</obj>
-								<obj id="DownloadFile.Picture" class="TextureObject">
+								<obj id="DownloadFile.Picture" class="ImageObject">
 									<attr>
 										<left>21</left>
 										<top>54</top>
@@ -216,7 +216,7 @@
             <width>350</width>
             <height>225</height>
 
-            <topmost>0</topmost>
+            <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
             <maxbox>0</maxbox>
