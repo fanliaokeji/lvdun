@@ -196,10 +196,8 @@ end
 
 function UpdateDownSize(nIndex, nQuerySizeInByte)
 	local nOldDownSize = tRabbitFileList:GetDownSizeInKB(nIndex)
-	local nQuerySizeInKB = 1 
-	if nQuerySizeInByte > 1024 then
-		nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
-	end
+	nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
+	
 	if nOldDownSize < nQuerySizeInKB then
 		tRabbitFileList:SetDownSizeInKB(nIndex, nQuerySizeInKB)
 	end
@@ -208,10 +206,8 @@ end
 
 function UpdateFileSize(nIndex, nQuerySizeInByte)
 	local nOldFileSize = tRabbitFileList:GetFileSizeInKB(nIndex)
-	local nQuerySizeInKB = 1 
-	if nQuerySizeInByte > 1024 then
-		nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
-	end
+	
+	nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
 	if nOldFileSize < nQuerySizeInKB then
 		tRabbitFileList:SetFileSizeInKB(nIndex, nQuerySizeInKB)
 	end
