@@ -119,12 +119,12 @@ function DeleteAllFileItem(objRootCtrl)
 	local nTotalFileNum = #tFileList
 	
 	for nIndex=nTotalFileNum, 1, -1 do
-		if attr.bDeleteFile then
-			local strFilePath = tRabbitFileList:GetFilePath(nIndex)
-			tipUtil:DeletePathFile(strFilePath)
+		local objFileItem = tFunHelper.GetFileItemUIByIndex(nIndex)
+		if objFileItem then
+			objFileItem:StopQueryTimer()
 		end
 	
-		tRabbitFileList:RemoveFileItem(nIndex)
+		tRabbitFileList:RemoveFileItem(nIndex, attr.bDeleteFile)
 	end
 	
 	tFunHelper.UpdateFileList()

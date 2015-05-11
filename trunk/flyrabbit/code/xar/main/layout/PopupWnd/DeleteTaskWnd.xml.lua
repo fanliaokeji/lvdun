@@ -92,31 +92,10 @@ function DeleteSelectFileItem(objRootCtrl)
 	end
 		
 	local nIndex = objFileItem:GetItemIndex()
-	
 	local attr = objRootCtrl:GetAttribute()
-	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
-	--定时器
-	tRabbitFileList:PauseTask(tFileItem)
-	tRabbitFileList:DeleteTask(tFileItem)
-	if attr.bDeleteFile then
-		local strFileDir = tRabbitFileList:GetFilePath(nIndex)
-		local strFilePath = tipUtil:PathCombine(strFileDir, tFileItem.tDownLoadConfig.strFileName)
-				XLMessageBox(strFilePath)
-		tipUtil:DeletePathFile(strFilePath)
-		--删除临时文件
-		local strTDPath = strFilePath .. ".td"
-		local strCfgPath = strTDPath .. ".cfg"
-		if tipUtil:QueryFileExists(strTDPath) then
-			XLMessageBox(strTDPath)
-			tipUtil:DeletePathFile(strTDPath)
-		end
-		if tipUtil:QueryFileExists(strCfgPath) then
-			XLMessageBox(strCfgPath)
-			tipUtil:DeletePathFile(strCfgPath)
-		end
-	end
+	objFileItem:StopQueryTimer()
 	
-	tRabbitFileList:RemoveFileItem(nIndex)
+	tRabbitFileList:RemoveFileItem(nIndex, attr.bDeleteFile)
 	tFunHelper.UpdateFileList()
 end
 
