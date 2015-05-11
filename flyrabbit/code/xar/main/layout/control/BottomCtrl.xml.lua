@@ -52,7 +52,7 @@ end
 
 
 function OnClickFileManage(self)
-	local strSaveDir = tFunHelper.GetDefaultSaveDir()
+	local strSaveDir = tFunHelper.GetDownFileSaveDir()
 	if not IsRealString(strSaveDir) or not tipUtil:QueryFileExists(strSaveDir) then
 		return
 	end
@@ -85,6 +85,12 @@ function UpdateFileState(nSetStart)
 	
 	local nIndex = objFileItem:GetItemIndex()
 	tRabbitFileList:SetFileItemState(nIndex, nSetStart)
+	
+	if nSetStart == tRabbitFileList.FILESTATE_START then
+		objFileItem:StartQueryTimer()
+	elseif nSetStart == tRabbitFileList.FILESTATE_PAUSE then
+		objFileItem:StopQueryTimer()
+	end
 end
 
 
