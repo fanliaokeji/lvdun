@@ -20,15 +20,16 @@ end
 function RegisterRabbitFileObject()
 	local strFunhelpPath = __document.."\\..\\rabbitfilehelper.lua"
 	XLLoadModule(strFunhelpPath)
-	
 	local tRabbitFileList = XLGetGlobal("Project.RabbitFileList")
 	if type(tRabbitFileList) ~= "table" then
 		return false
 	end
-	
-	tRabbitFileList:Init()
-	tRabbitFileList:LoadListFromFile()
-	
+	if not tRabbitFileList:Init() then
+		return false
+	end
+	if not tRabbitFileList:LoadListFromFile() then
+		return false
+	end
 	return true
 end
 
@@ -319,11 +320,9 @@ function PreTipMain()
 	
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	FunctionObj.ReadAllConfigInfo()
-	
 	if not RegisterRabbitFileObject() then
 		tipUtil:Exit("Exit")
 	end
-	
 	StartRunCountTimer()	
 	SendStartReportLocal()
 	SendStartupReportGgl(false)
