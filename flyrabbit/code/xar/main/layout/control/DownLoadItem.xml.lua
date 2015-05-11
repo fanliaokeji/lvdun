@@ -231,6 +231,22 @@ function SetFileNameUI(objRootCtrl, strFileName)
 end
 
 
+function SetFileImage(objRootCtrl, strFileName)
+	local objFileImage = objRootCtrl:GetControlObject("DownLoad.FileImage")
+	if not objFileImage then
+		return
+	end
+	
+	local ext = string.match(tostring(strFileName), "(%..*)$")
+	local xlgraphicplus = XLGetObject("Xunlei.XGP.Factory") 
+	local icon = xlgraphicplus:LoadIconFromFileExt(ext, 32, 32)
+	if icon then
+		local bmp = icon:GetBitmap()
+		objFileImage:SetBitmap(bmp)
+	end
+end
+
+
 function SetFileSizeUI(objRootCtrl, tFileContent)
 	local tDownLoadConfig = tFileContent.tDownLoadConfig
 
@@ -287,6 +303,7 @@ function SetFileShowInfoUI(objRootCtrl, tFileContent)
 	end
 
 	SetFileNameUI(objRootCtrl, tDownLoadConfig.strFileName)
+	SetFileImage(objRootCtrl, tDownLoadConfig.strFileName)
 	SetFileSizeUI(objRootCtrl, tFileContent)
 	ShowErrorBkg(objRootCtrl, false)
 	ShowProgressBar(objRootCtrl, true)
