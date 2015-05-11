@@ -325,6 +325,7 @@ function TipLog(strLog)
 end
 
 function GetFileSaveNameFromUrl(url)
+	url = tRabbitFileList:ParseThunderPrivateUrl(url)
 	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
 	if not IsRealString(strFileName) then
 		return url
