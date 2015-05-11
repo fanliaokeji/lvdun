@@ -654,7 +654,7 @@ int LuaAsynUtil::AsynCreateProcess(lua_State* pLuaState)
 	const char* pParams = lua_tostring(pLuaState, 3);
 	const char* pWorkDir = lua_tostring(pLuaState, 4);
 	DWORD dwPriority = GetPriorityFromFlag((DWORD)lua_tonumber(pLuaState, 5));
-	int nShow = lua_tonumber(pLuaState, 6);
+	int nShow = (int)lua_tonumber(pLuaState, 6);
 	CProcessParam* pData = NULL;
 
 	if (lua_isfunction(pLuaState, 7))
