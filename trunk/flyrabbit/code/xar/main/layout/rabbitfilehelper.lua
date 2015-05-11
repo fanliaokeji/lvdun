@@ -391,8 +391,8 @@ function tRabbitFileList:CreateTask(tFileItem)
 	local strCookies = nil
 	local bOnlyOriginal = nil
 	local nDisableAutoRename = 1  --0是不重命名
-	
-	local hTaskHandle = miniTPUtil:TaskCreate(tDownLoadConfig.strFileURL, tDownLoadConfig.strFileDir
+	local strUrl = self:ParseThunderPrivateUrl(tDownLoadConfig.strFileURL)
+	local hTaskHandle = miniTPUtil:TaskCreate(strUrl, tDownLoadConfig.strFileDir
 						, tDownLoadConfig.strFileName, strRefURL, strCookies, strCookies
 						, bOnlyOriginal, nDisableAutoRename, tDownLoadConfig.bIsResume)
 					
@@ -621,6 +621,23 @@ function tRabbitFileList:DelTempFile(tFileItem)
 	tipUtil:DeletePathFile(strTempFile)
 	
 	return bRet
+end
+
+function tRabbitFileList:ParseThunderPrivateUrl(strThunderUrl)
+	Log("[ParseThunderPrivateUrl] strThunderUrl = "..tostring(strThunderUrl))
+	if not IsRealString(strThunderUrl) then
+		return strUrl
+	end
+	if string.find(string.lower(strThunderUrl),"^thunder://") == nil then
+		return strThunderUrl
+	end
+	local bRet,strUrl = miniTPUtil:ParseThunderPrivateUrl(strThunderUrl)
+	Log("[ParseThunderPrivateUrl] Parse bRet = "..tostring(bRet) .. ", strUrl = " .. tostring(strUrl))
+	if bRet then
+		return strUrl
+	else
+		return strThunderUrl
+	end
 end
 
 
