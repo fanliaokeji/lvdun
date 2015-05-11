@@ -1121,22 +1121,55 @@ function GetDiskSizeInKB(strDirPath)
 end
 
 
-function GetDefaultSaveDir()
-	local strExePath = GetExePath()
-	if not IsRealString(strExePath) or not tipUtil:QueryFileExists(strExePath) then
-		return ""
+function GetDownFileSaveDir()
+	local strSaveDir = GetUserSetSaveDir()
+	if IsRealString(strSaveDir) and tipUtil:QueryFileExists(strSaveDir) then
+		return strSaveDir
 	end
 	
-	local strDir = GetFileDirFromPath(strExePath)
-	local strDir = GetFileDirFromPath(strDir)
-	
-	local strSaveDir = strDir.."\\Download"
-	if not tipUtil:QueryFileExists(strSaveDir) then
-		tipUtil:CreateDir(strSaveDir)
-	end
-	
+	return GetDefaultSaveDir()
+end
+
+
+function GetUserSetSaveDir()
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	local strSaveDir = tUserConfig["strSaveDir"] or ""
 	return strSaveDir
 end
+
+function SetUserSetSaveDir(strSaveDir)
+	if not IsRealString(strSaveDir) then
+		return
+	end
+
+	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
+	tUserConfig["strSaveDir"] = strSaveDir
+	-- SaveConfigToFileByKey("tUserConfig")
+end
+
+
+function GetDefaultSaveDir()
+	local strDefaultSaveDir = "c:\\FlyRabbitDownload"
+	local strExePath = GetExePath()
+	if not IsRealString(strExePath) or not tipUtil:QueryFileExists(strExePath) then
+		return strDefaultSaveDir
+	end
+	
+	local _, _, strDiskRoot = string.find(tostring(strExePath), "^(.:\\).*")
+	if not IsRealString(strDiskRoot) or not tipUtil:QueryFileExists(strDiskRoot) then
+		return strDefaultSaveDir
+	end
+		
+	strDefaultSaveDir = tipUtil:PathCombine(strDiskRoot, "FlyRabbitDownload")
+	if not tipUtil:QueryFileExists(strDefaultSaveDir) then
+		tipUtil:CreateDir(strDefaultSaveDir)
+	end
+	
+	return strDefaultSaveDir
+end
+
+
+
 
 
 function GetSelectItemObject()
@@ -1262,6 +1295,8 @@ obj.RegSetValue = RegSetValue
 obj.FormatFileSize = FormatFileSize
 obj.GetDiskSizeInKB = GetDiskSizeInKB
 obj.GetDefaultSaveDir = GetDefaultSaveDir
+obj.GetDownFileSaveDir = GetDownFileSaveDir
+obj.SetUserSetSaveDir = SetUserSetSaveDir
 obj.GetSelectItemObject = GetSelectItemObject
 obj.GetFileItemUIByIndex = GetFileItemUIByIndex
 obj.UpdateFileStateUI = UpdateFileStateUI

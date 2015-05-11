@@ -180,7 +180,7 @@ function ResetAllText(objRootLayout)
 	objURLEdit:SetText("")
 	objFileNameEdit:SetText("")
 	
-	local strSaveDir = tFunHelper.GetDefaultSaveDir()
+	local strSaveDir = tFunHelper.GetDownFileSaveDir()
 	objDirEdit:SetText(strSaveDir)	
 end
 
@@ -222,6 +222,7 @@ function CreateNewTask(objRootCtrl)
 	tRabbitFileList:PushFileItem(tFileItem)
 	tFunHelper.UpdateFileList()
 	
+	tFunHelper.SetUserSetSaveDir(strSaveDir)
 	return true
 end
 
