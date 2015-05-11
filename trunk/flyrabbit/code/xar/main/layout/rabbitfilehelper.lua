@@ -78,10 +78,8 @@ function tRabbitFileList:PushFileItem(tFileItem)
 	local tDownLoadConfig = tFileItem.tDownLoadConfig
 	
 	if tDownLoadConfig.nFileState ~= nil then
-		local hHandle = tRabbitFileList:CreateTask(tFileItem)
-		tFileItem.hTaskHandle = hHandle
 		if tDownLoadConfig.nFileState == FILESTATE_START then
-			tRabbitFileList:QueryTask(tFileItem)
+			-- tRabbitFileList:QueryTask(tFileItem)
 			tRabbitFileList:StartTask(tFileItem)
 		end
 	end
@@ -408,6 +406,9 @@ function tRabbitFileList:StartTask(tFileItem)
 		Log("[StartTask] tFileItem not valid")
 		return false
 	end
+	
+	local hHandle = tRabbitFileList:CreateTask(tFileItem)
+	tFileItem.hTaskHandle = hHandle
 
 	local hTaskHandle = tFileItem.hTaskHandle
 	if hTaskHandle == nil or hTaskHandle == -1 then
@@ -497,8 +498,13 @@ function tRabbitFileList:PauseTask(tFileItem)
 			if tTaskInfo.stat ~= tRabbitFileList.FILESTATE_PAUSEPENDING	and tTaskInfo.stat ~= tRabbitFileList.FILESTATE_STARTPENDING then
 				local bRet = miniTPUtil:TaskPause(hTaskHandle)
 				Log("[PauseTask] execute pause,  strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
-				item:KillTimer(id)
-				tFileItem.hPauseTimer = nil
+				
+				if bRet then
+					local bRet = miniTPUtil:TaskDelete(hTaskHandle)
+					Log("[PauseTask] execute TaskDelete,  strFileName: " ..tostring(tFileItem.tDownLoadConfig.strFileName).." bRet: "..tostring(bRet))
+					item:KillTimer(id)
+					tFileItem.hPauseTimer = nil
+				end
 			end
 		end
 	end, 1*1000)	
