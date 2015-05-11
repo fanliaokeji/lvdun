@@ -120,7 +120,7 @@ function CreateNewTask(objRootCtrl)
 	tFileItem.tDownLoadConfig.nFileSizeInKB = 0
 	tFileItem.tDownLoadConfig.nDownSizeInKB = 0
 	tFileItem.tDownLoadConfig.nFinishPercent = 0
-	tFileItem.tDownLoadConfig.strFilePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	tFileItem.tDownLoadConfig.strFilePath = strSaveDir--tipUtil:PathCombine(strSaveDir, strFileName)
 	tFileItem.tDownLoadConfig.strFileURL = strURL
 	tFileItem.tDownLoadConfig.bIsResume = true
 	tFileItem.tDownLoadConfig.nFileState = tRabbitFileList.FILESTATE_START
