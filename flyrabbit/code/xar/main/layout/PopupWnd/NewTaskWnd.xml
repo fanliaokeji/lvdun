@@ -89,6 +89,7 @@
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusURL" />
 												<event name="OnChange" file="NewTaskWnd.xml.lua" func="OnChangeURL" />
+												<event name="OnRButtonUp" file="NewTaskWnd.xml.lua" func="OnEditRBtnUp" />
 											</eventlist>
 										</obj>
 									</children>
@@ -128,6 +129,7 @@
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusSavePath" />
 												<event name="OnChange" file="NewTaskWnd.xml.lua" func="OnChangeSavePath" />
+												<event name="OnRButtonUp" file="NewTaskWnd.xml.lua" func="OnEditRBtnUp" />
 											</eventlist>
 										</obj>
 									</children>
@@ -180,6 +182,7 @@
 											</attr>
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusFileName" />
+												<event name="OnRButtonUp" file="NewTaskWnd.xml.lua" func="OnEditRBtnUp" />
 											</eventlist>
 										</obj>
 									</children>

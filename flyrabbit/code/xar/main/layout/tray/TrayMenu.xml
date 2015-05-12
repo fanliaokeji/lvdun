@@ -75,7 +75,7 @@
 			<height>134</height>
 		</attr>
 		
-		<obj id="TrayMenu.Main" class="TextureObject">
+		<obj id="Menu.MainLayout" class="TextureObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
@@ -84,7 +84,7 @@
 				<texture>Tray.Main.Bkg</texture>
 			</attr>
 			<children>
-				<obj id="TrayMenu.Context" class="NormalMenu">
+				<obj id="Menu.Context" class="NormalMenu">
 					<attr>
 						<left>0</left>
 						<top>0</top>

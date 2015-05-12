@@ -102,6 +102,13 @@ function OnFocusSavePath(self, bFocus)
 	SetEditBkg(self, bFocus)
 end
 
+
+function OnEditRBtnUp(self)
+	tFunHelper.TryDestroyOldMenu(self, "RBtnEditMenu", 0, true)
+	tFunHelper.CreateAndShowMenu(self, "RBtnEditMenu", 0, true)
+end
+
+
 function OnChangeSavePath(self)
 	local objRootLayout = self:GetOwnerControl()
 	-- local attr = objRootLayout:GetAttribute()

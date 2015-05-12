@@ -873,6 +873,141 @@ end
 ------------------文件--
 
 
+----菜单--
+function TryDestroyOldMenu(objUIElem, strMenuKey)
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+	local strHostWndName = strMenuKey..".HostWnd.Instance" 
+	local strObjTreeName = strMenuKey..".Tree.Instance"
+
+	if uHostWndMgr:GetHostWnd(strHostWndName) then
+		uHostWndMgr:RemoveHostWnd(strHostWndName)
+	end
+	
+	if uObjTreeMgr:GetUIObjectTree(strObjTreeName) then
+		uObjTreeMgr:DestroyTree(strObjTreeName)
+	end
+end
+
+
+--nTopSpan: 离弹出控件的高度差
+--bRBtnPopup：右键弹出菜单
+function CreateAndShowMenu(objUIElem, strMenuKey, nTopSpan, bRBtnPopup)
+	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+
+	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
+		local uHostWnd = nil
+		local strHostWndName = strMenuKey..".HostWnd.Instance"
+		local strHostWndTempltName = "MenuHostWnd"
+		local strHostWndTempltClass = "HostWndTemplate"
+		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
+		if uHostWndTemplt then
+			uHostWnd = uHostWndTemplt:CreateInstance(strHostWndName)
+		end
+
+		local uObjTree = nil
+		local strObjTreeTempltName = strMenuKey.."Tree"
+		local strObjTreeTempltClass = "ObjectTreeTemplate"
+		local strObjTreeName = strMenuKey..".Tree.Instance"
+		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
+		if uObjTreeTemplt then
+			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
+		end
+
+		if uHostWnd and uObjTree then
+			--函数会阻塞
+			local bSucc = ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
+			
+			if bSucc and uHostWnd:GetMenuMode() == "manual" then
+				uObjTreeMgr:DestroyTree(strObjTreeName)
+				uHostWndMgr:RemoveHostWnd(strHostWndName)
+			end
+		end
+	end
+end
+
+
+function ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
+	uHostWnd:BindUIObjectTree(uObjTree)
+					
+	local objMainLayout = uObjTree:GetUIObject("Menu.MainLayout")
+	if not objMainLayout then
+		TipLog("[ShowMenuHostWnd] find Menu.MainLayout obj failed")
+	    return false
+	end	
+	
+	local objNormalMenu = uObjTree:GetUIObject("Menu.Context")
+	if not objNormalMenu then
+		TipLog("[ShowMenuHostWnd] find normalmenu obj failed")
+	    return false
+	end	
+	objNormalMenu:BindRelateObject(objUIElem)
+	
+	local nL, nT, nR, nB 
+	local objMenuFrame = objNormalMenu:GetControlObject("menu.frame")
+	if objMenuFrame then
+		nL, nT, nR, nB = objMenuFrame:GetObjPos()				
+	else
+		nL, nT, nR, nB = objNormalMenu:GetObjPos()	
+	end	
+	
+	local nMenuContainerWidth = nR - nL
+	local nMenuContainerHeight = nB - nT
+
+	local nMenuLeft, nMenuTop = 0, 0
+	if bRBtnPopup then
+		nMenuLeft, nMenuTop = tipUtil:GetCursorPos() 	
+		nTopSpan = 0 
+	else
+		nMenuLeft, nMenuTop = GetScreenAbsPos(objUIElem)
+	end
+	
+	local nMenuL, nMenuT, nMenuR, nMenuB = objUIElem:GetAbsPos()
+	local nMenuHeight = nMenuB - nMenuT
+	if tonumber(nTopSpan) == nil then
+		nTopSpan = nMenuHeight
+	end
+	
+	local nMenuLeft, nMenuTop = AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
+	
+	--函数会阻塞
+	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight)
+	return bOk
+end
+
+
+function GetScreenAbsPos(objUIElem)
+	local objTree = objUIElem:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	local nL, nT, nR, nB = objUIElem:GetAbsPos()
+	return objHostWnd:HostWndPtToScreenPt(nL, nT)
+end
+
+
+function AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
+	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetWorkArea()
+	
+	if nMenuLeft < nScrnLeft then
+		nMenuLeft = nScrnLeft
+	end
+	
+	if nMenuLeft+nMenuContainerWidth > nScrnRight then
+		nMenuLeft = nScrnRight - nMenuContainerWidth
+	end
+	
+	if nMenuTop < nScrnTop then
+		nMenuTop = nTopSpan+nScrnTop
+	elseif nMenuTop+nMenuContainerHeight+nTopSpan > nScrnBottom then
+		nMenuTop = nMenuTop - nMenuContainerHeight
+	else
+		nMenuTop = nTopSpan+nMenuTop
+	end	
+		
+	return nMenuLeft, nMenuTop
+end
+
 -------托盘---
 local g_tipNotifyIcon = nil
 
@@ -999,7 +1134,7 @@ function CreateTrayTipWnd(objHostWnd)
 
 	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
 		local uHostWnd = nil
-		local strHostWndTempltName = "TipTrayWnd"
+		local strHostWndTempltName = "MenuHostWnd"
 		local strHostWndTempltClass = "HostWndTemplate"
 		local strHostWndName = "TrayMenuHostWnd.MainFrame"
 		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
@@ -1012,6 +1147,7 @@ function CreateTrayTipWnd(objHostWnd)
 		local strObjTreeTempltClass = "ObjectTreeTemplate"
 		local strObjTreeName = "TrayMenuWnd.MainObjectTree"
 		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
+
 		if uObjTreeTemplt then
 			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
 		end
@@ -1019,7 +1155,7 @@ function CreateTrayTipWnd(objHostWnd)
 		if uHostWnd and uObjTree then
 			--函数会阻塞
 			local bSucc = ShowPopupMenu(uHostWnd, uObjTree)
-			
+	
 			if bSucc and uHostWnd:GetMenuMode() == "manual" then
 				uObjTreeMgr:DestroyTree(strObjTreeName)
 				uHostWndMgr:RemoveHostWnd(strHostWndName)
@@ -1039,7 +1175,7 @@ function ShowPopupMenu(uHostWnd, uObjTree)
 	
 	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetScreenArea()
 	
-	local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
+	local objMainLayout = uObjTree:GetUIObject("Menu.MainLayout")
 	if not objMainLayout then
 	    return false
 	end	
@@ -1059,6 +1195,7 @@ function ShowPopupMenu(uHostWnd, uObjTree)
 	
 	--函数会阻塞
 	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
+	
 	TipLog("[ShowPopupMenu] end menu")
 	
 	return bOk
@@ -1169,9 +1306,6 @@ function GetDefaultSaveDir()
 end
 
 
-
-
-
 function GetSelectItemObject()
 	local objDownloadList = GetMainCtrlChildObj("DownLoadList")
 	if not objDownloadList then
@@ -1254,7 +1388,6 @@ obj.GetMinorVer = GetMinorVer
 obj.GetTimeStamp = GetTimeStamp
 obj.OpenFolderDialog = OpenFolderDialog
 
-
 --UI
 obj.GetMainWndInst = GetMainWndInst
 obj.GetMainCtrlChildObj = GetMainCtrlChildObj
@@ -1263,18 +1396,19 @@ obj.SetPopupWndCenterByName = SetPopupWndCenterByName
 obj.CreatePopupTipWnd = CreatePopupTipWnd
 obj.ShowModalDialog = ShowModalDialog
 
+--菜单
+obj.TryDestroyOldMenu = TryDestroyOldMenu
+obj.CreateAndShowMenu = CreateAndShowMenu
 
 --托盘
 obj.InitTrayTipWnd = InitTrayTipWnd
 obj.SetNotifyIconState = SetNotifyIconState
-
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName
 obj.ReadConfigFromMemByKey = ReadConfigFromMemByKey
 obj.SaveConfigToFileByKey = SaveConfigToFileByKey
 obj.ReadAllConfigInfo = ReadAllConfigInfo
-
 
 --升级
 obj.DownLoadServerConfig = DownLoadServerConfig
