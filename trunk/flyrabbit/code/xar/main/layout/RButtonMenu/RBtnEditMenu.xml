@@ -1,0 +1,85 @@
+<xlue>
+	<objtemplate id="rbtn.editmenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>4</ItemTop>
+			<ItemLeft>5</ItemLeft>
+			<ItemRight>10</ItemRight>
+		</attr>
+		<children>
+			<obj id="Cut" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>剪切(T)</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Cut" />
+				</eventlist>
+			</obj>
+		
+			<obj id="Copy" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>复制(C)</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Copy" />
+				</eventlist>
+			</obj>	
+	
+			<obj id="Paste" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>粘贴(P)</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Paste" />
+				</eventlist>
+			</obj>
+			
+			<obj id="PasteAndDownLoad" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>粘贴并立即下载</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_PasteAndDownLoad" />
+				</eventlist>
+			</obj>
+			
+			<obj id="SelectAll" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>全部选中</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_SelectAll" />
+				</eventlist>
+			</obj>			
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="RBtnEditMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>144</width>
+			<height>139</height>
+		</attr>
+		
+		<obj id="Menu.MainLayout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>144</width>
+				<height>139</height>
+			</attr>
+			<children>
+				<obj id="Menu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<ContextID>rbtn.editmenu.context</ContextID>
+						<BknID>RBtnMenu.Bkg</BknID>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>

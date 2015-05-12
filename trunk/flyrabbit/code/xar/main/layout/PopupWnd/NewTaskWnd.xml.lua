@@ -12,7 +12,7 @@ function OnCreate( self )
 	end
 end
 
----
+---方法
 function SetData(self, tData)
 	local attr = self:GetAttribute()
 	attr.okfunc = tData["okfunc"]
@@ -40,8 +40,9 @@ function MoveWindowToCenter(self)
 	SetWindowPos(objHostWnd)
 end
 
-function OnClickOK(self)
-	local ctrl = self:GetOwnerControl()
+
+function BeginDownLoad(self)
+	local ctrl = self
 	local objDirEdit = ctrl:GetControlObject("NewTask.SavePath.edit")
 	local strSaveDir = objDirEdit:GetText()
 	if IsRealString(strSaveDir) and not tipUtil:QueryFileExists(strSaveDir) then
@@ -56,6 +57,13 @@ function OnClickOK(self)
 	if bRet then
 		OnClose(self)
 	end
+end
+
+
+------事件
+function OnClickOK(self)
+	local ctrl = self:GetOwnerControl()
+	ctrl:BeginDownLoad()
 end
 
 function OnClose(self)
