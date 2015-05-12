@@ -5,6 +5,7 @@
 		<method_def>
 			<SetData file="NewTaskWnd.xml.lua" func="SetData"/>
 			<MoveWindowToCenter file="NewTaskWnd.xml.lua" func="MoveWindowToCenter"/>
+			<BeginDownLoad file="NewTaskWnd.xml.lua" func="BeginDownLoad"/>
 		</method_def>
 		<event_def>
 			
