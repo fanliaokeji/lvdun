@@ -558,3 +558,19 @@ function AdjustItemPos(self)
 	menu:AdjustItemPos()
 	UpdateSize( self )
 end
+
+
+function BindRelateObject(self, objRelate)
+	local attr = self:GetAttribute()
+	attr.RelateObject = objRelate
+end
+
+
+function GetRelateObject(self)
+	local attr = self:GetAttribute()
+	return attr.RelateObject
+end
+
+
+
+

@@ -5,7 +5,7 @@
 		</attr>
 	</animationtemplate>
 	
-	<hostwndtemplate id="TipTrayWnd" class="MenuHostWnd">
+	<hostwndtemplate id="MenuHostWnd" class="MenuHostWnd">
 		<attr> 
 			<!--mode>auto</mode-->
 			<topmost>1</topmost>
