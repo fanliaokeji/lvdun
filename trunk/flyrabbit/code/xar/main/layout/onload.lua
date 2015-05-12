@@ -321,20 +321,6 @@ function CreateMainTipWnd()
 	PopTipWnd(OnCreateFuncF)	
 end
 
-function GetFileSaveNameFromUrl(url)
-	local tRabbitFileList = XLGetGlobal("Project.RabbitFileList")
-	url = tRabbitFileList:ParseThunderPrivateUrl(url)
-	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
-	if not IsRealString(strFileName) then
-		return url
-	end
-	local npos = string.find(strFileName, "?", 1, true)
-	if npos ~= nil then
-		strFileName = string.sub(strFileName, 1, npos-1)
-	end
-	return strFileName
-end
-
 function ListenBrowserEvent()
 	local objFactory = XLGetObject("APIListen.Factory")
 	local apilisten
@@ -347,8 +333,6 @@ function ListenBrowserEvent()
 				local x = select(3, ...)
 				local y = select(4, ...)
 				local tFunHelper = XLGetGlobal("Project.FunctionHelper")
-				--local name = string.match(url, "[/\\]([^/\\%?]+)[^/\\]*$")
-				local name = GetFileSaveNameFromUrl(url)
 				local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 				local objDownLoadWnd = hostwndManager:GetHostWnd("TipNewTaskWnd.Instance")
 				if objDownLoadWnd then
@@ -356,7 +340,7 @@ function ListenBrowserEvent()
 					if objtree then
 						local ctrl = objtree:GetUIObject("root.layout")
 						if ctrl then
-							ctrl:SetData({["filename"]=name, ["url"]=url})
+							ctrl:SetData({["url"]=url})
 						end
 					end
 				else
@@ -364,7 +348,7 @@ function ListenBrowserEvent()
 						"TipNewTaskWnd.Instance", 
 						"NewTaskTree", 
 						"NewTaskTree.Instance",
-						{["filename"]=name, ["url"]=url}
+						{["url"]=url}
 					)
 				end
 			end
