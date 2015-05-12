@@ -124,6 +124,7 @@ public:
 	static int GetFileTypeIcon(lua_State* pLuaState);
 	static int FDestroyIconByHandle(lua_State* pLuaState);
 	static int FnGetDiskFreeSpaceEx(lua_State* pLuaState);
+	static int FExtractIcon(lua_State* pLuaState);
 	//×¢²á±í²Ù×÷
 	static int QueryRegValue(lua_State* pLuaState);
 	static int DeleteRegValue(lua_State* pLuaState);

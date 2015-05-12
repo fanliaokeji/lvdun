@@ -93,6 +93,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"GetFileTypeIcon", GetFileTypeIcon},
 	{"DestroyIcon", FDestroyIconByHandle},	
 	{"GetDiskFreeSpaceEx", FnGetDiskFreeSpaceEx},
+	{"ExtractIcon", FExtractIcon},
 
 	//¶ÁÐ´UTF8ÎÄ¼þ
 	{"ReadFileToString", ReadFileToString},
@@ -2436,6 +2437,32 @@ int LuaAPIUtil::GetFileTypeIcon(lua_State* pLuaState)
 				::CoUninitialize();
 				return 1;
 			}
+		}
+		::CoUninitialize();
+		return 0;
+	}
+	return 0;
+}
+
+int LuaAPIUtil::FExtractIcon(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+
+	if (ppUtil != NULL)
+	{
+		const char* utf8FileName = luaL_checkstring(pLuaState, 2);
+		if (utf8FileName != NULL)
+		{
+			CComBSTR bstrFileName;
+			LuaStringToCComBSTR(utf8FileName,bstrFileName);
+			
+			HICON hIcon = ::ExtractIcon(::GetModuleHandle(NULL),bstrFileName.m_str,0);
+			if (NULL == hIcon)
+			{
+				return 0;
+			}
+			lua_pushlightuserdata(pLuaState,hIcon);
+			return 1;
 		}
 		::CoUninitialize();
 		return 0;
