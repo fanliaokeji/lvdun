@@ -88,6 +88,7 @@
 											</attr>
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusURL" />
+												<event name="OnChange" file="NewTaskWnd.xml.lua" func="OnChangeURL" />
 											</eventlist>
 										</obj>
 									</children>
@@ -122,9 +123,11 @@
 												<text></text>
 												<textcolor>28313A</textcolor>
 												<font>DeleteTask.Font12</font>
+												<autourldetect>0</autourldetect>
 											</attr>
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusSavePath" />
+												<event name="OnChange" file="NewTaskWnd.xml.lua" func="OnChangeSavePath" />
 											</eventlist>
 										</obj>
 									</children>
@@ -173,6 +176,7 @@
 												<text></text>
 												<textcolor>28313A</textcolor>
 												<font>DeleteTask.Font12</font>
+												<autourldetect>0</autourldetect>
 											</attr>
 											<eventlist>
 												<event name="OnFocusChange" file="NewTaskWnd.xml.lua" func="OnFocusFileName" />
