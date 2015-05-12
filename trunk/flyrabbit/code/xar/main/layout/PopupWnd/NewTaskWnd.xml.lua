@@ -4,12 +4,14 @@ local tipUtil = tFunHelper.tipUtil
 local tipAsynUtil = tFunHelper.tipAsynUtil
 
 function OnCreate( self )
-	PopupInDeskRight(self)
+	PopupInDeskCenter(self)
 	
 	local objMainWnd = tFunHelper.GetMainWndInst()
-	if objMainWnd:GetVisible() then
+	local state = objMainWnd:GetWindowState()
+	if objMainWnd:GetVisible() and (state == "normal" or state == "max") then
 		PopupInMainWndCenter(self)
 	end
+	self:BringWindowToTop(true)
 end
 
 ---方法
@@ -185,10 +187,11 @@ function OnShowWindow(self, bVisible)
 	local objRootLayout = objtree:GetUIObject("root.layout")
 	
 	ResetAllText(objRootLayout)
+	objRootLayout:SetData(self:GetUserData())
 end
 
 ------
-function PopupInDeskRight(self)
+function PopupInDeskCenter(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
     local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
@@ -198,7 +201,7 @@ function PopupInDeskRight(self)
 	local nLayoutHeight = nLayoutB - nLayoutT
 	
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move( workright - nLayoutWidth - 7, workbottom - nLayoutHeight-5, nLayoutWidth, nLayoutHeight)
+	self:Move(workleft + (workright -workleft - nLayoutWidth)/2, worktop + (workbottom - worktop - nLayoutHeight)/2, nLayoutWidth, nLayoutHeight)
 	return true
 end
 

@@ -67,10 +67,10 @@ function SendStartupReportGgl(bShowWnd)
 	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
-		tStatInfo.strEC = "startup"  --Ω¯»Î…œ±®
+		tStatInfo.strEC = "startup"  --ËøõÂÖ•‰∏äÊä•
 		tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
 	else
-		tStatInfo.strEC = "showui" 	 --’π æ…œ±®
+		tStatInfo.strEC = "showui" 	 --Â±ïÁ§∫‰∏äÊä•
 		tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""
 	end
 	
@@ -294,7 +294,7 @@ function PopTipWnd(OnCreateFunc)
 		FunctionObj:FailExitTipWnd(4)
 	end
 	
-	--≥ı ºªØÕ–≈Ã
+	--ÂàùÂßãÂåñÊâòÁõò
     if frameHostWnd then
 	    FunctionObj.InitTrayTipWnd(frameHostWnd)
 	end
@@ -350,21 +350,21 @@ function ListenBrowserEvent()
 				--local name = string.match(url, "[/\\]([^/\\%?]+)[^/\\]*$")
 				local name = GetFileSaveNameFromUrl(url)
 				local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
-				local objDownLoadWnd = hostwndManager:GetHostWnd("TipDownloadFileWnd.Instance")
+				local objDownLoadWnd = hostwndManager:GetHostWnd("TipNewTaskWnd.Instance")
 				if objDownLoadWnd then
 					local objtree = objDownLoadWnd:GetBindUIObjectTree()
 					if objtree then
 						local ctrl = objtree:GetUIObject("root.layout")
 						if ctrl then
-							ctrl:SetData({["name"]=name, ["url"]=url})
+							ctrl:SetData({["filename"]=name, ["url"]=url})
 						end
 					end
 				else
-					tFunHelper.ShowModalDialog("TipDownloadFileWnd", 
-						"TipDownloadFileWnd.Instance", 
-						"DownloadFileTree", 
-						"DownloadFileTree.Instance", 
-						{["name"]=name, ["url"]=url}
+					tFunHelper.ShowModalDialog("TipNewTaskWnd",
+						"TipNewTaskWnd.Instance", 
+						"NewTaskTree", 
+						"NewTaskTree.Instance",
+						{["filename"]=name, ["url"]=url}
 					)
 				end
 			end
