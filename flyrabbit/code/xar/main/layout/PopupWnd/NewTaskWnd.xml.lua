@@ -28,6 +28,12 @@ function SetData(self, tData)
 	if savepath and IsRealString(tData["savepath"]) then
 		savepath:SetText(tData["savepath"])
 	end
+	if IsRealString(tData["url"]) then
+		local name = GetTaskSaveNameFromUrl(tData["url"])
+		if filename then
+			filename:SetText(name)
+		end
+	end
 	if filename and IsRealString(tData["filename"]) then
 		filename:SetText(tData["filename"])
 	end
