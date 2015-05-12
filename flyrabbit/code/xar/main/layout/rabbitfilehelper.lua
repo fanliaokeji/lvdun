@@ -674,6 +674,8 @@ function tRabbitFileList:AsynGetFileSizeWithUrlInKB(strURL,fnCallBack)
 		if iRet == 0 and nFileSizeInByte > 0 then
 			nFileSizeInKB = nFileSizeInByte/1024
 			fnCallBack(iRet,nFileSizeInKB)
+		else
+			fnCallBack(iRet,0)
 		end
 	end)
 end
