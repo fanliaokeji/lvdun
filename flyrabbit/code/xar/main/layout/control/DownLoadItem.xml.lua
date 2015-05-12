@@ -19,6 +19,10 @@ function SetItemIndex(self, nIndex)
 end
 
 function GetItemIndex(self, nIndex)
+	if not self then
+		return -1
+	end
+
 	local attr = self:GetAttribute()
 	return attr.nItemIndex
 end
@@ -53,8 +57,9 @@ function StartQueryTimer(objRootCtrl)
 	objRootCtrl:StopQueryTimer()
 	
 	attr.hQueryTimer = timerManager:SetTimer(function(item, id)
-		if objRootCtrl == nil then
+		if objRootCtrl:GetAttribute() == nil then
 			item:KillTimer(id)
+			return
 		end
 	
 		local bRet, tQueryInfo = tRabbitFileList:QueryTask(tFileItem)
@@ -116,7 +121,7 @@ function OnClickStart(self)
 	-- local nIndex = objRootCtrl:GetItemIndex()
 	-- local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
 	-- local bRet = tRabbitFileList:StartTask(tFileItem)
-	
+	UpdateFileItemStyle(objRootCtrl)
 	objRootCtrl:StartQueryTimer()
 	RouteToFather(self)
 end
@@ -130,6 +135,7 @@ function OnClickPause(self)
 	-- local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
 	-- local bRet = tRabbitFileList:PauseTask(tFileItem)
 	
+	UpdateFileItemStyle(objRootCtrl)
 	objRootCtrl:StopQueryTimer()
 	RouteToFather(self)
 end
@@ -231,7 +237,9 @@ end
 
 function SetFileNameUI(objRootCtrl, strFileName)
 	local objFileName = objRootCtrl:GetControlObject("DownLoad.FileName")
-	objFileName:SetText(strFileName)
+	if objFileName then
+		objFileName:SetText(strFileName)
+	end
 end
 
 
@@ -303,20 +311,26 @@ end
 
 function SetFileStateText(objRootCtrl, strText)
 	local objFileName = objRootCtrl:GetControlObject("DownLoad.FileSize")
-	objFileName:SetText(strText or "")
+	if objFileName then
+		objFileName:SetText(strText or "")
+	end
 end
 
 
 function ShowErrorBkg(objRootCtrl, bShow)
 	local objErrorBkg = objRootCtrl:GetControlObject("DownLoad.ErrorBkg")
-	objErrorBkg:SetVisible(bShow)
+	if objErrorBkg then
+		objErrorBkg:SetVisible(bShow)
+	end
 end
 
 
 function ShowProgressBar(objRootCtrl, bShow)
 	local objProgressBar = objRootCtrl:GetControlObject("DownLoad.ProgressBar")
-	objProgressBar:SetVisible(bShow)
-	objProgressBar:SetChildrenVisible(bShow)
+	if objProgressBar then
+		objProgressBar:SetVisible(bShow)
+		objProgressBar:SetChildrenVisible(bShow)
+	end
 end
 
 
@@ -385,6 +399,9 @@ end
 
 function SetProgressBarState(objRootCtrl, nPercent)
 	local objProgress = objRootCtrl:GetControlObject("DownLoad.ProgressBar")
+	if not objProgress then
+		return
+	end
 	local nProg = nPercent
 	objProgress:SetProgress(nProg)
 end
