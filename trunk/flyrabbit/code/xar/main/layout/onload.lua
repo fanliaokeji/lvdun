@@ -341,6 +341,7 @@ function ListenBrowserEvent()
 						local ctrl = objtree:GetUIObject("root.layout")
 						if ctrl then
 							ctrl:SetData({["url"]=url})
+							objDownLoadWnd:BringWindowToTop(true)
 						end
 					end
 				else
