@@ -57,7 +57,7 @@ function OnClickFileItem(self)
 	local nCurIndex = self:GetItemIndex()
 	attr.SelectItemIndex = nCurIndex
 	if nLastIndex == nCurIndex then
-		tFunHelper.UpdateFileStateUI()
+		tFunHelper.UpdateBottomStyle()
 		return
 	end
 	
@@ -68,7 +68,7 @@ function OnClickFileItem(self)
 		end
 	end
 	
-	tFunHelper.UpdateFileStateUI()
+	tFunHelper.UpdateBottomStyle()
 end
 
 ---

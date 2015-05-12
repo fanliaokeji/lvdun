@@ -2,7 +2,7 @@
 	<control class="DeleteTaskCtrl">
 		<attr_def>
 			<attr name="bDeleteFile" type="bool">
-				<default>true</default>
+				<default>false</default>
 			</attr>
 		</attr_def>
 		<method_def>
@@ -73,7 +73,7 @@
 										<top>74</top>
 										<width>160</width>
 										<height>24</height>
-										<ForegroundResID>DeleteTask.Select.Texture</ForegroundResID>
+										<ForegroundResID>DeleteTask.UnSelect.Texture</ForegroundResID>
 										<ForegroundWidth>18</ForegroundWidth>
 										<ForegroundHeight>18</ForegroundHeight>
 										<Text>同时删除已下载的文件</Text>
