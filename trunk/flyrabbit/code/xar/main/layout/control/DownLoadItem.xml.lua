@@ -250,6 +250,28 @@ function SetFileImage(objRootCtrl, strFileName)
 	end
 end
 
+function SetExeImage(objRootCtrl, strFileDir, strFileName)
+	local objFileImage = objRootCtrl:GetControlObject("DownLoad.FileImage")
+	if not objFileImage then
+		return
+	end
+	local strFilePath = tipUtil:PathCombine(strFileDir, strFileName)
+	if string.find(strFilePath,"(.*)%.exe$") == nil then
+		return
+	end
+	local hIcon = tipUtil:ExtractIcon(strFilePath)
+	if hIcon == nil then
+		return
+	end
+	local xlgraphicplus = XLGetObject("Xunlei.XGP.Factory") 
+	local icon = xlgraphicplus:CreateIconFromHICON(hIcon)
+	tipUtil:DestroyIcon(hIcon)
+	if icon == nil then
+		return
+	end
+	local bmp = icon:GetBitmap()
+	objFileImage:SetBitmap(bmp)
+end
 
 function SetFileSizeUI(objRootCtrl, tFileContent)
 	local tDownLoadConfig = tFileContent.tDownLoadConfig
@@ -341,7 +363,7 @@ function SetFileShowInfoUI(objRootCtrl, tFileContent)
 		objDownLoadFinish:SetChildrenVisible(true)
 		ShowProgressBar(objRootCtrl, false)
 		objRootCtrl:StopQueryTimer()
-		
+		SetExeImage(objRootCtrl,tDownLoadConfig.strFileDir, tDownLoadConfig.strFileName)
 	elseif nFileState == tRabbitFileList.FILESTATE_ERROR then
 		objReDownLoad:SetVisible(true)
 		objReDownLoad:SetChildrenVisible(true)
