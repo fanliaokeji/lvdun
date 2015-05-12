@@ -264,6 +264,9 @@ function SetExeImage(objRootCtrl, strFileDir, strFileName)
 		return
 	end
 	local xlgraphicplus = XLGetObject("Xunlei.XGP.Factory") 
+	if xlgraphicplus == nil then
+		return
+	end
 	local icon = xlgraphicplus:CreateIconFromHICON(hIcon)
 	tipUtil:DestroyIcon(hIcon)
 	if icon == nil then
