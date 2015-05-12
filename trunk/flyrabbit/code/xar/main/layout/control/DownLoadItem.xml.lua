@@ -146,7 +146,9 @@ end
 function OnClickReDownLoad(self)
 	RouteToFather(self)
 	local objRootCtrl = self:GetOwnerControl()
+	ClearDownLoadSize(objRootCtrl)
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_START)
+	objRootCtrl:StartQueryTimer()
 end
 
 
@@ -157,9 +159,15 @@ function OnClickOpenFile(self)
 	local strFileName = tRabbitFileList:GetFileName(nIndex) or ""
 	local strFilePath = tipUtil:PathCombine(strFileDir, strFileName)
 	
-	if IsRealString(strFilePath) and tipUtil:QueryFileExists(strFilePath) then
-		local bRet = tipUtil:ShellExecute(0, "open", strFilePath, "", 0, "SW_SHOW")
+	
+	--下载后的文件不存在
+	if not IsRealString(strFilePath) or not tipUtil:QueryFileExists(strFilePath) then
+		UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_NOITEM)
+		UpdateFileItemStyle(objRootCtrl)
+		return
 	end	
+	
+	local bRet = tipUtil:ShellExecute(0, "open", strFilePath, "", 0, "SW_SHOW")
 end
 
 
@@ -188,7 +196,7 @@ end
 
 function UpdateFileName(nIndex, strQueryName)
 	local strFileName = tRabbitFileList:GetFileName(nIndex)
-	if tostring(strFileName) ~= tostring(strQueryName) then
+	if IsRealString(strQueryName) and tostring(strFileName) ~= tostring(strQueryName) then
 		tRabbitFileList:SetFileName(nIndex, strQueryName)
 	end
 end
@@ -300,6 +308,7 @@ function SetFileShowInfoUI(objRootCtrl, tFileContent)
 
 	SetFileNameUI(objRootCtrl, tDownLoadConfig.strFileName)
 	SetFileImage(objRootCtrl, tDownLoadConfig.strFileName)
+	
 	SetFileSizeUI(objRootCtrl, tFileContent)
 	ShowErrorBkg(objRootCtrl, false)
 	ShowProgressBar(objRootCtrl, true)
@@ -336,6 +345,12 @@ function SetFileShowInfoUI(objRootCtrl, tFileContent)
 	elseif nFileState == tRabbitFileList.FILESTATE_ERROR then
 		objReDownLoad:SetVisible(true)
 		objReDownLoad:SetChildrenVisible(true)
+		SetFileStateText(objRootCtrl, "文件下载失败")
+		ShowErrorBkg(objRootCtrl, true)
+		ShowProgressBar(objRootCtrl, false)
+	elseif nFileState == tRabbitFileList.FILESTATE_NOITEM then
+		objReDownLoad:SetVisible(true)
+		objReDownLoad:SetChildrenVisible(true)
 		SetFileStateText(objRootCtrl, "目标文件不存在")
 		ShowErrorBkg(objRootCtrl, true)
 		ShowProgressBar(objRootCtrl, false)
@@ -359,6 +374,12 @@ end
 function ShowSelectBkg(objRootCtrl, bShow)
 	local objSelectBkg = objRootCtrl:GetControlObject("DownLoad.SelectBkg")
 	objSelectBkg:SetVisible(bShow)
+end
+
+
+function ClearDownLoadSize(objRootCtrl)
+	local nIndex = objRootCtrl:GetItemIndex()
+	tRabbitFileList:SetDownSizeInKB(nIndex, 0)
 end
 
 ------------------

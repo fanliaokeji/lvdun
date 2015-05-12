@@ -29,24 +29,16 @@ function OnSize(self, _type, width, height)
 end
 
 
---to do left
-function PopupInDeskRight(self)
+function PopupInDeskCenter(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
     local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
-	-- local aniT = templateMananger:GetTemplate("tip.pos.animation","AnimationTemplate")
-	-- local ani = aniT:CreateInstance()
-	-- ani:BindObj(objRootLayout)
-	
 	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
 	local nLayoutWidth = nLayoutR - nLayoutL
 	local nLayoutHeight = nLayoutB - nLayoutT
 	
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move( workright - nLayoutWidth+3, workbottom - nLayoutHeight+2, nLayoutWidth, nLayoutHeight)
-	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
-	-- objtree:AddAnimation(ani)
-	-- ani:Resume()
+	self:Move( (workright - nLayoutWidth)/2, (workbottom - nLayoutHeight)/2, nLayoutWidth, nLayoutHeight)
 
 	return true
 end
@@ -69,7 +61,7 @@ end
 
 
 function OnCreate( self )
-	PopupInDeskRight(self)
+	PopupInDeskCenter(self)
 	-- SetWindowProfile(self)
 end
 
