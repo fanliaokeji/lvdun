@@ -117,8 +117,8 @@ function CreateNewTask(objRootCtrl)
 	
 	tFileItem.tDownLoadConfig = {}
 	tFileItem.tDownLoadConfig.strFileName = strFileName
-	tFileItem.tDownLoadConfig.nFileSizeInKB = 0
-	tFileItem.tDownLoadConfig.nDownSizeInKB = 0
+	tFileItem.tDownLoadConfig.nFileSizeInByte = 0
+	tFileItem.tDownLoadConfig.nDownSizeInByte = 0
 	tFileItem.tDownLoadConfig.nFinishPercent = 0
 	tFileItem.tDownLoadConfig.strFileDir = strSaveDir--tipUtil:PathCombine(strSaveDir, strFileName)
 	tFileItem.tDownLoadConfig.strFileURL = strURL

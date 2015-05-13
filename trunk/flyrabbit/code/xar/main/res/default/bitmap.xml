@@ -67,6 +67,7 @@
 		<bitmap id="MenuItem.Quit" path="bitmap\MenuItem.Quit.png" />
 		
 		<texture id="RBtnMenu.Bkg" image="bitmap\RBtnMenu.Bkg.png" />
+		<texture id="ToolTip.Bkg" type="NineInOne" image="bitmap\Tooltip.Bkg.png" />
 		
 		<texture id="UpdateWnd.Bkg" image="bitmap\UpdateWnd.Bkg.png" />
 		<texture id="UpdateWnd.UpdateBtn.Normal" image="bitmap\UpdateWnd.UpdateBtn.Normal.png" />
