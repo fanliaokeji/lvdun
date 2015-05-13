@@ -40,7 +40,6 @@ function OnInit_Paste(self)
 end
 
 
-
 function OnSelect_Paste(self)
 	local objEdit = GetEditObject(self)
 	if objEdit then

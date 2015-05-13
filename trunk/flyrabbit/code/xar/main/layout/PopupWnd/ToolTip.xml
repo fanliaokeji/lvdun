@@ -1,0 +1,81 @@
+<xlue>
+	<control class="ToolTipCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<SetToolTipText file="ToolTip.xml.lua" func="SetToolTipText"/>
+			<GetToolTipWidth file="ToolTip.xml.lua" func="GetToolTipWidth"/>
+			<AdjustTextPos file="ToolTip.xml.lua" func="AdjustTextPos"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ToolTipLayout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture>ToolTip.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="ToolTipText" class="TextObject">
+							<attr>
+								<left>8</left>
+								<top>5</top>
+								<width>father.width-15</width>
+								<height>father.height</height>
+								<font>font.text10</font>
+								<textcolor>system.black</textcolor>
+								<multiline>1</multiline>
+								<halign>left</halign>
+								<valign>top</valign>
+							</attr>
+						</obj>
+					</children>
+				</obj>						
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="ToolTip.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+	 
+	<objtreetemplate id="ToolTipTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>-200</left>
+			<top>-200</top>
+			<width>154</width>
+			<height>200</height>
+		</attr>
+
+		<obj id="RootCtrl" class="ToolTipCtrl">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>120</width>
+				<height>118</height>
+			</attr>
+			<eventlist>
+				<event name="OnMouseEnter" file="ToolTip.xml.lua" func="OnMouseEnter_Root" />
+			</eventlist>
+		</obj>
+	</objtreetemplate>
+	
+	
+	<hostwndtemplate id="ToolTipWnd" class="TipsHostWnd" >
+		<attr>
+			<layered>1</layered>
+			<left>200</left>
+			<top>100</top>
+			<width>200</width>
+			<height>120</height>
+			<topmost>1</topmost>
+			<visible>1</visible>
+			<fps>30</fps>
+		</attr>
+	</hostwndtemplate>
+</xlue>
