@@ -171,6 +171,7 @@ public:
 	static int EncryptAESToFile(lua_State* pLuaState);
 	static int DecryptFileAES(lua_State* pLuaState);
 	
+	static int FIsClipboardFormatAvailable(lua_State* pLuaState);
 
 	//INIÅäÖÃÎÄ¼ş²Ù×÷
 	static int ReadINI(lua_State* pLuaState);

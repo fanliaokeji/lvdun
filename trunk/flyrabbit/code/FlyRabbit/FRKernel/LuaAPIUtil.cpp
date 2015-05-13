@@ -146,6 +146,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
 
+	{"IsClipboardFormatAvailable",FIsClipboardFormatAvailable},
+
 	//INIÅäÖÃÎÄ¼þ²Ù×÷
 	{"ReadINI", ReadINI},
 	{"WriteINI", WriteINI},
@@ -3714,7 +3716,18 @@ int LuaAPIUtil::DecryptFileAES(lua_State* pLuaState)
 	return 1;
 }
 
-
+int LuaAPIUtil::FIsClipboardFormatAvailable(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		UINT uFormat = (UINT)lua_tointeger(pLuaState, 2);
+		BOOL bRet = ::IsClipboardFormatAvailable(uFormat);
+		lua_pushboolean(pLuaState, (int )bRet);
+		return 1;
+	}
+	return 0;
+}
 
 int LuaAPIUtil::ReadINI(lua_State* pLuaState)
 {
