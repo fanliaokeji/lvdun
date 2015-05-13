@@ -14,8 +14,11 @@ end
 
 
 function OnShowWindow(self, bShow)
-
+	if bShow then
+		self:SetFocus(true)
+	end
 end
+
 
 function OnFocusChange(self, bFocus)
 

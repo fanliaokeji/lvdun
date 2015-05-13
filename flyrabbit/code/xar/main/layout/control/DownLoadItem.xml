@@ -95,6 +95,7 @@
 							<eventlist>
 								<event name="OnMouseEnter" file="DownLoadItem.xml.lua" func="OnMsEnterFileName" />
 								<event name="OnMouseLeave" file="DownLoadItem.xml.lua" func="OnMsLeaveFileName" />
+								<event name="OnLButtonUp" file="DownLoadItem.xml.lua" func="RouteToFather"/>
 							</eventlist>							
 						</obj>	
 						

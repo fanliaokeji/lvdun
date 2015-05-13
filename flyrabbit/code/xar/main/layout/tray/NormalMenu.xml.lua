@@ -572,5 +572,19 @@ function GetRelateObject(self)
 end
 
 
+function InitMenuWithRelateObject(self)
+	local objRelate = self:GetRelateObject()
+	if not objRelate then
+		return
+	end
+	
+	local nCount = self:GetItemCount()
+	for nIndex = 1, nCount do 
+		local objMenuItem = self:GetItem(nIndex)
+		if objMenuItem then
+			objMenuItem:FireExtEvent( "OnInitWithRelateObj" )
+		end	
+	end
+end
 
 

@@ -945,6 +945,7 @@ function ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
 	    return false
 	end	
 	objNormalMenu:BindRelateObject(objUIElem)
+	objNormalMenu:InitMenuWithRelateObject()
 	
 	local nL, nT, nR, nB 
 	local objMenuFrame = objNormalMenu:GetControlObject("menu.frame")

@@ -17,6 +17,20 @@ function OnSelect_Cut(self)
 	end
 end
 
+
+function OnInit_Cut(self)
+	local objEdit = GetEditObject(self)
+	if not objEdit then
+		return
+	end
+	
+	local strSelText = objEdit:GetSelText()
+	if not IsRealString(strSelText) then
+		self:SetEnable(false)
+	end		
+end
+
+
 function OnSelect_Paste(self)
 	local objEdit = GetEditObject(self)
 	if objEdit then

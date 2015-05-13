@@ -93,6 +93,7 @@
 
 		<event_def>
 			<OnInit/>
+			<OnInitWithRelateObj/>
 			<OnPreSelect>
 				<param>
 					<string />
