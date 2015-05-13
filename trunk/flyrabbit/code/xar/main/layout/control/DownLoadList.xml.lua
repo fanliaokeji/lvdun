@@ -6,7 +6,7 @@ local tipUtil = tFunHelper.tipUtil
 --方法  
 function UpdateFileList(objRootCtrl)
 	RemoveFileList(objRootCtrl)
-
+	
 	local tFileList = tRabbitFileList:GetFileList()
 	if type(tFileList) ~= "table" then
 		return
@@ -108,7 +108,7 @@ function SetFileItemPos(objRootCtrl, objFileItem, nIndex)
 	local nSpanH = attr.ItemSpanH
 	
 	local nNewTop = (nIndex-1)*(nHeight+nSpanH)
-	
+
 	objFileItem:SetObjPos2(0, nNewTop, "father.width", nHeight)
 end
 
@@ -144,6 +144,7 @@ function ResetScrollBar(objRootCtrl)
 	objScrollBar:SetScrollPos(0, true)	
 		
 	if nLinePerPage == 0 or nLinePerPage >= nTotalLineCount then
+		objRootCtrl:MoveItemListPanel(0)
 		objScrollBar:SetVisible(false)
 		objScrollBar:SetChildrenVisible(false)
 		return true
