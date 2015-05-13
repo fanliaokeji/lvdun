@@ -210,11 +210,9 @@ function FixUserConfig(tServerConfig)
 	if type(tUserConfigInServer) ~= "table" then
 		return
 	end
-
 	
 	-- FunctionObj.SaveConfigToFileByKey("tUserConfig")
 end
-
 
 
 function AnalyzeServerConfig(nDownServer, strServerPath)
@@ -230,10 +228,8 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 end
 
 
-
-
 function SendRunTimeReport(nTimeSpanInSec, bExit)
-	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	local tStatInfo = {}
 	tStatInfo.strEC = "runtime"
 	tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""
@@ -251,6 +247,7 @@ end
 
 
 function StartRunCountTimer()
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	local nTimeSpanInSec = 10 * 60 
 	local nTimeSpanInMs = nTimeSpanInSec * 1000
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
@@ -258,6 +255,12 @@ function StartRunCountTimer()
 		gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 		SendRunTimeReport(nTimeSpanInSec, false)
 		XLSetGlobal("Project.LastReportRunTime", gnLastReportRunTmUTC) 
+	end, nTimeSpanInMs)
+	
+	---飞兔服务器上报
+	local nTimeSpanInMs = 2*60*1000
+	timerManager:SetTimer(function(item, id)
+		FunctionObj.SendLocalReport(10)
 	end, nTimeSpanInMs)
 end
 
@@ -381,7 +384,7 @@ function PreTipMain()
 		tipUtil:Exit("Exit")
 	end
 	StartRunCountTimer()	
-	SendStartReportLocal()
+	FunctionObj.SendLocalReport(2)
 	SendStartupReportGgl(false)
 	TipMain()
 	

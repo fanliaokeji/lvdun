@@ -310,6 +310,7 @@ function CreateNewTask(objRootLayout)
 	tRabbitFileList:PushFileItem(tFileItem)
 	tFunHelper.UpdateFileList()
 	
+	SendNewTaskReport(strURL)
 	tFunHelper.SetUserSetSaveDir(strSaveDir)
 	return true
 end
@@ -394,6 +395,7 @@ function TipLog(strLog)
 	end
 end
 
+
 function GetTaskSaveNameFromUrl(strUrl)
 	if not IsRealString(strUrl) then
 		return false,""
@@ -414,6 +416,7 @@ function GetTaskSaveNameFromUrl(strUrl)
 	return true,strFileName
 end
 
+
 function GetRootLayout()
 	local hostWndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local objNewTaskWnd = hostWndManager:GetHostWnd("TipNewTaskWnd.Instance")
@@ -430,3 +433,16 @@ function GetRootLayout()
 	end
 	return objRootLayout
 end
+
+
+function SendNewTaskReport(strURL)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local tStatInfo = {}
+	tStatInfo.strEC = "newtask"
+	tStatInfo.strEA = FunctionObj.UrlEncode(strURL)
+	tStatInfo.strEL = FunctionObj.GetInstallSrc() or ""
+	tStatInfo.strEV = 1
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+

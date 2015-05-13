@@ -90,6 +90,7 @@ function ReportAndExit()
 	HideMainWindow()	
 	DestroyPopupWnd()	
 	SendRunTimeReport(0, true)
+	SendLocalReport(10)
 	local tRabbitFileList = XLGetGlobal("Project.RabbitFileList")
 	tRabbitFileList:UnInit()
 	tRabbitFileList:SaveListToFile()
@@ -130,6 +131,27 @@ function IsUserFullScreen()
 end
 
 
+
+function UrlEncode(strUrlToBeEncoded)
+	local strUrlEncoded = nil
+	if type(strUrlToBeEncoded) == "string" then
+		strUrlEncoded = ""
+		local nPos = 1
+		while nPos <= #strUrlToBeEncoded do
+			local nCharCode = string.byte(strUrlToBeEncoded, nPos)
+			if (nCharCode == 46) or (nCharCode > 47 and nCharCode < 58) or (nCharCode > 64 and nCharCode < 91) or (nCharCode == 95) or (nCharCode > 96 and nCharCode < 123) then
+				strUrlEncoded = strUrlEncoded .. string.char(nCharCode)
+			else
+				strUrlEncoded = strUrlEncoded .. string.format("%%%02X", nCharCode)
+			end
+			nPos = nPos + 1
+		end
+	end
+		
+	return strUrlEncoded
+end
+
+
 function CheckIsNewVersion(strNewVer, strCurVer)
 	if not IsRealString(strNewVer) or not IsRealString(strCurVer) then
 		return false
@@ -153,7 +175,7 @@ end
 
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\Project\\PeerId")
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\FlyRabbit\\PeerId")
 	if IsRealString(strPeerID) then
 		return strPeerID
 	end
@@ -163,13 +185,13 @@ function GetPeerID()
 		return ""
 	end
 	
-	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\Project\\PeerId", strRandPeerID)
+	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\FlyRabbit\\PeerId", strRandPeerID)
 	return strRandPeerID
 end
 
 --渠道
 function GetInstallSrc()
-	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\Project\\InstallSource")
+	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\FlyRabbit\\InstallSource")
 	if not IsNilString(strInstallSrc) then
 		return tostring(strInstallSrc)
 	end
@@ -244,7 +266,9 @@ function TipConvStatistic(tStat)
 		strEV = 1
 	end
 	
-	local strUrl = ""
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-62827200-1&cid="..tostring(strCID)
+						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
+						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 	
 	TipLog("TipConvStatistic: " .. tostring(strUrl))
 	
@@ -267,6 +291,26 @@ function TipConvStatistic(tStat)
 			ExitProcess()
 		end, 15000 * iStatCount)
 	end
+end
+
+
+function SendLocalReport(nOPeration)
+	local strCID = GetPeerID()
+	local strChannelID = GetInstallSrc()
+	local strVer = GetMinorVer()
+	local strRandom = tipUtil:GetCurrentUTCTime()
+	
+	local strPort = "8082"
+	if nOPeration == 10 then   --心跳上报的端口为8083
+		strPort = "8083"
+	end
+	
+	local strUrl = "http://stat.feitwo.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+					.."&proid=14&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
+	
+	TipLog("SendLocalReport: " .. tostring(strUrl))
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
 end
 
 
@@ -295,7 +339,6 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 			end
 		end)
 end
-
 
 
 function CheckMD5(strFilePath, strExpectedMD5) 
@@ -1474,6 +1517,7 @@ obj.MessageBox = MessageBox
 obj.GetPeerID = GetPeerID
 obj.FailExitTipWnd = FailExitTipWnd
 obj.TipConvStatistic = TipConvStatistic
+obj.SendLocalReport = SendLocalReport
 obj.ExitProcess = ExitProcess
 obj.ReportAndExit = ReportAndExit
 obj.GetCommandStrValue = GetCommandStrValue
@@ -1491,6 +1535,7 @@ obj.GetInstallSrc = GetInstallSrc
 obj.GetMinorVer = GetMinorVer
 obj.GetTimeStamp = GetTimeStamp
 obj.OpenFolderDialog = OpenFolderDialog
+obj.UrlEncode = UrlEncode
 
 --UI
 obj.GetMainWndInst = GetMainWndInst
