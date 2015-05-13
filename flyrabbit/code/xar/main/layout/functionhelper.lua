@@ -1119,10 +1119,7 @@ function ShowMainPanleByTray(objHostWnd)
 	if objHostWnd then
 		objHostWnd:Show(5)
 		SetWndForeGround(objHostWnd)
-		local strState = objHostWnd:GetWindowState()
-		if tostring(strState) == "min" then
-			objHostWnd:BringWindowToTop(true)
-		end
+		objHostWnd:BringWindowToTop(true)
 	end
 end
 
