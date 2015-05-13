@@ -35,6 +35,7 @@
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Paste" />
+					<event name="OnInitWithRelateObj" file="RBtnEditMenu.xml.lua" function="OnInit_Paste" />
 				</eventlist>
 			</obj>
 			
@@ -44,6 +45,7 @@
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_PasteAndDownLoad" />
+					<event name="OnInitWithRelateObj" file="RBtnEditMenu.xml.lua" function="OnInit_Paste" />
 				</eventlist>
 			</obj>
 			

@@ -1,5 +1,5 @@
 local tFunHelper = XLGetGlobal("Project.FunctionHelper")
-
+local tipUtil = tFunHelper.tipUtil
 
 -------事件---
 function OnSelect_Copy(self)
@@ -29,6 +29,16 @@ function OnInit_Cut(self)
 		self:SetEnable(false)
 	end		
 end
+
+
+function OnInit_Paste(self)
+	local CF_TEXT = 1
+	local bIsPasteAvlbl = tipUtil:IsClipboardFormatAvailable(CF_TEXT)
+	if not bIsPasteAvlbl then
+		self:SetEnable(false)
+	end	
+end
+
 
 
 function OnSelect_Paste(self)
