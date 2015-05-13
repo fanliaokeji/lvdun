@@ -604,6 +604,7 @@ function CreatePopupTipWnd()
 		local bSucc = CreateWndByName(strHostWndName, strTreeName)
 	end
 	
+	InitToolTip()
 	return true
 end
 
@@ -1204,30 +1205,132 @@ end
 -----------托盘--
 
 
+-------------悬浮窗
+local g_objToolTipWnd = nil
+function InitToolTip()
+	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local tipsHostWndTemplate = templateMananger:GetTemplate("ToolTipWnd","HostWndTemplate")
+	if tipsHostWndTemplate == nil then return nil end
+	
+	local tipsHostWnd = tipsHostWndTemplate:CreateInstance("ToolTipWndIns")
+	if tipsHostWnd == nil then return nil end
+
+	local objectTreeTemplate = templateMananger:GetTemplate("ToolTipTree", "ObjectTreeTemplate")
+	if objectTreeTemplate == nil then return nil end
+	
+	local uiObjectTree = objectTreeTemplate:CreateInstance("ToolTipTreeIns")
+	if uiObjectTree == nil then return nil end
+	
+	tipsHostWnd:BindUIObjectTree(uiObjectTree)
+
+	local nSuccess = tipsHostWnd:Create()
+	if not nSuccess then
+		return nil
+	end
+	
+	tipsHostWnd:SetVisible(false)
+	g_objToolTipWnd = tipsHostWnd
+	
+	return tipsHostWnd
+end
+
+
+function SetToolTipText(strText)
+	local objToolTipWnd = g_objToolTipWnd
+	if objToolTipWnd == nil then return end
+	
+	local objTree = objToolTipWnd:GetBindUIObjectTree()
+	if objTree == nil then return end
+	
+	local objRootCtrl = objTree:GetUIObject("RootCtrl")
+	if objRootCtrl == nil then return end
+	
+	objRootCtrl:SetToolTipText(strText)
+end
+
+
+function SetToolTipPos(objUIItem)
+	local objToolTipWnd = g_objToolTipWnd
+	if objToolTipWnd == nil or objUIItem == nil then return end
+	
+	local objToolTipTree = objToolTipWnd:GetBindUIObjectTree()
+	if objToolTipTree == nil then return end
+	
+	local objRootCtrl = objToolTipTree:GetUIObject("RootCtrl")
+	if objRootCtrl == nil then return end
+	
+	local objHostWnd = GetMainWndInst()	
+		
+	local nToolLeft, nToolTop, nToolRight, nToolBottom = objToolTipWnd:GetWindowRect()
+	local nItemLeft, nItemTop, nItemRight, nItemBottom = objUIItem:GetAbsPos()
+	local nScrItemL, nScrItemT, nScrItemR, nScrItemB = objHostWnd:HostWndRectToScreenRect(nItemLeft, nItemTop, nItemRight, nItemBottom) 
+	local nWidth = objRootCtrl:GetToolTipWidth()
+	
+	objToolTipWnd:Move(nScrItemL, nScrItemT+20, nWidth, nToolBottom-nToolTop) 
+
+	local nDeskLeft, nDeskTop, nDeskRight, nDeskBottom = tipUtil:GetWorkArea()
+	local nToolLeft, nToolTop, nToolRight, nToolBottom = objToolTipWnd:GetWindowRect()
+	local nToolHeight = nToolBottom - nToolTop
+	
+	if nToolRight > nDeskRight then
+		local nWidth = objRootCtrl:GetToolTipWidth()
+		objToolTipWnd:Move(nDeskRight-nWidth, nToolTop, nWidth, nToolBottom-nToolTop) 
+	end
+end
+
+
+local g_hToolTipTimer = nil
+function ShowToolTip(bShow, strText, objUIItem)
+	local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local objToolTipWnd = g_objToolTipWnd
+	if objToolTipWnd == nil then return end
+	
+	if IsRealString(strText) then
+		SetToolTipText(strText)
+	end
+	
+	if g_hToolTipTimer then
+		timeMgr:KillTimer(g_hToolTipTimer)
+	end
+	
+	if bShow then
+		g_hToolTipTimer = timeMgr:SetTimer(function(Itm, id)
+			Itm:KillTimer(id)
+
+			SetToolTipPos(objUIItem)
+			objToolTipWnd:UpdateWindow()
+			objToolTipWnd:DelayPopup(0)
+			
+		end, 500)	
+	else	
+		objToolTipWnd:SetVisible(false)
+	end
+end
+
 
 -----
-function FormatFileSize(nFileSizeInKB)
+function FormatFileSize(nFileSizeInByte)
 	local strFileSize = ""
-	if tonumber(nFileSizeInKB) == nil then
+	if tonumber(nFileSizeInByte) == nil then
 		return strFileSize
 	end
 
 	local nSize = 0
 	local strUnit = ""
-	if nFileSizeInKB >= 1024*1024 then  
-		nSize = nFileSizeInKB/(1024*1024)
+	if nFileSizeInByte >= 1024*1024*1024 then  
+		nSize = nFileSizeInByte/(1024*1024*1024)
 		strUnit = "GB"
 		
-	elseif nFileSizeInKB >= 1024 then  
-		nSize = nFileSizeInKB/1024
+	elseif nFileSizeInByte >= 1024*1024 then  
+		nSize = nFileSizeInByte/(1024*1024)
 		strUnit = "MB"
 		
-	elseif nFileSizeInKB >= 1 then   
-		nSize = nFileSizeInKB
+	elseif nFileSizeInByte >= 1024 then   
+		nSize = nFileSizeInByte/1024
 		strUnit = "KB"
 		
 	else
-		nSize = nFileSizeInKB * 1024
+		nSize = nFileSizeInByte
 		strUnit = "B"
 	end
 	
@@ -1239,7 +1342,7 @@ function FormatFileSize(nFileSizeInKB)
 end
 
 
-function GetDiskSizeInKB(strDirPath)
+function GetDiskSizeInByte(strDirPath)
 	if not IsRealString(strDirPath) or not tipUtil:QueryFileExists(strDirPath) then
 		return -1
 	end
@@ -1249,12 +1352,12 @@ function GetDiskSizeInKB(strDirPath)
 		return -1
 	end
 	
-	local nFreeSizeInKB = 1
+	local nFreeSizeInByte = 1
 	if nAvailableInByte > 1024 then
-		nFreeSizeInKB = math.floor(nAvailableInByte/1024)
+		nFreeSizeInByte = math.floor(nAvailableInByte/1024)
 	end
 	
-	return nFreeSizeInKB
+	return nFreeSizeInByte
 end
 
 
@@ -1425,9 +1528,16 @@ obj.RegDeleteValue = RegDeleteValue
 obj.RegSetValue = RegSetValue
 
 
+--悬浮窗
+obj.InitToolTip = InitToolTip
+obj.SetToolTipText = SetToolTipText
+obj.ShowToolTip = ShowToolTip
+obj.SetToolTipPos = SetToolTipPos
+
+
 --其他
 obj.FormatFileSize = FormatFileSize
-obj.GetDiskSizeInKB = GetDiskSizeInKB
+obj.GetDiskSizeInByte = GetDiskSizeInByte
 obj.GetDefaultSaveDir = GetDefaultSaveDir
 obj.GetDownFileSaveDir = GetDownFileSaveDir
 obj.SetUserSetSaveDir = SetUserSetSaveDir

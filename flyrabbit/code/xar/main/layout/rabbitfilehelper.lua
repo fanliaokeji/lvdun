@@ -12,8 +12,8 @@
 		["tDownLoadConfig"] =
 		{
 			["strFileName"] = "",
-			["nFileSizeInKB"] = "",
-			["nDownSizeInKB"] = "",
+			["nFileSizeInByte"] = "",
+			["nDownSizeInByte"] = "",
 			["nFinishPercent"] = "",
 			["strFileDir"] = "",
 			["strFileURL"] = "",
@@ -21,6 +21,7 @@
 			["nFileState"] = FILESTATE_START | FILESTATE_PAUSE | FILESTATE_FINISH | FILESTATE_ERROR,
 		}
 		["hTaskHandle"] = -1,		
+		["nDownSpeedInByte"] = 0,		
 		["strICOPath"] = "",
 	}
 	
@@ -225,68 +226,101 @@ function tRabbitFileList:GetFileDir(nIndex)
 end
 
 
-function tRabbitFileList:GetFileSizeInKB(nIndex)
+function tRabbitFileList:GetFileSizeInByte(nIndex)
 	if type(nIndex) ~= "number" then
-		Log("[GetFileSizeInKB] param error")
+		Log("[GetFileSizeInByte] param error")
 		return 0
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[GetFileSizeInKB] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[GetFileSizeInByte] GetFileItemByIndex failed"..tostring(nIndex))
 		return 0
 	end
 	
-	return tFileItem.tDownLoadConfig.nFileSizeInKB
+	return tFileItem.tDownLoadConfig.nFileSizeInByte
 end
 
 
-function tRabbitFileList:SetFileSizeInKB(nIndex, nFileSizeInKB)
-	if type(nIndex) ~= "number" or type(nFileSizeInKB) ~= "number" then
-		Log("[SetFileSizeInKB] param error")
+function tRabbitFileList:SetFileSizeInByte(nIndex, nFileSizeInByte)
+	if type(nIndex) ~= "number" or type(nFileSizeInByte) ~= "number" then
+		Log("[SetFileSizeInByte] param error")
 		return false
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[SetFileSizeInKB] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[SetFileSizeInByte] GetFileItemByIndex failed"..tostring(nIndex))
 		return false
 	end
 	
-	tFileItem.tDownLoadConfig.nFileSizeInKB = nFileSizeInKB
+	tFileItem.tDownLoadConfig.nFileSizeInByte = nFileSizeInByte
 	return true
 end
 
 
-function tRabbitFileList:GetDownSizeInKB(nIndex)
-	if type(nIndex) ~= "number" then
-		Log("[GetDownSizeInKB] param error")
-		return 0
+function tRabbitFileList:SetDownSpeedInByte(nIndex, nDownSpeedInByte)
+	if type(nIndex) ~= "number" or type(nDownSpeedInByte) ~= "number" then
+		Log("[SetDownSpeedInByte] param error")
+		return false
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[GetDownSizeInKB] GetFileItemByIndex failed"..tostring(nIndex))
-		return 0
+		Log("[SetDownSpeedInByte] GetFileItemByIndex failed"..tostring(nIndex))
+		return false
 	end
 	
-	return tFileItem.tDownLoadConfig.nDownSizeInKB
+	tFileItem.nDownSpeedInByte = nDownSpeedInByte
+	return true
 end
 
 
-function tRabbitFileList:SetDownSizeInKB(nIndex, nDownSizeInKB)
-	if type(nIndex) ~= "number" or type(nDownSizeInKB) ~= "number" then
-		Log("[SetDownSizeInKB] param error")
+function tRabbitFileList:GetDownSpeedInByte(nIndex)
+	if type(nIndex) ~= "number" then
+		Log("[GetDownSpeedInByte] param error")
 		return false
 	end
 
 	local tFileItem = self:GetFileItemByIndex(nIndex)
 	if type(tFileItem) ~= "table" then
-		Log("[SetDownSizeInKB] GetFileItemByIndex failed"..tostring(nIndex))
+		Log("[GetDownSpeedInByte] GetFileItemByIndex failed"..tostring(nIndex))
 		return false
 	end
 	
-	tFileItem.tDownLoadConfig.nDownSizeInKB = nDownSizeInKB
+	return tFileItem.nDownSpeedInByte
+end
+
+
+function tRabbitFileList:GetDownSizeInByte(nIndex)
+	if type(nIndex) ~= "number" then
+		Log("[GetDownSizeInByte] param error")
+		return 0
+	end
+
+	local tFileItem = self:GetFileItemByIndex(nIndex)
+	if type(tFileItem) ~= "table" then
+		Log("[GetDownSizeInByte] GetFileItemByIndex failed"..tostring(nIndex))
+		return 0
+	end
+	
+	return tFileItem.tDownLoadConfig.nDownSizeInByte
+end
+
+
+function tRabbitFileList:SetDownSizeInByte(nIndex, nDownSizeInByte)
+	if type(nIndex) ~= "number" or type(nDownSizeInByte) ~= "number" then
+		Log("[SetDownSizeInByte] param error")
+		return false
+	end
+
+	local tFileItem = self:GetFileItemByIndex(nIndex)
+	if type(tFileItem) ~= "table" then
+		Log("[SetDownSizeInByte] GetFileItemByIndex failed"..tostring(nIndex))
+		return false
+	end
+	
+	tFileItem.tDownLoadConfig.nDownSizeInByte = nDownSizeInByte
 	return true
 end
 
@@ -710,33 +744,14 @@ function tRabbitFileList:ParseThunderPrivateUrl(strThunderUrl)
 end
 
 
---º¯Êý×èÈû
-function tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
-	if not IsRealString(strURL) then
-		return false, 0
-	end
-	
-	local bRet, nFileSizeInByte = miniTPUtil:GetFileSizeWithUrl(strURL)
-	if not bRet then
-		return false, 0
-	end
-	
-	local nFileSizeInKB = 1
-	if nFileSizeInByte > 1024 then
-		nFileSizeInKB = math.floor(nFileSizeInByte/1024)
-	end
-
-	return bRet, nFileSizeInKB
-end
-
-function tRabbitFileList:AsynGetFileSizeWithUrlInKB(strURL,fnCallBack)
+function tRabbitFileList:AsynGetFileSizeWithUrlInByte(strURL,fnCallBack)
 	if not IsRealString(strURL) then
 		return
 	end
 	tipAsynUtil:AsynGetFileSizeWithUrl(strURL,function(iRet, nFileSizeInByte)
 		if iRet == 0 and nFileSizeInByte > 0 then
-			nFileSizeInKB = nFileSizeInByte/1024
-			fnCallBack(iRet,nFileSizeInKB)
+			nFileSizeInByte = nFileSizeInByte/1024
+			fnCallBack(iRet,nFileSizeInByte)
 		else
 			fnCallBack(iRet,0)
 		end

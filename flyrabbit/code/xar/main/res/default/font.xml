@@ -2,6 +2,7 @@
 	<resource>
 		<font id="default.font" height="12" facename="微软雅黑" />
 		
+		<font id="font.text10" height="10" facename="微软雅黑" />  
 		<font id="font.text12" height="12" facename="微软雅黑" />  
 		<font id="font.text13" height="13" facename="微软雅黑" />  
 		<font id="font.text14" height="14" facename="微软雅黑" />  

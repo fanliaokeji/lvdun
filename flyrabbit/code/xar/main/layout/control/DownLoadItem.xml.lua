@@ -114,6 +114,21 @@ function OnLButtonUp(self)
 end
 
 
+function OnMsEnterFileName(self)
+	local objText = self
+	local bIsOverflow = IsTextOverFlow(objText)
+	
+	if bIsOverflow then
+		tFunHelper.ShowToolTip(true, objText:GetText(), objText)
+	end	
+end
+
+
+function OnMsLeaveFileName(self)
+	tFunHelper.ShowToolTip(false)
+end
+
+
 function OnClickStart(self)
 	local objRootCtrl = self:GetOwnerControl()
 	UpdateFileState(objRootCtrl, tRabbitFileList.FILESTATE_START)
@@ -193,6 +208,7 @@ function UpdateFileInfoAndUI(objRootCtrl, nIndex, tQueryInfo)
     UpdateFileName(nIndex, tQueryInfo.szFilename)
 	UpdateDownSize(nIndex, tQueryInfo.nTotalDownload)
 	UpdateFileSize(nIndex, tQueryInfo.nTotalSize)
+	UpdateDownSpeed(nIndex, tQueryInfo.nSpeed)
 	UpdateFileStateInCond(objRootCtrl, tQueryInfo.stat)
 
 	local tFileItem = tRabbitFileList:GetFileItemByIndex(nIndex)
@@ -209,22 +225,25 @@ end
 
 
 function UpdateDownSize(nIndex, nQuerySizeInByte)
-	local nOldDownSize = tRabbitFileList:GetDownSizeInKB(nIndex)
-	nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
+	local nOldDownSize = tRabbitFileList:GetDownSizeInByte(nIndex)
 	
-	if nOldDownSize < nQuerySizeInKB then
-		tRabbitFileList:SetDownSizeInKB(nIndex, nQuerySizeInKB)
+	if nOldDownSize < nQuerySizeInByte then
+		tRabbitFileList:SetDownSizeInByte(nIndex, nQuerySizeInByte)
 	end
 end
 
 
 function UpdateFileSize(nIndex, nQuerySizeInByte)
-	local nOldFileSize = tRabbitFileList:GetFileSizeInKB(nIndex)
+	local nOldFileSizeInByte = tRabbitFileList:GetFileSizeInByte(nIndex)
 	
-	nQuerySizeInKB = math.floor(nQuerySizeInByte/1024)
-	if nOldFileSize < nQuerySizeInKB then
-		tRabbitFileList:SetFileSizeInKB(nIndex, nQuerySizeInKB)
+	if nOldFileSizeInByte < nQuerySizeInByte then
+		tRabbitFileList:SetFileSizeInByte(nIndex, nQuerySizeInByte)
 	end
+end
+
+
+function UpdateDownSpeed(nIndex, nQuerySpeedInByte)
+	tRabbitFileList:SetDownSpeedInByte(nIndex, nQuerySpeedInByte)
 end
 
 
@@ -287,23 +306,33 @@ end
 function SetFileSizeUI(objRootCtrl, tFileContent)
 	local tDownLoadConfig = tFileContent.tDownLoadConfig
 
-	local nDownSizeInKB = tDownLoadConfig.nDownSizeInKB
-	local nFileSizeInKB = tDownLoadConfig.nFileSizeInKB
-		
-	if tonumber(nDownSizeInKB) == nil or tonumber(nFileSizeInKB) == nil then
+	local nDownSizeInByte = tDownLoadConfig.nDownSizeInByte
+	local nFileSizeInByte = tDownLoadConfig.nFileSizeInByte
+	local nDownSpeedInByte = tFileContent.nDownSpeedInByte
+	
+	if tonumber(nDownSizeInByte) == nil or tonumber(nFileSizeInByte) == nil then
 		return
 	end
 	
 	local nPercent = 0
-	if nFileSizeInKB ~= 0 then
-		nPercent = nDownSizeInKB*100/nFileSizeInKB 
+	if nFileSizeInByte ~= 0 then
+		nPercent = nDownSizeInByte*100/nFileSizeInByte 
+	end
+	
+	if nPercent >= 100 then
+		nPercent = 99.9
 	end
 	
 	local strPercent = string.format("%.1f", nPercent)
-	local strDownSize = tFunHelper.FormatFileSize(tDownLoadConfig.nDownSizeInKB)
-	local strFileSize = tFunHelper.FormatFileSize(tDownLoadConfig.nFileSizeInKB)
+	local strDownSize = tFunHelper.FormatFileSize(nDownSizeInByte)
+	local strFileSize = tFunHelper.FormatFileSize(nFileSizeInByte)
+	local strDownSpeed = tFunHelper.FormatFileSize(nDownSpeedInByte)
 	
-	local strText = strPercent.."%   "..strDownSize.." / "..strFileSize
+	local strText = strPercent.."%    "..strDownSize.." / "..strFileSize
+	if IsRealString(strDownSpeed) then
+		strText = strText.."    "..strDownSpeed.."/s"
+	end
+	
 	SetFileStateText(objRootCtrl, strText)
 	SetProgressBarState(objRootCtrl, nPercent)
 end
@@ -381,6 +410,9 @@ function SetFileShowInfoUI(objRootCtrl, tFileContent)
 		ShowProgressBar(objRootCtrl, false)
 		objRootCtrl:StopQueryTimer()
 		SetExeImage(objRootCtrl,tDownLoadConfig.strFileDir, tDownLoadConfig.strFileName)
+		SetFileStateText(objRootCtrl, "完成")
+		SetProgressBarState(objRootCtrl, 100)
+		
 	elseif nFileState == tRabbitFileList.FILESTATE_ERROR then
 		objReDownLoad:SetVisible(true)
 		objReDownLoad:SetChildrenVisible(true)
@@ -402,8 +434,8 @@ function SetProgressBarState(objRootCtrl, nPercent)
 	if not objProgress then
 		return
 	end
-	local nProg = nPercent
-	objProgress:SetProgress(nProg)
+	
+	objProgress:SetProgress(nPercent)
 end
 
 
@@ -421,7 +453,22 @@ end
 
 function ClearDownLoadSize(objRootCtrl)
 	local nIndex = objRootCtrl:GetItemIndex()
-	tRabbitFileList:SetDownSizeInKB(nIndex, 0)
+	tRabbitFileList:SetDownSizeInByte(nIndex, 0)
+end
+
+
+function IsTextOverFlow(objText)
+	-- local objText = self:GetControlObject("ShortCutText.Text")
+	-- local objLayout = self:GetControlObject("ShortCutText.Layout")
+	local nLeft, nTop, nRight, nBottom = objText:GetObjPos()
+	local nWidth = nRight - nLeft
+	local nSuitWidth = objText:GetTextExtent()
+	
+	if nWidth < nSuitWidth then
+		return true
+	else
+		return false
+	end
 end
 
 ------------------

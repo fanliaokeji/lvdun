@@ -16,6 +16,10 @@ end
 
 ---方法
 function SetData(self, tData)
+	if type(tData) ~= "table" then
+		return
+	end
+
 	local attr = self:GetAttribute()
 	attr.okfunc = tData["okfunc"]
 	local url = self:GetControlObject("NewTask.Url.edit")
@@ -290,20 +294,14 @@ function CreateNewTask(objRootLayout)
 		return false
 	end
 	
-	-- local bSucc, nFileSizeInKB = tRabbitFileList:GetFileSizeWithUrlInKB(strURL)
-	-- if not bSucc then
-		-- ShowDescMessage(objRootLayout, "请检查下载链接")
-		-- return false
-	-- end
-	
 	local tFileItem = {}
 	tFileItem.strICOPath = ""
 	tFileItem.hTaskHandle = -1
 	
 	tFileItem.tDownLoadConfig = {}
 	tFileItem.tDownLoadConfig.strFileName = strFileName
-	tFileItem.tDownLoadConfig.nFileSizeInKB = nFileSizeInKB or 0
-	tFileItem.tDownLoadConfig.nDownSizeInKB = 0
+	tFileItem.tDownLoadConfig.nFileSizeInByte = nFileSizeInByte or 0
+	tFileItem.tDownLoadConfig.nDownSizeInByte = 0
 	tFileItem.tDownLoadConfig.nFinishPercent = 0
 	tFileItem.tDownLoadConfig.strFileDir = strSaveDir -- tipUtil:PathCombine(strSaveDir, strFileName)
 	tFileItem.tDownLoadConfig.strFileURL = strURL
@@ -341,10 +339,10 @@ function SetFileSizeFromUI()
 	end
 	local objURLEdit = objRootLayout:GetControlObject("NewTask.Url.edit")	
 	local strURL = objURLEdit:GetText()
-	tRabbitFileList:AsynGetFileSizeWithUrlInKB(strURL,function(iRet, nFileSizeInKB)
+	tRabbitFileList:AsynGetFileSizeWithUrlInByte(strURL,function(iRet, nFileSizeInByte)
 		local objRootLayout = GetRootLayout()
-		if iRet == 0 and nFileSizeInKB > 0 then
-			local strSize = tFunHelper.FormatFileSize(nFileSizeInKB)
+		if iRet == 0 and nFileSizeInByte > 0 then
+			local strSize = tFunHelper.FormatFileSize(nFileSizeInByte)
 			if objRootLayout == nil then
 				return
 			end
@@ -368,9 +366,9 @@ function GetDiskSizeFromUI(strDiskName)
 		-- tipUtil:CreateDir(strPath)
 	-- end
 	local strFormatSize = ""
-	local nDiskSizeInKB = tFunHelper.GetDiskSizeInKB(strDiskName)
-	if nDiskSizeInKB >= 0 then
-		strFormatSize = tFunHelper.FormatFileSize(nDiskSizeInKB)
+	local nDiskSizeInByte = tFunHelper.GetDiskSizeInByte(strDiskName)
+	if nDiskSizeInByte >= 0 then
+		strFormatSize = tFunHelper.FormatFileSize(nDiskSizeInByte)
 		bRet = true
 	end
 	
