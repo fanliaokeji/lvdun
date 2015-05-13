@@ -8,25 +8,30 @@
 		<children>
 			<obj id="Cut" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>剪切(T)</Text>
+					<Text>剪切</Text>
+					<AccKey>T</AccKey>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Cut" />
+					<event name="OnInitWithRelateObj" file="RBtnEditMenu.xml.lua" function="OnInit_Cut" />
 				</eventlist>
 			</obj>
 		
 			<obj id="Copy" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>复制(C)</Text>
+					<Text>复制</Text>
+					<AccKey>C</AccKey>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Copy" />
+					<event name="OnInitWithRelateObj" file="RBtnEditMenu.xml.lua" function="OnInit_Cut" />
 				</eventlist>
 			</obj>	
 	
 			<obj id="Paste" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>粘贴(P)</Text>
+					<Text>粘贴</Text>
+					<AccKey>V</AccKey>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_Paste" />
@@ -45,6 +50,7 @@
 			<obj id="SelectAll" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
 					<Text>全部选中</Text>
+					<AccKey>A</AccKey>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="RBtnEditMenu.xml.lua" function="OnSelect_SelectAll" />

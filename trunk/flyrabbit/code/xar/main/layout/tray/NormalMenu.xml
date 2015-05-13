@@ -47,6 +47,7 @@
 			<OnInitControl file="NormalMenu.xml.lua" func="OnInitControl" />
 			<BindRelateObject file="NormalMenu.xml.lua" func="BindRelateObject" />
 			<GetRelateObject file="NormalMenu.xml.lua" func="GetRelateObject" />
+			<InitMenuWithRelateObject file="NormalMenu.xml.lua" func="InitMenuWithRelateObject" />
 		</method_def>
 		
 		<objtemplate>
@@ -107,14 +108,13 @@
 			<width>father.width</width>
 			<TextPos>36</TextPos>
 			<Font>font.text12</Font>
-			<FontColorNormal>2B353E</FontColorNormal>
-			<FontColorDisable>ADA999</FontColorDisable>
+			<FontColorNormal>28313A</FontColorNormal>
+			<FontColorDisable>7C8D9F</FontColorDisable>
 			<IconWidth>13</IconWidth>
 			<IconHeight>13</IconHeight>
 			<IconPos>7</IconPos>
 		</attr>
 	</objtemplate>
-
 
     <objtemplate id="menu.main.itemex" class="MenuItemObject">
         <attr>
