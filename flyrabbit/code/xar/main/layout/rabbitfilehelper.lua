@@ -71,7 +71,7 @@ end
 
 
 function tRabbitFileList:PushFileItem(tFileItem)
-	if type(tFileItem) ~= "table" then
+	if type(tFileItem) ~= "table" or type(tFileItem.tDownLoadConfig) ~= "table" then
 		Log("[PushFileItem] param error")
 		return false
 	end
@@ -88,6 +88,7 @@ function tRabbitFileList:PushFileItem(tFileItem)
 	local tFileList = self:GetFileList()
 	tFileList[#tFileList+1] = tFileItem
 	
+	Log("[PushFileItem] strFileName: "..tostring(tDownLoadConfig.strFileName))
 	return true
 end
 
@@ -98,11 +99,11 @@ function tRabbitFileList:PushDeleteItem(tFileItem)
 		return false
 	end
 	
-	-- if tFileItem.hTaskHandle == nil or tFileItem.hTaskHandle == -1 then
-		-- Log("[PushDeleteItem] hTaskHandle not valid")
-		-- return false
-	-- end
-	
+	if tFileItem.hTaskHandle ~= nil and tFileItem.hTaskHandle ~= -1 then
+		local hTaskHandle = tFileItem.hTaskHandle
+		miniTPUtil:TaskForcePause(hTaskHandle)
+	end
+		
 	g_tDeleteItemList[#g_tDeleteItemList+1] = tFileItem
 	tRabbitFileList:DealWithDeleteList()
 	
@@ -597,6 +598,7 @@ function tRabbitFileList:DealWithDeleteList()
 		
 		if #tDeleteItemList < 1 then
 			item:KillTimer(id)
+			g_DeleteTimer = nil
 		end
 		
 	end, 1*1000)
@@ -640,6 +642,8 @@ function tRabbitFileList:DeleteFinishStateFile(tFileItem, tDeleteItemList, nInde
 		return not bHasDelete
 	end
 	
+	tRabbitFileList:DeleteTask(tFileItem)
+	
 	local bDeleteFile = tFileItem.bDeleteFile
 	if bDeleteFile then
 		local bRet = tRabbitFileList:DelTempFile(tFileItem)
@@ -660,8 +664,6 @@ function tRabbitFileList:DeleteUnFinishStateFile(tFileItem, tDeleteItemList, nIn
 		table.remove(tDeleteItemList, nIndex)
 		return
 	end
-
-	tRabbitFileList:PauseTask(tFileItem)
 			
 	local  bQueryRet, tTaskInfo = tRabbitFileList:QueryTask(tFileItem)
 	Log("[DeleteUnFinishStateFile] strFileName: ".. tostring(tFileItem.tDownLoadConfig.strFileName) .. "  strFileState: " ..tostring(tTaskInfo.stat).." bQueryRet: "..tostring(bQueryRet))
@@ -717,14 +719,34 @@ function tRabbitFileList:DelTempFile(tFileItem)
 	local bRet = miniTPUtil:DelTempFile(strFileDir, strFileName)
 	Log("[DelTempFile] strFileName: " ..tostring(strFileName).. "  strDir:" ..tostring(strFileDir) .. " bRet: "..tostring(bRet))
 	
-	tipUtil:DeletePathFile(strFilePath)
-	local strTempFile = strFilePath..".td"
-	tipUtil:DeletePathFile(strTempFile)
-	strTempFile = strFilePath..".td.cfg"
-	tipUtil:DeletePathFile(strTempFile)
+	DeletePathFile(strFilePath)
+	
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetOnceTimer(function(item, id)
+		DeletePathFile(strFilePath)
+	end, 5*1000)
 	
 	return bRet
 end
+
+
+function DeletePathFile(strFilePath)
+	if not IsRealString(strFilePath) then
+		return
+	end	
+	
+	local bRet = tipUtil:DeletePathFile(strFilePath)
+	Log("[DelTempFile] DeletePathFile: " ..tostring(strFilePath).." bRet: "..tostring(bRet))
+	
+	local strTempFile = strFilePath..".td"
+	bRet = tipUtil:DeletePathFile(strTempFile)
+	Log("[DelTempFile] DeletePathFile: " ..tostring(strTempFile).." bRet: "..tostring(bRet))
+	
+	strTempFile = strFilePath..".td.cfg"
+	bRet = tipUtil:DeletePathFile(strTempFile)
+	Log("[DelTempFile] DeletePathFile: " ..tostring(strTempFile).." bRet: "..tostring(bRet))
+end
+
 
 function tRabbitFileList:ParseThunderPrivateUrl(strThunderUrl)
 	Log("[ParseThunderPrivateUrl] strThunderUrl = "..tostring(strThunderUrl))
@@ -789,9 +811,7 @@ function CheckFileItemForDownload(tFileItem)
 end
 
 
-
 XLSetGlobal("Project.RabbitFileList", tRabbitFileList)
-
 
 ------------------
 function IsRealString(str)
