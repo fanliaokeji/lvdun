@@ -17,6 +17,7 @@ public:
 	static int MiniTPTaskDelete(lua_State* luaState);
 	static int MiniTPTaskStart(lua_State* luaState);
 	static int MiniTPTaskPause(lua_State* luaState);
+	static int MiniTPTaskForcePause(lua_State* luaState);
 	//static int MiniTPTaskQuery(lua_State* luaState);
 	static int MiniTPTaskQueryEx(lua_State* luaState);
 	static int MiniTPLimitSpeed(lua_State* luaState);

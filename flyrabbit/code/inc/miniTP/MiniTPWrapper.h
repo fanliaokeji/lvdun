@@ -9,6 +9,7 @@ typedef HANDLE  (*fn_TaskCreate)(DownTaskParam &stParam);
 typedef BOOL    (*fn_TaskDelete)(HANDLE hTask);
 typedef BOOL	(*fn_TaskStart) (HANDLE hTask);
 typedef BOOL	(*fn_TaskPause) (HANDLE hTask);
+typedef BOOL	(*fn_TaskForcePause) (HANDLE hTask);
 typedef BOOL	(*fn_TaskQuery) (HANDLE hTask,DownTaskInfo &stTaskInfo);
 typedef BOOL	(*fn_TaskQueryEx) (HANDLE hTask,DownTaskInfo &stTaskInfo);
 typedef void	(*fn_LimitSpeed)(INT32 nKBps);
@@ -59,6 +60,8 @@ public:
 		CHECKFUNC(_TaskStart); 
 		_TaskPause				= (fn_TaskPause)				::GetProcAddress(m_hModule, "XL_StopTask");
 		CHECKFUNC(_TaskPause);
+		_TaskForcePause			= (fn_TaskForcePause)			::GetProcAddress(m_hModule, "XL_ForceStopTask");
+		CHECKFUNC(_TaskForcePause);
 		_TaskQuery				= (fn_TaskQuery)				::GetProcAddress(m_hModule, "XL_QueryTaskInfo");
 		CHECKFUNC(_TaskQuery); 
 		_TaskQueryEx			= (fn_TaskQueryEx)				::GetProcAddress(m_hModule, "XL_QueryTaskInfoEx");
@@ -95,6 +98,8 @@ public:
 	{return _TaskStart(hTask);}
 	BOOL TaskPause(HANDLE hTask)
 	{return _TaskPause(hTask);}
+	BOOL TaskForcePause(HANDLE hTask)
+	{return _TaskForcePause(hTask);}
 	BOOL TaskQuery(HANDLE hTask, DownTaskInfo & stTaskInfo)
 	{return _TaskQuery(hTask,stTaskInfo);}
 	BOOL TaskQueryEx(HANDLE hTask, DownTaskInfo & stTaskInfo)
@@ -127,6 +132,7 @@ private:
 	fn_TaskDelete				_TaskDelete;
 	fn_TaskStart				_TaskStart;
 	fn_TaskPause				_TaskPause;
+	fn_TaskForcePause           _TaskForcePause;
 	fn_TaskQuery				_TaskQuery;
 	fn_TaskQueryEx				_TaskQueryEx;
 	fn_LimitSpeed				_LimitSpeed;
