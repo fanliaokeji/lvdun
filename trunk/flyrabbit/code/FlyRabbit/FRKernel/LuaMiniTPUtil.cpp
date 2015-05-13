@@ -21,6 +21,7 @@ XLLRTGlobalAPI LuaMiniTPUtil::LuaMiniTPMemberFunctions[] =
 	{"TaskDelete", MiniTPTaskDelete},
 	{"TaskStart", MiniTPTaskStart},
 	{"TaskPause", MiniTPTaskPause},
+	{"TaskForcePause", MiniTPTaskForcePause},
 	{"TaskQueryEx", MiniTPTaskQueryEx},
 	{"LimitSpeed", MiniTPLimitSpeed},
 	{"LimitUploadSpeed", MiniTPLimitUploadSpeed},
@@ -202,6 +203,19 @@ int LuaMiniTPUtil::MiniTPTaskPause(lua_State* pLuaState)
 	}
 	HANDLE hTask = (HANDLE)lua_touserdata(pLuaState, 2);
 	BOOL bRet = gMiniTPWrapper.TaskPause(hTask);
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaMiniTPUtil::MiniTPTaskForcePause(lua_State* pLuaState)
+{
+	LuaMiniTPUtil** ppUtil = (LuaMiniTPUtil **)luaL_checkudata(pLuaState, 1, MiniTP_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	HANDLE hTask = (HANDLE)lua_touserdata(pLuaState, 2);
+	BOOL bRet = gMiniTPWrapper.TaskForcePause(hTask);
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
