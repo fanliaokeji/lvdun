@@ -1,0 +1,7 @@
+function GetSubTable()
+	local t = {
+		["strServerConfigURL"] = "http://www.feitwo.com/update/1.0/RabbitServerConfig.dat", 
+		["strIndexURL"] = "http://www.feitwo.com", 
+	}
+	return t
+end
