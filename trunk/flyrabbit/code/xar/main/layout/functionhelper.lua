@@ -885,7 +885,7 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	local strConfigURL = tUserConfig["strServerConfigURL"]
 	
 	if not IsRealString(strConfigURL) then
-		strConfigURL = "http://www.feitwo.com/update/1.0/RabbitServerConfig.dat"
+		strConfigURL = "http://dl.feitwo.com/update/1.0/RabbitServerConfig.dat"
 	end
 	
 	local strConfigName = GetFileSaveNameFromUrl(strConfigURL)
