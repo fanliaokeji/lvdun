@@ -1392,12 +1392,7 @@ function GetDiskSizeInByte(strDirPath)
 		return -1
 	end
 	
-	local nFreeSizeInByte = 1
-	if nAvailableInByte > 1024 then
-		nFreeSizeInByte = math.floor(nAvailableInByte/1024)
-	end
-	
-	return nFreeSizeInByte
+	return nAvailableInByte
 end
 
 
