@@ -882,11 +882,10 @@ end
 
 function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
-	
 	local strConfigURL = tUserConfig["strServerConfigURL"]
+	
 	if not IsRealString(strConfigURL) then
-		fnCallBack(-1)
-		return
+		strConfigURL = "http://www.feitwo.com/update/1.0/RabbitServerConfig.dat"
 	end
 	
 	local strConfigName = GetFileSaveNameFromUrl(strConfigURL)
@@ -1524,6 +1523,7 @@ obj.CheckIsNewVersion = CheckIsNewVersion
 obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
 obj.GetFileDirFromPath = GetFileDirFromPath
 obj.CheckMD5 = CheckMD5
+obj.DownLoadFileWithCheck = DownLoadFileWithCheck
 
 obj.NewAsynGetHttpFile = NewAsynGetHttpFile
 obj.GetProgramTempDir = GetProgramTempDir
@@ -1533,6 +1533,7 @@ obj.GetMinorVer = GetMinorVer
 obj.GetTimeStamp = GetTimeStamp
 obj.OpenFolderDialog = OpenFolderDialog
 obj.UrlEncode = UrlEncode
+obj.SetWndForeGround = SetWndForeGround
 
 --UI
 obj.GetMainWndInst = GetMainWndInst

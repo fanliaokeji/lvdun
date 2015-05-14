@@ -68,6 +68,7 @@ function BeginDownLoad(self)
 	local bRet = CreateNewTask(ctrl)
 	if bRet then
 		OnClose(self)
+		ShowMainPanle()
 	end
 end
 
@@ -131,25 +132,7 @@ end
 
 function OnChangeSavePath(self)
 	local objRootLayout = self:GetOwnerControl()
-	-- local attr = objRootLayout:GetAttribute()
-	-- local strSaveDir = self:GetText()
-	-- local _, _, strDiskName = string.find(tostring(strSaveDir), "^(.):\\.*")
-	-- if not IsRealString(strDiskName) then
-		-- attr.strDiskInfo = nil
-		-- ShowDiskInfo(objRootLayout)
-		-- return
-	-- end
-	-- local bRet, strFormatSize = GetDiskSizeFromUI(strDiskName .. ":\\")
-	-- if bRet and IsRealString(strFormatSize) then
-		-- local strDiskInfo = strDiskName.."盘剩余空间:"..strFormatSize
-		-- if attr.strDiskInfo ~= strDiskInfo then
-			-- attr.strDiskInfo = strDiskInfo
-			-- ShowDiskInfo(objRootLayout)
-		-- end
-	-- else
-		-- attr.strDiskInfo = nil
-		-- ShowDiskInfo(objRootLayout)
-	-- end
+
 	SetDiskAttribute(objRootLayout)
 	ShowDiskInfo(objRootLayout)
 end
@@ -243,16 +226,7 @@ function ResetAllText(objRootLayout)
 	
 	local strSaveDir = tFunHelper.GetDownFileSaveDir()
 	objDirEdit:SetText(strSaveDir)	
-	
-	-- local _, _, strDiskName = string.find(tostring(strSaveDir), "^(.):\\.*")
-	-- if IsRealString(strDiskName) then
-		-- local bRet, strFormatSize = GetDiskSizeFromUI(strDiskName .. ":\\")
-		-- if bRet and IsRealString(strFormatSize) then
-			-- strDiskInfo = strDiskName.."盘剩余空间:"..strFormatSize
-			-- local attr = objRootLayout:GetAttribute()
-			-- attr.strDiskInfo = strDiskInfo
-		-- end
-	-- end	
+
 	SetDiskAttribute(objRootLayout)
 	ShowDiskInfo(objRootLayout)
 end
@@ -380,6 +354,16 @@ end
 function ShowDescMessage(objRootLayout, strMessage)
 	local objFileDesc = objRootLayout:GetControlObject("NewTask.FileDesc.Text")
 	objFileDesc:SetText(strMessage)
+end
+
+
+function ShowMainPanle()
+	local objHostWnd = tFunHelper.GetMainWndInst()
+	if objHostWnd then
+		objHostWnd:Show(5)
+		tFunHelper.SetWndForeGround(objHostWnd)
+		objHostWnd:BringWindowToTop(true)
+	end
 end
 
 -----------

@@ -41,7 +41,17 @@ end
 
 
 function OnSelect_OfficialWeb(self)
-	OpenConfigURL("strIndexURL")
+	if type(tFunctionHelper.ReadConfigFromMemByKey) ~= "function" then
+		return
+	end
+	
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local strIndexURL = tUserConfig["strIndexURL"]
+	if not IsRealString(strIndexURL) then
+		strIndexURL = "http://www.feitwo.com"
+	end	
+	
+	tipUtil:OpenURL(strIndexURL)
 end
 
 
