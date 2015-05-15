@@ -1,0 +1,18 @@
+<XLUE>
+	<resource>
+		<color id="system.black" red="0" green="0" blue="0" alpha="255" />
+		<color id="system.gray" red="204" green="211" blue="214" alpha="255"/>
+		<color id="system.blue" red="0" green="0" blue="255" alpha="255" />
+		<color id="system.white" red="255" green="255" blue="255" alpha="255" />
+		<color id="system.red" red="255" green="0" blue="0" alpha="255" />
+			
+		<color id="333333" value="#333333" />
+		<color id="808080" value="#808080" />
+		<color id="262624" value="#262624" />
+		<color id="4D4D4D" value="#4D4D4D" />
+		<color id="CCCCCC" value="#CCCCCC" />
+		<color id="FF9933" value="#FF9933" />
+		<color id="626262" value="#626262" />
+		<color id="EA5B34" value="#EA5B34" />
+	</resource>
+</XLUE>

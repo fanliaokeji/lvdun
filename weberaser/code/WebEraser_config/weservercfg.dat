@@ -1,0 +1,37 @@
+function GetSubTable()
+	local t = {
+		["tNewVersionInfo"] = {
+			["strVersion"] = "1.0.0.2",
+			["strPacketURL"] = "http://down.52jsqx.com/client/adcleansetup__0001.exe",
+			["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
+			["tInroduce"] = {
+				"1.修复部分bug",
+				"",
+				"",
+			},
+			
+			["tForceUpdate"] = {
+				["strVersion"] = "1.0.0.2",
+				["tVersion"] = {"1"},
+				["strPacketURL"] = "http://down.52jsqx.com/client/adcleansetup__0001.exe",
+				["strMD5"] = "8187B02147A2864789DAFE49A667B8A4",
+			},
+		},
+		
+		["tServerData"] = {
+			["tServerDataW"] = {
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerADCVideo.dat",
+				["strMD5"] = "D5A605FF37D902420BAA058CA5D31806",
+			},
+			["tServerDataV"] = {
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerADCWeb.dat",
+				["strMD5"] = "9757D329685A4958537D51714F8E7180",
+			},
+			["tServerWhite"] = {
+				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerADCWhite.dat",
+				["strMD5"] = "9757D329685A4958537D51714F8E7180",
+			},
+		},
+	}
+	return t
+end
