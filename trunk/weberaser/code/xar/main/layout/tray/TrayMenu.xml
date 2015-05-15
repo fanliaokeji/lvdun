@@ -1,0 +1,105 @@
+<xlue>
+	<objtemplate id="menu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>0</ItemTop>
+			<ItemLeft>5</ItemLeft>
+			<ItemRight>11</ItemRight>
+		</attr>
+		<children>
+			<obj id="sysboot" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>开机启动</Text>
+					<Icon>MenuItem.Check</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Sysboot" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Sysboot" />
+				</eventlist>
+			</obj>
+			
+			<obj id="filterstate" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>开启实时拦截</Text>
+					<Icon>MenuItem.Check</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Filter" />
+					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Filter" />
+				</eventlist>
+			</obj>
+			
+			<obj id="update" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>软件升级</Text>
+					<Icon>MenuItem.Update</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Update" />
+				</eventlist>
+			</obj>
+			
+			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>关于广告清道夫</Text>
+					<Icon>MenuItem.About</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_About" />
+				</eventlist>
+			</obj>
+			<obj id="exit" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>退出</Text>
+					<Icon>MenuItem.Quit</Icon>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Exit" />
+				</eventlist>
+			</obj>
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="TrayMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>198</width>
+			<height>186</height>
+		</attr>
+		
+		<obj id="TrayMenu.Main" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>198</width>
+				<height>186</height>
+				<texture>Tray.Main.Bkg</texture>
+			</attr>
+			<children>
+				<obj id="TrayMenu.Title.Text" class="TextObject">
+					<attr>
+						<left>20</left>
+						<top>5</top>
+						<width>father.width</width>
+						<height>29</height>
+						<text>当天累计拦截广告 次</text>
+						<textcolor>system.white</textcolor>
+						<font>font.yahei12</font>
+						<valign>center</valign>
+					</attr>
+				</obj>
+				
+				<obj id="TrayMenu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>35</top>
+						<width>father.width</width>
+						<height>father.height-40</height>
+						<ContextID>menu.context</ContextID>
+						<!--BknID>Tray.Main.Bkg</BknID-->
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
