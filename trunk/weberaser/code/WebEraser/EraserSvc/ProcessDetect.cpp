@@ -151,7 +151,7 @@ bool ProcessDetect::IsGreenShieldRunning()
 
 bool ProcessDetect::IsGreenShieldSetupRunning()
 {
-	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{F3DAF570-0C73-45e6-8D92-82D300ABBEDF}_INSTALL_MUTEX");
+	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{D8BD00DC-74BF-45ad-B8CB-61CB31C2CE84}_INSTALL_MUTEX");
 	if(hMutex != NULL) {
 		::CloseHandle(hMutex);
 		hMutex = NULL;
@@ -162,7 +162,7 @@ bool ProcessDetect::IsGreenShieldSetupRunning()
 
 bool ProcessDetect::IsGreenShieldOrGreenShieldSetupRunning()
 {
-	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{F3DAF570-0C73-45e6-8D92-82D300ABBEDF}_INSTALL_MUTEX");
+	HANDLE hMutex = ::OpenMutex(SYNCHRONIZE, FALSE, L"Global\\{D8BD00DC-74BF-45ad-B8CB-61CB31C2CE84}_INSTALL_MUTEX");
 	if(hMutex != NULL) {
 		::CloseHandle(hMutex);
 		hMutex = NULL;
