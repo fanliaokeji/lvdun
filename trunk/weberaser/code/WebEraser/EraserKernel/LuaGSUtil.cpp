@@ -42,12 +42,15 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"LoadWebRules",LoadWebRules},
 	{"LoadVideoRules",LoadVideoRules},
 	{"LoadUserRules",LoadUserRules},
+	{"LoadRedirectRules", LoadRedirectRules},
 
 	{"AddVideoHost",AddVideoHost},
 	{"AddWhiteHost",AddWhiteHost},
 	{"UpdateVideoHost",UpdateVideoHost},
 	{"UpdateWhiteHost",UpdateWhiteHost},
 	
+	{"EnableRedirect", EnableRedirect},
+
 	{"GSFilter", FGSFilter},
 	{"Exit", Exit},	
 	{"GetPeerId", GetPeerId},
@@ -261,6 +264,39 @@ int LuaGSUtil::LoadUserRules(lua_State* pLuaState)
 	BOOL bRet = FALSE;
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
+}
+
+int LuaGSUtil::LoadRedirectRules(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	if (!lua_isstring(pLuaState,2))
+	{
+		return 0;
+	}
+
+	BOOL bRet = FALSE;
+	const char* utf8CfgPath = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrPath;
+	LuaStringToCComBSTR(utf8CfgPath,bstrPath);
+	if (::PathFileExists(bstrPath.m_str))
+	{
+		if (GsGetRedirectRules(bstrPath.m_str))
+		{
+			bRet = TRUE;
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+int LuaGSUtil::EnableRedirect(lua_State* pLuaState)
+{
+	GsEnableRedirect(lua_toboolean(pLuaState, 1));
+	return 0;
 }
 
 int LuaGSUtil::AddVideoHost(lua_State* pLuaState)
