@@ -1,4 +1,4 @@
-LIBRARY	"GSPre"
+LIBRARY	"EraserKernel"
 
 EXPORTS
 InitXLUE
