@@ -12,7 +12,7 @@
 #pragma comment(lib, "Version.lib")
 
 #define TSLOG
-#define GS_GROUP "GS"	//可选,默认为 "TSLOG"
+#define GS_GROUP "WE"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>				//如上配置,日志程序将根据 C:\TSLOG_CONFIG\TSLOG.ini 定义的策略打印
 #include <shellapi.h>
 #include <tlhelp32.h>
@@ -191,7 +191,7 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\ADClean";
+	LPCSTR data_Set= "Software\\WebEarser";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
@@ -213,7 +213,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "ADClean", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "WebEarser", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}

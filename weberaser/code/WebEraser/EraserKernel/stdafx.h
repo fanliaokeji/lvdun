@@ -59,7 +59,7 @@
 
 // TODO: reference additional headers your program requires here
 #define TSLOG
-#define GS_GROUP "GS"	//可选,默认为 "TSLOG"
+#define WE_GROUP "WE"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>
 
 #include "LuaAPIHelper.h"

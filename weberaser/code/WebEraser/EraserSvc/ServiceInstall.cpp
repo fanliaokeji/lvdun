@@ -114,7 +114,7 @@ bool IsServiceInstalled()
 bool CopyFilesToPublicFolder()
 {
 	wchar_t* dependFiles[] = {
-		L"CleanSvc.dll",
+		L"EraserSvc.dll",
 		L"Microsoft.VC90.CRT.manifest",
 		L"msvcp90.dll",
 		L"msvcr90.dll",

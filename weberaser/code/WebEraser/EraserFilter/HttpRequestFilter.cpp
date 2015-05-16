@@ -40,7 +40,7 @@ bool HttpRequestFilter::Enable(bool enable, unsigned short listen_port)
 	XMLib::CriticalSectionLockGuard lck(this->cs);
 	this->m_enable = enable;
 	if(this->m_hIPCFileMapping == NULL) {
-		this->m_hIPCFileMapping = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4 * 1024, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}CleanFilterEnable");
+		this->m_hIPCFileMapping = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4 * 1024, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}WebEarserFilterEnable");
 		if(this->m_hIPCFileMapping == NULL) {
 			return false;
 		}

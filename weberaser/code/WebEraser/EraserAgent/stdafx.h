@@ -43,7 +43,7 @@
 #include <WTL/atlcrack.h>
 #include <XLLuaRuntime.h>
 #define TSLOG
-#define GS_GROUP "GS"	//可选,默认为 "TSLOG"
+#define WE_GROUP "WE"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>
 
 
