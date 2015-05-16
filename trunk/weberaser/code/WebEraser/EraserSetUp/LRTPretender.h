@@ -26,7 +26,7 @@ public:
 		::PathCombine(szLuaPath,szModulePath,_T("dclsetupload.dat"));
 
 		wchar_t szLuaAgent[MAX_PATH] = {0};
-		::PathCombine(szLuaAgent,szModulePath,_T("CleanLuaAgent.dll"));
+		::PathCombine(szLuaAgent,szModulePath,_T("EraserAgent.dll"));
 
 		if (!::PathFileExists(szLuaPath) || !::PathFileExists(szLuaAgent))
 		{

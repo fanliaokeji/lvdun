@@ -72,7 +72,7 @@ BEGIN
             VALUE "CompanyName", "深圳市醇世德贸易有限公司"
             VALUE "FileDescription", "EraserSvc Module"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "CleanSvc"
+            VALUE "InternalName", "EraserSvc"
             VALUE "LegalCopyright", "Copyright (c) 2015 深圳市醇世德贸易有限公司"
             VALUE "OriginalFilename", "EraserSvc.dll"
             VALUE "ProductName", "广告橡皮擦"

@@ -214,16 +214,16 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 #define TRACE TSTRACE
 
-#define TSLOG_GROUP_DEFAULT "GS" 
+#define TSLOG_GROUP_DEFAULT "WE" 
 
 //默认宏定义
 #ifndef TSLOG_GROUP
-#define TSLOG_GROUP "GS"
+#define TSLOG_GROUP "WE"
 #pragma message("warning: undefine macro 'TSLOG_GROUP', default : [#define TSLOG_GROUP \"" TSLOG_GROUP "\"]")
 #endif
 //默认配置目录
 #ifndef TSLOG_CONFIG_DIR
-#define TSLOG_CONFIG_DIR "C:\\GS_CONFIG\\"
+#define TSLOG_CONFIG_DIR "C:\\WE_CONFIG\\"
 //#pragma message("warning: undefine macro 'TSLOG_CONFIG_DIR', default : [#define TSLOG_CONFIG_DIR \"" TSLOG_CONFIG_DIR "\"]")
 #endif
 
@@ -257,7 +257,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #define MAX_HEX_DUMP_SIZE  		512
 #define MAX_ENVTSLOG_SIZE		128
 //no config, default
-#define DEFAULT_LOGFILE_PATH				"C:\\GSLOG\\"
+#define DEFAULT_LOGFILE_PATH				"C:\\WELOG\\"
 #define __TDEFAULT_LOGFILE_PATH				_T(DEFAULT_LOGFILE_PATH)
 #define DEFAULT_MAX_LOGFILE_SIZE			20480
 #define MAX_MAX_LOGFILE_SIZE				(DEFAULT_MAX_LOGFILE_SIZE * 100)

@@ -27,7 +27,7 @@
 // #include <WTL/atldlgs.h>
 // #include <WTL/atlcrack.h>
 #define TSLOG
-#define GS_GROUP "GS"
+#define WE_GROUP "WE"
 #include <tslog\tslog.h>
 
 extern CAppModule _Module;

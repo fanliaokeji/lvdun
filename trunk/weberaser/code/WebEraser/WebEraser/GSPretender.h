@@ -42,7 +42,7 @@ public:
 
 		//º”‘ÿGSPre.dll
 
-		m_hGSPre = LoadLibrary(_T("CleanPre.dll"));
+		m_hGSPre = LoadLibrary(_T("EraserKernel.dll"));
 		if (NULL == m_hGSPre)
 		{
 			return;

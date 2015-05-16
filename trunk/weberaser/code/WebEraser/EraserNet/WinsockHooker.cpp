@@ -75,7 +75,7 @@ unsigned __stdcall WaitForQueryRemoteAddressThreadProc(void *arg)
 	if(dwWaitResult != WAIT_OBJECT_0) {
 		return 0;
 	}
-	std::wstring fileMappingName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSharedMemory_";
+	std::wstring fileMappingName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}WebEarserPDIPCSharedMemory_";
 	std::wstring local_port_str;
 	{
 		std::wstringstream wss;
@@ -108,7 +108,7 @@ unsigned __stdcall WaitForQueryRemoteAddressThreadProc(void *arg)
 		std::memcpy(sharedMemeryBuffer, ip_and_port, sizeof(ip_and_port));
 	}
 
-	std::wstring ackEventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncAckEvent_";
+	std::wstring ackEventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}WebEarserPDIPCSyncAckEvent_";
 	ackEventName += local_port_str;
 	HANDLE hAckEvent = ::OpenEvent(EVENT_MODIFY_STATE, FALSE, ackEventName.c_str());
 	if(hAckEvent == NULL) {
@@ -156,7 +156,7 @@ int WSAAPI WinsockHooker::Hooked_connect(SOCKET s, const struct sockaddr *name, 
 			}
 		}
 		if(local_port != 0) {
-			std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncEvent_";
+			std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}WebEarserPDIPCSyncEvent_";
 			std::wstring port_str;
 			{
 				std::wstringstream wss;
@@ -286,7 +286,7 @@ BOOL WSAAPI WinsockHooker::Hooked_ExtendConnectEx(SOCKET s, const struct sockadd
 				}
 			}
 			if(local_port != 0) {
-				std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}ADCleanPDIPCSyncEvent_";
+				std::wstring eventName = L"Local\\{D3855530-84CD-4009-8920-793E798EEA87}WebEarserPDIPCSyncEvent_";
 				std::wstring port_str;
 				{
 					std::wstringstream wss;
@@ -361,7 +361,7 @@ void WinsockHooker::DetachHook()
 
 bool WinsockHooker::IsEnable(unsigned short* proxy_port)
 {
-	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}CleanFilterEnable");
+	HANDLE hFileMapping = ::OpenFileMapping(FILE_MAP_READ, FALSE, L"Local\\{ED30EC84-F8F0-4D7E-83B5-942E4E3DD5DA}WebEarserFilterEnable");
 	if(hFileMapping == NULL) {
 		return false;
 	}

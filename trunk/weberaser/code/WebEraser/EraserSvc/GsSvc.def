@@ -1,4 +1,4 @@
-LIBRARY	"CleanSvc"
+LIBRARY	"EraserSvc"
 EXPORTS
 	DllMain					PRIVATE
 	ServiceMain				PRIVATE
