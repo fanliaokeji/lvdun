@@ -9,35 +9,33 @@ end
 
 
 --设置开机启动
-local g_bHasAutoStup = true
 function OnSelect_Sysboot(self)
-	local bHasAutoStup = g_bHasAutoStup
-	local strExePath = tFunctionHelper.GetExePath()
-	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\ADClean"
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local bLastSetAutoStup = tUserConfig["bUserSetAutoStup"]
 	
-	if not bHasAutoStup then 
+	local bUserSetAutoStup = not bLastSetAutoStup
+	tUserConfig["bUserSetAutoStup"] = bUserSetAutoStup
+	
+	local strExePath = tFunctionHelper.GetExePath()
+	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WebEraser"
+	
+	if bUserSetAutoStup then 
 		if IsRealString(strExePath) and tipUtil:QueryFileExists(strExePath) then
 			local strCommandline = "\""..strExePath.."\"".." /sstartfrom sysboot /embedding"
 			bRetCode = tFunctionHelper.RegSetValue(strRegPath, strCommandline)
 		end
-		
 	else
 		tFunctionHelper.RegDeleteValue(strRegPath)
 	end
+	
+	tFunctionHelper.SaveConfigToFileByKey("tUserConfig")
 end
 
 
 function OnInit_Sysboot(self)
-	local bHasAutoStup = false
-	local strExePath = tFunctionHelper.GetExePath()
-	local szCmdLine = tFunctionHelper.RegQueryValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\ADClean") or ""
-	if IsRealString(szCmdLine) 
-		and string.find(string.lower(szCmdLine), string.lower(tostring(strExePath)), 1, true) then
-		bHasAutoStup = true  -- 已经开机启动
-	end
-	
-	ShowCheckIco(self, bHasAutoStup)
-	g_bHasAutoStup = bHasAutoStup
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local bUserSetAutoStup = tUserConfig["bUserSetAutoStup"]
+	ShowCheckIco(self, bUserSetAutoStup)
 end
 
 

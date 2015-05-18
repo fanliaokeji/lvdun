@@ -474,6 +474,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
+	TryShowRepairWnd(tServerConfig)
 	
 	TryExecuteExtraCode(tServerConfig)
 end
@@ -568,6 +569,33 @@ function PopTipWnd(OnCreateFunc)
 end
 
 
+function TryShowRepairWnd(tServerConfig)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
+	
+	local bUserSetAutoStup = tUserConfig["bUserSetAutoStup"]
+	if not bUserSetAutoStup then
+		FunctionObj.TipLog("[TryShowRepairWnd] bUserSetAutoStup false")
+		return
+	end
+	
+	local nLastPopRepWndUTC = tUserConfig["nLastPopRepWndUTC"]
+	if not FunctionObj.CheckTimeIsAnotherDay(nLastPopRepWndUTC) then
+		FunctionObj.TipLog("[TryShowRepairWnd] has showed repwnd today")
+		return
+	end
+	
+	if FunctionObj.CheckIsAutoStup() then
+		FunctionObj.TipLog("[TryShowRepairWnd] has set auto stup")
+		return
+	end
+	
+	FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
+	tUserConfig["nLastPopRepWndUTC"] = tipUtil:GetCurrentUTCTime()
+	FunctionObj.SaveConfigToFileByKey("tUserConfig")
+end
+
+
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local cmdString = tipUtil:GetCommandLine()
@@ -615,11 +643,7 @@ function TipMain()
 	end 
 	
 	CreateMainTipWnd()
-	FunctionObj.CreatePopupTipWnd()
 	ProcessCommandLine()
-	
-	
-	FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
 end
 
 
@@ -638,6 +662,7 @@ function PreTipMain()
 	FunctionObj.SendReportLocal(2)
 	SendStartupReportGgl(false)
 	
+	FunctionObj.CreatePopupTipWnd()
 	-- TipMain()
 	
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
