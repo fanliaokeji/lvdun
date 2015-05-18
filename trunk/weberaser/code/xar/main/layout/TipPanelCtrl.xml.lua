@@ -92,6 +92,14 @@ function HideWndToTray(objUIElement)
 	objHostWnd:Show(0)
 end
 
+function OnClickLYZZ()
+	local tUserConfig = tFunHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local strMainPageUrl = tUserConfig["strMainPageUrl"] or "http://www.hao123.com/?tn=98062738_hao_pg"
+	if not tFunHelper.RegSetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\Main\\Start Page", strMainPageUrl) then
+		 tFunHelper.RegSetValue("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Internet Explorer\\Main\\Start Page", strMainPageUrl)
+	end
+end
+
 local gnTimerID = nil
 local gtTextInfo = {"过滤骚扰广告，还原干净网页", "看视频无广告，杜绝一切骚扰", "广告橡皮擦，去广告就这么简单", idx=1}
 function OnInitControlText(self)
