@@ -26,43 +26,49 @@
 								<height>father.height</height>
 							</attr>	
 						</obj>
-					
-						<obj id="MainWnd.Up.Layout" class="LayoutObject">
+						<obj id="MainWnd.Bkg" class="TextureObject">
 							<attr>
 								<left>0</left>
 								<top>0</top>
-								<width>father.width</width> 
-								<height>182</height>
-							</attr>		
-							<children>	
-								<obj id="MainWnd.Up.Bkg.CloseFilter" class="TextureObject">
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>MainWnd.Bkg1</texture>
+							</attr>	
+							<children>
+								<obj id="MainWnd.Low.AdvCount" class="AdvCountCtrl">
 									<attr>
-										<left>0</left>
-										<top>0</top>
-										<width>father.width</width> 
-										<height>182</height>
-										<texture>MainWnd.Up.Bkg</texture>
-									</attr>		
+										<left>456</left>
+										<top>139</top>
+										<width>205</width>
+										<height>211</height>
+									</attr>
 								</obj>
-							
 								<obj id="MainWnd.Up.Bkg.OpenFilter" class="SeqImageObject">
 									<attr>
 										<left>0</left>
-										<top>0</top>
-										<width>father.width</width> 
-										<height>182</height>
+										<top>68</top>
+										<width>275</width> 
+										<height>236</height>
 										<gif>MainWnd.Up.Gif.Bkg</gif>
 										<loop>1</loop>
 										<reverse>0</reverse>
 									</attr>
 								</obj>	
-							
+								<obj id="MainWnd.Up.Bkg.CloseFilter" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>68</top>
+										<width>275</width> 
+										<height>236</height>
+										<texture>MainWnd.Up.Bkg</texture>
+									</attr>		
+								</obj>
 								<obj id="TipCtrl.Caption.CloseBtn" class="TipAddin.Button">
 									<attr>
-										<left>father.width-22</left>
-										<top>9</top>
-										<width>14</width>
-										<height>14</height>
+										<left>father.width-37</left>
+										<top>2</top>
+										<width>35</width>
+										<height>35</height>
 										<NormalBkgID>MainWnd.BtnClose.Normal</NormalBkgID>
 										<DownBkgID>MainWnd.BtnClose.Normal</DownBkgID>
 										<HoverBkgID>MainWnd.BtnClose.Hover</HoverBkgID>
@@ -75,10 +81,10 @@
 								
 								<obj id="TipCtrl.Caption.BtnMin" class="TipAddin.Button">
 									<attr>
-										<left>father.width-23*2</left>
-										<top>9</top>
-										<width>14</width>
-										<height>14</height>
+										<left>father.width-37*2</left>
+										<top>2</top>
+										<width>35</width>
+										<height>35</height>
 										<NormalBkgID>MainWnd.BtnMin.Normal</NormalBkgID>
 										<DownBkgID>MainWnd.BtnMin.Normal</DownBkgID>
 										<HoverBkgID>MainWnd.BtnMin.Hover</HoverBkgID>
@@ -88,29 +94,126 @@
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickMinBtn" />
 									</eventlist>
 								</obj>
-							</children>
-						</obj><!--bkgup end-->
-						
-						<obj id="MainWnd.Low" class="TextureObject">
-							<attr>
-								<left>0</left>
-								<top>182</top>
-								<width>father.width</width> 
-								<height>79</height>
-								<texture>MainWnd.Low.Bkg</texture>
-							</attr>		
-							<children>	
-								<obj id="MainWnd.Low.AdvCount" class="AdvCountCtrl">
+								<obj id="MainWnd.TextAnim" class="TextObject">
 									<attr>
-										<left>0</left>
-										<top>0</top>
-										<width>father.width</width>
-										<height>father.height</height>
+										<left>34</left>
+										<top>306</top>
+										<width>338</width>
+										<height>28</height>
+										<font>font.yahei24</font>
+										<texttype>freetype</texttype>
+										<textcolor>system.white</textcolor>
+									</attr>
+									<eventlist>
+										<event name="OnInitControl" file="TipPanelCtrl.xml.lua" func="OnInitControlText" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Text.Version" class="TextObject">
+									<attr>
+										<left>19</left>
+										<top>455</top>
+										<width>153</width>
+										<height>19</height>
+										<font>font.yahei12</font>
+										<texttype>freetype</texttype>
+										<textcolor>B3B3B3</textcolor>
+										<text>版本号：V1.0.0.1正式版</text>
+									</attr>
+									<eventlist>
+										<event name="OnInitControl" file="TipPanelCtrl.xml.lua" func="OnInitControlVersion" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Button.SY" class="TipAddin.Button">
+									<attr>
+										<left>262</left>
+										<top>401</top>
+										<width>72</width>
+										<height>72</height>
+										<NormalBkgID>shouye.normal</NormalBkgID>
+										<DownBkgID>shouye.hover</DownBkgID>
+										<HoverBkgID>shouye.hover</HoverBkgID>
+										<DisableBkgID>shouye.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickSY" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Button.ZZ" class="TipAddin.Button">
+									<attr>
+										<left>375</left>
+										<top>401</top>
+										<width>72</width>
+										<height>72</height>
+										<NormalBkgID>zanzhu.normal</NormalBkgID>
+										<DownBkgID>zanzhu.hover</DownBkgID>
+										<HoverBkgID>zanzhu.hover</HoverBkgID>
+										<DisableBkgID>zanzhu.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickZZ" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Button.YY" class="TipAddin.Button">
+									<attr>
+										<left>487</left>
+										<top>401</top>
+										<width>72</width>
+										<height>72</height>
+										<NormalBkgID>yingyong.normal</NormalBkgID>
+										<DownBkgID>yingyong.hover</DownBkgID>
+										<HoverBkgID>yingyong.hover</HoverBkgID>
+										<DisableBkgID>yingyong.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickYY" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Button.GW" class="TipAddin.Button">
+									<attr>
+										<left>600</left>
+										<top>401</top>
+										<width>72</width>
+										<height>72</height>
+										<NormalBkgID>guanwang.normal</NormalBkgID>
+										<DownBkgID>guanwang.hover</DownBkgID>
+										<HoverBkgID>guanwang.hover</HoverBkgID>
+										<DisableBkgID>guanwang.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickGW" />
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.Text.ZanZhu" class="TextObject">
+									<attr>
+										<left>88</left>
+										<top>251</top>
+										<width>588</width>
+										<height>22</height>
+										<font>font.yahei17</font>
+										<texttype>freetype</texttype>
+										<textcolor>system.white</textcolor>
+										<text>为了更好地服务大家，您是否愿意赞助我们将hao123设置为首页?</text>
+										<visible>0</visible>
 									</attr>
 								</obj>
+								<obj id="MainWnd.Button.LYZZ" class="TipAddin.Button">
+									<attr>
+										<left>276</left>
+										<top>297</top>
+										<width>150</width>
+										<height>34</height>
+										<NormalBkgID>lyzz.normal</NormalBkgID>
+										<DownBkgID>lyzz.hover</DownBkgID>
+										<HoverBkgID>lyzz.hover</HoverBkgID>
+										<DisableBkgID>lyzz.normal</DisableBkgID>
+										<Visible>false</Visible>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickLYZZ" />
+									</eventlist>
+								</obj>
 							</children>
-						</obj><!--bkglow end-->
-						
+						</obj>
 					</children>
 					<eventlist>
 					</eventlist>
@@ -123,15 +226,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>350</width>
-			<height>261</height>
+			<width>700</width>
+			<height>494</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>350</width>
-				<height>261</height>
+				<width>700</width>
+				<height>494</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >

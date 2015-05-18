@@ -12,55 +12,30 @@
 			
 		</event_def>
 		<objtemplate>
-			<children>
-				<obj id="AdvCountCtrl.Left" class="LayoutObject">
+			<children>	
+				<obj id="AdvCountCtrl.MainWnd.Container" class="LayoutObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>175</width>
-						<height>father.height</height>
+						<width>father.width</width>
+						<height>44</height>
 					</attr>
-					<children>		
-						<obj id="AdvCountCtrl.MainWnd.Container" class="LayoutObject">
-							<attr>
-								<left>0</left>
-								<top>30</top>
-								<width>father.width</width>
-								<height>35</height>
-							</attr>
-						</obj>					
-					
-						<obj id="AdvCountCtrl.MainWnd.Text" class="TextObject">
-							<attr>
-								<left>0</left>
-								<top>0</top>
-								<width>father.width</width>
-								<height>30</height>
-								<text>当天累计拦截广告次数</text>
-								<valign>center</valign>
-								<halign>center</halign>
-								<font>font.yahei13</font>
-								<textcolor>system.white</textcolor>
-							</attr>
-						</obj>		
-					</children>						
-				</obj>	
-				
+				</obj>					
 				<obj id="AdvCountCtrl.Switch.Filter" class="TextureObject">
 					<attr>
-						<left>father.width-(20+115)</left>
-						<top>(father.height-37)/2+8</top>
-						<width>115</width>
-						<height>37</height>
+						<left>0</left>
+						<top>father.height-50</top>
+						<width>father.width</width>
+						<height>50</height>
 						<texture>SwitchFilter.Open</texture>
 						<cursor>IDC_HAND</cursor>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="AdvCountCtrl.xml.lua" func="OnClickSwitchFilter" />
+						<event name="OnMouseEnter" file="AdvCountCtrl.xml.lua" func="OnMouseEnterSwitchFilter" />
+						<event name="OnMouseLeave" file="AdvCountCtrl.xml.lua" func="OnMouseLeaveSwitchFilter" />
 					</eventlist>
 				</obj>
-				
-				
 			</children>
 			<eventlist>
 				<event name="OnInitControl" file="AdvCountCtrl.xml.lua" func="OnInitAdvCount" />
@@ -85,9 +60,9 @@
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>20</width>
-						<height>35</height>
-						<texture>AdvCountElem.Bkg</texture>
+						<width>33</width>
+						<height>44</height>
+						<texture>Number.Bkg_1</texture>
 						<limitchild>1</limitchild>
 					</attr>
 					<children>
@@ -104,8 +79,8 @@
 									<attr>
 										<left>0</left>
 										<top>0</top>
-										<width>20</width>
-										<height>35</height>
+										<width>33</width>
+										<height>44</height>
 									</attr>
 								</obj>	
 							</children>
@@ -123,8 +98,8 @@
 									<attr>
 										<left>0</left>
 										<top>0</top>
-										<width>20</width>
-										<height>35</height>
+										<width>33</width>
+										<height>44</height>
 									</attr>
 								</obj>	
 							</children>

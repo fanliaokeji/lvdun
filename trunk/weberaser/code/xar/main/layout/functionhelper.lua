@@ -601,7 +601,7 @@ function ShowPopupWndByName(strWndName, bSetTop)
 			if hWnd ~= nil then
 				TipLog("[ShowPopupWndByName] success")
 				if bSetTop then
-					frameHostWnd:SetTopMost(true)
+					frameHostWnd:BringWindowToTop(true)
 					tipUtil:SetWndPos(hWnd, 0, 0, 0, 0, 0, 0x0043)
 				else
 					tipUtil:SetWndPos(hWnd, -2, 0, 0, 0, 0, 0x0043)
@@ -625,7 +625,7 @@ function SetWndForeGround(objHostWnd)
 	end
 
 	if not IsUserFullScreen() then
-		objHostWnd:SetTopMost(true)
+		objHostWnd:BringWindowToTop(true)
 		if type(tipUtil.SetWndPos) == "function" then
 			local hWnd = objHostWnd:GetWndHandle()
 			if hWnd ~= nil then

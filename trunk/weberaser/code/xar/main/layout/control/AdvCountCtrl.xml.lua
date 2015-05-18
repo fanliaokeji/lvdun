@@ -51,7 +51,7 @@ end
 function OnClickSwitchFilter(self)
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:ChangeSwitchFilter()
-	
+	OnMouseEnterSwitchFilter(self)
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"
 	tStatInfo.strEA = "filteropen"
@@ -65,6 +65,21 @@ function OnClickSwitchFilter(self)
 	SendReport(tStatInfo)
 end
 
+function OnMouseEnterSwitchFilter(self)
+	if self:GetTextureID() == "SwitchFilter.Open" then
+		self:SetTextureID("SwitchFilter.Open.Hover")
+	elseif self:GetTextureID() == "SwitchFilter.Close" then
+		self:SetTextureID("SwitchFilter.Close.Hover")
+	end
+end
+
+function OnMouseLeaveSwitchFilter(self)
+	if self:GetTextureID() == "SwitchFilter.Open.Hover" then
+		self:SetTextureID("SwitchFilter.Open")
+	elseif self:GetTextureID() == "SwitchFilter.Close.Hover" then
+		self:SetTextureID("SwitchFilter.Close")
+	end
+end
 
 ---------------------------
 function OnInitCountElem(self)
@@ -215,7 +230,7 @@ function InitAdvCount(objRootCtrl)
 	
 	local nFatherLeft, nFatherTop, nFatherRight, nFatherBottom = objFather:GetObjPos(objElem)
 	local nFatherWidth = nFatherRight - nFatherLeft
-	local nElemWidth = 22
+	local nElemWidth = 34
 	
 	for nIndex=1, g_nElemCount do
 		strKey = "AdvCountElem_"..tostring(nIndex)

@@ -9,10 +9,12 @@
 		<font id="font.yahei14" height="14" facename="微软雅黑" /> 
 		<font id="font.yahei15" height="15" facename="微软雅黑" /> 
 		<font id="font.yahei16" height="16" facename="微软雅黑" /> 
+		<font id="font.yahei17" height="17" facename="微软雅黑" />
 		<font id="font.yahei18" height="18" facename="微软雅黑" /> 
 		<font id="font.yahei26" height="26" facename="微软雅黑" /> 
 			
 		<font id="font.yahei20.bold" height="20" facename="微软雅黑" weight="bold" /> 
+		<font id="font.yahei24" height="24" facename="微软雅黑" />
 		
 	</resource>
 </XLUE>
