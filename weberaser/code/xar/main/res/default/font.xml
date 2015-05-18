@@ -14,6 +14,7 @@
 		<font id="font.yahei20" height="20" facename="微软雅黑" /> 
 		<font id="font.yahei26" height="26" facename="微软雅黑" /> 
 			
+		<font id="font.yahei18.bold" height="18" facename="微软雅黑" weight="bold" /> 
 		<font id="font.yahei20.bold" height="20" facename="微软雅黑" weight="bold" /> 
 		<font id="font.yahei24" height="24" facename="微软雅黑" />
 		
