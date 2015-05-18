@@ -79,7 +79,7 @@ function ShowMainTipWnd(objMainWnd)
 		objMainWnd:Show(5)
 	end
 	
-	objMainWnd:SetTitle("广告清道夫")
+	objMainWnd:SetTitle("广告橡皮擦")
 	SendStartupReportGgl(true)
 	WriteLastLaunchTime()
 end
@@ -88,7 +88,7 @@ end
 function WriteLastLaunchTime()	
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
-	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\ADClean\\LastLaunchTime"
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\WebEraser\\LastLaunchTime"
 	FunctionObj.RegSetValue(strRegPath, nCurrnetTime)
 end
 
@@ -251,7 +251,7 @@ end
 
 function GenDecFilePath(strEncFilePath)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
-	local strKey = "adS5m9PE8avRxmbs"
+	local strKey = "GlcKkQ67EW9Htasd"
 	local strDecString = tipUtil:DecryptFileAES(strEncFilePath, strKey)
 	if type(strDecString) ~= "string" then
 		FunctionObj.TipLog("[GenDecFilePath] DecryptFileAES failed : "..tostring(strEncFilePath))
@@ -291,8 +291,8 @@ end
 function SendRuleListtToFilterThread()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 
-	local strWebRulePath = GetRulePath("ServerADCWeb.dat", "ADCWeb.dat")
-	local strVideoRulePath = GetRulePath("ServerADCVideo.dat", "ADCVideo.dat")
+	local strWebRulePath = GetRulePath("serverwecfgw.dat", "wecfgw.dat")
+	local strVideoRulePath = GetRulePath("serverwecfgv.dat", "wecfgv.dat")
 	if not IsRealString(strWebRulePath) or not tipUtil:QueryFileExists(strWebRulePath) 
 	   or not IsRealString(strVideoRulePath) or not tipUtil:QueryFileExists(strVideoRulePath) then
 		return false
@@ -308,6 +308,7 @@ function SendRuleListtToFilterThread()
 		FunctionObj.TipLog("[SendRuleListtToFilterThread] LoadWebRules failed")
 		return false
 	end
+	
 	tipUtil:DeletePathFile(strDecWebRulePath)
 	
 	local strDecVideoRulePath = GenDecFilePath(strVideoRulePath)
@@ -319,6 +320,7 @@ function SendRuleListtToFilterThread()
 		FunctionObj.TipLog("[SendRuleListtToFilterThread] LoadVideoRules failed")
 		return false
 	end
+	
 	tipUtil:DeletePathFile(strDecVideoRulePath)
 	
 	return true
@@ -328,7 +330,7 @@ end
 function SendWhiteListToFilterThread()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 
-	local strWhiteListPath = GetRulePath("ServerADCWhite.dat", "ADCWhite.dat")
+	local strWhiteListPath = GetRulePath("ServerADCWhite.dat", "wewhite.dat")
 	if not IsRealString(strWhiteListPath) or not tipUtil:QueryFileExists(strWhiteListPath) then
 		return false
 	end		
@@ -420,13 +422,13 @@ function CheckServerRuleFile(tServerConfig)
 	local strWhiteListPath = FunctionObj.GetCfgPathWithName("ServerADCWhite.dat")
 	
 	if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
-		strVideoSavePath = FunctionObj.GetCfgPathWithName("ADCVideo.dat")
+		strVideoSavePath = FunctionObj.GetCfgPathWithName("wecfgv.dat")
 	end
 	if not IsRealString(strWebSavePath) or not tipUtil:QueryFileExists(strWebSavePath) then
-		strWebSavePath = FunctionObj.GetCfgPathWithName("ADCWeb.dat")
+		strWebSavePath = FunctionObj.GetCfgPathWithName("wecfgw.dat")
 	end
 	if not IsRealString(strWhiteListPath) or not tipUtil:QueryFileExists(strWhiteListPath) then
-		strWhiteListPath = FunctionObj.GetCfgPathWithName("ADCWhite.dat")
+		strWhiteListPath = FunctionObj.GetCfgPathWithName("wewhite.dat")
 	end
 	
 	local strDataVMD5 = tipUtil:GetMD5Value(strVideoSavePath)
@@ -519,7 +521,7 @@ function StartRunCountTimer()
 		XLSetGlobal("Project.LastReportRunTime", gnLastReportRunTmUTC) 
 	end, nTimeSpanInMs)
 	
-	---清道夫上报
+	---橡皮擦上报
 	local nTimeSpanInMs = 2*60*1000
 	timerManager:SetTimer(function(item, id)
 		FunctionObj.SendReportLocal(10)
@@ -615,6 +617,9 @@ function TipMain()
 	CreateMainTipWnd()
 	FunctionObj.CreatePopupTipWnd()
 	ProcessCommandLine()
+	
+	
+	FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
 end
 
 
