@@ -100,6 +100,10 @@ function OnClickLYZZ()
 	end
 end
 
+function OnClickGW(self)
+	tipUtil:OpenURL("http://www.ggxpc.com")
+end
+
 local gnTimerID = nil
 local gtTextInfo = {"过滤骚扰广告，还原干净网页", "看视频无广告，杜绝一切骚扰", "广告橡皮擦，去广告就这么简单", idx=1}
 function OnInitControlText(self)
