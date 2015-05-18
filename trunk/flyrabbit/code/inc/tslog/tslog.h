@@ -223,7 +223,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 //Ä¬ÈÏÅäÖÃÄ¿Â¼
 #ifndef TSLOG_CONFIG_DIR
-#define TSLOG_CONFIG_DIR "C:\\FR_CONFIG\\"
+#define TSLOG_CONFIG_DIR "%temp%\\FR_CONFIG\\"
 //#pragma message("warning: undefine macro 'TSLOG_CONFIG_DIR', default : [#define TSLOG_CONFIG_DIR \"" TSLOG_CONFIG_DIR "\"]")
 #endif
 
@@ -1779,17 +1779,29 @@ void CTSLog::ResetParams(BOOL bModuleInit)
 }
 BOOL CTSLog::GetConfig(BOOL bModuleInit) //Èç¹ûÃ»ÓÐÅäÖÃÎÄ¼þ£¬½«²»´òÓ¡ÈÕÖ¾£¬ÀúÊ·ÈÕÖ¾Ò²Ã»ÓÐ±ØÒªÉ¾³ý
 {	
+	TCHAR pszConfigFileName[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH, pszConfigFileName, MAX_PATH);
+	
+	TCHAR pszConfigFileName2[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH2, pszConfigFileName2, MAX_PATH);
+
+	TCHAR pszConfigFileNameDefault[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, pszConfigFileNameDefault, MAX_PATH);
+
+	TCHAR pszConfigFileNameDefault2[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, pszConfigFileNameDefault2, MAX_PATH);
+
 	struct _stat stBuf;	
-	if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH, &stBuf)) 
+	if(0 != _tstat(pszConfigFileName, &stBuf)) 
 	{
 		//TSLOG_GROUP.ini²»´æÔÚ
-		if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH2, &stBuf))
+		if(0 != _tstat(pszConfigFileName2, &stBuf))
 		{
 			//TSLOG_GROUP.txtÒ²²»´æÔÚ			
-			if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, &stBuf))
+			if(0 != _tstat(pszConfigFileNameDefault, &stBuf))
 			{
 				//tslog.ini²»´æÔÚ
-				if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, &stBuf))
+				if(0 != _tstat(pszConfigFileNameDefault2, &stBuf))
 				{
 					//tslog.txt²»´æÔÚ
 					ResetParams(FALSE);
@@ -1797,18 +1809,19 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //Èç¹ûÃ»ÓÐÅäÖÃÎÄ¼þ£¬½«²»´òÓ¡ÈÕÖ¾£¬ÀúÊ·È
 				}
 				else 
 				{
-					MoveFile(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, __TTSLOG_CONFIG_FILE_PATH_DEFAULT);
+					MoveFile(pszConfigFileNameDefault2, pszConfigFileNameDefault);
 				}
 			}
-			CopyFile(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, __TTSLOG_CONFIG_FILE_PATH, FALSE);
+			CopyFile(pszConfigFileNameDefault, pszConfigFileName, FALSE);
 		}
 		else
 		{
 			//´æÔÚtslog.txt²»´æÔÚtslog.ini, °Ñ tslog.txt¸ÄÃûÎªtslog.ini
-            MoveFile(__TTSLOG_CONFIG_FILE_PATH2, __TTSLOG_CONFIG_FILE_PATH);
+            MoveFile(pszConfigFileName2, pszConfigFileName);
 		}
 	}
-	LPCTSTR pszConfigFileName = __TTSLOG_CONFIG_FILE_PATH;	
+	//LPCTSTR pszConfigFileName = __TTSLOG_CONFIG_FILE_PATH;	
+	//TCHAR pszConfigFileName[MAX_PATH] = {0};
 	BOOL bWriteConfig = FALSE;
 	BOOL bLastFileLog = m_bFileLog;
 	if((_off_t)0 == stBuf.st_size)
