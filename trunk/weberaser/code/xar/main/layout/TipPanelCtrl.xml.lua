@@ -10,10 +10,13 @@ function SetTipData(self, infoTab)
 end
 
 
-function UpdateMainWndBkg(self)
+function UpdateMainWndBkg(self, bForce)
 	local bFilterOpen = tFunHelper.GetFilterState() 
 	local objCloseBkg = self:GetControlObject("MainWnd.Up.Bkg.CloseFilter")
 	local objOpenBkg = self:GetControlObject("MainWnd.Up.Bkg.OpenFilter")
+	if not objOpenBkg:GetVisible() and not objCloseBkg:GetVisible() and not bForce then
+		return 
+	end
 		
 	if bFilterOpen then
 		objCloseBkg:SetVisible(false)
@@ -149,7 +152,7 @@ function ShowMainPage(ctrl, bIsShow)
 	if bIsShow then
 		local bkg = ctrl:GetControlObject("MainWnd.Bkg")
 		bkg:SetTextureID("MainWnd.Bkg1")
-		ctrl:UpdateMainWndBkg()
+		ctrl:UpdateMainWndBkg(true)
 	end
 end
 
