@@ -3,16 +3,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>176</width>
-			<height>42</height>
+			<width>171</width>
+			<height>40</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>176</width>
-				<height>42</height>
+				<width>171</width>
+				<height>40</height>
 				<texture>BubbleWnd.Bkg</texture>
 			</attr>				
 			<children>					
@@ -22,7 +22,7 @@
 						<top>0</top>
 						<width>father.width</width>
 						<height>father.height</height>
-						<text>不再开启实时拦截</text>
+						<text>不开启实时拦截</text>
 						<textcolor>333333</textcolor>
 						<font>font.yahei14</font>
 						<valign>center</valign>
@@ -34,8 +34,8 @@
 					<attr>
 						<left>father.width-20</left>
 						<top>6</top>
-						<width>13</width>
-						<height>13</height>
+						<width>12</width>
+						<height>12</height>
 						<NormalBkgID>Bubble.BtnClose.Normal</NormalBkgID>
 						<DownBkgID>Bubble.BtnClose.Normal</DownBkgID>
 						<HoverBkgID>Bubble.BtnClose.Hover</HoverBkgID>
@@ -51,9 +51,9 @@
 				<obj id="BubbleWnd.CheckBox" class="TextureObject">
 					<attr>
 						<left>10</left>
-						<top>(father.height-23)/2+1</top>
-						<width>22</width>
-						<height>22</height>
+						<top>(father.height-20)/2+1</top>
+						<width>20</width>
+						<height>20</height>
 						<texture>BubbleWnd.CheckBox.Empty</texture>
 					</attr>
 					<eventlist>
@@ -75,8 +75,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>176</width>
-            <height>42</height>
+            <width>171</width>
+            <height>40</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
