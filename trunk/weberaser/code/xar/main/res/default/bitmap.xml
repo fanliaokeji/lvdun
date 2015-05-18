@@ -21,6 +21,12 @@
 <texture id="MainWnd.Bkg1" image="bitmap\MainWnd.Bkg1.png" />
 <texture id="MainWnd.Bkg2" image="bitmap\MainWnd.Bkg2.png" />
 <texture id="MainWnd.Bkg3" image="bitmap\MainWnd.Bkg3.png" />
+
+<texture id="AboutWnd.Bkg" image="bitmap\AboutWnd.Bkg.png" />
+<texture id="AboutWnd.Top.Logo" image="bitmap\AboutWnd.Top.Logo.png" />
+<texture id="AboutWnd.Center.Logo" image="bitmap\AboutWnd.Center.Logo.png" />
+
+
 		<texture id="ExitRemind.Bkg" image="bitmap\ExitRemind.Bkg.png" />
 		<texture id="PopupWnd.EnterBtn.Normal" image="bitmap\PopupWnd.EnterBtn.Normal.png" />
 		<texture id="PopupWnd.EnterBtn.Hover" image="bitmap\PopupWnd.EnterBtn.Hover.png" />
