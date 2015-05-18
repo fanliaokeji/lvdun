@@ -195,14 +195,16 @@ end
 
 function OnClickYY(self)
 	local ctrl = self:GetOwnerControl()
-	ShowZanZhu(ctrl, false)
-	ShowMainPage(ctrl, false)
 	AsynCall(
 		function()
 			if type(gtAppList) == "table" then
+				ShowZanZhu(ctrl, false)
+				ShowMainPage(ctrl, false)
 				ShowAppList(ctrl, true)
 			else
 				DownLoadAppList(function(strCfgName)
+					ShowZanZhu(ctrl, false)
+					ShowMainPage(ctrl, false)
 					gtAppList = LoadAppList(strCfgName)
 					ShowAppList(ctrl, true)
 				end)
@@ -230,7 +232,7 @@ function DownLoadAppList(fnCallBack)
 	
 	tFunHelper.NewAsynGetHttpFile(strAppListURL, strSavePath, false
 	, function(bRet, strRealPath)
-		TipLog("[InitAppCtrl] bRet:"..tostring(bRet)
+		tFunHelper.TipLog("[InitAppCtrl] bRet:"..tostring(bRet)
 				.." strRealPath:"..tostring(strRealPath))
 		
 		if 0 == bRet then
@@ -308,6 +310,7 @@ function ShowAppList(ctrl, bIsShow)
 				tmpTextObj:SetVAlign("center")
 				tmpTextObj:SetTextFontResID("font.yahei12")
 				tmpTextObj:SetTextColorResID("system.white")
+				tmpTextObj:SetWordEllipsis(true)
 				tmpTextObj:SetText(info["strAppName"])			
 			end
 		end
