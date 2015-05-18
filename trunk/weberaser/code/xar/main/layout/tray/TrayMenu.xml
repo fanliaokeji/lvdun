@@ -40,7 +40,7 @@
 			
 			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>关于广告清道夫</Text>
+					<Text>关于广告橡皮擦</Text>
 					<Icon>MenuItem.About</Icon>
 				</attr>
 				<eventlist>
