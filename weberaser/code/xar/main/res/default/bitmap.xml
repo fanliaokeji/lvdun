@@ -14,9 +14,14 @@
 		<texture id="Tray.Main.Bkg" image="bitmap\Tray.Main.Bkg.png" />
 		
 		<texture id="SwitchFilter.Open" image="bitmap\SwitchFilter.Open.png" />
+<texture id="SwitchFilter.Open.Hover" image="bitmap\SwitchFilter.Open.Hover.png" />
 		<texture id="SwitchFilter.Close" image="bitmap\SwitchFilter.Close.png" />
+<texture id="SwitchFilter.Close.Hover" image="bitmap\SwitchFilter.Close.Hover.png" />
 		<texture id="AdvCountElem.Bkg" image="bitmap\AdvCountElem.Bkg.png" />
 		
+<texture id="MainWnd.Bkg1" image="bitmap\MainWnd.Bkg1.png" />
+<texture id="MainWnd.Bkg2" image="bitmap\MainWnd.Bkg2.png" />
+<texture id="MainWnd.Bkg3" image="bitmap\MainWnd.Bkg3.png" />
 		<texture id="AboutWnd.Bkg" image="bitmap\AboutWnd.Bkg.png" />
 		<texture id="ExitRemind.Bkg" image="bitmap\ExitRemind.Bkg.png" />
 		<texture id="PopupWnd.EnterBtn.Normal" image="bitmap\PopupWnd.EnterBtn.Normal.png" />
@@ -64,6 +69,16 @@
 		
 		<gif id="MainWnd.Up.Gif.Bkg" file="bitmap\MainWnd.Up.Gif.Bkg.gif" />
 		<gif id="UpdateWnd.Loading" file="bitmap\UpdateWnd.Loading.gif" />
+<texture id="guanwang.hover" image="bitmap\guanwang.hover.png"/>
+<texture id="guanwang.normal" image="bitmap\guanwang.normal.png"/>
+<texture id="yingyong.hover" image="bitmap\yingyong.hover.png"/>
+<texture id="yingyong.normal" image="bitmap\yingyong.normal.png"/>
+<texture id="zanzhu.hover" image="bitmap\zanzhu.hover.png"/>
+<texture id="zanzhu.normal" image="bitmap\zanzhu.normal.png"/>
+<texture id="shouye.hover" image="bitmap\shouye.hover.png"/>
+<texture id="shouye.normal" image="bitmap\shouye.normal.png"/>
+<texture id="lyzz.hover" image="bitmap\lyzz.hover.png"/>
+<texture id="lyzz.normal" image="bitmap\lyzz.normal.png"/>
 	</resource>
 </XLUE>
 

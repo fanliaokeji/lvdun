@@ -18,6 +18,7 @@ XLSetGlobal("Project.GetTipStartTime", GetTipStartTime)
 function OnShowWindow(self, bShow)
 	if bShow then
 		gTipStartTime = tipUtil:GetCurrentUTCTime()
+		self:BringWindowToTop(true)
 	end
 end
 
@@ -44,9 +45,23 @@ function PopupInDeskRight(self)
 	return true
 end
 
+function PopupInDeskCenter(self)
+	local objtree = self:GetBindUIObjectTree()
+	local objRootLayout = objtree:GetUIObject("root.layout")
+    local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	
+	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+	local nLayoutWidth = nLayoutR - nLayoutL
+	local nLayoutHeight = nLayoutB - nLayoutT
+	
+	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
+	self:Move( workleft + (workright - nLayoutWidth)/2, worktop + (workbottom - nLayoutHeight)/2, nLayoutWidth, nLayoutHeight)
+
+	return true
+end
 
 function OnCreate( self )
-	 PopupInDeskRight(self)
+	 PopupInDeskCenter(self)
 end
 
 
