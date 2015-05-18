@@ -17,7 +17,7 @@ function OnShowWindow(self, bVisible)
 	local objTree = self:GetBindUIObjectTree()
 	local objHostWnd = objTree:GetBindHostWnd()
 	if objHostWnd then
-		objHostWnd:SetTitle("广告清道夫在线升级")
+		objHostWnd:SetTitle("广告橡皮擦在线升级")
 	end
 	
 	local objRootCtrl = objTree:GetUIObject("root.layout")
@@ -85,12 +85,12 @@ function ShowInstallPanel(self, strInstallPath)
 	objGif:SetVisible(false)
 	objEnterBtn:SetVisible(true)
 	objEnterBtn:SetChildrenVisible(true)
-	objTitle:SetVisible(true)
-	objTitle:SetChildrenVisible(true)
+	objTitle:SetVisible(false)
+	objTitle:SetChildrenVisible(false)
 	
-	strText = "下载完毕，点击更新"
-	objTitle:SetText(strText)
-	-- objEnterBtn:SetText("立即安装")
+	-- strText = "下载完毕，点击更新"
+	-- objTitle:SetText(strText)
+	objEnterBtn:SetText("立即安装")
 	
 	local attr = objRootCtrl:GetAttribute()
 	attr.bInstall = true
@@ -103,13 +103,6 @@ function OnClickCloseBtn(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	objHostWnd:Show(0)
-end
-
-
-function OnClickMinBtn(self)
-	local objTree = self:GetOwner()
-	local objHostWnd = objTree:GetBindHostWnd()
-	objHostWnd:Min()
 end
 
 
@@ -155,6 +148,9 @@ function ShowCheckingImage(objRootCtrl)
 	
 	local objUpdateGif = objRootCtrl:GetControlObject("TipUpdate.CheckUpdate.Loading")
 	objUpdateGif:Play()
+	
+	local objUpdateGif = objRootCtrl:GetControlObject("TipAbout.Center.Layout")
+	objUpdateGif:SetObjPos2(0, 70, "father.width", "father.height-70")
 end
 
 
@@ -165,6 +161,9 @@ function HideCheckingImage(objRootCtrl)
 	
 	local objUpdateGif = objRootCtrl:GetControlObject("TipUpdate.CheckUpdate.Loading")
 	objUpdateGif:Stop()
+	
+	local objUpdateGif = objRootCtrl:GetControlObject("TipAbout.Center.Layout")
+	objUpdateGif:SetObjPos2(0, 30, "father.width", "father.height-70")
 end
 
 
@@ -205,7 +204,7 @@ function ShowDownLoading(objRootCtrl, tNewVersionInfo)
 	
 	local objText = objRootCtrl:GetControlObject("TipUpdate.DownLoading.Text")
 	objText:SetVisible(true)
-	objText:SetText("下载中，请稍候")
+	objText:SetText("下载中...")
 end
 
 
@@ -221,11 +220,11 @@ function ShowErrorPanel(objRootCtrl)
 	objGif:SetVisible(false)
 	objEnterBtn:SetVisible(true)
 	objEnterBtn:SetChildrenVisible(true)
-	objTitle:SetVisible(true)
-	objTitle:SetChildrenVisible(true)
+	objTitle:SetVisible(false)
+	objTitle:SetChildrenVisible(false)
 	
-	objTitle:SetText("新版本下载失败")
-	-- objEnterBtn:SetText("重新下载")
+	-- objTitle:SetText("新版本下载失败")
+	objEnterBtn:SetText("重新下载")
 end
 
 
@@ -275,7 +274,7 @@ function SetVersionText(objRootCtrl)
 	
 	local strVersion = tNewVersionInfo.strVersion
 	
-	local strText = "发现新版本广告清道夫V"..tostring(strVersion)
+	local strText = "发现新版本广告橡皮擦V"..tostring(strVersion)
 	objVersion:SetText(strText)
 	
 	local objText1 = objContent:GetObject("TipUpdate.Content.Text1")

@@ -5,7 +5,7 @@ function OnCreate( self )
 	PopupInDeskRight(self)
 	SetShowText(self)
 	
-	self:SetTitle("关于广告清道夫")
+	self:SetTitle("关于广告橡皮擦")
 end
 
 function OnClickCloseBtn(self)
