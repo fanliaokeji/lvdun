@@ -67,9 +67,9 @@
 				<obj id="ItemBkn" class="TextureObject">
 					<attr>
 						<left>0</left>
-						<top>0</top>
-						<width>father.width</width>
-						<height>26</height>
+						<top>2</top>
+						<width>177</width>
+						<height>23</height>
 						<alpha>255</alpha>
 						<visible>false</visible>
 						<texture>TrayMenu.Select</texture>

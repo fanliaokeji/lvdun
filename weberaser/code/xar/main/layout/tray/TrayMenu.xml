@@ -63,25 +63,25 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>198</width>
-			<height>186</height>
+			<width>187</width>
+			<height>182</height>
 		</attr>
 		
 		<obj id="TrayMenu.Main" class="TextureObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>198</width>
-				<height>186</height>
+				<width>187</width>
+				<height>182</height>
 				<texture>Tray.Main.Bkg</texture>
 			</attr>
 			<children>
 				<obj id="TrayMenu.Title.Text" class="TextObject">
 					<attr>
 						<left>20</left>
-						<top>5</top>
+						<top>3</top>
 						<width>father.width</width>
-						<height>29</height>
+						<height>27</height>
 						<text>当天累计拦截广告 次</text>
 						<textcolor>system.white</textcolor>
 						<font>font.yahei12</font>
