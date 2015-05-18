@@ -49,6 +49,7 @@ function FetchValueByPath(obj, path)
 	return cursor
 end
 
+
 function GetCommandStrValue(strKey)
 	local bRet, strValue = false, nil
 	local cmdString = tipUtil:GetCommandLine()
@@ -78,12 +79,14 @@ function ExitProcess()
 	tipUtil:Exit("Exit")
 end
 
+
 function HideMainWindow()
 	local objMainWnd = GetMainWndInst()
 	if objMainWnd then
 		objMainWnd:Show(0)
 	end
 end
+
 
 function ReportAndExit()
 	local tStatInfo = {}
@@ -150,7 +153,7 @@ function IsUserFullScreen()
 end
 
 function GetBaseRegPath()
-	return "HKEY_LOCAL_MACHINE\\Software\\ADClean\\"
+	return "HKEY_LOCAL_MACHINE\\Software\\WebEraser\\"
 end	
 
 
@@ -253,7 +256,7 @@ function TipConvStatistic(tStat)
 		strEV = 1
 	end
 	
-	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-58613034-1&cid="..tostring(strCID)
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-63070680-1&cid="..tostring(strCID)
 						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
 						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 	
@@ -271,7 +274,7 @@ function TipConvStatistic(tStat)
 	end)
 	
 	local iStatCount = gStatCount
-	if gForceExit and iStatCount > 0 and gTimeoutTimerId == nil then	--开启定时退出定时器
+	if gForceExit and iStatCount > 0 and gTimeoutTimerId == nil then	--开启退出定时器
 		local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 		gTimeoutTimerId = timeMgr:SetTimer(function(Itm, id)
 			Itm:KillTimer(id)
@@ -306,7 +309,6 @@ function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutI
 			end
 		end)
 end
-
 
 
 function CheckMD5(strFilePath, strExpectedMD5) 
@@ -485,6 +487,38 @@ function RegSetValue(sPath, value)
 end
 
 
+function CheckIsAutoStup()
+	local bAutoStup = false
+	local strExePath = GetExePath()
+	local szCmdLine = RegQueryValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WebEraser") or ""
+	if IsRealString(szCmdLine) 
+		and string.find(string.lower(szCmdLine), string.lower(tostring(strExePath)), 1, true) then
+		bAutoStup = true  -- 已经开机启动
+	end
+	
+	return bAutoStup
+end
+
+
+function SetExeAutoStup(bSetStup)
+	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WebEraser"
+	if not bSetStup then   --撤销开机启动
+		RegDeleteValue(strRegPath)
+		return
+	end
+	
+	local bHasAutoStup = CheckIsAutoStup()
+	if bHasAutoStup then 
+		return
+	end
+	
+	local strExePath = GetExePath()
+	if IsRealString(strExePath) and tipUtil:QueryFileExists(strExePath) then
+		local strCommandline = "\""..strExePath.."\"".." /sstartfrom sysboot /embedding"
+		RegSetValue(strRegPath, strCommandline)
+	end
+end
+
 
 function SwitchADCFilter(bOpen)
 	local bSucc = tipUtil:GSFilter(bOpen)
@@ -555,6 +589,7 @@ end
 function ShowPopupWndByName(strWndName, bSetTop)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local frameHostWnd = hostwndManager:GetHostWnd(tostring(strWndName))
+	
 	if frameHostWnd == nil then
 		TipLog("[ShowPopupWindow] GetHostWnd failed: "..tostring(strWndName))
 		return
@@ -695,12 +730,12 @@ function SetNotifyIconState(strText)
 	if not bFilterOpen then
 		strState = "停止拦截"
 	end
-	local strDefaultText = "广告清道夫\r\n状态："..strState.."\r\n今日累计拦截："..tostring(nFilterCount).."次"
+	local strDefaultText = "广告橡皮擦\r\n状态："..strState.."\r\n今日累计拦截："..tostring(nFilterCount).."次"
 	
 	local strResImageDir = __document .. "\\..\\..\\..\\..\\res"
-	local strImageName = "ADClean.TrayIcon.Close.ico"
+	local strImageName = "WebEraser.TrayIcon.Close.ico"
 	if bFilterOpen then
-		strImageName = "ADClean.TrayIcon.Open.ico"
+		strImageName = "WebEraser.TrayIcon.Open.ico"
 	end
 	
 	local strImagePath = strResImageDir.. "\\".. strImageName
@@ -742,12 +777,6 @@ function PopupBubbleOneDay()
 	if not IsNilString(nNoShowFilterBubble) then
 		return
 	end
-	
-	-- if g_tipNotifyIcon then
-		-- PopupNotifyIconTip("广告清道夫\r\n已开始为您过滤骚扰广告", true)
-		-- tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
-		-- SaveConfigToFileByKey("tUserConfig")
-	-- end
 	
 	ShowPopupWndByName("TipFilterBubbleWnd.Instance", true)
 	tUserConfig["nLastBubbleUTC"] = tipUtil:GetCurrentUTCTime()
@@ -830,13 +859,13 @@ end
 -----------------------托盘
 
 
-
 --弹出窗口--
 local g_tPopupWndList = {
 	[1] = {"TipAboutWnd", "TipAboutTree"},
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipUpdateWnd", "TipUpdateTree"},
 	[4] = {"TipBubbleWnd", "TipBubbleTree"},
+	[5] = {"TipRepairStupWnd", "TipRepairStupTree"},
 }
 
 function CreatePopupTipWnd()
@@ -848,6 +877,7 @@ function CreatePopupTipWnd()
 	
 	return true
 end
+
 
 function CreateWndByName(strHostWndName, strTreeName)
 	local bSuccess = false
@@ -970,7 +1000,7 @@ function GetCfgPathWithName(strCfgName)
 		return ""
 	end
 	
-	local strCfgFilePath = tipUtil:PathCombine(strBaseDir, "ADClean\\"..tostring(strCfgName))
+	local strCfgFilePath = tipUtil:PathCombine(strBaseDir, "WebEraser\\"..tostring(strCfgName))
 	return strCfgFilePath or ""
 end
 
@@ -1216,6 +1246,8 @@ obj.SaveAutoUpdateUTC = SaveAutoUpdateUTC
 obj.RegQueryValue = RegQueryValue
 obj.RegDeleteValue = RegDeleteValue
 obj.RegSetValue = RegSetValue
+obj.CheckIsAutoStup = CheckIsAutoStup
+obj.SetExeAutoStup = SetExeAutoStup
 
 
 XLSetGlobal("Project.FunctionHelper", obj)

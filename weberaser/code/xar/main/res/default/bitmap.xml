@@ -33,6 +33,11 @@
 		<texture id="Bubble.BtnClose.Hover" image="bitmap\Bubble.BtnClose.Hover.png" />
 		<texture id="Bubble.BtnClose.Normal" image="bitmap\Bubble.BtnClose.Normal.png" />
 		
+		<texture id="CheckBox.Green.Check" image="bitmap\CheckBox.Green.Check.png" />
+		<texture id="CheckBox.Green.UnCheck" image="bitmap\CheckBox.Green.UnCheck.png" />
+		
+		<texture id="Remind.Bkg" image="bitmap\Remind.Bkg.png" />
+		
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
 		<bitmap id="Number_2" path="bitmap\number_2.png"/>
@@ -61,10 +66,4 @@
 		<gif id="UpdateWnd.Loading" file="bitmap\UpdateWnd.Loading.gif" />
 	</resource>
 </XLUE>
-
-
-
-
-
-
 
