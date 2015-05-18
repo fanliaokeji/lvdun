@@ -3,16 +3,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>319</width>
-			<height>242</height>
+            <width>350</width>
+            <height>383</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>319</width>
-				<height>242</height>
+				<width>350</width>
+				<height>383</height>
 				<texture>AboutWnd.Bkg</texture>
 			</attr>				
 			<children>					
@@ -35,26 +35,36 @@
 						<texture>AboutWnd.Bkg</texture>
 					</attr>
 					<children>		
+						<obj id="TipAbout.Title.Logo" class="TextureObject">
+							<attr>
+								<left>10</left>
+								<top>10</top>
+								<width>14</width>
+								<height>17</height>
+								<texture>AboutWnd.Top.Logo</texture>
+							</attr>
+						</obj>
+					
 						<obj id="TipAbout.Title.Text" class="TextObject">
 							<attr>
-								<left>35</left>
-								<top>0</top>
+								<left>30</left>
+								<top>5</top>
 								<width>100</width>
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>left</halign>
 								<font>font.yahei12</font>
 								<textcolor>system.white</textcolor>
-								<text>关于广告清道夫</text>
+								<text>关于广告橡皮擦</text>
 							</attr>
 						</obj>
 
 						<obj id="TipCtrl.Caption.CloseBtn" class="TipAddin.Button">
 							<attr>
-								<left>father.width-22</left>
-								<top>(father.height-14)/2</top>
-								<width>14</width>
-								<height>14</height>
+								<left>father.width-35</left>
+								<top>0</top>
+								<width>35</width>
+								<height>35</height>
 								<NormalBkgID>PopWnd.BtnClose.Normal</NormalBkgID>
 								<DownBkgID>PopWnd.BtnClose.Normal</DownBkgID>
 								<HoverBkgID>PopWnd.BtnClose.Hover</HoverBkgID>
@@ -66,59 +76,68 @@
 						</obj>						
 					</children>
 				</obj>
-				
-				<!--版本信息-->
+
 				<obj id="TipAbout.Version.Layout" class="LayoutObject">
 					<attr>
 						<left>0</left>
-						<top>father.height-70</top>
+						<top>100</top>
 						<width>father.width</width>
-						<height>70</height>
+						<height>father.height-100</height>
 					</attr>
 					<children>		
+						<obj id="TipAbout.Center.Logo" class="TextureObject">
+							<attr>
+								<left>(father.width-109)/2</left>
+								<top>0</top>
+								<width>109</width>
+								<height>113</height>
+								<texture>AboutWnd.Center.Logo</texture>
+							</attr>
+						</obj>
+					
 						<obj id="TipAbout.Version.LogoText" class="TextObject">
 							<attr>
 								<left>0</left>
-								<top>0</top>
+								<top>113+10</top>
 								<width>father.width</width>
 								<height>father.height</height>
 								<valign>top</valign>
 								<halign>center</halign>
-								<font>font.yahei18</font>
+								<font>font.yahei20</font>
 								<textcolor>system.white</textcolor>
-								<text>广 告 清 道 夫</text>
+								<text>广 告 橡 皮 擦</text>
 							</attr>
 						</obj>
-
-						<obj id="TipAbout.Version.Text" class="TextObject">
-							<attr>
-								<left>15</left>
-								<top>father.height-35</top>
-								<width>father.width/2</width>
-								<height>20</height>
-								<valign>center</valign>
-								<halign>left</halign>
-								<font>font.yahei12</font>
-								<textcolor>system.white</textcolor>
-								<text>版本号:V1.0正式版本</text>
-							</attr>
-						</obj>		
-
-						<obj id="TipAbout.Version.CopyRight" class="TextObject">
-							<attr>
-								<left>father.width/2+30</left>
-								<top>father.height-35</top>
-								<width>father.width/2-20</width>
-								<height>20</height>
-								<valign>center</valign>
-								<halign>left</halign>
-								<font>font.yahei12</font>
-								<textcolor>system.white</textcolor>
-								<text>广告清道夫  版权所有</text>
-							</attr>
-						</obj>	
 					</children>
 				</obj>
+
+				<obj id="TipAbout.Version.Text" class="TextObject">
+					<attr>
+						<left>0</left>
+						<top>father.height-70</top>
+						<width>father.width/2</width>
+						<height>70</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.yahei13</font>
+						<textcolor>system.black</textcolor>
+						<text></text>
+					</attr>
+				</obj>		
+
+				<obj id="TipAbout.Version.CopyRight" class="TextObject">
+					<attr>
+						<left>father.width/2</left>
+						<top>father.height-70</top>
+						<width>father.width/2</width>
+						<height>70</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.yahei13</font>
+						<textcolor>system.black</textcolor>
+						<text>广告橡皮擦  版权所有</text>
+					</attr>
+				</obj>	
 			</children>
 		</obj>
 	</objtreetemplate>
@@ -128,8 +147,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>319</width>
-            <height>242</height>
+            <width>350</width>
+            <height>383</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 

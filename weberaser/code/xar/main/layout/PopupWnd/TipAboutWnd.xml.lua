@@ -18,7 +18,7 @@ function SetShowText(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
 
-	local objVersion = objRootLayout:GetObject("TipAbout.Version.Layout:TipAbout.Version.Text")
+	local objVersion = objRootLayout:GetObject("TipAbout.Version.Text")
 	if not objVersion then
 		return
 	end
