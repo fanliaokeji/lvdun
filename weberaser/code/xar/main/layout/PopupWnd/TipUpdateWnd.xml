@@ -26,73 +26,78 @@
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
-								<texture>UpdateWnd.Bkg</texture>
+								<texture>AboutWnd.Bkg</texture>
 							</attr>
 							<children>					
 								<obj id="TipUpdate.Caption.CloseBtn" class="TipAddin.Button">
 									<attr>
-										<left>father.width-22</left>
-										<top>9</top>
-										<width>14</width>
-										<height>14</height>
-										<NormalBkgID>MainWnd.BtnClose.Normal</NormalBkgID>
-										<DownBkgID>MainWnd.BtnClose.Normal</DownBkgID>
-										<HoverBkgID>MainWnd.BtnClose.Hover</HoverBkgID>
-										<DisableBkgID>MainWnd.BtnClose.Normal</DisableBkgID>
+										<left>father.width-35</left>
+										<top>0</top>
+										<width>35</width>
+										<height>35</height>
+										<NormalBkgID>PopWnd.BtnClose.Normal</NormalBkgID>
+										<DownBkgID>PopWnd.BtnClose.Normal</DownBkgID>
+										<HoverBkgID>PopWnd.BtnClose.Hover</HoverBkgID>
+										<DisableBkgID>PopWnd.BtnClose.Normal</DisableBkgID>
 									</attr>
 									<eventlist>
 										<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickCloseBtn" />
 									</eventlist>
 								</obj>
 								
-								<obj id="TipUpdate.Caption.BtnMin" class="TipAddin.Button">
+									
+								<obj id="TipAbout.Center.Layout" class="LayoutObject">
 									<attr>
-										<left>father.width-23*2</left>
-										<top>9</top>
-										<width>14</width>
-										<height>14</height>
-										<NormalBkgID>MainWnd.BtnMin.Normal</NormalBkgID>
-										<DownBkgID>MainWnd.BtnMin.Normal</DownBkgID>
-										<HoverBkgID>MainWnd.BtnMin.Hover</HoverBkgID>
-										<DisableBkgID>MainWnd.BtnMin.Normal</DisableBkgID>
+										<left>0</left>
+										<top>70</top>
+										<width>father.width</width>
+										<height>father.height-70</height>
 									</attr>
-									<eventlist>
-										<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickMinBtn" />
-									</eventlist>
-								</obj>
-								
-								<obj id="TipUpdate.Title.Caption" class="TextObject">
-									<attr>
-										<left>189</left>
-										<top>20</top>
-										<width>215</width>
-										<height>25</height>
-										<text>广告清道夫在线升级</text>
-										<textcolor>system.white</textcolor>
-										<font>font.yahei20.bold</font>
-										<valign>center</valign>
-										<halign>left</halign>
-									</attr>
+									<children>
+										<obj id="TipAbout.Center.Logo" class="TextureObject">
+											<attr>
+												<left>(father.width-109)/2</left>
+												<top>0</top>
+												<width>109</width>
+												<height>113</height>
+												<texture>AboutWnd.Center.Logo</texture>
+											</attr>
+										</obj>
+										
+										<obj id="TipUpdate.Title.Caption" class="TextObject">
+											<attr>
+												<left>0</left>
+												<top>113+10</top>
+												<width>father.width</width>
+												<height>25</height>
+												<text>广告橡皮擦在线升级</text>
+												<textcolor>system.white</textcolor>
+												<font>font.yahei18.bold</font>
+												<valign>center</valign>
+												<halign>center</halign>
+											</attr>
+										</obj>
+									</children>
 								</obj>
 								
 								<!--正在检测-->
 								<obj id="TipUpdate.CheckUpdate.Layout" class="LayoutObject">
 									<attr>
-										<left>189</left>
-										<top>30+25</top>
-										<width>250</width>
-										<height>140</height>
+										<left>0</left>
+										<top>father.height-70</top>
+										<width>father.width</width>
+										<height>70</height>
 									</attr>
 									<children>
 										<obj id="TipUpdate.CheckUpdate.Text" class="TextObject">
 											<attr>
-												<left>0</left>
-												<top>30</top>
-												<width>150</width>
-												<height>25</height>
-												<text>正在为您检测更新</text>
-												<textcolor>system.white</textcolor>
-												<font>font.yahei16</font>
+												<left>20</left>
+												<top>0</top>
+												<width>130</width>
+												<height>father.height</height>
+												<text>正在为您检测更新...</text>
+												<textcolor>system.black</textcolor>
+												<font>font.yahei14</font>
 												<valign>center</valign>
 												<halign>left</halign>
 											</attr>
@@ -100,15 +105,13 @@
 										
 										<obj id="TipUpdate.CheckUpdate.Loading" class="SeqImageObject">
 											<attr>
-												<left>140</left>  
-												<top>36</top>
-												<width>66</width>
-												<height>15</height>
+												<left>150</left>  
+												<top>26</top>
+												<width>160</width>
+												<height>18</height>
 												<gif>UpdateWnd.Loading</gif>
 												<loop>1</loop>
 												<reverse>0</reverse>
-												<antialias>2</antialias>
-												<alpha>255</alpha>
 											</attr>
 										</obj>	
 									</children>
@@ -117,10 +120,10 @@
 								<!--更新升级-->
 								<obj id="TipUpdate.Update.Layout" class="LayoutObject">
 									<attr>
-										<left>189</left>
-										<top>30+25</top>
-										<width>250</width>
-										<height>140</height>
+										<left>25</left>
+										<top>father.height/2</top>
+										<width>father.width-25</width>
+										<height>father.height/2</height>
 									</attr>
 									<children>
 										<obj id="TipUpdate.Title.Text" class="TextObject">
@@ -129,9 +132,9 @@
 												<top>0</top>
 												<width>father.width</width>
 												<height>20</height>
-												<text>发现新版本广告清道夫</text>
+												<text>发现新版本广告橡皮擦</text>
 												<textcolor>system.white</textcolor>
-												<font>font.yahei15</font>
+												<font>font.yahei14</font>
 												<valign>center</valign>
 												<halign>left</halign>
 											</attr>
@@ -140,7 +143,7 @@
 										<obj id="TipUpdate.Content.Layout" class="LayoutObject">
 											<attr>
 												<left>0</left>
-												<top>20</top>
+												<top>30</top>
 												<width>father.width</width>
 												<height>father.height-20</height>
 											</attr>
@@ -203,14 +206,18 @@
 										
 										<obj id="TipUpdate.EnterBtn" class="TipAddin.Button">
 											<attr>
-												<left>father.width-83-15</left>
-												<top>father.height-27-10</top>
-												<width>83</width>
-												<height>27</height>
-												<NormalBkgID>UpdateWnd.UpdateBtn.Normal</NormalBkgID>
-												<DownBkgID>UpdateWnd.UpdateBtn.Hover</DownBkgID>
-												<HoverBkgID>UpdateWnd.UpdateBtn.Hover</HoverBkgID>
-												<DisableBkgID>UpdateWnd.UpdateBtn.Normal</DisableBkgID>
+												<left>(father.width-98-25)/2</left>
+												<top>father.height-50</top>
+												<width>98</width>
+												<height>30</height>
+												<NormalBkgID>PopupWnd.EnterBtn.Normal</NormalBkgID>
+												<DownBkgID>PopupWnd.EnterBtn.Hover</DownBkgID>
+												<HoverBkgID>PopupWnd.EnterBtn.Hover</HoverBkgID>
+												<DisableBkgID>PopupWnd.EnterBtn.Normal</DisableBkgID>
+												<Text>立即更新</Text>
+												<TextFont>font.yahei14</TextFont>
+												<TextColor>system.white</TextColor>
+												<LeftTextPos>20</LeftTextPos>
 											</attr>
 											<eventlist>
 												<event name="OnClick" file="TipUpdateWnd.xml.lua" func="OnClickEnterBtn" />
@@ -221,20 +228,20 @@
 										<obj id="TipUpdate.DownLoading.Layout" class="LayoutObject">
 											<attr>
 												<left>0</left>
-												<top>father.height-65</top>
-												<width>250</width>
-												<height>20</height>
+												<top>father.height-70</top>
+												<width>father.width</width>
+												<height>70</height>
 											</attr>
 											<children>
 												<obj id="TipUpdate.DownLoading.Text" class="TextObject">
 													<attr>
 														<left>0</left>
-														<top>27</top>
-														<width>150</width>
-														<height>25</height>
-														<text>下载中，请稍候</text>
-														<textcolor>system.white</textcolor>
-														<font>font.yahei16</font>
+														<top>0</top>
+														<width>70</width>
+														<height>father.height</height>
+														<text>下载中...</text>
+														<textcolor>system.black</textcolor>
+														<font>font.yahei14</font>
 														<valign>center</valign>
 														<halign>left</halign>
 													</attr>
@@ -242,10 +249,10 @@
 												
 												<obj id="TipUpdate.DownLoading.Loading" class="SeqImageObject">
 													<attr>
-														<left>120</left>  
-														<top>32</top>
-														<width>61</width>
-														<height>16</height>
+														<left>70</left>  
+														<top>26</top>
+														<width>180</width>
+														<height>18</height>
 														<gif>UpdateWnd.Loading</gif>
 														<loop>1</loop>
 														<reverse>0</reverse>
@@ -270,16 +277,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>437</width>
-			<height>204</height>
+			 <width>350</width>
+            <height>383</height>
 		</attr>
 
 		<obj id="root.layout" class="UpdateRootCtrl">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>437</width>
-				<height>204</height>
+				 <width>350</width>
+				<height>383</height>
 			</attr>				
 		</obj>
 	</objtreetemplate>
@@ -289,8 +296,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>437</width>
-            <height>204</height>
+            <width>350</width>
+            <height>383</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
