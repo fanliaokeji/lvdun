@@ -246,7 +246,7 @@ function ShowAppList(ctrl, bIsShow)
 				tmpTextureObj:AttachListener("OnClick", 
 									false,
 									function(self)
-										XLMessageBox("21")
+									
 									end)
 				tmpTextObj:SetObjPos2((v-1)*83, (h-1)*110+48+6, 70, 15)
 				tmpTextObj:SetHAlign("center")
