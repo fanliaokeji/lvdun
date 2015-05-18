@@ -250,7 +250,8 @@ function SetHoverItem(self, item, show_sub )
 	
 	if oldItem == nil then
 		local left,top,right,bottom = item:GetObjPos() 
-		itembkn:SetObjPos(left,top,right,bottom)
+		local l, t, r, b = itembkn:GetObjPos()
+		itembkn:SetObjPos(left,top+2,left+r-l,top+2+b-t)
 		itembkn:SetVisible( true )
 		itembkn:SetChildrenVisible( true )
 		attr.HoverItem:ChangeState( 1 )
