@@ -98,8 +98,12 @@ function HideWindow(objElem)
 		return
 	end
 	
+	local tUserConfig = tFunHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	tUserConfig["bUserSetAutoStup"] = g_AllowRepair
+	
 	local objHostWnd = objTree:GetBindHostWnd()
 	objHostWnd:Show(0)
+	tFunHelper.SaveConfigToFileByKey("tUserConfig")
 end
 
 
