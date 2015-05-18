@@ -3,17 +3,17 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>287</width>
-			<height>129</height>
+			<width>350</width>
+			<height>383</height>
 		</attr>
 
 		<obj id="root.layout" class="TextureObject">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>287</width>
-				<height>129</height>
-				<texture>ExitRemind.Bkg</texture>
+				<width>350</width>
+				<height>383</height>
+				<texture>Remind.Bkg</texture>
 			</attr>		
 			<children>					
 				<obj id="ExitRemind.Caption" class="CaptionObject">
@@ -24,27 +24,13 @@
 						<height>father.height</height>
 					</attr>	
 				</obj>
-				
-				<obj id="ExitRemind.Title" class="TextObject">
-					<attr>
-						<left>35</left>
-						<top>0</top>
-						<width>father.width-30</width>
-						<height>23</height>
-						<valign>center</valign>
-						<halign>left</halign>
-						<font>font.yahei11</font>
-						<textcolor>system.white</textcolor>
-						<text>广告清道夫-退出程序</text>
-					</attr>
-				</obj>	
-				
+							
 				<obj id="ExitRemind.Title.CloseBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-22</left>
-						<top>(23-14)/2</top>
-						<width>14</width>
-						<height>14</height>
+						<left>father.width-35</left>
+						<top>0</top>
+						<width>35</width>
+						<height>35</height>
 						<NormalBkgID>PopWnd.BtnClose.Normal</NormalBkgID>
 						<DownBkgID>PopWnd.BtnClose.Normal</DownBkgID>
 						<HoverBkgID>PopWnd.BtnClose.Hover</HoverBkgID>
@@ -59,63 +45,70 @@
 				<obj id="ExitRemind.Text1" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>36</top>
+						<top>245</top>
 						<width>father.width</width>
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.yahei12</font>
+						<font>font.yahei15</font>
 						<textcolor>system.white</textcolor>
-						<text>退出广告清道夫后，您的电脑将不能拦截广告，</text>
+						<text>退出广告橡皮擦后，您的电脑将不能拦截广告，</text>
 					</attr>
 				</obj>		
 				
 				<obj id="ExitRemind.Text2" class="TextObject">
 					<attr>
 						<left>18</left>
-						<top>36+22</top>
+						<top>245+30</top>
 						<width>father.width</width>
 						<height>20</height>
 						<valign>center</valign>
 						<halign>left</halign>
-						<font>font.yahei12</font>
+						<font>font.yahei15</font>
 						<textcolor>system.white</textcolor>
 						<text>您确定要退出吗？</text>
 					</attr>
 				</obj>	
 
-				<obj id="ExitRemind.CancleBtn" class="TipAddin.Button">
+				<obj id="ExitRemind.EnterBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-13-79</left>
-						<top>father.height-10-26</top>
-						<width>79</width>
-						<height>26</height>
+						<left>father.width-65-98</left>
+						<top>father.height-50</top>
+						<width>98</width>
+						<height>30</height>
 						<NormalBkgID>PopupWnd.EnterBtn.Normal</NormalBkgID>
 						<DownBkgID>PopupWnd.EnterBtn.Hover</DownBkgID>
 						<HoverBkgID>PopupWnd.EnterBtn.Hover</HoverBkgID>
 						<DisableBkgID>PopupWnd.EnterBtn.Normal</DisableBkgID>
+						<Text>继续过滤</Text>
+						<TextFont>font.yahei15</TextFont>
+						<TextColor>system.white</TextColor>
+						<LeftTextPos>18</LeftTextPos>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickContinue" />
 					</eventlist>
 				</obj>		
 				
-				<obj id="ExitRemind.EnterBtn" class="TipAddin.Button">
+				<obj id="ExitRemind.CancleBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-13*2-79*2</left>
-						<top>father.height-10-26</top>
-						<width>79</width>
-						<height>26</height>
+						<left>65</left>
+						<top>father.height-50</top>
+						<width>98</width>
+						<height>30</height>
 						<NormalBkgID>PopupWnd.CancleBtn.Normal</NormalBkgID>
 						<DownBkgID>PopupWnd.CancleBtn.Hover</DownBkgID>
 						<HoverBkgID>PopupWnd.CancleBtn.Hover</HoverBkgID>
 						<DisableBkgID>PopupWnd.CancleBtn.Normal</DisableBkgID>
+						<Text>退出程序</Text>
+						<TextFont>font.yahei15</TextFont>
+						<TextColor>system.white</TextColor>
+						<LeftTextPos>20</LeftTextPos>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TipExitRemindWnd.xml.lua" func="OnClickQuit" />
 					</eventlist>
 				</obj>		
-				
 			</children>
 		</obj>
 	</objtreetemplate>
@@ -125,8 +118,8 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>287</width>
-            <height>129</height>
+            <width>350</width>
+            <height>383</height>
             <cacheleft>0</cacheleft>
             <cachetop>0</cachetop>
 
