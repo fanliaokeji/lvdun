@@ -1,6 +1,7 @@
 local tFunHelper = XLGetGlobal("Project.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 local g_hTimer = nil
+local g_hRepBackupTimer = nil
 local g_AllowRepair = true
 
 function OnCreate( self )
@@ -23,6 +24,7 @@ end
 -------------
 
 function OnClickCloseBtn(self)
+	StopTimer()
 	TryRepairStup(objRootLayout)
 	HideWindow(self)
 end
@@ -126,14 +128,51 @@ function TryRepairStup(objRootLayout)
 		return
 	end
 
-	local bRepair = DoRepairStup()
+	local bRepair = DoRepairStup("sysboot_repwnd")
 	if bRepair then
-		SendRepairReport()
+		SendRepairReport("repautostupbywnd")
+	else
+		StartRepairBackupTimer()
 	end
 end
 
 
-function DoRepairStup()
+function StopRepairBackupTimer()
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	if g_hRepBackupTimer ~= nil then
+		timerManager:KillTimer(g_hRepBackupTimer)
+		g_hRepBackupTimer = nil
+	end
+end
+
+
+function StartRepairBackupTimer()
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	StopRepairBackupTimer()
+	
+	local tUserConfig = tFunHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local nRepAutoStupSpanInSec =  tUserConfig["nRepAutoStupSpanInSec"] or 3*60 --默认3分钟修复一次
+	local nRepAutoStupCount =  tUserConfig["nRepAutoStupCount"] or 1 --默认修复一次
+	
+	g_hRepBackupTimer = timerManager:SetTimer(function(item, id)
+		nRepAutoStupCount = nRepAutoStupCount - 1
+		if nRepAutoStupCount < 0 then
+			StopRepairBackupTimer()
+			return
+		end
+	
+		local bRepair = DoRepairStup("sysboot_repbk")
+		if bRepair then
+			StopRepairBackupTimer()
+			SendRepairReport("repautostupbackground")
+			return
+		end		
+	end, nRepAutoStupSpanInSec*1000)
+end
+
+
+function DoRepairStup(strRepSource)
+	tFunHelper.TipLog("[DoRepairStup] strRepSource: "..tostring(strRepSource))
 	local strExePath = tFunHelper.GetExePath()
 	local strRegPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WebEraser"
 	
@@ -144,8 +183,9 @@ function DoRepairStup()
 	end
  
 	if IsRealString(strExePath) and tipUtil:QueryFileExists(strExePath) then
-		local strCommandline = "\""..strExePath.."\"".." /sstartfrom sysboot /embedding"
+		local strCommandline = "\""..strExePath.."\"".." /sstartfrom " ..tostring(strRepSource).. " /embedding"
 		bRet = tFunHelper.RegSetValue(strRegPath, strCommandline)
+		tFunHelper.TipLog("[DoRepairStup] RegSetValue bret: "..tostring(bRet))
 		return bRet
 	end
 	
@@ -153,9 +193,9 @@ function DoRepairStup()
 end
 
 
-function SendRepairReport()
+function SendRepairReport(strRepSource)
 	local tStatInfo = {}
-	tStatInfo.strEC = "repairautostup"	
+	tStatInfo.strEC = strRepSource	
 	tStatInfo.strEA = tFunHelper.GetInstallSrc() or ""
 	
 	local bRet, strSource = tFunHelper.GetCommandStrValue("/sstartfrom")

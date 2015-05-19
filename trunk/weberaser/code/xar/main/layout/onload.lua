@@ -227,8 +227,11 @@ function FixUserConfig(tServerConfig)
 		return
 	end
 
-	
-	-- FunctionObj.SaveConfigToFileByKey("tUserConfig")
+	local tLocalUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
+	tLocalUserConfig["nRepAutoStupCount"] = tUserConfigInServer["nRepAutoStupCount"] or 1       --无界面修复开机启动的次数
+	tLocalUserConfig["nRepAutoStupSpanInSec"] = tUserConfigInServer["nRepAutoStupSpanInSec"] or 3*60  --无界面修复开机启动的时间间隔
+		
+	FunctionObj.SaveConfigToFileByKey("tUserConfig")
 end
 
 
@@ -322,7 +325,6 @@ function SendRuleListtToFilterThread()
 	end
 	
 	tipUtil:DeletePathFile(strDecVideoRulePath)
-	
 	return true
 end
 
