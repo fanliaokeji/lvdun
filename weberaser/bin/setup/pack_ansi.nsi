@@ -1248,14 +1248,14 @@ Function WelcomePage
 	
 	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 38 $3 60 20 "开机启动"
+    ${NSD_CreateLabel} 38 $3 70 20 "开机自启动"
     Pop $Lbl_Sysstup
 	${NSD_OnClick} $Lbl_Sysstup OnClick_CheckSysstup
     SetCtlColors $Lbl_Sysstup "333333" transparent ;背景设成透明
 	SendMessage $Lbl_Sysstup ${WM_SETFONT} $Handle_Font 0
 	
 	;勾选开启实时过滤
-	${NSD_CreateButton} 105 290 15 15 ""
+	${NSD_CreateButton} 125 290 15 15 ""
 	Pop $ck_StartTimeDo
 	StrCpy $1 $ck_StartTimeDo
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
@@ -1265,7 +1265,7 @@ Function WelcomePage
 	
 	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 124 $3 100 18 "开启实时拦截"
+    ${NSD_CreateLabel} 144 $3 80 18 "开启实时拦截"
     Pop $Lbl_StartTimeDo
 	${NSD_OnClick} $Lbl_StartTimeDo OnClick_CheckStartTimeDo
     SetCtlColors $Lbl_StartTimeDo "333333" transparent ;背景设成透明
@@ -1337,7 +1337,7 @@ Function WelcomePage
 	
 	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 36 $3 130 18 "添加桌面快捷方式"
+    ${NSD_CreateLabel} 36 $3 110 18 "创建桌面快捷方式"
     Pop $Lbl_DeskTopLink
 	${NSD_OnClick} $Lbl_DeskTopLink OnClick_CheckDeskTopLink
     SetCtlColors $Lbl_DeskTopLink "333333" transparent ;背景设成透明
@@ -1346,7 +1346,7 @@ Function WelcomePage
 	SendMessage $Lbl_DeskTopLink ${WM_SETFONT} $Handle_Font 0
 	
 	;添加到启动栏
-	${NSD_CreateButton} 166 291 15 15 ""
+	${NSD_CreateButton} 159 291 15 15 ""
 	Pop $ck_ToolBarLink
 	StrCpy $1 $ck_ToolBarLink
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
@@ -1356,7 +1356,7 @@ Function WelcomePage
 	
 	StrCpy $3 288
 	IntOp $3 $3 + $Int_FontOffset
-    ${NSD_CreateLabel} 186 $3 100 18 "添加到启动栏"
+    ${NSD_CreateLabel} 179 $3 110 18 "添加到快速启动栏"
     Pop $Lbl_ToolBarLink
 	${NSD_OnClick} $Lbl_ToolBarLink OnClick_CheckToolBarLink
     SetCtlColors $Lbl_ToolBarLink "333333" transparent ;背景设成透明
