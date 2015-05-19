@@ -135,7 +135,7 @@ function SendReportLocal(nOPeration)
 		strPort = "8083"
 	end
 	
-	local strUrl = "http://stat.52jsqx.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+	local strUrl = "http://stat.ggxpc.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
 					.."&proid=13&op="..tostring(nOPeration).."&cid="..(strChannelID)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
