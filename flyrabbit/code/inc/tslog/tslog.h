@@ -1861,7 +1861,7 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»
 	if(bWriteConfig)
 		WritePrivateProfileString(_T("Output"), _T("DebugView"), m_bDebugViewLog ? _T("ON") : _T("OFF"), pszConfigFileName);
 	GetPrivateProfileString(_T("Output"), _T("FileLog"), _T("ON"), szReturnedString, sizeof(szReturnedString)/sizeof(TCHAR), pszConfigFileName);	// «∑Ò‘⁄»’÷æŒƒº˛÷–¥Ú”°»’÷æ
-	if(0  == _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")) || 0 == _tcsicmp(szReturnedString, _T("1")))
+	if(0  == _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")) || 0 == _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")))
 		m_bFileLog = TRUE;
 	else if(0 == _tcsicmp(szReturnedString, _T("OFF")) || 0 == _tcsicmp(szReturnedString, _T("0")))
 		m_bFileLog = FALSE;
