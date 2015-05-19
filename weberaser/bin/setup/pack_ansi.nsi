@@ -1513,7 +1513,7 @@ Function LastCreateBindUI
 	${EndIf}
 	
 	;绑定信息2
-	${If} $R2 != 0
+	${If} $2 != 0
 	${AndIf} $2 != ""
 		IntOp $R9  $R9  + $R4
 		${NSD_CreateButton} $R9 291 15 15 ""
@@ -1565,8 +1565,8 @@ Function LastCreateBindUI
 	${EndIf}
 	
 	;绑定信息4
-	${If} $R2 != 0
-	${AndIf} $2 != ""
+	${If} $4 != 0
+	${AndIf} $4 != ""
 		IntOp $R9  $R9  + $R4
 		${NSD_CreateButton} $R9 291 15 15 ""
 		Pop $ck_bindinfo4
