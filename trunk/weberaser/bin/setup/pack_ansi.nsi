@@ -78,7 +78,7 @@ Var bool_needinstofficeandbind
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
 ;卸载包开关（请不要轻易打开）
-;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
+!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -410,7 +410,6 @@ Function ExitWithCheck
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
 	${If} $bool_installoffice == "true"
 	${AndIf} $bool_needinstofficeandbind == "true"
-		;System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::LoadLuaRunTime(t '$INSTDIR\program', t '')"
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
 	${Else}
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
@@ -560,6 +559,8 @@ Function .onInit
 	SetOverwrite on
 	File ".\webindcfg.dat"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite off
+	File /r ".\ERASERCONFIG"
 	SetOverwrite on
 	File "bin\EraserSetUp.dll"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
@@ -1102,30 +1103,25 @@ Function OnClickQuitOK
 FunctionEnd
 
 Function ExitWithCheck2
-	StrCpy $7 ""
+	Var /GLOBAL strBindUrl
 	${If} $bool_bindinfo1 == 1
-		StrCpy $7 "$TEMP\webindcfg.dat"
-		WriteINIStr "$TEMP\webindcfg.dat" "bindinfo1" "install" "1"
-		StrCpy $bool_needinstofficeandbind "true"
+		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo1" "url"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
 	${EndIf}
 	${If} $bool_bindinfo2 == 1
-		StrCpy $7 "$TEMP\webindcfg.dat"
-		WriteINIStr "$TEMP\webindcfg.dat" "bindinfo2" "install" "1"
-		StrCpy $bool_needinstofficeandbind "true"
+		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo2" "url"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
 	${EndIf}
 	${If} $bool_bindinfo3 == 1
-		StrCpy $7 "$TEMP\webindcfg.dat"
-		WriteINIStr "$TEMP\webindcfg.dat" "bindinfo3" "install" "1"
-		StrCpy $bool_needinstofficeandbind "true"
+		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo3" "url"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
 	${EndIf}
 	${If} $bool_bindinfo4 == 1
-		StrCpy $7 "$TEMP\webindcfg.dat"
-		WriteINIStr "$TEMP\webindcfg.dat" "bindinfo4" "install" "1"
-		StrCpy $bool_needinstofficeandbind "true"
+		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo4" "url"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
 	${EndIf}
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
 	${If} $bool_needinstofficeandbind == "true"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::LoadLuaRunTime(t '$INSTDIR\program', t '$7')"
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
 	${Else}
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
@@ -2091,6 +2087,8 @@ Function un.OnClick_CruelRefused
 	EnableWindow $Btn_CruelRefused 0
 	EnableWindow $Btn_ContinueUse 0
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	SetOverwrite off
+	File /r ".\ERASERCONFIG"
 	SetOverwrite on
 	File "bin\EraserSetUp.dll"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSetUp.dll" 0 +3
