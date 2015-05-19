@@ -223,7 +223,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 //ƒ¨»œ≈‰÷√ƒø¬º
 #ifndef TSLOG_CONFIG_DIR
-#define TSLOG_CONFIG_DIR "C:\\WE_CONFIG\\"
+#define TSLOG_CONFIG_DIR "%temp%\\ERASERCONFIG\\"
 //#pragma message("warning: undefine macro 'TSLOG_CONFIG_DIR', default : [#define TSLOG_CONFIG_DIR \"" TSLOG_CONFIG_DIR "\"]")
 #endif
 
@@ -257,7 +257,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #define MAX_HEX_DUMP_SIZE  		512
 #define MAX_ENVTSLOG_SIZE		128
 //no config, default
-#define DEFAULT_LOGFILE_PATH				"C:\\WELOG\\"
+#define DEFAULT_LOGFILE_PATH				"D:\\ERASERLOG\\"
 #define __TDEFAULT_LOGFILE_PATH				_T(DEFAULT_LOGFILE_PATH)
 #define DEFAULT_MAX_LOGFILE_SIZE			20480
 #define MAX_MAX_LOGFILE_SIZE				(DEFAULT_MAX_LOGFILE_SIZE * 100)
@@ -1779,17 +1779,29 @@ void CTSLog::ResetParams(BOOL bModuleInit)
 }
 BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»’÷æ“≤√ª”–±ÿ“™…æ≥˝
 {	
+	TCHAR pszConfigFileName[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH, pszConfigFileName, MAX_PATH);
+	
+	TCHAR pszConfigFileName2[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH2, pszConfigFileName2, MAX_PATH);
+
+	TCHAR pszConfigFileNameDefault[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, pszConfigFileNameDefault, MAX_PATH);
+
+	TCHAR pszConfigFileNameDefault2[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, pszConfigFileNameDefault2, MAX_PATH);
+
 	struct _stat stBuf;	
-	if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH, &stBuf)) 
+	if(0 != _tstat(pszConfigFileName, &stBuf)) 
 	{
 		//TSLOG_GROUP.ini≤ª¥Ê‘⁄
-		if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH2, &stBuf))
+		if(0 != _tstat(pszConfigFileName2, &stBuf))
 		{
 			//TSLOG_GROUP.txt“≤≤ª¥Ê‘⁄			
-			if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, &stBuf))
+			if(0 != _tstat(pszConfigFileNameDefault, &stBuf))
 			{
 				//tslog.ini≤ª¥Ê‘⁄
-				if(0 != _tstat(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, &stBuf))
+				if(0 != _tstat(pszConfigFileNameDefault2, &stBuf))
 				{
 					//tslog.txt≤ª¥Ê‘⁄
 					ResetParams(FALSE);
@@ -1797,24 +1809,26 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»
 				}
 				else 
 				{
-					MoveFile(__TTSLOG_CONFIG_FILE_PATH_DEFAULT2, __TTSLOG_CONFIG_FILE_PATH_DEFAULT);
+					MoveFile(pszConfigFileNameDefault2, pszConfigFileNameDefault);
 				}
 			}
-			CopyFile(__TTSLOG_CONFIG_FILE_PATH_DEFAULT, __TTSLOG_CONFIG_FILE_PATH, FALSE);
+			CopyFile(pszConfigFileNameDefault, pszConfigFileName, FALSE);
 		}
 		else
 		{
 			//¥Ê‘⁄tslog.txt≤ª¥Ê‘⁄tslog.ini, ∞— tslog.txt∏ƒ√˚Œ™tslog.ini
-            MoveFile(__TTSLOG_CONFIG_FILE_PATH2, __TTSLOG_CONFIG_FILE_PATH);
+            MoveFile(pszConfigFileName2, pszConfigFileName);
 		}
 	}
-	LPCTSTR pszConfigFileName = __TTSLOG_CONFIG_FILE_PATH;	
+	//LPCTSTR pszConfigFileName = __TTSLOG_CONFIG_FILE_PATH;	
+	//TCHAR pszConfigFileName[MAX_PATH] = {0};
 	BOOL bWriteConfig = FALSE;
 	BOOL bLastFileLog = m_bFileLog;
 	if((_off_t)0 == stBuf.st_size)
 	{
 		HANDLE hFile = CreateFile(pszConfigFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0 , NULL);
-		if(INVALID_HANDLE_VALUE != hFile)			
+		if (FALSE)
+		//if(INVALID_HANDLE_VALUE != hFile)			
 		{
 			DWORD dwByteWritten = 0;
 			LPCSTR szBufferA = ";[Output]\r\n"
@@ -1840,14 +1854,14 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»
 	}	
 	TCHAR szReturnedString[2048] = {0};
 	GetPrivateProfileString(_T("Output"), _T("DebugView"), _T("ON"), szReturnedString, sizeof(szReturnedString)/sizeof(TCHAR), pszConfigFileName);	// «∑Ò‘⁄DebugView÷–¥Ú”°»’÷æ
-	if(0 == _tcsicmp(szReturnedString, _T("ON")) || _tcsicmp(szReturnedString, _T("1")) == 0)
+	if(0 == _tcsicmp(szReturnedString, _T("{A95DE049-C098-4f62-B4D9-20A31246D832}")) || _tcsicmp(szReturnedString, _T("{A95DE049-C098-4f62-B4D9-20A31246D832}")) == 0)
 		m_bDebugViewLog = TRUE;
 	else if(0 == _tcsicmp(szReturnedString, _T("OFF")) || 0 == _tcsicmp(szReturnedString, _T("0")))
 		m_bDebugViewLog = FALSE;
 	if(bWriteConfig)
 		WritePrivateProfileString(_T("Output"), _T("DebugView"), m_bDebugViewLog ? _T("ON") : _T("OFF"), pszConfigFileName);
 	GetPrivateProfileString(_T("Output"), _T("FileLog"), _T("ON"), szReturnedString, sizeof(szReturnedString)/sizeof(TCHAR), pszConfigFileName);	// «∑Ò‘⁄»’÷æŒƒº˛÷–¥Ú”°»’÷æ
-	if(0  == _tcsicmp(szReturnedString, _T("ON")) || 0 == _tcsicmp(szReturnedString, _T("1")))
+	if(0  == _tcsicmp(szReturnedString, _T("{A95DE049-C098-4f62-B4D9-20A31246D832}")) || 0 == _tcsicmp(szReturnedString, _T("{A95DE049-C098-4f62-B4D9-20A31246D832}")))
 		m_bFileLog = TRUE;
 	else if(0 == _tcsicmp(szReturnedString, _T("OFF")) || 0 == _tcsicmp(szReturnedString, _T("0")))
 		m_bFileLog = FALSE;
