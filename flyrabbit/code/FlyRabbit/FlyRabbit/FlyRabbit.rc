@@ -62,8 +62,8 @@ IDI_ICON1               ICON                    "res\\FlyRabbit.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,0,0,3
+ PRODUCTVERSION 1,0,0,3
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -78,13 +78,14 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "FileDescription", "FlyRabbi Application"
-            VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "FlyRabbi"
-            VALUE "LegalCopyright", "Copyright (C) 2015"
-            VALUE "OriginalFilename", "FlyRabbi.exe"
-            VALUE "ProductName", "FlyRabbi Application"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "CompanyName", "深圳市立升行塑胶有限公司"
+            VALUE "FileDescription", "FlyRabbit Application"
+            VALUE "FileVersion", "1, 0, 0, 3"
+            VALUE "InternalName", "FlyRabbit"
+            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市立升行塑胶有限公司"
+            VALUE "OriginalFilename", "FlyRabbit.exe"
+            VALUE "ProductName", "飞兔下载"
+            VALUE "ProductVersion", "1, 0, 0, 3"
         END
     END
     BLOCK "VarFileInfo"

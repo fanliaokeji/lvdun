@@ -36,6 +36,7 @@ STDAPI DllUnregisterServer(void)
 	return hr;
 }
 
+
 // DllInstall - Adds/Removes entries to the system registry per user
 //              per machine.	
 STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
