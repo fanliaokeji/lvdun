@@ -256,15 +256,89 @@ function LoadAppList(strCfgName)
 	return tAppList
 end
 
+function GetAllUserDirFile(strDirName, strFileName)
+	if not IsRealString(strDirName) or not IsRealString(strFileName) then
+		return nil
+	end
+	local strDirPath = tFunHelper.GetCfgPathWithName(strDirName)
+	if not tipUtil:QueryFileExists(strDirPath) then
+		tipUtil:CreateDir(strDirPath)
+	end
+	if not tipUtil:QueryFileExists(strDirPath) then
+		return nil
+	end
+	local strFilePath = tipUtil:PathCombine(strDirPath, strFileName)
+	return strFilePath
+end
+
 function CreateTextureRes(strName)
 	local xarMgr = XLGetObject("Xunlei.UIEngine.XARManager")
 	local xar = xarMgr:GetXARByIndex(0)
 	local strImgPath = __document .. "\\..\\..\\..\\..\\appimage\\"..strName..".png"
+	if not tipUtil:QueryFileExists(strImgPath) then
+		strImgPath = GetAllUserDirFile("appimage", strName..".png")
+	end
+	if not IsRealString(strImgPath) then
+		return false
+	end
 	if xar:GetTexture("AppList."..strName) == nil and tipUtil:QueryFileExists(strImgPath) then
 		local texture = xar:CreateTexture({["id"] = "AppList."..strName, ["image"] = strImgPath})
 		return true
 	end
 	return false
+end
+
+function ShowAppListItem(ctrl, idx, info, isSecond)
+	if idx > 24 then return end
+	local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
+	local layout = ctrl:GetControlObject("MainWnd.Layout.AppList")
+	if CreateTextureRes(info["strKeyName"]) then
+		local tmpTextureObj = objFactory:CreateUIObject("AppList.Texture."..info["strKeyName"], "TipAddin.Button")
+		local tmpTextObj = objFactory:CreateUIObject("AppList.Text."..info["strKeyName"], "TextObject")
+		layout:AddChild(tmpTextureObj)
+		layout:AddChild(tmpTextObj)
+		local h, v = math.modf(idx/8)
+		v = v*8
+		if v == 0 then
+			v = 8
+		else
+			h = h + 1
+		end
+		tmpTextureObj:SetObjPos2((v-1)*83+13, (h-1)*110, 48, 48)
+		local attr = tmpTextureObj:GetAttribute()
+		attr.NormalBkgID = "AppList."..info["strKeyName"]
+		attr.HoverBkgID = "AppList."..info["strKeyName"]
+		attr.DownBkgID = "AppList."..info["strKeyName"]
+		tmpTextureObj:Show(true)
+		tmpTextureObj:AttachListener("OnClick", 
+							false,
+							function(self)
+								OpenLinkAfterClick(info)
+							end)
+		tmpTextObj:SetObjPos2((v-1)*83, (h-1)*110+48+6, 70, 15)
+		tmpTextObj:SetHAlign("center")
+		tmpTextObj:SetVAlign("center")
+		tmpTextObj:SetTextFontResID("font.yahei12")
+		tmpTextObj:SetTextColorResID("system.white")
+		tmpTextObj:SetWordEllipsis(true)
+		tmpTextObj:SetText(info["strAppName"])	
+	elseif not isSecond then
+		local strImgPath = GetAllUserDirFile("appimage", info["strKeyName"]..".png")
+		local strImgUrl = info["strImgUrl"]
+		if not IsRealString(strImgPath) or not IsRealString(strImgUrl) then
+			return
+		end
+		tFunHelper.NewAsynGetHttpFile(strImgUrl, strImgPath, false
+			, function(bRet, strRealPath)
+				tFunHelper.TipLog("[ShowAppListItem] [NewAsynGetHttpFile] bRet:"..tostring(bRet)
+						.." strRealPath:"..tostring(strRealPath))
+				
+				if 0 == bRet then
+					ShowAppListItem(ctrl, idx, info, true)
+				end
+			end, 60*1000)
+
+	end
 end
 
 function ShowAppList(ctrl, bIsShow) 
@@ -279,40 +353,8 @@ function ShowAppList(ctrl, bIsShow)
 		layout = objFactory:CreateUIObject("MainWnd.Layout.AppList", "LayoutObject")
 		layout:SetObjPos2(24, 50, 655, 298)
 		ctrl:AddChild(layout)
-		gtAppList = gtAppList or LoadAppList()
-		local tmpTextureObj, tmpTextObj
 		for idx, info in ipairs(gtAppList) do
-			if CreateTextureRes(info["strKeyName"]) and idx <= 24 then
-				tmpTextureObj = objFactory:CreateUIObject("AppList.Texture."..info["strKeyName"], "TipAddin.Button")
-				tmpTextObj = objFactory:CreateUIObject("AppList.Text."..info["strKeyName"], "TextObject")
-				layout:AddChild(tmpTextureObj)
-				layout:AddChild(tmpTextObj)
-				local h, v = math.modf(idx/8)
-				v = v*8
-				if v == 0 then
-					v = 8
-				else
-					h = h + 1
-				end
-				tmpTextureObj:SetObjPos2((v-1)*83+13, (h-1)*110, 48, 48)
-				local attr = tmpTextureObj:GetAttribute()
-				attr.NormalBkgID = "AppList."..info["strKeyName"]
-				attr.HoverBkgID = "AppList."..info["strKeyName"]
-				attr.DownBkgID = "AppList."..info["strKeyName"]
-				tmpTextureObj:Show(true)
-				tmpTextureObj:AttachListener("OnClick", 
-									false,
-									function(self)
-										OpenLinkAfterClick(info)
-									end)
-				tmpTextObj:SetObjPos2((v-1)*83, (h-1)*110+48+6, 70, 15)
-				tmpTextObj:SetHAlign("center")
-				tmpTextObj:SetVAlign("center")
-				tmpTextObj:SetTextFontResID("font.yahei12")
-				tmpTextObj:SetTextColorResID("system.white")
-				tmpTextObj:SetWordEllipsis(true)
-				tmpTextObj:SetText(info["strAppName"])			
-			end
+			ShowAppListItem(ctrl, idx, info)
 		end
 	end
 	layout:SetVisible(bIsShow)
