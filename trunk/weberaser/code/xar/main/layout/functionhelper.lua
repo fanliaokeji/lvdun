@@ -136,7 +136,7 @@ function SendReportLocal(nOPeration)
 	end
 	
 	local strUrl = "http://stat.ggxpc.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
-					.."&proid=13&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&proid=15&op="..tostring(nOPeration).."&cid="..(strChannelID)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
 	TipLog("SendReportLocal: " .. tostring(strUrl))
