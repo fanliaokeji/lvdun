@@ -380,6 +380,8 @@ function OpenLinkAfterClick(info)
 end
 
 
+local tAppTaskPool = {}
+local bIsDownLoading = false
 function OpenSoftware(info)
 	local strRegPath = info.strRegPath or ""
 	local strExeName = info.strExeName or ""
@@ -396,11 +398,12 @@ function OpenSoftware(info)
 		tipUtil:ShellExecute(0, "open", strPathWithFix, 0, 0, "SW_SHOWNORMAL")
 		SendAppReport(strKeyName, 2)
 	else
-		if info.bIsDownLoading then
-			return
+		if bIsDownLoading then
+			tAppTaskPool[#tAppTaskPool+1] = info
+		else
+			bIsDownLoading = true
+			DownLoadSoftware(info)
 		end
-		DownLoadSoftware(info)
-		SendAppReport(strKeyName, 3)
 	end
 end
 
@@ -415,14 +418,10 @@ function GetFileSaveNameFromUrl(url)
 end
 
 function DownLoadSoftware(info)
-	if info.bIsDownLoading then
-		return
-	end
-	info.bIsDownLoading = true
-	
 	local strOpenLink = info.strOpenLink
 	local strCommand = info.strCommand or ""
 	if not IsRealString(strOpenLink) then
+		bIsDownLoading = false
 		return
 	end
 	
@@ -432,18 +431,23 @@ function DownLoadSoftware(info)
 		strFileName = strFileName..".exe"
 	end
 	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	
+	SendAppReport(info.strKeyName, 3)
 	tFunHelper.NewAsynGetHttpFile(strOpenLink, strSavePath, false
 	, function(bRet, strRealPath)
 		tFunHelper.TipLog("[DownLoadSoftware] strOpenLink:"..tostring(strOpenLink)
 		        .."  bRet:"..tostring(bRet).."  strRealPath:"..tostring(strRealPath))		
+		bIsDownLoading = false
+		if #tAppTaskPool > 0 then
+			bIsDownLoading = true
+			local tInfo = tAppTaskPool[1]
+			table.remove(tAppTaskPool, 1)
+			DownLoadSoftware(tInfo)
+		end
 		if 0 ~= bRet then
-			attr.bIsDownLoading = false
 			return
 		end
 		
 		tipUtil:ShellExecute(0, "open", strRealPath, strCommand, 0, "SW_HIDE")
-		attr.bIsDownLoading = false
 	end)	
 end
 
