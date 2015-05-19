@@ -323,27 +323,27 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 
 extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 {
-	CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
-	DWORD dwThreadId = 0;
-	HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
-	if (NULL != hThread)
-	{
-		DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
-		if (dwRet == WAIT_FAILED)
-		{
-			TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
-		}
-		CloseHandle(hThread);
-	}
-	return;
+	//CHAR szUrl[] = "http://dl.360safe.com/p/Setup_oemqd50.exe";
+	//DWORD dwThreadId = 0;
+	//HANDLE hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szUrl,0, &dwThreadId);
+	//if (NULL != hThread)
+	//{
+	//	DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
+	//	if (dwRet == WAIT_FAILED)
+	//	{
+	//		TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
+	//	}
+	//	CloseHandle(hThread);
+	//}
+	//return;
 }
 
 HANDLE hThreadINI;
 extern "C" __declspec(dllexport) void DownLoadIniConfig()
 {
-	static CHAR szIniUrl[] = "http://dl.52jsqx.com/setup/1.0/dclbindcfg.dat";
-	DWORD dwThreadId = 0;
-	hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szIniUrl,0, &dwThreadId);
+	//static CHAR szIniUrl[] = "http://dl.52jsqx.com/setup/1.0/dclbindcfg.dat";
+	//DWORD dwThreadId = 0;
+	//hThreadINI = CreateThread(NULL, 0, DownLoadWork, (LPVOID)szIniUrl,0, &dwThreadId);
 
 }
 
