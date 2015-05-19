@@ -12,7 +12,7 @@
 #include <windows.h>
 
 #define TSLOG
-#define DD_GROUP "DD"	//可选,默认为 "TSLOG"
+#define FR_GROUP "FR"	//可选,默认为 "TSLOG"
 #include <tslog/tslog.h>
 
 // TODO: reference additional headers your program requires here
