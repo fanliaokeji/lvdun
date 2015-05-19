@@ -22,10 +22,40 @@ struct FRBrowserTaskInfo
 	int posY;
 };
 
+HWND GetHwndMsgListenerOK()
+{
+	HANDLE hMutex;
+	DWORD dwRet;
+	//互斥量存在则说明消息监听ok
+	for(int i = 0; i < 3; ++i){
+		hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"xarmutex_{455EB122-3F18-4139-AE47-255F940CBCF0}");
+		dwRet = GetLastError();
+		if (hMutex == NULL || ERROR_FILE_NOT_FOUND == dwRet){
+			if(i == 2){
+				//return NULL;
+			} else {
+				Sleep(500);
+			}
+		} else {
+			CloseHandle(hMutex);
+			break;
+		}
+	}
+	HWND hwnd;
+	for(int i = 0; i < 3; ++i){
+		hwnd = ::FindWindowA("{1DA1F328-DB3D-4f6a-A62E-E9B2B22F2B9A}_frmainmsg", NULL);
+		if(hwnd != NULL){
+			return hwnd;
+		} else {
+			Sleep(500);
+		}
+	}
+	return NULL;
+}
 
 HWND __stdcall CreateProcessAndGetHwnd()
 {
-	HWND hwnd = ::FindWindowA("{1DA1F328-DB3D-4f6a-A62E-E9B2B22F2B9A}_frmainmsg", NULL);
+	HWND hwnd = GetHwndMsgListenerOK();
 	if(hwnd != NULL){
 		return hwnd;
 	}
@@ -49,7 +79,7 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		strcpy(szBrowserName, PathFindFileNameA(szBrowserPath));
 	}
 	char szCmdLine[MAX_PATH] = {0};
-	sprintf(szCmdLine, "/sstartfrom FlyRabbitAgent /browsername %s", szBrowserName);
+	sprintf(szCmdLine, "/sstartfrom FlyRabbitAgent /browsername %s /embedding", szBrowserName);
 	STARTUPINFOA si = {sizeof(si)};
 	PROCESS_INFORMATION pi;
 	si.dwFlags=STARTF_USESHOWWINDOW;//指定wShowWindow成员有效
@@ -72,17 +102,9 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		::RegCloseKey(hKEY);
 		return NULL;
 	}
-	for(int i = 0; i < 3; ++i){
-		hwnd = ::FindWindowA("{1DA1F328-DB3D-4f6a-A62E-E9B2B22F2B9A}_frmainmsg", NULL);
-		if(hwnd != NULL){
-			::RegCloseKey(hKEY);
-			return hwnd;
-		} else {
-			Sleep(500);
-		}
-	}
+	hwnd = GetHwndMsgListenerOK();
 	::RegCloseKey(hKEY);
-	return NULL;
+	return hwnd;
 }
 
 unsigned int __stdcall ThreadFun(PVOID pM)  
@@ -90,7 +112,7 @@ unsigned int __stdcall ThreadFun(PVOID pM)
 	COPYDATASTRUCT cpd;
 	cpd.dwData = 0;
 	cpd.cbData = sizeof(FRBrowserTaskInfo);
-	cpd.lpData = (void*)pM;
+	cpd.lpData = pM;
 	HWND hwnd = CreateProcessAndGetHwnd();
 	if(hwnd != NULL){
 		::SendMessageA(hwnd, WM_COPYDATA, 1, (LPARAM)&cpd);

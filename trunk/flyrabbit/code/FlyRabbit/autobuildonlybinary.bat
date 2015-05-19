@@ -33,6 +33,19 @@ for %%i in (.dll,.exe) do (
 )
 
 echo 编译完成
+(
+  echo @echo off
+  echo cd /d %%~dp0
+  echo for /r %%%%i in ^(*.dll *.exe^) do ^(
+  echo if %%%%~ni == FlyRabbitSetupHelper ^(
+  echo copy /y %%%%i "D:\绿盾SVN\flyrabbit\bin\setup\bin\"
+  echo ^) else ^(
+  echo copy /y %%%%i "D:\绿盾SVN\flyrabbit\bin\setup\input_main\program\"
+  echo ^)
+  echo ^)
+  echo pause
+  echo @echo on
+)> !unsigdir!\copyfile.bat
 goto done
 echo 开始打包...
 "C:\Program Files (x86)\NSIS\makensisw.exe" "%basedir:~1,-1%..\..\bin\setup\pack_ansi.nsi"

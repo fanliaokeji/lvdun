@@ -145,7 +145,7 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		sprintf(szev, "&ev=%ld",ev);
 		str += szev;
 	}
-	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
+	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-62827200-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
 	
 	ResetUserHandle();
 	DWORD dwThreadId = 0;
@@ -375,9 +375,9 @@ extern "C" __declspec(dllexport) void Send2FlyRabbitAnyHttpStat(CHAR *op, CHAR *
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}*/
-	std::string str = "http://stat.FlyRabbitrili.com:8082/c?peerid=";
+	std::string str = "http://stat.feitwo.com:8082/c?peerid=";
 	str += szPid;
-	str += "&appid=1001&proid=12";
+	str += "&appid=1001&proid=14";
 	str += "&op=";
 	str += op;
 	str += "&cid=";
