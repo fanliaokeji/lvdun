@@ -12,7 +12,6 @@
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
-#include "LRTPretender.h"
 HINSTANCE gInstance = NULL;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -67,7 +66,6 @@ void SetUserHandle()
 
 DWORD WINAPI SendHttpStatThread(LPVOID pParameter)
 {
-	TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 	delete [] pParameter;
@@ -290,7 +288,6 @@ extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// ʧ�ܷ
 
 DWORD WINAPI DownLoadWork(LPVOID pParameter)
 {
-	TSAUTO();
 	CHAR szUrl[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
 	CHAR szBuffer[MAX_PATH] = {0};
@@ -568,32 +565,4 @@ extern "C" __declspec(dllexport) void GetUserPinPath(char* szPath)
 	}
 	int nLen = (int)strUserPinPath.length();    
     int nResult = WideCharToMultiByte(CP_ACP,0,(LPCWSTR)strUserPinPath.c_str(),nLen,szPath,nLen,NULL,NULL);
-}
-
-
-CAppModule _Module;
-
-extern "C" __declspec(dllexport) void LoadLuaRunTime(char* szInstallDir,char* szParam)
-{
-	TSTRACEAUTO();
-	HRESULT hr = ::CoInitialize(NULL);
-	hr = _Module.Init(NULL, gInstance);
-
-
-	CMessageLoop theLoop;
-	_Module.AddMessageLoop(&theLoop);
-
-	CLRTAgent lrtAgent;
-	if (lrtAgent.InitLua(szInstallDir,szParam))
-	{
-		TSDEBUG4CXX(_T(">>>>>theLoop.Run()"));
-		theLoop.Run();
-		TSDEBUG4CXX(_T("<<<<<theLoop.Run()"));
-	}
-	_Module.RemoveMessageLoop();
-	_Module.Term();
-	::CoUninitialize();
-	TerminateProcess(::GetCurrentProcess(), S_OK);
-
-	return;
 }
