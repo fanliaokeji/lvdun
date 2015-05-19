@@ -257,7 +257,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #define MAX_HEX_DUMP_SIZE  		512
 #define MAX_ENVTSLOG_SIZE		128
 //no config, default
-#define DEFAULT_LOGFILE_PATH				"C:\\FRLOG\\"
+#define DEFAULT_LOGFILE_PATH				"D:\\FRLOG\\"
 #define __TDEFAULT_LOGFILE_PATH				_T(DEFAULT_LOGFILE_PATH)
 #define DEFAULT_MAX_LOGFILE_SIZE			20480
 #define MAX_MAX_LOGFILE_SIZE				(DEFAULT_MAX_LOGFILE_SIZE * 100)
