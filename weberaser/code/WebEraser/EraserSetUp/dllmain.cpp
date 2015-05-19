@@ -2,18 +2,13 @@
 #include "stdafx.h"
 #include "..\EraserKernel\PeeIdHelper.h"
 #include <string>
-// ATL Header Files
-#include <tslog/tslog.h>
 #include <atlbase.h>
 #include <WTL/atlapp.h>
 #include <Urlmon.h>
 #pragma comment(lib, "Urlmon.lib")
-#include <Windows.h>
 #pragma comment(lib, "Version.lib")
 
-#define TSLOG
-#define GS_GROUP "WE"	//可选,默认为 "TSLOG"
-#include <tslog/tslog.h>				//如上配置,日志程序将根据 C:\TSLOG_CONFIG\TSLOG.ini 定义的策略打印
+#include <shlobj.h>
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
@@ -133,7 +128,7 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		sprintf(szev, "&ev=%ld",ev);
 		str += szev;
 	}
-	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58613034-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
+	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-63070680-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
 	
 	ResetUserHandle();
 	DWORD dwThreadId = 0;
@@ -191,7 +186,7 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\WebEarser";
+	LPCSTR data_Set= "Software\\WebEraser";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
@@ -213,7 +208,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "WebEarser", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "WebEraser", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}
@@ -390,7 +385,7 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid,
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}*/
-	std::string str = "http://52jsqx.com:8082/c?appid=1001&peerid=";
+	std::string str = "http://stat.ggxpc.com:8082/c?appid=1001&peerid=";
 	str += szPid;
 	str += "&proid=13&op=";
 	str += op;

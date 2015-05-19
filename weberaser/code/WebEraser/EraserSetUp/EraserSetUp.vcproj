@@ -94,7 +94,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
@@ -121,6 +121,7 @@
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="../../inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DSSETUPHELPER_EXPORTS"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
