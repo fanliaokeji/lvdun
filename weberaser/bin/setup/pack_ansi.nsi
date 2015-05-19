@@ -50,7 +50,6 @@ Var Btn_FreeUse
 ;动态获取渠道号
 Var str_ChannelID
 
-Var bool_needinstofficeandbind
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
 !define MUI_ABORTWARNING
@@ -78,7 +77,7 @@ Var bool_needinstofficeandbind
 !define PRODUCT_MAININFO_FORSELF "Software\${PRODUCT_NAME}"
 
 ;卸载包开关（请不要轻易打开）
-!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
+;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
 ;---------------------------设置软件压缩类型（也可以通过外面编译脚本控制）------------------------------------
@@ -408,12 +407,7 @@ FunctionEnd
 
 Function ExitWithCheck
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
-	${If} $bool_installoffice == "true"
-	${AndIf} $bool_needinstofficeandbind == "true"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
-	${Else}
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
-	${EndIf}
+	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
 FunctionEnd
 
 Function UnstallOnlyFile
@@ -571,23 +565,7 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	
-	
-	;是否需要装office以及展示捆绑位置
-	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
-	Push $R2
-	Push "\"
-	Call GetLastPart
-	Pop $R1
-	${If} $R1 != "WebEraserSetup${PRODUCT_VERSION}.exe"
-		StrCpy $bool_needinstofficeandbind "true"
-	${EndIf}
-	
 	Call CmdSilentInstall
-	;Call CmdUnstall
-	;有界面的安装下载ini文件
-	${If} $bool_needinstofficeandbind == "true"
-		;System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::DownLoadIniConfig()"
-	${EndIf}
 	
 	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
@@ -1121,11 +1099,7 @@ Function ExitWithCheck2
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
 	${EndIf}
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
-	${If} $bool_needinstofficeandbind == "true"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
-	${Else}
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
-	${EndIf}
+	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
