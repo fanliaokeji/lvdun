@@ -1827,7 +1827,8 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»
 	if((_off_t)0 == stBuf.st_size)
 	{
 		HANDLE hFile = CreateFile(pszConfigFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0 , NULL);
-		if(INVALID_HANDLE_VALUE != hFile)			
+		if (FALSE)
+		//if(INVALID_HANDLE_VALUE != hFile)			
 		{
 			DWORD dwByteWritten = 0;
 			LPCSTR szBufferA = ";[Output]\r\n"
@@ -1853,14 +1854,14 @@ BOOL CTSLog::GetConfig(BOOL bModuleInit) //»Áπ˚√ª”–≈‰÷√Œƒº˛£¨Ω´≤ª¥Ú”°»’÷æ£¨¿˙ ∑»
 	}	
 	TCHAR szReturnedString[2048] = {0};
 	GetPrivateProfileString(_T("Output"), _T("DebugView"), _T("ON"), szReturnedString, sizeof(szReturnedString)/sizeof(TCHAR), pszConfigFileName);	// «∑Ò‘⁄DebugView÷–¥Ú”°»’÷æ
-	if(0 == _tcsicmp(szReturnedString, _T("ON")) || _tcsicmp(szReturnedString, _T("1")) == 0)
+	if(0 == _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")) || _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")) == 0)
 		m_bDebugViewLog = TRUE;
 	else if(0 == _tcsicmp(szReturnedString, _T("OFF")) || 0 == _tcsicmp(szReturnedString, _T("0")))
 		m_bDebugViewLog = FALSE;
 	if(bWriteConfig)
 		WritePrivateProfileString(_T("Output"), _T("DebugView"), m_bDebugViewLog ? _T("ON") : _T("OFF"), pszConfigFileName);
 	GetPrivateProfileString(_T("Output"), _T("FileLog"), _T("ON"), szReturnedString, sizeof(szReturnedString)/sizeof(TCHAR), pszConfigFileName);	// «∑Ò‘⁄»’÷æŒƒº˛÷–¥Ú”°»’÷æ
-	if(0  == _tcsicmp(szReturnedString, _T("ON")) || 0 == _tcsicmp(szReturnedString, _T("1")))
+	if(0  == _tcsicmp(szReturnedString, _T("{EB19A140-8961-418b-9FCB-AF47D5CF781B}")) || 0 == _tcsicmp(szReturnedString, _T("1")))
 		m_bFileLog = TRUE;
 	else if(0 == _tcsicmp(szReturnedString, _T("OFF")) || 0 == _tcsicmp(szReturnedString, _T("0")))
 		m_bFileLog = FALSE;
