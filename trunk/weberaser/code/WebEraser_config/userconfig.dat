@@ -3,10 +3,12 @@ function GetSubTable()
 		["nLastCommonUpdateUTC"] = 0, 
 		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
-		["strServerConfigURL"] = "http://dl.52jsqx.com/update/1.0/ADCleanServerConfig.dat", 
+		["strServerConfigURL"] = "http://dl.ggxpc.com/update/1.0/weserverconfig.dat", 
 		["nLastClearUTC"] = 0, 
 		["bFilterOpen"] = true, 
 		["nHideBubblePopWndInSec"] = 5, 
+		["nRepAutoStupCount"] = 1, 
+		["nRepAutoStupSpanInSec"] = 3*60, 
 	}
 	return t
 end
