@@ -83,7 +83,7 @@ BOOL CGSApp::IniEnv()
 	TCHAR szXar[MAX_PATH] = {0};
 	GetModuleFileName((HMODULE)g_hInst, szXar, MAX_PATH);
 	PathRemoveFileSpec(szXar);
-	PathAppend(szXar, _T("..\\xar\\")); 
+	//PathAppend(szXar, _T("..\\xar\\")); 
 	if (!::PathFileExists(szXar) || !::PathIsDirectory(szXar) )
 	{
 		return FALSE;
@@ -115,9 +115,9 @@ BOOL CGSApp::IniEnv()
 void CGSApp::InternalLoadXAR()
 {
 	XLUE_AddXARSearchPath(m_strXarPath.c_str());
-	if (XLUE_XARExist("main"))
+	if (XLUE_XARExist("eraserui"))
 	{
-		long iRet = XLUE_LoadXAR("main");	//返回值为0说明加载成功
+		long iRet = XLUE_LoadXAR("eraserui");	//返回值为0说明加载成功
 		TSDEBUG4CXX(L"XLUE_LoadXAR iret = " << iRet);
 		if(iRet != 0)
 		{
