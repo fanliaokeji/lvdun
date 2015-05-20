@@ -332,7 +332,7 @@ end
 function SendWhiteListToFilterThread()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 
-	local strWhiteListPath = GetRulePath("ServerADCWhite.dat", "wewhite.dat")
+	local strWhiteListPath = GetRulePath("serverwewhite.dat", "wewhite.dat")
 	if not IsRealString(strWhiteListPath) or not tipUtil:QueryFileExists(strWhiteListPath) then
 		return false
 	end		
@@ -407,7 +407,6 @@ function DownLoadServerRule(tDownRuleList)
 end
 
 
-
 function CheckServerRuleFile(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
@@ -419,9 +418,9 @@ function CheckServerRuleFile(tServerConfig)
 	local strServerWhiteURL = FetchValueByPath(tServerData, {"tServerWhite", "strURL"})
 	local strServerWhiteMD5 = FetchValueByPath(tServerData, {"tServerWhite", "strMD5"})
 		
-	local strVideoSavePath = FunctionObj.GetCfgPathWithName("ServerADCVideo.dat")
-	local strWebSavePath = FunctionObj.GetCfgPathWithName("ServerADCWeb.dat")
-	local strWhiteListPath = FunctionObj.GetCfgPathWithName("ServerADCWhite.dat")
+	local strVideoSavePath = FunctionObj.GetCfgPathWithName("serverwecfgv.dat")
+	local strWebSavePath = FunctionObj.GetCfgPathWithName("serverwecfgw.dat")
+	local strWhiteListPath = FunctionObj.GetCfgPathWithName("serverwewhite.dat")
 	
 	if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
 		strVideoSavePath = FunctionObj.GetCfgPathWithName("wecfgv.dat")
@@ -442,21 +441,21 @@ function CheckServerRuleFile(tServerConfig)
 		local nIndex = #tDownRuleList+1
 		tDownRuleList[nIndex] = {}
 		tDownRuleList[nIndex]["strURL"] = strServerVideoURL
-		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCVideo.dat")
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("serverwecfgv.dat")
 	end
 	
 	if IsRealString(strServerWebURL) and tostring(strDataWMD5) ~= tostring(strServerWebMD5) then
 		local nIndex = #tDownRuleList+1
 		tDownRuleList[nIndex] = {}
 		tDownRuleList[nIndex]["strURL"] = strServerWebURL
-		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCWeb.dat")
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("serverwecfgw.dat")
 	end
 	
 	if IsRealString(strServerWhiteURL) and tostring(strWhiteMD5) ~= tostring(strServerWhiteMD5) then
 		local nIndex = #tDownRuleList+1
 		tDownRuleList[nIndex] = {}
 		tDownRuleList[nIndex]["strURL"] = strServerWhiteURL
-		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("ServerADCWhite.dat")
+		tDownRuleList[nIndex]["strPath"] = FunctionObj.GetCfgPathWithName("serverwewhite.dat")
 	end
 	
 	DownLoadServerRule(tDownRuleList)
@@ -622,7 +621,7 @@ function CreateMainTipWnd()
 end
 
 
-function InitADCFilter()
+function InitWEFilter()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
@@ -639,7 +638,7 @@ function TipMain()
 		return
 	end
 	
-	local bSucc = InitADCFilter()  --里面退出
+	local bSucc = InitWEFilter()  --如果出错，该函数会弹框并结束进程
 	if not bSucc then
 		return
 	end 

@@ -732,7 +732,9 @@ function SetNotifyIconState(strText)
 	end
 	local strDefaultText = "广告橡皮擦\r\n状态："..strState.."\r\n今日累计拦截："..tostring(nFilterCount).."次"
 	
-	local strResImageDir = __document .. "\\..\\..\\..\\res"
+	local strProgramDir = GetProgramDir()
+	local strResImageDir = tipUtil:PathCombine(strProgramDir, "res")
+	
 	local strImageName = "WebEraser.TrayIcon.Close.ico"
 	if bFilterOpen then
 		strImageName = "WebEraser.TrayIcon.Open.ico"
