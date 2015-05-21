@@ -6,24 +6,28 @@ function GetSubTable()
 			["strKeyName"] = "datianshi",
 			["nOpenType"] = 1,  
 			["strOpenLink"] = "http://p.ali37.net/s/1/720/20987.html?uid=915687",
+			["strImgUrl"] = "http://127.0.0.1/appimage/datianshi.png"
 		},
 		[2] = {
 			["strAppName"] = "风云无双",
 			["strKeyName"] = "fengyunwushuang",
 			["nOpenType"] = 1,
 			["strOpenLink"] = "http://p.ali37.net/s/1/720/19934.html?uid=915687",
+			["strImgUrl"] = "http://127.0.0.1/appimage/fengyunwushuang.png"
 		},
 		[3] = {
 			["strAppName"] = "斩龙传奇",
 			["strKeyName"] = "zhanlongchuanqi",
 			["nOpenType"] = 1,
 			["strOpenLink"] = "http://p.ali37.net/s/1/720/13682.html?uid=915687",
+			["strImgUrl"] = "http://127.0.0.1/appimage/zhanlongchuanqi.png"
 		},
 		[4] = {
 			["strAppName"] = "万世",
 			["strKeyName"] = "wanshi",
 			["nOpenType"] = 1,
 			["strOpenLink"] = "http://p.ali37.net/s/1/720/19742.html?uid=915687",
+			["strImgUrl"] = "http://127.0.0.1/appimage/wanshi.png"
 		},
 		[5] = {
 			["strAppName"] = "360安全套装",
@@ -33,6 +37,7 @@ function GetSubTable()
 			["strOpenLink"] = "http://dl.360safe.com/p/Setup_oemasdf021.exe",
 			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\360安全卫士\\InstallLocation",
 			["strExeName"] = "360Safe.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/360Safe.png"
 		},
 		[6] = {
 			["strAppName"] = "360浏览器",
@@ -42,6 +47,7 @@ function GetSubTable()
 			["strOpenLink"] = "http://down.360safe.com/p/360se_oemasdf013.exe",
 			["strRegPath"] = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\360se6\\InstallLocation",
 			["strExeName"] = "360se.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/360Chrome.png"
 		},	
 		[7] = {
 			["strAppName"] = "QQ管家",
@@ -50,6 +56,7 @@ function GetSubTable()
 			["strCommand"] = "/S",
 			["strOpenLink"] = "http://dlied6.qq.com/invc/xfspeed/qqpcmgr/versetup/gjstat_platform/qqpcmgr_124581_n_v8.9.10958.231_Silence.exe",
 			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Tencent\\QQPCMgr\\ExeString",
+			["strImgUrl"] = "http://127.0.0.1/appimage/QQManager.png"
 		},		
 		[8] = {
 			["strAppName"] = "搜狐影音",
@@ -59,6 +66,7 @@ function GetSubTable()
 			["strOpenLink"] = "http://p2p.hd.sohu.com/dcs.do?f=1&s=2093006&append=-ng-nti-s",
 			["strRegPath"] = "HKEY_CURRENT_USER\\Software\\SOHU\\SoHuVA\\Path",
 			["strExeName"] = "SHPlayer.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/SohuPlayer.png"
 		},
 		[9] = {
 			["strAppName"] = "PPS",
@@ -68,6 +76,7 @@ function GetSubTable()
 			["strOpenLink"] = "http://download.ppstream.com/hz/ppstreamsetup_zxH@xp001.exe",
 			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\PPStream\\SetupPath",
 			["strExeName"] = "PPStream.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/PPSPlayer.png"
 		},
 		[10] = {
 			["strAppName"] = "酷狗音乐",
@@ -77,6 +86,7 @@ function GetSubTable()
 			["strRegPath"] = "HKEY_CURRENT_USER\\Software\\KuGou\\AppPath",
 			["strCommand"] = "/S",
 			["strExeName"] = "KuGou.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/KugouMusic.png"
 		},		
 		[11] = {
 			["strAppName"] = "酷我音乐",
@@ -86,6 +96,7 @@ function GetSubTable()
 			["strOpenLink"] = "http://down.kuwo.cn/mbox/kuwo_jm416.exe",
 			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\KwMusic7\\InstallLocation",
 			["strExeName"] = "KwMusic.exe",
+			["strImgUrl"] = "http://127.0.0.1/appimage/KuwoMusic.png"
 		},
 		[12] = {
 			["strAppName"] = "UC浏览器",
@@ -94,6 +105,7 @@ function GetSubTable()
 			["strCommand"] = "/S",
 			["strOpenLink"] = "http://down2.uc.cn/pcbrowser/down.php?pid=4074",
 			["strRegPath"] = "HKEY_LOCAL_MACHINE\\SOFTWARE\\UCBrowser\\InstallerSuccessLaunchCmdLine",
+			["strImgUrl"] = "http://127.0.0.1/appimage/UCBrowser.png"
 		},
 	}
 	return t
