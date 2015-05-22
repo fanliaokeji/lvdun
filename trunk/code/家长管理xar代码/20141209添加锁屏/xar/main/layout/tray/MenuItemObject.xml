@@ -1,0 +1,131 @@
+<xlue>
+	<objtemplate id="menu.text" class="TextObject">
+		<attr>
+			<valign>center</valign>
+		</attr>
+	</objtemplate>
+	
+	<control class="MenuItemObject">
+		<attr_def>
+			<attr name="Type" type="int" desc="该条目的类型0表示一般菜单类型，1表示分隔符" >
+				<default>0</default>
+			</attr>
+			<attr name="SeparatorHeight" type="int" >
+				<default>0</default>
+			</attr>
+			<attr name="Icon" type="string" desc="该条目的图标"/>
+			<attr name="Text" type="string" desc="该条目的文本"/>
+			
+			<attr name="NormalArrow" type="string" desc="如果存在子菜单时的箭头图标" >
+				<!--default>bitmap.menu.arrow.normal</default-->
+			</attr>
+			<attr name="HoverArrow" type="string" >
+				<!--default>bitmap.menu.arrow.hover</default-->
+			</attr>
+			<attr name="Font" type="string">
+			</attr>
+			<attr name="IconPos" type="int" desc="图标的左边起始位置">
+				<default>0</default>
+			</attr>
+			<attr name="IconWidth" type="int">
+				<default>10</default>
+			</attr>
+			<attr name="IconHeight" type="int">
+				<default>10</default>
+			</attr>
+			<attr name="TextPos" type="int" desc="文本的左边起始位置">
+				<default>13</default>
+			</attr>
+			<attr name="FontColorNormal" type="string">
+			</attr>
+			<attr name="FontColorDisable" type="string">
+			</attr>
+			<attr name="FontColorHover" type="string">
+			</attr>
+			<attr name="TextRightWidth" type="int">
+				<default>16</default>
+			</attr>
+			
+			<attr name="AccKey" type="string" desc="加速键，一个字符"/>
+			<attr name="State" type="int"/>
+			<attr name="Enable" type="int">
+				<default>1</default>
+			</attr>
+			<attr name="SubMenuID" type="string" />
+			<attr name="Visible" type="bool">
+				<default>true</default>
+			</attr>
+			<attr name="Index" type="int" />
+			<attr name="TipsText" type="string" />
+		</attr_def>
+
+		<method_def>
+			<GetMinWidth file="MenuItemObject.xml.lua" function="GetMinWidth"/>
+			<ChangeState file="MenuItemObject.xml.lua" function="ChangeState"/>
+			<SelectItem file="MenuItemObject.xml.lua" function="SelectItem"/>
+			<CancelItem file="MenuItemObject.xml.lua" function="CancelItem"/>
+			<GetSubMenu file="MenuItemObject.xml.lua" function="GetSubMenu"/>
+			<SetText file="MenuItemObject.xml.lua" function="SetText"/>
+			<SetTipsText file="MenuItemObject.xml.lua" function="SetTipsText"/>
+			<SetIconID file="MenuItemObject.xml.lua" function="SetIconID" />
+			<GetIconID file="MenuItemObject.xml.lua" function="GetIconID" />
+			<Show file="MenuItemObject.xml.lua" function="Show" />
+			<IsVisible file="MenuItemObject.xml.lua" function="IsVisible" />
+			<SetEnable/>
+			<IsEnable/>
+			<SetSubMenu/>
+			<ShowSubMenu/>
+			<EndSubMenu/>
+			<GetItemSize file="MenuItemObject.xml.lua" function="GetItemSize" />
+			<SetType file="MenuItemObject.xml.lua" function="SetType" />
+			<HasSubMenu file="MenuItemObject.xml.lua" function="HasSubMenu" />
+			<SetAccKey file="MenuItemObject.xml.lua" function="SetAccKey" />
+			<IsShowSubMenu file="MenuItemObject.xml.lua" function="IsShowSubMenu" />
+			<SetMargin file="MenuItemObject.xml.lua" function="SetMargin" />
+			<SetFont file="MenuItemObject.xml.lua" function="SetFont" />
+			<SetFontColorNormal file="MenuItemObject.xml.lua" function="SetFontColorNormal" />
+			<SetFontBorder file="MenuItemObject.xml.lua" function="SetFontBorder" />
+			<SetFontShadow file="MenuItemObject.xml.lua" function="SetFontShadow" />
+			<GetParentItem file="MenuItemObject.xml.lua" func="GetParentItem" />
+			<SetUserData file="MenuItemObject.xml.lua" func="SetUserData" />
+			<GetUserData file="MenuItemObject.xml.lua" func="GetUserData" />
+		</method_def>
+
+		<event_def>
+			<OnInit/>
+			<OnPreSelect>
+				<param>
+					<string />
+				</param>
+			</OnPreSelect>
+			<OnSelect>
+				<param>
+					<string />
+				</param>
+			</OnSelect>
+			<OnShowSubMenu>
+				<param>
+					<string />
+				</param>
+			</OnShowSubMenu>
+		</event_def>
+
+		<objtemplate>
+			<children>
+
+			</children>
+
+			<eventlist>
+				<event name="OnInitControl" />
+				<event name="OnMouseMove" />
+				<event name="OnMouseLeave" />
+				<event name="OnMouseHover" />
+				<event name="OnLButtonDown" />
+				<event name="OnLButtonUp" file="MenuItemObject.xml.lua" function="OnLButtonUp" />
+				<event name="OnRButtonUp" file="MenuItemObject.xml.lua" function="OnLButtonUp" />
+				<event name="OnKeyDown" file="MenuItemObject.xml.lua" func="OnKeyDown" />
+			</eventlist>
+		</objtemplate>
+	</control>
+
+</xlue>

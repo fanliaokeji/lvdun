@@ -1,0 +1,93 @@
+<xlue>
+	<control class="ChildCtrl_Config">
+		<attr_def>
+
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_Config.xml.lua" func="OnShowPanel"/>
+			<SetElemState file="ChildCtrl_Config.xml.lua" func="SetElemState"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ChildCtrl_Config.MainWnd.Container" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+				</obj>	
+			</children>
+			<eventlist>
+				<event name="OnDestroy" file="ChildCtrl_Config.xml.lua" func="OnDestroy" />
+				<event name="OnInitControl" file="ChildCtrl_Config.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="ConfigElem">
+		<attr_def>
+			<attr name="SwitchState" type="bool" ><default>true</default></attr>
+		</attr_def>
+		<method_def>
+			<GetSwitchState file="ChildCtrl_Config.xml.lua" func="GetSwitchState"/>
+			<SetSwitchState file="ChildCtrl_Config.xml.lua" func="SetSwitchState"/>
+			<SetElemText file="ChildCtrl_Config.xml.lua" func="SetElemText"/>
+		</method_def>
+		<event_def>
+			<OnStateChange>
+			</OnStateChange>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="ConfigElem.Bkg" class="TextureObject">
+					<attr>
+						<left>12</left>
+						<top>0</top>
+						<width>289</width>
+						<height>35</height>
+						<texture>Greenwall.ConfigElem.ElemBkg.Normal</texture>
+					</attr>
+					<children>
+						<obj id="ConfigElem.Text" class="TextObject">
+							<attr>
+								<left>16</left>
+								<top>0</top>
+								<width>father.width*2/3</width>
+								<height>father.height</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.yahei12</font>
+								<textcolor>4D4D4D</textcolor>
+							</attr>
+						</obj>	
+						<obj id="ConfigElem.SwitchBtn" class="TextureObject">
+							<attr>
+								<left>father.width-18-54</left>
+								<top>(father.height-20)/2</top>
+								<width>54</width>
+								<height>20</height>
+								<texture>GreenWall.Common.SwitchButton.Open</texture>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="ChildCtrl_Config.xml.lua" func="OnClickSwitchButton" />
+								<event name="OnMouseEnter" file="ChildCtrl_Config.xml.lua" func="OnMouseEnterBtn" />
+								<event name="OnMouseLeave" file="ChildCtrl_Config.xml.lua" func="OnMouseLeaveBtn" />
+							</eventlist>
+						</obj>
+						
+					</children>
+					<eventlist>
+						<event name="OnMouseEnter" file="ChildCtrl_Config.xml.lua" func="OnMouseEnterBkg" />
+						<event name="OnMouseLeave" file="ChildCtrl_Config.xml.lua" func="OnMouseLeaveBkg" />
+					</eventlist>
+				</obj>
+			</children>
+		</objtemplate>
+	</control>	
+	
+</xlue>

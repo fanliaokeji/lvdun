@@ -1,0 +1,386 @@
+<xlue>
+	<control class="LockMainPanelRootCtrl">
+		<attr_def>
+        </attr_def>
+		<method_def>
+			<SetTipData file="LockPanelCtrl.xml.lua" func="SetTipData"/>
+		</method_def>
+        <event_def>
+        </event_def>
+		<objtemplate>
+            <children>		
+				<obj id="lockwnd.root.layout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>1024</width>
+						<height>640</height>
+						<texture>GreenWall.LockWnd.Bkg</texture>
+					</attr>				
+					<children>		
+						<obj id="lockwnd.centerpanel" class="LayoutObject">
+							<attr>
+								<left>261</left>
+								<top>189</top>
+								<width>499</width>
+								<height>222</height>
+							</attr>				
+							<children>			
+								<obj id="lockwnd.centerpanel.title" class="TextObject">
+									<attr>
+										<left>50</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>45</height>
+										<valign>center</valign>
+										<halign>left</halign>
+										<font>font.yahei19</font>
+										<textcolor>system.white</textcolor>
+										<text>绿盾广告管家提醒您：</text>
+									</attr>
+								</obj>	
+
+								<!--输入密码解锁-->
+								<obj id="lockwnd.centerpanel.unlock" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>45</top>
+										<width>499</width>
+										<height>222-45</height>
+									</attr>
+									<children>	
+										<obj id="lockwnd.centerpanel.unlock.text1" class="TextObject">
+											<attr>
+												<left>50</left>
+												<top>15</top>
+												<width>father.width-50</width>
+												<height>30</height>
+												<font>font.yahei20</font>
+												<textcolor>333333</textcolor>
+												<text>家长管理模式下，您的电脑已被锁屏；</text>
+											</attr>
+										</obj>	
+										<obj id="lockwnd.centerpanel.unlock.text2" class="TextObject">
+											<attr>
+												<left>50</left>
+												<top>15+30+5</top>
+												<width>father.width-50</width>
+												<height>30</height>
+												<font>font.yahei20</font>
+												<textcolor>333333</textcolor>
+												<text>请输入密码进行解锁！</text>
+											</attr>
+										</obj>	
+										
+										<obj id="lockwnd.centerpanel.unlock.textcode" class="TextObject">
+											<attr>
+												<left>50</left>
+												<top>15+30*2+5+15</top>
+												<width>60</width>
+												<height>30</height>
+												<font>font.yahei20</font>
+												<textcolor>333333</textcolor>
+												<text>密码：</text>
+											</attr>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.unlock.inputcode.Bkg" class="TextureObject">
+											<attr>
+												<left>50+60</left>
+												<top>15+30*2+5+15</top>
+												<width>148</width>
+												<height>32</height>
+												<texture>GreenWall.LockWnd.Input.Normal</texture>
+											</attr>
+											<children>
+												<obj id="lockwnd.centerpanel.unlock.inputcode" class="EditObject">
+													<attr>
+														<left>1</left>
+														<top>3</top>
+														<width>father.width-2</width>
+														<height>father.height-4</height>
+														<font>font.yahei20.bold</font>
+														<textcolor>333333</textcolor>
+														<disableime>1</disableime>
+														<maxlength>12</maxlength>
+														<password>1</password>
+														<passwordchar>·</passwordchar>
+													</attr>
+													<eventlist>
+														<event name="OnKeyDown" file="LockPanelCtrl.xml.lua" func="OnInputCodeKeyDown" />
+														<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+														<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+													</eventlist>
+												</obj>
+											</children>
+											<eventlist>
+												<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="OnMouseEnterInputBkg" />
+												<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="OnMouseLeaveInputBkg" />
+											</eventlist>
+										</obj>
+										
+										<obj id="lockwnd.centerpanel.unlock.keyerror" class="TextObject">
+											<attr>
+												<left>50+60+148+15</left>
+												<top>15+30*2+5+15+4</top>
+												<width>80</width>
+												<height>30</height>
+												<font>font.yahei15</font>
+												<textcolor>ED3B3B</textcolor>
+												<text>密码错误！</text>
+											</attr>
+										</obj>
+										
+										
+										<obj id="lockwnd.centerpanel.unlock.forget" class="TipAddin.Button">
+											<attr>
+												<left>father.width-25-114</left>
+												<top>father.height-25-35</top>
+												<width>114</width>
+												<height>35</height>
+												<NormalBkgID>GreenWall.LockWnd.Forget.Normal</NormalBkgID>
+												<DownBkgID>GreenWall.LockWnd.Forget.Hover</DownBkgID>
+												<HoverBkgID>GreenWall.LockWnd.Forget.Hover</HoverBkgID>
+												<DisableBkgID>GreenWall.LockWnd.Forget.Normal</DisableBkgID>
+												<Text>忘记密码</Text>
+												<TextFont>font.yahei16</TextFont>
+												<TextColor>876D54</TextColor>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="LockPanelCtrl.xml.lua" func="OnClickForgetBtn" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+								
+								<!--忘记密码-->
+								<obj id="lockwnd.centerpanel.resetcode" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>45</top>
+										<width>499</width>
+										<height>222-45</height>
+									</attr>
+									<children>	
+										<obj id="lockwnd.centerpanel.resetcode.identcode" class="TextObject">
+											<attr>
+												<left>50</left>
+												<top>20</top>
+												<width>110</width>
+												<height>30</height>
+												<font>font.yahei18</font>
+												<textcolor>333333</textcolor>
+												<text>输入验证码：</text>
+											</attr>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.resetcode.inputident.Bkg" class="TextureObject">
+											<attr>
+												<left>50+110</left>
+												<top>18</top>
+												<width>148</width>
+												<height>32</height>
+												<texture>GreenWall.LockWnd.Input.Normal</texture>
+											</attr>
+											<children>
+												<obj id="lockwnd.centerpanel.resetcode.inputident" class="EditObject">
+													<attr>
+														<left>1</left>
+														<top>3</top>
+														<width>father.width-2</width>
+														<height>father.height-4</height>
+														<font>font.yahei18</font>
+														<textcolor>666666</textcolor>
+														<tabgroup>3</tabgroup>
+														<taborder>1</taborder>
+													</attr>
+													<eventlist>
+														<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+														<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+													</eventlist>
+												</obj>
+											</children>
+											<eventlist>
+												<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="OnMouseEnterInputBkg" />
+												<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="OnMouseLeaveInputBkg" />
+											</eventlist>
+										</obj>
+										
+										<obj id="lockwnd.centerpanel.resetcode.newcode" class="TextObject">
+											<attr>
+												<left>50</left>
+												<top>20+50</top>
+												<width>110</width>
+												<height>30</height>
+												<font>font.yahei18</font>
+												<textcolor>333333</textcolor>
+												<text>填写新密码：</text>
+											</attr>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.resetcode.inputnew.Bkg" class="TextureObject">
+											<attr>
+												<left>50+110</left>
+												<top>18+50</top>
+												<width>148</width>
+												<height>32</height>
+												<texture>GreenWall.LockWnd.Input.Normal</texture>
+											</attr>
+											<children>
+												<obj id="lockwnd.centerpanel.resetcode.inputnew" class="EditObject">
+													<attr>
+														<left>1</left>
+														<top>3</top>
+														<width>father.width-2</width>
+														<height>father.height-4</height>
+														<font>font.yahei18.bold</font>
+														<textcolor>4B4B4B</textcolor>
+														<disableime>1</disableime>
+														<maxlength>12</maxlength>
+														<password>1</password>
+														<passwordchar>·</passwordchar>
+														<tabgroup>3</tabgroup>
+														<taborder>2</taborder>
+													</attr>
+													<eventlist>
+														<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+														<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="RouteToFather" />
+													</eventlist>
+												</obj>
+											</children>
+											<eventlist>
+												<event name="OnMouseEnter" file="LockPanelCtrl.xml.lua" func="OnMouseEnterInputBkg" />
+												<event name="OnMouseLeave" file="LockPanelCtrl.xml.lua" func="OnMouseLeaveInputBkg" />
+											</eventlist>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.resetcode.iden" class="TipAddin.Button">
+											<attr>
+												<left>50+110+148+20</left>
+												<top>20</top>
+												<width>98</width>
+												<height>27</height>
+												<NormalBkgID>GreenWall.LockWnd.IdenCode.Normal</NormalBkgID>
+												<DownBkgID>GreenWall.LockWnd.IdenCode.Hover</DownBkgID>
+												<HoverBkgID>GreenWall.LockWnd.IdenCode.Hover</HoverBkgID>
+												<DisableBkgID>GreenWall.LockWnd.IdenCode.Normal</DisableBkgID>
+												<Text>点击获取验证</Text>
+												<TextFont>font.yahei12</TextFont>
+												<TextColor>876D54</TextColor>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="LockPanelCtrl.xml.lua" func="OnClickIdenBtn" />
+											</eventlist>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.resetcode.idensec" class="TextObject">
+											<attr>
+												<left>50+110+148+20+98+10</left>
+												<top>22</top>
+												<width>100</width>
+												<height>30</height>
+												<font>font.yahei14</font>
+												<textcolor>666666</textcolor>
+												<visible>false</visible>
+											</attr>
+										</obj>
+										
+										<obj id="lockwnd.centerpanel.resetcode.keyerror" class="TextObject">
+											<attr>
+												<left>50+110+148+20</left>
+												<top>20+52</top>
+												<width>180</width>
+												<height>30</height>
+												<font>font.yahei15</font>
+												<textcolor>ED3B3B</textcolor>
+												<visible>false</visible>
+											</attr>
+										</obj>
+									
+										<obj id="lockwnd.centerpanel.resetcode.enter" class="TipAddin.Button">
+											<attr>
+												<left>50+110</left>
+												<top>father.height-20-30</top>
+												<width>94</width>
+												<height>30</height>
+												<NormalBkgID>GreenWall.LockWnd.EnterBtn.Normal</NormalBkgID>
+												<DownBkgID>GreenWall.LockWnd.EnterBtn.Hover</DownBkgID>
+												<HoverBkgID>GreenWall.LockWnd.EnterBtn.Hover</HoverBkgID>
+												<DisableBkgID>GreenWall.LockWnd.EnterBtn.Normal</DisableBkgID>
+												<Text>确定</Text>
+												<TextFont>font.yahei14</TextFont>
+												<TextColor>4B4B4B</TextColor>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="LockPanelCtrl.xml.lua" func="OnClickEnterBtn" />
+											</eventlist>
+										</obj>
+										
+										<obj id="lockwnd.centerpanel.resetcode.cancle" class="TipAddin.Button">
+											<attr>
+												<left>50+110+94+20</left>
+												<top>father.height-20-30</top>
+												<width>94</width>
+												<height>30</height>
+												<NormalBkgID>GreenWall.LockWnd.EnterBtn.Normal</NormalBkgID>
+												<DownBkgID>GreenWall.LockWnd.EnterBtn.Hover</DownBkgID>
+												<HoverBkgID>GreenWall.LockWnd.EnterBtn.Hover</HoverBkgID>
+												<DisableBkgID>GreenWall.LockWnd.EnterBtn.Normal</DisableBkgID>
+												<Text>取消</Text>
+												<TextFont>font.yahei14</TextFont>
+												<TextColor>4B4B4B</TextColor>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="LockPanelCtrl.xml.lua" func="OnClickCancleBtn" />
+											</eventlist>
+										</obj>
+									
+									</children>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>		
+        </objtemplate>
+	</control>
+
+	<objtreetemplate id="LockPanelTree" class="ObjectTreeTemplate" templateid="LockMainWndTree">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+		<obj id="root.layout" class="LockMainWndRootCtrl" >
+			<attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>2000</width>
+				<height>2000</height>
+			</attr>
+			<children>
+				<!--黑色透明背景>
+				<obj id="black.layout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture>GreenWall.LockWnd.BlackRect</texture>
+						<alpha>100</alpha>
+					</attr>	
+				</obj-->
+			
+				<obj id="root.ctrl" class="LockMainPanelRootCtrl" >
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>1024</width>
+						<height>640</height>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
