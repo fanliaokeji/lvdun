@@ -27,12 +27,7 @@ function FetchValueByPath(obj, path)
 	return cursor
 end
 
-function LoadJSONHelper()
-	local strJSONHelperPath = __document.."\\..\\JSON.lua"
-	local Module = XLLoadModule(strJSONHelperPath)
-end
 
-local JsonFun = XLGetGlobal("WE.Json")
 
 function CheckIsInZone(strProvince,strCity, tBlackCity)
 	local tabProvinceInclude = {}
@@ -116,6 +111,8 @@ function CheckIsInZone(strProvince,strCity, tBlackCity)
 end
 
 function GetCityInfo(fnSuccess,fnFail)
+	local JsonFun = XLGetGlobal("WE.Json")
+	
 	apiAsyn:AjaxGetHttpContent(strIPUrl, function(iRet, strContent, respHeaders)
 		Log("[GetCityInfo] strIPUrl = " .. GTV(strIPUrl) .. ", iRet = " .. GTV(iRet))
 		if iRet == 0 then
@@ -172,8 +169,8 @@ function Sunccess(strProvince,strCity)
 		DoRedirect(strProvince,strCity, tBlackCity)
 	end
 	
-	if type(apiUtil.LaunchAiSvcs) == "function" then
-		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
+	if type(apiUtil.LaunchUpdate) == "function" then
+		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\WebEraser\\InstallMethod")
 		if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 		
 			return 
@@ -282,6 +279,7 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
 
 	local bret = apiUtil:LaunchUpdate()
+	
 	Log("[DoLaunchAI] LaunchUpdate bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
@@ -319,6 +317,7 @@ end
 ------------------------------------		
 	
 function Run()
+	local JsonFun = XLGetGlobal("WE.Json")
 	if type(JsonFun) ~= "table" then
 		return
 	end
