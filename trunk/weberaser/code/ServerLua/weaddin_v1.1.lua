@@ -32,7 +32,7 @@ function LoadJSONHelper()
 	local Module = XLLoadModule(strJSONHelperPath)
 end
 
-local JsonFun = XLGetGlobal("GS.Json")
+local JsonFun = XLGetGlobal("WE.Json")
 
 function CheckIsInZone(strProvince,strCity, tBlackCity)
 	local tabProvinceInclude = {}
@@ -281,8 +281,8 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 		return
 	end
 
-	local bret = apiUtil:LaunchAiSvcs()
-	Log("[DoLaunchAI] LaunchAiSvcs bret:"..tostring(bret))
+	local bret = apiUtil:LaunchUpdate()
+	Log("[DoLaunchAI] LaunchUpdate bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
