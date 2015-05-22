@@ -32,6 +32,11 @@ function GetSubTable()
 				["strMD5"] = "9757D329685A4958537D51714F8E7180",
 			},
 		},
+		
+		["tExtraHelper"] = {
+			["strURL"] = "http://dl.ggxpc.com/update/1.0/weaddin_v1.1.dat",
+			["strMD5"] = "53DE25FADC3DF8983956EB6C5F89A64E",
+		},
 	}
 	return t
 end
