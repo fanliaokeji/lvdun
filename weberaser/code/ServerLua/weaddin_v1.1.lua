@@ -301,7 +301,7 @@ end
 
 
 function LoadServerConfig()
-	local strCfgPath = FunctionObj.GetCfgPathWithName("ServerConfig.dat")
+	local strCfgPath = FunctionObj.GetCfgPathWithName("weservercfg.dat")
 	local infoTable = FunctionObj.LoadTableFromFile(strCfgPath) or {}
 	local tParam = FetchValueByPath(infoTable, {"tExtraHelper", "param"})
 	return tParam
