@@ -16,6 +16,13 @@ function RegisterFunctionObject()
 	end
 end
 
+
+function LoadJSONHelper()
+	local strJSONHelperPath = __document.."\\..\\JSON.lua"
+	local Module = XLLoadModule(strJSONHelperPath)
+end
+
+
 function IsNilString(AString)
 	if AString == nil or AString == "" then
 		return true
@@ -656,6 +663,7 @@ function PreTipMain()
 		tipUtil:Exit("Exit")
 	end
 	
+	LoadJSONHelper()
 	StartRunCountTimer()
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper")
 	FunctionObj.ReadAllConfigInfo()
