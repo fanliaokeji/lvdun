@@ -164,6 +164,10 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"SetLowLevelKeyboardHook", SetLowLevelKeyboardHook},
 	{"UnhookLowLevelKeyboard", UnhookLowLevelKeyboard},
 	
+
+	//╠Дож
+	{"LaunchUpdate", LaunchUpdate},
+
 	{NULL, NULL}
 };
 
@@ -4252,5 +4256,30 @@ int LuaGSUtil::Decrypt_AES_BASE64(lua_State* pLuaState)
 		return 1;
 	}
 	lua_pushnil(pLuaState);
+	return 1;
+}
+
+
+int LuaGSUtil::LaunchUpdate(lua_State* pLuaState)
+{
+	LuaGSUtil** ppUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	BOOL bRet = FALSE;
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"weupdate.dll");
+	if(NULL != hDll)
+	{
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
+		{
+			bRet = TRUE;
+			pf();
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
