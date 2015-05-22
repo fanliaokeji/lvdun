@@ -3,7 +3,7 @@ function GetSubTable()
 		["nLastCommonUpdateUTC"] = 0, 
 		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
-		["strServerConfigURL"] = "http://dl.ggxpc.com/update/1.0/weserverconfig.dat", 
+		["strServerConfigURL"] = "http://dl.ggxpc.com/update/1.0/weservercfg.dat", 
 		["nLastClearUTC"] = 0, 
 		["bFilterOpen"] = true, 
 		["nHideBubblePopWndInSec"] = 5, 
