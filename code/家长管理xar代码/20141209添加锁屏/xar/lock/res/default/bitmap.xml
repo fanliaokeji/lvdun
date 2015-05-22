@@ -1,0 +1,14 @@
+<XLUE>
+	<resource>
+		<texture id="GreenWall.LockWnd.Bkg" image="bitmap\GreenWall.LockWnd.Bkg.png" />
+		<texture id="GreenWall.LockWnd.BlackRect" image="bitmap\GreenWall.LockWnd.BlackRect.png" />	
+		<texture id="GreenWall.LockWnd.EnterBtn.Normal" image="bitmap\GreenWall.PopupWnd.EnterBtn.Normal.png" />
+		<texture id="GreenWall.LockWnd.EnterBtn.Hover" image="bitmap\GreenWall.PopupWnd.EnterBtn.Hover.png" />
+		<texture id="GreenWall.LockWnd.Forget.Hover" image="bitmap\GreenWall.LockWnd.Forget.Hover.png" />
+		<texture id="GreenWall.LockWnd.Forget.Normal" image="bitmap\GreenWall.LockWnd.Forget.Normal.png" />
+		<texture id="GreenWall.LockWnd.IdenCode.Normal" image="bitmap\GreenWall.LockWnd.IdenCode.Normal.png" />
+		<texture id="GreenWall.LockWnd.IdenCode.Hover" image="bitmap\GreenWall.LockWnd.IdenCode.Hover.png" />
+		<texture id="GreenWall.LockWnd.Input.Hover" image="bitmap\GreenWall.LockWnd.Input.Hover.png" />
+		<texture id="GreenWall.LockWnd.Input.Normal" image="bitmap\GreenWall.LockWnd.Input.Normal.png" />
+	</resource>
+</XLUE>

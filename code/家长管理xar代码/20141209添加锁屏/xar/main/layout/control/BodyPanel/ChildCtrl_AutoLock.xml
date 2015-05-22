@@ -1,0 +1,32 @@
+<xlue>
+	<control class="ChildCtrl_AutoLock">
+		<attr_def>
+
+		</attr_def>
+		<method_def>
+			<OnShowPanel file="ChildCtrl_AutoLock.xml.lua" func="OnShowPanel"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>		
+				<obj id="SurfTime.AutoLock.Text" class="TextObject">
+					<attr>
+						<left>11+99*2</left>
+						<top>50</top>
+						<width>99</width>
+						<height>father.height</height>
+						<valign>center</valign>
+						<halign>center</halign>
+						<font>font.yahei12</font>
+						<textcolor>system.black</textcolor>
+						<text>自动锁屏</text>
+						<cursor>IDC_HAND</cursor>
+						<zorder>2000</zorder>
+					</attr>
+				</obj>	
+			</children>
+		</objtemplate>
+	</control>
+</xlue>

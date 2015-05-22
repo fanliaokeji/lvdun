@@ -1,0 +1,70 @@
+<xlue>
+	<control class="LockMainWndRootCtrl">
+		<attr_def>
+		    <attr name="popanitime" type="int">
+				<default>800</default>
+			</attr>
+			<attr name="hidanitime" type="int">
+				<default>3000</default>
+			</attr>
+			<attr name="holdseconds" type="int">
+				<default>15</default>
+			</attr>
+		</attr_def>
+    	<objtemplate>
+    		<children>
+
+    		</children>
+    	</objtemplate>
+    </control>
+
+	<objtreetemplate id="LockMainWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>1024</width>
+			<height>680</height>
+		</attr>
+
+		<obj id="root.layout" class="LockMainWndRootCtrl">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>1024</width>
+				<height>680</height>
+			</attr>		
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="LockMainWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>2000</width>
+            <height>2000</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <center>0</center>
+            <topmost>1</topmost>
+            <visible>1</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="LockMainWnd.xml.lua" func="OnCreate"/>
+			<event name="OnDestroy" file="LockMainWnd.xml.lua" func="OnDestroy"/>
+			<event name="OnShowWindow" file="LockPanelCtrl.xml.lua" func="OnShowLockWnd"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
