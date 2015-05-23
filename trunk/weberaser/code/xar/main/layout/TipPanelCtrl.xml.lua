@@ -105,8 +105,26 @@ function OnClickGW(self)
 end
 
 local gnTimerID = nil
+local nRootTimerID = nil
 local gtTextInfo = {"过滤骚扰广告，还原干净网页", "看视频无广告，杜绝一切骚扰", "广告橡皮擦，去广告就这么简单", idx=1}
 function OnInitControlText(self)
+	local timerMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
+	if not timerMgr then return end
+	local objHostWnd = tFunHelper.GetMainWndInst()
+	nRootTimerID = timerMgr:SetTimer(
+		function()
+			if objHostWnd:GetVisible() and objHostWnd:GetWindowState() == "normal" then
+				StartAnimTextTimer(self)
+			else
+				if gnTimerID ~= nil then
+					timerMgr:KillTimer(gnTimerID)
+					gnTimerID = nil
+				end
+			end
+		end, 100)
+end
+
+function StartAnimTextTimer(self)
 	local timerMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 	if not timerMgr then return end
 	if gnTimerID == nil and gtTextInfo.idx ~= #gtTextInfo then
@@ -117,17 +135,26 @@ function OnInitControlText(self)
 				else
 					timerMgr:KillTimer(gnTimerID)
 					gnTimerID = nil
+					if nRootTimerID ~= nil then
+						timerMgr:KillTimer(nRootTimerID)
+						nRootTimerID = nil
+					end
 				end
 			end, 3000)
 	end
 end
 
 function AnimChangeText(self, bHide)
+	local timerMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 	local function onAniFinish(anim, old, new)
 		if new == 3 or new == 4 then
 			if gtTextInfo.idx == #gtTextInfo then
 				timerMgr:KillTimer(gnTimerID)
 				gnTimerID = nil
+				if nRootTimerID ~= nil then
+					timerMgr:KillTimer(nRootTimerID)
+					nRootTimerID = nil
+				end
 			else
 				gtTextInfo.idx = gtTextInfo.idx + 1
 				self:SetText(gtTextInfo[gtTextInfo.idx])

@@ -474,6 +474,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
 		TipMain()
+		TimerTryShowRepairWnd()
 		return	
 	end
 	
@@ -482,7 +483,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
-	TryShowRepairWnd(tServerConfig)
+	TimerTryShowRepairWnd()
 	
 	TryExecuteExtraCode(tServerConfig)
 end
@@ -576,6 +577,19 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
+function TimerTryShowRepairWnd()
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local nTimer = timerManager:SetTimer(
+		function(item, id)
+			if TryShowRepairWnd() then
+				timerManager:KillTimer(nTimer)
+				nTimer = nil
+			end
+		end,
+		1000
+	)
+end
+XLSetGlobal("TimerTryShowRepairWnd", TimerTryShowRepairWnd)
 
 function TryShowRepairWnd(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
@@ -584,23 +598,33 @@ function TryShowRepairWnd(tServerConfig)
 	local bUserSetAutoStup = tUserConfig["bUserSetAutoStup"]
 	if not bUserSetAutoStup then
 		FunctionObj.TipLog("[TryShowRepairWnd] bUserSetAutoStup false")
-		return
+		return false
+	end
+	if FunctionObj.CheckIsAutoStup() then
+		FunctionObj.TipLog("[TryShowRepairWnd] has set auto stup")
+		return false
 	end
 	
 	local nLastPopRepWndUTC = tUserConfig["nLastPopRepWndUTC"]
-	if not FunctionObj.CheckTimeIsAnotherDay(nLastPopRepWndUTC) then
-		FunctionObj.TipLog("[TryShowRepairWnd] has showed repwnd today")
-		return
+	local nLastBkRepUTC = tUserConfig["nLastBkRepUTC"]
+	if FunctionObj.CheckTimeIsAnotherDay(nLastPopRepWndUTC) then
+		FunctionObj.TipLog("[TryShowRepairWnd] check nLastPopRepWndUTC ok")
+		FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
+		tUserConfig["nLastPopRepWndUTC"] = tipUtil:GetCurrentUTCTime()
+		FunctionObj.SaveConfigToFileByKey("tUserConfig")
+		return true
+	elseif nLastBkRepUTC == nil or FunctionObj.CheckTimeIsAnotherDay(nLastBkRepUTC) then
+		local StartRepairBackupTimer = XLGetGlobal("StartRepairBackupTimer")
+		FunctionObj.TipLog("[TryShowRepairWnd] check nLastBkRepUTC ok, type(StartRepairBackupTimer) = "..type(StartRepairBackupTimer))
+		if type(StartRepairBackupTimer) == "function" then
+			StartRepairBackupTimer()
+			return true
+		else
+			return false
+		end
+	else
+		return false
 	end
-	
-	if FunctionObj.CheckIsAutoStup() then
-		FunctionObj.TipLog("[TryShowRepairWnd] has set auto stup")
-		return
-	end
-	
-	FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
-	tUserConfig["nLastPopRepWndUTC"] = tipUtil:GetCurrentUTCTime()
-	FunctionObj.SaveConfigToFileByKey("tUserConfig")
 end
 
 

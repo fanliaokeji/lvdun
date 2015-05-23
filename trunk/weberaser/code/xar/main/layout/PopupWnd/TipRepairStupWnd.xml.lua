@@ -3,6 +3,7 @@ local tipUtil = tFunHelper.tipUtil
 local g_hTimer = nil
 local g_hRepBackupTimer = nil
 local g_AllowRepair = true
+local TimerTryShowRepairWnd = XLGetGlobal("TimerTryShowRepairWnd")
 
 function OnCreate( self )
 	PopupInDeskCenter(self)
@@ -125,12 +126,15 @@ end
 
 function TryRepairStup(objRootLayout)
 	if not g_AllowRepair then
+		tFunHelper.TipLog("[TryRepairStup] g_AllowRepair = false ")
 		return
 	end
 
 	local bRepair = DoRepairStup("sysboot_repwnd")
+	tFunHelper.TipLog("[TryRepairStup] bRepair = "..tostring(bRepair))
 	if bRepair then
 		SendRepairReport("repautostupbywnd")
+		TimerTryShowRepairWnd()
 	else
 		StartRepairBackupTimer()
 	end
@@ -147,10 +151,13 @@ end
 
 
 function StartRepairBackupTimer()
+	tFunHelper.TipLog("[StartRepairBackupTimer] enter")
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	StopRepairBackupTimer()
 	
 	local tUserConfig = tFunHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	tUserConfig["nLastBkRepUTC"] = tipUtil:GetCurrentUTCTime()
+	tFunHelper.SaveConfigToFileByKey("tUserConfig")
 	local nRepAutoStupSpanInSec =  tUserConfig["nRepAutoStupSpanInSec"] or 3*60 --默认3分钟修复一次
 	local nRepAutoStupCount =  tUserConfig["nRepAutoStupCount"] or 1 --默认修复一次
 	
@@ -158,6 +165,7 @@ function StartRepairBackupTimer()
 		nRepAutoStupCount = nRepAutoStupCount - 1
 		if nRepAutoStupCount < 0 then
 			StopRepairBackupTimer()
+			TimerTryShowRepairWnd()
 			return
 		end
 	
@@ -165,11 +173,12 @@ function StartRepairBackupTimer()
 		if bRepair then
 			StopRepairBackupTimer()
 			SendRepairReport("repautostupbackground")
+			TimerTryShowRepairWnd()
 			return
 		end		
 	end, nRepAutoStupSpanInSec*1000)
 end
-
+XLSetGlobal("StartRepairBackupTimer", StartRepairBackupTimer)
 
 function DoRepairStup(strRepSource)
 	tFunHelper.TipLog("[DoRepairStup] strRepSource: "..tostring(strRepSource))
