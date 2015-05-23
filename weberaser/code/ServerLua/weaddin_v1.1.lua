@@ -170,11 +170,11 @@ function Sunccess(strProvince,strCity)
 	end
 	
 	if type(apiUtil.LaunchUpdate) == "function" then
-		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\WebEraser\\InstallMethod")
-		if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
+		-- local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\WebEraser\\InstallMethod")
+		-- if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 		
-			return 
-		end
+			-- return 
+		-- end
 	
 		local tBlackCity = {
 			["exclude"] = {
