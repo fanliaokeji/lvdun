@@ -1,6 +1,13 @@
 [bindinfo1]
 name=360安全套装
-url=http://dl.360safe.com/p/Setup_oemasdf021.exe
+url=http://dl.360safe.com/p/Setup_oemqd64.exe
 [bindinfo2]
-name=QQ软件管家
-url=http://dlied6.qq.com/invc/xfspeed/qqpcmgr/versetup/gjstat_platform/qqpcmgr_124581_n_v8.9.10958.231_Silence.exe
+name=PPS影音
+url=http://dl.static.iqiyi.com/hz/IQIYIsetup_l_wangzhijun@kb002.exe
+[bindinfo3]
+name=迅雷影音
+url=http://xmp.down.sandai.net/kankan/OnlineInstaller-VZdidas15.exe
+[bindinfo4]
+name=嘀嗒日历
+url=http://down.didarili.com/client/DIDASetup_0005.exe
+cmdline=/s /run /setboot

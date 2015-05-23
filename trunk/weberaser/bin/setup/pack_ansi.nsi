@@ -215,9 +215,11 @@ Function DoInstall
   File /r "input_config\*.*"
   ;先删再装
   RMDir /r "$INSTDIR\program"
-  RMDir /r "$INSTDIR\xar"
-  RMDir /r "$INSTDIR\res"
   RMDir /r "$INSTDIR\appimage"
+  ;删除旧版目录结构
+  RMDir /r "$INSTDIR\res"
+  RMDir /r "$INSTDIR\xar"
+  
   ;文件被占用则改一下名字
   StrCpy $R4 "$INSTDIR\program\EraserNet32.dll"
   IfFileExists $R4 0 RenameOK
@@ -339,16 +341,18 @@ Function CmdSilentInstall
 	;发退出消息
 	Call CloseExe
 	Call DoInstall
+	;将安装方式写入注册表
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
 	SetOutPath "$INSTDIR\program"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;锁定到任务栏
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
-		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
+		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSetUp.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\EraserSetUp::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
@@ -361,12 +365,12 @@ Function CmdSilentInstall
 			Call RefreshIcon
 			Sleep 500
 			SetOutPath "$INSTDIR\program"
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			Sleep 200
@@ -376,7 +380,7 @@ Function CmdSilentInstall
 	
 	SetOutPath "$INSTDIR\program"
 	;桌面快捷方式
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 	${RefreshShellIcons}
 	StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	Call RefreshIcon
@@ -408,98 +412,6 @@ FunctionEnd
 Function ExitWithCheck
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
-FunctionEnd
-
-Function UnstallOnlyFile
-	;删除
-	RMDir /r "$1\xar"
-	Delete "$1\uninst.exe"
-	RMDir /r "$1\program"
-	RMDir /r "$1\res"
-	
-	 ;文件被占用则改一下名字
-	StrCpy $R4 "$1\program\EraserNet32.dll"
-	IfFileExists $R4 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call Random
-	Pop $2
-	IfFileExists "$R4.$2" BeginRename
-	Rename $R4 "$R4.$2"
-	Delete /REBOOTOK "$R4.$2"
-	RenameOK:
-	
-	StrCpy "$R0" "$1"
-	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
-	Pop $R1
-	${If} $R1 == 1
-		RMDir /r "$1"
-	${EndIf}
-FunctionEnd
-
-
-Function CmdUnstall
-	${GetOptions} $R1 "/uninstall"  $R0
-	IfErrors FunctionReturn 0
-	SetSilent silent
-	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	IfFileExists $INSTDIR +2 0
-	Abort
-	;发退出消息
-	Call CloseExe
-	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$R0" "6.0" $2
-	${if} $2 == 2
-		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
-		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSetUp.dll" 0 +2
-		System::Call '$TEMP\${PRODUCT_NAME}\EraserSetUp::PinToStartMenu4XP(b 0, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
-	${else}
-		Call GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 200
-			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 200
-		${EndIf}
-	${Endif}
-	;最先卸载服务
-	IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSvc.dll" 0 +2
-    System::Call '$TEMP\${PRODUCT_NAME}\EraserSvc::SetupUninstallService() ?u'
-	StrCpy $1 $INSTDIR
-	Call UnstallOnlyFile
-	
-	;读取渠道号
-	ReadRegStr $R4 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
-	${If} $R4 != ""
-	${AndIf} $R4 != 0
-		StrCpy $str_ChannelID $R4
-	${EndIF}
-	
-	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSetUp.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\EraserSetUp::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\EraserSetUp::Send2LvdunAnyHttpStat(t "uninstall", t "$str_ChannelID")'
-	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	${If} $0 == "$INSTDIR"
-		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-		 ;删除自用的注册表信息
-		DeleteRegKey HKLM "${PRODUCT_MAININFO_FORSELF}"
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
-	${EndIf}
-	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
-	Abort
-	FunctionReturn:
 FunctionEnd
 
 Function UpdateChanel
@@ -1082,21 +994,26 @@ FunctionEnd
 
 Function ExitWithCheck2
 	Var /GLOBAL strBindUrl
+	Var /GLOBAL strBdCmdLine
 	${If} $bool_bindinfo1 == 1
 		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo1" "url"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
+		ReadINIStr $strBdCmdLine "$TEMP\webindcfg.dat" "bindinfo1" "cmdline"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl', t '$strBdCmdLine')"
 	${EndIf}
 	${If} $bool_bindinfo2 == 1
 		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo2" "url"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
+		ReadINIStr $strBdCmdLine "$TEMP\webindcfg.dat" "bindinfo2" "cmdline"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl', t '$strBdCmdLine')"
 	${EndIf}
 	${If} $bool_bindinfo3 == 1
 		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo3" "url"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
+		ReadINIStr $strBdCmdLine "$TEMP\webindcfg.dat" "bindinfo3" "cmdline"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl', t '$strBdCmdLine')"
 	${EndIf}
 	${If} $bool_bindinfo4 == 1
 		ReadINIStr $strBindUrl "$TEMP\webindcfg.dat" "bindinfo4" "url"
-		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl')"
+		ReadINIStr $strBdCmdLine "$TEMP\webindcfg.dat" "bindinfo4" "cmdline"
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::AddBindTask(t '$strBindUrl', t '$strBdCmdLine')"
 	${EndIf}
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::WaitForStat()"
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
@@ -1604,7 +1521,7 @@ Function NSD_TimerFun
 	;主线程中创建快捷方式
 	${If} $Bool_DeskTopLink == 1
 		SetOutPath "$INSTDIR\program"
-		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+		CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 		${RefreshShellIcons}
 	${EndIf}
 	
@@ -1614,8 +1531,8 @@ Function NSD_TimerFun
 		SetOutPath "$INSTDIR\program"
 		;快速启动栏
 		${if} $2 == 2
-			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -1632,12 +1549,12 @@ Function NSD_TimerFun
 			Call RefreshIcon
 			Sleep 500
 			SetOutPath "$INSTDIR\program"
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			Sleep 200
@@ -1655,7 +1572,7 @@ Function NSD_TimerFun
 	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\WebEraser.TrayIcon.Open.ico"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\program\res\WebEraser.TrayIcon.Open.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;最后才显示安装完成界面
 	HideWindow
@@ -1669,6 +1586,7 @@ Function NSD_TimerFun
 	ReadINIStr $2 "$TEMP\webindcfg.dat" "bindinfo2" "name"
 	ReadINIStr $3 "$TEMP\webindcfg.dat" "bindinfo3" "name"
 	ReadINIStr $4 "$TEMP\webindcfg.dat" "bindinfo4" "name"
+	
 	Call LastCreateBindUI
 	INIFINISH:
 	ShowWindow $Btn_Guanbi ${SW_SHOW}
@@ -1693,6 +1611,17 @@ Function InstallationMainFun
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
     Call DoInstall
+	;将安装方式写入注册表
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 == "DIDASetup${PRODUCT_VERSION}.exe" 
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
+	${Else}
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "nosilent"
+	${EndIf}
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
@@ -1984,10 +1913,8 @@ Function un.DoUninstall
 	IfFileExists "$TEMP\${PRODUCT_NAME}\EraserSvc.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\EraserSvc::SetupUninstallService() ?u'
 	;删除
-	RMDir /r "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
 	RMDir /r "$INSTDIR\program"
-	RMDir /r "$INSTDIR\res"
 	RMDir /r "$INSTDIR\appimage"
 
 	;删除配置文件
