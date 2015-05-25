@@ -65,8 +65,8 @@
 								</obj>
 								<obj id="TipCtrl.Caption.CloseBtn" class="TipAddin.Button">
 									<attr>
-										<left>father.width-37</left>
-										<top>2</top>
+										<left>father.width-36</left>
+										<top>1</top>
 										<width>35</width>
 										<height>35</height>
 										<NormalBkgID>MainWnd.BtnClose.Normal</NormalBkgID>
@@ -81,8 +81,8 @@
 								
 								<obj id="TipCtrl.Caption.BtnMin" class="TipAddin.Button">
 									<attr>
-										<left>father.width-37*2</left>
-										<top>2</top>
+										<left>father.width-36*2</left>
+										<top>1</top>
 										<width>35</width>
 										<height>35</height>
 										<NormalBkgID>MainWnd.BtnMin.Normal</NormalBkgID>
@@ -123,12 +123,18 @@
 										<event name="OnInitControl" file="TipPanelCtrl.xml.lua" func="OnInitControlVersion" />
 									</eventlist>
 								</obj>
-								<obj id="MainWnd.Button.SY" class="TipAddin.Button">
+								<obj id="MainWnd.Button.SY" class="TipAddin.AnimButton">
 									<attr>
 										<left>262</left>
-										<top>401</top>
+										<top>401-15</top>
 										<width>72</width>
-										<height>72</height>
+										<height>101</height>
+										<ImgHeight>72</ImgHeight>
+										<Text>首 页</Text>
+										<LeftTextPos>0</LeftTextPos>
+										<TopTextPos>85</TopTextPos>
+										<TextFont>font.yahei13</TextFont>
+										<TextColor>333333</TextColor>
 										<NormalBkgID>shouye.normal</NormalBkgID>
 										<DownBkgID>shouye.hover</DownBkgID>
 										<HoverBkgID>shouye.hover</HoverBkgID>
@@ -138,12 +144,18 @@
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickSY" />
 									</eventlist>
 								</obj>
-								<obj id="MainWnd.Button.ZZ" class="TipAddin.Button">
+								<obj id="MainWnd.Button.ZZ" class="TipAddin.AnimButton">
 									<attr>
 										<left>375</left>
-										<top>401</top>
+										<top>401-15</top>
 										<width>72</width>
-										<height>72</height>
+										<height>101</height>
+										<ImgHeight>72</ImgHeight>
+										<Text>赞 助</Text>
+										<LeftTextPos>0</LeftTextPos>
+										<TopTextPos>85</TopTextPos>
+										<TextFont>font.yahei13</TextFont>
+										<TextColor>333333</TextColor>
 										<NormalBkgID>zanzhu.normal</NormalBkgID>
 										<DownBkgID>zanzhu.hover</DownBkgID>
 										<HoverBkgID>zanzhu.hover</HoverBkgID>
@@ -153,12 +165,18 @@
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickZZ" />
 									</eventlist>
 								</obj>
-								<obj id="MainWnd.Button.YY" class="TipAddin.Button">
+								<obj id="MainWnd.Button.YY" class="TipAddin.AnimButton">
 									<attr>
 										<left>487</left>
-										<top>401</top>
+										<top>401-15</top>
 										<width>72</width>
-										<height>72</height>
+										<height>101</height>
+										<ImgHeight>72</ImgHeight>
+										<Text>应 用</Text>
+										<LeftTextPos>0</LeftTextPos>
+										<TopTextPos>85</TopTextPos>
+										<TextFont>font.yahei13</TextFont>
+										<TextColor>333333</TextColor>
 										<NormalBkgID>yingyong.normal</NormalBkgID>
 										<DownBkgID>yingyong.hover</DownBkgID>
 										<HoverBkgID>yingyong.hover</HoverBkgID>
@@ -168,12 +186,18 @@
 										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickYY" />
 									</eventlist>
 								</obj>
-								<obj id="MainWnd.Button.GW" class="TipAddin.Button">
+								<obj id="MainWnd.Button.GW" class="TipAddin.AnimButton">
 									<attr>
 										<left>600</left>
-										<top>401</top>
+										<top>401-15</top>
 										<width>72</width>
-										<height>72</height>
+										<height>101</height>
+										<ImgHeight>72</ImgHeight>
+										<Text>官 网</Text>
+										<LeftTextPos>0</LeftTextPos>
+										<TopTextPos>85</TopTextPos>
+										<TextFont>font.yahei13</TextFont>
+										<TextColor>333333</TextColor>
 										<NormalBkgID>guanwang.normal</NormalBkgID>
 										<DownBkgID>guanwang.hover</DownBkgID>
 										<HoverBkgID>guanwang.hover</HoverBkgID>
