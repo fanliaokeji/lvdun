@@ -106,9 +106,9 @@
 			<Font>font.yahei12</Font>
 			<FontColorNormal>system.black</FontColorNormal>
 			<FontColorHover>system.black</FontColorHover>
-			<IconWidth>14</IconWidth>
-			<IconHeight>14</IconHeight>
-			<IconPos>13</IconPos>
+			<IconWidth>16</IconWidth>
+			<IconHeight>16</IconHeight>
+			<IconPos>6</IconPos>
 		</attr>
 	</objtemplate>
 
