@@ -971,13 +971,12 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	if type(tOldCfg) ~= "table" then
 		return false, tCurrentCfg
 	end
-	
-	tCurrentCfg["nFilterCountTotal"] = tOldCfg["nFilterCountTotal"] or 0
-	tCurrentCfg["nFilterCountOneDay"] = tOldCfg["nFilterCountOneDay"] or 0
-	tCurrentCfg["bFilterOpen"] = tOldCfg["bFilterOpen"]
-	tCurrentCfg["nHideBubblePopWndInSec"] = tOldCfg["nHideBubblePopWndInSec"]
-	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
-	tCurrentCfg["nLastCommonUpdateUTC"] = tOldCfg["nLastCommonUpdateUTC"]
+	for k, v in pairs(tOldCfg) do
+		--除了远程配置、是否开机启动、是否过滤需要更新外，其他都用旧的
+		if k ~= "strServerConfigURL" and k ~= "bFilterOpen" and k ~= "bUserSetAutoStup" then
+			tCurrentCfg[k] = v or tCurrentCfg[k]
+		end
+	end
 		
 	tipUtil:DeletePathFile(strOldCfgPath)
 	return true, tCurrentCfg

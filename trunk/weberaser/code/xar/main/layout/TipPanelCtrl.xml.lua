@@ -113,7 +113,7 @@ function OnInitControlText(self)
 	local objHostWnd = tFunHelper.GetMainWndInst()
 	nRootTimerID = timerMgr:SetTimer(
 		function()
-			if objHostWnd:GetVisible() and objHostWnd:GetWindowState() == "normal" then
+			if self:GetVisible() and objHostWnd:GetVisible() and objHostWnd:GetWindowState() == "normal" then
 				StartAnimTextTimer(self)
 			else
 				if gnTimerID ~= nil then
@@ -127,20 +127,13 @@ end
 function StartAnimTextTimer(self)
 	local timerMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
 	if not timerMgr then return end
-	if gnTimerID == nil and gtTextInfo.idx ~= #gtTextInfo then
+	if gnTimerID == nil  then
 		self:SetText(gtTextInfo[gtTextInfo.idx])
-		gnTimerID = timerMgr:SetTimer(function()
-				if gtTextInfo.idx ~= #gtTextInfo then
-					AnimChangeText(self, true)
-				else
-					timerMgr:KillTimer(gnTimerID)
-					gnTimerID = nil
-					if nRootTimerID ~= nil then
-						timerMgr:KillTimer(nRootTimerID)
-						nRootTimerID = nil
-					end
-				end
-			end, 3000)
+		gnTimerID = timerMgr:SetTimer(
+						function()
+							AnimChangeText(self, true)
+						end, 
+						3000)
 	end
 end
 
@@ -149,17 +142,12 @@ function AnimChangeText(self, bHide)
 	local function onAniFinish(anim, old, new)
 		if new == 3 or new == 4 then
 			if gtTextInfo.idx == #gtTextInfo then
-				timerMgr:KillTimer(gnTimerID)
-				gnTimerID = nil
-				if nRootTimerID ~= nil then
-					timerMgr:KillTimer(nRootTimerID)
-					nRootTimerID = nil
-				end
+				gtTextInfo.idx = 1
 			else
 				gtTextInfo.idx = gtTextInfo.idx + 1
-				self:SetText(gtTextInfo[gtTextInfo.idx])
-				AnimChangeText(self)
-			end
+			end	
+			self:SetText(gtTextInfo[gtTextInfo.idx])
+			AnimChangeText(self)
 		end
 	end
 	local aniFactory = XLGetObject("Xunlei.UIEngine.AnimationFactory")
