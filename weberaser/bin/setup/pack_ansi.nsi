@@ -1509,6 +1509,51 @@ Function LastCreateBindUI
 	ENDFUNC:
 FunctionEnd
 
+Function NSISModifyCfgFile
+	push $0
+	push $1
+	push $2
+	push $3
+	StrCpy $1 ${NSIS_MAX_STRLEN}
+	StrCpy $0 ""
+	System::Call '$TEMP\${PRODUCT_NAME}\EraserSetUp::GetProfileFolder(t) i(.r0).r2' 
+	StrCpy $3 ""
+	${If} $0 != ""
+		FileOpen $1 "$0\${PRODUCT_NAME}\userconfig.dat" r
+		IfErrors done
+		FileRead $1 $2
+		${While} $2 != ''
+			StrCpy $3 "$3$2"
+			FileSeek $1 0 CUR
+			FileRead $1 $2
+		${EndWhile}
+		FileClose $1
+		done:
+	${EndIf}
+	${If} $3 != ""
+		${If} $Bool_Sysstup == 1
+			${WordReplace} $3 "[$\"bUserSetAutoStup$\"] = false" "[$\"bUserSetAutoStup$\"] = true" "+*" $3
+		${Else}
+			${WordReplace} $3 "[$\"bUserSetAutoStup$\"] = true" "[$\"bUserSetAutoStup$\"] = false" "+*" $3
+		${EndIf}
+		${If} $Bool_StartTimeDo == 1
+			${WordReplace} $3 "[$\"bFilterOpen$\"] = false" "[$\"bFilterOpen$\"] = true" "+*" $3
+		${Else}
+			${WordReplace} $3 "[$\"bFilterOpen$\"] = true" "[$\"bFilterOpen$\"] = false" "+*" $3
+		${EndIf}
+		;Delete "$0\${PRODUCT_NAME}\userconfig.dat"
+		FileOpen $1 "$0\${PRODUCT_NAME}\userconfig.dat" w
+		IfErrors done2
+		FileWrite $1 $3
+		FileClose $1
+		done2:
+	${EndIf}
+	pop $3
+	pop $2
+	pop $1
+	pop $0
+FunctionEnd
+
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
@@ -1562,13 +1607,11 @@ Function NSD_TimerFun
 			${EndIf}
 		${Endif}
 	${EndIf}
-	
 	${If} $Bool_Sysstup == 1
 		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	${Else}
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
 	${EndIf}
-	
 	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
@@ -1605,12 +1648,13 @@ Function InstallationMainFun
 	Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 4 0
 	Sleep 100
+	Call DoInstall
 	SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 14 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
-    Call DoInstall
+    Call NSISModifyCfgFile
 	;将安装方式写入注册表
 	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
 	Push $R2
