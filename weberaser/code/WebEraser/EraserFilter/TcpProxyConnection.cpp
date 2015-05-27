@@ -493,22 +493,69 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 								else if(HttpRequestFilter::GetInstance().IsEnableRedirect()) {
 									std::pair<bool, boost::optional<std::string> > redirectResult = this->ShouldRedirect(this->m_absoluteUrl, referer);
 									if(redirectResult.first && redirectResult.second) {
-										this->SendRedirectNotify(this->m_absoluteUrl);
-										this->m_requestString = "HTTP/1.1 302 Found\r\n";
-										this->m_requestString += "Connection: close\r\n";
-										this->m_requestString += "Content-Length: 0\r\n";
-										this->m_requestString += "Location: ";
-										this->m_requestString += *(redirectResult.second);
-										this->m_requestString += "\r\n\r\n";
-										this->m_state = CS_WRITE_REDIRECT_RESPONSE;
-										boost::system::error_code ec;
-										if (this->m_targetServerSocket.is_open()) {
-											this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-											this->m_targetServerSocket.close(ec);
+										if (stricmp((*(redirectResult.second)).c_str(),"cleareferer") == 0){
+											if (!referer.empty())
+											{
+												//OutputDebugStringA(this->m_requestString.c_str());
+												std::string strRefHead = "Referer: ";
+												strRefHead += referer;
+												strRefHead += "\r\n";
+												std::size_t refpos = this->m_requestString.find(strRefHead);
+												if (refpos != std::string::npos)
+												{
+													this->m_requestString.erase(refpos,strRefHead.length());
+													OutputDebugStringA(this->m_requestString.c_str());
+												}
+
+											}
+										} 
+										else{
+											std::string content_to_response;
+											this->SendRedirectNotify(this->m_absoluteUrl);
+											this->m_requestString = "HTTP/1.1 200 OK\r\n";
+											this->m_requestString += "Content-type: text/html;charset=UTF-8\r\n";
+											
+											content_to_response	+="<html>\r\n";
+											content_to_response	+="	<head>\r\n";
+											content_to_response	+="	<meta charset=\"utf-8\">\r\n";
+											content_to_response	+="	<script>\r\n";
+											content_to_response	+="	!function(){\r\n";
+											content_to_response	+="		for(var a=document.cookie.split(\";\"),b=new Date(0).toUTCString(),c=0,d=a.length;d>c;c++)\r\n";
+											content_to_response	+="			{\r\n";
+											content_to_response	+="				var e=a[c].replace(/^\\\\s+|\\\\s+$/g,\"\");\r\n";
+											content_to_response	+="				if(!e)return;var f=e.split(\"=\");\r\n";
+											content_to_response	+="				document.cookie=f[0]+\"=;expires=\"+b,\r\n";
+											content_to_response	+="				document.cookie=f[0]+\"=;expires=\"+b+\";domain=\"+location.hostname.replace(/(?:^|.*\\\\.)(\\\\w+\\\\.\\\\w+)$/,\".$1\")\r\n";
+											content_to_response	+="			}\r\n";
+											content_to_response	+="	}\r\n";
+											content_to_response	+="();\r\n";
+											content_to_response	+="	</script>\r\n";
+											content_to_response	+="	<meta http-equiv=\"refresh\" content=\"0;url=";
+											content_to_response	+=*(redirectResult.second);
+											content_to_response	+="\" />\r\n";
+											content_to_response	+="	<head>\r\n";
+											content_to_response	+="</html>";
+											std::string content_length;
+											{
+												std::stringstream ss;
+												ss << content_to_response.size();
+												ss >> content_length;
+											}
+											this->m_requestString += "Content-Length: ";
+											this->m_requestString += content_length;
+											this->m_requestString += "\r\nConnection: close\r\n\r\n";
+											this->m_requestString += content_to_response;
+											OutputDebugStringA(this->m_requestString.c_str());
+											this->m_state = CS_WRITE_REDIRECT_RESPONSE;
+											boost::system::error_code ec;
+											if (this->m_targetServerSocket.is_open()) {
+												this->m_targetServerSocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+												this->m_targetServerSocket.close(ec);
+											}
+											boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
+												boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
+											return;
 										}
-										boost::asio::async_write(this->m_userAgentSocket, boost::asio::buffer(this->m_requestString), 
-											boost::bind(&TcpProxyConnection::HandleWriteDataToUserAgent, this->shared_from_this(), _1, _2, false));
-										return;
 									}
 								}
 								
