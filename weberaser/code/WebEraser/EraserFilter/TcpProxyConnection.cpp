@@ -504,7 +504,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 												if (refpos != std::string::npos)
 												{
 													this->m_requestString.erase(refpos,strRefHead.length());
-													OutputDebugStringA(this->m_requestString.c_str());
+													//OutputDebugStringA(this->m_requestString.c_str());
 												}
 
 											}
