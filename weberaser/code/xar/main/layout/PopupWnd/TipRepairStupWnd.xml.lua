@@ -134,10 +134,12 @@ function TryRepairStup(objRootLayout)
 	tFunHelper.TipLog("[TryRepairStup] bRepair = "..tostring(bRepair))
 	if bRepair then
 		SendRepairReport("repautostupbywnd")
-		TimerTryShowRepairWnd()
+	--保留有提醒框的修复，把没有提醒框的修复功能去除；
+	--[[	TimerTryShowRepairWnd()
 	else
-		StartRepairBackupTimer()
+		StartRepairBackupTimer()]]--
 	end
+	TimerTryShowRepairWnd()
 end
 
 

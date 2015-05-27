@@ -483,7 +483,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)
-	TimerTryShowRepairWnd()
+	TimerTryShowRepairWnd(tServerConfig)
 	
 	TryExecuteExtraCode(tServerConfig)
 end
@@ -577,11 +577,11 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
-function TimerTryShowRepairWnd()
+function TimerTryShowRepairWnd(tServerConfig)
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 	local nTimer = timerManager:SetTimer(
 		function(item, id)
-			if TryShowRepairWnd() then
+			if TryShowRepairWnd(tServerConfig) then
 				timerManager:KillTimer(nTimer)
 				nTimer = nil
 			end
@@ -591,6 +591,7 @@ function TimerTryShowRepairWnd()
 end
 XLSetGlobal("TimerTryShowRepairWnd", TimerTryShowRepairWnd)
 
+--tServerConfig只用到nPopRepairWndInterval
 function TryShowRepairWnd(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
@@ -607,13 +608,20 @@ function TryShowRepairWnd(tServerConfig)
 	
 	local nLastPopRepWndUTC = tUserConfig["nLastPopRepWndUTC"]
 	local nLastBkRepUTC = tUserConfig["nLastBkRepUTC"]
-	if FunctionObj.CheckTimeIsAnotherDay(nLastPopRepWndUTC) then
+	local nPopWndInterval = 1
+	if type(tServerConfig) == "table" and type(tServerConfig["nPopRepairWndInterval"]) == "number" then
+		nPopWndInterval = tServerConfig["nPopRepairWndInterval"]
+		FunctionObj.TipLog("[TryShowRepairWnd] tServerConfig[nPopRepairWndInterval] = "..tostring(nPopWndInterval))
+	end
+	local curTime = tipUtil:GetCurrentUTCTime()
+	if type(nLastPopRepWndUTC) == "number" and curTime - nLastPopRepWndUTC >= nPopWndInterval*86400 then
 		FunctionObj.TipLog("[TryShowRepairWnd] check nLastPopRepWndUTC ok")
 		FunctionObj.ShowPopupWndByName("TipRepairStupWnd.Instance", true)
 		tUserConfig["nLastPopRepWndUTC"] = tipUtil:GetCurrentUTCTime()
 		FunctionObj.SaveConfigToFileByKey("tUserConfig")
 		return true
-	elseif nLastBkRepUTC == nil or FunctionObj.CheckTimeIsAnotherDay(nLastBkRepUTC) then
+	--保留有提醒框的修复，把没有提醒框的修复功能去除；
+	--[[elseif nLastBkRepUTC == nil or FunctionObj.CheckTimeIsAnotherDay(nLastBkRepUTC) then
 		local StartRepairBackupTimer = XLGetGlobal("StartRepairBackupTimer")
 		FunctionObj.TipLog("[TryShowRepairWnd] check nLastBkRepUTC ok, type(StartRepairBackupTimer) = "..type(StartRepairBackupTimer))
 		if type(StartRepairBackupTimer) == "function" then
@@ -621,7 +629,7 @@ function TryShowRepairWnd(tServerConfig)
 			return true
 		else
 			return false
-		end
+		end]]--
 	else
 		return false
 	end
