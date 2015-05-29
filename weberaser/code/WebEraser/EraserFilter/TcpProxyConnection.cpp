@@ -527,7 +527,7 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 											this->m_requestString += content_length;
 											this->m_requestString += "\r\nConnection: close\r\n\r\n";
 											this->m_requestString += content_to_response;
-											OutputDebugStringA(this->m_requestString.c_str());
+											//OutputDebugStringA(this->m_requestString.c_str());
 											this->m_state = CS_WRITE_REDIRECT_RESPONSE;
 											boost::system::error_code ec;
 											if (this->m_targetServerSocket.is_open()) {
