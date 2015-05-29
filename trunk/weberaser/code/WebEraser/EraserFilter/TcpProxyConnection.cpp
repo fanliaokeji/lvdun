@@ -514,27 +514,9 @@ void TcpProxyConnection::HandleReadDataFromUserAgent(const boost::system::error_
 											this->SendRedirectNotify(this->m_absoluteUrl);
 											this->m_requestString = "HTTP/1.1 200 OK\r\n";
 											this->m_requestString += "Content-type: text/html;charset=UTF-8\r\n";
-											
-											content_to_response	+="<html>\r\n";
-											content_to_response	+="	<head>\r\n";
-											content_to_response	+="	<meta charset=\"utf-8\">\r\n";
-											content_to_response	+="	<script>\r\n";
-											content_to_response	+="	!function(){\r\n";
-											content_to_response	+="		for(var a=document.cookie.split(\";\"),b=new Date(0).toUTCString(),c=0,d=a.length;d>c;c++)\r\n";
-											content_to_response	+="			{\r\n";
-											content_to_response	+="				var e=a[c].replace(/^\\\\s+|\\\\s+$/g,\"\");\r\n";
-											content_to_response	+="				if(!e)return;var f=e.split(\"=\");\r\n";
-											content_to_response	+="				document.cookie=f[0]+\"=;expires=\"+b,\r\n";
-											content_to_response	+="				document.cookie=f[0]+\"=;expires=\"+b+\";domain=\"+location.hostname.replace(/(?:^|.*\\\\.)(\\\\w+\\\\.\\\\w+)$/,\".$1\")\r\n";
-											content_to_response	+="			}\r\n";
-											content_to_response	+="	}\r\n";
-											content_to_response	+="();\r\n";
-											content_to_response	+="	</script>\r\n";
-											content_to_response	+="	<meta http-equiv=\"refresh\" content=\"0;url=";
-											content_to_response	+=*(redirectResult.second);
-											content_to_response	+="\" />\r\n";
-											content_to_response	+="	<head>\r\n";
-											content_to_response	+="</html>";
+											content_to_response += "<html><head><script>!function(){for(var a=document.cookie.split(\";\"),b=new Date(0).toUTCString(),c=0,d=a.length;d>c;c++){var e=a[c].replace(/^\\s+|\\s+$/g,\"\");if(!e)return;var f=e.split(\"=\");document.cookie=f[0]+\"=;expires=\"+b+\";domain=\"+location.hostname.replace(/(?:^|.*\\.)(\\w+\\.\\w+)$/,\".$1\")}}();</script><meta http-equiv=\"refresh\" content=\"0;url=";
+											content_to_response +=*(redirectResult.second);
+											content_to_response +="\" /></head></html>";
 											std::string content_length;
 											{
 												std::stringstream ss;
