@@ -283,13 +283,18 @@ function OnEditFocusChange(edit, bFocus)
 end
 
 function OnRButtonDbClick(self)
-	local edit = self:GetControlObject("button.edit")
+	--[[local edit = self:GetControlObject("button.edit")
 	if not edit:GetVisible() then
 		local text = self:GetControlObject("Recomment")
 		local sText = text:GetText()
 		if sText and sText ~= "" then
 			edit:SetText(sText)
 		end
+		local l, t, r, b = text:GetObjPos()
+		edit:SetObjPos(l, t, r, b)
+		local attr = self:GetAttribute()
+		edit:SetTextColorID(attr.TextColor)
+		edit:SetFontID(attr.TextFont)
 		text:SetVisible(false)
 		edit:SetVisible(true)
 		AsynCall(function()
@@ -297,7 +302,7 @@ function OnRButtonDbClick(self)
 					edit:SetSelAll()
 					self:SetTextColor("system.blue")
 				end)
-	end
+	end]]--
 end
 
 function OnEditKeyDown(self, uChar)

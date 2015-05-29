@@ -101,6 +101,8 @@
 										<font>default.font</font>
 										<visible>false</visible>
 										<zorder>100</zorder>
+										<halign>center</halign>
+										<valign>bottom</valign>
 									</attr>
 									<eventlist>
 										<event name="OnFocusChange" file="AnimButton.xml.lua" func="OnEditFocusChange" />
