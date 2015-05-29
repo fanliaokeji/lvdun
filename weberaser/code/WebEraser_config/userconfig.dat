@@ -4,11 +4,13 @@ function GetSubTable()
 		["nFilterCountTotal"] = 0, 
 		["nFilterCountOneDay"] = 0, 
 		["strServerConfigURL"] = "http://dl.ggxpc.com/update/1.0/weservercfg.dat", 
+		["strServerAppListURL"] = "http://dl.ggxpc.com/update/1.0/ServerAppList.dat",
 		["nLastClearUTC"] = 0, 
 		["bFilterOpen"] = true, 
 		["nHideBubblePopWndInSec"] = 5, 
 		["nRepAutoStupCount"] = 1, 
 		["nRepAutoStupSpanInSec"] = 3*60, 
+		["bUserSetAutoStup"] = true,
 	}
 	return t
 end
