@@ -72,7 +72,7 @@ function main()
 	// 在开始菜单添加
 	CreateStartMenu()
 	
-	CopyXLUEToTools()
+	//CopyXLUEToTools()
 	
 	//编译samples xar
 	CompileSamples()
@@ -354,6 +354,8 @@ function SetProductRelease()
 	
 	var src = fso.BuildPath(sdkFolder, "dev\\pr\\lib\\*.lib")
 	var dest = fso.BuildPath(sdkFolder, "lib")
+	
+	fso.CreateFolder(dest)
 	fso.CopyFile(src, dest)
 }
 

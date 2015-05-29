@@ -24,25 +24,48 @@
 #ifndef __XLFS_H__
 #define __XLFS_H__
 
-#ifdef XLFS_EXPORTS
+
+#ifndef XLFS_EXTERN_C
 	#ifdef __cplusplus
-		#define XLFS_API(x) extern "C" __declspec(dllexport) x __stdcall 
+		#define XLFS_EXTERN_C extern "C"
 	#else
-		#define XLFS_API(x) __declspec(dllexport) x __stdcall 
-	#endif //__cplusplus
-#elif defined (XLUE_UNION)
-	#ifdef __cplusplus
-		#define XLFS_API(x) extern "C"  x __stdcall 
-	#else
-		#define XLFS_API(x) x __stdcall 
-	#endif //__cplusplus
-#else // XLFS_EXPORTS
-	#ifdef __cplusplus
-		#define XLFS_API(x) extern "C" __declspec(dllimport) x __stdcall 
-	#else
-		#define XLFS_API(x) __declspec(dllimport) x __stdcall 
-	#endif //__cplusplus
-#endif // XLFS_EXPORTS
+		#define XLFS_EXTERN_C 
+	#endif // __cplusplus
+#endif //XLUE_EXTERN_C
+
+#ifndef XLUE_STDCALL
+	#if defined(_MSC_VER)
+		#define XLUE_STDCALL __stdcall
+	#elif defined(__GNUC__)
+		#define XLUE_STDCALL __attribute__((__stdcall__))
+	#endif
+#endif //XLUE_STDCALL
+
+#if defined(_MSC_VER)
+	#if defined(XLUE_UNIONLIB)
+			#define XLFS_API(x) XLFS_EXTERN_C  x __stdcall 
+	#elif defined(XLFS_EXPORTS)
+			#define XLFS_API(x) XLFS_EXTERN_C __declspec(dllexport) x __stdcall 
+	#elif defined (XLUE_UNION)
+			#define XLFS_API(x) XLFS_EXTERN_C  x __stdcall 
+	#else // XLFS_EXPORTS
+			#define XLFS_API(x) XLFS_EXTERN_C __declspec(dllimport) x __stdcall 
+	#endif // XLFS_EXPORTS
+#elif defined(__GNUC__)
+	#if defined(XLUE_UNIONLIB)
+			#define XLFS_API(x) XLFS_EXTERN_C  __attribute__((__stdcall__)) x
+	#elif defined(XLFS_EXPORTS)
+			#define XLFS_API(x) XLFS_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x
+	#elif defined (XLUE_UNION)
+			#define XLFS_API(x) XLFS_EXTERN_C  __attribute__((__stdcall__)) x
+	#else // XLFS_EXPORTS
+			#define XLFS_API(x) XLFS_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x 
+	#endif // XLFS_EXPORTS
+#endif
+
+#if !defined(WIN32) && !defined(XLUE_WIN32)
+#include <XLUESysPreDefine.h>
+#endif // WIN32 && XLUE_WIN32
 
 // xlfs句柄的定义
 typedef void * XLFS_FILE_HANDLE;
@@ -60,7 +83,7 @@ typedef int (*pfnDirOpenCallBack)(void *pParam,XLFS_DIR_HANDLE hDir,int result);
 typedef int (*pfnFileUpdateCallBack)(void *pParam);
 
 // 自定义的解密回调函数
-typedef int (*pfnDecryptCallBack)(void* userData, const void* lpContext, __int64 contextLen, void* lpDecryptBuffer, __int64 decryptBufferOffset, __int64 decryptBufferLen); 
+typedef int (*pfnDecryptCallBack)(void* userData, const void* lpContext, long long contextLen, void* lpDecryptBuffer, long long decryptBufferOffset, long long decryptBufferLen); 
 
 typedef struct tagFileOpenCallBackData
 {
@@ -83,10 +106,10 @@ typedef struct tagDirOpenCallBackData
 typedef struct tagXLFSDirEntry
 {  
 	unsigned long Attributes; //暂时未定义属性的意义 
-	__int64 CreationTime;  
-	__int64 LastAccessTime;  
-	__int64 LastWriteTime;  
-	__int64 FileSize;//DIR没有size
+	long long CreationTime;  
+	long long LastAccessTime;  
+	long long LastWriteTime;  
+	long long FileSize;//DIR没有size
 	wchar_t Name[MAX_PATH];  
 } XLFSDirEntry;
 
@@ -135,11 +158,11 @@ XLFS_API(long) XLFS_FixPath(const wchar_t* pSrcPath,wchar_t** ppDestPath);
 //
 //openMode继承自C,包括r,w,r+等
 XLFS_API(long) XLFS_OpenFile(const wchar_t * filePath, const wchar_t * openMode, XLFS_FILE_HANDLE *phFile,LPFileOpenCallBackData pCallBack);
-XLFS_API(__int64) XLFS_ReadFile(XLFS_FILE_HANDLE hFile, unsigned char *pBuffer, __int64 bufferLen);
-XLFS_API(__int64) XLFS_WriteFile(XLFS_FILE_HANDLE hFile, const unsigned char *pBuffer, __int64 bufferLen);
-XLFS_API(__int64) XLFS_SeekFile(XLFS_FILE_HANDLE hFile,__int64 newPosition,int origin);
-XLFS_API(__int64) XLFS_GetFileSize(XLFS_FILE_HANDLE hFile);
-XLFS_API(__int64) XLFS_GetFilePosition(XLFS_FILE_HANDLE hFile);
+XLFS_API(long long) XLFS_ReadFile(XLFS_FILE_HANDLE hFile, unsigned char *pBuffer, long long bufferLen);
+XLFS_API(long long) XLFS_WriteFile(XLFS_FILE_HANDLE hFile, const unsigned char *pBuffer, long long bufferLen);
+XLFS_API(long long) XLFS_SeekFile(XLFS_FILE_HANDLE hFile,long long newPosition,int origin);
+XLFS_API(long long) XLFS_GetFileSize(XLFS_FILE_HANDLE hFile);
+XLFS_API(long long) XLFS_GetFilePosition(XLFS_FILE_HANDLE hFile);
 XLFS_API(long) XLFS_DeleteFile(const wchar_t * filePath);
 XLFS_API(long) XLFS_IsEOF(XLFS_FILE_HANDLE hFile);
 XLFS_API(long) XLFS_CloseFile(XLFS_FILE_HANDLE hFile);

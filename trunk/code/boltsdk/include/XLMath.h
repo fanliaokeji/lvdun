@@ -18,33 +18,47 @@
 #ifndef __XUNLEI_MATH_H__
 #define __XUNLEI_MATH_H__
 
-#ifdef WIN32
-	#ifdef XLGRAPHIC_EXPORTS
-		#ifdef __cplusplus 
-			#define XLMATH_API(x) extern "C" __declspec(dllexport) x __stdcall 
-		#else //__cplusplus
-			#define XLMATH_API(x)  __declspec(dllexport) x __stdcall 
-		#endif //__cplusplus
-	#elif defined (XLUE_UNION)
-		#ifdef __cplusplus 
-			#define XLMATH_API(x) extern "C" x __stdcall 
-		#else //__cplusplus
-			#define XLMATH_API(x) x __stdcall 
-		#endif //__cplusplus
-	#else //XLGRAPHIC_EXPORTS
-		#ifdef __cplusplus 
-			#define XLMATH_API(x) extern "C" __declspec(dllimport) x __stdcall 
-		#else //__cplusplus
-			#define XLMATH_API(x) __declspec(dllimport) x __stdcall 
-		#endif //__cplusplus
+#ifndef XLMATH_EXTERN_C
+	#ifdef __cplusplus	
+		#define XLMATH_EXTERN_C extern "C"
+	#else
+		#define XLMATH_EXTERN_C 
+	#endif // __cplusplus
+#endif //XLMATH_EXTERN_C
+
+#ifndef XLUE_STDCALL
+	#if defined(_MSC_VER)
+		#define XLUE_STDCALL __stdcall
+	#elif defined(__GNUC__)
+		#define XLUE_STDCALL __attribute__((__stdcall__))
 	#endif
-#else
-	#ifdef _cplusplus
-		#define XLMATH_API(x) extern "C" x
-	#else //__cplusplus
-		#define XLMATH_API(x) x
-	#endif //__cplusplus
+#endif //XLUE_STDCALL
+
+#if defined(_MSC_VER)
+	#if defined(XLUE_UNIONLIB)
+			#define XLMATH_API(x) XLMATH_EXTERN_C  x __stdcall 
+	#elif defined(XLGRAPHIC_EXPORTS)
+			#define XLMATH_API(x) XLMATH_EXTERN_C __declspec(dllexport) x __stdcall 
+	#elif defined (XLUE_UNION)
+			#define XLMATH_API(x) XLMATH_EXTERN_C  x __stdcall 
+	#else // XLGRAPHIC_EXPORTS
+			#define XLMATH_API(x) XLMATH_EXTERN_C __declspec(dllimport) x __stdcall 
+	#endif // XLGRAPHIC_EXPORTS
+#elif defined(__GNUC__)
+	#if defined(XLUE_UNIONLIB)
+			#define XLMATH_API(x) XLMATH_EXTERN_C  __attribute__((__stdcall__)) x
+	#elif defined(XLGRAPHIC_EXPORTS)
+			#define XLMATH_API(x) XLMATH_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x
+	#elif defined (XLUE_UNION)
+			#define XLMATH_API(x) XLMATH_EXTERN_C  __attribute__((__stdcall__)) x
+	#else // XLGRAPHIC_EXPORTS
+			#define XLMATH_API(x) XLMATH_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x 
+	#endif // XLGRAPHIC_EXPORTS
 #endif
+
+#if !defined(WIN32) && !defined(XLUE_WIN32)
+#include <XLUESysPreDefine.h>
+#endif // WIN32 && XLUE_WIN32
 
 #define XL_RECT_NOT_INTERSECT 0
 #define XL_RECT_INTERSET      1
@@ -54,11 +68,13 @@
 //***矩形相交
 XLMATH_API(BOOL) XL_SetRect(LPRECT lprc,int xLeft,int yTop,int xRight,int yBottom);
 XLMATH_API(BOOL) XL_OffsetRect(LPRECT lprc,int dx,int dy);
+XLMATH_API(BOOL) XL_InflateRect(LPRECT lprc, int cx, int cy);
 XLMATH_API(BOOL) XL_SetRectEmpty(LPRECT lprc);
 XLMATH_API(BOOL) XL_EqualRect(const RECT* lprc1,const RECT* lprc2);
 XLMATH_API(BOOL) XL_CopyRect(LPRECT lprcDst,const RECT* lprsSrc);
 XLMATH_API(BOOL) XL_IsRectEmpty(const RECT* lprc);
 XLMATH_API(BOOL) XL_PtInRect(const RECT *lprc,POINT pt);
+XLMATH_API(BOOL) XL_SubtractRect(LPRECT lprcDst, const RECT *lprcSrc1, const RECT *lprcSrc2);
 
 XLMATH_API(long) XL_IsRectIntersect(const RECT* pRect1,const RECT* pRect2);
 XLMATH_API(BOOL) XL_IntersectRect(RECT* pResult,const RECT* pSrc1,const RECT* pSrc2);
@@ -74,7 +90,7 @@ XLMATH_API(long) XL_UnionRectEx(const RECT* pInputRectList,size_t listSize,RECT*
 
 //***********************表达式相关算法************************************
 
-typedef DWORD* XL_EXP_HANDLE;
+typedef void* XL_EXP_HANDLE;
 
 typedef LPCRECT (*XL_ExpBindProc)(void* lpObject, const char* lpcstrObject);
 
@@ -105,10 +121,10 @@ XLMATH_API(long) XL_GetRectExpWidth(XL_RECTEXP_HANDLE hExp);
 XLMATH_API(long) XL_GetRectExpHeight(XL_RECTEXP_HANDLE hExp);
 XLMATH_API(BOOL) XL_GetRectExpRect(XL_RECTEXP_HANDLE hExp, LPRECT lpRect);
 
-XLMATH_API(BOOL) XL_SetRectExpLeft(XL_RECTEXP_HANDLE hExp, LPCSTR lpcstrLeft);
-XLMATH_API(BOOL) XL_SetRectExpTop(XL_RECTEXP_HANDLE hExp, LPCSTR lpcstrTop);
-XLMATH_API(BOOL) XL_SetRectExpWidth(XL_RECTEXP_HANDLE hExp, LPCSTR lpcstrWidth);
-XLMATH_API(BOOL) XL_SetRectExpHeight(XL_RECTEXP_HANDLE hExp, LPCSTR lpcstrHeight);
+XLMATH_API(BOOL) XL_SetRectExpLeft(XL_RECTEXP_HANDLE hExp, const char* lpcstrLeft);
+XLMATH_API(BOOL) XL_SetRectExpTop(XL_RECTEXP_HANDLE hExp, const char* lpcstrTop);
+XLMATH_API(BOOL) XL_SetRectExpWidth(XL_RECTEXP_HANDLE hExp, const char* lpcstrWidth);
+XLMATH_API(BOOL) XL_SetRectExpHeight(XL_RECTEXP_HANDLE hExp, const char* lpcstrHeight);
 
 //*********************曲线拟合的相关算法*******************************************************
 //曲线
@@ -135,20 +151,6 @@ typedef struct ParamControlPoint
 //t -- 时间值（0~1）
 
 XLMATH_API(float) XL_GetCurvePosition(_ControlPoint_* lpControl, int nSize, int type, float t);
-
-
-#ifdef WIN32
-	#ifdef XLGRAPHIC_THREADSAFE
-		#define XL_INCREMENT InterlockedIncrement	
-		#define XL_DECREMENT InterlockedDecrement
-	#else  //XLGRAPHIC_THREADSAFE
-		#define	XL_INCREMENT(x) (++*(x))
-		#define XL_DECREMENT(x) (--*(x))
-	#endif //XLGRAPHIC_THREADSAFE
-#else 
-	#define	XL_INCREMENT(x) (++*(x))
-	#define XL_DECREMENT(x) (--*(x))
-#endif // WIN32
 
 #endif // __XUNLEI_MATH_H__
 

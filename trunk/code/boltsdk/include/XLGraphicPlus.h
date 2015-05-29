@@ -18,33 +18,48 @@
 #ifndef __XLGRAPHICPLUS_H__
 #define __XLGRAPHICPLUS_H__
 
-#ifdef WIN32
-	#ifdef XLGRAPHICPLUS_EXPORTS
-		#ifdef __cplusplus
-			#define XLGRAPHICPLUS_API(x) extern "C" __declspec(dllexport) x __stdcall 
-		#else
-			#define XLGRAPHICPLUS_API(x) __declspec(dllexport) x __stdcall 
-		#endif //__cplusplus
-	#elif defined (XLUE_UNION)
-		#ifdef __cplusplus
-			#define XLGRAPHICPLUS_API(x) extern "C" x __stdcall 
-		#else
-			#define XLGRAPHICPLUS_API(x) x __stdcall 
-		#endif //__cplusplus
-	#else //XLGRAPHICPLUS_API
-		#ifdef __cplusplus
-			#define XLGRAPHICPLUS_API(x) extern "C" __declspec(dllimport) x __stdcall 
-		#else
-			#define XLGRAPHICPLUS_API(x) __declspec(dllimport) x __stdcall 
-		#endif // __cplusplus
-	#endif //XLGRAPHICPLUS_EXPORTS
-#else
-	#ifdef __cplusplus
-		#define XLGRAPHICPLUS_API(x) extern "C" x 
-	#else // __cplusplus
-		#define XLGRAPHICPLUS_API(x) x 
+
+#ifndef XLGRAPHICPLUS_EXTERN_C
+	#ifdef __cplusplus	
+		#define XLGRAPHICPLUS_EXTERN_C extern "C"
+	#else
+		#define XLGRAPHICPLUS_EXTERN_C 
 	#endif // __cplusplus
+#endif //XLUE_EXTERN_C
+
+#ifndef XLUE_STDCALL
+	#if defined(_MSC_VER)
+		#define XLUE_STDCALL __stdcall
+	#elif defined(__GNUC__)
+		#define XLUE_STDCALL __attribute__((__stdcall__))
+	#endif
+#endif //XLUE_STDCALL
+
+#if defined(_MSC_VER)
+	#if defined(XLUE_UNIONLIB)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C  x __stdcall 
+	#elif defined(XLGRAPHICPLUS_EXPORTS)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C __declspec(dllexport) x __stdcall 
+	#elif defined (XLUE_UNION)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C  x __stdcall 
+	#else // XLGRAPHICPLUS_EXPORTS
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C __declspec(dllimport) x __stdcall 
+	#endif // XLGRAPHICPLUS_EXPORTS
+#elif defined(__GNUC__)
+	#if defined(XLUE_UNIONLIB)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C  __attribute__((__stdcall__)) x
+	#elif defined(XLGRAPHICPLUS_EXPORTS)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x
+	#elif defined (XLUE_UNION)
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C  __attribute__((__stdcall__)) x
+	#else // XLGRAPHICPLUS_EXPORTS
+			#define XLGRAPHICPLUS_API(x) XLGRAPHICPLUS_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x 
+	#endif // XLGRAPHICPLUS_EXPORTS
 #endif
+
+#if !defined(WIN32) && !defined(XLUE_WIN32)
+#include <XLUESysPreDefine.h>
+#endif // WIN32 && XLUE_WIN32
 
 #include <XLGraphic.h>
 #include <XLLuaRuntime.h>

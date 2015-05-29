@@ -26,33 +26,48 @@
 // XLGRAPHIC_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
-#ifdef WIN32
-	#ifdef XLGRAPHIC_EXPORTS
-		#ifdef __cplusplus
-			#define XLGRAPHIC_API(x) extern "C" __declspec(dllexport) x __stdcall 
-		#else
-			#define XLGRAPHIC_API(x) __declspec(dllexport) x __stdcall 
-		#endif //__cplusplus
-	#elif defined (XLUE_UNION)
-		#ifdef __cplusplus
-			#define XLGRAPHIC_API(x) extern "C" x __stdcall 
-		#else
-			#define XLGRAPHIC_API(x) x __stdcall 
-		#endif //__cplusplus
-	#else//XLGRAPHIC_EXPORTS
-		#ifdef __cplusplus
-			#define XLGRAPHIC_API(x) extern "C" __declspec(dllimport) x __stdcall 
-		#else
-			#define XLGRAPHIC_API(x) __declspec(dllimport) x __stdcall 
-		#endif // __cplusplus
-	#endif//XLGRAPHIC_EXPORTS
-#else
-	#ifdef __cplusplus
-		#define XLGRAPHIC_API(x) extern "C" x 
+#ifndef XLGRAPHIC_EXTERN_C
+	#ifdef __cplusplus	
+		#define XLGRAPHIC_EXTERN_C extern "C"
 	#else
-		#define XLGRAPHIC_API(x) x 
+		#define XLGRAPHIC_EXTERN_C 
+	#endif // __cplusplus
+#endif //XLUE_EXTERN_C
+
+#ifndef XLUE_STDCALL
+	#if defined(_MSC_VER)
+		#define XLUE_STDCALL __stdcall
+	#elif defined(__GNUC__)
+		#define XLUE_STDCALL __attribute__((__stdcall__))
 	#endif
+#endif //XLUE_STDCALL
+
+#if defined(_MSC_VER)
+	#if defined(XLUE_UNIONLIB)
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C  x __stdcall 
+	#elif defined(XLGRAPHIC_EXPORTS)
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C __declspec(dllexport) x __stdcall 
+	#elif defined (XLUE_UNION)
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C  x __stdcall 
+	#else // XLGRAPHIC_EXPORTS
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C __declspec(dllimport) x __stdcall 
+	#endif // XLGRAPHIC_EXPORTS
+#elif defined(__GNUC__)
+	#if defined(XLUE_UNIONLIB)
+			define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C  __attribute__((__stdcall__)) x
+	#elif defined(XLGRAPHIC_EXPORTS)
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x
+	#elif defined (XLUE_UNION)
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C  __attribute__((__stdcall__)) x
+	#else // XLGRAPHIC_EXPORTS
+			#define XLGRAPHIC_API(x) XLGRAPHIC_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x 
+	#endif // XLGRAPHIC_EXPORTS
 #endif
+
+#if !defined(WIN32) && !defined(XLUE_WIN32)
+#include <XLUESysPreDefine.h>
+#endif // WIN32 && XLUE_WIN32
+
 
 #ifndef __XLFS_H__
 	#include <XLFS.h>
@@ -291,7 +306,8 @@ XLGRAPHIC_API(XL_Color) XL_RGB2HSL(const XL_Color clrSource);
 
 //-----------Bitmap数据结构定义---------------------------
 XLGRAPHIC_API(XL_BITMAP_HANDLE) XL_CreateBitmap(DWORD BitmapColorType,unsigned long Width,unsigned long Height);
-XLGRAPHIC_API(XL_BITMAP_HANDLE) XL_CreateBindBitmap(XLBitmapInfo* pBitmapInfo,BYTE* pBuffer);
+XLGRAPHIC_API(XL_BITMAP_HANDLE) XL_CreateBindBitmap(XLBitmapInfo* pBitmapInfo,unsigned char* pBuffer);
+XLGRAPHIC_API(XL_BITMAP_HANDLE) XL_CreateBindBitmapEx(XLBitmapInfo* pBitmapInfo,unsigned char* pBuffer, BOOL bufferPreMultiplied);
 
 XLGRAPHIC_API(unsigned long) XL_AddRefBitmap(XL_BITMAP_HANDLE hBitmap);
 XLGRAPHIC_API(unsigned long) XL_ReleaseBitmap(XL_BITMAP_HANDLE hBitmap);
@@ -510,11 +526,11 @@ XLGRAPHIC_API(int) XL_AlphaPaintBitmap(HDC hdcDest, int nXOriginDest, int nYOrig
 // 字体的反走样定义，默认为XLAntiAliasMode_Normal
 typedef struct tagXLLogFontInfo
 {
-	LONG  lfHeight;
-	LONG  lfWidth;
-	LONG  lfEscapement;
-	LONG  lfOrientation;
-	LONG  lfWeight;
+	long  lfHeight;
+	long  lfWidth;
+	long  lfEscapement;
+	long  lfOrientation;
+	long  lfWeight;
 	BYTE  lfItalic;
 	BYTE  lfUnderline;
 	BYTE  lfStrikeOut;
@@ -523,7 +539,7 @@ typedef struct tagXLLogFontInfo
 	BYTE  lfClipPrecision;
 	BYTE  lfQuality;
 	BYTE  lfPitchAndFamily;
-	WCHAR lfFaceName[XLTEXT_LF_FACESIZE];
+	wchar_t lfFaceName[XLTEXT_LF_FACESIZE];
 
 	BOOL    bUseCache;
 
@@ -559,7 +575,7 @@ XLGRAPHIC_API(unsigned long) XL_ReleaseTextEnv(XL_TEXTENV_HANDLE hTextEnv);
 //------------ 对文本环境的配置和读取 ---------------------
 
 // 获得默认的facename
-XLGRAPHIC_API(BOOL) XL_GetDefaultFaceName(wchar_t* szFaceName, UINT nLen);
+XLGRAPHIC_API(BOOL) XL_GetDefaultFaceName(wchar_t* szFaceName, unsigned int nLen);
 XLGRAPHIC_API(BOOL) XL_IsSupportFont(const wchar_t* szFaceName);
 XLGRAPHIC_API(BOOL) XL_SetConfigFontName(const wchar_t* szFaceName);
 
@@ -623,20 +639,20 @@ XLGRAPHIC_API(BOOL) XL_SetShadowOffset(XL_TEXTENV_HANDLE hTextEnv, char xOffset,
 
 
 // 获取指定长度nCount文本lpcstrText的高度和宽度信息
-XLGRAPHIC_API(BOOL) XL_GetSinglelineTextExtent(XL_TEXTENV_HANDLE hTextEnv, const wchar_t* lpcstrText,INT nCount, LPSIZE lpSize);
+XLGRAPHIC_API(BOOL) XL_GetSinglelineTextExtent(XL_TEXTENV_HANDLE hTextEnv, const wchar_t* lpcstrText,int nCount, LPSIZE lpSize);
 
 //为richEdit写的一个，同时获得最低点到baseline的距离
 XLGRAPHIC_API(BOOL) XL_GetTextExtentAndBaseLine(XL_TEXTENV_HANDLE hTextEnv, const wchar_t* lpcstrText,
-												INT nCount, LPSIZE lpSize, int* lpnFontDescender);
+												int nCount, LPSIZE lpSize, int* lpnFontDescender);
 
-XLGRAPHIC_API(BOOL) XL_GetMultilineTextExtent(XL_TEXTENV_HANDLE hTextEnv, const wchar_t* lpcstrText,INT nCount,INT nWidthLimit, LPSIZE lpSize);
+XLGRAPHIC_API(BOOL) XL_GetMultilineTextExtent(XL_TEXTENV_HANDLE hTextEnv, const wchar_t* lpcstrText,int nCount,int nWidthLimit, LPSIZE lpSize);
 
 // 按照指定格式输出文本，最后一个参数表示特效类型
-XLGRAPHIC_API(int)	XL_DrawSinglelineText(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText,INT nCount, LPCRECT lpcRect, DWORD dwFormat, XLGraphicHint* pHint);
-XLGRAPHIC_API(int)	XL_DrawMultilineText(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText,INT nCount, LPCRECT lpcRect, DWORD dwFormat, XLGraphicHint* pHint);
+XLGRAPHIC_API(int)	XL_DrawSinglelineText(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText,int nCount, LPCRECT lpcRect, DWORD dwFormat, XLGraphicHint* pHint);
+XLGRAPHIC_API(int)	XL_DrawMultilineText(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText,int nCount, LPCRECT lpcRect, DWORD dwFormat, XLGraphicHint* pHint);
 
-XLGRAPHIC_API(BOOL) XL_TabbedTextOut(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText, INT nCount, 
-										INT nXPos, INT nYPos, INT nTabPostions, const INT* lpnTabPostions, INT nTabOrigin, LPSIZE lpTextDimension, XLGraphicHint* pHint);
+XLGRAPHIC_API(BOOL) XL_TabbedTextOut(XL_TEXTENV_HANDLE hTextEnv, XL_BITMAP_HANDLE hBmp, const wchar_t* lpcstrText, int nCount, 
+										int nXPos, int nYPos, int nTabPostions, const int* lpnTabPostions, int nTabOrigin, LPSIZE lpTextDimension, XLGraphicHint* pHint);
 
 //-------------对曲线对象的支持---------------------
 #define XLCURVE_BEZIER		0 //贝塞尔
@@ -760,9 +776,9 @@ XLGRAPHIC_API(unsigned long) XL_ReleasePen(XL_PEN_HANDLE hPen);
 #define XLVECTOR_HS_DIAGCROSS        5       /* xxxxx */
 
 typedef struct tagXLLOGBRUSH { 
-	UINT     lbStyle; 
-	XL_Color lbColor; 
-	LONG     lbHatch; 
+	unsigned int	lbStyle; 
+	XL_Color		lbColor; 
+	long			lbHatch; 
 } XLLOGBRUSH, *LPXLLOGBRUSH;
 
 XLGRAPHIC_API(XL_BRUSH_HANDLE) XL_CreateBrush(const LPXLLOGBRUSH lpLogBrush);
