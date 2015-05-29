@@ -70,7 +70,7 @@
 										<width>35</width>
 										<height>35</height>
 										<NormalBkgID>MainWnd.BtnClose.Normal</NormalBkgID>
-										<DownBkgID>MainWnd.BtnClose.Normal</DownBkgID>
+										<DownBkgID>MainWnd.BtnClose.Hover</DownBkgID>
 										<HoverBkgID>MainWnd.BtnClose.Hover</HoverBkgID>
 										<DisableBkgID>MainWnd.BtnClose.Normal</DisableBkgID>
 									</attr>
@@ -86,7 +86,7 @@
 										<width>35</width>
 										<height>35</height>
 										<NormalBkgID>MainWnd.BtnMin.Normal</NormalBkgID>
-										<DownBkgID>MainWnd.BtnMin.Normal</DownBkgID>
+										<DownBkgID>MainWnd.BtnMin.Hover</DownBkgID>
 										<HoverBkgID>MainWnd.BtnMin.Hover</HoverBkgID>
 										<DisableBkgID>MainWnd.BtnMin.Normal</DisableBkgID>
 									</attr>
