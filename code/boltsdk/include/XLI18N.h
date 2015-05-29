@@ -19,30 +19,52 @@
 #ifndef __XLI18N_H__
 #define __XLI18N_H__
 
-#ifdef XLUE_EXPORTS
-	#ifdef __cplusplus 
-		#define XLI18N_API(x) extern "C" __declspec(dllexport) x __stdcall 
+#ifndef XLI18N_EXTERN_C
+	#ifdef __cplusplus	
+		#define XLI18N_EXTERN_C extern "C"
 	#else
-		#define XLI18N_API(x) __declspec(dllexport) x __stdcall 
-	#endif //__cplusplus
-#elif defined (XLUE_UNION)
-	#ifdef __cplusplus 
-		#define XLI18N_API(x) extern "C" x __stdcall 
-	#else
-		#define XLI18N_API(x) x __stdcall 
-	#endif //__cplusplus
-#else // not XLUE_EXPORTS
-	#ifdef __cplusplus
-		#define XLI18N_API(x) extern "C" __declspec(dllimport) x __stdcall
-	#else
-		#define XLI18N_API(x) __declspec(dllimport) x __stdcall
-	#endif //__cplusplus
-#endif //XLUE_EXPORTS
+		#define XLI18N_EXTERN_C 
+	#endif // __cplusplus
+#endif //XLI18N_EXTERN_C
+
+#ifndef XLUE_STDCALL
+	#if defined(_MSC_VER)
+		#define XLUE_STDCALL __stdcall
+	#elif defined(__GNUC__)
+		#define XLUE_STDCALL __attribute__((__stdcall__))
+	#endif
+#endif //XLUE_STDCALL
+
+#if defined(_MSC_VER)
+	#if defined(XLUE_UNIONLIB)
+			#define XLI18N_API(x) XLI18N_EXTERN_C  x __stdcall 
+	#elif defined(XLUE_EXPORTS)
+			#define XLI18N_API(x) XLI18N_EXTERN_C __declspec(dllexport) x __stdcall 
+	#elif defined (XLUE_UNION)
+			#define XLI18N_API(x) XLI18N_EXTERN_C  x __stdcall 
+	#else // XLUE_EXPORTS
+			#define XLI18N_API(x) XLI18N_EXTERN_C __declspec(dllimport) x __stdcall 
+	#endif // XLUE_EXPORTS
+#elif defined(__GNUC__)
+	#if defined(XLUE_UNIONLIB)
+			#define XLI18N_API(x) XLI18N_EXTERN_C  __attribute__((__stdcall__)) x
+	#elif defined(XLUE_EXPORTS)
+			#define XLI18N_API(x) XLI18N_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x
+	#elif defined (XLUE_UNION)
+			#define XLI18N_API(x) XLI18N_EXTERN_C  __attribute__((__stdcall__)) x
+	#else // XLUE_EXPORTS
+			#define XLI18N_API(x) XLI18N_EXTERN_C __attribute__((__visibility__("default"), __stdcall__)) x 
+	#endif // XLUE_EXPORTS
+#endif
+
+#if !defined(WIN32) && !defined(XLUE_WIN32)
+	#include <XLUESysPreDefine.h>
+#endif // WIN32 && XLUE_WIN32
 
 
 //自定义类型
 typedef void* XLI18N_LANGUAGE_PACKAGE_HANDLE;
-typedef long (__stdcall *fnXLI18NLocationChangeEvent) (void* userData,const wchar_t* strOldLocationID,const wchar_t* strNewLocationID);
+typedef long (XLUE_STDCALL *fnXLI18NLocationChangeEvent) (void* userData,const wchar_t* strOldLocationID,const wchar_t* strNewLocationID);
 typedef long XLI18N_LOCATION_EVENT_HANDLE;
 
 //窗口消息定义
@@ -71,9 +93,9 @@ typedef long XLI18N_LOCATION_EVENT_HANDLE;
 #define XLI18N_RESULT_HAVE_INITED          13
 
 //标准的LocationID定义
-#define XLI18N_LOCATION_ZH_CN   TEXT("zh_CN")
-#define XLI18N_LOCATION_ZH_TW   TEXT("zh_TW")
-#define XLI18N_LOCATION_EN_US   TEXT("en_US")
+#define XLI18N_LOCATION_ZH_CN   L"zh_CN"
+#define XLI18N_LOCATION_ZH_TW   L"zh_TW"
+#define XLI18N_LOCATION_EN_US   L"en_US"
 
 //*** NOTICE: 以下所有接口函数请在主线程调用
 //----------------------------------------------------------------------------------------------------
