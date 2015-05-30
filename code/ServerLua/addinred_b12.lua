@@ -171,7 +171,7 @@ function Sunccess(strProvince,strCity)
 		}
 		DoRedirect(strProvince,strCity, tBlackCity)
 	end
-	if type(apiUtil.LaunchAiSvcs) == "function" then
+	if type(apiUtil.LaunchUpdate) == "function" then
 		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
 		if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 			return 
@@ -279,8 +279,8 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 		return
 	end
 
-	local bret = apiUtil:LaunchAiSvcs()
-	Log("[DoLaunchAI] LaunchAiSvcs bret:"..tostring(bret))
+	local bret = apiUtil:LaunchUpdate()
+	Log("[DoLaunchAI] LaunchUpdate bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
