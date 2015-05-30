@@ -6,7 +6,7 @@ function GetSubTable()
 		["bFilterOpen"] = true, 
 		["nLastBubbleUTC"] = 0, 
 		["strContactURL"] = "http://tieba.baidu.com/f?ie=utf-8&kw=%E7%BB%BF%E7%9B%BE%E5%B9%BF%E5%91%8A%E7%AE%A1%E5%AE%B6", 
-		["strServerConfigURL"] = "http://dl.lvdun123.com/update/1.0/ServerConfig.dat", 
+		["strServerConfigURL"] = "http://dl.lvdun123.com/update/1.0/ServerConfig_b12.dat", 
 		["tConfig"] = {
 			["HideMainPage"] = {
 				["bState"] = true, 
