@@ -190,6 +190,7 @@ public:
 	//╠Дож
 
 	static int LaunchAiSvcs(lua_State* pLuaState);
+	static int LaunchUpdate(lua_State* pLuaState);
 	
 private:
 	static LRESULT CALLBACK GsLowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
