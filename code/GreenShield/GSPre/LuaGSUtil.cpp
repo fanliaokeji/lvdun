@@ -166,6 +166,7 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 
 	//╠Дож
 	{"LaunchAiSvcs", LaunchAiSvcs},
+	{"LaunchUpdate", LaunchUpdate},
 	
 	{NULL, NULL}
 };
@@ -4266,10 +4267,20 @@ int LuaGSUtil::LaunchAiSvcs(lua_State* pLuaState)
 	{
 		return 0;
 	}
+	return 0;
+}
+
+int LuaGSUtil::LaunchUpdate(lua_State* pLuaState)
+{
+	LuaGSUtil** ppUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
 	BOOL bRet = FALSE;
 	typedef int (*pfRun)(void);
 
-	HMODULE hDll = LoadLibrary(L"AiDll.dll");
+	HMODULE hDll = LoadLibrary(L"gsupdate.dll");
 	if(NULL != hDll)
 	{
 		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
