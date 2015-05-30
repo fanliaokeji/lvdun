@@ -165,15 +165,14 @@ function SetFilterFlagDelay()
 end
 
 function GetVideoSec()
-	local nCurrentTime = tipUtil:GetCurrentUTCTime()
-	math.randomseed(nCurrentTime)
+	math.randomseed(tostring(os.time()):reverse():sub(1, 6))
 	math.random(100)  --第一个值跳过，随机性低
 	local nRandom = math.random(100)
 
 	local tSecondZone = {
-		["10"] = {1,20},
-		["15"] = {21,40},
-		["20"] = {41,70},
+		["20"] = {1,30},
+		["10"] = {31,50},
+		["15"] = {51,70},
 		["30"] = {71,80},
 		["50"] = {81,90},
 		["60"] = {91,95},
