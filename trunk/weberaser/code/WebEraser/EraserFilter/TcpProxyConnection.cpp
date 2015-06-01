@@ -784,7 +784,12 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 
 								if(this->m_responseContentLength) {
 									this->m_bytesOfResponseContentHasRead = this->m_responseString.size() - (doubleCrlfPos + 4);
-									if(this->m_bytesOfResponseContentHasRead > *this->m_responseContentLength) {
+									if (this->m_bytesOfResponseContentHasRead - *this->m_responseContentLength == 1 && this->m_responseString[this->m_responseString.size() - 1] == '\n') {
+										this->m_responseString.resize(this->m_responseString.size());
+										bytes_transferred -= 1;
+										this->m_bytesOfResponseContentHasRead -= 1;
+									}
+									else {
 										ERROR_MSG_LOG("The reponse content size is larger than the Content-Length value");
 										this->m_state = CS_TUNNELLING;
 										break;
@@ -832,8 +837,14 @@ void TcpProxyConnection::HandleReadDataFromTargetServer(const boost::system::err
 				if(this->m_responseContentLength) {
 					this->m_bytesOfResponseContentHasRead += bytes_transferred;
 					if(this->m_bytesOfResponseContentHasRead > *this->m_responseContentLength) {
-						ERROR_MSG_LOG("The reponse content size is larger than the Content-Length value");
-						this->m_state = CS_TUNNELLING;
+						if (this->m_bytesOfResponseContentHasRead - *this->m_responseContentLength == 1 && this->m_downstreamBuffer[bytes_transferred - 1] == '\n') {
+							bytes_transferred -= 1;
+							this->m_bytesOfResponseContentHasRead -= 1;
+						}
+						else {
+							ERROR_MSG_LOG("The reponse content size is larger than the Content-Length value");
+							this->m_state = CS_TUNNELLING;
+						}
 					}
 				}
 				else if(this->m_responseTransferEncoding == TE_CHUNKED) {
