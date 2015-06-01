@@ -1011,7 +1011,8 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	
 	tCurrentCfg["nFilterCountTotal"] = tOldCfg["nFilterCountTotal"] or 0
 	tCurrentCfg["nFilterCountOneDay"] = tOldCfg["nFilterCountOneDay"] or 0
-	tCurrentCfg["bFilterOpen"] = tOldCfg["bFilterOpen"]
+	--是否实时监控以安装时选择为准
+	--tCurrentCfg["bFilterOpen"] = tOldCfg["bFilterOpen"]
 	tCurrentCfg["nLastAutoUpdateUTC"] = tOldCfg["nLastAutoUpdateUTC"]
 	tCurrentCfg["nLastBubbleUTC"] = tOldCfg["nLastBubbleUTC"]
 	tCurrentCfg["nLastClearUTC"] = tOldCfg["nLastClearUTC"]
@@ -1026,7 +1027,10 @@ function MergeOldUserCfg(tCurrentCfg, strFileName)
 	
 	local tOldStateConfig = tOldCfg["tConfig"] or {}
 	for strKey, tStateInfo in pairs(tOldStateConfig) do
-		tCurrentCfg["tConfig"][strKey] = tStateInfo
+		--是否开机启动以安装时选择为准
+		if strKey ~= "AutoStup" then
+			tCurrentCfg["tConfig"][strKey] = tStateInfo
+		end
 	end	
 	
 	tipUtil:DeletePathFile(strOldCfgPath)

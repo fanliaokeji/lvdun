@@ -165,7 +165,8 @@ function SetFilterFlagDelay()
 end
 
 function GetVideoSec()
-	math.randomseed(tostring(os.time()):reverse():sub(1, 6))
+	local ost = os.time()
+	math.randomseed(tostring(ost):reverse():sub(1, 6))
 	math.random(100)  --第一个值跳过，随机性低
 	local nRandom = math.random(100)
 
