@@ -178,8 +178,10 @@ function ShowMainPage(ctrl, bIsShow)
 	gifclose:SetVisible(bIsShow)
 	if bIsShow then
 		local bkg = ctrl:GetControlObject("MainWnd.Bkg")
-		bkg:SetTextureID("MainWnd.Bkg1")
-		ctrl:UpdateMainWndBkg(true)
+		if bkg:GetTextureID() ~= "MainWnd.Bkg1" then
+			bkg:SetTextureID("MainWnd.Bkg1")
+			ctrl:UpdateMainWndBkg(true)
+		end
 	end
 end
 
@@ -210,20 +212,16 @@ end
 
 function OnClickYY(self)
 	local ctrl = self:GetOwnerControl()
+	ShowZanZhu(ctrl, false)
+	ShowMainPage(ctrl, false)
+	local bkg = ctrl:GetControlObject("MainWnd.Bkg")
+	bkg:SetTextureID("MainWnd.Bkg3")
 	AsynCall(
 		function()
-			if type(gtAppList) == "table" then
-				ShowZanZhu(ctrl, false)
-				ShowMainPage(ctrl, false)
+			DownLoadAppList(function(strCfgName)
+				gtAppList = LoadAppList(strCfgName)
 				ShowAppList(ctrl, true)
-			else
-				DownLoadAppList(function(strCfgName)
-					ShowZanZhu(ctrl, false)
-					ShowMainPage(ctrl, false)
-					gtAppList = LoadAppList(strCfgName)
-					ShowAppList(ctrl, true)
-				end)
-			end
+			end)
 		end)
 end
 
@@ -242,6 +240,8 @@ function DownLoadAppList(fnCallBack)
 		return
 	end
 	
+	--下载之前先显示本地的
+	fnCallBack("AppList.dat")
 	local nTimeInMs = 10*1000
 	g_bAppListDownLoading = true
 	
@@ -298,6 +298,8 @@ function CreateTextureRes(strName)
 	end
 	if xar:GetTexture("AppList."..strName) == nil and tipUtil:QueryFileExists(strImgPath) then
 		local texture = xar:CreateTexture({["id"] = "AppList."..strName, ["image"] = strImgPath})
+	end
+	if xar:GetTexture("AppList."..strName) ~= nil then
 		return true
 	end
 	return false
@@ -307,6 +309,8 @@ function ShowAppListItem(ctrl, idx, info, isSecond)
 	if idx > 24 then return end
 	local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 	local layout = ctrl:GetControlObject("MainWnd.Layout.AppList")
+	tFunHelper.TipLog("ShowAppListItem, layout = "..tostring(layout))
+	if not layout then return end
 	if CreateTextureRes(info["strKeyName"]) then
 		local tmpTextureObj = objFactory:CreateUIObject("AppList.Texture."..info["strKeyName"], "TipAddin.Button")
 		local tmpTextObj = objFactory:CreateUIObject("AppList.Text."..info["strKeyName"], "TextObject")
@@ -358,22 +362,33 @@ end
 
 function ShowAppList(ctrl, bIsShow) 
 	local layout = ctrl:GetControlObject("MainWnd.Layout.AppList")
-	if not layout and not bIsShow then return end
-	if bIsShow then
-		local bkg = ctrl:GetControlObject("MainWnd.Bkg")
-		bkg:SetTextureID("MainWnd.Bkg3")
+	tFunHelper.TipLog("ShowAppList, bIsShow = "..tostring(bIsShow))
+	if not bIsShow then 
+		if layout then
+			layout:SetVisible(false)
+			layout:RemoveAllChild()
+			ctrl:RemoveChild(layout)
+		end
+		return
+	end
+	local bkg = ctrl:GetControlObject("MainWnd.Bkg")
+	if bIsShow and bkg:GetTextureID() ~= "MainWnd.Bkg3" then
+		tFunHelper.TipLog("ShowAppList, bIsShow = "..tostring(bIsShow)..", bkg:GetTextureID() = bkg3")
+		return 
 	end
 	if not layout then
 		local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 		layout = objFactory:CreateUIObject("MainWnd.Layout.AppList", "LayoutObject")
 		layout:SetObjPos2(24, 50, 655, 298)
 		ctrl:AddChild(layout)
-		for idx, info in ipairs(gtAppList) do
-			ShowAppListItem(ctrl, idx, info)
-		end
+	else
+		layout:RemoveAllChild()
 	end
-	layout:SetVisible(bIsShow)
-	layout:SetChildrenVisible(bIsShow)
+	layout:SetVisible(true)
+	layout:SetChildrenVisible(true)
+	for idx, info in ipairs(gtAppList) do
+		ShowAppListItem(ctrl, idx, info)
+	end
 end
 
 --1:浏览器打开;2:直接下载或运行
