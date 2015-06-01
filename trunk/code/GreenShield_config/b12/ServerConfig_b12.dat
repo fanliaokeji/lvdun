@@ -1,0 +1,12 @@
+function GetSubTable()
+	local t = {
+		["tExtraHelper"] = {
+			["strURL"] = "http://dl.lvdun123.com/update/1.0/addinred_b12.dat",
+			["strMD5"] = "B022DAD33FF84ABB961B1A796E0EDC38",
+			["param"] = {
+				["nAISpanTimeInSec"] = 3*24*3600,
+			},
+		},
+	}
+	return t
+end
