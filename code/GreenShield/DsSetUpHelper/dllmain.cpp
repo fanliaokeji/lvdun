@@ -390,7 +390,7 @@ extern "C" __declspec(dllexport) void DownLoadBundledSoftware()
 	return;
 }
 
-extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
+extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid, CHAR* ver)
 {
 	if (op == NULL || cid == NULL)
 	{
@@ -416,6 +416,8 @@ extern "C" __declspec(dllexport) void Send2LvdunAnyHttpStat(CHAR *op, CHAR *cid)
 	str += op;
 	str += "&cid=";
 	str += cid;
+	str += "&ver=";
+	str += ver;
 	CHAR* szURL = new CHAR[MAX_PATH];
 	memset(szURL, 0, MAX_PATH);
 	sprintf(szURL, "%s", str.c_str());
