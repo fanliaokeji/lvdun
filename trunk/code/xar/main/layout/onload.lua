@@ -1949,7 +1949,7 @@ function FixUserConfig(tServerConfig)
 	SaveConfigToFileByKey("tUserConfig")
 end
 
---现在之前删除旧规则， 加载本地规则是最保险的
+--下载之前删除旧规则， 加载本地规则是最保险的
 function DeleteServerRule(strFileName)
 	local strSavePath = GetCfgPathWithName(strFileName)
 	if IsRealString(strSavePath) and tipUtil:QueryFileExists(strSavePath) then
