@@ -415,7 +415,8 @@ end
 
 --下载之前删除旧规则， 加载本地规则是最保险的
 function DeleteServerRule(strFileName)
-	local strSavePath = GetCfgPathWithName(strFileName)
+	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
+	local strSavePath = FunctionObj.GetCfgPathWithName(strFileName)
 	if IsRealString(strSavePath) and tipUtil:QueryFileExists(strSavePath) then
 		tipUtil:DeletePathFile(strSavePath)
 	end
