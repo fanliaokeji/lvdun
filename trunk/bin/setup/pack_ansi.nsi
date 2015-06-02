@@ -63,8 +63,8 @@ Var Bool_Bind360
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾广告管家"
-!define PRODUCT_VERSION "1.0.0.11"
-!define VERSION_LASTNUMBER 11
+!define PRODUCT_VERSION "1.0.0.12"
+!define VERSION_LASTNUMBER 12
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
@@ -107,9 +107,9 @@ RequestExecutionLevel admin
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "深圳市烦了科技有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市捷讯丰科技有限公司"
 ;VIAddVersionKey /LANG=2052 "LegalTrademarks" "GreenShield"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 深圳市烦了科技有限公司"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2014-2016 深圳市捷讯丰科技有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
@@ -196,12 +196,12 @@ Function DoInstall
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
   ${If} $0 == ""
 	HideWindow
-	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请加QQ群67542242寻求帮助"
+	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官网寻求帮助"
 	Call OnClickQuitOK
   ${EndIf}
   IfFileExists "$0" +4 0
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请加QQ群67542242寻求帮助"
+  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请请到官网寻求帮助"
   Call OnClickQuitOK
  
   ;拷贝安装包到%public%目录
@@ -254,6 +254,11 @@ Function DoInstall
   ;WriteUninstaller "$INSTDIR\uninst.exe"
   File "uninst\uninst.exe"
   
+  ;释放AI
+  SetOutPath "$INSTDIR\program"
+  SetOverwrite on
+  File /r "AI\*.*"
+  
   ;最后一步注册服务
   ${If} $Bool_StartTimeDo == 1
 	 IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +6
@@ -288,7 +293,7 @@ Function DoInstall
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
 	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
   ${EndIf}  
- ;写入自用的注册表信息
+  ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
   System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetTime(*l) i(.r0).r1'
@@ -310,8 +315,6 @@ Function DoInstall
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  ;SetOutPath "$INSTDIR"
-  ;WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
 FunctionEnd
 
 Function GetCommandLine
@@ -355,6 +358,8 @@ Function CmdSilentInstall
 	Call CloseExe
 	Call DoInstall
 	;Sleep 2000
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
+	
 	SetOutPath "$INSTDIR\program"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms"
@@ -448,99 +453,6 @@ Function ExitWithCheck
 	${EndIf}
 FunctionEnd
 
-Function UnstallOnlyFile
-	;删除
-	RMDir /r "$1\appimage"
-	RMDir /r "$1\xar"
-	Delete "$1\uninst.exe"
-	RMDir /r "$1\program"
-	RMDir /r "$1\res"
-	
-	 ;文件被占用则改一下名字
-	StrCpy $R4 "$1\program\GsNet32.dll"
-	IfFileExists $R4 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call Random
-	Pop $2
-	IfFileExists "$R4.$2" BeginRename
-	Rename $R4 "$R4.$2"
-	Delete /REBOOTOK "$R4.$2"
-	RenameOK:
-	
-	StrCpy "$R0" "$1"
-	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
-	Pop $R1
-	${If} $R1 == 1
-		RMDir /r "$1"
-	${EndIf}
-FunctionEnd
-
-
-Function CmdUnstall
-	${GetOptions} $R4 "/uninstall"  $R0
-	IfErrors FunctionReturn 0
-	SetSilent silent
-	;ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	IfFileExists $INSTDIR +2 0
-	Abort
-	;发退出消息
-	Call CloseExe
-	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$R0" "6.0" $2
-	${if} $2 == 2
-		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
-		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-		System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::PinToStartMenu4XP(b 0, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
-	${else}
-		Call GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 200
-			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 200
-		${EndIf}
-	${Endif}
-	;最先卸载服务
-	IfFileExists "$TEMP\${PRODUCT_NAME}\GsSvc.dll" 0 +2
-    System::Call '$TEMP\${PRODUCT_NAME}\GsSvc::SetupUninstallService() ?u'
-	StrCpy $1 $INSTDIR
-	Call UnstallOnlyFile
-	
-	;读取渠道号
-	ReadRegStr $R4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
-	${If} $R4 != ""
-	${AndIf} $R4 != 0
-		StrCpy $str_ChannelID $R4
-	${EndIF}
-	
-	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	IfFileExists "$TEMP\${PRODUCT_NAME}\DsSetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::Send2LvdunAnyHttpStat(t "3", t "$str_ChannelID")'
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	${If} $0 == "$INSTDIR"
-		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-		 ;删除自用的注册表信息
-		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_NAME}"
-	${EndIf}
-	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
-		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
-	Abort
-	FunctionReturn:
-FunctionEnd
-
 Function UpdateChanel
 	StrCpy $boolIsSilent "false"
 	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
@@ -596,11 +508,12 @@ Function .onInit
 	Call UpdateChanel
 	Call InitInsConfParam
 	
+	SetOutPath "$TEMP\${PRODUCT_NAME}\GSCFG"
+	SetOverwrite off
+	File "GSCFG\*.*"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
 	File "bin\DsSetUpHelper.dll"
-	File "bin\LuaAgent.dll"
-	File "bin\gssetupload.dat"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
@@ -609,7 +522,6 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	Call CmdSilentInstall
-	;Call CmdUnstall
 	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
@@ -1574,6 +1486,51 @@ Function NSD_TimerFun
 	Call SetWindowShowTop
 FunctionEnd
 
+Function NSISModifyCfgFile
+	push $0
+	push $1
+	push $2
+	push $3
+	StrCpy $1 ${NSIS_MAX_STRLEN}
+	StrCpy $0 ""
+	System::Call '$TEMP\${PRODUCT_NAME}\DsSetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+	StrCpy $3 ""
+	${If} $0 != ""
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.dat" r
+		IfErrors done
+		FileRead $1 $2
+		${While} $2 != ''
+			StrCpy $3 "$3$2"
+			FileSeek $1 0 CUR
+			FileRead $1 $2
+		${EndWhile}
+		FileClose $1
+		done:
+	${EndIf}
+	${If} $3 != ""
+		${If} $Bool_Sysstup == 1
+			${WordReplace} $3 "[$\"AutoStup$\"] = {$\r$\n$\t$\t$\t$\t[$\"bState$\"] = false" "[$\"AutoStup$\"] = {$\r$\n$\t$\t$\t$\t[$\"bState$\"] = true" "+*" $3
+		${Else}
+			${WordReplace} $3 "[$\"AutoStup$\"] = {$\r$\n$\t$\t$\t$\t[$\"bState$\"] = true" "[$\"AutoStup$\"] = {$\r$\n$\t$\t$\t$\t[$\"bState$\"] = false" "+*" $3
+		${EndIf}
+		${If} $Bool_StartTimeDo == 1
+			${WordReplace} $3 "[$\"bFilterOpen$\"] = false" "[$\"bFilterOpen$\"] = true" "+*" $3
+		${Else}
+			${WordReplace} $3 "[$\"bFilterOpen$\"] = true" "[$\"bFilterOpen$\"] = false" "+*" $3
+		${EndIf}
+		;Delete "$0\${PRODUCT_NAME}\userconfig.dat"
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.dat" w
+		IfErrors done2
+		FileWrite $1 $3
+		FileClose $1
+		done2:
+	${EndIf}
+	pop $3
+	pop $2
+	pop $1
+	pop $0
+FunctionEnd
+
 Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETRANGE32} 0 100  ;总步长为顶部定义值
 	Sleep 100
@@ -1581,22 +1538,25 @@ Function InstallationMainFun
 	SendMessage $PB_ProgressBar ${PBM_SETPOS} 2 0
 	Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 4 0
-     ;先卸载旧的
-	;ReadRegStr $4 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
-	;${If} $4 != 0
-	;${AndIf} $4 != ""
-	;IfFileExists $4 0 NextAction
-	;StrCpy $1 $4
-	;Call UnstallOnlyFile
-	;NextAction:
-	;${EndIf}
+	Call DoInstall
 	Sleep 100
 	SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
+	;将安装方式写入注册表
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${If} $R1 == "GsSetup${PRODUCT_VERSION}.exe" 
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
+	${Else}
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "nosilent"
+	${EndIf}
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 14 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
-    Call DoInstall
+	Call NSISModifyCfgFile
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
