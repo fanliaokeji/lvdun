@@ -413,6 +413,13 @@ function DownLoadServerRule(tDownRuleList)
 	end
 end
 
+--下载之前删除旧规则， 加载本地规则是最保险的
+function DeleteServerRule(strFileName)
+	local strSavePath = GetCfgPathWithName(strFileName)
+	if IsRealString(strSavePath) and tipUtil:QueryFileExists(strSavePath) then
+		tipUtil:DeletePathFile(strSavePath)
+	end
+end
 
 function CheckServerRuleFile(tServerConfig)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
@@ -424,7 +431,16 @@ function CheckServerRuleFile(tServerConfig)
 	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
 	local strServerWhiteURL = FetchValueByPath(tServerData, {"tServerWhite", "strURL"})
 	local strServerWhiteMD5 = FetchValueByPath(tServerData, {"tServerWhite", "strMD5"})
-		
+	--服务器不配置表示不希望使用服务端规则， 应删掉
+	if not IsRealString(strServerVideoURL) then
+		DeleteServerRule("serverwecfgv.dat")
+	end
+	if not IsRealString(strServerWebURL) then
+		DeleteServerRule("serverwecfgw.dat")
+	end
+	if not IsRealString(strServerWhiteURL) then
+		DeleteServerRule("serverwewhite.dat")
+	end
 	local strVideoSavePath = FunctionObj.GetCfgPathWithName("serverwecfgv.dat")
 	local strWebSavePath = FunctionObj.GetCfgPathWithName("serverwecfgw.dat")
 	local strWhiteListPath = FunctionObj.GetCfgPathWithName("serverwewhite.dat")
@@ -473,6 +489,9 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("Project.FunctionHelper") 
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
+		DeleteServerRule("serverwecfgv.dat")
+		DeleteServerRule("serverwecfgw.dat")
+		DeleteServerRule("serverwewhite.dat")
 		TipMain()
 		TimerTryShowRepairWnd()
 		return	
