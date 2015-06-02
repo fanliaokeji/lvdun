@@ -63,8 +63,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "WebEraser"
 !define SHORTCUT_NAME "¹ã¸æÏðÆ¤²Á"
-!define PRODUCT_VERSION "1.0.0.1"
-!define VERSION_LASTNUMBER 1
+!define PRODUCT_VERSION "1.0.0.2"
+!define VERSION_LASTNUMBER 2
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "WebEraserSetup_${INSTALL_CHANNELID}.exe"
 
