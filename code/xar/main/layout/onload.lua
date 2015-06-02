@@ -1949,6 +1949,17 @@ function FixUserConfig(tServerConfig)
 	SaveConfigToFileByKey("tUserConfig")
 end
 
+--现在之前删除旧规则， 加载本地规则是最保险的
+function DeleteServerRule()
+	local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
+	local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
+	if IsRealString(strVideoSavePath) and tipUtil:QueryFileExists(strVideoSavePath) then
+		tipUtil:DeletePathFile(strVideoSavePath)
+	end
+	if IsRealString(strWebSavePath) and tipUtil:QueryFileExists(strWebSavePath) then
+		tipUtil:DeletePathFile(strWebSavePath)
+	end
+end
 
 function CheckServerRuleFile(tServerConfig)
 	local tServerData = FetchValueByPath(tServerConfig, {"tServerData"}) or {}
@@ -1960,6 +1971,7 @@ function CheckServerRuleFile(tServerConfig)
 	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) 
 	   or not IsRealString(strServerVideoMD5) or not IsRealString(strServerWebMD5) then
 		TipLog("[CheckServerRuleFile] get server rule info failed , start tipmain ")
+		DeleteServerRule()
 		TipMain()
 		return
 	end
@@ -1990,7 +2002,7 @@ function CheckServerRuleFile(tServerConfig)
 		tDownRuleList[nIndex]["strURL"] = strServerWebURL
 		tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataW.dat")
 	end
-	
+	DeleteServerRule()
 	DownLoadServerRule(tDownRuleList)
 end
 
