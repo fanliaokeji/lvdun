@@ -167,6 +167,10 @@ function AnimChangeText(self, bHide)
 end
 
 function ShowMainPage(ctrl, bIsShow)
+	local bkg = ctrl:GetControlObject("MainWnd.Bkg")
+	if bIsShow and bkg:GetTextureID() == "MainWnd.Bkg1" then
+		return
+	end
 	local adctrl = ctrl:GetControlObject("MainWnd.Low.AdvCount")
 	local leftgif = ctrl:GetControlObject("MainWnd.Up.Bkg.OpenFilter")
 	local text = ctrl:GetControlObject("MainWnd.TextAnim")
@@ -177,7 +181,6 @@ function ShowMainPage(ctrl, bIsShow)
 	local gifclose = ctrl:GetControlObject("MainWnd.Up.Bkg.CloseFilter")
 	gifclose:SetVisible(bIsShow)
 	if bIsShow then
-		local bkg = ctrl:GetControlObject("MainWnd.Bkg")
 		if bkg:GetTextureID() ~= "MainWnd.Bkg1" then
 			bkg:SetTextureID("MainWnd.Bkg1")
 			ctrl:UpdateMainWndBkg(true)
