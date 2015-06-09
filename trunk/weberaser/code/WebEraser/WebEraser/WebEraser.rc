@@ -27,8 +27,8 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,2
- PRODUCTVERSION 1,0,0,2
+ FILEVERSION 1,0,0,3
+ PRODUCTVERSION 1,0,0,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -45,12 +45,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "深圳市醇世德贸易有限公司"
             VALUE "FileDescription", "WebEraser Module"
-            VALUE "FileVersion", "1, 0, 0, 2"
+            VALUE "FileVersion", "1, 0, 0, 3"
             VALUE "InternalName", "WebEraser"
             VALUE "LegalCopyright", "Copyright (c) 2015 深圳市醇世德贸易有限公司"
             VALUE "OriginalFilename", "WebEraser.exe"
             VALUE "ProductName", "广告橡皮擦"
-            VALUE "ProductVersion", "1, 0, 0, 2"
+            VALUE "ProductVersion", "1, 0, 0, 3"
         END
     END
     BLOCK "VarFileInfo"
