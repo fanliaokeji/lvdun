@@ -63,8 +63,8 @@ Var Bool_Bind360
 
 !define PRODUCT_NAME "GreenShield"
 !define SHORTCUT_NAME "绿盾广告管家"
-!define PRODUCT_VERSION "1.0.0.12"
-!define VERSION_LASTNUMBER 12
+!define PRODUCT_VERSION "1.0.0.13"
+!define VERSION_LASTNUMBER 13
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "GsSetup_${INSTALL_CHANNELID}.exe"
 
