@@ -181,7 +181,7 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		strcpy(szBrowserName, PathFindFileNameA(szBrowserPath));
 	}
 	char szCmdLine[MAX_PATH] = {0};
-	sprintf(szCmdLine, "/sstartfrom FlyRabbitAgent /browsername %s /embedding", szBrowserName);
+	sprintf(szCmdLine, "/sstartfrom npFlyRabbitCtrl /browsername %s /embedding", szBrowserName);
 	STARTUPINFOA si = {sizeof(si)};
 	PROCESS_INFORMATION pi;
 	si.dwFlags=STARTF_USESHOWWINDOW;//指定wShowWindow成员有效
@@ -198,12 +198,10 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		&si,
 		&pi);
 	if(bRet){
+		WaitForInputIdle(pi.hProcess, 5000);
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
-	} else {
-		::RegCloseKey(hKEY);
-		return NULL;
-	}
+	} 
 	hwnd = GetHwndMsgListenerOK();
 	::RegCloseKey(hKEY);
 	return hwnd;

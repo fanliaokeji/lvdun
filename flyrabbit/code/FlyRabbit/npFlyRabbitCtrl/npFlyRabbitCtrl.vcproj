@@ -147,7 +147,7 @@
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				AssemblerOutput="2"
-				AssemblerListingLocation="$(TargetDir)"
+				AssemblerListingLocation="$(IntDir)\"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
