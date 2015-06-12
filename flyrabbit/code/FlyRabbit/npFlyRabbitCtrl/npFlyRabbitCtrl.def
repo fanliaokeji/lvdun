@@ -1,0 +1,11 @@
+; npFlyRabbitCtrl.def : Declares the module parameters.
+
+LIBRARY      "npFlyRabbitCtrl.DLL"
+
+EXPORTS
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+	
+	NP_GetEntryPoints     @1
+	NP_Initialize         @2
+	NP_Shutdown           @3
