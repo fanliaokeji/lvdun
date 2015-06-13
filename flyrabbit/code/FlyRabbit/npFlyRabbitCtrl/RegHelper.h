@@ -357,7 +357,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 	//无法确定拷贝的源路径或当前路径
 	if (srcFullPath == _T("") && NULL == hInst)
 	{
-		//LOG4C_DEBUG(_T("hInst=%#x, srcFullPath=%s"), hInst, srcFullPath.c_str());
+		LOG4C_DEBUG(_T("hInst=%#x, srcFullPath=%s"), hInst, srcFullPath.c_str());
 		return E_FAIL;
 	}
 
@@ -366,7 +366,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 	{
 		if (!IsFileDirectoryExists((TCHAR*)srcFullPath.c_str(), FALSE))
 		{
-			//LOG4C_DEBUG(_T("IsFileDirectoryExists(srcFullPath=%s) is FALSE"), srcFullPath.c_str());
+			LOG4C_DEBUG(_T("IsFileDirectoryExists(srcFullPath=%s) is FALSE"), srcFullPath.c_str());
 			return E_FAIL;
 		}
 		strModulePath = srcFullPath;
@@ -379,7 +379,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 			strModulePath = szModulePath;
 		else
 		{
-			//LOG4C_DEBUG(_T("GetModuleFileName(%#x) failed."), hInst);
+			LOG4C_DEBUG(_T("GetModuleFileName(%#x) failed."), hInst);
 			return E_FAIL;
 		}
 	}
@@ -397,7 +397,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 		strDstPath += _T("Thunder Network\\KanKan\\");
 		if (!CreateDirectoryTree((TCHAR*)strDstPath.c_str()))
 		{
-			//LOG4C_DEBUG(_T("CreateDirectoryTree(%s) failed."), strDstPath.c_str());
+			LOG4C_DEBUG(_T("CreateDirectoryTree(%s) failed."), strDstPath.c_str());
 			return E_FAIL;
 		}
 	}
@@ -406,7 +406,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 		strDstPath = dstPath;
 		if (!CreateDirectoryTree((TCHAR*)strDstPath.c_str()))
 		{
-			//LOG4C_DEBUG(_T("CreateDirectoryTree(%s) failed."), strDstPath.c_str());
+			LOG4C_DEBUG(_T("CreateDirectoryTree(%s) failed."), strDstPath.c_str());
 			return E_FAIL;
 		}
 		if(strDstPath[strDstPath.length() - 1] != '\\')
@@ -440,7 +440,7 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 				HIWORD(i64NewVer >> 32), LOWORD(i64NewVer >> 32), HIWORD(i64NewVer & 0xffffffff), LOWORD(i64NewVer & 0xffffffff), 
 				rand()*1000/RAND_MAX, strModuleExt.c_str()) < 0)
 				szNOW[sizeof(szNOW)/sizeof(TCHAR)-1] = _T('\0');
-			//LOG4C_DEBUG( _T("New File Fullpath: %s"), szNOW );
+			LOG4C_DEBUG( _T("New File Fullpath: %s"), szNOW );
 		} while ( FALSE != PathFileExists(szNOW) );
 		strDstFilePath = szNOW;
 	}
@@ -453,15 +453,15 @@ HRESULT RegisterEx(const tstring& srcFullPath,
 	if (strModulePath == strDstFilePath)
 		goto REGISTER_BEGIN;
 
-	//LOG4C_DEBUG( _T("Copy from %s to %s"), strModulePath.c_str(), strDstFilePath.c_str());
+	LOG4C_DEBUG( _T("Copy from %s to %s"), strModulePath.c_str(), strDstFilePath.c_str());
 	if (FALSE == CopyFile(strModulePath.c_str(), strDstFilePath.c_str(), FALSE))
 	{
-		//LOG4C_ERROR( _T("Copy Failed. GetLastError(%#X)"), GetLastError());
+		LOG4C_ERROR( _T("Copy Failed. GetLastError(%#X)"), GetLastError());
 		return E_FAIL;
 	}
 	else
 	{
-		//LOG4C_DEBUG( _T("Copy Succeed."));
+		LOG4C_DEBUG( _T("Copy Succeed."));
 		goto REGISTER_BEGIN;
 	}
 
@@ -476,7 +476,7 @@ REGISTER_BEGIN:
 	{
 		if (strClsID == _T(""))
 		{
-			//LOG4C_DEBUG(_T("strClsID is empty"));
+			LOG4C_DEBUG(_T("strClsID is empty"));
 			return E_FAIL;
 		}
 
@@ -493,27 +493,27 @@ REGISTER_BEGIN:
 		i64NewVer;
 		i64NewTimeStamp;
 		i64NewVer = GetFileVersion(strModulePath.c_str(), &i64NewTimeStamp);
-		//LOG4C_DEBUG( _T("Try to Register Ver=%u.%u.%u.%u, TimeStamp=%I64u, %s"), 
-		//	HIWORD(i64NewVer >> 32), LOWORD(i64NewVer >> 32), HIWORD(i64NewVer & 0xffffffff), LOWORD(i64NewVer & 0xffffffff), 
-		//	i64NewTimeStamp, strModulePath.c_str());
+		LOG4C_DEBUG( _T("Try to Register Ver=%u.%u.%u.%u, TimeStamp=%I64u, %s"), 
+			HIWORD(i64NewVer >> 32), LOWORD(i64NewVer >> 32), HIWORD(i64NewVer & 0xffffffff), LOWORD(i64NewVer & 0xffffffff), 
+			i64NewTimeStamp, strModulePath.c_str());
 		int i = 0;
 		for (; itor != itend; itor++ )
 		{
 			unsigned __int64 i64HisTimeStamp = 0;
 			unsigned __int64 i64HisVer = GetFileVersion((*itor).c_str(), &i64HisTimeStamp);
 			UNREFERENCED_PARAMETER(i);
-			//LOG4C_DEBUG( _T("InstallPaths[%d/%d] Ver=%u.%u.%u.%u, TimeStamp=%I64u, %s"), ++i, s_vecInstallPaths.size(), 
-				//HIWORD(i64HisVer >> 32), LOWORD(i64HisVer >> 32), HIWORD(i64HisVer & 0xffffffff), LOWORD(i64HisVer & 0xffffffff), 
-				//i64HisTimeStamp, (*itor).c_str());
+			LOG4C_DEBUG( _T("InstallPaths[%d/%d] Ver=%u.%u.%u.%u, TimeStamp=%I64u, %s"), ++i, s_vecInstallPaths.size(), 
+				HIWORD(i64HisVer >> 32), LOWORD(i64HisVer >> 32), HIWORD(i64HisVer & 0xffffffff), LOWORD(i64HisVer & 0xffffffff), 
+				i64HisTimeStamp, (*itor).c_str());
 			if (_tcsicmp((*itor).c_str(), strModulePath.c_str()) == 0)			//路径一样，更新版本，允许注册
 			{
-				//LOG4C_DEBUG(_T("Same Path, Allow to Pass Version Check"));
+				LOG4C_DEBUG(_T("Same Path, Allow to Pass Version Check"));
 			}
 			else
 			{
 				if ( VerCmp(i64NewVer, i64HisVer) < 0 || ( VerCmp(i64NewVer, i64HisVer) == 0 && i64NewTimeStamp < i64HisTimeStamp))
 				{
-					//LOG4C_DEBUG(_T("Version too old, can't be registered."));
+					LOG4C_DEBUG(_T("Version too old, can't be registered."));
 					bPassVersionCheck = FALSE;
 					break;
 				}
@@ -534,30 +534,30 @@ REGISTER_BEGIN:
 			{
 				unsigned __int64 i64NowTimeStamp = 0;
 				unsigned __int64 i64NowVer = GetFileVersion(szNowPath, &i64NowTimeStamp);
-				//LOG4C_DEBUG( _T("Register Table Ver=%u.%u.%u.%u, %s, TimeStamp=%I64u"), 
-				//	HIWORD(i64NowVer >> 32), LOWORD(i64NowVer >> 32), HIWORD(i64NowVer & 0xffffffff), LOWORD(i64NowVer & 0xffffffff), 
-				//	szNowPath, i64NowTimeStamp);
+				LOG4C_DEBUG( _T("Register Table Ver=%u.%u.%u.%u, %s, TimeStamp=%I64u"), 
+					HIWORD(i64NowVer >> 32), LOWORD(i64NowVer >> 32), HIWORD(i64NowVer & 0xffffffff), LOWORD(i64NowVer & 0xffffffff), 
+					szNowPath, i64NowTimeStamp);
 				if ( VerCmp(i64NewVer, i64NowVer) < 0 )
 				{
-					//LOG4C_DEBUG( _T("Older than Register, Keep Register Table Unchange.") );
+					LOG4C_DEBUG( _T("Older than Register, Keep Register Table Unchange.") );
 					if (FALSE != bPassVersionCheck)
 						bPassVersionCheck = FALSE;
 				}
 				else
 				{
-					//LOG4C_DEBUG( _T("Fresh than Exist") );
+					LOG4C_DEBUG( _T("Fresh than Exist") );
 					bForceRegister = TRUE;
 				}
 			}
 			else
 			{
-				//LOG4C_WARN( _T("%s didn't exist. Force to Register"), szNowPath);
+				LOG4C_WARN( _T("%s didn't exist. Force to Register"), szNowPath);
 				bForceRegister = TRUE;
 			}
 		}
 		else
 		{
-			//LOG4C_WARN( _T("RegQueryValueEx %s or DapCtrl not installed, Force to Register."), szRegPath);
+			LOG4C_WARN( _T("RegQueryValueEx %s or DapCtrl not installed, Force to Register."), szRegPath);
 			bForceRegister = TRUE;
 		}
 
@@ -582,23 +582,23 @@ REGISTER_BEGIN:
 			hObjects[1] = hRegCheckSignThread;
 
 			DWORD dwEvent;
-			//LOG4C_INFO(_T("WaitForMultipleObjects(hCurCheckSignThread, hCurCheckSignThread, %d)"), 30000);
+			LOG4C_INFO(_T("WaitForMultipleObjects(hCurCheckSignThread, hCurCheckSignThread, %d)"), 30000);
 			dwEvent = ::WaitForMultipleObjects(2, hObjects, TRUE, 30000);
 			if ( dwEvent == WAIT_TIMEOUT )
 			{
 				TerminateThread(hCurCheckSignThread, 0);
 				TerminateThread(hRegCheckSignThread, 0);
-				//LOG4C_ERROR(_T("TimeOut"));
+				LOG4C_ERROR(_T("TimeOut"));
 			}
 		}
 
 		BOOL bSignCur = CurSignInfo.bResult;
 		BOOL bSignReg = RegSignInfo.bResult;
-		//LOG4C_DEBUG( _T("Will Register %s Signature is %s"), strModulePath.c_str(), (bSignCur?_T("valid"):_T("invalid")) );
+		LOG4C_DEBUG( _T("Will Register %s Signature is %s"), strModulePath.c_str(), (bSignCur?_T("valid"):_T("invalid")) );
 		//LOG4C_DEBUG( _T("Regsister table %s Signature is %s"), szNowPath, (bSignReg?_T("valid"):_T("invalid")) );
 		if (FALSE != bSignCur && FALSE == bSignReg)
 		{
-			//LOG4C_DEBUG( _T("%s's Signature is invalid and Source File with valid Signature, allow Force to Register"), szNowPath );
+			LOG4C_DEBUG( _T("%s's Signature is invalid and Source File with valid Signature, allow Force to Register"), szNowPath );
 			bForceRegister = TRUE;
 		}
 	}
@@ -610,7 +610,7 @@ REGISTER_BEGIN:
 		HANDLE hFind = FindFirstFile((strDstPath+strModuleName+_T(".*")+strModuleExt).c_str(), &wfd);
 		if (hFind == INVALID_HANDLE_VALUE) // 如果没有找到或查找失败
 		{
-			//LOG4C_WARN( _T("FindFirstFile(%sDapCtrl.*.dll) not Found"), strDstPath.c_str());
+			LOG4C_WARN( _T("FindFirstFile(%sDapCtrl.*.dll) not Found"), strDstPath.c_str());
 		}
 		do
 		{ 
@@ -618,7 +618,7 @@ REGISTER_BEGIN:
 				continue; // 过滤这两个目录 
 			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE && strDstFilePath != strDstPath+wfd.cFileName)
 			{
-				//LOG4C_DEBUG( _T("Will Delete Old Version(%s)"), (strDstPath+wfd.cFileName).c_str());
+				LOG4C_DEBUG( _T("Will Delete Old Version(%s)"), (strDstPath+wfd.cFileName).c_str());
 				vecOldVersion.push_back( strDstPath + wfd.cFileName );
 			} 
 		} while (FindNextFile(hFind, &wfd)); 
@@ -626,7 +626,7 @@ REGISTER_BEGIN:
 	}
 	else if (FALSE == bPassVersionCheck)	//没通过版本检查，删除之前拷贝的文件
 	{
-		//LOG4C_WARN( _T("Can't pass Version check, delete it(%s)"), strDstFilePath.c_str());
+		LOG4C_WARN( _T("Can't pass Version check, delete it(%s)"), strDstFilePath.c_str());
 		::DeleteFile(strDstFilePath.c_str());
 
 		//不管注册是否成功，回写历史文件，增加一次引用
@@ -649,12 +649,12 @@ REGISTER_BEGIN:
 	if ( NULL != hRegisterThread )
 	{
 		DWORD dwEvent;
-		//LOG4C_INFO(_T("WaitForSingleObjects(hRegisterThread, %d)"), 30000);
+		LOG4C_INFO(_T("WaitForSingleObjects(hRegisterThread, %d)"), 30000);
 		dwEvent = ::WaitForSingleObject(hRegisterThread, 30000);
 		if ( dwEvent == WAIT_TIMEOUT )
 		{
 			TerminateThread(hRegisterThread, 0);
-			//LOG4C_ERROR(_T("TimeOut"));
+			LOG4C_ERROR(_T("TimeOut"));
 		}
 	}
 	hRet = RegInfo.hRet;
@@ -684,7 +684,7 @@ REGISTER_BEGIN:
 		vector<tstring>::iterator itor;
 		for ( itor = vecOldVersion.begin(); itor != vecOldVersion.end(); itor++ )
 		{
-			//LOG4C_DEBUG( _T("Delete Old Version(%s)"), (*itor).c_str());
+			LOG4C_DEBUG( _T("Delete Old Version(%s)"), (*itor).c_str());
 			::DeleteFile( (*itor).c_str() );
 		}
 

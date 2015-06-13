@@ -124,21 +124,22 @@ struct FRBrowserTaskInfo
 	int posY;
 };
 
-HWND GetHwndMsgListenerOK()
+HWND GetHwndMsgListenerOK(bool bRuning = false)
 {
 	HANDLE hMutex;
 	DWORD dwRet;
 	//互斥量存在则说明消息监听ok
-	for(int i = 0; i < 3; ++i){
+	for(int i = 1; i <= 5; ++i){
 		hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"xarmutex_{455EB122-3F18-4139-AE47-255F940CBCF0}");
 		dwRet = GetLastError();
-		if (hMutex == NULL || ERROR_FILE_NOT_FOUND == dwRet){
-			if(i == 2){
-				//return NULL;
+		if (hMutex == NULL ){
+			if(!bRuning){
+				return NULL;
 			} else {
-				Sleep(100);
+				Sleep(i*100);
 			}
 		} else {
+			ReleaseMutex(hMutex);
 			CloseHandle(hMutex);
 			break;
 		}
@@ -192,7 +193,7 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		NULL,
 		NULL,
 		FALSE,
-		HIGH_PRIORITY_CLASS,
+		0,
 		NULL,
 		NULL,
 		&si,
@@ -202,19 +203,19 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
 	} 
-	hwnd = GetHwndMsgListenerOK();
+	hwnd = GetHwndMsgListenerOK(true);
 	::RegCloseKey(hKEY);
 	return hwnd;
 }
 
 unsigned int __stdcall ThreadFun(PVOID pM)  
 {
-	COPYDATASTRUCT cpd;
-	cpd.dwData = 0;
-	cpd.cbData = sizeof(FRBrowserTaskInfo);
-	cpd.lpData = pM;
 	HWND hwnd = CreateProcessAndGetHwnd();
 	if(hwnd != NULL){
+		COPYDATASTRUCT cpd;
+		cpd.dwData = 0;
+		cpd.cbData = sizeof(FRBrowserTaskInfo);
+		cpd.lpData = pM;
 		::SendMessageA(hwnd, WM_COPYDATA, 1, (LPARAM)&cpd);
 		delete []pM;
 	} else {
