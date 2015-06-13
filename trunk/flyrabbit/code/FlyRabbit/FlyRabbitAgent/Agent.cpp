@@ -22,21 +22,21 @@ struct FRBrowserTaskInfo
 	int posY;
 };
 
-HWND GetHwndMsgListenerOK()
+HWND GetHwndMsgListenerOK(bool bRuning = false)
 {
 	HANDLE hMutex;
 	DWORD dwRet;
 	//互斥量存在则说明消息监听ok
-	for(int i = 0; i < 3; ++i){
+	for(int i = 0; i < 5; ++i){
 		hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"xarmutex_{455EB122-3F18-4139-AE47-255F940CBCF0}");
-		dwRet = GetLastError();
-		if (hMutex == NULL || ERROR_FILE_NOT_FOUND == dwRet){
-			if(i == 2){
-				//return NULL;
+		if (hMutex == NULL){
+			if(!bRuning){
+				return NULL;
 			} else {
-				Sleep(500);
+				Sleep(100*i);
 			}
 		} else {
+			ReleaseMutex(hMutex);
 			CloseHandle(hMutex);
 			break;
 		}
@@ -47,7 +47,7 @@ HWND GetHwndMsgListenerOK()
 		if(hwnd != NULL){
 			return hwnd;
 		} else {
-			Sleep(500);
+			Sleep(100);
 		}
 	}
 	return NULL;
@@ -96,13 +96,11 @@ HWND __stdcall CreateProcessAndGetHwnd()
 		&si,
 		&pi);
 	if(bRet){
+		WaitForInputIdle(pi.hProcess, 5000);
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
-	} else {
-		::RegCloseKey(hKEY);
-		return NULL;
 	}
-	hwnd = GetHwndMsgListenerOK();
+	hwnd = GetHwndMsgListenerOK(true);
 	::RegCloseKey(hKEY);
 	return hwnd;
 }
