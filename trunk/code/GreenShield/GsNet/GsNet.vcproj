@@ -139,7 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Ws2_32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)32.dll"
+				OutputFile="$(OutDir)\GsFilterHelp.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="GsNet.def"
 				GenerateDebugInformation="true"
