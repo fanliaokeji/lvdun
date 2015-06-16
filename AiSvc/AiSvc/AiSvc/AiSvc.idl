@@ -1,0 +1,18 @@
+// AiSvc.idl : AiSvc 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(AiSvc.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(EBA73D02-8752-45F8-B347-547AFF0674C9),
+	version(1.0),
+]
+library AiSvcLib
+{
+	importlib("stdole2.tlb");
+};
+
