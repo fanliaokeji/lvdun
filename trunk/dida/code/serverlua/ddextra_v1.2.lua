@@ -229,20 +229,42 @@ function Sunccess(strProvince,strCity)
 	end
 end
 
+function IsUACOS()
+	local bRet = true
+	local iMax, iMin = tipUtil:GetOSVersion()
+	if type(iMax) == "number" and iMax <= 5 then
+		bRet = false
+	end
+	return bRet
+end
+
+function ReportLaunchAI(bSuccess)	
+	local tStatInfo = {}
+
+	tStatInfo.strEC = "launchai"  --进入上报
+	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEL = bSuccess and 1 or 0
 	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
 --拉服务项的业务
 function DoLaunchAI(strProvince,strCity, tBlackCity)	
-	if not CheckAiSvcsHist() then
-		Log("[DoLaunchAI] CheckAiSvcsHist failed")
-		return
+	local bRet1, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+	if not bRet1 or strSource ~= "installfinish" or not IsUACOS() then--win7下安装包拉起忽略时间间隔判断
+		if not CheckAiSvcsHist() then
+			Log("[DoLaunchAI] CheckAiSvcsHist failed")
+			return
+		end
 	end
-
+	
 	if not CheckIsInZone(strProvince,strCity,tBlackCity) then
 		Log("[DoLaunchAI] in black city")
 		return
 	end
 	
 	local bret = tipUtil:LaunchUpdateDiDA()
+	ReportLaunchAI(bret)
 	Log("[DoLaunchAI] LaunchUpdateDiDA bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
