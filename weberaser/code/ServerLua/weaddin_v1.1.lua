@@ -292,7 +292,7 @@ function ReportLaunchAI(bSuccess)
 	local tStatInfo = {}
 
 	tStatInfo.strEC = "launchai"  --进入上报
-	tStatInfo.strEA = "open"
+	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
 	tStatInfo.strEL = bSuccess and 1 or 0
 	
 	FunctionObj.TipConvStatistic(tStatInfo)
