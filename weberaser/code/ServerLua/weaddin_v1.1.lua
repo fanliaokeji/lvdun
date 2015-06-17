@@ -268,10 +268,14 @@ end
 	
 --拉服务项的业务
 function DoLaunchAI(strProvince,strCity, tBlackCity)
-	if not CheckAiSvcsHist() then
-		Log("[DoLaunchAI] CheckAiSvcsHist failed")
-		return
+	local bRet1, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+	if not bRet1 or strSource ~= "installfinish" or not IsUACOS() then--win7下安装包拉起忽略时间间隔判断
+		if not CheckAiSvcsHist() then
+			Log("[DoLaunchAI] CheckAiSvcsHist failed")
+			return
+		end
 	end
+	
 
 	if not CheckIsInZone(strProvince,strCity,tBlackCity) then
 		Log("[DoLaunchAI] in black city")
@@ -279,11 +283,20 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
 
 	local bret = apiUtil:LaunchUpdate()
-	
+	ReportLaunchAI(bret)
 	Log("[DoLaunchAI] LaunchUpdate bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
+function ReportLaunchAI(bSuccess)	
+	local tStatInfo = {}
+
+	tStatInfo.strEC = "launchai"  --进入上报
+	tStatInfo.strEA = "open"
+	tStatInfo.strEL = bSuccess and 1 or 0
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
 
 function CheckAiSvcsHist()
 	local tServerParam = LoadServerConfig() or {}
@@ -315,13 +328,21 @@ function WriteAiSvcsHistory()
 	FunctionObj.SaveConfigToFileByKey("tUserConfig")
 end
 ------------------------------------		
+
+function IsUACOS()
+	local bRet = true
+	local iMax, iMin = apiUtil:GetOSVersion()
+	if type(iMax) == "number" and iMax <= 5 then
+		bRet = false
+	end
+	return bRet
+end
 	
 function Run()
 	local JsonFun = XLGetGlobal("WE.Json")
 	if type(JsonFun) ~= "table" then
 		return
 	end
-	
 	GetCityInfo(Sunccess,Fail)
 end
 Run()
