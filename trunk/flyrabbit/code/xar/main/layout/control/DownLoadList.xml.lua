@@ -143,7 +143,9 @@ function ResetScrollBar(objRootCtrl)
 	objScrollBar:SetPageSize(nPageSize, true)
 	local _, endPos = objScrollBar:GetScrollRange()
 	
-	objScrollBar:SetScrollPos(endPos or 0, true)
+	local curScrollPos = endPos or 0
+	objScrollBar:SetScrollPos(curScrollPos, true)
+	objRootCtrl:MoveItemListPanel(curScrollPos)
 		
 	if nLinePerPage == 0 or nLinePerPage >= nTotalLineCount then
 		objRootCtrl:MoveItemListPanel(0)
