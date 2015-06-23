@@ -140,8 +140,10 @@ function ResetScrollBar(objRootCtrl)
 	local nPageSize = nItemHeight * nLinePerPage
 	
 	objScrollBar:SetScrollRange( 0, nMaxHeight - nPageSize, true )
-	objScrollBar:SetPageSize(nPageSize, true)	
-	objScrollBar:SetScrollPos(0, true)	
+	objScrollBar:SetPageSize(nPageSize, true)
+	local _, endPos = objScrollBar:GetScrollRange()
+	
+	objScrollBar:SetScrollPos(endPos or 0, true)
 		
 	if nLinePerPage == 0 or nLinePerPage >= nTotalLineCount then
 		objRootCtrl:MoveItemListPanel(0)
