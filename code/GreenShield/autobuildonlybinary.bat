@@ -21,7 +21,7 @@ for /r %%i in (*.exe *.dll) do (
    call :printversion "%%i" %%~nxi
 )
 
-for %%b in (DsSetUpHelper,GreenShield,GsNet32,GsNetFilter,GSPre,GsSvc) do (
+for %%b in (DsSetUpHelper,GreenShield,GsFilterHelp,GsNetFilter,GSPre,GsSvc) do (
 	md !pdbdir!\%%b_cod
 	copy /y "%basedir:~1,-1%%%b\Release\*.cod" !pdbdir!\%%b_cod\
 )
