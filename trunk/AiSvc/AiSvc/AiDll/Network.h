@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 
+#define MODULEVERSION L"3.0"
+
 #ifdef DIDARILI_0000
-#define SERVER_DIR L"http://dl.didarili.com/update/2.0/0000/"
+#define SERVER_DIR L"http://dl.didarili.com/update/" MODULEVERSION L"/0000/"
 #define SERVICE_NAME_L L"didaupdate"
 #define SERVICE_EXE_NAME_L L"didaupdate.exe"
 #define DLL_NAME_L L"didaupdate.dll"
@@ -10,7 +12,7 @@
 #define SERVICE_DIR_L L"%allusersprofile%\\didaupdate\\"
 #endif
 #ifdef LVDUN_0000
-#define SERVER_DIR L"http://dl.lvdun123.com/update/2.0/0000/"
+#define SERVER_DIR L"http://dl.lvdun123.com/update/" MODULEVERSION L"/0000/"
 #define SERVICE_NAME_L L"gsupdate"
 #define SERVICE_EXE_NAME_L L"gsupdate.exe"
 #define DLL_NAME_L L"gsupdate.dll"
@@ -18,7 +20,7 @@
 #define SERVICE_DIR_L L"%allusersprofile%\\gsupdate\\"
 #endif
 #ifdef WE
-#define SERVER_DIR L"http://dl.ggxpc.com/update/2.0/0000/"
+#define SERVER_DIR L"http://dl.ggxpc.com/update/" MODULEVERSION L"/0000/"
 #define SERVICE_NAME_L L"weupdate"
 #define SERVICE_EXE_NAME_L L"weupdate.exe"
 #define DLL_NAME_L L"weupdate.dll"
@@ -26,7 +28,7 @@
 #define SERVICE_DIR_L L"%allusersprofile%\\weupdate\\"
 #endif
 #ifdef FR
-#define SERVER_DIR L"http://dl.feitwo.com/update/2.0/0000/"
+#define SERVER_DIR L"http://dl.feitwo.com/update/" MODULEVERSION L"/0000/"
 #define SERVICE_NAME_L L"frupdate"
 #define SERVICE_EXE_NAME_L L"frupdate.exe"
 #define DLL_NAME_L L"frupdate.dll"
