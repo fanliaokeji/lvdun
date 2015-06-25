@@ -377,7 +377,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 						PinShortCutLnk(L"startpin",szDefaultLnk_CurrentDeskTop);
 					}
 				}
-				RevertToSelf();
+				//RevertToSelf();
 
 			}
 			else
@@ -613,7 +613,7 @@ UINT WINAPI  AiDll::CreateShortCutProcIE( void* param )
 						PinShortCutLnk(L"startpin",szIELnk_CurrentDeskTop);
 					}
 				}
-				RevertToSelf();
+				//RevertToSelf();
 
 			}
 			else
