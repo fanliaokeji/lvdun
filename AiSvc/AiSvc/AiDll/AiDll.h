@@ -26,6 +26,10 @@ private:
 	static bool CheckIsNeedInstall();
 
 	static std::wstring GetCurrentMouleBuildNum();
+	static BOOL GetProcessUserSidAndAttribute(PSID *ppsid, DWORD *pdwAttribute);
+	static void FreeProcessUserSID(PSID psid);
+	static HRESULT IsThisProcessCreatedAsUser(BOOL &bCreatedAsUser);
+	static HANDLE GetUserToken();
 };
 std::wstring GetNameFromPath(std::wstring);
 std::wstring GetPathFromString(std::wstring str);

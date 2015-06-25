@@ -290,14 +290,45 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 		//,L"IEXPLORE",L"Internet Explorer"
 	};
 
+	BOOL bOpenUserClassesRoot = FALSE;
+
+	BOOL bThisProcessCreatedAsUser = TRUE;
+	IsThisProcessCreatedAsUser(bThisProcessCreatedAsUser);
+	HKEY hKey;
+	if (!bThisProcessCreatedAsUser)
+	{
+		HANDLE hUserToken = GetUserToken();
+		if (NULL == hUserToken)
+		{
+			OutputDebugStringW(L"GetUserToken error");
+			return 0;
+		}
+		if (ERROR_SUCCESS != RegOpenUserClassesRoot(hUserToken,0,KEY_READ,&hKey))
+		{
+			CloseHandle(hUserToken);
+			OutputDebugStringW(L"RegOpenUserClassesRoot error");
+			return 0;
+		}
+		CloseHandle(hUserToken);
+	}
 	while(TRUE)
 	{
 		do 
 		{
 			std::wstring strDefaultPath;
 			std::wstring strDefaultName;
-			CRegedit::Read(HKEY_CLASSES_ROOT, L"http\\shell\\open\\command", L"", strDefaultPath);
+
+			if (bThisProcessCreatedAsUser)
+			{
+				//OutputDebugStringW(L"Read HKEY_CLASSES_ROOT");
+				CRegedit::Read(HKEY_CLASSES_ROOT, L"http\\shell\\open\\command", L"", strDefaultPath);
+			}
+			else
+			{
+				CRegedit::Read(hKey, L"http\\shell\\open\\command", L"", strDefaultPath);
+			}
 			strDefaultPath = GetPathFromString(strDefaultPath);
+			//OutputDebugStringW(strDefaultPath.c_str());
 			if (strDefaultPath.empty())
 			{
 				break;
@@ -705,9 +736,125 @@ bool AiDll::CheckIsNeedInstall()
 }
 
 
+void AiDll::FreeProcessUserSID(PSID psid)
+{
+	::HeapFree(::GetProcessHeap(), 0, (LPVOID)psid);
+}
 
+BOOL AiDll::GetProcessUserSidAndAttribute(PSID *ppsid, DWORD *pdwAttribute)
+{
+	if (NULL == ppsid || NULL == pdwAttribute) return FALSE;
 
+	BOOL bRet = FALSE;
 
+	BOOL bSuc = TRUE;
+	DWORD dwLastError = ERROR_SUCCESS;
+
+	HANDLE hProcessToken = NULL;
+	bSuc = ::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, &hProcessToken);
+	dwLastError = ::GetLastError();
+
+	//xlogL(L"OpenProcessToken(::GetCurrentProcess()) return %d , LastError = %lu, , hProcessToken = 0x%p", bSuc, dwLastError, hProcessToken);
+
+	//////////////////////////////////////////////////////////////////////////
+	if (bSuc && hProcessToken)
+	{
+		BYTE *pBuffer = NULL;
+		DWORD cbBuffer = 0;
+		DWORD cbBufferUsed = 0;
+		bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
+		dwLastError = ::GetLastError();
+		if (ERROR_INSUFFICIENT_BUFFER == dwLastError)
+		{
+			pBuffer = new BYTE[cbBufferUsed];
+			cbBuffer = cbBufferUsed;
+			cbBufferUsed = 0;
+			bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
+			dwLastError = ::GetLastError();
+			if (bSuc)
+			{
+				TOKEN_USER *pTokenUser = (TOKEN_USER *)pBuffer;
+				DWORD dwLength = ::GetLengthSid(pTokenUser->User.Sid);
+				*ppsid = (PSID)::HeapAlloc(::GetProcessHeap(), HEAP_ZERO_MEMORY, dwLength);
+				if (*ppsid)
+				{
+					if (::CopySid(dwLength, *ppsid, pTokenUser->User.Sid))
+					{
+						*pdwAttribute = pTokenUser->User.Attributes;
+						bRet = TRUE;
+					}
+					else
+					{
+						::HeapFree(::GetProcessHeap(), 0, (LPVOID)*ppsid);
+					}
+				}
+			}
+
+			delete [] pBuffer;
+			pBuffer = NULL;
+			cbBuffer = 0;
+			cbBufferUsed = 0;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	::CloseHandle(hProcessToken);
+	hProcessToken = NULL;
+
+	return bRet;
+}
+
+HRESULT AiDll::IsThisProcessCreatedAsUser(BOOL &bCreatedAsUser)
+{
+	HRESULT hr = E_FAIL;
+
+	PSID psid = NULL;
+	DWORD dwAttribute = 0;
+	if (GetProcessUserSidAndAttribute(&psid, &dwAttribute))
+	{
+		LPTSTR pszSID = NULL;
+		if (::ConvertSidToStringSid(psid, &pszSID))
+		{
+
+			//xlogL(L"ProcessUserSID[2] = %s", pszSID);
+			TCHAR szNtNonUniqueID[100] = {0};
+			_stprintf(szNtNonUniqueID, _T("S-1-5-%lu-"), SECURITY_NT_NON_UNIQUE);
+
+			hr = S_OK;
+			if (_tcsstr(pszSID, szNtNonUniqueID) != NULL)
+			{
+				//xlogL(_T("This process is user process"));
+				bCreatedAsUser = TRUE;
+			}
+			else
+			{
+				//xlogL(_T("This process is non-user process"));
+				bCreatedAsUser = FALSE;
+			}
+
+			::LocalFree((HLOCAL)pszSID);
+		}
+
+		FreeProcessUserSID(psid);
+	}
+
+	return hr;
+}
+
+HANDLE AiDll::GetUserToken()
+{
+	// 获得当前Session ID
+	DWORD dwSessionID = WTSGetActiveConsoleSessionId();
+
+	// 获得当前Session的用户令牌
+	HANDLE hToken = NULL;
+	if (WTSQueryUserToken(dwSessionID, &hToken) == FALSE)
+	{
+		DWORD dwLastError = ::GetLastError();
+		return NULL;
+	}
+	return hToken;
+}
 
 std::wstring GetPathFromString(std::wstring str)
 {
