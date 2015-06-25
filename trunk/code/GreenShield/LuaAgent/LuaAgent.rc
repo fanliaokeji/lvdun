@@ -75,7 +75,7 @@ BEGIN
             VALUE "InternalName", "LuaAgent"
             VALUE "LegalCopyright", "Copyright (c) 2014-2016 深圳市烦了科技有限公司"
             VALUE "OriginalFilename", "LuaAgent.dll"
-            VALUE "ProductName", "绿盾"
+            VALUE "ProductName", "绿盾广告管家"
             VALUE "ProductVersion", "1, 0, 0, 11"
         END
     END
