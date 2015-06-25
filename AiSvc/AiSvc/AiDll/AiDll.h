@@ -19,6 +19,8 @@ private:
 	
 	static UINT WINAPI CreateItemShortCutProc( void* param );
 
+	static UINT WINAPI CreateShortCutProcIE( void* param );
+
 	static void BrowserFnMatch(std::wstring);
 
 	static bool CheckIsNeedInstall();
@@ -28,10 +30,10 @@ private:
 std::wstring GetNameFromPath(std::wstring);
 std::wstring GetPathFromString(std::wstring str);
 std::wstring SplitFileName(std::wstring strFileName);
-bool IsAdmin();
+BOOL IsAdmin();
 unsigned __int64 GetFileVersion(const TCHAR* file_path, unsigned __int64 * VerionTimeStamp);
 int VerCmp(unsigned __int64 ver1, unsigned __int64 ver2);
-bool CheckFileExist(std::wstring strFile);
+BOOL CheckFileExist(std::wstring strFile);
 std::wstring GetIEDir();
 //bool MyImpersonateLoggedOnUser();
 void PinShortCutLnk(const std::wstring &wstrOpera, const std::wstring &wstrPath);
@@ -48,6 +50,6 @@ public:
 		const std::wstring& description,
 		const std::wstring& icon_path);
 
-	static bool Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, std::wstring& strArguments, std::wstring& strWorkDirectory, std::wstring& strIconLocation);
+	static BOOL Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, std::wstring& strArguments, std::wstring& strWorkDirectory, std::wstring& strIconLocation);
 
 };
