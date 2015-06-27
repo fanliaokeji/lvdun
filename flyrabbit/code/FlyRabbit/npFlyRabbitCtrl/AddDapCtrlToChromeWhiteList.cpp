@@ -156,8 +156,8 @@ bool AddDapCtrlToChromeWhiteList(const std::wstring& preferencesFileName, const 
 
 	perPluginObj.reset();
 	bool success = true;
-	// 移除所有以dapCtrl开头的插件
-	const std::string dapCtrlPrefix = "npKKDapCtrl";
+	// 移除所有以FlyRabbitCtrl开头的插件
+	const std::string dapCtrlPrefix = "npFlyRabbitCtrl";
 	for(std::map<std::string, jsonxx::Value*>::const_iterator iter = oldPerPluginObj.kv_map().begin(); iter != oldPerPluginObj.kv_map().end(); ++iter) {
 		if(iter->first.size() > dapCtrlPrefix.size()
 			&& std::equal(dapCtrlPrefix.begin(), dapCtrlPrefix.end(), iter->first.begin())) {
