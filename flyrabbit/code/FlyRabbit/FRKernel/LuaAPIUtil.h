@@ -190,6 +190,9 @@ public:
 	static int FAddFontResource(lua_State* pLuaState);
 	static int FRemoveFontResource(lua_State* pLuaState);
 
+	//╠Дож
+	static int LaunchUpdate(lua_State* pLuaState);
+
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };
