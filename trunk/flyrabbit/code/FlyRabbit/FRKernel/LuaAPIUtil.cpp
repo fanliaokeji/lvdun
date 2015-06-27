@@ -159,6 +159,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//资源相关
 	{"AddFontResource",FAddFontResource},
 	{"RemoveFontResource",FRemoveFontResource},
+	{"LaunchUpdate", LaunchUpdate},
 	{NULL, NULL}
 };
 
@@ -4246,36 +4247,26 @@ int LuaAPIUtil::FRemoveFontResource(lua_State* pLuaState)
 	return 1;
 }
 
-typedef BOOL (WINAPI *ISSAFEEXIST)();
-
-UINT WINAPI AsynFix360Proc(PVOID pArg)
+int LuaAPIUtil::LaunchUpdate(lua_State* pLuaState)
 {
-	DWORD* pdwID = (DWORD*)(pArg);
-	HINSTANCE hInstance = LoadLibrary(L"360ini.dll");
-	if (NULL == hInstance)
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
 	{
 		return 0;
 	}
-	ISSAFEEXIST IsSafeExist = (ISSAFEEXIST)GetProcAddress(hInstance,"IsSafeExist");
-	if (IsSafeExist)
+	BOOL bRet = FALSE;
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"frupdate.dll");
+	if(NULL != hDll)
 	{
-		if(TRUE == IsSafeExist())
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
 		{
-			typedef BOOL (__stdcall *DO_505)(DWORD saver_id);    
-			//int pid = 21456;    //只需要修改这个分配给您的渠道号就可以了. 
-			DO_505 do505 = (DO_505)GetProcAddress(hInstance,"do505");
-
-			if (do505)
-			{
-				do505(*pdwID);
-			}
-			return 0;
-
+			bRet = TRUE;
+			pf();
 		}
 	}
-	
-	delete pdwID;
-	::FreeLibrary(hInstance);
-	return 0;
-
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
 }
