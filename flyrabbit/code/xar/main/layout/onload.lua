@@ -402,11 +402,16 @@ function TipMain()
 	ProcessCommandLine()
 end
 
+function LoadJSONHelper()
+	local strJSONHelperPath = __document.."\\..\\JSON.lua"
+	local Module = XLLoadModule(strJSONHelperPath)
+end
 
 function PreTipMain() 
 	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 	XLSetGlobal("Project.LastReportRunTime", gnLastReportRunTmUTC) 
 	
+	LoadJSONHelper()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
