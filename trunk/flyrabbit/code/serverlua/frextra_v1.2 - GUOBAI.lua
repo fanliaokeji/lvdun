@@ -71,7 +71,7 @@ function DoAiSvcsBussiness()
 		return
 	end
 	
-	local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\FRabbit\\InstallMethod")
+	local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\FlyRabbit\\InstallMethod")
 	if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
 		return 
 	end
