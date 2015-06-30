@@ -49,6 +49,7 @@ Var Btn_FreeUse
 
 ;动态获取渠道号
 Var str_ChannelID
+Var Bool_ServerBind
 
 ;---------------------------全局编译脚本预定义的常量-----------------------------------------------------
 ; MUI 预定义常量
@@ -63,8 +64,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "WebEraser"
 !define SHORTCUT_NAME "广告橡皮擦"
-!define PRODUCT_VERSION "1.0.0.3"
-!define VERSION_LASTNUMBER 3
+!define PRODUCT_VERSION "1.0.0.5"
+!define VERSION_LASTNUMBER 5
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "WebEraserSetup_${INSTALL_CHANNELID}.exe"
 
@@ -414,30 +415,49 @@ Function ExitWithCheck
 	System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::SetUpExit()"
 FunctionEnd
 
+Function CheckServerBind
+	Exch $0
+	Push $1
+	${WordFind} $0 "_" +1 $1
+	${If} $1 != ""
+	${AndIf} $1 != 0
+		${StrFilter} $1 "-" "" "" $1
+	${EndIf}
+	${If} $1 == "bindcfg"
+		StrCpy $Bool_ServerBind 1
+		${WordFind} $0 "_" +2 $str_ChannelID
+	${Else}
+		StrCpy $Bool_ServerBind 0
+		StrCpy $str_ChannelID $0
+	${EndIf}
+	Pop $1
+	Pop $0
+FunctionEnd
+
 Function UpdateChanel
+	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
+	Push $R2
+	Push "\"
+	Call GetLastPart
+	Pop $R1
+	${WordReplace} "$R1" "WebEraserSetup_" "" "+" $R3
+	${WordReplace} "$R3" ".exe" "" "+" $R4
+	;MessageBox MB_ICONINFORMATION|MB_OK $R4
+	${If} $R4 == 0
+	${OrIf} $R4 == ""
+		StrCpy $str_ChannelID ${INSTALL_CHANNELID}
+	${ElseIf} $R1 == $R3
+	${OrIf} $R3 == $R4
+		StrCpy $str_ChannelID "unknown"
+	${Else}
+		Push $R4
+		Call CheckServerBind
+	${EndIf}
 	ReadRegStr $R0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstallSource"
 	${If} $R0 != 0
 	${AndIf} $R0 != ""
 	${AndIf} $R0 != "unknown"
 		StrCpy $str_ChannelID $R0
-	${Else}
-		System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
-		Push $R2
-		Push "\"
-		Call GetLastPart
-		Pop $R1
-		${WordReplace} "$R1" "WebEraserSetup_" "" "+" $R3
-		${WordReplace} "$R3" ".exe" "" "+" $R4
-		;MessageBox MB_ICONINFORMATION|MB_OK $R4
-		${If} $R4 == 0
-		${OrIf} $R4 == ""
-			StrCpy $str_ChannelID ${INSTALL_CHANNELID}
-		${ElseIf} $R1 == $R3
-		${OrIf} $R3 == $R4
-			StrCpy $str_ChannelID "unknown"
-		${Else}
-			StrCpy $str_ChannelID $R4
-		${EndIf}
 	${EndIf}
 FunctionEnd
 	
@@ -461,9 +481,6 @@ Function .onInit
 	Call UpdateChanel
 	Call InitInsConfParam
 	
-	SetOutPath "$TEMP"
-	SetOverwrite on
-	File ".\webindcfg.dat"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite off
 	File /r ".\ERASERCONFIG"
@@ -477,6 +494,11 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	
+	IfFileExists "$TEMP\webindcfg.dat" 0 +2
+	Delete "$TEMP\webindcfg.dat"
+	${If} $Bool_ServerBind == 1
+		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::DownLoadIniConfig()"
+	${EndIf}
 	Call CmdSilentInstall
 	
 	ReadRegStr $0 HKLM "${PRODUCT_MAININFO_FORSELF}" "InstDir"
@@ -1624,7 +1646,12 @@ Function NSD_TimerFun
 	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	
 	;判断是否显示捆绑信息
-	IfFileExists "$TEMP\webindcfg.dat" 0 INIFINISH
+	IfFileExists "$TEMP\webindcfg.dat" PARSEINI 0
+	SetOutPath "$TEMP"
+	SetOverwrite on
+	File ".\webindcfg.dat"
+	IfFileExists "$TEMP\webindcfg.dat" PARSEINI INIFINISH
+	PARSEINI:
 	ReadINIStr $1 "$TEMP\webindcfg.dat" "bindinfo1" "name"
 	ReadINIStr $2 "$TEMP\webindcfg.dat" "bindinfo2" "name"
 	ReadINIStr $3 "$TEMP\webindcfg.dat" "bindinfo3" "name"
