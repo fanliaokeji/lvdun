@@ -283,7 +283,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 		,L"firefox",L"Mozilla Firefox"
 		,L"QQBrowser",L"QQ浏览器"
 		,L"360chrome",L"360极速浏览器"
-		,L"Maxthon",L"遨游云浏览器"
+		,L"Maxthon",L"傲游云浏览器"
 		,L"SogouExplorer",L"搜狗高速浏览器"
 		,L"TaoBrowser",L"淘宝浏览器"
 		,L"2345Explorer",L"2345王牌浏览器"
