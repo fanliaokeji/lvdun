@@ -251,7 +251,7 @@ end
 --拉服务项的业务
 function DoLaunchAI(strProvince,strCity, tBlackCity)	
 	local bRet1, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
-	if not bRet1 or strSource ~= "installfinish" or not IsUACOS() then--win7下安装包拉起忽略时间间隔判断
+	if not bRet1 or strSource ~= "installfinish" then--win7下安装包拉起忽略时间间隔判断
 		if not CheckAiSvcsHist() then
 			Log("[DoLaunchAI] CheckAiSvcsHist failed")
 			return
@@ -274,7 +274,7 @@ function CheckAiSvcsHist()
 	local tServerParam = LoadServerConfig() or {}
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nLaunchAiSvcTime = tUserConfig["nLaunchAiSvcTime"] or 0
-	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 3*24*3600
+	local nSpanTimeInSec = tServerParam["nAISpanTimeInSec"] or 2*24*3600
 	local nCurrentTime = tipUtil:GetCurrentUTCTime()
 	
 	if math.abs(nCurrentTime-nLaunchAiSvcTime) > nSpanTimeInSec then
