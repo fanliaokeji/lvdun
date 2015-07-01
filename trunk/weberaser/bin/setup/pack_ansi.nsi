@@ -494,9 +494,9 @@ Function .onInit
 	File "input_main\program\ATL90.dll"
 	File "license\license.txt"
 	
-	IfFileExists "$TEMP\webindcfg.dat" 0 +2
-	Delete "$TEMP\webindcfg.dat"
 	${If} $Bool_ServerBind == 1
+		IfFileExists "$TEMP\webindcfg.dat" 0 +2
+		Delete "$TEMP\webindcfg.dat"
 		System::Call "$TEMP\${PRODUCT_NAME}\EraserSetUp::DownLoadIniConfig()"
 	${EndIf}
 	Call CmdSilentInstall
@@ -1646,19 +1646,21 @@ Function NSD_TimerFun
 	ShowWindow $PB_ProgressBar ${SW_HIDE}
 	
 	;判断是否显示捆绑信息
-	IfFileExists "$TEMP\webindcfg.dat" PARSEINI 0
-	SetOutPath "$TEMP"
-	SetOverwrite on
-	File ".\webindcfg.dat"
-	IfFileExists "$TEMP\webindcfg.dat" PARSEINI INIFINISH
-	PARSEINI:
-	ReadINIStr $1 "$TEMP\webindcfg.dat" "bindinfo1" "name"
-	ReadINIStr $2 "$TEMP\webindcfg.dat" "bindinfo2" "name"
-	ReadINIStr $3 "$TEMP\webindcfg.dat" "bindinfo3" "name"
-	ReadINIStr $4 "$TEMP\webindcfg.dat" "bindinfo4" "name"
-	
-	Call LastCreateBindUI
-	INIFINISH:
+	;IfFileExists "$TEMP\webindcfg.dat" PARSEINI 0
+	;SetOutPath "$TEMP"
+	;SetOverwrite on
+	;File ".\webindcfg.dat"
+	${If} $Bool_ServerBind == 1
+		IfFileExists "$TEMP\webindcfg.dat" PARSEINI INIFINISH
+		PARSEINI:
+		ReadINIStr $1 "$TEMP\webindcfg.dat" "bindinfo1" "name"
+		ReadINIStr $2 "$TEMP\webindcfg.dat" "bindinfo2" "name"
+		ReadINIStr $3 "$TEMP\webindcfg.dat" "bindinfo3" "name"
+		ReadINIStr $4 "$TEMP\webindcfg.dat" "bindinfo4" "name"
+		
+		Call LastCreateBindUI
+		INIFINISH:
+	${EndIf}
 	ShowWindow $Btn_Guanbi ${SW_SHOW}
 	ShowWindow $Bmp_Finish ${SW_SHOW}
 	ShowWindow $Btn_FreeUse ${SW_SHOW}
