@@ -44,10 +44,12 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"Exit", Exit},	
 	{"GetPeerId", GetPeerId},
 	{"Log", Log},
+	{"IsLogEnable", IsLogEnable},
 	{"SaveLuaTableToLuaFile", SaveLuaTableToLuaFile},
 	{"GetCommandLine", GetCommandLine},
 	{"CommandLineToList", CommandLineToList},
 	{"GetModuleExeName", GetModuleExeName},
+	{"GetScreenRectFromPoint", GetScreenRectFromPoint},
 
 	{"GetWorkArea", GetWorkArea},
 	{"GetScreenArea", GetScreenArea},
@@ -94,6 +96,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"QueryFileExists", QueryFileExists},
 	{"Rename", Rename},
 	{"CreateDir", CreateDir},
+	{"CreatePathFile", CreatePathFile},
 	{"CopyPathFile", CopyPathFile},
 	{"DeletePathFile", DeletePathFile},
 	//读写UTF8文件
@@ -258,7 +261,15 @@ int LuaAPIUtil::GetWorkArea(lua_State* pLuaState)
 	lua_pushinteger(pLuaState, 0);
 	return 4;
 }
+int LuaAPIUtil::IsLogEnable(lua_State* pLuaState)
+{
+	if (ISTSDEBUGVALID())
+		lua_pushboolean(pLuaState, 1);
+	else
+		lua_pushboolean(pLuaState, 0);
 
+	return 1;
+}
 int LuaAPIUtil::GetScreenArea(lua_State* pLuaState)
 {
 	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
@@ -320,6 +331,33 @@ int LuaAPIUtil::GetCursorPos(lua_State* pLuaState)
 	lua_pushnumber(pLuaState, pt.x);
 	lua_pushnumber(pLuaState, pt.y);
 	return 2;
+}
+int LuaAPIUtil::GetScreenRectFromPoint(lua_State* luaState)
+{
+	POINT point;
+	point.x = (LONG)lua_tointeger(luaState, 3);
+	point.y = (LONG)lua_tointeger(luaState, 4);
+	RECT rect = {0};
+	HMONITOR hMonitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
+	MONITORINFO mi = {sizeof(MONITORINFO)};
+
+	if(hMonitor == NULL || !GetMonitorInfo(hMonitor, &mi))
+	{
+		//TSERROR(_T("hMonitor: 0x%p, hMonitor is NULL or GetMonitorInfo failed"), hMonitor);
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = GetSystemMetrics(SM_CXSCREEN);
+		rect.bottom = GetSystemMetrics(SM_CYSCREEN);
+	}
+	else
+	{
+		rect = mi.rcMonitor;
+	}
+	lua_pushinteger(luaState, rect.left);
+	lua_pushinteger(luaState, rect.top);
+	lua_pushinteger(luaState, rect.right);
+	lua_pushinteger(luaState, rect.bottom);
+	return 4;
 }
 
 // 获取命令行参数(不包含可执行程序路径)
@@ -2337,6 +2375,30 @@ int LuaAPIUtil::CreateDir(lua_State* pLuaState)
 		LuaStringToCComBSTR(utf8DirPath,bstrDirPath);
 
 		if (ERROR_SUCCESS == SHCreateDirectoryEx(NULL, bstrDirPath.m_str, NULL))
+		{
+			iValue = 1;
+		}
+	}	
+	lua_pushboolean(pLuaState, iValue);
+	return 1;
+}
+
+int LuaAPIUtil::CreatePathFile(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	const char* utf8FilePath = luaL_checkstring(pLuaState, 2);
+	int iValue = 0;
+	if(utf8FilePath != NULL)
+	{
+		CComBSTR bstrFilePath;
+		LuaStringToCComBSTR(utf8FilePath, bstrFilePath);
+
+		HANDLE hFile = CreateFile(bstrFilePath.m_str, GENERIC_READ || GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (INVALID_HANDLE_VALUE != hFile)
 		{
 			iValue = 1;
 		}
