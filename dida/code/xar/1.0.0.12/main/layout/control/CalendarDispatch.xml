@@ -1,0 +1,66 @@
+<xlue>
+	<objtemplate id="CalendarItem.Big" class="CalendarItem">
+		<attr>
+			<SelectBkgResID>DiDa.Canlender.Select.Big</SelectBkgResID>
+		</attr>
+	</objtemplate>
+	
+	<objtemplate id="CalendarItem.Small" class="CalendarItem">
+		<attr>
+			<SelectBkgResID>DiDa.Canlender.Select.Small</SelectBkgResID>
+		</attr>
+	</objtemplate>
+
+	
+	<objtemplate id="LineTemplate" class="FillObject">
+		<attr>
+			<left>0</left>
+            <top>0</top>
+            <width>father.width</width>
+            <height>1</height>
+			<srccolor>color.calendar.line</srccolor>
+			<destcolor>color.calendar.line</destcolor>
+			<filltype>Monochrome</filltype>
+			<blendtype>Source</blendtype>
+		</attr>
+	</objtemplate>
+	
+	<control class="CalendarDispatch">
+		<attr_def>
+					
+		</attr_def>
+		<method_def>
+			<ShowCalendarInfo file="CalendarDispatch.xml.lua" func="ShowCalendarInfo"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="CalendarCtrl.Big" class="CalendarCtrl">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+					</attr>		
+				</obj>
+				
+				<obj id="CalendarCtrl.Small" class="CalendarCtrl">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width> 
+						<height>father.height</height>
+						<ItemWidth>57</ItemWidth>
+						<ItemHeight>55</ItemHeight>
+					</attr>					
+				</obj>
+			
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="CalendarDispatch.xml.lua" func="OnInitControl"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

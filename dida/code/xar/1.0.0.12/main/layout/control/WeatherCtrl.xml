@@ -1,0 +1,103 @@
+<xlue>
+	<control class="WeatherCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="WeatherCtrl.Layout" class="LayoutObject">
+					<attr>
+						<left>0</left>  
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="WeatherCtrl.Loading" class="SeqImageObject">
+							<attr>
+								<left>40</left>  
+								<top>10</top>
+								<width>70</width>
+								<height>70</height>
+								<gif>DiDa.Weather.Loading</gif>
+								<loop>1</loop>
+								<reverse>0</reverse>
+								<antialias>2</antialias>
+							</attr>
+						</obj>	
+					
+						<obj id="WeatherCtrl.Image" class="ImageObject">
+							<attr>
+								<left>20</left>
+								<top>10</top>
+								<width>54</width> 
+								<height>54</height>
+							</attr>		
+						</obj>
+						
+						<obj id="WeatherCtrl.Zone" class="TextObject">
+							<attr>
+								<left>20+60</left>
+								<top>20</top>
+								<width>60</width> 
+								<height>12</height>
+								<valign>center</valign>
+								<halign>right</halign>
+								<font>font.text11</font>
+								<textcolor>069DD5</textcolor>
+							</attr>		
+						</obj>
+						
+						<obj id="WeatherCtrl.Average" class="TextObject">
+							<attr>
+								<left>20+60</left>
+								<top>30</top>
+								<width>60</width> 
+								<height>30</height>
+								<valign>center</valign>
+								<halign>right</halign>
+								<font>font.text18</font>
+								<textcolor>069DD5</textcolor>
+							</attr>		
+						</obj>
+						
+						<obj id="WeatherCtrl.Detail" class="TextObject">
+							<attr>
+								<left>25</left>
+								<top>62</top>
+								<width>father.width-20</width> 
+								<height>14</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.text11</font>
+								<textcolor>808080</textcolor>
+							</attr>		
+						</obj>
+					</children>
+				</obj>
+				
+				<obj id="WeatherCtrl.Image.Fail" class="ImageObject">
+					<attr>
+						<left>5</left>
+						<top>20</top>
+						<width>136</width> 
+						<height>46</height>
+						<image>DiDa.Weather.LoadFail</image>
+						<visible>false</visible>
+					</attr>		
+				</obj>
+				
+				
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="WeatherCtrl.xml.lua" func="OnInitWeatherCtrl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
