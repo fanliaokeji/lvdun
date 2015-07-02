@@ -1,0 +1,121 @@
+<xlue>
+	<objtreetemplate id="TipAboutTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>275</width>
+			<height>132</height>
+		</attr>
+
+		<obj id="root.layout" class="CaptionObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>275</width>
+				<height>132</height>
+			</attr>				
+			<children>					
+				<!--标题栏-->
+				<obj id="TipAbout.Caption" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture>DiDa.AboutWnd.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="TipAbout.CloseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-7-35</left>
+								<top>3</top>
+								<width>35</width>
+								<height>16</height>
+								<cursor>IDC_HAND</cursor>
+								<NormalBkgID>DiDa.AboutWnd.CloseBtn.Normal</NormalBkgID>
+								<DownBkgID>DiDa.AboutWnd.CloseBtn.Hover</DownBkgID>
+								<HoverBkgID>DiDa.AboutWnd.CloseBtn.Hover</HoverBkgID>
+								<DisableBkgID>DiDa.AboutWnd.CloseBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipAboutWnd.xml.lua" func="OnClickCloseBtn" />
+							</eventlist>
+						</obj>
+						
+						<obj id="TipAbout.Title" class="TextObject">
+							<attr>
+								<left>15</left>
+								<top>3</top>
+								<width>father.width-20</width> 
+								<height>24</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.text10</font>
+								<textcolor>626262</textcolor>
+								<text>关于嘀嗒日历</text>
+							</attr>		
+						</obj>
+						
+						<obj id="TipAbout.Version" class="TextObject">
+							<attr>
+								<left>108</left>
+								<top>48</top>
+								<width>152</width> 
+								<height>23</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.text13</font>
+								<textcolor>626262</textcolor>
+								<text>版本号:V1.0.0.1正式版</text>
+							</attr>		
+						</obj>
+						
+						<obj id="TipAbout.CopyRight" class="TextObject">
+							<attr>
+								<left>153</left>
+								<top>80</top>
+								<width>father.width-113</width> 
+								<height>23</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.text11</font>
+								<textcolor>626262</textcolor>
+								<text>嘀嗒日历 版权所有</text>
+							</attr>		
+						</obj>
+						
+					</children>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipAboutWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>275</width>
+            <height>132</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
+
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <active>0</active>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipAboutWnd.xml.lua" func="OnCreate"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

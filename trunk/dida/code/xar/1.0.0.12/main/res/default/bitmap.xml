@@ -1,0 +1,102 @@
+<XLUE>
+	<resource>
+		<texture id="DiDa.MainWnd.Bkg" image="bitmap\DiDa.MainWnd.Bkg.png" />
+		
+		<texture id="DiDa.Title.CloseBtn.Hover" image="bitmap\DiDa.Title.CloseBtn.Hover.png" />
+		<texture id="DiDa.Title.CloseBtn.Normal" image="bitmap\DiDa.Title.CloseBtn.Normal.png" />
+		
+		<texture id="DiDa.Scroll.ThumbBtn.Normal" type="ThreeInOneV" image="bitmap\DiDa.Scroll.ThumbBtn.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Festival.Hover" image="bitmap\DiDa.Combobox.Bkg.Festival.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Festival.Normal" image="bitmap\DiDa.Combobox.Bkg.Festival.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Month.Normal" image="bitmap\DiDa.Combobox.Bkg.Month.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Month.Hover" image="bitmap\DiDa.Combobox.Bkg.Month.Hover.png" />
+		<texture id="DiDa.Combobox.Bkg.Year.Normal" image="bitmap\DiDa.Combobox.Bkg.Year.Normal.png" />
+		<texture id="DiDa.Combobox.Bkg.Year.Hover" image="bitmap\DiDa.Combobox.Bkg.Year.Hover.png" />
+		<texture id="DiDa.DropDown.Arrow.Normal" image="bitmap\DiDa.DropDown.Arrow.Normal.png" />
+		<texture id="DiDa.DropDown.Arrow.Hover" image="bitmap\DiDa.DropDown.Arrow.Hover.png" />
+		<texture id="DiDa.DropList.Bkg" image="bitmap\DiDa.DropList.Bkg.png" />
+		<texture id="DiDa.DropList.Festival" image="bitmap\DiDa.DropList.Festival.png" />
+		<texture id="DiDa.DropList.Month" image="bitmap\DiDa.DropList.Month.png" />
+		<texture id="DiDa.DropList.Year" image="bitmap\DiDa.DropList.Year.png" />
+		<texture id="DiDa.DropList.Select" image="bitmap\DiDa.DropList.Select.png" />
+		
+		<texture id="DiDa.ArrowLeft.Month.Normal" image="bitmap\DiDa.ArrowLeft.Month.Normal.png" />
+		<texture id="DiDa.ArrowLeft.Month.Hover" image="bitmap\DiDa.ArrowLeft.Month.Hover.png" />
+		<texture id="DiDa.ArrowRight.Month.Normal" image="bitmap\DiDa.ArrowRight.Month.Normal.png" />
+		<texture id="DiDa.ArrowRight.Month.Hover" image="bitmap\DiDa.ArrowRight.Month.Hover.png" />
+		
+		<texture id="DiDa.BackToToday.Normal" image="bitmap\DiDa.BackToToday.Normal.png" />
+		<texture id="DiDa.BackToToday.Hover" image="bitmap\DiDa.BackToToday.Hover.png" />
+		
+		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
+		<texture id="DiDa.Canlender.Current.Work" image="bitmap\DiDa.Canlender.Current.Work.png" />
+		<texture id="DiDa.Canlender.Select.Big" image="bitmap\DiDa.Canlender.Select.Big.png" />
+		<texture id="DiDa.Canlender.Select.Small" image="bitmap\DiDa.Canlender.Select.Small.png" />
+		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
+		<texture id="DiDa.Canlender.Work" image="bitmap\DiDa.Canlender.Work.png" />
+		
+		<texture id="DiDa.ExitRemind.Bkg" image="bitmap\DiDa.ExitRemind.Bkg.png" />
+		<texture id="DiDa.ExitRemind.Cancle.Normal" image="bitmap\DiDa.ExitRemind.Cancle.Normal.png" />
+		<texture id="DiDa.ExitRemind.Cancle.Hover" image="bitmap\DiDa.ExitRemind.Cancle.Hover.png" />
+		<texture id="DiDa.ExitRemind.Exit.Normal" image="bitmap\DiDa.ExitRemind.Exit.Normal.png" />
+		<texture id="DiDa.ExitRemind.Exit.Hover" image="bitmap\DiDa.ExitRemind.Exit.Hover.png" />
+		
+		<texture id="DiDa.AboutWnd.Bkg" image="bitmap\DiDa.AboutWnd.Bkg.png" />
+		<texture id="DiDa.AboutWnd.CloseBtn.Normal" image="bitmap\DiDa.AboutWnd.CloseBtn.Normal.png" />
+		<texture id="DiDa.AboutWnd.CloseBtn.Hover" image="bitmap\DiDa.AboutWnd.CloseBtn.Hover.png" />
+		
+		
+		<texture id="DiDa.UpdateWnd.Bkg" image="bitmap\DiDa.UpdateWnd.Bkg.png" />
+		<texture id="DiDa.UpdateWnd.CloseBtn.Hover" image="bitmap\DiDa.UpdateWnd.CloseBtn.Hover.png" />
+		<texture id="DiDa.UpdateWnd.CloseBtn.Normal" image="bitmap\DiDa.UpdateWnd.CloseBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.UpdateBtn.Hover" image="bitmap\DiDa.UpdateWnd.UpdateBtn.Hover.png" />
+		<texture id="DiDa.UpdateWnd.UpdateBtn.Normal" image="bitmap\DiDa.UpdateWnd.UpdateBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.MinBtn.Normal" image="bitmap\DiDa.UpdateWnd.MinBtn.Normal.png" />
+		<texture id="DiDa.UpdateWnd.MinBtn.Hover" image="bitmap\DiDa.UpdateWnd.MinBtn.Hover.png" />
+	
+		<bitmap id="多云" path="bitmap\weather\Weather.DuoYun.png" />
+		<bitmap id="暴雪" path="bitmap\weather\Weather.BaoXue.png" />
+		<bitmap id="大雨" path="bitmap\weather\Weather.DaYu.png" />
+		<bitmap id="暴雨" path="bitmap\weather\Weather.BaoYu.png" />
+		<bitmap id="冰雹" path="bitmap\weather\Weather.BingBao.png" />
+		<bitmap id="大暴雨" path="bitmap\weather\Weather.DaBaoYu.png" />
+		<bitmap id="大台风" path="bitmap\weather\Weather.DaTaiFeng.png" />
+		<bitmap id="雷阵雨" path="bitmap\weather\Weather.LeiZhenYu.png" />
+		<bitmap id="雷阵雨伴有冰雹" path="bitmap\weather\Weather.LeiZhenYuBanYouBingBao.png" />
+		<bitmap id="霾" path="bitmap\weather\Weather.Mai.png" />
+		<bitmap id="晴" path="bitmap\weather\Weather.Qing.png" />
+		<bitmap id="台风" path="bitmap\weather\Weather.TaiFeng.png" />
+		<bitmap id="特大暴雨" path="bitmap\weather\Weather.TeDaBaoYu.png" />
+		<bitmap id="雾" path="bitmap\weather\Weather.Wu.png" />
+		<bitmap id="小雪" path="bitmap\weather\Weather.XiaoXue.png" />
+		<bitmap id="小雨" path="bitmap\weather\Weather.XiaoYu.png" />
+		<bitmap id="阴" path="bitmap\weather\Weather.Yin.png" />
+		<bitmap id="雨夹雪" path="bitmap\weather\Weather.YuJiaXue.png" />
+		<bitmap id="阵雪" path="bitmap\weather\Weather.ZhenXue.png" />
+		<bitmap id="阵雨" path="bitmap\weather\Weather.ZhenYu.png" />
+		<bitmap id="中台风" path="bitmap\weather\Weather.ZhongTaiFeng.png" />
+		<bitmap id="中雪" path="bitmap\weather\Weather.ZhongXue.png" />
+		<bitmap id="中雨" path="bitmap\weather\Weather.ZhongYu.png" />
+		
+		<bitmap id="白羊座" path="bitmap\zodiac\baiyangzuo.png" />
+		<bitmap id="处女座" path="bitmap\zodiac\chunvzuo.png" />
+		<bitmap id="金牛座" path="bitmap\zodiac\jinniuzuo.png" />
+		<bitmap id="巨蟹座" path="bitmap\zodiac\juxiezuo.png" />
+		<bitmap id="摩羯座" path="bitmap\zodiac\mojiezuo.png" />
+		<bitmap id="射手座" path="bitmap\zodiac\sheshouzuo.png" />
+		<bitmap id="狮子座" path="bitmap\zodiac\shizizuo.png" />
+		<bitmap id="双鱼座" path="bitmap\zodiac\shuangyuzuo.png" />
+		<bitmap id="双子座" path="bitmap\zodiac\shuangzizuo.png" />
+		<bitmap id="水瓶座" path="bitmap\zodiac\shuipingzuo.png" />
+		<bitmap id="天秤座" path="bitmap\zodiac\tianpingzuo.png" />
+		<bitmap id="天蝎座" path="bitmap\zodiac\tianxiezuo.png" />
+	
+		<bitmap id="DiDa.Weather.LoadFail" path="bitmap\DiDa.Weather.LoadFail.png" />
+		
+		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
+		<gif id="DiDa.UpdateWnd.Loading" file="bitmap\DiDa.UpdateWnd.Loading.gif" />
+	</resource>
+</XLUE>
+
+
+
