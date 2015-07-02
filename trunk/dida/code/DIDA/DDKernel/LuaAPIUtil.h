@@ -53,7 +53,6 @@ private:
 		const TCHAR* argument, 
 		const TCHAR* description,
 		const TCHAR* despath);
-
 public:
 	static LuaAPIUtil * __stdcall Instance(void *);
 	static void RegisterObj(XL_LRT_ENV_HANDLE hEnv);
@@ -63,10 +62,12 @@ public:
 	static int Exit(lua_State* pLuaState);
 	static int GetPeerId(lua_State* pLuaState);
 	static int Log(lua_State* pLuaState);
+	static int IsLogEnable(lua_State* pLuaState);
 	static int SaveLuaTableToLuaFile(lua_State* pLuaState);
 	static int GetCommandLine(lua_State* pLuaState);
 	static int CommandLineToList(lua_State* pLuaState);
 	static int GetModuleExeName(lua_State* pLuaState);
+	static int GetScreenRectFromPoint(lua_State* pLuaState);
 
 
 	//窗口
@@ -115,6 +116,7 @@ public:
 	static int QueryFileExists(lua_State* pLuaState);
 	static int Rename(lua_State* pLuaState);
 	static int CreateDir(lua_State* pLuaState);
+	static int CreatePathFile(lua_State* pLuaState);
 	static int CopyPathFile(lua_State* pLuaState);
 	static int DeletePathFile(lua_State* pLuaState);
 	// ReadFileToString 将指定全路径的文件读入到一个string中。
