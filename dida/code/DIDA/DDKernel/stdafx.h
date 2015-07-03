@@ -48,6 +48,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 #include <fstream>
 #include <algorithm>
 #pragma warning(default:4702)
