@@ -138,6 +138,9 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"GetOSVersion", GetOSVersionInfo},
 	{"QueryProcessExists", QueryProcessExists},
 	{"IsWindows8Point1",IsWindows8Point1},
+	
+	{"GetSystemAllTTFFont",GetSystemAllTTFFont},
+
 	//功能
 	{"CreateShortCutLinkEx", CreateShortCutLinkEx},
 	{"OpenURL", OpenURL},
@@ -147,7 +150,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
-
+	
+	{"IsClipboardFormatAvailable",FIsClipboardFormatAvailable},
 	//INI配置文件操作
 	{"ReadINI", ReadINI},
 	{"WriteINI", WriteINI},
@@ -4235,5 +4239,82 @@ int LuaAPIUtil::LaunchUpdateDiDA(lua_State* pLuaState)
 		}
 	}
 	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+
+int LuaAPIUtil::FIsClipboardFormatAvailable(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		UINT uFormat = (UINT)lua_tointeger(pLuaState, 2);
+		BOOL bRet = ::IsClipboardFormatAvailable(uFormat);
+		lua_pushboolean(pLuaState, (int )bRet);
+		return 1;
+	}
+	return 0;
+}
+
+
+int CALLBACK EnumFontFamExProc(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, DWORD FontType, LPARAM lParam)
+{
+	std::set<std::wstring> *psetFaceName = reinterpret_cast<std::set<std::wstring>*>(lParam);
+	if (FontType & TRUETYPE_FONTTYPE)
+	{
+		psetFaceName->insert(lpelfe->elfLogFont.lfFaceName);
+	}
+	return 1;
+}
+
+int LuaAPIUtil::GetSystemAllTTFFont(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	HDC hdc = ::GetWindowDC(NULL);
+	if (NULL == hdc)
+	{
+		return 0;
+	}
+	LOGFONT lf;
+	memset(&lf,0,sizeof(LOGFONT));
+	lf.lfCharSet = DEFAULT_CHARSET;
+
+	std::set<std::wstring> setFaceName;
+	if (!::EnumFontFamiliesEx(hdc,&lf,(FONTENUMPROC)EnumFontFamExProc,(LPARAM)&setFaceName,0))
+	{
+		::ReleaseDC(NULL,hdc); 
+		lua_pushnil(pLuaState);
+		return 1;
+	}
+	::ReleaseDC(NULL,hdc);  
+	int iCount = setFaceName.size();
+	if (iCount <= 0)
+	{
+		lua_pushnil(pLuaState);
+		return 1;
+	}
+	lua_checkstack(pLuaState, iCount);
+	lua_newtable(pLuaState);
+	std::set<std::wstring>::const_iterator c_iter = setFaceName.begin();
+	int index = 1;
+	for(;c_iter!=setFaceName.end();c_iter++)
+	{
+		if ((*c_iter)[0] == L'@' || iswdigit((*c_iter)[0]))
+		{
+			continue;
+		}
+		std::string utf8FaceName;
+		wchar_t szFaceName[MAX_PATH] = {0};
+		wcscpy(szFaceName,(*c_iter).c_str());
+		szFaceName[MAX_PATH-1] = L'\0';
+		BSTRToLuaString(szFaceName,utf8FaceName);
+		lua_pushstring(pLuaState, utf8FaceName.c_str());
+		lua_rawseti(pLuaState, -2, index);
+		index++;
+	}
 	return 1;
 }

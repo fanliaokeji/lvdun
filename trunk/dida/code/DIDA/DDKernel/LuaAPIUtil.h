@@ -161,7 +161,7 @@ public:
 	static int GetOSVersionInfo(lua_State* pLuaState);
 	static int QueryProcessExists(lua_State* pLuaState);
 	static int IsWindows8Point1(lua_State* pLuaState);
-
+	static int GetSystemAllTTFFont(lua_State* pLuaState);
 	//功能
 	static int CreateShortCutLinkEx(lua_State* pLuaState);
 	static int OpenURL(lua_State* pLuaState);
@@ -172,6 +172,7 @@ public:
 	static int DecryptFileAES(lua_State* pLuaState);
 	
 
+	static int FIsClipboardFormatAvailable(lua_State* pLuaState);
 	//INI配置文件操作
 	static int ReadINI(lua_State* pLuaState);
 	static int WriteINI(lua_State* pLuaState);
