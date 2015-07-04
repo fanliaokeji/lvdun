@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DIDASetUpHelper", "DIDASetU
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DIDALuaAgent", "DIDALuaAgent\DIDALuaAgent.vcproj", "{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddnotepad", "ddnotepad\ddnotepad.vcproj", "{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddnpkernel", "ddnpkernel\ddnpkernel.vcproj", "{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -51,6 +55,18 @@ Global
 		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|Win32.ActiveCfg = Release|Win32
 		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|Win32.Build.0 = Release|Win32
 		{4E59EFBC-46DD-426C-8100-5C57FBD2DB8E}.Release|x64.ActiveCfg = Release|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Debug|Win32.ActiveCfg = Debug|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Debug|Win32.Build.0 = Debug|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Debug|x64.ActiveCfg = Debug|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Release|Win32.ActiveCfg = Release|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Release|Win32.Build.0 = Release|Win32
+		{59EAE79F-C98E-4AF5-AC0D-FC9FE99F0223}.Release|x64.ActiveCfg = Release|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Debug|Win32.Build.0 = Debug|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Debug|x64.ActiveCfg = Debug|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Release|Win32.ActiveCfg = Release|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Release|Win32.Build.0 = Release|Win32
+		{9E4EF51F-1CA7-46FE-9E42-6A1352688EC8}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
