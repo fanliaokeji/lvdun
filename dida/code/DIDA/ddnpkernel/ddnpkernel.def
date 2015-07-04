@@ -1,0 +1,5 @@
+LIBRARY	"ddnpkernel"
+
+EXPORTS
+InitXLUE
+UnInitXLUE
