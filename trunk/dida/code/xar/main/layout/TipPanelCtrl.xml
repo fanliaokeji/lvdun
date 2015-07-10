@@ -16,78 +16,139 @@
 						<width>father.width</width>
 						<height>father.height</height>
 					</attr>				
-					<children>	
-						<obj id="bkg" class="TextureObject">
+					<children>
+						<obj id="navigation.layout" class="LayoutObject">
 							<attr>
 								<left>0</left>
-								<top>0</top>
-								<width>father.width</width> 
-								<height>father.height</height>
-								<texture>DiDa.MainWnd.Bkg</texture>
-							</attr>		
-							<children>	
-								<obj id="DiDa.TitleCtrl" class="TitleCtrl">
+								<top>(father.height - 347)/2</top>
+								<width>38</width>
+								<height>357 - 10</height>
+							</attr>
+							<children>
+								<obj id="calendar.btn" class="TipAddin.Button">
 									<attr>
-										<left>20</left>
-										<top>10</top>
-										<width>father.width-40</width> 
-										<height>30</height>
-									</attr>			
-								</obj>	
-							
-								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
-									<attr>
-										<left>20</left>
-										<top>130</top>
-										<width>150</width> 
-										<height>father.height-130</height>
-									</attr>			
-								</obj>	
-								
-								<obj id="DiDa.WeatherCtrl" class="WeatherCtrl">
-									<attr>
-										<left>20</left>
-										<top>40</top>
-										<width>135</width> 
-										<height>110</height>
-									</attr>			
-								</obj>	
-								
-								<obj id="DiDa.DateSelectCtrl" class="DateSelectCtrl">
-									<attr>
-										<left>40+135</left>
-										<top>60</top>
-										<width>father.width-135-40</width> 
-										<height>20</height>
+										<left>father.width - 33</left>
+										<top>0</top>
+										<width>33</width>
+										<height>86</height>
+										<zorder>36000</zorder>
+										<NormalBkgID>DiDa.calendar.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>DiDa.calendar.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>DiDa.calendar.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>DiDa.calendar.btn.bkg.normal</DisableBkgID>
 									</attr>
+									<eventlist>
+										<event name="OnLButtonDown" file="TipPanelCtrl.xml.lua" func="OnLButtonDown" />
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickCalendar" />
+									</eventlist>
 								</obj>
-								
-								<obj id="DiDa.WeekNumCtrl" class="WeekNumCtrl">
+								<obj id="notepad.btn" class="TipAddin.Button">
 									<attr>
-										<left>182</left>
-										<top>96</top>
-										<width>336</width> 
-										<height>27</height>
-									</attr>			
+										<left>father.width - 27</left>
+										<top>86 - 10</top>
+										<width>27</width>
+										<height>87</height>
+										<zorder>36000</zorder>
+										<NormalBkgID>DiDa.notepad.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>DiDa.notepad.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>DiDa.notepad.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>DiDa.notepad.btn.bkg.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnLButtonDown" file="TipPanelCtrl.xml.lua" func="OnLButtonDown" />
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickNotepad" />
+									</eventlist>
 								</obj>
-								
-								<obj id="DiDa.CalendarDispatch" class="CalendarDispatch">
+								<obj id="remind.btn" class="TipAddin.Button">
 									<attr>
-										<left>152+30</left>
-										<top>123</top>
-										<width>332+65</width> 
-										<height>246</height>
-									</attr>			
+										<left>father.width - 38</left>
+										<top>86 + 87 - 10 - 10</top>
+										<width>38</width>
+										<height>87</height>
+										<zorder>36000</zorder>
+										<NormalBkgID>DiDa.remind.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>DiDa.remind.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>DiDa.remind.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>DiDa.remind.btn.bkg.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnLButtonDown" file="TipPanelCtrl.xml.lua" func="OnLButtonDown" />
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickRemind" />
+									</eventlist>
 								</obj>
-								
+								<obj id="forher.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width - 29</left>
+										<top>86 + 87 + 87 - 10 - 10 - 15</top>
+										<width>29</width>
+										<height>97</height>
+										<zorder>36000</zorder>
+										<NormalBkgID>DiDa.forher.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>DiDa.forher.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>DiDa.forher.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>DiDa.forher.btn.bkg.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnLButtonDown" file="TipPanelCtrl.xml.lua" func="OnLButtonDown" />
+										<event name="OnClick" file="TipPanelCtrl.xml.lua" func="OnClickForher" />
+									</eventlist>
+								</obj>
+							</children>			
+						</obj>
+						<obj id="preview.layout.bkg" class="TextureObject">
+							<attr>
+								<left>38</left>
+								<top>0</top>
+								<width>182</width>
+								<height>445</height>
+								<texture>notepad.preview.bkg</texture>
+							</attr>	
+							<children>
+								<obj id="preview.layout" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>						
+								</obj>
 							</children>
-						</obj><!--bkg end-->
+						</obj>
+						<obj id="pagenail.bkg" class="TextureObject">
+							<attr>
+								<left>185 + 38 - 14</left>
+								<top>(445 - 293)/2</top>
+								<width>25</width>
+								<height>293</height>
+								<texture>DiDa.pagenail.bkg</texture>
+								<zorder>999999</zorder>
+							</attr>						
+						</obj>
+						<obj id="view.layout.bkg" class="TextureObject">
+							<attr>
+								<left>185 + 38</left>
+								<top>0</top>
+								<width>503</width>
+								<height>445</height>
+								<texture>texture.editwnd.shadow</texture>
+							</attr>
+							<children>
+								<obj id="view.layout" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>						
+								</obj>
+							</children>							
+						</obj>
 					</children>
-					<eventlist>
-						<event name="OnLButtonUp" file="TipPanelCtrl.xml.lua" func="OnLButtonUp" />
-					</eventlist>
-				</obj><!--root layout end-->
+				</obj>
 			</children>
+			<eventlist>
+				<event name="OnInitControl" file="TipPanelCtrl.xml.lua" func="OnInitControl" />
+			</eventlist>
         </objtemplate>
 	</control>
 
@@ -95,15 +156,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>610</width>
-			<height>432</height>
+			<width>729</width>
+			<height>445</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>610</width>
-				<height>432</height>
+				<width>729</width>
+				<height>445</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >

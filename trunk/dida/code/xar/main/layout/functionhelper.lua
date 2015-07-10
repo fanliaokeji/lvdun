@@ -20,7 +20,10 @@ end
 
 function TipLog(strLog)
 	if type(tipUtil.Log) == "function" then
-		tipUtil:Log("@@DiDa_Log: " .. tostring(strLog))
+		local traceInfo = debug.traceback("", 2)
+		local s = string.gsub(traceInfo, "\n", " < ") 
+		s =string.sub(s,1, 512)
+		tipUtil:Log("@@DiDa_Log: " .. tostring(strLog)..tostring(s))
 	end
 end
 
@@ -424,7 +427,7 @@ function GetDBPath(strDBName)
 		return strDBPath
 	end
 	
-	MessageBox(tostring("关键数据丢失，请重新安装"))
+	MessageBox(tostring("关键数据丢失，请重新安装".." "..tostring(strDBPath)))
 	ExitProcess()
 	return nil
 end
@@ -555,13 +558,10 @@ function GetMainCtrlChildObj(strObjName)
 		return nil
 	end
 	
-	local objRootCtrl = objTree:GetUIObject("root.layout:root.ctrl")
-	if not objRootCtrl then
-		TipLog("[GetMainCtrlChildObj] get objRootCtrl failed")
-		return nil
-	end 
-
-	return objRootCtrl:GetControlObject(tostring(strObjName))
+	local objCtrl = objTree:GetUIObject("root.layout:root.ctrl:"..strObjName)
+	
+	return objCtrl
+	
 end
 
 
@@ -603,7 +603,7 @@ end
 
 
 function GetYearMonthFromUI()
-	local objDateSelectCtrl = GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelectCtrl = GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	local strYear = objDateSelectCtrl:GetYearText()
 	local strMonth = objDateSelectCtrl:GetMonthText()
 	
@@ -621,6 +621,7 @@ end
 
 --strDateInfo：格式： 20150101 , nDay可为空
 function GetClndrContent(strDateInfo, fnCallBack)
+	TipLog("strDateInfo: "..tostring(strDateInfo))
 	local strCalendarDB = GetDBPath("lunar.db")
 	local strYear = string.sub(strDateInfo, 1, 4)
 	local strMonth = string.sub(strDateInfo, 5, 6)
@@ -667,7 +668,7 @@ end
 
 
 function UpdateBackTodayStyle(nFocusDayIdxInMonth)
-	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objCalendarCtrl = GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	if nFocusDayIdxInMonth == 0 then
 		objCalendarCtrl:SetBackTodayVisible(true)
 	else	
@@ -749,13 +750,13 @@ end
 
 function UpdateCalendarContent()
 	local strYearMonth = GetYearMonthFromUI()
-	local objCalendarDisp = GetMainCtrlChildObj("DiDa.CalendarDispatch")
+	local objCalendarDisp = GetMainCtrlChildObj("DiDa.CalendarView:DiDa.CalendarDispatch")
 	objCalendarDisp:ShowCalendarInfo(strYearMonth)
 end
 
 
 function UpdateLeftBarContent()
-	local objLeftBarCtrl = GetMainCtrlChildObj("DiDa.LeftBarCtrl")
+	local objLeftBarCtrl = GetMainCtrlChildObj("DiDa.CalendarPreView:DiDa.LeftBarCtrl")
 	local strCurDate = os.date("%Y%m%d")
 	
 	GetClndrContent(strCurDate, 
@@ -776,6 +777,38 @@ function UpdateUIPanel()
 end
 
 
+function RunSeqFrameAni(object, seqResID, fun, total_time, loop)	
+	if not object then
+		return
+	end
+	if loop == nil then
+		loop = true
+	end
+	if total_time == nil then
+		total_time = 800
+	end
+	
+	object:SetVisible(true)
+	local aniFactory = XLGetObject("Xunlei.UIEngine.AnimationFactory")
+	local seqFramAni = aniFactory:CreateAnimation("SeqFrameAnimation")
+	seqFramAni:SetLoop(loop)
+	seqFramAni:SetResID(seqResID)
+	seqFramAni:SetTotalTime(total_time)
+	seqFramAni:BindImageObj(object)
+	local tree = object:GetOwner()
+	tree:AddAnimation(seqFramAni)
+	local handle = object:GetHandle()
+	local function OnAniFinish(self, old, new)
+		if new == 4 then
+			if fun then fun(bkg) end
+		end
+		return true
+	end
+	
+	seqFramAni:AttachListener(true, OnAniFinish)
+	seqFramAni:Resume()
+	return seqFramAni
+end
 
 --天气
 local strIPUrl = "http://ip.dnsexit.com/index.php"
@@ -1258,6 +1291,9 @@ obj.GetDllPath = GetDllPath
 obj.KillClockWindow = KillClockWindow
 obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 obj.SendDiDaReport = SendDiDaReport
+
+
+obj.RunSeqFrameAni = RunSeqFrameAni
 
 
 --UI

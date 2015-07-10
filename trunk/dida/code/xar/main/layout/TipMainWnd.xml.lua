@@ -83,24 +83,24 @@ end
 local gTimerID = nil
 function OnFocusChange(self, bFocus)
 	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
-	if not bFocus then
-		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	-- if not bFocus then
+		-- local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 
-		self:UpdateWindow()
-		self:Show(0)
+		-- self:UpdateWindow()
+		-- self:Show(0)
 		
-		local nTimeSpanInMs = 200
-		if gTimerID ~= nil then
-			timerManager:KillTimer(gTimerID)
-			gTimerID = nil
-		end
-		gShowWnd = false
-		gTimerID = timerManager:SetTimer(function(item, id)
-			timerManager:KillTimer(gTimerID)
-			gTimerID = nil
-			gShowWnd = true
-		end, nTimeSpanInMs)
-	end
+		-- local nTimeSpanInMs = 200
+		-- if gTimerID ~= nil then
+			-- timerManager:KillTimer(gTimerID)
+			-- gTimerID = nil
+		-- end
+		-- gShowWnd = false
+		-- gTimerID = timerManager:SetTimer(function(item, id)
+			-- timerManager:KillTimer(gTimerID)
+			-- gTimerID = nil
+			-- gShowWnd = true
+		-- end, nTimeSpanInMs)
+	-- end
 end
 
 
