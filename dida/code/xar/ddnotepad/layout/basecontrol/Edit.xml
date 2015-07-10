@@ -1,0 +1,307 @@
+<xlue>
+    <control class="Edit">
+        <attr_def>
+            <attr name="NormalBkgID" type="string">
+                <default></default>
+            </attr>
+            <attr name="HoverBkgID" type="string" >
+                <default></default>
+            </attr>
+            <attr name="DisableBkgID" type="string">
+                <default></default>
+            </attr>
+			<attr name="Text" type="string" />
+			<attr name="MaxLength" type="int" >
+				<default>0</default>
+			</attr>
+			<attr name="IsNumber" type="bool" >
+				<default>false</default>
+			</attr>
+			<attr name="IsFloat" type="bool" >
+				<default>false</default>
+			</attr>
+			<attr name="Precision" type="int" >
+				<default>1</default>
+			</attr>
+			<attr name="Min" type="int" >
+				<default>0</default>
+			</attr>
+			<attr name="Max" type="int" >
+				<default>0</default>
+			</attr>
+            <attr name="Width" type="int" >
+                <default>50</default>
+            </attr>
+			<attr name="EditCustom" type="bool" >
+				<default>false</default>
+			</attr>
+			<attr name="EditLeft" type="int" >
+				<default>1</default>
+			</attr>
+			<attr name="EditTop" type="int" >
+				<default>3</default>
+			</attr>
+			<attr name="EditWidth" type="string" >
+				<default>0</default>
+			</attr>
+			<attr name="EditHeight" type="string" >
+				<default>0</default>
+			</attr>
+            <attr name="TopMargin" type="int" />
+            <attr name="NowState" type="int">
+                <default>0</default>
+            </attr>
+            <attr name="ReadOnly" type="bool">
+                <default>false</default>
+            </attr>
+            <attr name="Multiline" type="bool">
+                <default>false</default>
+            </attr>
+            <attr name="Enable" type="bool">
+                <default>true</default>
+            </attr>
+			<attr name="Font" type="string">
+				<default>font.text12</default>
+			</attr>
+			<attr name="Color" type="string">
+				<default>system.black</default>
+			</attr>
+			<attr name="HoverColor" type="string">
+				<default>system.black</default>
+			</attr>
+			<attr name="DisableColor" type="string">
+				<default>system.gray</default>
+			</attr>
+			<attr name="Password" type="bool"><default>fasle</default></attr>
+			<attr name="AllowVSB" type="bool">
+				<default>0</default>
+			</attr>
+			<attr name="AllowHSB" type="bool">
+				<default>0</default>
+			</attr>
+			<attr name="PopTipsFunction" type="string"><default></default></attr>
+			<attr name="TabID" type="int" />
+			<attr name="HitSelAll" type="bool" >
+				<default>true</default>
+			</attr>
+			<attr name="WordWrap" type="bool">
+				<default>true</default>
+			</attr>
+			<attr name="AutoUrlDetect" type="bool">
+				<default>false</default>
+			</attr>
+			<attr name="ViewinsetLeft" type="int" />
+			<attr name="ViewinsetRight" type="int" />
+			<attr name="ViewinsetTop" type="int" />
+			<attr name="ViewinsetButtom" type="int" />
+			<attr name="ShowMenu" type="bool" >
+				<default>true</default>
+			</attr>
+			<attr name="Disableime" type="bool" >
+				<default>false</default>
+			</attr>
+			<attr name="TextHint" type="string" desc="提示此编辑框输入内容的意义" />
+			<attr name="TextHintFont" type="string" />
+			<attr name="TextHintColor" type="string" />
+        </attr_def>
+        <method_def>
+            <SetReadOnly file="Edit.xml.lua" func="SetReadOnly" />
+            <SetMultiline file="Edit.xml.lua" func="SetMultiline" />
+            <GetReadOnly file="Edit.xml.lua" func="GetReadOnly" />
+            <GetMultiline file="Edit.xml.lua" func="GetMultiline" />
+            <SetText file="Edit.xml.lua" func="SetText" />
+            <GetText file="Edit.xml.lua" func="GetText" />
+            <SetEnable file="Edit.xml.lua" func="SetEnable"/>
+			<GetEnable file="Edit.xml.lua" func="GetEnable"/>
+			<SetTextColor file="Edit.xml.lua" func="SetTextColor" />
+            <AddTip file="Edit.xml.lua" func="AddTip"/>
+            <RemoveTip file="Edit.xml.lua" func="RemoveTip"/>
+            <SetState file="Edit.xml.lua" func="SetState"/>
+			<SetSel file="Edit.xml.lua" func="SetSel" />
+			<GetSel file="Edit.xml.lua" func="GetSel" />
+			<GetSelText file="Edit.xml.lua" func="GetSelText" />
+			<SetIsPassword file="Edit.xml.lua" func="SetIsPassword" />
+			<GetIsPassword file="Edit.xml.lua" func="GetIsPassword" />
+			<SetRange file="Edit.xml.lua" func="SetRange" />
+			<AppendText file="Edit.xml.lua" func="AppendText" />
+			<GetLineCount file="Edit.xml.lua" func="GetLineCount" />
+			<GetLine file="Edit.xml.lua" func="GetLine" />
+			<LineIndex file="Edit.xml.lua" func="LineIndex" />
+			<PosFromChar file="Edit.xml.lua" func="PosFromChar" />
+			<SetFocus file="Edit.xml.lua" func="SetFocus" />
+			<GetFocus file="Edit.xml.lua" func="GetFocus" />
+			<ScrollCaret file="Edit.xml.lua" func="ScrollCaret" />
+			<SetIsNumber file="Edit.xml.lua" func="SetIsNumber" />
+			<SetViewInset file="Edit.xml.lua" func="SetViewInset" />
+			
+			<SetTextHintFont file="Edit.xml.lua" func="SetTextHintFont" />
+			<SetTextHintColor file="Edit.xml.lua" func="SetTextHintColor" />
+        </method_def>
+        <event_def>
+            <OnEditChange>
+                <param>
+                    <string/>
+                    <string/>
+                </param>
+            </OnEditChange>
+			<OnSelChange>
+                <param>
+                    <int/>
+                    <int/>
+					<int/>
+                </param>
+            </OnSelChange>
+            <OnEditFocusChange>
+                <param>
+                    <bool/>
+                </param>
+            </OnEditFocusChange>
+			<OnEditKeyDown>
+				<param>
+					<int/>
+					<int/>
+					<int/>
+				</param>
+			</OnEditKeyDown>
+			<OnEditKeyUp>
+				<param>
+					<int/>
+					<int/>
+					<int/>
+				</param>
+			</OnEditKeyUp>
+			<OnEditMouseWheel>
+				<param>
+					<int/> <!-- x -->
+					<int/> <!-- y -->
+					<int/> <!-- distance -->
+					<int/> <!-- flags -->
+				</param>
+			</OnEditMouseWheel>
+        </event_def>
+        <objtemplate>
+            <children>
+                <obj id="newedit.bkg" class="TextureObject">
+                    <attr>
+                        <left>0</left>
+                        <top>0</top>
+                        <width>father.width</width>
+                        <height>father.height</height>
+                    </attr>
+                    <children>
+						<obj id="edit.limit" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<limitchild>1</limitchild>
+							</attr>
+							<children>
+								<obj id="newedit.edit" class="EditObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<zorder>1</zorder>
+										<transparent>1</transparent>										
+									</attr>
+									<children>
+										<obj id="text.hint" class="TextObject">
+											<attr>
+												<left>father.left + 10</left>
+												<top>(father.height-18)/2 - 4</top>
+												<width>father.width-10</width>
+												<height>18</height>
+												<valign>center</valign>
+												<visible>false</visible>
+											</attr>
+										</obj>
+										<obj id="vsb" class="TipAddin.ScrollBar">
+											<attr>
+												<Type>1</Type>
+												<ThumbBtn_normal>texture.vsb.thumb.normal</ThumbBtn_normal>
+												<ThumbBtn_hover>texture.vsb.thumb.hover</ThumbBtn_hover>
+												<ThumbBtn_down>texture.vsb.thumb.down</ThumbBtn_down>
+												
+												<SideBtnLength>12</SideBtnLength>
+												<PageSize>0</PageSize>
+												<RangeBegin>0</RangeBegin>
+												<RangeEnd>0</RangeEnd>
+												<ScrollPos>0</ScrollPos>
+												<Visible>false</Visible>			
+												<width>23</width>
+												<ThumbBtnWidth>11</ThumbBtnWidth> 
+												<ThumbRightMagrin>2</ThumbRightMagrin>
+												<cursor>IDC_ARROW</cursor>
+											</attr>
+											<eventlist>
+												<event name="OnVScroll" file="Edit.xml.lua" func="OnVScroll" />
+												<event name="OnScrollBarMouseWheel" file="Edit.xml.lua" func="OnScrollBarMouseWheel" />
+											</eventlist>			
+										</obj>
+										<obj id="hsb" class="TipAddin.ScrollBar">
+											<attr>
+												<Type>0</Type>
+												<ThumbBtn_normal>texture.hsb.thumb.normal</ThumbBtn_normal>
+												<ThumbBtn_hover>texture.hsb.thumb.hover</ThumbBtn_hover>
+												<ThumbBtn_down>texture.hsb.thumb.down</ThumbBtn_down>										
+												<SideBtnLength>0</SideBtnLength>
+												<PageSize>0</PageSize>
+												<RangeBegin>0</RangeBegin>
+												<RangeEnd>0</RangeEnd>
+												<Visible>false</Visible>
+												<height>23</height>
+												<cursor>IDC_ARROW</cursor>
+												<ThumbBtnWidth>11</ThumbBtnWidth> 
+												<ThumbRightMagrin>2</ThumbRightMagrin>
+												</attr>
+											<eventlist>
+												<event name="OnHScroll" file="Edit.xml.lua" func="OnHScroll"/>
+												<event name="OnScrollBarMouseWheel" file="Edit.xml.lua" func="OnScrollBarMouseWheel" />
+											</eventlist>
+										</obj>
+									</children>
+									<eventlist>
+										<event name="OnChange" file="Edit.xml.lua" func="Edit__OnChange"/>
+										<event name="OnSelChange" file="Edit.xml.lua" func="Edit__OnSelChange"/>
+										<event name="OnMouseMove" file="Edit.xml.lua" func="Edit__OnMouseMove"/>
+										<event name="OnMouseLeave" file="Edit.xml.lua" func="Edit__OnMouseLeave" />
+										<event name="OnMouseWheel" file="Edit.xml.lua" func="Edit__OnMouseWheel" />
+										<event name="OnFocusChange" file="Edit.xml.lua" func="Edit__OnFocusChange"/>
+										<event name="OnChar" file="Edit.xml.lua" func="Edit__OnChar"/>
+										<event name="OnGetSBVisible" file="Edit.xml.lua" func="OnGetSBVisible"/>
+										<event name="OnSetSBVisible" file="Edit.xml.lua" func="OnSetSBVisible"/>
+										<event name="OnGetSBEnable" file="Edit.xml.lua" func="OnGetSBEnable"/>
+										<event name="OnSetSBEnable" file="Edit.xml.lua" func="OnSetSBEnable"/>
+										<event name="OnGetSBPageSize" file="Edit.xml.lua" func="OnGetSBPageSize"/>
+										<event name="OnSetSBPageSize" file="Edit.xml.lua" func="OnSetSBPageSize"/>
+										<event name="OnSetSBRange" file="Edit.xml.lua" func="OnSetSBRange"/>
+										<event name="OnGetSBRange" file="Edit.xml.lua" func="OnGetSBRange"/>
+										<event name="OnSetSBPos" file="Edit.xml.lua" func="OnSetSBPos"/>
+										<event name="OnGetSBPos" file="Edit.xml.lua" func="OnGetSBPos"/>
+										<event name="OnGetSBIdealSize" file="Edit.xml.lua" func="OnGetSBIdealSize"/>
+										<event name="OnSetSBRect" file="Edit.xml.lua" func="OnSetSBRect"/>
+										<event name="OnKeyDown" file="Edit.xml.lua" func="Edit_OnKeyDown"/>
+										<event name="OnKeyUp" file="Edit.xml.lua" func="Edit_OnKeyUp"/>
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+                    </children>
+					<eventlist>
+						<event name="OnMouseMove" file="Edit.xml.lua" func="OnMouseMove" />
+						<event name="OnMouseLeave" file="Edit.xml.lua" func="OnMouseLeave" />
+						<event name="OnFocusChange" file="Edit.xml.lua" func="OnFocusChange" />
+					</eventlist>
+                </obj>
+            </children>
+            <eventlist>
+                <event name="OnBind" file="Edit.xml.lua" func="OnBind" />
+                <event name="OnInitControl" file="Edit.xml.lua" func="OnInitControl"/>
+				<event name="OnFocusChange" file="Edit.xml.lua" func="Control_OnFocusChange" />
+            </eventlist>
+        </objtemplate>
+    </control>
+</xlue>

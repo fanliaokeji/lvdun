@@ -1,0 +1,48 @@
+<XLUE>
+	<resource>
+		<texture id="calendar.layout.bkg" image="bitmap\bkg\calendar.layout.bkg.png" />
+		<texture id="mainwnd.bkg" image="bitmap\bkg\mainwnd.bkg.png" />
+		<texture id="notepad.preview.bkg" image="bitmap\bkg\notepad.preview.bkg.png" />
+		
+		
+		<texture id="division.line.bkg" image="bitmap\notepad\division.line.bkg.png" />
+		<texture id="texture.editwnd.shadow" type="NineInOne" image="bitmap\bkg\texture.editwnd.shadow.png"/>
+		<texture id="texture.droplist.frame.bkg" type="NineInOne" image="bitmap\basecontrol\texture.droplist.frame.bkg.png"/>
+		
+		<texture id="save.btn.bkg.normal" image="bitmap\notepad\save.btn.bkg.normal.png" />
+		<texture id="save.btn.bkg.hover" image="bitmap\notepad\save.btn.bkg.hover.png" />
+		<texture id="save.btn.bkg.disable" image="bitmap\notepad\save.btn.bkg.disable.png" />
+		<texture id="cancel.btn.bkg.normal" image="bitmap\notepad\cancel.btn.bkg.normal.png" />
+		<texture id="cancel.btn.bkg.hover" image="bitmap\notepad\cancel.btn.bkg.hover.png" />
+		<texture id="dropdown.btn.bkg.normal" image="bitmap\notepad\dropdown.btn.bkg.normal.png" />
+		<texture id="dropdown.btn.bkg.hover" image="bitmap\notepad\dropdown.btn.bkg.hover.png" />
+		
+		<texture id="edit.blank.bkg" image="bitmap\notepad\edit.blank.bkg.png" />
+		
+		<texture id="mainwnd.btn.close.normal" image="bitmap\notepad\mainwnd.btn.close.normal.png" />
+		<texture id="mainwnd.btn.close.hover" image="bitmap\notepad\mainwnd.btn.close.hover.png" />
+		<texture id="mainwnd.btn.min.normal" image="bitmap\notepad\mainwnd.btn.min.normal.png" />
+		<texture id="mainwnd.btn.min.hover" image="bitmap\notepad\mainwnd.btn.min.hover.png" />
+		<texture id="mainwnd.btn.max.normal" image="bitmap\notepad\mainwnd.btn.max.normal.png" />
+		<texture id="mainwnd.btn.max.hover" image="bitmap\notepad\mainwnd.btn.max.hover.png" />
+		<texture id="mainwnd.btn.recovery.normal" image="bitmap\notepad\mainwnd.btn.recovery.normal.png" />
+		<texture id="mainwnd.btn.recovery.hover" image="bitmap\notepad\mainwnd.btn.recovery.hover.png" />
+		
+		<texture id="toolbar.copy.btn.bkg.normal" image="bitmap\notepad\toolbar.copy.btn.bkg.normal.png" />
+		<texture id="toolbar.copy.btn.bkg.hover" image="bitmap\notepad\toolbar.copy.btn.bkg.hover.png" />
+		<texture id="toolbar.copy.btn.bkg.disable" image="bitmap\notepad\toolbar.copy.btn.bkg.disable.png" />
+		<texture id="toolbar.paste.btn.bkg.normal" image="bitmap\notepad\toolbar.paste.btn.bkg.normal.png" />
+		<texture id="toolbar.paste.btn.bkg.hover" image="bitmap\notepad\toolbar.paste.btn.bkg.hover.png" />
+		<texture id="toolbar.paste.btn.bkg.disable" image="bitmap\notepad\toolbar.paste.btn.bkg.disable.png" />
+		<texture id="toolbar.cut.btn.bkg.normal" image="bitmap\notepad\toolbar.cut.btn.bkg.normal.png" />
+		<texture id="toolbar.cut.btn.bkg.hover" image="bitmap\notepad\toolbar.cut.btn.bkg.hover.png" />
+		<texture id="toolbar.cut.btn.bkg.disable" image="bitmap\notepad\toolbar.cut.btn.bkg.disable.png" />
+		<texture id="toolbar.new.btn.bkg.normal" image="bitmap\notepad\toolbar.new.btn.bkg.normal.png" />
+		<texture id="toolbar.new.btn.bkg.hover" image="bitmap\notepad\toolbar.new.btn.bkg.hover.png" />
+		<texture id="toolbar.new.btn.bkg.disable" image="bitmap\notepad\toolbar.new.btn.bkg.disable.png" />
+		
+	</resource>
+</XLUE>
+
+
+
