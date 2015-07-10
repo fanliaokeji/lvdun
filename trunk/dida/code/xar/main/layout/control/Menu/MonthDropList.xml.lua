@@ -84,7 +84,7 @@ end
 
 function OnSelectMonth(objMenuItem)
 	local strText = objMenuItem:GetText()
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	
 	local _, _, strMonth = string.find(strText, "(%d*)[^%d]*")
 	local nMonth = tonumber(strMonth) 
@@ -97,7 +97,7 @@ end
 
 
 function GetMonthFromComboBox()
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	if not objDateSelect then
 		local strMonth = os.date("%m")
 		local nMonth = tonumber(strMonth)

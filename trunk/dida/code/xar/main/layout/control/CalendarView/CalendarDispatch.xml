@@ -37,6 +37,7 @@
 		</event_def>
 		<objtemplate>
 			<children>
+			<!---->
 				<obj id="CalendarCtrl.Big" class="CalendarCtrl">
 					<attr>
 						<left>0</left>
@@ -52,7 +53,7 @@
 						<top>0</top>
 						<width>father.width</width> 
 						<height>father.height</height>
-						<ItemWidth>57</ItemWidth>
+						<ItemWidth>68</ItemWidth>
 						<ItemHeight>55</ItemHeight>
 					</attr>					
 				</obj>

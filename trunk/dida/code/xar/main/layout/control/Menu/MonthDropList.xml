@@ -37,7 +37,7 @@
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
-								<BknID>DiDa.DropList.Month</BknID>
+								<BknID>texture.droplist.frame.bkg</BknID>
 							</attr>
 							<eventlist>
 								<event name="OnInitControl" file="MonthDropList.xml.lua" func="OnInitControl" />

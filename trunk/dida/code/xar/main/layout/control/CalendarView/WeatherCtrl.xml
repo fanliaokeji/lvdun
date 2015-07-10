@@ -21,7 +21,7 @@
 					<children>
 						<obj id="WeatherCtrl.Loading" class="SeqImageObject">
 							<attr>
-								<left>40</left>  
+								<left>10</left>  
 								<top>10</top>
 								<width>70</width>
 								<height>70</height>
@@ -34,49 +34,61 @@
 					
 						<obj id="WeatherCtrl.Image" class="ImageObject">
 							<attr>
-								<left>20</left>
-								<top>10</top>
-								<width>54</width> 
-								<height>54</height>
+								<left>2</left>
+								<top>2</top>
+								<width>101</width> 
+								<height>71</height>
 							</attr>		
 						</obj>
 						
 						<obj id="WeatherCtrl.Zone" class="TextObject">
 							<attr>
-								<left>20+60</left>
-								<top>20</top>
+								<left>132</left>
+								<top>32</top>
 								<width>60</width> 
-								<height>12</height>
+								<height>14</height>
 								<valign>center</valign>
-								<halign>right</halign>
-								<font>font.text11</font>
-								<textcolor>069DD5</textcolor>
+								<halign>left</halign>
+								<font>font.text14</font>
+								<textcolor>system.white</textcolor>
 							</attr>		
 						</obj>
 						
 						<obj id="WeatherCtrl.Average" class="TextObject">
 							<attr>
-								<left>20+60</left>
-								<top>30</top>
+								<left>111</left>
+								<top>53</top>
 								<width>60</width> 
 								<height>30</height>
 								<valign>center</valign>
-								<halign>right</halign>
-								<font>font.text18</font>
-								<textcolor>069DD5</textcolor>
+								<halign>left</halign>
+								<font>font.text23</font>
+								<textcolor>system.white</textcolor>
 							</attr>		
 						</obj>
 						
 						<obj id="WeatherCtrl.Detail" class="TextObject">
 							<attr>
-								<left>25</left>
-								<top>62</top>
-								<width>father.width-20</width> 
+								<left>24</left>
+								<top>82</top>
+								<width>father.width-24</width> 
 								<height>14</height>
 								<valign>center</valign>
 								<halign>left</halign>
-								<font>font.text11</font>
-								<textcolor>808080</textcolor>
+								<font>font.text14</font>
+								<textcolor>system.white</textcolor>
+							</attr>		
+						</obj>
+						<obj id="WeatherCtrl.Tem" class="TextObject">
+							<attr>
+								<left>24</left>
+								<top>82 + 14 + 5</top>
+								<width>father.width-24</width> 
+								<height>14</height>
+								<valign>center</valign>
+								<halign>left</halign>
+								<font>font.text14</font>
+								<textcolor>system.white</textcolor>
 							</attr>		
 						</obj>
 					</children>

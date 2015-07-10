@@ -75,7 +75,7 @@ end
 
 
 function SetWeatherContent(objRootCtrl, strCity, strTem, strWeather)
-	SetDetailText(objRootCtrl, strWeather..strTem)
+	SetDetailText(objRootCtrl, strWeather, strTem)
 	SetWeatherImage(objRootCtrl, strWeather)
 
 	local objZone = objRootCtrl:GetControlObject("WeatherCtrl.Zone")
@@ -87,10 +87,16 @@ function SetWeatherContent(objRootCtrl, strCity, strTem, strWeather)
 end
 
 
-function SetDetailText(objRootCtrl, strText)
+function SetDetailText(objRootCtrl, strText, strTem)
 	local objDetail = objRootCtrl:GetControlObject("WeatherCtrl.Detail")
+	local objTem = objRootCtrl:GetControlObject("WeatherCtrl.Tem")
 	if objDetail then
 		objDetail:SetText(strText)
+	end
+	
+	--温度另起一行
+	if objTem then
+		objTem:SetText(strTem)
 	end
 end
 

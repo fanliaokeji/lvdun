@@ -33,7 +33,7 @@ function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
 	--设置当前日为焦点
 	SetFocusDay(objRootCtrl, nFocusDayIdxInMonth)   
 	
-	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl")
+	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarPreView:DiDa.LeftBarCtrl")
 	if objLeftBarCtrl then
 		objLeftBarCtrl:SetClndrInfo(tClndrContent[nFocusDayIdxInMonth])
 	end
@@ -114,7 +114,8 @@ function SetClndrItemPos(objRootCtrl, objClndrItem, nLine, nCol)
 	local nNewLeft = (nCol-1)*(nWidth+nSpanW)
 	local nNewTop = (nLine-1)*(nHeight+nSpanH)
 	
-	objClndrItem:SetObjPos(nNewLeft, nNewTop, nNewLeft+nWidth, nNewTop+nHeight)
+	tFunHelper.TipLog("nWidth: "..tostring(nWidth))
+	objClndrItem:SetObjPos2(nNewLeft, nNewTop, nWidth, nHeight)
 end
 
 

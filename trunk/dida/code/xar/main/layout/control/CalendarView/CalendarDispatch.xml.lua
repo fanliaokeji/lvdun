@@ -78,24 +78,24 @@ end
 
 
 function InitLineContainer(objContainer, nLineCount)
-	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
-	local nHeight = GetLineSpan(objContainer)
-	local strFatherID = objContainer:GetID()
+	-- local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
+	-- local nHeight = GetLineSpan(objContainer)
+	-- local strFatherID = objContainer:GetID()
 	
-	local LineTemplate = templateMananger:GetTemplate("LineTemplate", "ObjectTemplate")
-	if LineTemplate == nil then
-		return nil
-	end
+	-- local LineTemplate = templateMananger:GetTemplate("LineTemplate", "ObjectTemplate")
+	-- if LineTemplate == nil then
+		-- return nil
+	-- end
 	
-	for i=2, nLineCount do
-		local strKey = strFatherID.."_Line"..tostring(i)
-		local objLine = LineTemplate:CreateInstance( strKey )
+	-- for i=2, nLineCount do
+		-- local strKey = strFatherID.."_Line"..tostring(i)
+		-- local objLine = LineTemplate:CreateInstance( strKey )
 		
-		objContainer:AddChild(objLine)
-		local nTop = nHeight*(i-1)
+		-- objContainer:AddChild(objLine)
+		-- local nTop = nHeight*(i-1)
 
-		objLine:SetObjPos(0, nTop, "father.width", nTop+1)
-	end
+		-- objLine:SetObjPos(0, nTop, "father.width", nTop+1)
+	-- end
 end
 
 

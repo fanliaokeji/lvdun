@@ -1,14 +1,18 @@
 <xlue>
 
-	<control class="YearDropList">
+	<control class="FontSizeDropList">
 		<attr_def>
 			
 		</attr_def>
 		<method_def>
-			<SetDefaultItemHover file="YearDropList.xml.lua" func="SetDefaultItemHover"/>
+			<SetDefaultItemHover file="FontSizeDropList.xml.lua" func="SetDefaultItemHover"/>
 		</method_def>
 		<event_def>
-			
+			<OnSelectFontSize>
+				<param>
+					<string />
+				</param>
+			</OnSelectFontSize>
 		</event_def>
 		<objtemplate>
 			<children>
@@ -29,7 +33,7 @@
 								<BknID>texture.droplist.frame.bkg</BknID>
 							</attr>
 							<eventlist>
-								<event name="OnInitControl" file="YearDropList.xml.lua" func="OnInitControl" />
+								<event name="OnInitControl" file="FontSizeDropList.xml.lua" func="OnInitControl" />
 							</eventlist>
 						</obj>
 					</children>
@@ -39,13 +43,13 @@
 				</obj>
 			</children>
 			<eventlist>
-				<event name="OnMouseWheel" file="YearDropList.xml.lua" func="OnMouseWheel" />
+				<event name="OnMouseWheel" file="FontSizeDropList.xml.lua" func="OnMouseWheel" />
 				<!--event name="OnMouseWheel" file="NormalMenu.xml.lua" redirect="listbox.vscroll"/-->
 			</eventlist>
 		</objtemplate>
 	</control>
 	
-	<objtemplate id="yearmenu.context" class="MenuObject" templateid="menu.object.template">
+	<objtemplate id="fontsizemenu.context" class="MenuObject" templateid="menu.object.template">
 		<attr>
 			<ItemTop>1</ItemTop>
 			<ItemLeft>0</ItemLeft> 

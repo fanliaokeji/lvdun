@@ -14,26 +14,26 @@
 				<obj id="LeftBar.Date" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>18</top>
+						<top>0</top>
 						<width>father.width</width> 
 						<height>15</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text13</font>
-						<textcolor>262624</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 					</attr>		
 				</obj>
 			
 				<obj id="LeftBar.Week" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>40</top>
+						<top>25</top>
 						<width>father.width</width> 
 						<height>15</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text13</font>
-						<textcolor>262624</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
@@ -41,10 +41,10 @@
 				
 				<obj id="LeftBar.Zodiac.Image" class="ImageObject">
 					<attr>
-						<left>(father.width-83)/2</left>
-						<top>68</top>
-						<width>83</width> 
-						<height>83</height>
+						<left>(father.width-98)/2</left>
+						<top>69</top>
+						<width>98</width> 
+						<height>98</height>
 					</attr>		
 				</obj>	
 				
@@ -52,13 +52,13 @@
 				<obj id="LeftBar.Zodiac" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>153</top>
+						<top>174</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text14</font>
-						<textcolor>069DD5</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
@@ -66,13 +66,13 @@
 				<obj id="LeftBar.LunarDate" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>186</top>
+						<top>207</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text13</font>
-						<textcolor>262624</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
@@ -80,27 +80,27 @@
 				<obj id="LeftBar.ChineseDate" class="TextObject">
 					<attr>
 						<left>0</left>
-						<top>211</top>
+						<top>232</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text13</font>
-						<textcolor>262624</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
 				
 				<obj id="LeftBar.ChineseYear" class="TextObject">
 					<attr>
-						<left>3</left>
-						<top>father.height-69</top>
+						<left>-3</left>
+						<top>257</top>
 						<width>father.width</width> 
 						<height>20</height>
 						<valign>center</valign>
 						<halign>center</halign>
-						<font>font.text13</font>
-						<textcolor>069DD5</textcolor>
+						<font>font.text15</font>
+						<textcolor>system.white</textcolor>
 						<text></text>
 					</attr>		
 				</obj>
