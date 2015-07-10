@@ -29,7 +29,10 @@
 		<texture id="DiDa.BackToToday.Hover" image="bitmap\DiDa.BackToToday.Hover.png" />
 		
 		<texture id="DiDa.Canlender.Current" image="bitmap\DiDa.Canlender.Current.png" />
+		<bitmap id="DiDa.Canlender.Current.Bitmap" path="bitmap\seq_ani\15.png" />
 		<texture id="DiDa.Canlender.Current.Work" image="bitmap\DiDa.Canlender.Current.Work.png" />
+		<bitmap id="DiDa.Canlender.Current.Work.Bitmap" path="bitmap\DiDa.Canlender.Current.Work.png" />
+		
 		<texture id="DiDa.Canlender.Select.Big" image="bitmap\DiDa.Canlender.Select.Big.png" />
 		<texture id="DiDa.Canlender.Select.Small" image="bitmap\DiDa.Canlender.Select.Small.png" />
 		<texture id="DiDa.Canlender.Holiday" image="bitmap\DiDa.Canlender.Holiday.png" />
@@ -53,7 +56,56 @@
 		<texture id="DiDa.UpdateWnd.UpdateBtn.Normal" image="bitmap\DiDa.UpdateWnd.UpdateBtn.Normal.png" />
 		<texture id="DiDa.UpdateWnd.MinBtn.Normal" image="bitmap\DiDa.UpdateWnd.MinBtn.Normal.png" />
 		<texture id="DiDa.UpdateWnd.MinBtn.Hover" image="bitmap\DiDa.UpdateWnd.MinBtn.Hover.png" />
-	
+		
+		<imageseq id="DiDa.seq_ani" folder="bitmap\seq_ani" />
+		<bitmap id="texture.curday.bkg" path="bitmap\seq_ani\15.png" />
+		
+		<texture id="weather.rain.bkg" image="bitmap\bkg\weather.rain.bkg.png" />
+		<texture id="weather.snow.bkg" image="bitmap\bkg\weather.snow.bkg.png" />
+		<texture id="weather.sunny.bkg" image="bitmap\bkg\weather.sunny.bkg.png" />
+		<texture id="weather.typhoon.bkg" image="bitmap\bkg\weather.typhoon.bkg.png" />
+		<texture id="calendar.layout.bkg" image="bitmap\bkg\calendar.layout.bkg.png" />
+		<texture id="mainwnd.bkg" image="bitmap\bkg\mainwnd.bkg.png" />
+		<texture id="notepad.preview.bkg" image="bitmap\bkg\notepad.preview.bkg.png" />
+		
+		<texture id="toolbar.copy.btn.bkg.normal" image="bitmap\notepad\toolbar.copy.btn.bkg.normal.png" />
+		<texture id="toolbar.copy.btn.bkg.hover" image="bitmap\notepad\toolbar.copy.btn.bkg.hover.png" />
+		<texture id="toolbar.copy.btn.bkg.disable" image="bitmap\notepad\toolbar.copy.btn.bkg.disable.png" />
+		<texture id="toolbar.paste.btn.bkg.normal" image="bitmap\notepad\toolbar.paste.btn.bkg.normal.png" />
+		<texture id="toolbar.paste.btn.bkg.hover" image="bitmap\notepad\toolbar.paste.btn.bkg.hover.png" />
+		<texture id="toolbar.paste.btn.bkg.disable" image="bitmap\notepad\toolbar.paste.btn.bkg.disable.png" />
+		<texture id="toolbar.cut.btn.bkg.normal" image="bitmap\notepad\toolbar.cut.btn.bkg.normal.png" />
+		<texture id="toolbar.cut.btn.bkg.hover" image="bitmap\notepad\toolbar.cut.btn.bkg.hover.png" />
+		<texture id="toolbar.cut.btn.bkg.disable" image="bitmap\notepad\toolbar.cut.btn.bkg.disable.png" />
+		<texture id="toolbar.new.btn.bkg.normal" image="bitmap\notepad\toolbar.new.btn.bkg.normal.png" />
+		<texture id="toolbar.new.btn.bkg.hover" image="bitmap\notepad\toolbar.new.btn.bkg.hover.png" />
+		<texture id="toolbar.new.btn.bkg.disable" image="bitmap\notepad\toolbar.new.btn.bkg.disable.png" />
+		
+		<texture id="division.line.bkg" image="bitmap\notepad\division.line.bkg.png" />
+		<texture id="texture.editwnd.shadow" type="NineInOne" image="bitmap\bkg\texture.editwnd.shadow.png"/>
+		<texture id="texture.droplist.frame.bkg" type="NineInOne" image="bitmap\basecontrol\texture.droplist.frame.bkg.png"/>
+		
+		<texture id="save.btn.bkg.normal" image="bitmap\notepad\save.btn.bkg.normal.png" />
+		<texture id="save.btn.bkg.hover" image="bitmap\notepad\save.btn.bkg.hover.png" />
+		<texture id="save.btn.bkg.disable" image="bitmap\notepad\save.btn.bkg.disable.png" />
+		<texture id="cancel.btn.bkg.normal" image="bitmap\notepad\cancel.btn.bkg.normal.png" />
+		<texture id="cancel.btn.bkg.hover" image="bitmap\notepad\cancel.btn.bkg.hover.png" />
+		<texture id="dropdown.btn.bkg.normal" image="bitmap\notepad\dropdown.btn.bkg.normal.png" />
+		<texture id="dropdown.btn.bkg.hover" image="bitmap\notepad\dropdown.btn.bkg.hover.png" />
+		
+		<texture id="edit.blank.bkg" image="bitmap\notepad\edit.blank.bkg.png" />
+		
+		<texture id="DiDa.calendar.btn.bkg.normal" image="bitmap\DiDa.calendar.btn.bkg.normal.png" />
+		<texture id="DiDa.calendar.btn.bkg.hover" image="bitmap\DiDa.calendar.btn.bkg.hover.png" />
+		<texture id="DiDa.notepad.btn.bkg.normal" image="bitmap\DiDa.notepad.btn.bkg.normal.png" />
+		<texture id="DiDa.notepad.btn.bkg.hover" image="bitmap\DiDa.notepad.btn.bkg.hover.png" />
+		<texture id="DiDa.remind.btn.bkg.normal" image="bitmap\DiDa.remind.btn.bkg.normal.png" />
+		<texture id="DiDa.remind.btn.bkg.hover" image="bitmap\DiDa.remind.btn.bkg.hover.png" />
+		<texture id="DiDa.forher.btn.bkg.normal" image="bitmap\DiDa.forher.btn.bkg.normal.png" />
+		<texture id="DiDa.forher.btn.bkg.hover" image="bitmap\DiDa.forher.btn.bkg.hover.png" />
+		
+		<texture id="DiDa.pagenail.bkg" image="bitmap\DiDa.pagenail.bkg.png" />
+		
 		<bitmap id="多云" path="bitmap\weather\Weather.DuoYun.png" />
 		<bitmap id="暴雪" path="bitmap\weather\Weather.BaoXue.png" />
 		<bitmap id="大雨" path="bitmap\weather\Weather.DaYu.png" />
@@ -95,6 +147,40 @@
 		
 		<gif id="DiDa.Weather.Loading" file="bitmap\DiDa.Weather.Loading.gif" />
 		<gif id="DiDa.UpdateWnd.Loading" file="bitmap\DiDa.UpdateWnd.Loading.gif" />
+		
+		<!--时间轴列表begin-->
+		<texture id="check.hover" image="bitmap\TimeLineList\check.hover.png" /> 
+		<texture id="check.normal" image="bitmap\TimeLineList\check.normal.png" /> 
+		<texture id="daybg" image="bitmap\TimeLineList\daybg.png" /> 
+		<texture id="del.hover" image="bitmap\TimeLineList\del.hover.png" /> 
+		<texture id="del.hover2" image="bitmap\TimeLineList\del.hover2.png" /> 
+		<texture id="del.normal" image="bitmap\TimeLineList\del.normal.png" /> 
+		<texture id="del.normal2" image="bitmap\TimeLineList\del.normal2.png" /> 
+		<texture id="new.hover" image="bitmap\TimeLineList\new.hover.png" /> 
+		<texture id="new.normal" image="bitmap\TimeLineList\new.normal.png" /> 
+		<texture id="new2.hover" image="bitmap\TimeLineList\new2.hover.png" /> 
+		<texture id="new2.normal" image="bitmap\TimeLineList\new2.normal.png" /> 
+		<texture id="uncheck" image="bitmap\TimeLineList\uncheck.png" /> 
+		<texture id="timeline" image="bitmap\TimeLineList\timeline.png" />
+		<texture id="line2" image="bitmap\TimeLineList\line2.png" />
+		<texture id="scrollbkg" type="ThreeInOneV" image="bitmap\TimeLineList\scroll.png" />
+		<texture id="check2" image="bitmap\TimeLineList\check2.png" />
+		<texture id="check3" image="bitmap\TimeLineList\check3.png" />
+		<texture id="uncheck1" image="bitmap\TimeLineList\uncheck1.png" />
+		<texture id="timer" image="bitmap\TimeLineList\timer.png" />
+		<texture id="new3.hover" image="bitmap\TimeLineList\new3.hover.png" /> 
+		<texture id="new3.normal" image="bitmap\TimeLineList\new3.normal.png" />
+		<texture id="remindbkg" image="bitmap\TimeLineList\remindbkg.png" />
+		<texture id="flipnail" image="bitmap\TimeLineList\flipnail.png" />
+		<texture id="date.hover" image="bitmap\TimeLineList\date.hover.png" />
+		<texture id="date.normal" image="bitmap\TimeLineList\date.normal.png" />
+		<texture id="cutoffrule" image="bitmap\TimeLineList\cutoffrule.png" />
+		<texture id="savebutton.bkg.normal" image="bitmap\TimeLineList\savebutton.bkg.normal.png" />
+		<texture id="savebutton.bkg.hover" image="bitmap\TimeLineList\savebutton.bkg.hover.png" />
+		<texture id="cancelbutton.bkg.normal" image="bitmap\TimeLineList\cancelbutton.bkg.normal.png" />
+		<texture id="cancelbutton.bkg.hover" image="bitmap\TimeLineList\cancelbutton.bkg.hover.png" />
+		<!--时间轴列表end-->
+		
 	</resource>
 </XLUE>
 
