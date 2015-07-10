@@ -106,7 +106,7 @@ end
 
 function OnSelectYear(objMenuItem)
 	local strText = objMenuItem:GetText() .. " 年"
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	objDateSelect:SetYearText(strText)
 	objDateSelect:ResetFestivalText()
 	
@@ -115,7 +115,7 @@ end
 
 
 function GetYearFromComboBox(objMenuContainer)
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	if not objDateSelect then
 		local strYear = os.date("%Y")
 		return tonumber(strYear)

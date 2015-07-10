@@ -2,10 +2,10 @@
 	<control class="CalendarCtrl">
 		<attr_def>
 			<attr name="ItemWidth" type="int">
-				<default>57</default>
+				<default>68</default>
 			</attr>
 			<attr name="ItemHeight" type="int">
-				<default>46</default>
+				<default>55</default>
 			</attr>
 			<attr name="ItemSpanW" type="int">
 				<default>0</default>

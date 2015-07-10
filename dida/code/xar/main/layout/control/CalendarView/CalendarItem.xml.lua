@@ -32,7 +32,7 @@ function SetAllTextGray(self)
 end
 
 function SetAllTextWeekend(self)
-	 SetAllTextColorRes(self, "E6151C", "999999")
+	 SetAllTextColorRes(self, "orange.weekend", "999999")
 end
 
 
@@ -45,15 +45,21 @@ function SetCHNTextTermDay(self)
 	SetAllTextColorRes(self, "", "FF4A50")
 end
 
+local bSeqFrameAniEnd = true
 
 function SetCurrentDayBkg(self, bShowBkg)
 	local bIsWorkDay = CheckIsWorkDay(self)
 	local objCurDayImg = self:GetControlObject("Calendar.Current")
 	
 	if bIsWorkDay then
-		objCurDayImg:SetTextureID("DiDa.Canlender.Current.Work")
+		objCurDayImg:SetResID("DiDa.Canlender.Current.Work.Bitmap")
 	else
-		objCurDayImg:SetTextureID("DiDa.Canlender.Current")
+		-- objCurDayImg:SetTextureID("DiDa.Canlender.Current")
+		--
+		if bSeqFrameAniEnd then--上次的动画已经做完了
+			bSeqFrameAniEnd = false
+			tFunHelper.RunSeqFrameAni(objCurDayImg, "DiDa.seq_ani", function() bSeqFrameAniEnd = true end, 1200, false)
+		end
 	end
 	
 	objCurDayImg:SetVisible(bShowBkg)
@@ -137,7 +143,7 @@ function OnLButtonUp(self)
 		return
 	end
 	
-	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.LeftBarCtrl") 
+	local objLeftBarCtrl = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarPreView:DiDa.LeftBarCtrl") 
 	objLeftBarCtrl:SetClndrInfo(tClndrContent)	
 	
 	self:SetSelectState(true)

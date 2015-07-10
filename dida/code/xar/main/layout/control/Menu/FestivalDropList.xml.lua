@@ -123,7 +123,7 @@ end
 
 function OnSelectFestival(objMenuItem)
 	local strText = objMenuItem:GetText()
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	local objFestivalBox = objDateSelect:GetControlObject("Combobox.Festival")
 		
 	local attr = objFestivalBox:GetAttribute()
@@ -144,7 +144,7 @@ function ChangeCalendarState(nFestIndex)
 		return
 	end
 	
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	local tVacationList = tFunHelper.ReadConfigFromMemByKey("tVacationList") or {}
 	
 	local strMonth = FetchValueByPath(tVacationList, {"tDefaultVacMap", strText})
@@ -175,7 +175,7 @@ end
 
 
 function GetFestivalFromComboBox(objMenuContainer)
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.DateSelectCtrl")
+	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	if not objDateSelect then
 		return "元旦"
 	end

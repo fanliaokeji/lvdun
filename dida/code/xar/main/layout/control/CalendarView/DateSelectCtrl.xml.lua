@@ -40,10 +40,10 @@ end
 function ResetFestivalText(self)
 	local objFestival = self:GetControlObject("Combobox.Festival")
 	local attr = objFestival:GetAttribute()
-	attr.LeftTextPos = -20
+	attr.LeftTextPos = -25
 	objFestival:SetText("假期安排")
 	objFestival:SetEnable(true)
-	objFestival:SetTextColor("B8181D")
+	objFestival:SetTextColor("Festival.TextColor")
 	
 	local strYear = self:GetYearText()
 	if not tFunHelper.CheckIsYearInVacList(strYear) then
@@ -93,7 +93,7 @@ function AddMonth(self, nDiff)
 	end
 	
 	local strMonth = string.format("%02d", nCurMonth)
-	local strMonthText = tostring(strMonth).."月"
+	local strMonthText = tostring(strMonth).." 月"
 	self:SetMonthText(strMonthText)
 end
 
@@ -174,7 +174,7 @@ end
 function OnInitMonthBox(self)
 	local nCurMonth = os.date("%m")
 	local strMonth = string.format("%02d", nCurMonth)
-	local strText = tostring(strMonth)..tostring("月")
+	local strText = tostring(strMonth)..tostring(" 月")
 	
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:SetMonthText(strText)
@@ -259,7 +259,7 @@ function ResetCtrlText(objRootCtrl)
 	local strMonth = os.date("%m")
 	local nMonth = tonumber(strMonth)
 	strMonth = string.format("%02d", nMonth)
-	objRootCtrl:SetMonthText(strMonth.."月")
+	objRootCtrl:SetMonthText(strMonth.." 月")
 	
 	objRootCtrl:ResetFestivalText()
 end	

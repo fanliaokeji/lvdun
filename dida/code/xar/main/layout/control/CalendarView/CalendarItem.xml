@@ -67,13 +67,13 @@
 							</attr>		
 						</obj>	
 						
-						<obj id="Calendar.Current" class="TextureObject">
+						<obj id="Calendar.Current" class="ImageObject">
 							<attr>
-								<left>1</left>
-								<top>1</top>
-								<width>father.width-1</width> 
+								<left>2</left>
+								<top>-2</top>
+								<width>father.width-4</width> 
 								<height>father.height</height>
-								<texture>DiDa.Canlender.Current</texture>
+								<image>DiDa.Canlender.Current.Bitmap</image>
 								<visible>false</visible>
 								<zorder>-1</zorder>
 							</attr>		

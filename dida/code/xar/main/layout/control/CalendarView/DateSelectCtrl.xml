@@ -18,50 +18,12 @@
 		</event_def>
 		<objtemplate>
 			<children>
-				<obj id="Combobox.Year" class="TipAddin.Button">
-					<attr>
-						<left>105</left>
-						<top>25</top>
-						<width>12</width>
-						<height>6</height>
-						<cursor>IDC_HAND</cursor>
-						<NormalBkgID>DiDa.DropDown.Arrow.Normal</NormalBkgID>
-						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
-						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
-						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
-						<TextColor>262624</TextColor>
-						<TextFont>font.text14</TextFont>
-						<LeftTextPos>-12</LeftTextPos>
-						<TopTextPos>-20</TopTextPos>
-						<TextHeight>15</TextHeight>
-					</attr>
-					<eventlist>
-						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpYearBox" />
-						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearBox" />
-					</eventlist>
-				</obj>
-				
-				<obj id="DropList.Year" class="YearDropList">
-					<attr>
-						<left>86</left>
-						<top>22</top>
-						<width>51</width>
-						<height>204</height>
-						<zorder>9999999</zorder>
-					</attr>
-					<eventlist>
-						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
-						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
-					</eventlist>
-				</obj>
-				
-				
 				<obj id="Combobox.LeftArrow" class="TipAddin.Button">
 					<attr>
-						<left>52</left>
-						<top>8</top>
-						<width>8</width>
-						<height>13</height>
+						<left>0</left>
+						<top>0</top>
+						<width>9</width>
+						<height>16</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.ArrowLeft.Month.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ArrowLeft.Month.Hover</DownBkgID>
@@ -72,12 +34,10 @@
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnClickLeftArrow" />
 					</eventlist>
 				</obj>
-				
-				
-				<obj id="Combobox.Month" class="TipAddin.Button">
+				<obj id="Combobox.Year" class="TipAddin.Button">
 					<attr>
-						<left>105+45</left>
-						<top>25</top>
+						<left>54</left>
+						<top>19</top>
 						<width>12</width>
 						<height>6</height>
 						<cursor>IDC_HAND</cursor>
@@ -86,7 +46,42 @@
 						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
 						<TextColor>262624</TextColor>
-						<TextFont>font.text14</TextFont>
+						<TextFont>font.text16.Arial</TextFont>
+						<LeftTextPos>-12</LeftTextPos>
+						<TopTextPos>-20</TopTextPos>
+						<TextHeight>15</TextHeight>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpYearBox" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearBox" />
+					</eventlist>
+				</obj>
+				<obj id="DropList.Year" class="YearDropList">
+					<attr>
+						<left>19</left>
+						<top>19</top>
+						<width>77</width>
+						<height>300</height>
+						<zorder>9999999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
+					</eventlist>
+				</obj>
+				<obj id="Combobox.Month" class="TipAddin.Button">
+					<attr>
+						<left>122</left>
+						<top>19</top>
+						<width>12</width>
+						<height>6</height>
+						<cursor>IDC_HAND</cursor>
+						<NormalBkgID>DiDa.DropDown.Arrow.Normal</NormalBkgID>
+						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
+						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
+						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
+						<TextColor>262624</TextColor>
+						<TextFont>font.text16.Arial</TextFont>
 						<LeftTextPos>-3</LeftTextPos>
 						<TopTextPos>-20</TopTextPos>
 						<TextHeight>15</TextHeight>
@@ -96,13 +91,25 @@
 						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitMonthBox" />
 					</eventlist>
 				</obj>
-				
+				<obj id="DropList.Month" class="MonthDropList">
+					<attr>
+						<left>19+77+2</left>
+						<top>22</top>
+						<width>77</width>
+						<height>300</height>
+						<zorder>9999999</zorder>
+					</attr>
+					<eventlist>
+						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
+						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
+					</eventlist>
+				</obj>
 				<obj id="Combobox.RightArrow" class="TipAddin.Button">
 					<attr>
-						<left>212</left>
-						<top>7</top>
-						<width>8</width>
-						<height>13</height>
+						<left>193</left>
+						<top>0</top>
+						<width>9</width>
+						<height>16</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.ArrowRight.Month.Normal</NormalBkgID>
 						<DownBkgID>DiDa.ArrowRight.Month.Hover</DownBkgID>
@@ -113,27 +120,10 @@
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnClickRightArrow" />
 					</eventlist>
 				</obj>
-				
-				
-				<obj id="DropList.Month" class="MonthDropList">
-					<attr>
-						<left>140</left>
-						<top>22</top>
-						<width>43</width>
-						<height>207</height>
-						<zorder>9999999</zorder>
-					</attr>
-					<eventlist>
-						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
-						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
-					</eventlist>
-				</obj>
-				
-				
 				<obj id="Combobox.Festival" class="TipAddin.Button">
 					<attr>
-						<left>285</left>
-						<top>25</top>
+						<left>290</left>
+						<top>19</top>
 						<width>12</width>
 						<height>6</height>
 						<cursor>IDC_HAND</cursor>
@@ -142,23 +132,21 @@
 						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
 						<TextColor>B8181D</TextColor>
-						<TextFont>font.text12</TextFont>
+						<TextFont>font.text15</TextFont>
 						<LeftTextPos>-12</LeftTextPos>
-						<TopTextPos>-19</TopTextPos>
-						<TextHeight>15</TextHeight>
+						<TopTextPos>-22</TopTextPos>
+						<TextHeight>18</TextHeight>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonUp" file="DateSelectCtrl.xml.lua" func="OnLButtonUpFestivalBox" />
 					</eventlist>
 				</obj>
-				
-				
 				<obj id="DropList.Festival" class="FestivalDropList">
 					<attr>
-						<left>256</left>
-						<top>22</top>
-						<width>70</width>
-						<height>137</height>
+						<left>267</left>
+						<top>19</top>
+						<width>77</width>
+						<height>200</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
@@ -166,14 +154,12 @@
 						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
 					</eventlist>
 				</obj>
-				
-				
 				<obj id="BackToToday.Button" class="TipAddin.Button">
 					<attr>
-						<left>363</left>
-						<top>0</top>
-						<width>27</width>
-						<height>27</height>
+						<left>392</left>
+						<top>-5</top>
+						<width>32</width>
+						<height>32</height>
 						<cursor>IDC_HAND</cursor>
 						<NormalBkgID>DiDa.BackToToday.Normal</NormalBkgID>
 						<DownBkgID>DiDa.BackToToday.Hover</DownBkgID>

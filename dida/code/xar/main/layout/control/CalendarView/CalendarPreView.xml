@@ -1,0 +1,57 @@
+<xlue>
+	<control class="CalendarPreView">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="root" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>	
+					<children>
+						<obj id="weather.bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>weather.sunny.bkg</texture>
+							</attr>	
+							<children>
+								<obj id="DiDa.WeatherCtrl" class="WeatherCtrl">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>180</width> 
+										<height>130</height>
+									</attr>			
+								</obj>
+								<obj id="DiDa.LeftBarCtrl" class="LeftBarCtrl">
+									<attr>
+										<left>0</left>
+										<top>138</top>
+										<width>father.width</width> 
+										<height>father.height - 138 - 5</height>
+									</attr>			
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="CalendarPreView.xml.lua" func="OnInitCalendarPreView" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

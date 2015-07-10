@@ -1,0 +1,675 @@
+<xlue>
+	<control class="SimpleEditCtrl">
+		<attr_def>
+			<attr name="NormalBkgID" type="string" />
+			<attr name="HoverBkgID" type="string" />
+			<attr name="ImgWidth" type="int" />
+			<attr name="ImgHeight" type="int" />
+			<attr name="Text" type="string" />
+			<attr name="LimitLen" type="int" />
+			<attr name="MaxNumber" type="int"><default>60</default></attr>
+			<attr name="MinNumber" type="int"><default>0</default></attr>
+			<attr name="DefaultText" type="string" />
+		</attr_def>
+		<method_def>
+			<SetEditText file="RemindPanle.xml.lua" func="SetEditText"/>
+		</method_def>
+		<event_def>
+			<OnChange />
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="bkg" class="TextureObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+				</attr>
+				<children>
+					<obj id="edit" class="EditObject">
+						<attr>
+							<left>-4</left>
+							<top>2</top>
+							<width>father.width+10</width>
+							<height>father.height</height>
+							<transparent>1</transparent>
+							<wanttab>1</wanttab>
+							<textcolor>262624</textcolor>
+							<font>font.text12</font>
+							<number>1</number>
+							<maxlength>4</maxlength>
+							<viewinset>0,0,0,0</viewinset>
+						</attr>
+						<eventlist>
+							<event name="OnFocusChange" file="RemindPanle.xml.lua" func="OnFocusChangeEdit" />
+							<event name="OnChange" file="RemindPanle.xml.lua" func="OnChangeEdit" />
+						</eventlist>
+					</obj>
+				</children>
+			</obj>
+			<obj id="text" class="TextObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+					<textcolor>262624</textcolor>
+					<font>font.text13</font>
+					<valign>top</valign>
+					<halign>left</halign>
+				</attr>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitControlEdit" />
+			<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+		</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="SimpleCheckBox">
+		<attr_def>
+			<attr name="UnCheckBkgID" type="string" />
+			<attr name="CheckBkgID" type="string" />
+			<attr name="ImgWidth" type="int" ><default>16</default></attr>
+			<attr name="ImgHeight" type="int" ><default>16</default></attr>
+			<attr name="Text" type="string" />
+			<attr name="Space" type="int" ><default>9</default></attr>
+		</attr_def>
+		<method_def>
+			<SetCheck file="RemindPanle.xml.lua" func="SetCheck"/>
+		</method_def>
+		<event_def>
+			<OnClick />
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="button" class="TipAddin.Button">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>16</width>
+					<height>16</height>
+					<NormalBkgID>uncheck1</NormalBkgID>
+					<HoverBkgID>uncheck1</HoverBkgID>
+					<DownBkgID>uncheck1</DownBkgID>
+					<DisableBkgID>uncheck1</DisableBkgID>
+				</attr>
+				<eventlist>
+					<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickSimpleCheckBox" />
+				</eventlist>
+			</obj>
+			<obj id="text" class="TextObject">
+				<attr>
+					<left>16+9</left>
+					<top>0</top>
+					<width>100</width>
+					<height>20</height>
+					<textcolor>262624</textcolor>
+					<font>font.text13</font>
+					<valign>top</valign>
+					<halign>left</halign>
+					<text>气泡提醒</text>
+				</attr>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitSimpleCheckBox" />
+			<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+		</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="SimpleTitleCtrl">
+		<attr_def>
+			<attr name="Text" type="string" />
+			<attr name="TextFont" type="string" />
+			<attr name="TextColor" type="string" />
+		</attr_def>
+		<method_def>
+			<SetText file="RemindPanle.xml.lua" func="SetText"/>
+		</method_def>
+		<event_def>
+			<OnClick />
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="text" class="TextObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+					<textcolor>3F5483</textcolor>
+					<font>font.text15.arial.bold</font>
+					<valign>top</valign>
+					<halign>left</halign>
+					<wordellipsis></wordellipsis>
+					<text>标题，周六要加班</text>
+				</attr>
+			</obj>
+			<obj id="edit" class="EditObject">
+				<attr>
+					<left>-4</left>
+					<top>0</top>
+					<width>father.width+10</width>
+					<height>father.height</height>
+					<bkcolor>EBF1F9</bkcolor>
+					<wanttab>1</wanttab>
+					<textcolor>262624</textcolor>
+					<font>font.text12</font>
+					<viewinset>0,4,0,0</viewinset>
+					<text>标题，周六要加班</text>
+				</attr>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitSimpleTitleCtrl" />
+			<event name="OnControlMouseEnter" file="RemindPanle.xml.lua" func="OnMouseEnterSimpleTitleCtrl" />
+			<event name="OnControlMouseLeave" file="RemindPanle.xml.lua" func="OnMouseLeaveSimpleTitleCtrl" />
+			<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+		</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="RemindPanleCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="RemindPanle.xml.lua" func="SetData"/>
+		</method_def>
+		<event_def>
+			<UpdateRemindList>
+				<param>
+				</param>
+			</UpdateRemindList>
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="RemindPanle.bkg" class="TextureObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+					<texture>calendar.layout.bkg</texture>
+				</attr>	
+				<children>
+					<obj id="TitleObj" class="SimpleTitleCtrl">
+						<attr>
+							<left>23</left>
+							<top>23</top>
+							<width>200</width>
+							<height>24</height>
+							<TextColor>3F5483</TextColor>
+							<TextFont>font.text15.arial.bold</TextFont>
+							<Text>标题，周六要加班</Text>
+						</attr>
+					</obj>
+					<obj id="RightTimeObj" class="TextObject">
+						<attr>
+							<left>293+65</left>
+							<top>38</top>
+							<width>140</width>
+							<height>24</height>
+							<textcolor>999999</textcolor>
+							<font>font.text11</font>
+							<valign>top</valign>
+							<halign>left</halign>
+							<text>2015-06-26  18:55</text>
+						</attr>
+					</obj>
+					<obj id="CenterEditObj" class="EditObject">
+						<attr>
+							<left>2</left>
+							<top>60</top>
+							<width>father.width - 2 - 8</width>
+							<height>160</height>
+							<bkcolor>EBF1F9</bkcolor>
+							<multiline>1</multiline>
+							<wanttab>1</wanttab>
+							<allowvsb>1</allowvsb>
+							<textcolor>262624</textcolor>
+							<font>font.text13</font>
+							<viewinset>7,15,7,15</viewinset>
+							<text>内容：斑马斑马 你不要睡觉啦
+		再给我看看你受伤的尾巴，我不想去触碰你伤口的疤</text>
+						</attr>
+					</obj>
+					<obj id="BottomCheckPanle" class="LayoutObject">
+						<attr>
+							<left>0</left>
+							<top>60+160</top>
+							<width>father.width</width>
+							<height>160</height>
+						</attr>
+						<children>
+							<!--单选框"无"-->
+							<obj id="CheckBoxNA" class="SimpleCheckBox">
+								<attr>
+									<left>18</left>
+									<top>15</top>
+									<width>75</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>无</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--单选框"气泡提醒"-->
+							<obj id="CheckBoxBubble" class="SimpleCheckBox">
+								<attr>
+									<left>87</left>
+									<top>15</top>
+									<width>125</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>气泡提醒</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--重复-->
+							<obj id="RepeatTextObj" class="TextObject">
+								<attr>
+									<left>18</left>
+									<top>56</top>
+									<width>40</width>
+									<height>20</height>
+									<textcolor>262624</textcolor>
+									<font>font.text12</font>
+									<valign>top</valign>
+									<halign>left</halign>
+									<text>重复：</text>
+								</attr>
+								<eventlist>
+									<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+								</eventlist>
+							</obj>
+							<!--重复后面的单选框“一次性提醒”"-->
+							<obj id="CheckBoxOnce" class="SimpleCheckBox">
+								<attr>
+									<left>87</left>
+									<top>56</top>
+									<width>95</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>一次性提醒</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--一次性提醒后面的单选框“每天”"-->
+							<obj id="CheckBoxEveryDay" class="SimpleCheckBox">
+								<attr>
+									<left>182</left>
+									<top>56</top>
+									<width>65</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>每天</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--每天后面的单选框“每周”"-->
+							<obj id="CheckBoxEveryWeek" class="SimpleCheckBox">
+								<attr>
+									<left>247</left>
+									<top>56</top>
+									<width>65</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>每周</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--每周后面的单选框“每月”"-->
+							<obj id="CheckBoxEveryMonth" class="SimpleCheckBox">
+								<attr>
+									<left>314</left>
+									<top>56</top>
+									<width>65</width>
+									<height>20</height>
+									<UnCheckBkgID>uncheck1</UnCheckBkgID>
+									<CheckBkgID>check3</CheckBkgID>
+									<Text>每月</Text>
+								</attr>
+								<eventlist>
+									<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+								</eventlist>
+							</obj>
+							<!--提醒时间-->
+							<obj id="RemindTimeTextObj" class="TextObject">
+								<attr>
+									<left>18</left>
+									<top>96</top>
+									<width>70</width>
+									<height>20</height>
+									<textcolor>262624</textcolor>
+									<font>font.text12</font>
+									<valign>top</valign>
+									<halign>left</halign>
+									<text>提醒时间：</text>
+								</attr>
+								<eventlist>
+									<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+								</eventlist>
+							</obj>
+							<obj id="RemindTimeRightWeekCk" class="LayoutObject">
+								<attr>
+									<left>87</left>
+									<top>96</top>
+									<width>365</width>
+									<height>59</height>
+								</attr>
+								<children>
+									<!--周一-->
+									<obj id="CheckBoxMonday" class="SimpleCheckBox">
+										<attr>
+											<left>0</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周一</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--编辑时间-->
+									<obj id="EditHourWeek" class="SimpleEditCtrl">
+										<attr>
+											<left>0</left>
+											<top>34</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>23</MaxNumber>
+											<Text>时</Text>
+										</attr>
+									</obj>
+									<obj id="EditMinuteWeek" class="SimpleEditCtrl">
+										<attr>
+											<left>49</left>
+											<top>34</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>59</MaxNumber>
+											<Text>分</Text>
+										</attr>
+									</obj>
+									<!--周二-->
+									<obj id="CheckBoxTuesday" class="SimpleCheckBox">
+										<attr>
+											<left>54</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周二</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--周三-->
+									<obj id="CheckBoxWednesday" class="SimpleCheckBox">
+										<attr>
+											<left>107</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周三</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--周四-->
+									<obj id="CheckBoxThursday" class="SimpleCheckBox">
+										<attr>
+											<left>160</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周四</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--周五-->
+									<obj id="CheckBoxFriday" class="SimpleCheckBox">
+										<attr>
+											<left>213</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周五</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--周六-->
+									<obj id="CheckBoxSaturday" class="SimpleCheckBox">
+										<attr>
+											<left>266</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周六</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+									<!--周日-->
+									<obj id="CheckBoxSunday" class="SimpleCheckBox">
+										<attr>
+											<left>319</left>
+											<top>0</top>
+											<width>47</width>
+											<height>20</height>
+											<UnCheckBkgID>uncheck1</UnCheckBkgID>
+											<CheckBkgID>check3</CheckBkgID>
+											<Text>周日</Text>
+											<Space>4</Space>
+										</attr>
+										<eventlist>
+											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+										</eventlist>
+									</obj>
+								</children>
+							</obj>
+							<obj id="RemindTimeRightTimeEdit" class="LayoutObject">
+								<attr>
+									<left>87</left>
+									<top>96</top>
+									<width>365</width>
+									<height>59</height>
+								</attr>
+								<children>
+									<obj id="EditYearTimeEdit" class="SimpleEditCtrl">
+										<attr>
+											<left>0</left>
+											<top>0</top>
+											<width>64</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>40</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>4</LimitLen>
+											<MaxNumber>9999</MaxNumber>
+											<MinNumber>2015</MinNumber>
+											<Text>年</Text>
+										</attr>
+									</obj>
+									<obj id="EditMonthTimeEdit" class="SimpleEditCtrl">
+										<attr>
+											<left>69</left>
+											<top>0</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>12</MaxNumber>
+											<MinNumber>1</MinNumber>
+											<Text>月</Text>
+										</attr>
+									</obj>
+									<obj id="EditDayTimeEdit" class="SimpleEditCtrl">
+										<attr>
+											<left>118</left>
+											<top>0</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>31</MaxNumber>
+											<MinNumber>1</MinNumber>
+											<Text>日</Text>
+										</attr>
+									</obj>
+									<obj id="CutOffLineObj" class="TextureObject">
+										<attr>
+											<left>182</left>
+											<top>0</top>
+											<width>1</width>
+											<height>25</height>
+											<texture>cutoffrule</texture>
+										</attr>
+									</obj>
+									<obj id="EditHourTimeEdit" class="SimpleEditCtrl">
+										<attr>
+											<left>203</left>
+											<top>0</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>23</MaxNumber>
+											<Text>时</Text>
+										</attr>
+									</obj>
+									<obj id="EditMinuteTimeEdit" class="SimpleEditCtrl">
+										<attr>
+											<left>252</left>
+											<top>0</top>
+											<width>44</width>
+											<height>22</height>
+											<ImgHeight>20</ImgHeight>
+											<ImgWidth>20</ImgWidth>
+											<NormalBkgID>date.normal</NormalBkgID>
+											<HoverBkgID>date.hover</HoverBkgID>
+											<LimitLen>2</LimitLen>
+											<MaxNumber>59</MaxNumber>
+											<Text>分</Text>
+										</attr>
+									</obj>
+								</children>
+							</obj>
+						</children>
+					</obj>
+					<!--底部按钮-->
+					<obj id="BottomSaveBtn" class="TipAddin.Button">
+						<attr>
+							<left>271</left>
+							<top>398</top>
+							<width>80</width>
+							<height>26</height>
+							<NormalBkgID>savebutton.bkg.normal</NormalBkgID>
+							<HoverBkgID>savebutton.bkg.hover</HoverBkgID>
+							<DownBkgID>savebutton.bkg.normal</DownBkgID>
+							<DisableBkgID>savebutton.bkg.normal</DisableBkgID>
+							<Text>保存</Text>
+							<LeftTextPos>28</LeftTextPos>
+							<TopTextPos>5</TopTextPos>
+							<TextHeight>16</TextHeight>
+							<TextFont>font.text12</TextFont>
+							<TextColor>system.white</TextColor>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickBottomSaveBtn" />
+						</eventlist>
+					</obj>
+					<obj id="BottomCancelBtn" class="TipAddin.Button">
+						<attr>
+							<left>372</left>
+							<top>398</top>
+							<width>80</width>
+							<height>26</height>
+							<NormalBkgID>cancelbutton.bkg.normal</NormalBkgID>
+							<HoverBkgID>cancelbutton.bkg.hover</HoverBkgID>
+							<DownBkgID>cancelbutton.bkg.normal</DownBkgID>
+							<DisableBkgID>cancelbutton.bkg.normal</DisableBkgID>
+							<Text>取消</Text>
+							<LeftTextPos>28</LeftTextPos>
+							<TopTextPos>5</TopTextPos>
+							<TextHeight>16</TextHeight>
+							<TextFont>font.text12</TextFont>
+							<TextColor>3F5483</TextColor>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickBottomCancelBtn" />
+						</eventlist>
+					</obj>
+				</children>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitControlRemindPanle" />
+		</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

@@ -1,7 +1,6 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
-
 --方法
 function SetClndrInfo(self, tClndrContent)
 	local objRootCtrl = self
@@ -32,32 +31,22 @@ function SetClndrInfo(self, tClndrContent)
 	SetTextObjContent(objRootCtrl, "LeftBar.ChineseDate", strChineseDate)
 	
 	local strChineseYear = tostring(tClndrContent.yearganzhi).."年 【"..tostring(tClndrContent.shengxiao).."年】"
+	strChineseYear = "—  "..strChineseYear.." —"
 	SetTextObjContent(objRootCtrl, "LeftBar.ChineseYear", strChineseYear)
 end
 
-
-
 ---事件
 function OnInitLeftBar(self)
-	InitClndrInfo(self)
-end
-
-
-------------------
-function InitClndrInfo(objRootCtrl)
 	local strCurDate = os.date("%Y%m%d")
-	
 	tFunHelper.GetClndrContent(strCurDate, 
 		function (tClndrContentList)
 			if type(tClndrContentList) ~= "table" then
+				
 				return
 			end
-		
-			tClndrContent = tClndrContentList[1]
-			objRootCtrl:SetClndrInfo(tClndrContent)
+			objRootCtrl:SetClndrInfo(tClndrContentList[1])
 		end)
 end
-
 
 --Sunday 是1
 function GetCHNWeekText(nWeekNum)
@@ -74,14 +63,12 @@ function GetCHNWeekText(nWeekNum)
 	return tCHNNumMap[nWeekNum]
 end
 
-
 function SetTextObjContent(objRootCtrl, strObjKey, strText)
 	local objText = objRootCtrl:GetControlObject(strObjKey)
 	if objText and IsRealString(strText) then
 		objText:SetText(strText) 
 	end
 end
-
 
 function SetZodiacImage(objRootCtrl, strZodiac)
 	local objXarManager = XLGetObject("Xunlei.UIEngine.XARManager")
@@ -96,7 +83,6 @@ function SetZodiacImage(objRootCtrl, strZodiac)
 		objImage:SetBitmap(objBitmap)
 	end
 end
-
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""

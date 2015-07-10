@@ -26,7 +26,7 @@
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
-								<BknID>DiDa.DropList.Festival</BknID>
+								<BknID>texture.droplist.frame.bkg</BknID>
 							</attr>
 							<eventlist>
 								<event name="OnInitControl" file="FestivalDropList.xml.lua" func="OnInitControl" />

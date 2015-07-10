@@ -1,0 +1,316 @@
+<xlue>
+	<control class="TimeLineListItemHead">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="TimeLineCtrl.xml.lua" func="SetDataHead"/>
+		</method_def>
+		<event_def>
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="Background" class="FillObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+					<destcolor>system.white</destcolor>
+					<srccolor>system.white</srccolor>
+					<srcpt>0,0</srcpt>
+					<destpt>father.width,father.height</destpt>
+					<filltype>Monochrome</filltype>
+					<blendtype>Source</blendtype>
+				</attr>
+				<children>
+					<obj id="Foreground" class="TextureObject">
+						<attr>
+							<left>26</left>
+							<top>9</top>
+							<width>26</width>
+							<height>26</height>
+							<texture>daybg</texture>
+						</attr>
+						<children>
+							<obj id="HeadDay" class="TextObject">
+								<attr>
+									<left>0</left>
+									<top>0</top>
+									<width>father.width</width>
+									<height>father.height</height>
+									<textcolor>3F5483</textcolor>
+									<font>font.text15.arial.bold</font>
+									<valign>center</valign>
+									<halign>center</halign>
+								</attr>
+							</obj>
+						</children>
+					</obj>
+					<obj id="DateAndWeek" class="TextObject">
+						<attr>
+							<left>26+26+7</left>
+							<top>11</top>
+							<width>123</width>
+							<height>26</height>
+							<textcolor>3F5483</textcolor>
+							<font>font.text13</font>
+						</attr>
+					</obj>
+					<obj id="MiniAddBtn" class="TipAddin.Button">
+						<attr>
+							<left>father.width-13-15</left>
+							<top>14</top>
+							<width>13</width>
+							<height>13</height>
+							<NormalBkgID>new2.normal</NormalBkgID>
+							<HoverBkgID>new2.hover</HoverBkgID>
+							<DownBkgID>new2.hover</DownBkgID>
+							<DisableBkgID>new2.normal</DisableBkgID>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickAddBtn" />
+						</eventlist>
+					</obj>
+				</children>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnLButtonDown" file="TimeLineCtrl.xml.lua" func="OnLButtonDown" />
+			<event name="OnLButtonUp" file="TimeLineCtrl.xml.lua" func="OnLButtonUp" />
+			<event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<event name="OnMouseLeave" file="TimeLineCtrl.xml.lua" func="OnMouseLeave" />
+			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitControl" />
+		</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="TimeLineListItemChild">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetData file="TimeLineCtrl.xml.lua" func="SetDataChild"/>
+		</method_def>
+		<event_def>
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="Background" class="FillObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>father.height</height>
+					<destcolor>system.white</destcolor>
+					<srccolor>system.white</srccolor>
+					<srcpt>0,0</srcpt>
+					<destpt>father.width,father.height</destpt>
+					<filltype>Monochrome</filltype>
+					<blendtype>Source</blendtype>
+				</attr>
+				<children>
+					<obj id="HourSecond" class="TextObject">
+						<attr>
+							<left>6</left>
+							<top>17</top>
+							<width>30</width>
+							<height>14</height>
+							<textcolor>999999</textcolor>
+							<font>font.text8</font>
+						</attr>
+					</obj>
+					
+					<obj id="LineTop" class="TextureObject">
+						<attr>
+							<left>39</left>
+							<top>0</top>
+							<width>3</width>
+							<height>16</height>
+							<texture>timeline</texture>
+							<alpha>70</alpha>
+						</attr>
+					</obj>
+					<obj id="ForegroundCheckBox" class="TipAddin.Button">
+						<attr>
+							<left>34</left>
+							<top>16</top>
+							<width>12</width>
+							<height>12</height>
+							<NormalBkgID>uncheck</NormalBkgID>
+							<HoverBkgID>uncheck</HoverBkgID>
+							<DownBkgID>uncheck</DownBkgID>
+							<DisableBkgID>uncheck</DisableBkgID>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickCheckBox" />
+						</eventlist>
+					</obj>
+					<obj id="LineBottom" class="TextureObject">
+						<attr>
+							<left>39</left>
+							<top>28</top>
+							<width>3</width>
+							<height>16</height>
+							<texture>timeline</texture>
+							<alpha>70</alpha>
+						</attr>
+					</obj>
+					
+					<obj id="TitleText" class="TextObject">
+						<attr>
+							<left>26+26+7</left>
+							<top>11</top>
+							<width>123</width>
+							<height>20</height>
+							<textcolor>262624</textcolor>
+							<font>font.text13</font>
+						</attr>
+					</obj>
+				</children>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnLButtonDown" file="TimeLineCtrl.xml.lua" func="OnLButtonDown" />
+			<event name="OnLButtonUp" file="TimeLineCtrl.xml.lua" func="OnLButtonUp" />
+			<event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<event name="OnMouseLeave" file="TimeLineCtrl.xml.lua" func="OnMouseLeave" />
+			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitControl" />
+		</eventlist>
+		</objtemplate>
+	</control>
+	
+	<control class="TimeLineListCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<ReBuildRemindList file="TimeLineCtrl.xml.lua" func="ReBuildList"/>
+		</method_def>
+		<event_def>
+			<OnSelect>
+				<param>
+					<table />
+				</param>
+			</OnSelect>
+			<OnClearItem>
+				<param>
+					
+				</param>
+			</OnClearItem>
+		</event_def>
+		<objtemplate>
+		<children>
+			<obj id="HeadCtrl" class="FillObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>father.width</width>
+					<height>55</height>
+					<destcolor>F89400</destcolor>
+					<srccolor>F89400</srccolor>
+					<srcpt>0,0</srcpt>
+					<destpt>father.width,55</destpt>
+					<filltype>Monochrome</filltype>
+					<blendtype>Source</blendtype>
+				</attr>
+				<children>
+					<obj id="HeadDeleteBtn" class="TipAddin.Button">
+						<attr>
+							<left>100</left>
+							<top>9</top>
+							<width>36</width>
+							<height>36</height>
+							<NormalBkgID>del.normal2</NormalBkgID>
+							<HoverBkgID>del.hover2</HoverBkgID>
+							<DownBkgID>del.hover2</DownBkgID>
+							<DisableBkgID>del.normal2</DisableBkgID>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickDel" />
+						</eventlist>
+					</obj>
+					<obj id="HeadAddBtn" class="TipAddin.Button">
+						<attr>
+							<left>144</left>
+							<top>9</top>
+							<width>36</width>
+							<height>36</height>
+							<NormalBkgID>new.normal</NormalBkgID>
+							<HoverBkgID>new.hover</HoverBkgID>
+							<DownBkgID>new.hover</DownBkgID>
+							<DisableBkgID>new.normal</DisableBkgID>
+						</attr>
+						<eventlist>
+							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickHeadAddBtn" />
+						</eventlist>
+					</obj>
+				</children>
+			</obj>
+			<obj id="BottomPanle" class="FillObject">
+				 <attr>
+					<left>0</left>
+					<top>55</top>
+					<width>father.width</width>
+					<height>father.height-55-44</height>
+					<limitchild>1</limitchild>
+					<destcolor>system.white</destcolor>
+					<srccolor>system.white</srccolor>
+					<srcpt>0,0</srcpt>
+					<destpt>father.width,father.height-55-44</destpt>
+					<filltype>Monochrome</filltype>
+					<blendtype>Source</blendtype>
+				</attr>
+				<children>
+					<obj id="BottomListLayout" class="LayoutObject">
+						<attr>
+							<left>0</left>
+							<top>0</top>
+							<width>father.width</width>
+							<height>father.height</height>
+						</attr>
+					</obj>
+				</children>
+			</obj>
+			
+			<obj id="listbox.vscroll" class="TipAddin.ScrollBar">
+				<attr>
+					<Type>1</Type>
+					<ThumbBtn_normal>scrollbkg</ThumbBtn_normal>
+					<ThumbBtn_hover>scrollbkg</ThumbBtn_hover>
+					<ThumbBtn_down>scrollbkg</ThumbBtn_down>
+					<ThumbRightMagrin>1</ThumbRightMagrin>
+					<ThumbBtnWidth>12</ThumbBtnWidth>
+					<ThumbBtnLength>100</ThumbBtnLength>
+					<SideBtnLength>0</SideBtnLength>
+					<left>father.width - 14</left>
+					<top>55</top>
+					<width>12</width>
+					<height>father.height-55-44</height>
+					<zorder>99999</zorder>
+				</attr>
+				<eventlist>
+					<event name="OnScrollBarMouseWheel" file="TimeLineCtrl.xml.lua" func="OnScrollBarMouseWheel"/>
+					<event name="OnMousePosEvent" file="TimeLineCtrl.xml.lua" func="OnScrollMousePosEvent"/>
+					<event name="OnVScroll" file="TimeLineCtrl.xml.lua" func="OnVScroll" />
+				</eventlist>
+			</obj>	
+			
+			<obj id="BottomEndPanle" class="FillObject">
+				<attr>
+					<left>0</left>
+					<top>father.height-44</top>
+					<width>father.width</width>
+					<height>44</height>
+					<destcolor>EBF1F9</destcolor>
+					<srccolor>EBF1F9</srccolor>
+					<srcpt>0,0</srcpt>
+					<destpt>father.width,44</destpt>
+					<filltype>Monochrome</filltype>
+					<blendtype>Source</blendtype>
+				</attr>
+			</obj>
+		</children>
+		<eventlist>
+			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitTimeLineListCtrl" />
+		</eventlist>
+		</objtemplate>
+	</control>
+</xlue>
