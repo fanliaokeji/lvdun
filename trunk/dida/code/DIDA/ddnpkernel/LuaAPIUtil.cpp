@@ -152,6 +152,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"DecryptFileAES", DecryptFileAES},
 	
 	{"IsClipboardFormatAvailable",FIsClipboardFormatAvailable},
+	{"FileDialog",FileDialog},
+	{"BrowserForFile",BrowserForFile},
 	//INIÅäÖÃÎÄ¼þ²Ù×÷
 	{"ReadINI", ReadINI},
 	{"WriteINI", WriteINI},
