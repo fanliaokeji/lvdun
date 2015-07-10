@@ -1,0 +1,62 @@
+<XLUE>
+	<resource>
+		<curve id="dlg.turn.curve" type="bezier">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.189560" sp="0.656151"/>
+			<controlpoint  tp="0.475275" sp="0.949527"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+		<curve id="dlg.hidden.curve" type="bspline">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.082418" sp="-0.217666"/>
+			<controlpoint  tp="0.472527" sp="-0.138801"/>
+			<controlpoint  tp="0.651099" sp="0.873817"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+		<curve id="dlg.pop.curve" type="bspline">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.445055" sp="0.182965"/>
+			<controlpoint  tp="0.483516" sp="1.353312"/>
+			<controlpoint  tp="0.964286" sp="1.347003"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+
+		<curve id="menu.show" type="bezier">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.604396" sp="0.968454"/>
+			<controlpoint  tp="0.706044" sp="1.302839"/>
+			<controlpoint  tp="0.884615" sp="1.056782"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+
+		<curve id="menu.hide" type="bezier">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.197802" sp="0.567823"/>
+			<controlpoint  tp="0.494505" sp="0.936909"/>
+			<controlpoint  tp="0.744505" sp="1.009464"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+		
+		<curve id="progress.light" type="bspline">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.219780" sp="1.000000"/>
+			<controlpoint  tp="0.782967" sp="1.003155"/>
+			<controlpoint  tp="0.997253" sp="0.012618"/>
+		</curve>
+		
+		<curve id="checkbox.show" type="bspline">
+		  <controlpoint tp="0.000000" sp="0.000000" /> 
+		  <controlpoint tp="0.516484" sp="0.176656" /> 
+		  <controlpoint tp="0.744505" sp="1.343849" /> 
+		  <controlpoint tp="0.936813" sp="1.318612" /> 
+		  <controlpoint tp="0.997253" sp="1.000000" /> 
+		</curve>
+		<curve id="radiobutton.show" type="bspline">
+			<controlpoint  tp="0.000000" sp="0.000000"/>
+			<controlpoint  tp="0.516484" sp="0.176656"/>
+			<controlpoint  tp="0.744505" sp="1.343849"/>
+			<controlpoint  tp="0.936813" sp="1.318612"/>
+			<controlpoint  tp="0.997253" sp="1.000000"/>
+		</curve>
+	</resource>	
+</XLUE>
