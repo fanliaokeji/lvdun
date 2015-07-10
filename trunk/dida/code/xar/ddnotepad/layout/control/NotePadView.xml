@@ -1,0 +1,365 @@
+<xlue>
+<!--
+	<objtemplate id="config.combobox.listctrl.scrollbar" class="TipAddin.ScrollBar">
+		<attr>
+			<Type>1</Type>
+			<HoverBkn>texture.common.scrollbar.bkg.normal</HoverBkn>
+			<NormalBkn>texture.common.scrollbar.bkg.hover</NormalBkn>
+			<ThumbBtn_normal>texture.common.scrollbar.thumbbtn.normal</ThumbBtn_normal>
+			<ThumbBtn_hover>texture.common.scrollbar.thumbbtn.hover</ThumbBtn_hover>
+			<ThumbBtn_down>texture.common.scrollbar.thumbbtn.down</ThumbBtn_down>
+			<LeftBtn_normal>texture.vsb.leftbtn.normal</LeftBtn_normal>
+			<LeftBtn_hover>texture.vsb.leftbtn.hover</LeftBtn_hover>
+			<LeftBtn_down>texture.vsb.leftbtn.down</LeftBtn_down>
+			<RightBtn_normal>texture.vsb.rightbtn.normal</RightBtn_normal>
+			<RightBtn_hover>texture.vsb.rightbtn.hover</RightBtn_hover>
+			<RightBtn_down>texture.vsb.rightbtn.down</RightBtn_down>
+			<NormalDecorateID></NormalDecorateID>
+			<HoverDecorateID></HoverDecorateID>
+			<DownDecorateID></DownDecorateID>
+			<ThumbBtnWidth>9</ThumbBtnWidth>
+			<ThumbRightMagrin></ThumbRightMagrin>
+			<ThumbBtnLength>32</ThumbBtnLength>
+			<SideBtnLength>9</SideBtnLength>
+			<PageSize>15</PageSize>
+			<RangeBegin>0</RangeBegin>
+			<RangeEnd>100</RangeEnd>
+			<ScrollPos>0</ScrollPos>
+			<left>father.width-8</left>
+			<top>0</top>
+			<width>9</width>	
+			<height>father.height</height> 
+			<zorder>1000</zorder>
+		</attr>
+	</objtemplate>
+	
+	<objtemplate id="TipAddin.combobox" class="ComboBox">
+		<attr>
+			<height>24</height>
+			<ScrollBarTemplate>config.combobox.listctrl.scrollbar</ScrollBarTemplate>					
+			<ListCtrlBkgID>texture.general.combox.listctrlbkg</ListCtrlBkgID>
+			<UpwardList>false</UpwardList>
+			<ItemNormalBkgID></ItemNormalBkgID>
+			<ItemHoverBkgID>combo.general.item.bkg.hover</ItemHoverBkgID>
+			<ItemTextFont>font.config.defaultfont.normal</ItemTextFont>
+			<ListItemHeight>19</ListItemHeight>
+			<TopMargin>2</TopMargin>
+			<LeftMargin>1</LeftMargin>
+			<ListCtrlHeight>80</ListCtrlHeight>
+			<EnableEdit>false</EnableEdit>
+			<ItemTextColor>combobox.eidtwnd.text</ItemTextColor>
+		</attr>
+	</objtemplate>
+	-->
+	<control class="NotePadView">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			 <AddNewContent file="NotePadView.xml.lua" func="AddNewContent" />
+			 <OnPreViewSel file="NotePadView.xml.lua" func="OnPreViewSel" />
+			 <SetData file="NotePadView.xml.lua" func="SetData" />
+		</method_def>
+		<event_def>
+			<UpdateNoteList>
+				<param>
+				</param>
+			</UpdateNoteList>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="root" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>	
+					<children>
+						<obj id="notepadview.bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture></texture>
+							</attr>	
+							<children>
+								<obj id="headtitle.text" class="TextObject">
+									<attr>
+										<left>18</left>
+										<top>23</top>
+										<width>50</width> 
+										<height>23</height>
+										<valign>left</valign>
+										<halign>top</halign>
+										<text>标题:</text>
+										<textcolor>HeadTitle.TextColor</textcolor>
+										<font>font.text15</font>
+									</attr>
+								</obj>
+								
+								<obj id="headtitle.edit" class="EditObject">
+									<attr>
+										<left>18+50</left>
+										<top>23</top>
+										<width>father.width - 80</width> 
+										<height>23</height>
+										<textcolor>HeadTitle.TextColor</textcolor>
+										<font>font.text15</font>
+										<readonly>0</readonly>
+										<text>测试用标题</text> 
+									</attr>		
+									<eventlist>
+										<event name="OnFocusChange" file="NotePadView.xml.lua" func="OnTitleEditFocusChange" />
+									</eventlist>
+								</obj>
+								
+								<obj id="createdate.text" class="TextObject">
+									<attr>
+										<left>father.width - 163 - 15</left>
+										<top>38</top>
+										<width>163</width> 
+										<height>14</height>
+										<textcolor>HeadTitle.TextColor</textcolor>
+										<font>font.text12</font>
+										<text>创建时间:2015-05-07 10:10</text>
+									</attr>			
+								</obj>
+								<obj id="toolbar.layout.bkg" class="FillObject">
+									<attr>
+										<left>2</left>
+										<top>60</top>
+										<width>father.width - 8</width> 
+										<height>37</height>
+										<srccolor>ToolBar.Bkg</srccolor>
+										<destcolor>ToolBar.Bkg</destcolor>
+									</attr>
+									<children>
+										<obj id="toolbar.new.btn" class="TipAddin.Button">
+											<attr>
+												<left>28</left>
+												<top>11</top>
+												<width>11</width> 
+												<height>13</height>
+												<NormalBkgID>toolbar.new.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>toolbar.new.btn.bkg.hover</DownBkgID>
+												<HoverBkgID>toolbar.new.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>toolbar.new.btn.bkg.disable</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="NotePadView.xml.lua" func="OnClickNew" />
+											</eventlist>
+										</obj>
+										<obj id="toolbar.cut.btn" class="TipAddin.Button">
+											<attr>
+												<left>28 + 10 + 17</left>
+												<top>11</top>
+												<width>11</width> 
+												<height>13</height>
+												<NormalBkgID>toolbar.cut.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>toolbar.cut.btn.bkg.hover</DownBkgID>
+												<HoverBkgID>toolbar.cut.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>toolbar.cut.btn.bkg.disable</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="NotePadView.xml.lua" func="OnClickCut" />
+											</eventlist>
+										</obj>
+										<obj id="toolbar.copy.btn" class="TipAddin.Button">
+											<attr>
+												<left>28 + 10 + 17 + 10 + 17</left>
+												<top>11</top>
+												<width>11</width> 
+												<height>13</height>
+												<NormalBkgID>toolbar.copy.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>toolbar.copy.btn.bkg.hover</DownBkgID>
+												<HoverBkgID>toolbar.copy.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>toolbar.copy.btn.bkg.disable</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="NotePadView.xml.lua" func="OnClickCopy" />
+											</eventlist>
+										</obj>
+										<obj id="toolbar.paste.btn" class="TipAddin.Button">
+											<attr>
+												<left>28 + 10 + 17 + 10 + 17 + 10 + 17</left>
+												<top>11</top>
+												<width>11</width> 
+												<height>13</height>
+												<NormalBkgID>toolbar.paste.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>toolbar.paste.btn.bkg.hover</DownBkgID>
+												<HoverBkgID>toolbar.paste.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>toolbar.paste.btn.bkg.disable</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="NotePadView.xml.lua" func="OnClickPaste" />
+											</eventlist>
+										</obj>
+										<obj id="division.line.bkg" class="TextureObject">
+											<attr>
+												<left>28 + 10 + 17 + 10 + 17 + 10 + 17 + 10 + 17</left>
+												<top>11</top>
+												<width>1</width> 
+												<height>13</height>
+												<texture>division.line.bkg</texture>
+											</attr>
+										</obj>
+										<obj id="font.Combobox.btn" class="TipAddin.Button">
+											<attr>
+												<left>152+54+12</left>
+												<top>16</top>
+												<width>8</width> 
+												<height>4</height>
+												<NormalBkgID>dropdown.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>dropdown.btn.bkg.normal</DownBkgID>
+												<HoverBkgID>dropdown.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>dropdown.btn.bkg.hover</DisableBkgID>
+												<TextColor>HeadTitle.TextColor</TextColor>
+												<TextFont>font.text13</TextFont>
+												<LeftTextPos>-60</LeftTextPos>
+												<TopTextPos>-6</TopTextPos>
+												<TextHeight>15</TextHeight>
+											</attr>
+											<eventlist>
+												<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitNoteFontCb" />
+												<event name="OnLButtonUp" file="NotePadView.xml.lua" func="OnLButtonUpFontCb" />
+											</eventlist>
+										</obj>
+										<obj id="size.Combobox.btn" class="TipAddin.Button">
+											<attr>
+												<left>261 + 33 + 9</left>
+												<top>16</top>
+												<width>8</width> 
+												<height>4</height>
+												<NormalBkgID>dropdown.btn.bkg.normal</NormalBkgID>
+												<DownBkgID>dropdown.btn.bkg.normal</DownBkgID>
+												<HoverBkgID>dropdown.btn.bkg.hover</HoverBkgID>
+												<DisableBkgID>dropdown.btn.bkg.hover</DisableBkgID>
+												<TextColor>HeadTitle.TextColor</TextColor>
+												<TextFont>font.text13</TextFont>
+												<LeftTextPos>-42</LeftTextPos>
+												<TopTextPos>-6</TopTextPos>
+												<TextHeight>15</TextHeight>
+											</attr>
+											<eventlist>
+												<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitNoteSizeCb" />
+												<event name="OnLButtonUp" file="NotePadView.xml.lua" func="OnLButtonUpSizeCb" />
+											</eventlist>
+										</obj>
+										<obj id="division.line2.bkg" class="TextureObject">
+											<attr>
+												<left>329</left>
+												<top>11</top>
+												<width>1</width> 
+												<height>13</height>
+												<texture>division.line.bkg</texture>
+											</attr>
+										</obj>
+									</children>									
+								</obj>
+								<obj id="edit.ctrl" class="Edit">
+									<attr>
+										<left>2</left>
+										<top>98</top>
+										<width>father.width - 8</width> 
+										<height>father.height - 165</height>
+										<Multiline>true</Multiline>
+										<HitSelAll>false</HitSelAll>
+										<WordWrap>false</WordWrap>
+										<AllowVSB>true</AllowVSB>
+										<AllowHSB>true</AllowHSB>
+									</attr>
+									<children>
+										<obj id="edit.blank.bkg" class="TextureObject">
+											<attr>
+												<left>(father.width - 284)/2</left>
+												<top>(father.height - 77)/2</top>
+												<width>284</width> 
+												<height>77</height>
+												<texture>edit.blank.bkg</texture>
+											</attr>
+										</obj>
+										<obj id="DropList.Font" class="FontDropList">
+											<attr>
+												<left>122</left>
+												<top>0</top>
+												<width>100</width>
+												<height>240</height>
+												<zorder>9999999</zorder>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="NotePadView.xml.lua" func="OnFocusFontDropList" />
+												<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitFontDropList" />
+												<event name="OnSelectFont"  file="NotePadView.xml.lua" func="OnSelectFont" />
+											</eventlist>
+										</obj>
+										<obj id="DropList.FontSize" class="FontSizeDropList">
+											<attr>
+												<left>122+100</left>
+												<top>0</top>
+												<width>100</width>
+												<height>240</height>
+												<zorder>9999999</zorder>
+											</attr>
+											<eventlist>
+												<event name="OnFocusChange" file="NotePadView.xml.lua" func="OnFocusFontDropList" />
+												<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitFontDropList" />
+												<event name="OnSelectFontSize"  file="NotePadView.xml.lua" func="OnSelectFontSize" />
+											</eventlist>
+										</obj>
+									</children>
+									<eventlist>
+										<event name="OnEditChange" file="NotePadView.xml.lua" func="OnEditChange" />
+										<event name="OnSelChange" file="NotePadView.xml.lua" func="OnSelChange" />
+									</eventlist>
+								</obj>
+								<obj id="save.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width-200</left>
+										<top>father.height-40</top>
+										<width>80</width> 
+										<height>27</height>
+										<Text>保存</Text>
+										<LeftTextPos>26</LeftTextPos>
+										<TextColor>system.white</TextColor>
+										<TextFont>font.text12</TextFont>
+										<NormalBkgID>save.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>save.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>save.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>save.btn.bkg.disable</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NotePadView.xml.lua" func="OnClickSave" />
+									</eventlist>
+								</obj>
+								<obj id="cancel.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width-96</left>
+										<top>father.height-40</top>
+										<width>80</width> 
+										<height>26</height>
+										<Text>取消</Text>
+										<LeftTextPos>27</LeftTextPos>
+										<TextColor>HeadTitle.TextColor</TextColor>
+										<TextFont>font.text12</TextFont>
+										<NormalBkgID>cancel.btn.bkg.normal</NormalBkgID>
+										<DownBkgID>cancel.btn.bkg.hover</DownBkgID>
+										<HoverBkgID>cancel.btn.bkg.hover</HoverBkgID>
+										<DisableBkgID>cancel.btn.bkg.normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="NotePadView.xml.lua" func="OnClickCancel" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitNotePadView" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

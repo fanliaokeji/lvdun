@@ -1,0 +1,66 @@
+<xlue>
+	<hostwndtemplate id="wnd.common.menu" class="MenuHostWnd">
+		<attr> 
+			<mode>auto</mode>
+			<topmost>0</topmost>
+			<layered>1</layered>
+		</attr>
+		<eventlist>
+			<event name="OnPopupMenu" />
+			<event name="OnEndMenu" />
+			<event name="OnBindObjectTree" />
+		</eventlist>
+	</hostwndtemplate>
+
+	<objtemplate id="menu.common.context" class="MenuObject"  >
+		<attr>
+			<ItemLeft>1</ItemLeft>
+			<ItemTop>0</ItemTop>
+			<ItemRight>1</ItemRight>
+			<ItemBottom>0</ItemBottom>
+		</attr>
+	</objtemplate>
+	
+	<!-- 通用的空菜单模板  menu.common.object.template
+	<objtemplate id="menu.common.context" class="MenuObject" templateid="menu.common.object.template">
+		
+	</objtemplate>
+	 -->
+	
+	<objtreetemplate id="tree.common.menu">
+		<attr>
+			<left>-1000</left>
+			<top>-1000</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+		<obj id="menu.common" class="NormalMenu">
+			<attr>
+				<width>180</width>
+				<height>1370</height>
+				<ContextID>menu.common.context</ContextID>
+			</attr>
+		</obj>
+	</objtreetemplate>
+	
+	<objtemplate id="item.common.menu" class="MenuItemObject" >
+		<attr>
+			<height>28</height>
+			<width>150</width>
+			<IconPos>0</IconPos>
+			<TextPos>18</TextPos>
+			<IconWidth>16</IconWidth>
+			<IconHeight>16</IconHeight>
+			<TextRightWidth>21</TextRightWidth>
+			<!--<FontColorHover>system.white</FontColorHover>-->
+		</attr>
+	</objtemplate>
+	
+	<animationtemplate id="menu.showani" class="PosChangeAnimation">
+		<attr>
+			<curve>menu.show</curve>
+			<totaltime>200</totaltime>
+			<loop>false</loop>
+		</attr>
+	</animationtemplate>
+</xlue>

@@ -1,0 +1,253 @@
+<xlue>
+	<objtemplate id = "caption.failhittest" >
+		<attr>
+		</attr>
+		<eventlist>
+			<event name="OnHitTest" >
+				return 0,true,true
+			</event>
+		</eventlist>
+	</objtemplate>
+	<control class="FrameWndCtrl">
+		<objtemplate>
+			<children>
+				<obj id="mainwnd.resize.right" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>father.width-3</left>
+						<width>6</width>
+						<height>father.height</height>
+						<type>right</type>
+						<zorder>10</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.bottom" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<top>father.height-3</top>
+						<width>father.width</width>
+						<height>6</height>
+						<type>bottom</type>
+						<zorder>10</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.top" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<top>-3</top>
+						<width>father.width</width>
+						<height>6</height>
+						<type>top</type>
+						<zorder>10</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.left" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>-3</left>
+						<width>6</width>
+						<height>father.height</height>
+						<type>left</type>
+						<zorder>10</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.topleft" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>-3</left>
+						<top>-3</top>
+						<width>8</width>
+						<height>8</height>
+						<type>topleft</type>
+						<zorder>100</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.bottomleft" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>-3</left>
+						<top>father.height-5</top>
+						<width>8</width>
+						<height>8</height>
+						<type>bottomleft</type>
+						<zorder>100</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.topright" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>father.width-5</left>
+						<top>-3</top>
+						<width>8</width>
+						<height>8</height>
+						<type>topright</type>
+						<zorder>100</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.resize.bottomright" class="ResizeObject" templateid = "caption.failhittest">
+					<attr>
+						<left>father.width-10</left>
+						<top>father.height-10</top>
+						<width>12</width>
+						<height>12</height>
+						<type>bottomright</type>
+						<zorder>100</zorder>
+					</attr>
+				</obj>
+				<obj id="mainwnd.caption" class="CaptionObject" templateid = "caption.failhittest">
+					<attr>
+						<left>0</left> 
+						<top>0</top> 
+						<width>father.width</width> 
+						<height>father.height</height> 
+					</attr>
+				</obj>
+			</children>
+		</objtemplate>
+	</control>
+	
+	<objtreetemplate id="NotePadWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>466</width>
+			<height>438</height>
+		</attr>
+		<obj id="root" class="TextureObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>466</width>
+				<height>438</height>
+				<texture>texture.editwnd.shadow</texture>
+			</attr>		
+			<children>
+				<obj id="mainwnd.frame" class="FrameWndCtrl">
+					<attr>
+						<left>6</left>
+						<top>4</top>
+						<width>father.width-12</width>
+						<height>father.height-8</height>
+					</attr>		
+					<children>
+						<obj id="notepadview.bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture></texture>
+							</attr>	
+							<children>
+								<obj id="mainwnd.min.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width - 57-9</left>
+										<top>1</top>
+										<width>19</width>
+										<height>22</height>
+										<NormalBkgID>mainwnd.btn.min.normal</NormalBkgID>
+										<DownBkgID>mainwnd.btn.min.hover</DownBkgID>
+										<HoverBkgID>mainwnd.btn.min.hover</HoverBkgID>
+										<DisableBkgID>mainwnd.btn.min.normal</DisableBkgID>
+									</attr>	
+									<eventlist>
+										<event name="OnClick" file="NotePadWnd.xml.lua" func="OnClickMin" />
+									</eventlist>
+								</obj>
+								<obj id="mainwnd.max.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width - 38-9</left>
+										<top>1</top>
+										<width>19</width>
+										<height>22</height>
+										<NormalBkgID>mainwnd.btn.max.normal</NormalBkgID>
+										<DownBkgID>mainwnd.btn.max.hover</DownBkgID>
+										<HoverBkgID>mainwnd.btn.max.hover</HoverBkgID>
+										<DisableBkgID>mainwnd.btn.max.normal</DisableBkgID>
+									</attr>	
+									<eventlist>
+										<event name="OnClick" file="NotePadWnd.xml.lua" func="OnClickMax" />
+									</eventlist>
+								</obj>
+								<obj id="mainwnd.restore.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width - 38-9</left>
+										<top>1</top>
+										<width>19</width>
+										<height>22</height>
+										<NormalBkgID>mainwnd.btn.recovery.normal</NormalBkgID>
+										<DownBkgID>mainwnd.btn.recovery.hover</DownBkgID>
+										<HoverBkgID>mainwnd.btn.recovery.hover</HoverBkgID>
+										<DisableBkgID>mainwnd.btn.recovery.normal</DisableBkgID>
+										<visible>false</visible>
+									</attr>	
+									<eventlist>
+										<event name="OnClick" file="NotePadWnd.xml.lua" func="OnClickRestore" />
+									</eventlist>
+								</obj>
+								<obj id="mainwnd.close.btn" class="TipAddin.Button">
+									<attr>
+										<left>father.width - 19-9</left>
+										<top>1</top>
+										<width>19</width>
+										<height>22</height>
+										<NormalBkgID>mainwnd.btn.close.normal</NormalBkgID>
+										<DownBkgID>mainwnd.btn.close.hover</DownBkgID>
+										<HoverBkgID>mainwnd.btn.close.hover</HoverBkgID>
+										<DisableBkgID>mainwnd.btn.close.normal</DisableBkgID>
+									</attr>	
+									<eventlist>
+										<event name="OnClick" file="NotePadWnd.xml.lua" func="OnClickClose" />
+									</eventlist>
+								</obj>
+								<obj id="notepadview.layout" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+									<children>
+										<obj id="notepadview" class="NotePadView">
+											<attr>
+												<left>0</left>
+												<top>0</top>
+												<width>father.width</width>
+												<height>father.height</height>
+											</attr>
+											<eventlist>
+												<event name="OnInitControl" file="NotePadWnd.xml.lua" func="OnInitNotePad" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="NotePadWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>466</width>
+            <height>438</height>
+			<updateonsize>1</updateonsize>
+           
+			<enable>1</enable>
+            <maxbox>1</maxbox>
+            <minbox>1</minbox>
+            <minwidth>466</minwidth>
+            <minheight>438</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="NotePadWnd.xml.lua" func="OnCreate"/>
+			<event name="OnShowWindow" file="NotePadWnd.xml.lua" func="OnShowWindow"/>
+			<event name="OnDestroy" file="NotePadWnd.xml.lua" func="OnDestroy"/>
+			<event name="OnClose" file="NotePadWnd.xml.lua" func="OnClose"/>
+			<event name="OnSize" file="NotePadWnd.xml.lua" func="OnSize" />
+		</eventlist>
+    </hostwndtemplate>
+
+</xlue>

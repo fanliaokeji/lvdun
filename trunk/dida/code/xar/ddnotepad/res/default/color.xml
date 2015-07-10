@@ -1,0 +1,36 @@
+<XLUE>
+	<resource>
+		<color id="system.black" red="0" green="0" blue="0" alpha="255" />
+		<color id="system.gray" red="204" green="211" blue="214" alpha="255"/>
+		<color id="system.blue" red="0" green="0" blue="255" alpha="255" />
+		<color id="system.white" red="255" green="255" blue="255" alpha="255" />
+		<color id="system.red" red="255" green="0" blue="0" alpha="255" />
+			
+		<color id="4B99F2" value="#4B99F2" />
+		<color id="808080" value="#808080" />
+		<color id="262624" value="#262624" />
+		<color id="4D4D4D" value="#4D4D4D" />
+		<color id="CCCCCC" value="#CCCCCC" />
+		<color id="FF9933" value="#FF9933" />
+		<color id="626262" value="#626262" />
+		<color id="069DD5" value="#069DD5" />
+		<color id="B8181D" value="#B8181D" />
+		<color id="999999" value="#999999" />
+		<color id="E6151C" value="#E6151C" />
+		<color id="E6E6E6" value="#E6E6E6" />
+		<color id="FF4A50" value="#FF4A50" />
+		
+		<color id="F89400" value="#F89400" />
+		<color id="3F5483" value="#3F5483" />
+		<color id="EBF1F9" value="#EBF1F9" />
+		<color id="7DCA81" value="#7DCA81" />
+		
+		<color id="orange.weekend" value="#FF4400" />
+		<color id="Festival.TextColor" value="#5789dc" />
+		<color id="HeadTitle.TextColor" value="#3f5483" />
+		<color id="ToolBar.Bkg" value="#EBF1F9" />
+		<color id="MenuItem.Select.Bkg" value="#4B98FC" />
+		
+		<color id="color.calendar.line" value="#E6E6E6" />
+	</resource>
+</XLUE>
