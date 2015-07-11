@@ -340,5 +340,6 @@ function tFunHelper.ChangeView(viewIndex, bNotPopUp)
 		local wndTree = tipMainPanelRootCtrlObj:GetOwner()
 		local wnd = wndTree:GetBindHostWnd()
 		wnd:Show(4)
+		wnd:BringWindowToTop()
 	end
 end
