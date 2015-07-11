@@ -43,10 +43,15 @@
 		<texture id="DiDa.ExitRemind.Cancle.Hover" image="bitmap\DiDa.ExitRemind.Cancle.Hover.png" />
 		<texture id="DiDa.ExitRemind.Exit.Normal" image="bitmap\DiDa.ExitRemind.Exit.Normal.png" />
 		<texture id="DiDa.ExitRemind.Exit.Hover" image="bitmap\DiDa.ExitRemind.Exit.Hover.png" />
+		<texture id="DiDa.ExitRemind.Exit.Center" image="bitmap\DiDa.ExitRemind.Exit.Center.png" />
+		<texture id="delete.remind.center" image="bitmap\delete.remind.center.png" />
+		<texture id="delete.notepad.center" image="bitmap\delete.notepad.center.png" />
+		<texture id="tipremindbubble.bkg" image="bitmap\tipremindbubble.bkg.png" />
 		
 		<texture id="DiDa.AboutWnd.Bkg" image="bitmap\DiDa.AboutWnd.Bkg.png" />
 		<texture id="DiDa.AboutWnd.CloseBtn.Normal" image="bitmap\DiDa.AboutWnd.CloseBtn.Normal.png" />
 		<texture id="DiDa.AboutWnd.CloseBtn.Hover" image="bitmap\DiDa.AboutWnd.CloseBtn.Hover.png" />
+		<texture id="DiDa.AboutWnd.Center" image="bitmap\DiDa.AboutWnd.Center.png" />
 		
 		
 		<texture id="DiDa.UpdateWnd.Bkg" image="bitmap\DiDa.UpdateWnd.Bkg.png" />

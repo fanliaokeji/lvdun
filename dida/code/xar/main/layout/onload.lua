@@ -292,6 +292,99 @@ function StartRunCountTimer()
 	
 end
 
+function ForceUpdateRemindTimer(tRealData)
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local tRemindListData = tRealData
+	if type(tRemindListData) ~= "table" then
+		local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+		if not tipUtil:QueryFileExists(strPath) then
+			tRemindListData = {}
+		end
+		tRemindListData = FunctionObj.LoadTableFromFile(strPath)
+	end
+	FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(tRemindListData) = "..type(tRemindListData))
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	for _, data in pairs(tRemindListData) do
+		FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(data) = "..type(data))
+		for _, info in ipairs(data) do
+			if type(info) == "table" and info["bopen"] then--状态是打开，且未提醒过
+				FunctionObj.TipLog("ForceUpdateRemindTimer, info[title] = "..tostring(info["title"]))
+				local nCurrentUTC = tipUtil:GetCurrentUTCTime()
+				if info["ntype"] == 1 then --一次性
+					if type(info["noncetargettime"]) == "number" then
+						local nStep = info["noncetargettime"] - nCurrentUTC
+						FunctionObj.TipLog("ForceUpdateRemindTimer, nStep = "..tostring(nStep).."info[noncetargettime] = "..tostring(info["noncetargettime"])..", nCurrentUTC = "..nCurrentUTC)
+						if nStep > 0 and nStep < 30*60 then
+							info["remindtime"] = info["noncetargettime"]
+							if info["timerid"] then
+								timerManager:KillTimer(info["timerid"])
+							end
+							info["timerid"] = timerManager:SetTimer(function(item, id)
+								item:KillTimer(id)
+								info["state"] = "hasremind"
+								info["timerid"] = nil
+								local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+								tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+								FunctionObj.ShowRemindBubble(info)
+							end, nStep*1000)
+						end
+					end
+				elseif info["ntype"] == 2 then--每天
+					local LYear, LMonth, LDay = tipUtil:FormatCrtTime(nCurrentUTC)
+					local nTarGetUTC = tipUtil:DateTime2Seconds(LYear, LMonth, LDay, info["hour"], info["min"], 0)
+					local nStep = nTarGetUTC - nCurrentUTC
+					if nStep > 0 and nStep < 30*60 then
+						info["remindtime"] = nTarGetUTC
+						if info["timerid"] then
+							timerManager:KillTimer(info["timerid"])
+						end
+						info["timerid"] = timerManager:SetTimer(function(item, id)
+							Itm:KillTimer(id)
+							info["state"] = nil--要清除标记才能保证每天都提醒
+							info["timerid"] = nil
+							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+							tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+							FunctionObj.ShowRemindBubble(info)
+						end, nStep*1000)
+					end
+				elseif info["ntype"] == 3 then--每周
+					if type(info["tweek"]) == "table" then
+						local _, _, _, _, _, _, LWeek = tipUtil:Seconds2DateTime(nCurrentUTC)
+						local bRet = false
+						for _, weekidx in ipairs(info["tweek"]) do
+							if weekidx == LWeek then
+								bRet = true
+								break
+							end
+						end
+						if bRet then
+							local LYear, LMonth, LDay = tipUtil:FormatCrtTime(nCurrentUTC)
+							local nTarGetUTC = tipUtil:DateTime2Seconds(LYear, LMonth, LDay, info["hour"], info["min"], 0)
+							local nStep = nTarGetUTC - nCurrentUTC
+							if nStep > 0 and nStep < 30*60 then
+								info["remindtime"] = nTarGetUTC
+								if info["timerid"] then
+									timerManager:KillTimer(info["timerid"])
+								end
+								info["timerid"] = timerManager:SetTimer(function(item, id)
+									Itm:KillTimer(id)
+									info["state"] = nil--要清除标记才能保证每周都提醒
+									info["timerid"] = nil
+									local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+									tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+									FunctionObj.ShowRemindBubble(info)
+								end, nStep*1000)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+XLSetGlobal("ForceUpdateRemindTimer", ForceUpdateRemindTimer) 
+
 function StartUITimer()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local nCurrentTime = tipUtil:GetCurrentUTCTime()
