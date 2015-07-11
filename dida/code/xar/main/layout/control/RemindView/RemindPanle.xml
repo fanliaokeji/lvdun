@@ -551,92 +551,114 @@
 									<height>59</height>
 								</attr>
 								<children>
-									<obj id="EditYearTimeEdit" class="SimpleEditCtrl">
+									<!--年月面板-->
+									<obj id="EditYearMonthLayout" class="LayoutObject">
 										<attr>
 											<left>0</left>
 											<top>0</top>
-											<width>64</width>
+											<width>64+44</width>
 											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>40</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>4</LimitLen>
-											<MaxNumber>9999</MaxNumber>
-											<MinNumber>2015</MinNumber>
-											<Text>年</Text>
 										</attr>
+										<children>
+											<obj id="EditYearTimeEdit" class="SimpleEditCtrl">
+												<attr>
+													<left>0</left>
+													<top>0</top>
+													<width>64</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>40</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>4</LimitLen>
+													<MaxNumber>9999</MaxNumber>
+													<MinNumber>2015</MinNumber>
+													<Text>年</Text>
+												</attr>
+											</obj>
+											<obj id="EditMonthTimeEdit" class="SimpleEditCtrl">
+												<attr>
+													<left>69</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>12</MaxNumber>
+													<MinNumber>1</MinNumber>
+													<Text>月</Text>
+												</attr>
+											</obj>
+										</children>
 									</obj>
-									<obj id="EditMonthTimeEdit" class="SimpleEditCtrl">
-										<attr>
-											<left>69</left>
-											<top>0</top>
-											<width>44</width>
-											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>12</MaxNumber>
-											<MinNumber>1</MinNumber>
-											<Text>月</Text>
-										</attr>
-									</obj>
-									<obj id="EditDayTimeEdit" class="SimpleEditCtrl">
+									<!--日时分面板-->
+									<obj id="EditDayHourMinLayout" class="LayoutObject">
 										<attr>
 											<left>118</left>
 											<top>0</top>
-											<width>44</width>
+											<width>father.width-118</width>
 											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>31</MaxNumber>
-											<MinNumber>1</MinNumber>
-											<Text>日</Text>
 										</attr>
-									</obj>
-									<obj id="CutOffLineObj" class="TextureObject">
-										<attr>
-											<left>182</left>
-											<top>0</top>
-											<width>1</width>
-											<height>25</height>
-											<texture>cutoffrule</texture>
-										</attr>
-									</obj>
-									<obj id="EditHourTimeEdit" class="SimpleEditCtrl">
-										<attr>
-											<left>203</left>
-											<top>0</top>
-											<width>44</width>
-											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>23</MaxNumber>
-											<Text>时</Text>
-										</attr>
-									</obj>
-									<obj id="EditMinuteTimeEdit" class="SimpleEditCtrl">
-										<attr>
-											<left>252</left>
-											<top>0</top>
-											<width>44</width>
-											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>59</MaxNumber>
-											<Text>分</Text>
-										</attr>
+										<children>
+											<obj id="EditDayTimeEdit" class="SimpleEditCtrl">
+												<attr>
+													<left>0</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>31</MaxNumber>
+													<MinNumber>1</MinNumber>
+													<Text>日</Text>
+												</attr>
+											</obj>
+											<obj id="CutOffLineObj" class="TextureObject">
+												<attr>
+													<left>182-118</left>
+													<top>0</top>
+													<width>1</width>
+													<height>25</height>
+													<texture>cutoffrule</texture>
+												</attr>
+											</obj>
+											<obj id="EditHourTimeEdit" class="SimpleEditCtrl">
+												<attr>
+													<left>203-118</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>23</MaxNumber>
+													<Text>时</Text>
+												</attr>
+											</obj>
+											<obj id="EditMinuteTimeEdit" class="SimpleEditCtrl">
+												<attr>
+													<left>252-118</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>59</MaxNumber>
+													<Text>分</Text>
+												</attr>
+											</obj>
+										</children>
 									</obj>
 								</children>
 							</obj>

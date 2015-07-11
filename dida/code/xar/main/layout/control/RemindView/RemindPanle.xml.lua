@@ -76,7 +76,7 @@ function OnInitControlEdit(self)
 end
 
 function OnChangeEdit(self)
-	local owner = self:GetOwnerControl()
+	--[[local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	local text = self:GetText()
 	local nText = tonumber(text)
@@ -85,7 +85,7 @@ function OnChangeEdit(self)
 	end
 	if type(attr.MinNumber) == "number" and type(nText) == "number" and nText < attr.MinNumber then
 		self:SetText(StringFormat02d(attr.MinNumber))
-	end
+	end]]--
 	owner:FireExtEvent("OnChange")
 end
 
@@ -230,14 +230,19 @@ function OnClickCheckBox1(self)
 	if tCheckBox3[id] then
 		local attr = self:GetAttribute()
 		self:SetCheck(not attr.select)
-	elseif id == "CheckBoxOnce" then--一次性提醒
+	elseif id == "CheckBoxOnce" or id == "CheckBoxEveryMonth" then--一次性提醒、每月
 		local RemindTimeRightWeekCk = owner:GetControlObject("RemindTimeRightWeekCk")
 		RemindTimeRightWeekCk:SetVisible(false)
 		RemindTimeRightWeekCk:SetChildrenVisible(false)
 		local RemindTimeRightTimeEdit = owner:GetControlObject("RemindTimeRightTimeEdit")
 		RemindTimeRightTimeEdit:SetVisible(true)
 		RemindTimeRightTimeEdit:SetChildrenVisible(true)
-	elseif id == "CheckBoxEveryDay" or id == "CheckBoxEveryWeek" or id == "CheckBoxEveryMonth" then--每日每周每月
+		if id == "CheckBoxEveryMonth" then
+			ShowYearMonthEdit(RemindTimeRightTimeEdit, true)
+		else
+			ShowYearMonthEdit(RemindTimeRightTimeEdit, false)
+		end
+	elseif id == "CheckBoxEveryDay" or id == "CheckBoxEveryWeek" then--每日每周
 		local RemindTimeRightWeekCk = owner:GetControlObject("RemindTimeRightWeekCk")
 		RemindTimeRightWeekCk:SetVisible(true)
 		RemindTimeRightWeekCk:SetChildrenVisible(true)
@@ -268,6 +273,24 @@ function ShowPerDayEdit(RemindTimeRightWeekCk, bOnlyShowPerDay)
 		EditTimeLayout:SetVisible(true)
 		EditTimeLayout:SetChildrenVisible(true)
 		EditTimeLayout:SetObjPos2(0, 34, "father.width", 22)
+	end
+end
+
+function ShowYearMonthEdit(RemindTimeRightTimeEdit, bOnlyShowDayHour)
+	local owner = RemindTimeRightTimeEdit:GetOwnerControl()
+	local EditYearMonthLayout, EditDayHourMinLayout = owner:GetControlObject("EditYearMonthLayout"), owner:GetControlObject("EditDayHourMinLayout")
+	if bOnlyShowDayHour then
+		EditYearMonthLayout:SetVisible(false)
+		EditYearMonthLayout:SetChildrenVisible(false)
+		EditDayHourMinLayout:SetVisible(true)
+		EditDayHourMinLayout:SetChildrenVisible(true)
+		EditDayHourMinLayout:SetObjPos2(0, 0, "father.width-118", 22)
+	else
+		EditYearMonthLayout:SetVisible(true)
+		EditYearMonthLayout:SetChildrenVisible(true)
+		EditDayHourMinLayout:SetVisible(true)
+		EditDayHourMinLayout:SetChildrenVisible(true)
+		EditDayHourMinLayout:SetObjPos2(118, 0, "father.width-118", 22)
 	end
 end
 
@@ -389,6 +412,16 @@ function OnClickBottomSaveBtn(self)
 		local EditMinuteWeekedit = EditMinuteWeek:GetControlObject("edit")
 		data["hour"] = EditHourWeekedit:GetText()
 		data["min"] = EditMinuteWeekedit:GetText()
+	elseif data["ntype"] == 4 then --每月
+		local dc = owner:GetControlObject("EditDayTimeEdit")
+		local dcedit = dc:GetControlObject("edit")
+		local hc = owner:GetControlObject("EditHourTimeEdit")
+		local hcedit = hc:GetControlObject("edit")
+		local minc = owner:GetControlObject("EditMinuteTimeEdit")
+		local mincedit = minc:GetControlObject("edit")
+		data["day"] = dcedit:GetText()
+		data["hour"] = hcedit:GetText()
+		data["min"] = mincedit:GetText()
 	--周1-7
 	--时
 	--分

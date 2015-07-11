@@ -339,7 +339,7 @@ function ForceUpdateRemindTimer(tRealData)
 							timerManager:KillTimer(info["timerid"])
 						end
 						info["timerid"] = timerManager:SetTimer(function(item, id)
-							Itm:KillTimer(id)
+							item:KillTimer(id)
 							info["state"] = nil--要清除标记才能保证每天都提醒
 							info["timerid"] = nil
 							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
@@ -367,7 +367,7 @@ function ForceUpdateRemindTimer(tRealData)
 									timerManager:KillTimer(info["timerid"])
 								end
 								info["timerid"] = timerManager:SetTimer(function(item, id)
-									Itm:KillTimer(id)
+									item:KillTimer(id)
 									info["state"] = nil--要清除标记才能保证每周都提醒
 									info["timerid"] = nil
 									local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
@@ -376,6 +376,24 @@ function ForceUpdateRemindTimer(tRealData)
 								end, nStep*1000)
 							end
 						end
+					end
+				else--每月
+					local nYear, nMonth = tipUtil:Seconds2DateTime(nCurrentUTC)
+					local nTarGetUTC = tipUtil:DateTime2Seconds(nYear, nMonth, info["day"], info["hour"], info["min"], 0)
+					local nStep = nTarGetUTC - nCurrentUTC
+					if nStep > 0 and nStep < 30*60 then
+						info["remindtime"] = nTarGetUTC
+						if info["timerid"] then
+							timerManager:KillTimer(info["timerid"])
+						end
+						info["timerid"] = timerManager:SetTimer(function(item, id)
+							item:KillTimer(id)
+							info["state"] = nil--要清除标记才能保证每天都提醒
+							info["timerid"] = nil
+							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+							tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+							FunctionObj.ShowRemindBubble(info)
+						end, nStep*1000)
 					end
 				end
 			end
