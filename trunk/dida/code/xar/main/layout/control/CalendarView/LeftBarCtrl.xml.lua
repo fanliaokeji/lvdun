@@ -36,7 +36,7 @@ function SetClndrInfo(self, tClndrContent)
 end
 
 ---事件
-function OnInitLeftBar(self)
+function OnInitLeftBar(objRootCtrl)
 	local strCurDate = os.date("%Y%m%d")
 	tFunHelper.GetClndrContent(strCurDate, 
 		function (tClndrContentList)
