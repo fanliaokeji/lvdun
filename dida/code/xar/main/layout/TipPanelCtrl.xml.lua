@@ -280,7 +280,7 @@ function ShowHostWnd()
 			objHostWnd:Show(5)
 		end
 		
-		objMainWnd:SetTopMost(true)
+		objHostWnd:SetTopMost(true)
 	end
 end
 
