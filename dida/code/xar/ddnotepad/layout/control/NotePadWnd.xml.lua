@@ -81,15 +81,18 @@ end
 
 function OnSize(self, _type, width, height)
 	local tree = self:GetBindUIObjectTree()
-	if tree then
-		local rootObject = tree:GetRootObject()
-		rootObject:SetObjPos(0, 0, width, height)
+	if not tree then
+		return
 	end
 	
+	local rootObject = tree:GetRootObject()
+	rootObject:SetObjPos(0, 0, width, height)
+		
 	local maxbtn = tree:GetUIObject("mainwnd.frame:mainwnd.max.btn")
 	local restorebtn = tree:GetUIObject("mainwnd.frame:mainwnd.restore.btn")
 	if "max" == _type then			
 		maxbtn:Show(false)
+		rootObject:SetObjPos(-5, -5, width+13, height+10)
 		restorebtn:Show(true)
 	elseif "restored" == _type then
 		maxbtn:Show(true)
