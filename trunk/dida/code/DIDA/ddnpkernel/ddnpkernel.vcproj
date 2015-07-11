@@ -361,6 +361,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TextCodeConvert.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Util.h"
 				>
 			</File>
