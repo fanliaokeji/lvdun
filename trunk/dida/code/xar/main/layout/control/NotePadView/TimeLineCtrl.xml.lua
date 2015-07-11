@@ -197,18 +197,27 @@ end
 
 function OnClickDel(self)
 	local rootctrl = self:GetOwnerControl()
-	DeleteData()
-	if 0 == #tNotepadListData then
-		rootctrl:FireExtEvent("OnClearItem")
+	local parent = rootctrl:GetControlObject("BottomListLayout") 
+	if not IsAllUnCheck(parent) then--有选中的时候
+		FunctionObj.TipLog("OnClickDel, IsAllUnCheck return false")
+		local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
+		FunctionObj.TipLog("OnClickDel, type of SetLoseFocusNoHideFlag is "..type(SetLoseFocusNoHideFlag))
+		SetLoseFocusNoHideFlag(true)
+		FunctionObj.ShowDeleteNotepadRemindWnd("notepad", function()
+			DeleteData()
+			if 0 == #tNotepadListData then
+				rootctrl:FireExtEvent("OnClearItem")
+			end
+			ReBuildList(rootctrl)
+			--删完恢复显示状态
+			local attr = self:GetAttribute()
+			attr.NormalBkgID = "del.normal2"
+			attr.HoverBkgID = "del.hover2"
+			attr.DownBkgID = "del.normal2"
+			attr.DisableBkgID  = "del.normal2"
+			self:Updata()
+		end)
 	end
-	ReBuildList(rootctrl)
-	--删完恢复显示状态
-	local attr = self:GetAttribute()
-	attr.NormalBkgID = "del.normal2"
-	attr.HoverBkgID = "del.hover2"
-	attr.DownBkgID = "del.normal2"
-	attr.DisableBkgID  = "del.normal2"
-	self:Updata()
 end
 
 --父节点的+号按钮

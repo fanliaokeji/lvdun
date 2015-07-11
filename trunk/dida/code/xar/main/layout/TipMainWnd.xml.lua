@@ -79,10 +79,16 @@ function OnDestroy( self )
 	end
 end
 
+local gbNotHideFlag = false
+function SetLoseFocusNoHideFlag(bNotHide)
+	gbNotHideFlag = bNotHide
+end
+XLSetGlobal("SetLoseFocusNoHideFlag", SetLoseFocusNoHideFlag)
 
 local gTimerID = nil
 function OnFocusChange(self, bFocus)
 	tFunHelper.TipLog("[OnFocusChange]  bFocus:"..tostring(bFocus))
+	if gbNotHideFlag then return end 
 	if not bFocus then
 		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 

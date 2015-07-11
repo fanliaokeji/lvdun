@@ -177,11 +177,13 @@ end
 
 function IsAllUnCheck(layout)
 	local nCount = layout:GetChildCount()
+	FunctionObj.TipLog("IsAllUnCheck, nCount = "..tostring(nCount))
 	local obj
 	local bRet = true
 	for i=1, nCount do
 		obj = layout:GetChildByIndex(i-1)
-		if obj:GetClass() == "TimeLineListItemChild" then
+		FunctionObj.TipLog("IsAllUnCheck, obj:GetClass() = "..tostring(obj:GetClass()))
+		if obj:GetClass() == "TimeLineListItemChildEx" then
 			local checkobj = obj:GetControlObject("ForegroundCheckBox")
 			local attr = checkobj:GetAttribute()
 			if attr.ischeck then
@@ -195,15 +197,25 @@ end
 
 function OnClickDel(self)
 	local rootctrl = self:GetOwnerControl()
-	DeleteData()
-	ReBuildList(rootctrl)
-	--删完恢复显示状态
-	local attr = self:GetAttribute()
-	attr.NormalBkgID = "del.normal2"
-	attr.HoverBkgID = "del.hover2"
-	attr.DownBkgID = "del.normal2"
-	attr.DisableBkgID  = "del.normal2"
-	self:Updata()
+	local parent = rootctrl:GetControlObject("BottomListLayout") 
+	FunctionObj.TipLog("OnClickDel, type(parent) = "..tostring(type(parent)))
+	if not IsAllUnCheck(parent) then--有选中的时候
+		FunctionObj.TipLog("OnClickDel, IsAllUnCheck return false")
+		local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
+		FunctionObj.TipLog("OnClickDel, type of SetLoseFocusNoHideFlag is "..type(SetLoseFocusNoHideFlag))
+		SetLoseFocusNoHideFlag(true)
+		FunctionObj.ShowDeleteNotepadRemindWnd("remind", function()
+			DeleteData()
+			ReBuildList(rootctrl)
+			--删完恢复显示状态
+			local attr = self:GetAttribute()
+			attr.NormalBkgID = "del.normal2"
+			attr.HoverBkgID = "del.hover2"
+			attr.DownBkgID = "del.normal2"
+			attr.DisableBkgID  = "del.normal2"
+			self:Updata()
+		end)
+	end
 end
 
 --父节点的+号按钮

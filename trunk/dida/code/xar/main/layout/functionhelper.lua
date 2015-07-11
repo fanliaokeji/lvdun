@@ -596,6 +596,60 @@ function ShowPopupWndByName(strWndName, bSetTop)
 	frameHostWnd:Show(5)
 end
 
+function ShowDeleteNotepadRemindWnd(strType, callback)
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd("TipExitRemindWnd.Instance")
+	if frameHostWnd == nil then
+		TipLog("[ShowDeleteNotepadRemindWnd] GetHostWnd failed: TipExitRemindWnd.Instance")
+		return
+	end
+	local objTree = frameHostWnd:GetBindUIObjectTree()
+	local objRootCtrl = objTree:GetUIObject("root.layout")
+	local title = objRootCtrl:GetObject("ExitRemind.Title")
+	local ExitRemindText1 = objRootCtrl:GetObject("ExitRemind.Text1")
+	local ExitRemindText2 = objRootCtrl:GetObject("ExitRemind.Text2")
+	local CenterImg = objRootCtrl:GetObject("ExitRemind.Center.Obj")
+	local Exitbtn = objRootCtrl:GetObject("ExitRemind.ExitBtn")
+	local strCenterTextureID, strRemindText, strTitle, nStartPos, tCenterPos
+	if strType == "notepad" then
+		strCenterTextureID = "delete.notepad.center"
+		strRemindText = "确定要删除所选记事本？"
+		strTitle = "记事本删除提示："
+		nStartPos = 105
+		tCenterPos={141, 26, 110, 110}
+	else
+		strCenterTextureID = "delete.remind.center"
+		strRemindText = "确定要删除所选提醒文本？"
+		strTitle = "提醒删除提示："
+		nStartPos = 96
+		tCenterPos={141, 26, 110, 110}
+	end
+	Exitbtn:SetText("删除")
+	title:SetText(strTitle)
+	CenterImg:SetTextureID(strCenterTextureID)
+	CenterImg:SetObjPos2(tCenterPos[1], tCenterPos[2], tCenterPos[3], tCenterPos[4])
+	ExitRemindText1:SetVisible(false)
+	ExitRemindText2:SetText(strRemindText)
+	ExitRemindText2:SetObjPos2(nStartPos, 151, 200, 20)
+	local tUserData = {
+		["callback"] = callback,
+		["restore"] = function()
+						Exitbtn:SetText("退出")
+						title:SetText("嘀嗒-任务栏日历")
+						CenterImg:SetTextureID("DiDa.ExitRemind.Exit.Center")
+						CenterImg:SetObjPos2(141, 2, 177, 135)
+						ExitRemindText1:SetVisible(true)
+						ExitRemindText2:SetText("就不能随时查看日历信息哦～")
+						ExitRemindText2:SetObjPos2(42, 168, "father.width-75", 20)
+						frameHostWnd:SetUserData(nil)
+						--恢复状态标记：失去焦点时隐藏
+						local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
+						SetLoseFocusNoHideFlag(false)
+					end,
+	}
+	frameHostWnd:SetUserData(tUserData)
+	ShowPopupWndByName("TipExitRemindWnd.Instance", true)
+end
 
 function GetYearScale()
 	return 1900, 2100
@@ -1314,6 +1368,7 @@ obj.UpdateUIPanel = UpdateUIPanel
 obj.GetWeatherInfo = GetWeatherInfo
 obj.CheckIsYearInVacList = CheckIsYearInVacList
 obj.UpdateBackTodayStyle = UpdateBackTodayStyle
+obj.ShowDeleteNotepadRemindWnd = ShowDeleteNotepadRemindWnd
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName
