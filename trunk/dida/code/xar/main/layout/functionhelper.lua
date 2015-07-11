@@ -670,7 +670,7 @@ function ShowRemindBubble(data)
 	LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(data["remindtime"])
 	strData = string.format("提醒时间：%04d-%02d-%02d     %02d-%02d-%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
 	ExitRemindText2:SetText(strData)
-	ExitRemindText3:SetText(tostring(data["title"]))
+	ExitRemindText3:SetText("提醒标题："..tostring(data["title"]))
 	ExitRemindText4:SetText("提醒内容："..tostring(data["content"]))
 	ShowPopupWndByName("TipRemindBubbleWnd.Instance", true)
 end
