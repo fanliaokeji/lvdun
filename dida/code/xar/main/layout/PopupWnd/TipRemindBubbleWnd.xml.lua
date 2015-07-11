@@ -13,10 +13,12 @@ end
 
 
 function OnClickQuit(self)
-	local objTree = self:GetOwner()
-	local objHostWnd = objTree:GetBindHostWnd()
-	tFunHelper.KillClockWindow()
-	tFunHelper.ReportAndExit()
+	OnClickCancle(self)
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+			timerManager:KillTimer(id)
+			tFunHelper.ChangeView(3)
+		end, 200)
 end
 
 function PopupInMainWndCenter(self)
