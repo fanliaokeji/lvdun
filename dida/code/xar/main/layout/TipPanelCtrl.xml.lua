@@ -1,7 +1,8 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
-----方法----
+local tipMainPanelRootCtrlObj = nil
+
 function SetTipData(self, infoTab) 
 	CreateFilterListener(self)
 	return true
@@ -227,6 +228,7 @@ function OnCloseWnd(self)
 end
 
 function OnInitControl(self)
+	tipMainPanelRootCtrlObj = self
 	--初始化，默认显示日历
 	local objectFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 	local calendarPreView = objectFactory:CreateUIObject("DiDa.CalendarPreView", "CalendarPreView")
@@ -319,4 +321,17 @@ end
 
 function IsRealString(AString)
     return type(AString) == "string" and AString ~= ""
+end
+
+local IndexToBtnID = {{id = "calendar.btn", fun = OnClickCalendar}, 
+					  {id = "notepad.btn", fun = OnClickNotepad},
+					  {id = "remind.btn", fun = OnClickRemind},
+					  {id = "forher.btn", fun = OnClickForher}
+					 }
+function tFunHelper.ChangeView(viewIndex)
+	if not IndexToBtnID[viewIndex] then
+		return
+	end	
+	local viewBtn = tipMainPanelRootCtrlObj:GetControlObject(IndexToBtnID[viewIndex].id)
+	IndexToBtnID[viewIndex].fun(viewBtn)
 end
