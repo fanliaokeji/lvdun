@@ -28,6 +28,8 @@ extern CDDApp theApp;
 #include "base64.h"
 //#include "DidaCalendarHelper\DidaCalendarHelper.h"
 
+#include "TextCodeConvert.h"
+
 LuaAPIUtil::LuaAPIUtil(void)
 {
 }
@@ -102,7 +104,10 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//读写UTF8文件
 	{"ReadFileToString", ReadFileToString},
 	{"WriteStringToFile", WriteStringToFile},
-
+	
+	//读写未知编码文件
+	{"ReadFileToStringEx", ReadFileToStringEx},
+	{"WriteStringToFileEx", WriteStringToFileEx},
 	//注册表操作
 	{"QueryRegValue", QueryRegValue},
 	{"QueryRegValue64", QueryRegValue64},
@@ -4248,5 +4253,67 @@ int LuaAPIUtil::GetSystemAllTTFFont(lua_State* pLuaState)
 		lua_rawseti(pLuaState, -2, index);
 		index++;
 	}
+	return 1;
+}
+
+int LuaAPIUtil::ReadFileToStringEx(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		// param1: file path
+		std::string strSrcFile = luaL_checkstring(pLuaState, 2);
+
+		CComBSTR bstrSrcFile;
+		LuaStringToCComBSTR(strSrcFile.c_str(),bstrSrcFile);
+
+		// param2: support max size
+		DWORD file_max_size = (DWORD)lua_tointeger(pLuaState, 3);
+		file_max_size = (file_max_size==0?1024*1024:file_max_size);
+
+		if ( bstrSrcFile.m_str)
+		{
+			std::string file_data;
+			DWORD dwByteRead = 0;
+			tipWndDatFileUtility.ReadFileToString(bstrSrcFile.m_str, file_data, dwByteRead, file_max_size);
+			if ( !file_data.empty() )
+			{
+				TextCodeConvert::TextCode tc;
+				TextCodeConvert::ConvertTextCodeToUTF8WithOutBOM(file_data,tc);
+				lua_pushinteger(pLuaState, tc);
+				lua_pushlstring(pLuaState, file_data.c_str(), file_data.size());
+				return 2;
+			}
+		}
+	}
+	return 0;
+}
+
+int LuaAPIUtil::WriteStringToFileEx(lua_State* pLuaState)
+{
+	bool ret = false;
+
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		// param1: file path
+		std::string strSrcFile = luaL_checkstring(pLuaState, 2);        
+		CComBSTR bstrSrcFile;
+		LuaStringToCComBSTR(strSrcFile.c_str(),bstrSrcFile);
+
+		// param2: file_data
+		size_t len = 0;
+		const char* file_data_ptr = lua_tolstring(pLuaState,3,&len);
+
+		TextCodeConvert::TextCode tc = (TextCodeConvert::TextCode)lua_tointeger(pLuaState, 4);
+
+		if ( file_data_ptr )
+		{
+			std::string strData(file_data_ptr,len);
+			TextCodeConvert::ConvertUTF8WithOutBOMByTextCode(strData,tc);
+			ret = tipWndDatFileUtility.WriteStringToFile(bstrSrcFile.m_str, strData.c_str(), strData.size());
+		}
+	}
+	lua_pushboolean(pLuaState,ret);
 	return 1;
 }

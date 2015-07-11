@@ -123,7 +123,9 @@ public:
 	// WriteStringToFile 将string全部内容写入到一个文件中。
 	static int ReadFileToString(lua_State* pLuaState);
 	static int WriteStringToFile(lua_State* pLuaState);
-
+	
+	static int ReadFileToStringEx(lua_State* pLuaState);
+	static int WriteStringToFileEx(lua_State* pLuaState);
 	
 	//注册表操作
 	static int QueryRegValue(lua_State* pLuaState);
