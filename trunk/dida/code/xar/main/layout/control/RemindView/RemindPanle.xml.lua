@@ -198,7 +198,7 @@ end
 
 local tCheckBox1 = {CheckBoxNA=1, CheckBoxBubble=1}
 local tCheckBox2 = {CheckBoxOnce=1, CheckBoxEveryDay=1, CheckBoxEveryWeek=1, CheckBoxEveryMonth=1}
-local tCheckBox3 = {CheckBoxMonday=1, CheckBoxTuesday=2, CheckBoxWednesday=3, CheckBoxThursday=4, CheckBoxFriday=5, CheckBoxSaturday=6, CheckBoxSunday=7}
+local tCheckBox3 = {CheckBoxMonday=2, CheckBoxTuesday=3, CheckBoxWednesday=4, CheckBoxThursday=5, CheckBoxFriday=6, CheckBoxSaturday=7, CheckBoxSunday=1}
 function SingleCheckBox(self, tCheckBox, strID)
 	local owner = self:GetOwnerControl()
 	if type(tCheckBox) ~= "table" then
@@ -244,7 +244,30 @@ function OnClickCheckBox1(self)
 		local RemindTimeRightTimeEdit = owner:GetControlObject("RemindTimeRightTimeEdit")
 		RemindTimeRightTimeEdit:SetVisible(false)
 		RemindTimeRightTimeEdit:SetChildrenVisible(false)
-		SingleCheckBox(self, tCheckBox3, "CheckBoxMonday")--默认单选周一
+		if id == "CheckBoxEveryDay" then
+			ShowPerDayEdit(RemindTimeRightWeekCk, true)
+		else
+			ShowPerDayEdit(RemindTimeRightWeekCk, false)
+			SingleCheckBox(self, tCheckBox3, "CheckBoxMonday")--默认单选周一
+		end
+	end
+end
+
+function ShowPerDayEdit(RemindTimeRightWeekCk, bOnlyShowPerDay)
+	local owner = RemindTimeRightWeekCk:GetOwnerControl()
+	local EditWeekLayout, EditTimeLayout = owner:GetControlObject("EditWeekLayout"), owner:GetControlObject("EditTimeLayout")
+	if bOnlyShowPerDay then
+		EditWeekLayout:SetVisible(false)
+		EditWeekLayout:SetChildrenVisible(false)
+		EditTimeLayout:SetVisible(true)
+		EditTimeLayout:SetChildrenVisible(true)
+		EditTimeLayout:SetObjPos2(0, 0, "father.width", 22)
+	else
+		EditWeekLayout:SetVisible(true)
+		EditWeekLayout:SetChildrenVisible(true)
+		EditTimeLayout:SetVisible(true)
+		EditTimeLayout:SetChildrenVisible(true)
+		EditTimeLayout:SetObjPos2(0, 34, "father.width", 22)
 	end
 end
 
@@ -359,6 +382,13 @@ function OnClickBottomSaveBtn(self)
 		local h = hcedit:GetText()
 		local mi = mincedit:GetText()
 		data["noncetargettime"] = tipUtil:DateTime2Seconds(y, m, d, h, mi, 0)
+	elseif data["ntype"] == 2 then
+		local EditHourWeek = owner:GetControlObject("EditHourWeek")
+		local EditHourWeekedit = EditHourWeek:GetControlObject("edit")
+		local EditMinuteWeek = owner:GetControlObject("EditMinuteWeek")
+		local EditMinuteWeekedit = EditMinuteWeek:GetControlObject("edit")
+		data["hour"] = EditHourWeekedit:GetText()
+		data["min"] = EditMinuteWeekedit:GetText()
 	--周1-7
 	--时
 	--分

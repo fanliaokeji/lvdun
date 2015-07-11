@@ -651,6 +651,30 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 	ShowPopupWndByName("TipExitRemindWnd.Instance", true)
 end
 
+function ShowRemindBubble(data)
+	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local frameHostWnd = hostwndManager:GetHostWnd("TipRemindBubbleWnd.Instance")
+	if frameHostWnd == nil then
+		TipLog("[ShowRemindBubble] GetHostWnd failed: TipRemindBubbleWnd.Instance")
+		return
+	end
+	local objTree = frameHostWnd:GetBindUIObjectTree()
+	local objRootCtrl = objTree:GetUIObject("root.layout")
+	local ExitRemindText1 = objRootCtrl:GetObject("ExitRemind.Text1")
+	local ExitRemindText2 = objRootCtrl:GetObject("ExitRemind.Text2")
+	local ExitRemindText3 = objRootCtrl:GetObject("ExitRemind.Text3")
+	local ExitRemindText4 = objRootCtrl:GetObject("ExitRemind.Text4")
+	local LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(data["createtime"])
+	local strData = string.format("记事时间：%04d-%02d-%02d     %02d-%02d-%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
+	ExitRemindText1:SetText(strData)
+	LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(data["remindtime"])
+	strData = string.format("提醒时间：%04d-%02d-%02d     %02d-%02d-%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
+	ExitRemindText2:SetText(strData)
+	ExitRemindText3:SetText(tostring(data["title"]))
+	ExitRemindText4:SetText("提醒内容："..tostring(data["content"]))
+	ShowPopupWndByName("TipRemindBubbleWnd.Instance", true)
+end
+
 function GetYearScale()
 	return 1900, 2100
 end
@@ -1005,6 +1029,7 @@ local g_tPopupWndList = {
 	[1] = {"TipAboutWnd", "TipAboutTree"},
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipUpdateWnd", "TipUpdateTree"},
+	[4] = {"TipRemindBubbleWnd", "TipRemindBubbleTree"},
 }
 
 function CreatePopupTipWnd()
@@ -1369,6 +1394,7 @@ obj.GetWeatherInfo = GetWeatherInfo
 obj.CheckIsYearInVacList = CheckIsYearInVacList
 obj.UpdateBackTodayStyle = UpdateBackTodayStyle
 obj.ShowDeleteNotepadRemindWnd = ShowDeleteNotepadRemindWnd
+obj.ShowRemindBubble = ShowRemindBubble
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName
