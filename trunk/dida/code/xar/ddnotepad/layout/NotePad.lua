@@ -7,11 +7,11 @@ local Helper = XLGetGlobal("Helper")
 	-- %installdir%\ddnotepad.exe /path c:\test.txt 
 	-- %installdir%\ddnotepad.exe /path c:\test.txt /sstartfrom desktop
 function OnLoadLuaFile()
-	local path = Helper:GetCommandStrValue("/path")
-	local sstartfrom = Helper:GetCommandStrValue("/sstartfrom ")
-	if nil == path or "" == path then
+	local ret, path = Helper:GetCommandStrValue("/path")
+	local startFromRet, sstartfrom = Helper:GetCommandStrValue("/sstartfrom ")
+	if not ret then
 		local command = tipUtil:GetCommandLine()
-		path = string.match(command, ".*%s+(%a:\\.*)%s*")
+		path = string.match(command, ".*(%a:\\.*)%s*")
 		-- XLMessageBox(path)
 		Helper:LOG("command file path: ", path)
 	end
