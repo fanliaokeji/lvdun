@@ -1,4 +1,5 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
+local Helper = XLGetGlobal("Helper")
 local tipUtil = tFunHelper.tipUtil
 
 local tipMainPanelRootCtrlObj = nil
@@ -202,24 +203,21 @@ function OnClickForher(self)
 	local previewLayoutBkg = owner:GetControlObject("preview.layout.bkg")
 	local pagenailBkg = owner:GetControlObject("pagenail.bkg")
 	local viewLayoutBkg = owner:GetControlObject("view.layout.bkg")
-		
+	
+	local wndTree = self:GetOwner()
+	local wnd = wndTree:GetBindHostWnd()
+	
+	Helper:CreateModalWnd("TipForherWnd", "TipForherWndTree", wnd:GetWndHandle())
 	--若上次显示的是日历标签，则需动画调整宽度
-	if 1 == curViewIndex then
-		previewLayoutBkg:SetObjPos2(38, 0, 213, 445)
-		pagenailBkg:SetObjPos2(213+38-14, math.floor((445 - 293)/2), 25, 293)
-		viewLayoutBkg:SetObjPos2(213 + 38, 0, 473, 445)
-		
-		local calendarPreView = owner:GetControlObject("DiDa.CalendarPreView")
-		calendarPreView:SetVisible(false)
-		calendarPreView:SetChildrenVisible(false)
-		local calendarView = owner:GetControlObject("DiDa.CalendarView")
-		calendarView:SetVisible(false)
-		calendarView:SetChildrenVisible(false)
-	end
+	-- if 1 == curViewIndex then
+		-- previewLayoutBkg:SetObjPos2(38, 0, 213, 445)
+		-- pagenailBkg:SetObjPos2(213+38-14, math.floor((445 - 293)/2), 25, 293)
+		-- viewLayoutBkg:SetObjPos2(213 + 38, 0, 473, 445)
+	-- end
 	--隐藏notepad preview、view 以及 提醒preview、view
 	
 	--显示她用 preview、view
-	curViewIndex = 4
+	-- curViewIndex = 4
 end
 
 ---事件--
