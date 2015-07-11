@@ -3,16 +3,16 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>275</width>
-			<height>132</height>
+			<width>390</width>
+			<height>257</height>
 		</attr>
 
 		<obj id="root.layout" class="CaptionObject">
 			<attr>
 				<left>0</left>
 				<top>0</top>
-				<width>275</width>
-				<height>132</height>
+				<width>390</width>
+				<height>257</height>
 			</attr>				
 			<children>					
 				<!--标题栏-->
@@ -25,12 +25,21 @@
 						<texture>DiDa.AboutWnd.Bkg</texture>
 					</attr>
 					<children>
+						<obj id="TipAbout.Center.Obj" class="TextureObject">
+							<attr>
+								<left>137</left>
+								<top>50</top>
+								<width>116</width>
+								<height>116</height>
+								<texture>DiDa.AboutWnd.Center</texture>
+							</attr>
+						</obj>
 						<obj id="TipAbout.CloseBtn" class="TipAddin.Button">
 							<attr>
-								<left>father.width-7-35</left>
+								<left>father.width-7-22</left>
 								<top>3</top>
-								<width>35</width>
-								<height>16</height>
+								<width>22</width>
+								<height>22</height>
 								<cursor>IDC_HAND</cursor>
 								<NormalBkgID>DiDa.AboutWnd.CloseBtn.Normal</NormalBkgID>
 								<DownBkgID>DiDa.AboutWnd.CloseBtn.Hover</DownBkgID>
@@ -44,42 +53,42 @@
 						
 						<obj id="TipAbout.Title" class="TextObject">
 							<attr>
-								<left>15</left>
-								<top>3</top>
+								<left>20</left>
+								<top>8</top>
 								<width>father.width-20</width> 
 								<height>24</height>
 								<valign>center</valign>
 								<halign>left</halign>
-								<font>font.text10</font>
-								<textcolor>626262</textcolor>
+								<font>font.text15</font>
+								<textcolor>system.white</textcolor>
 								<text>关于嘀嗒日历</text>
 							</attr>		
 						</obj>
 						
 						<obj id="TipAbout.Version" class="TextObject">
 							<attr>
-								<left>108</left>
-								<top>48</top>
-								<width>152</width> 
-								<height>23</height>
+								<left>100</left>
+								<top>180</top>
+								<width>186</width> 
+								<height>20</height>
 								<valign>center</valign>
 								<halign>left</halign>
-								<font>font.text13</font>
-								<textcolor>626262</textcolor>
+								<font>font.text16</font>
+								<textcolor>3F5483</textcolor>
 								<text>版本号:V1.0.0.1正式版</text>
 							</attr>		
 						</obj>
 						
 						<obj id="TipAbout.CopyRight" class="TextObject">
 							<attr>
-								<left>153</left>
-								<top>80</top>
-								<width>father.width-113</width> 
-								<height>23</height>
+								<left>136</left>
+								<top>220</top>
+								<width>117</width> 
+								<height>18</height>
 								<valign>center</valign>
 								<halign>left</halign>
-								<font>font.text11</font>
-								<textcolor>626262</textcolor>
+								<font>font.text13</font>
+								<textcolor>3F5483</textcolor>
 								<text>嘀嗒日历 版权所有</text>
 							</attr>		
 						</obj>
@@ -95,12 +104,15 @@
             <layered>1</layered>
             <left>0</left>
             <top>0</top>
-            <width>275</width>
-            <height>132</height>
+            <width>390</width>
+            <height>257</height>
+            <cacheleft>0</cacheleft>
+            <cachetop>0</cachetop>
 
             <topmost>0</topmost>
             <visible>0</visible>
             <enable>1</enable>
+            <active>0</active>
             <maxbox>0</maxbox>
             <minbox>1</minbox>
             <minwidth>50</minwidth>
