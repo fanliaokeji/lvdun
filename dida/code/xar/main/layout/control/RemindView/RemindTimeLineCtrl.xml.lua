@@ -18,8 +18,86 @@ function SaveRemindListData2File()
 	if type(tRemindListData) ~= "table" then return end
 	local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
 	tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+	--强制检查是否有马上要弹出的提醒
+	ForceUpdateRemindTimer()
 end
 XLSetGlobal("SaveRemindListData2File", SaveRemindListData2File)
+
+function ForceUpdateRemindTimer()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(tRemindListData) = "..type(tRemindListData))
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	for _, data in pairs(tRemindListData) do
+		FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(data) = "..type(data))
+		for _, info in ipairs(data) do
+			if type(info) == "table" and info["bopen"] and not info["state"] then--状态是打开，且未提醒过
+				FunctionObj.TipLog("ForceUpdateRemindTimer, info[title] = "..tostring(info["title"]))
+				local nCurrentUTC = tipUtil:GetCurrentUTCTime()
+				if info["ntype"] == 1 then --一次性
+					if type(info["noncetargettime"]) == "number" then
+						local nStep = info["noncetargettime"] - nCurrentUTC
+						FunctionObj.TipLog("ForceUpdateRemindTimer, nStep = "..tostring(nStep))
+						if nStep > 0 and nStep < 30*60 then
+							info["remindtime"] = info["noncetargettime"]
+							info["state"] = "willremind"
+							timerManager:SetTimer(function(item, id)
+								item:KillTimer(id)
+								info["state"] = "hasremind"
+								local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+								tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+								FunctionObj.ShowRemindBubble(info)
+							end, nStep)
+						end
+					end
+				elseif info["ntype"] == 2 then--每天
+					local LYear, LMonth, LDay = tipUtil:FormatCrtTime(nCurrentUTC)
+					local nTarGetUTC = tipUtil:DateTime2Seconds(LYear, LMonth, LDay, info["hour"], info["min"], 0)
+					local nStep = nTarGetUTC - nCurrentUTC
+					if nStep > 0 and nStep < 30*60 then
+						info["remindtime"] = nTarGetUTC
+						info["state"] = "willremind"
+						timerManager:SetTimer(function(item, id)
+							Itm:KillTimer(id)
+							info["state"] = nil--要清除标记才能保证每天都提醒
+							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+							tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+							FunctionObj.ShowRemindBubble(info)
+						end, nStep)
+					end
+				elseif info["ntype"] == 3 then--每周
+					if type(info["tweek"]) == "table" then
+						local _, _, _, _, _, _, LWeek = tipUtil:Seconds2DateTime(nCurrentUTC)
+						local bRet = false
+						for _, weekidx in ipairs(info["tweek"]) do
+							if weekidx == LWeek then
+								bRet = true
+								break
+							end
+						end
+						if bRet then
+							local LYear, LMonth, LDay = tipUtil:FormatCrtTime(nCurrentUTC)
+							local nTarGetUTC = tipUtil:DateTime2Seconds(LYear, LMonth, LDay, info["hour"], info["min"], 0)
+							local nStep = nTarGetUTC - nCurrentUTC
+							if nStep > 0 and nStep < 30*60 then
+								info["remindtime"] = nTarGetUTC
+								info["state"] = "willremind"
+								timerManager:SetTimer(function(item, id)
+									Itm:KillTimer(id)
+									info["state"] = nil--要清除标记才能保证每周都提醒
+									local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
+									tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
+									FunctionObj.ShowRemindBubble(info)
+								end, nStep)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+XLSetGlobal("ForceUpdateRemindTimer", ForceUpdateRemindTimer) 
 
 function OnLButtonDown(self, x, y)
 	 local attr = self:GetAttribute()

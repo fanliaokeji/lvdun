@@ -377,149 +377,170 @@
 									<height>59</height>
 								</attr>
 								<children>
-									<!--周一-->
-									<obj id="CheckBoxMonday" class="SimpleCheckBox">
-										<attr>
-											<left>0</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周一</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--编辑时间-->
-									<obj id="EditHourWeek" class="SimpleEditCtrl">
+									<!--编辑时间面板-->
+									<obj id="EditTimeLayout" class="LayoutObject">
 										<attr>
 											<left>0</left>
 											<top>34</top>
-											<width>44</width>
+											<width>father.width</width>
 											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>23</MaxNumber>
-											<Text>时</Text>
 										</attr>
+										<children>
+											<obj id="EditHourWeek" class="SimpleEditCtrl">
+												<attr>
+													<left>0</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>23</MaxNumber>
+													<Text>时</Text>
+												</attr>
+											</obj>
+											<obj id="EditMinuteWeek" class="SimpleEditCtrl">
+												<attr>
+													<left>49</left>
+													<top>0</top>
+													<width>44</width>
+													<height>22</height>
+													<ImgHeight>20</ImgHeight>
+													<ImgWidth>20</ImgWidth>
+													<NormalBkgID>date.normal</NormalBkgID>
+													<HoverBkgID>date.hover</HoverBkgID>
+													<LimitLen>2</LimitLen>
+													<MaxNumber>59</MaxNumber>
+													<Text>分</Text>
+												</attr>
+											</obj>
+										</children>
 									</obj>
-									<obj id="EditMinuteWeek" class="SimpleEditCtrl">
+									<!--编辑星期面板-->
+									<obj id="EditWeekLayout" class="LayoutObject">
 										<attr>
-											<left>49</left>
-											<top>34</top>
-											<width>44</width>
-											<height>22</height>
-											<ImgHeight>20</ImgHeight>
-											<ImgWidth>20</ImgWidth>
-											<NormalBkgID>date.normal</NormalBkgID>
-											<HoverBkgID>date.hover</HoverBkgID>
-											<LimitLen>2</LimitLen>
-											<MaxNumber>59</MaxNumber>
-											<Text>分</Text>
-										</attr>
-									</obj>
-									<!--周二-->
-									<obj id="CheckBoxTuesday" class="SimpleCheckBox">
-										<attr>
-											<left>54</left>
+											<left>0</left>
 											<top>0</top>
-											<width>47</width>
+											<width>father.width</width>
 											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周二</Text>
-											<Space>4</Space>
 										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--周三-->
-									<obj id="CheckBoxWednesday" class="SimpleCheckBox">
-										<attr>
-											<left>107</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周三</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--周四-->
-									<obj id="CheckBoxThursday" class="SimpleCheckBox">
-										<attr>
-											<left>160</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周四</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--周五-->
-									<obj id="CheckBoxFriday" class="SimpleCheckBox">
-										<attr>
-											<left>213</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周五</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--周六-->
-									<obj id="CheckBoxSaturday" class="SimpleCheckBox">
-										<attr>
-											<left>266</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周六</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
-									<!--周日-->
-									<obj id="CheckBoxSunday" class="SimpleCheckBox">
-										<attr>
-											<left>319</left>
-											<top>0</top>
-											<width>47</width>
-											<height>20</height>
-											<UnCheckBkgID>uncheck1</UnCheckBkgID>
-											<CheckBkgID>check3</CheckBkgID>
-											<Text>周日</Text>
-											<Space>4</Space>
-										</attr>
-										<eventlist>
-											<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
-										</eventlist>
-									</obj>
+										<children>
+											<!--周一-->
+											<obj id="CheckBoxMonday" class="SimpleCheckBox">
+												<attr>
+													<left>0</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周一</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周二-->
+											<obj id="CheckBoxTuesday" class="SimpleCheckBox">
+												<attr>
+													<left>54</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周二</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周三-->
+											<obj id="CheckBoxWednesday" class="SimpleCheckBox">
+												<attr>
+													<left>107</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周三</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周四-->
+											<obj id="CheckBoxThursday" class="SimpleCheckBox">
+												<attr>
+													<left>160</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周四</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周五-->
+											<obj id="CheckBoxFriday" class="SimpleCheckBox">
+												<attr>
+													<left>213</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周五</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周六-->
+											<obj id="CheckBoxSaturday" class="SimpleCheckBox">
+												<attr>
+													<left>266</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周六</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+											<!--周日-->
+											<obj id="CheckBoxSunday" class="SimpleCheckBox">
+												<attr>
+													<left>319</left>
+													<top>0</top>
+													<width>47</width>
+													<height>20</height>
+													<UnCheckBkgID>uncheck1</UnCheckBkgID>
+													<CheckBkgID>check3</CheckBkgID>
+													<Text>周日</Text>
+													<Space>4</Space>
+												</attr>
+												<eventlist>
+													<event name="OnClick" file="RemindPanle.xml.lua" func="OnClickCheckBox1" />
+												</eventlist>
+											</obj>
+										</children>
+									</obj>	
 								</children>
 							</obj>
 							<obj id="RemindTimeRightTimeEdit" class="LayoutObject">

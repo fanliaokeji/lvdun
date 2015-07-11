@@ -292,7 +292,6 @@ function StartRunCountTimer()
 	
 end
 
-
 function StartUITimer()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local nCurrentTime = tipUtil:GetCurrentUTCTime()
@@ -304,6 +303,20 @@ function StartUITimer()
 			FunctionObj.UpdateUIPanel()
 		end
 	end, 1000)
+	--开启提醒气泡计时器
+	--目前只对一次性、每天、每周的提醒做处理， 每月的需要产品确认
+	--每半个小时判断一次， 对于即将在半小时之内执行的提醒另开计时器
+	local ForceUpdateRemindTimer = XLGetGlobal("ForceUpdateRemindTimer")
+	if type(ForceUpdateRemindTimer) == "function" then
+		ForceUpdateRemindTimer()
+	end
+	timerManager:SetTimer(function(item, id)
+		local ForceUpdateRemindTimer = XLGetGlobal("ForceUpdateRemindTimer")
+		if type(ForceUpdateRemindTimer) == "function" then
+			ForceUpdateRemindTimer()
+		end
+	end, 30*60*1000)
+	
 end
 
 
