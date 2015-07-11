@@ -334,4 +334,5 @@ function tFunHelper.ChangeView(viewIndex)
 	end	
 	local viewBtn = tipMainPanelRootCtrlObj:GetControlObject(IndexToBtnID[viewIndex].id)
 	IndexToBtnID[viewIndex].fun(viewBtn)
+	OnLButtonDown(viewBtn)
 end
