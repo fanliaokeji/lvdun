@@ -328,11 +328,17 @@ local IndexToBtnID = {{id = "calendar.btn", fun = OnClickCalendar},
 					  {id = "remind.btn", fun = OnClickRemind},
 					  {id = "forher.btn", fun = OnClickForher}
 					 }
-function tFunHelper.ChangeView(viewIndex)
+function tFunHelper.ChangeView(viewIndex, bNotPopUp)
 	if not IndexToBtnID[viewIndex] then
 		return
 	end	
 	local viewBtn = tipMainPanelRootCtrlObj:GetControlObject(IndexToBtnID[viewIndex].id)
 	IndexToBtnID[viewIndex].fun(viewBtn)
 	OnLButtonDown(viewBtn)
+	
+	if not bNotPopUp then
+		local wndTree = tipMainPanelRootCtrlObj:GetOwner()
+		local wnd = wndTree:GetBindHostWnd()
+		wnd:Show(4)
+	end
 end
