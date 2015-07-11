@@ -1,0 +1,75 @@
+<xlue>
+	<objtreetemplate id="TipForherWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>390</width>
+			<height>257</height>
+		</attr>
+
+		<obj id="root.layout" class="CaptionObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>390</width>
+				<height>257</height>
+			</attr>				
+			<children>					
+				<!--标题栏-->
+				<obj id="TipAbout.Caption" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture>DiDa.ForherWnd.Bkg</texture>
+					</attr>
+					<children>
+						<obj id="TipAbout.CloseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-7-22</left>
+								<top>3</top>
+								<width>22</width>
+								<height>22</height>
+								<cursor>IDC_HAND</cursor>
+								<NormalBkgID>DiDa.AboutWnd.CloseBtn.Normal</NormalBkgID>
+								<DownBkgID>DiDa.AboutWnd.CloseBtn.Hover</DownBkgID>
+								<HoverBkgID>DiDa.AboutWnd.CloseBtn.Hover</HoverBkgID>
+								<DisableBkgID>DiDa.AboutWnd.CloseBtn.Normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipForherWnd.xml.lua" func="OnClickCloseBtn" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipForherWnd" class="ModalHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>390</width>
+            <height>257</height>
+           
+            <topmost>0</topmost>
+            <visible>0</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipForherWnd.xml.lua" func="OnCreate"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
