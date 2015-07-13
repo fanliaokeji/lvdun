@@ -114,6 +114,8 @@ public:
 	static int PathCombine(lua_State* pLuaState);
 	static int ExpandEnvironmentString(lua_State* pLuaState);
 	static int QueryFileExists(lua_State* pLuaState);
+	static int DragQueryFile(lua_State* pLuaState);
+	static int DragAcceptFiles(lua_State* pLuaState);
 	static int Rename(lua_State* pLuaState);
 	static int CreateDir(lua_State* pLuaState);
 	static int CreatePathFile(lua_State* pLuaState);
