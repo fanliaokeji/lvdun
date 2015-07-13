@@ -34,6 +34,9 @@ function OnInitNotePadView(self)
 					local attr = self:GetAttribute()
 					Helper:Assert(attr.data)
 					attr.data.txtFilePath = filePath
+					local year, month, day, hour, minute, second = tipUtil:GetFileCreateTime(filePath)
+					attr.data.createtime = os.time({year = year, month = month, day = day, hour = hour, min = minute, sec = second})
+					attr.data.title = string.match(filePath, ".*\\(.*)")
 					SetData(self, attr.data)
 	end)
 end
@@ -118,7 +121,8 @@ function OnClickSave(self)
 	local editCtrl = owner:GetControlObject("edit.ctrl")
 	local baseEdit = editCtrl:GetControlObject("newedit.edit")
 	--写edit中的文字到txt中
-	tipUtil:WriteStringToFileEx(data.txtFilePath, editCtrl:GetText(), data.txtCodingType)
+
+	tipUtil:WriteStringToFileEx(data.txtFilePath, string.gsub(editCtrl:GetText(), "\r", "\r\n"), data.txtCodingType)
 	owner:FireExtEvent("UpdateNoteList")
 	editCtrl:SetFocus(false)
 	
