@@ -12,6 +12,16 @@ function OnShowWindow(self, bShow)
 	end
 end
 
+function InputFilter(self, msg, wpram, lparam)
+	-- (UINT) WM_DROPFILES,      // message ID    0x0233
+	-- (WPARAM) wParam,      // = (WPARAM) (HDROP) hDrop;    
+	-- (LPARAM) lParam      // = 0; not used, must be zero );  
+	if msg == 0x0233 then 
+		local filePath = tipUtil:DragQueryFile(wpram)
+		Helper:DispatchEvent("OnNotePadDrop",filePath)
+	end
+end
+
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root")
@@ -42,6 +52,9 @@ function OnCreate(self)
 	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
 	-- objtree:AddAnimation(ani)
 	-- ani:Resume()
+	tipUtil:DragAcceptFiles(self:GetWndHandle(), true)
+	self:AddInputFilter(false,InputFilter)
+	
 end
 
 function OnInitNotePad(self)

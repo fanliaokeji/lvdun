@@ -312,6 +312,7 @@
 									<eventlist>
 										<event name="OnEditChange" file="NotePadView.xml.lua" func="OnEditChange" />
 										<event name="OnSelChange" file="NotePadView.xml.lua" func="OnSelChange" />
+										<event name="OnRButtonUp" file="NotePadView.xml.lua" func="OnEditRButtonUp" />
 									</eventlist>
 								</obj>
 								<obj id="save.btn" class="TipAddin.Button">
@@ -359,6 +360,7 @@
 			</children>
 			<eventlist>
 				<event name="OnInitControl" file="NotePadView.xml.lua" func="OnInitNotePadView" />
+				
 			</eventlist>
 		</objtemplate>
 	</control>

@@ -22,12 +22,20 @@ function OnInitNotePadView(self)
 	pasteBtn:Enable(false)
 	saveBtn:Enable(false)
 	
+	
 	--监控系统剪切板，里面有text，则粘贴按钮可用
 	SetTimer(function(self)
 			local CF_TEXT = 1
 			local bIsPasteAvlbl = tipUtil:IsClipboardFormatAvailable(CF_TEXT)
 			pasteBtn:Enable(bIsPasteAvlbl)
 	end,200)
+	
+	Helper:AddListener("OnNotePadDrop", function(_, _, filePath) 
+					local attr = self:GetAttribute()
+					Helper:Assert(attr.data)
+					attr.data.txtFilePath = filePath
+					SetData(self, attr.data)
+	end)
 end
 
 --默认字体微软雅黑、12号 
@@ -110,7 +118,7 @@ function OnClickSave(self)
 	local editCtrl = owner:GetControlObject("edit.ctrl")
 	local baseEdit = editCtrl:GetControlObject("newedit.edit")
 	--写edit中的文字到txt中
-	tipUtil:WriteStringToFile(data.txtFilePath, editCtrl:GetText())
+	tipUtil:WriteStringToFileEx(data.txtFilePath, editCtrl:GetText(), data.txtCodingType)
 	owner:FireExtEvent("UpdateNoteList")
 	editCtrl:SetFocus(false)
 	
@@ -139,7 +147,17 @@ function testMenuFunTable:OnSelect_cancel_operation(self)
 	XLMessageBox("OnClick_open item id： "..tostring(self:GetID()))
 end
 
+function OnEditRButtonUp(self)
+	-- XLMessageBox("OnEditRButtonUp")
+	local x, y = tipUtil:GetCursorPos()
+	local owner = self:GetOwner()
+	local wnd = owner:GetBindHostWnd()
+	local parentWndHandle = wnd:GetWndHandle()
+	Helper:CreateMenu(x, y, parentWndHandle, testMenuTable, testMenuFunTable)
+end
+
 function OnLButtonUpSizeCb(self)
+	-- OnEditRButtonUp(self)
 	ProcessClick(self, "DropList.FontSize")
 end
 
@@ -177,8 +195,9 @@ function SetData(self, data)
 	end
 	
 	if data.txtFilePath then 
-		local strInTxt = tipUtil:ReadFileToString(data.txtFilePath)
+		local tc, strInTxt = tipUtil:ReadFileToStringEx(data.txtFilePath)
 		editCtrl:SetText(strInTxt)
+		data.txtCodingType = tc
 	end	
 	--隐藏图片
 	blankBkg:SetVisible(false)
@@ -389,14 +408,14 @@ function OnEditChange(self)
 	local wndTree = self:GetOwner()
 	local wnd = wndTree:GetBindHostWnd()
 	OnCloseCookie = OnCloseCookie or wnd:AttachListener("OnClose", false, function()
-					local text = editCtrl:GetText()
+					local text = self:GetText()
 					if not text or "" == text then
 						return
 					end
 					local attr = self:GetAttribute()
-					local fileText = nil
+					local fileText, tc = nil
 					if attr.data and attr.data.txtFilePath then
-						fileText = tipUtil:ReadFileToString(attr.data.txtFilePath)
+						tc, fileText = tipUtil:ReadFileToStringEx(attr.data.txtFilePath)
 					end
 					if fileText and "" ~= fileText and fileText ~= text then
 						OnClickSave(saveBtn) 
