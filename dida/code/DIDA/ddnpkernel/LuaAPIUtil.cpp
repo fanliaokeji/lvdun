@@ -2498,7 +2498,7 @@ int LuaAPIUtil::ReadFileToString(lua_State* pLuaState)
 		
 		// param2: support max size
 		DWORD file_max_size = (DWORD)lua_tointeger(pLuaState, 3);
-		file_max_size = (file_max_size==0?1024*1024:file_max_size);
+		file_max_size = (file_max_size==0?1024*1024*1024:file_max_size);
 
 		if ( bstrSrcFile.m_str)
 		{
@@ -4269,7 +4269,7 @@ int LuaAPIUtil::ReadFileToStringEx(lua_State* pLuaState)
 
 		// param2: support max size
 		DWORD file_max_size = (DWORD)lua_tointeger(pLuaState, 3);
-		file_max_size = (file_max_size==0?1024*1024:file_max_size);
+		file_max_size = (file_max_size==0?1024*1024*1024:file_max_size);
 
 		if ( bstrSrcFile.m_str)
 		{

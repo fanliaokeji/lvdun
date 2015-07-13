@@ -26,7 +26,7 @@ void CDatFileUtility::ReadFileToString(std::wstring strSrcFile, std::string &str
 	if ( h != INVALID_HANDLE_VALUE )
 	{
 		DWORD dwFileSize = ::GetFileSize(h,NULL);
-		dwMaxFileSize = (dwMaxFileSize == 0 ? 1024*1024 : dwMaxFileSize);
+		dwMaxFileSize = (dwMaxFileSize == 0 ? 1024*1024*1024 : dwMaxFileSize);
 		if ( dwFileSize>0 && dwFileSize <= dwMaxFileSize)
 		{
 			strFileData.resize(dwFileSize);
