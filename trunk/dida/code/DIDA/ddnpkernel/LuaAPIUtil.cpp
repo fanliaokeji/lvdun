@@ -99,6 +99,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"Rename", Rename},
 	{"CreateDir", CreateDir},
 	{"CreatePathFile", CreatePathFile},
+	{"DragAcceptFiles", DragAcceptFiles},
+	{"DragQueryFile", DragQueryFile},
 	{"CopyPathFile", CopyPathFile},
 	{"DeletePathFile", DeletePathFile},
 	//读写UTF8文件
@@ -2411,6 +2413,51 @@ int LuaAPIUtil::CreatePathFile(lua_State* pLuaState)
 	}	
 	lua_pushboolean(pLuaState, iValue);
 	return 1;
+}
+int LuaAPIUtil::DragQueryFile(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	LONG lhDrop = lua_tonumber(pLuaState, 2);
+	HDROP hDrop = (HDROP)(DWORD_PTR)lhDrop;
+
+	TCHAR szFileName[MAX_PATH + 1] = {0};
+	UINT nFiles = ::DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0); 
+
+	TSDEBUG4CXX("DragQueryFile returns: "<< nFiles<< ", Error Code:"<<::GetLastError());
+
+	UINT uiLen = ::DragQueryFile(hDrop, 0, szFileName, MAX_PATH); //只取拖拽文件当中的第一个
+	std::string strFileName;
+	BSTRToLuaString(szFileName,strFileName);
+	lua_pushstring(pLuaState, strFileName.c_str());
+
+	return 1;
+}
+int LuaAPIUtil::DragAcceptFiles(lua_State* pLuaState)
+{
+	TSAUTO();
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+
+	HWND hWnd = (HWND)lua_touserdata(pLuaState, 2);
+
+	BOOL vbAccept = lua_toboolean(pLuaState, 3);
+	BOOL bAccept = vbAccept ? TRUE : FALSE;
+
+	BOOL isWindow = ::IsWindow(hWnd);
+	ATLASSERT(isWindow);
+
+	if (isWindow)
+	{
+		::DragAcceptFiles(hWnd,bAccept);
+	}
+	return 0;
 }
 
 long LuaAPIUtil::CopyPathFileHelper(const char* utf8ExistingFileName, const char* utf8NewFileName, BOOL bFailedIfExists)
