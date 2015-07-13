@@ -198,7 +198,7 @@ function Helper:CreateModalWnd(wndTemplateID, treeTemplateID, parentWnd, userDat
 	local treeTemplate = self.templateMananger:GetTemplate(treeTemplateID,"ObjectTreeTemplate")
 	if not treeTemplate then return end
 	
-	local treeID = treeTemplate..".Instance"
+	local treeID = treeTemplateID..".Instance"
 	treeID = bAllowMulti and treeID..self.iModalWndCount or treeID
 	LOG("treeID: ", treeID, " bAllowMulti: ", bAllowMulti)
 	
