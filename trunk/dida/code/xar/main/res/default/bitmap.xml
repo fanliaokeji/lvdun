@@ -54,6 +54,8 @@
 		<texture id="DiDa.AboutWnd.Center" image="bitmap\DiDa.AboutWnd.Center.png" />
 		
 		
+		<texture id="DiDa.ForherWnd.Bkg" image="bitmap\bkg\texture.forher.wnd.bkg.png" />
+		
 		<texture id="DiDa.UpdateWnd.Bkg" image="bitmap\DiDa.UpdateWnd.Bkg.png" />
 		<texture id="DiDa.UpdateWnd.CloseBtn.Hover" image="bitmap\DiDa.UpdateWnd.CloseBtn.Hover.png" />
 		<texture id="DiDa.UpdateWnd.CloseBtn.Normal" image="bitmap\DiDa.UpdateWnd.CloseBtn.Normal.png" />
