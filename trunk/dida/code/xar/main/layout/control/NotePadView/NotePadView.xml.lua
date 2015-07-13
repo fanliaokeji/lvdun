@@ -94,12 +94,12 @@ end
 
 function OnClickCancel(self)
 	-- local command = tipUtil:GetCommandLine()
-	local command = "start notepad file \"C:\\1.txt\""
-	local path = ""
-	if "string" == type(command) and command ~= "" then
-		path = string.match(command, ".*file%A*\"(.*)\"")
-		XLMessageBox(path)
-	end
+	-- local command = "start notepad file \"C:\\1.txt\""
+	-- local path = ""
+	-- if "string" == type(command) and command ~= "" then
+		-- path = string.match(command, ".*file%A*\"(.*)\"")
+		-- XLMessageBox(path)
+	-- end
 end
 
 function OnClickSave(self)
