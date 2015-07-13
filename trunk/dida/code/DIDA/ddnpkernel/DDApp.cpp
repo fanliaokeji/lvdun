@@ -75,6 +75,7 @@ BOOL CDDApp::IniEnv()
 		return FALSE;
 	}
 	m_strXarPath = szXar;
+	::OleInitialize(NULL); //解:调用注册RegisterDragDrop不成功，返回E_OUTOFMEMORY错误
 	// 1)初始化图形库
 	XLGraphicParam param;
 	XL_PrepareGraphicParam(&param);
@@ -87,7 +88,7 @@ BOOL CDDApp::IniEnv()
 	//XLGP_InitGraphicPlus(&plusParam);
 	// 2)初始化XLUE,这函数是一个符合初始化函数
 	// 完成了初始化Lua环境,标准对象,XLUELoader的工作
-	//XLFS_Init();
+	
 	XLUE_InitLoader(NULL);
 	XLLRT_ErrorHandle(CDDApp::LuaErrorHandle);
 
