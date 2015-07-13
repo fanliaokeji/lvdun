@@ -209,9 +209,9 @@
 					</obj>
 					<obj id="RightTimeObj" class="TextObject">
 						<attr>
-							<left>293+65</left>
+							<left>293+15</left>
 							<top>38</top>
-							<width>140</width>
+							<width>180</width>
 							<height>24</height>
 							<textcolor>999999</textcolor>
 							<font>font.text11</font>
