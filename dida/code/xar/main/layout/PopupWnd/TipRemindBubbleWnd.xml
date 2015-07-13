@@ -185,7 +185,6 @@
         </attr>
 		 <eventlist>
             <event name="OnCreate" file="TipRemindBubbleWnd.xml.lua" func="OnCreate"/>
-			<event name="OnShowWindow" file="TipRemindBubbleWnd.xml.lua" func="OnShowWindow"/>
         </eventlist>
     </hostwndtemplate>
 
