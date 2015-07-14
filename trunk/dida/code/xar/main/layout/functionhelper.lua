@@ -316,7 +316,9 @@ end
 
 function CheckMD5(strFilePath, strExpectedMD5) 
 	local bPassCheck = false
-	
+	if IsNilString(strExpectedMD5) then
+		return true
+	end
 	if not IsNilString(strFilePath) then
 		local strMD5 = tipUtil:GetMD5Value(strFilePath)
 		TipLog("[CheckMD5] strFilePath = " .. tostring(strFilePath) .. ", strMD5 = " .. tostring(strMD5))
@@ -337,7 +339,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 		return
 	end
 
-	if IsRealString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
+	if CheckMD5(strSavePath, strCheckMD5) then
 		TipLog("[DownLoadFileWithCheck]File Already existed")
 		fnCallBack(1, strSavePath)
 		return
@@ -610,13 +612,20 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 	local ExitRemindText2 = objRootCtrl:GetObject("ExitRemind.Text2")
 	local CenterImg = objRootCtrl:GetObject("ExitRemind.Center.Obj")
 	local Exitbtn = objRootCtrl:GetObject("ExitRemind.ExitBtn")
-	local strCenterTextureID, strRemindText, strTitle, nStartPos, tCenterPos
+	local strCenterTextureID, strRemindText, strRemindText1, strTitle, nStartPos, tCenterPos
 	if strType == "notepad" then
 		strCenterTextureID = "delete.notepad.center"
 		strRemindText = "确定要删除所选记事本？"
 		strTitle = "记事本删除提示："
 		nStartPos = 105
 		tCenterPos={141, 26, 110, 110}
+	elseif strType == "querybind" then
+		strCenterTextureID = "DiDa.ExitRemind.Exit.Center"
+		strRemindText = "是否需要为您新增广告过滤功能？"
+		strRemindText1 = "您的电脑日历已升级成功"
+		strTitle = "嘀嗒-任务栏日历"
+		nStartPos = 42
+		tCenterPos={141, 2, 177, 135}
 	else
 		strCenterTextureID = "delete.remind.center"
 		strRemindText = "确定要删除所选提醒文本？"
@@ -624,13 +633,19 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 		nStartPos = 96
 		tCenterPos={141, 26, 110, 110}
 	end
-	Exitbtn:SetText("删除")
 	title:SetText(strTitle)
 	CenterImg:SetTextureID(strCenterTextureID)
 	CenterImg:SetObjPos2(tCenterPos[1], tCenterPos[2], tCenterPos[3], tCenterPos[4])
-	ExitRemindText1:SetVisible(false)
-	ExitRemindText2:SetText(strRemindText)
-	ExitRemindText2:SetObjPos2(nStartPos, 151, 200, 20)
+	if strRemindText1 ~= nil then
+		ExitRemindText1:SetText(strRemindText1)
+		ExitRemindText2:SetText(strRemindText)
+		Exitbtn:SetText("确定")
+	else
+		Exitbtn:SetText("删除")
+		ExitRemindText1:SetVisible(false)
+		ExitRemindText2:SetText(strRemindText)
+		ExitRemindText2:SetObjPos2(nStartPos, 151, 200, 20)
+	end
 	local tUserData = {
 		["callback"] = callback,
 		["restore"] = function()
@@ -639,6 +654,7 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 						CenterImg:SetTextureID("DiDa.ExitRemind.Exit.Center")
 						CenterImg:SetObjPos2(141, 2, 177, 135)
 						ExitRemindText1:SetVisible(true)
+						ExitRemindText1:SetText("退出后，")
 						ExitRemindText2:SetText("就不能随时查看日历信息哦～")
 						ExitRemindText2:SetObjPos2(42, 168, "father.width-75", 20)
 						frameHostWnd:SetUserData(nil)

