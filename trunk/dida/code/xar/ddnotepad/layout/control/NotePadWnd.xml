@@ -247,6 +247,7 @@
 			<event name="OnDestroy" file="NotePadWnd.xml.lua" func="OnDestroy"/>
 			<event name="OnClose" file="NotePadWnd.xml.lua" func="OnClose"/>
 			<event name="OnSize" file="NotePadWnd.xml.lua" func="OnSize" />
+			<event name="OnMove" file="NotePadWnd.xml.lua" func="OnMove" />
 		</eventlist>
     </hostwndtemplate>
 

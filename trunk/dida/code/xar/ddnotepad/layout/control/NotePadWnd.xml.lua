@@ -1,6 +1,11 @@
 local Helper = XLGetGlobal("Helper")
 local tipUtil = XLGetObject("API.Util")
 
+local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosX"
+local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosY"
+local iWindowPosDXReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosDX"
+local iWindowPosDYReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosDY"
+
 function OnClose(self)
 	self:Show(0)
 	return 0, true
@@ -28,9 +33,7 @@ function OnCreate(self)
 	local notepadview = objtree:GetUIObject("mainwnd.frame:notepadview")
     local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")
 	local userData = self:GetUserData()
-	-- local aniT = templateMananger:GetTemplate("tip.pos.animation","AnimationTemplate")
-	-- local ani = aniT:CreateInstance()
-	-- ani:BindObj(objRootLayout)
+	
 	if userData and userData.filePath 
 		and tipUtil:QueryFileExists(userData.filePath) 
 		and ".txt" == Helper:GetFileExt(userData.filePath) then
@@ -43,18 +46,26 @@ function OnCreate(self)
 		local data = {["createtime"]=os.time(), ["title"]="新建文本文档.txt", ["bIndependentNotePad"]=userData.bIndependentNotePad}
 		notepadview:SetData(data)
 	end
-	local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
-	local nLayoutWidth = nLayoutR - nLayoutL
-	local nLayoutHeight = nLayoutB - nLayoutT
+	
+	local iWindowPosX = Helper:QueryRegValue(iWindowPosXReg)
+	local iWindowPosY = Helper:QueryRegValue(iWindowPosYReg)
+	local iWindowPosDX = Helper:QueryRegValue(iWindowPosDXReg)
+	local iWindowPosDY = Helper:QueryRegValue(iWindowPosDYReg)
 	
 	local workleft, worktop, workright, workbottom = tipUtil:GetWorkArea()
-	self:Move( math.floor((workright - nLayoutWidth)/2), math.floor((workbottom - nLayoutHeight)/2), nLayoutWidth, nLayoutHeight)
-	-- ani:SetKeyFramePos(0, nLayoutHeight, 0, 0) 
-	-- objtree:AddAnimation(ani)
-	-- ani:Resume()
+		
+	if tonumber(iWindowPosX) and tonumber(iWindowPosY) and tonumber(iWindowPosDX) and tonumber(iWindowPosDY) 
+		and iWindowPosX < workright and iWindowPosY < workbottom and iWindowPosDX > workleft and iWindowPosDY > worktop then
+		self:Move(iWindowPosX, iWindowPosY, iWindowPosDX-iWindowPosX, iWindowPosDY-iWindowPosY)
+	else
+		local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+		local nLayoutWidth = nLayoutR - nLayoutL
+		local nLayoutHeight = nLayoutB - nLayoutT
+		self:Move( math.floor((workright - nLayoutWidth)/2), math.floor((workbottom - nLayoutHeight)/2), nLayoutWidth, nLayoutHeight)
+	end
+	
 	tipUtil:DragAcceptFiles(self:GetWndHandle(), true)
 	self:AddInputFilter(false,InputFilter)
-	
 end
 
 function OnInitNotePad(self)
@@ -90,8 +101,8 @@ function OnClickClose(self)
 	--保存完毕，退出
 	-- Helper:DestoryModelessWnd("NotePadWnd")
 	tipUtil:Exit("Exit")
-end
-
+end	
+	
 function OnSize(self, _type, width, height)
 	local tree = self:GetBindUIObjectTree()
 	if not tree then
@@ -107,9 +118,33 @@ function OnSize(self, _type, width, height)
 		maxbtn:Show(false)
 		rootObject:SetObjPos(-5, -5, width+13, height+10)
 		restorebtn:Show(true)
+		return
 	elseif "restored" == _type then
 		maxbtn:Show(true)
 		restorebtn:Show(false)
+		
+		local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+		Helper:SetRegValue(iWindowPosXReg, x)
+		Helper:SetRegValue(iWindowPosYReg, y)
+		Helper:SetRegValue(iWindowPosDXReg, x+width)
+		Helper:SetRegValue(iWindowPosDYReg, y+height)
 	end
+end
+
+function OnMove(self)
+	local state = self:GetWindowState()
+	if "max" == state or "min" == state then
+		return
+	end
+	local wndleft,wndtop,wndright,wndbottom = self:GetWindowRect()
+	local wndwidth = wndright - wndleft
+	local wndheight = wndbottom - wndtop
+		
+	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+	
+	Helper:SetRegValue(iWindowPosXReg, x)
+	Helper:SetRegValue(iWindowPosYReg, y)
+	Helper:SetRegValue(iWindowPosDXReg, x+wndwidth)
+	Helper:SetRegValue(iWindowPosDYReg, y+wndheight)
 end
 
