@@ -413,6 +413,133 @@ function Helper:CreateMenuEx(x, y, parentWnd, menuTable, menuFunTable, userData,
 	
 end
 
+--以下四个方法暂时挂到Helper下，等CreateMenu方法写好后，去掉这三个
+function Helper:TryDestroyOldMenu(objUIElem, strMenuKey)
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+	local strHostWndName = strMenuKey..".HostWnd.Instance" 
+	local strObjTreeName = strMenuKey..".Tree.Instance"
+
+	if uHostWndMgr:GetHostWnd(strHostWndName) then
+		uHostWndMgr:RemoveHostWnd(strHostWndName)
+	end
+	
+	if uObjTreeMgr:GetUIObjectTree(strObjTreeName) then
+		uObjTreeMgr:DestroyTree(strObjTreeName)
+	end
+end
+
+--nTopSpan: 离弹出控件的高度差
+--bRBtnPopup：右键弹出菜单
+function Helper:CreateAndShowMenu(objUIElem, strMenuKey, nTopSpan, bRBtnPopup)
+	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+
+	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
+		local uHostWnd = nil
+		local strHostWndName = strMenuKey..".HostWnd.Instance"
+		local strHostWndTempltName = "wnd.common.menu"
+		local strHostWndTempltClass = "HostWndTemplate"
+		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
+		if uHostWndTemplt then
+			uHostWnd = uHostWndTemplt:CreateInstance(strHostWndName)
+		end
+
+		local uObjTree = nil
+		local strObjTreeTempltName = strMenuKey.."Tree"
+		local strObjTreeTempltClass = "ObjectTreeTemplate"
+		local strObjTreeName = strMenuKey..".Tree.Instance"
+		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
+		if uObjTreeTemplt then
+			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
+		end
+
+		if uHostWnd and uObjTree then
+			--函数会阻塞
+			local bSucc = self:ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
+			
+			if bSucc and uHostWnd:GetMenuMode() == "manual" then
+				uObjTreeMgr:DestroyTree(strObjTreeName)
+				uHostWndMgr:RemoveHostWnd(strHostWndName)
+			end
+		end
+	end
+end
+
+function Helper:ShowMenuHostWnd(objUIElem, uHostWnd, uObjTree, nTopSpan, bRBtnPopup)
+	uHostWnd:BindUIObjectTree(uObjTree)
+					
+	local objMainLayout = uObjTree:GetUIObject("Menu.MainLayout")
+	if not objMainLayout then
+		TipLog("[ShowMenuHostWnd] find Menu.MainLayout obj failed")
+	    return false
+	end	
+	
+	local objNormalMenu = uObjTree:GetUIObject("Menu.Context")
+	if not objNormalMenu then
+		TipLog("[ShowMenuHostWnd] find normalmenu obj failed")
+	    return false
+	end	
+	objNormalMenu:BindRelateObject(objUIElem)
+	objNormalMenu:InitMenuWithRelateObject()
+	
+	local nL, nT, nR, nB 
+	local objMenuFrame = objNormalMenu:GetControlObject("menu.frame")
+	if objMenuFrame then
+		nL, nT, nR, nB = objMenuFrame:GetObjPos()				
+	else
+		nL, nT, nR, nB = objNormalMenu:GetObjPos()	
+	end	
+	
+	local nMenuContainerWidth = nR - nL
+	local nMenuContainerHeight = nB - nT
+
+	local nMenuLeft, nMenuTop = 0, 0
+	if bRBtnPopup then
+		nMenuLeft, nMenuTop = tipUtil:GetCursorPos() 	
+		nTopSpan = 0 
+	else
+		nMenuLeft, nMenuTop = GetScreenAbsPos(objUIElem)
+	end
+	
+	local nMenuL, nMenuT, nMenuR, nMenuB = objUIElem:GetAbsPos()
+	local nMenuHeight = nMenuB - nMenuT
+	if tonumber(nTopSpan) == nil then
+		nTopSpan = nMenuHeight
+	end
+	
+	local nMenuLeft, nMenuTop = self:AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
+	
+	--函数会阻塞
+	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight)
+	return bOk
+end
+
+function Helper:AdjustScreenEdge(nMenuLeft, nMenuTop, nMenuContainerWidth, nMenuContainerHeight, nTopSpan)
+	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetWorkArea()
+	
+	if nMenuLeft < nScrnLeft then
+		nMenuLeft = nScrnLeft
+	end
+	
+	if nMenuLeft+nMenuContainerWidth > nScrnRight then
+		nMenuLeft = nScrnRight - nMenuContainerWidth
+	end
+	
+	if nMenuTop < nScrnTop then
+		nMenuTop = nTopSpan+nScrnTop
+	elseif nMenuTop+nMenuContainerHeight+nTopSpan > nScrnBottom then
+		nMenuTop = nMenuTop - nMenuContainerHeight
+	else
+		nMenuTop = nTopSpan+nMenuTop
+	end	
+		
+	return nMenuLeft, nMenuTop
+end
+
+
+
 --https://s3.amazonaws.com/github-cloud/releases/325827/8ddeba82-ce92-11e4-9812-db61045d243b.exe?response-content-disposition=attachment%3B%20filename%3DGit-1.9.5-preview20150319.exe&response-content-type=application/octet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1433307278&Signature=ppcL8mMS3EVKr8e2YXLk3bcENFA%3D
 --发统计的方法
 
