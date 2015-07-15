@@ -322,7 +322,7 @@ function ForceUpdateRemindTimer(tRealData)
 		if not tipUtil:QueryFileExists(strPath) then
 			tRemindListData = {}
 		end
-		tRemindListData = FunctionObj.LoadTableFromFile(strPath)
+		tRemindListData = FunctionObj.LoadTableFromFile(strPath) or {}
 	end
 	FunctionObj.TipLog("ForceUpdateRemindTimer, enter, type(tRemindListData) = "..type(tRemindListData))
 	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
