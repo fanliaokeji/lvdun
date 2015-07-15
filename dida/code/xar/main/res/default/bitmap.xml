@@ -91,6 +91,7 @@
 		<texture id="division.line.bkg" image="bitmap\notepad\division.line.bkg.png" />
 		<texture id="texture.editwnd.shadow" type="NineInOne" image="bitmap\bkg\texture.editwnd.shadow.png"/>
 		<texture id="texture.droplist.frame.bkg" type="NineInOne" image="bitmap\basecontrol\texture.droplist.frame.bkg.png"/>
+		<texture id="texture.menu.bkg" type="NineInOne" image="bitmap\ctrl\texture.menu.bkg.png"/>
 		
 		<texture id="save.btn.bkg.normal" image="bitmap\notepad\save.btn.bkg.normal.png" />
 		<texture id="save.btn.bkg.hover" image="bitmap\notepad\save.btn.bkg.hover.png" />
