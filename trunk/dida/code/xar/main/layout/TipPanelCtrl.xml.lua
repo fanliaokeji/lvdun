@@ -109,38 +109,12 @@ function OnClickNotepad(self)
 	
 	--显示notepad preview、view 
 	local notePadView = owner:GetControlObject("DiDa.NotePadView")
-	if not notePadView then
-		notePadView = objectFactory:CreateUIObject("DiDa.NotePadView", "NotePadView")
-		notePadView:SetObjPos(0, 0, "father.width", "father.height")
-		viewLayout:AddChild(notePadView)
-	end
 	notePadView:SetVisible(true)
 	notePadView:SetChildrenVisible(true)
 	
 	local notePadPreView = owner:GetControlObject("DiDa.NotePadPreView")
-	if not notePadPreView then
-		notePadPreView = objectFactory:CreateUIObject("DiDa.NotePadPreView", "TimeLineListCtrl")
-		--底部、左边有阴影
-		notePadPreView:SetObjPos(0, 0, "father.width - 5", "father.height - 9")
-		notePadPreView:AttachListener("OnSelect", false, 
-											function(_, _, data) 
-													notePadView:SetData(data)
-											end)
-		notePadPreView:AttachListener("OnClearItem", false, 
-											function() 
-													notePadView:SetData(nil)
-											end)
-											
-		previewLayout:AddChild(notePadPreView)
-	end
 	notePadPreView:SetVisible(true)
 	notePadPreView:SetChildrenVisible(true)
-	
-	UpdateNotePadListCookie = UpdateNotePadListCookie or 
-								notePadView:AttachListener("UpdateNoteList", false, 
-											function() 
-													notePadPreView:ReBuildRemindList()
-											end)
 											
 	curViewIndex = 2
 end
@@ -241,6 +215,41 @@ function OnInitControl(self)
 		calendarView:SetObjPos(0, 0, "father.width", "father.height")
 		viewLayout:AddChild(calendarView)
 	end
+	
+	--创建记事本view、preview
+	local notePadView = objectFactory:CreateUIObject("DiDa.NotePadView", "NotePadView")
+	if notePadView then
+		notePadView:SetVisible(false)
+		notePadView:SetChildrenVisible(false)
+	
+		notePadView:SetObjPos(0, 0, "father.width", "father.height")
+		viewLayout:AddChild(notePadView)
+	end
+	local notePadPreView = objectFactory:CreateUIObject("DiDa.NotePadPreView", "TimeLineListCtrl")
+	if notePadPreView then
+		--底部、左边有阴影
+		notePadPreView:SetObjPos(0, 0, "father.width - 5", "father.height - 9")
+		notePadPreView:AttachListener("OnSelect", false, 
+											function(_, _, data) 
+													notePadView:SetData(data)
+											end)
+		notePadPreView:AttachListener("OnClearItem", false, 
+											function() 
+													notePadView:SetData(nil)
+											end)
+											
+		previewLayout:AddChild(notePadPreView)
+		
+		notePadPreView:SetVisible(false)
+		notePadPreView:SetChildrenVisible(false)
+	end
+	
+	notePadView:AttachListener("UpdateNoteList", false, 
+				function() 
+						notePadPreView:ReBuildRemindList()
+				end)
+	
+	curViewIndex = 1
 end
 
 -- function OnLButtonUp(self, bFocus)
