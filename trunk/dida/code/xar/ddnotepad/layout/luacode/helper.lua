@@ -415,6 +415,54 @@ end
 
 --https://s3.amazonaws.com/github-cloud/releases/325827/8ddeba82-ce92-11e4-9812-db61045d243b.exe?response-content-disposition=attachment%3B%20filename%3DGit-1.9.5-preview20150319.exe&response-content-type=application/octet-stream&AWSAccessKeyId=AKIAISTNZFOVBIJMK3TQ&Expires=1433307278&Signature=ppcL8mMS3EVKr8e2YXLk3bcENFA%3D
 --发统计的方法
+function Helper:SendConvStatistic(tStat)
+	local tStatInfo = tStat or {}
+	local strDefaultNil = "null"
+	
+	local strCID = self:GetPeerID()
+	local strEC = tStatInfo.strEC 
+	local strEA = tStatInfo.strEA 
+	local strEL = tStatInfo.strEL
+	local strEV = tStatInfo.strEV
+	
+	if not self:IsRealString(strEC) then
+		strEC = strDefaultNil
+	end
+	
+	if not self:IsRealString(strEA) then
+		strEA = strDefaultNil
+	end
+	
+	if not self:IsRealString(strEL) then
+		strEL = strDefaultNil
+	end
+	
+	if tonumber(strEV) == nil then
+		strEV = 1
+	end
+	
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid="..tostring(strCID)
+						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
+						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
+	
+	
+	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+end
+
+function Helper:GetPeerID()
+	local strPeerID = self:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId")
+	if self:IsRealString(strPeerID) then
+		return strPeerID
+	end
+
+	local strRandPeerID = tipUtil:GetPeerId()
+	if not self:IsRealString(strRandPeerID) then
+		return ""
+	end
+	
+	self:SetRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId", strRandPeerID)
+	return strRandPeerID
+end
 
 --注册表方法
 function Helper:QueryRegValue(sPath)
