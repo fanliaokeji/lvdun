@@ -66,6 +66,12 @@ function OnCreate(self)
 	
 	tipUtil:DragAcceptFiles(self:GetWndHandle(), true)
 	self:AddInputFilter(false,InputFilter)
+	
+	local tStatInfo = {}
+	tStatInfo.strEC = "runtime"
+	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
+	
+	Helper:SendConvStatistic(tStatInfo)
 end
 
 function OnInitNotePad(self)
@@ -95,9 +101,12 @@ function OnClickRestore(self)
 end
 
 function OnClickClose(self)
-	--发事件，让控件检查一下是否需要保存
 	
+	local tStatInfo = {}
+	tStatInfo.strEC = "exit"
+	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
 	
+	Helper:SendConvStatistic(tStatInfo)
 	--保存完毕，退出
 	-- Helper:DestoryModelessWnd("NotePadWnd")
 	tipUtil:Exit("Exit")
