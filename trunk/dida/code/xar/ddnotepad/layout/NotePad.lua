@@ -16,11 +16,20 @@ function OnLoadLuaFile()
 		Helper:LOG("command file path: ", path)
 	end
 	
+	local modelessWnd = nil
 	--¸¸´°¿Ú¾ä±ú
 	if path and path ~= "" and tipUtil:QueryFileExists(path) then
-		Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["filePath"] = path, ["bIndependentNotePad"] = true})
+		modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["filePath"] = path, ["bIndependentNotePad"] = true})
 	else
-		Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["bIndependentNotePad"] = true})
+		modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["bIndependentNotePad"] = true})
+	end
+	if startFromRet and "association" == sstartfrom then
+		--À­ÆðµÎ´ðµ½ÍÐÅÌ
+		local ddPath =  Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\Path")
+		local para = "/sstartfrom ddnotepad /embedding"
+		if "string" == type(ddPath) and tipUtil:QueryFileExists(ddPath) then
+			local ret = tipUtil:ShellExecute(modelessWnd:GetWndHandle(), "open", ddPath, para, "", "")--0: SW_HIDE
+		end
 	end
 end
 
