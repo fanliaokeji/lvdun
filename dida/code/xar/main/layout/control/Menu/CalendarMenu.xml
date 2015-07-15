@@ -1,0 +1,70 @@
+<xlue>
+	<objtemplate id="calendarmenu.context" class="MenuObject" templateid="menu.object.template">
+		<attr>
+			<ItemTop>4</ItemTop>
+			<ItemLeft>5</ItemLeft>
+			<ItemRight>10</ItemRight>
+		</attr>
+		<children>
+			<obj id="notepad.open" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>打开记事本</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="CalendarMenu.xml.lua" function="OnSelect_open" />
+					<event name="OnInitWithRelateObj" file="CalendarMenu.xml.lua" function="OnInit_open" />
+				</eventlist>
+			</obj>
+		
+			<obj id="notepad.new" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>新建记事本</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="CalendarMenu.xml.lua" function="OnSelect_new" />
+					<event name="OnInitWithRelateObj" file="CalendarMenu.xml.lua" function="OnInit_new" />
+				</eventlist>
+			</obj>	
+	
+			<obj id="cancel" class="MenuItemObject" templateid="menu.context.item">
+				<attr>
+					<Text>取消</Text>
+				</attr>
+				<eventlist>
+					<event name="OnSelect" file="CalendarMenu.xml.lua" function="OnSelect_cancel" />
+					<event name="OnInitWithRelateObj" file="CalendarMenu.xml.lua" function="OnInit_cancel" />
+				</eventlist>
+			</obj>
+		</children>
+	</objtemplate>
+	
+	<objtreetemplate id="CalendarMenuTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>107</width>
+			<height>79</height>
+		</attr>
+		
+		<obj id="Menu.MainLayout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+			<width>107</width>
+			<height>79</height>
+			</attr>
+			<children>
+				<obj id="Menu.Context" class="NormalMenu">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<ContextID>calendarmenu.context</ContextID>
+						<BknID>texture.menu.bkg</BknID>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+</xlue>
