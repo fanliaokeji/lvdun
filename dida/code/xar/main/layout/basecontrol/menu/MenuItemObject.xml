@@ -61,8 +61,7 @@
 			</attr>
 			<attr name="FontColorNormal" type="string">
 			</attr>
-			<attr name="FontColorDisable" type="string">
-			</attr>
+			<attr name="FontColorDisable" type="string"> <default>CCCCCC</default> </attr>
 			<attr name="FontColorHover" type="string">
 			</attr>
 			<attr name="TextRightWidth" type="int">
@@ -120,6 +119,7 @@
 
 		<event_def>
 			<OnInit/>
+			<OnInitWithRelateObj/>
 			<OnPreSelect>
 				<param>
 					<string />
