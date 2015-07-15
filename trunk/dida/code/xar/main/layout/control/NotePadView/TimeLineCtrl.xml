@@ -183,6 +183,8 @@
 		</attr_def>
 		<method_def>
 			<ReBuildRemindList file="TimeLineCtrl.xml.lua" func="ReBuildList"/>
+			<CheckDayRecord file="TimeLineCtrl.xml.lua" func="CheckDayRecord"/>
+			<AddItemByDate file="TimeLineCtrl.xml.lua" func="AddItemByDate"/>
 		</method_def>
 		<event_def>
 			<OnSelect>

@@ -487,3 +487,45 @@ function OnVScroll(self, fun, _type, pos)
 	MoveItemListPanel(objRootCtrl, nNewScrollPos)
 	return true
 end
+
+function CheckDayRecord(self, sDate)--sDate为所查询当天的字符串，如20150713
+	local year, month, day = string.sub(sDate, 1, 4), string.sub(sDate, 5, 6), string.sub(sDate, 7, 8)
+	local curDayBegin = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=0, min=0, sec=0})
+	local curDayEnd = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=23, min=59, sec=59})
+	local resultCount = 0
+	local newestTime = 0
+	for createtime, _ in pairs(tNotepadListData) do
+		if tonumber(createtime) and tonumber(createtime) >= curDayBegin and tonumber(createtime) <= curDayEnd then
+			resultCount = resultCount + 1
+			newestTime = tonumber(createtime)>newestTime and tonumber(createtime) or newestTime
+		end
+	end
+	return resultCount, newestTime
+end
+
+function AddItemByDate(self, sDate)
+	local year, month, day = string.sub(sDate, 1, 4), string.sub(sDate, 5, 6), string.sub(sDate, 7, 8)
+	local curDayBegin = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=0, min=0, sec=0})
+	local curDayEnd = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=23, min=59, sec=59})
+	
+	for createtime, data in pairs(tNotepadListData) do
+		if tonumber(createtime) and tonumber(createtime) >= curDayBegin and tonumber(createtime) <= curDayEnd then
+			--如果已有同一天的item，就直接加在最后面。
+			local curcreatetime = value[1].createtime + 1
+			local t = {createtime = curcreatetime, title = "新建记事本", }
+			
+			table.insert(data, 1, t)
+			ReBuildList(self)
+			return
+		end
+	end
+	
+	--如果这天还没有任何记录
+	local t = {}
+	t.expand = true--会导致多个节点展开
+	t[1] = {createtime = curDayBegin, title = "新建记事本哈哈", }
+	tNotepadListData[tostring(curDayBegin)] = t
+	
+	ReBuildList(self)
+end
+
