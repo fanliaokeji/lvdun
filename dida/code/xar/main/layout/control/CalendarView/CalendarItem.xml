@@ -22,6 +22,7 @@
 			<SetVacationBkg file="CalendarItem.xml.lua" func="SetVacationBkg"/>
 			<SetWorkBkg file="CalendarItem.xml.lua" func="SetWorkBkg"/>
 			<SetCHNDayPos file="CalendarItem.xml.lua" func="SetCHNDayPos"/>
+			<SetHasItem file="CalendarItem.xml.lua" func="SetHasItem"/>
 		</method_def>
 		<event_def>
 			<OnClick>
@@ -86,6 +87,16 @@
 								<width>father.width</width> 
 								<height>father.height</height>
 								<texture></texture>
+								<visible>false</visible>
+							</attr>		
+						</obj>
+						<obj id="Calendar.hasitem" class="TextureObject">
+							<attr>
+								<left>19</left>
+								<top>12</top>
+								<width>28</width> 
+								<height>26</height>
+								<texture>notepad.day.hasitem</texture>
 								<visible>false</visible>
 							</attr>		
 						</obj>

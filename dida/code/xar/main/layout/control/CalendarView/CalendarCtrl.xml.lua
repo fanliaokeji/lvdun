@@ -168,8 +168,17 @@ end
 function SetVacBackGround(objCurItem, tClndrItem)	
 	objCurItem:SetVacationBkg(false)
 	objCurItem:SetWorkBkg(false)
-
+	
 	local strDate = tClndrItem.solarcalendar
+	local wndTree = objCurItem:GetOwner()
+	local notepadPreView = wndTree:GetUIObject("root.layout:root.ctrl:DiDa.NotePadPreView")
+	local curDayNoteCount = notepadPreView:CheckDayRecord(strDate)
+	if curDayNoteCount > 0 then
+		objCurItem:SetHasItem(true)
+	else
+		objCurItem:SetHasItem(false)
+	end
+	
 	local bIsVacation = tFunHelper.CheckIsVacation(strDate)
 	if bIsVacation then
 		objCurItem:SetVacationBkg(true)

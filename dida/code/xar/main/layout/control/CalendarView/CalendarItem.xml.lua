@@ -105,6 +105,11 @@ function SetWorkBkg(self, bShowBkg)
 	objImg:SetChildrenVisible(bShowBkg)
 end
 
+function SetHasItem(self, bShowBkg)
+	local hasitem = self:GetControlObject("Calendar.hasitem")
+	hasitem:SetVisible(bShowBkg)
+	hasitem:SetChildrenVisible(bShowBkg)
+end
 
 function SetCHNDayPos(objRootCtrl)
 	local objDayText = objRootCtrl:GetControlObject("Calendar.Day")
