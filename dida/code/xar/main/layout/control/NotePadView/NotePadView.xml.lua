@@ -115,6 +115,12 @@ function OnClickSave(self)
 	local baseEdit = editCtrl:GetControlObject("newedit.edit")
 	--写edit中的文字到txt中
 	tipUtil:WriteStringToFile(data.txtFilePath, editCtrl:GetText())
+	
+	--更新标题
+	local headtitleEdit = owner:GetControlObject("headtitle.edit")
+	local newTitle = headtitleEdit:GetText()
+	
+	data.title = "" ~= newTitle and newTitle or data.title
 	owner:FireExtEvent("UpdateNoteList")
 	editCtrl:SetFocus(false)
 end
