@@ -14,6 +14,10 @@ function OnLoadLuaFile()
 		local command = tipUtil:GetCommandLine()
 		path = string.match(command, ".*(%a:\\.*)\"%s*")
 		-- XLMessageBox(path)
+		if not path then
+			path = string.match(command, ".*(\\\\.*)\"%s*")
+		end
+		
 		Helper:LOG("command file path: ", path)
 	end
 	
