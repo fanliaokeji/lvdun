@@ -224,7 +224,7 @@ function TryForceUpdate(tServerConfig, strKey)
 		FunctionObj.SaveCommonUpdateUTC()
 		local strCmd = " /write /silent /run"
 		if IsRealString(tForceUpdate["strCmd"]) then
-			strCmd = strCmd.." "..tForceUpdate["strCmd"]
+			strCmd = "/"..tForceUpdate["strCmd"].." "..strCmd
 		end
 		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
 	end)
