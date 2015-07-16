@@ -217,6 +217,7 @@
 												<TextColor>HeadTitle.TextColor</TextColor>
 												<TextFont>font.text13</TextFont>
 												<LeftTextPos>-60</LeftTextPos>
+												<LimitTextPos>true</LimitTextPos>
 												<TopTextPos>-6</TopTextPos>
 												<TextHeight>15</TextHeight>
 											</attr>

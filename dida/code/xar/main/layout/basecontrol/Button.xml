@@ -10,6 +10,7 @@
 			<attr name="Visible" type="bool" ><default>true</default></attr>
 			<attr name="Text" type="string" />
 			<attr name="LeftTextPos" type="int" ><default>0</default></attr>
+			<attr name="LimitTextPos" type="bool" ><default>false</default></attr>
 			<attr name="TopTextPos" type="int" ><default>0</default></attr>
 			<attr name="TextHeight" type="int" ><default>0</default></attr>
 			<attr name="TextFont" type="string"><default>default.font</default></attr>
