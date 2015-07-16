@@ -103,7 +103,7 @@
 									<attr>
 										<left>18+50</left>
 										<top>23</top>
-										<width>100</width> 
+										<width>father.width - 80</width> 
 										<height>23</height>
 										<textcolor>HeadTitle.TextColor</textcolor>
 										<font>font.text15</font>
