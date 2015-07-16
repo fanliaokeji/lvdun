@@ -2,7 +2,7 @@
 	<objtemplate id="menu.text" class="TextObject">
 		<attr>
 			<valign>center</valign>
-			<endellipsis>0</endellipsis>
+			<endellipsis>1</endellipsis>
 		</attr>
 	</objtemplate>
 	
