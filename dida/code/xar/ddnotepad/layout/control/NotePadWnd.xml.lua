@@ -38,7 +38,9 @@ function OnCreate(self)
 		and tipUtil:QueryFileExists(userData.filePath) 
 		and ".txt" == Helper:GetFileExt(userData.filePath) then
 		--打开文件，初始化notepadCtrl
-			local createTime = tipUtil:GetFileCreateTime(userData.filePath)
+			local year, month, day, hour, minute, second = tipUtil:GetFileCreateTime(userData.filePath)
+			local createtime = os.time({year = year, month = month, day = day, hour = hour, min = minute, sec = second})
+			
 			local fileName = string.match(userData.filePath, ".*\\(.*)")
 			local data = {["txtFilePath"]=userData.filePath, ["createtime"]=createTime, ["title"]=fileName, ["bIndependentNotePad"]=userData.bIndependentNotePad}
 			notepadview:SetData(data)
