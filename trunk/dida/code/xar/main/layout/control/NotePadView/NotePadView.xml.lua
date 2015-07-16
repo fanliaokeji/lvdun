@@ -176,7 +176,10 @@ function SetData(self, data)
 		end
 	end
 	
-	if not data.txtFilePath then return end	
+	if not data.txtFilePath then 
+		Helper:Assert(false, "txtFilePath is nil!")
+		return 
+	end	
 	--隐藏图片
 	blankBkg:SetVisible(false)
 	editCtrl:SetEnable(true)
@@ -187,7 +190,8 @@ function SetData(self, data)
 		-- editCtrl:SetText("点击添加记事")
 		-- return 
 	-- end
-	editCtrl:SetText(strInTxt)
+	
+	editCtrl:SetText(strInTxt or "")
 end
 
 function ProcessClick(self, id)
