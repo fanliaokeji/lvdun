@@ -2405,11 +2405,12 @@ int LuaAPIUtil::CreatePathFile(lua_State* pLuaState)
 		CComBSTR bstrFilePath;
 		LuaStringToCComBSTR(utf8FilePath, bstrFilePath);
 
-		HANDLE hFile = CreateFile(bstrFilePath.m_str, GENERIC_READ || GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		HANDLE hFile = CreateFile(bstrFilePath.m_str, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (INVALID_HANDLE_VALUE != hFile)
 		{
 			iValue = 1;
 		}
+		CloseHandle(hFile);
 	}	
 	lua_pushboolean(pLuaState, iValue);
 	return 1;
