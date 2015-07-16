@@ -31,7 +31,7 @@
 										<top>0</top>
 										<width>33</width>
 										<height>86</height>
-										<zorder>36000</zorder>
+										<zorder>33</zorder>
 										<NormalBkgID>DiDa.calendar.btn.bkg.normal</NormalBkgID>
 										<DownBkgID>DiDa.calendar.btn.bkg.hover</DownBkgID>
 										<HoverBkgID>DiDa.calendar.btn.bkg.hover</HoverBkgID>
@@ -48,7 +48,7 @@
 										<top>86 - 10</top>
 										<width>27</width>
 										<height>87</height>
-										<zorder>36000</zorder>
+										<zorder>32</zorder>
 										<NormalBkgID>DiDa.notepad.btn.bkg.normal</NormalBkgID>
 										<DownBkgID>DiDa.notepad.btn.bkg.hover</DownBkgID>
 										<HoverBkgID>DiDa.notepad.btn.bkg.hover</HoverBkgID>
@@ -65,7 +65,7 @@
 										<top>86 + 87 - 10 - 10</top>
 										<width>38</width>
 										<height>87</height>
-										<zorder>36000</zorder>
+										<zorder>31</zorder>
 										<NormalBkgID>DiDa.remind.btn.bkg.normal</NormalBkgID>
 										<DownBkgID>DiDa.remind.btn.bkg.hover</DownBkgID>
 										<HoverBkgID>DiDa.remind.btn.bkg.hover</HoverBkgID>
@@ -82,7 +82,7 @@
 										<top>86 + 87 + 87 - 10 - 10 - 15</top>
 										<width>29</width>
 										<height>97</height>
-										<zorder>36000</zorder>
+										<zorder>30</zorder>
 										<NormalBkgID>DiDa.forher.btn.bkg.normal</NormalBkgID>
 										<DownBkgID>DiDa.forher.btn.bkg.hover</DownBkgID>
 										<HoverBkgID>DiDa.forher.btn.bkg.hover</HoverBkgID>
