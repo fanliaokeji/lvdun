@@ -17,12 +17,13 @@ function OnLButtonDown(self)
 	local remindBtn   = owner:GetControlObject("remind.btn")
 	local forherBtn   = owner:GetControlObject("forher.btn")
 	
-	calendarBtn:SetZorder(36000)
-	notepadBtn:SetZorder(36000)
-	remindBtn:SetZorder(36000)
-	forherBtn:SetZorder(36000)
+	local maxZorder = 0
+	maxZorder = calendarBtn:GetZorder() > maxZorder and calendarBtn:GetZorder() or maxZorder
+	maxZorder = notepadBtn:GetZorder() > maxZorder and notepadBtn:GetZorder() or maxZorder
+	maxZorder = remindBtn:GetZorder() > maxZorder and remindBtn:GetZorder() or maxZorder
+	maxZorder = forherBtn:GetZorder() > maxZorder and forherBtn:GetZorder() or maxZorder
 	
-	self:SetZorder(60000)
+	self:SetZorder(maxZorder + 1)
 	
 end
 
