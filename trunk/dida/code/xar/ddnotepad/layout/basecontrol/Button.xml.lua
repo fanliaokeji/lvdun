@@ -227,6 +227,16 @@ function SetTextStyle(objRootCtrl)
 	else
 		textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, "father.height-"..tostring(nTopPos))
 	end
+	
+	local textExtent = textObj:GetTextExtent()
+	if attr.LeftTextPos < 0 and textExtent > math.abs(attr.LeftTextPos) then
+		local left, top, right, bottom = textObj:GetObjPos()
+		textObj:SetObjPos(left, top, left+math.abs(attr.LeftTextPos), bottom)
+		textObj:SetEndEllipsis(true)
+	else
+		-- textObj:SetObjPos(0, 0, "father.width", "father.height")
+		textObj:SetEndEllipsis(false)
+	end
 end
 
 
