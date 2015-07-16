@@ -74,6 +74,7 @@
 		<texture id="calendar.layout.bkg" image="bitmap\bkg\calendar.layout.bkg.png" />
 		<texture id="mainwnd.bkg" image="bitmap\bkg\mainwnd.bkg.png" />
 		<texture id="notepad.preview.bkg" image="bitmap\bkg\notepad.preview.bkg.png" />
+		<texture id="notepad.day.hasitem" image="bitmap\notepad.day.hasitem.png" />
 		
 		<texture id="toolbar.copy.btn.bkg.normal" image="bitmap\notepad\toolbar.copy.btn.bkg.normal.png" />
 		<texture id="toolbar.copy.btn.bkg.hover" image="bitmap\notepad\toolbar.copy.btn.bkg.hover.png" />
