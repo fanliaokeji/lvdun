@@ -133,7 +133,7 @@
 			</children>
 				
 			<eventlist>
-				<event name="OnInitControl" />
+				<!--event name="OnInitControl" /-->
 				<event name="OnKeyDown" file="NormalMenu.xml.lua" func="OnKeyDown" />
 			</eventlist>
 		</objtemplate>
