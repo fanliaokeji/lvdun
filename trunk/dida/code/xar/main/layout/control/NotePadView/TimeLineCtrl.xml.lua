@@ -523,7 +523,7 @@ function AddItemByDate(self, sDate)
 	--如果这天还没有任何记录
 	local t = {}
 	t.expand = true--会导致多个节点展开
-	t[1] = {createtime = curDayBegin, title = "新建记事本哈哈", }
+	t[1] = {createtime = curDayBegin, title = "新建记事本", }
 	tNotepadListData[tostring(curDayBegin)] = t
 	
 	ReBuildList(self)
