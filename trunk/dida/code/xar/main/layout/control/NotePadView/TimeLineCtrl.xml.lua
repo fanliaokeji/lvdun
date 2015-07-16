@@ -103,7 +103,10 @@ end
 function SetDataHead(self, data)
 	local attr = self:GetAttribute() 
 	attr.data = data
-	local LYear, LMonth, LDay, LHour, LMinute, LSecond, LWeek = tipUtil:Seconds2DateTime(data[1])
+	local tempTable = os.date("*t", data[1])
+	-- local LYear, LMonth, LDay, LHour, LMinute, LSecond, LWeek = tipUtil:Seconds2DateTime(data[1])
+	local LYear, LMonth, LDay = tempTable.year, tempTable.month, tempTable.day
+	local LHour, LMinute, LSecond, LWeek = tempTable.hour, tempTable.min, tempTable.sec, tempTable.wday
 	local dayctrl = self:GetControlObject("HeadDay")
 	local strDay = GetTwoLenString(tostring(LDay))
 	dayctrl:SetText(strDay)
@@ -505,7 +508,7 @@ end
 
 function AddItemByDate(self, sDate)
 	local year, month, day = string.sub(sDate, 1, 4), string.sub(sDate, 5, 6), string.sub(sDate, 7, 8)
-	local curDayBegin = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=0, min=0, sec=0})
+	local curDayBegin = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=0, min=0, sec=1})
 	local curDayEnd = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=23, min=59, sec=59})
 	
 	for createtime, data in pairs(tNotepadListData) do
