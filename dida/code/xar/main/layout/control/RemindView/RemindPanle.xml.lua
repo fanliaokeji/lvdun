@@ -86,6 +86,7 @@ function OnChangeEdit(self)
 	if type(attr.MinNumber) == "number" and type(nText) == "number" and nText < attr.MinNumber then
 		self:SetText(StringFormat02d(attr.MinNumber))
 	end]]--
+	local owner = self:GetOwnerControl()
 	owner:FireExtEvent("OnChange")
 end
 
