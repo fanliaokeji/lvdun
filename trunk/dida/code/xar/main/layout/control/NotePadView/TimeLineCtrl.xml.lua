@@ -511,7 +511,7 @@ function AddItemByDate(self, sDate)
 	for createtime, data in pairs(tNotepadListData) do
 		if tonumber(createtime) and tonumber(createtime) >= curDayBegin and tonumber(createtime) <= curDayEnd then
 			--如果已有同一天的item，就直接加在最后面。
-			local curcreatetime = value[1].createtime + 1
+			local curcreatetime = data[1].createtime + 1
 			local t = {createtime = curcreatetime, title = "新建记事本", }
 			
 			table.insert(data, 1, t)
