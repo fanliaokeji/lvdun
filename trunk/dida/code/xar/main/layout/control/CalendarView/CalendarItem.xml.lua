@@ -46,20 +46,29 @@ function SetCHNTextTermDay(self)
 end
 
 local bSeqFrameAniEnd = true
+local OnLayoutChangeCookie = nil
 
 function SetCurrentDayBkg(self, bShowBkg)
 	local bIsWorkDay = CheckIsWorkDay(self)
 	local objCurDayImg = self:GetControlObject("Calendar.Current")
 	
+	local function DoSeqFrameAni()
+		if bSeqFrameAniEnd then--上次的动画已经做完了
+			bSeqFrameAniEnd = false
+			tFunHelper.RunSeqFrameAni(objCurDayImg, "DiDa.seq_ani", function() bSeqFrameAniEnd = true end, 1200, false)
+		end
+	end
 	if bIsWorkDay then
 		objCurDayImg:SetResID("DiDa.Canlender.Current.Work.Bitmap")
 	else
 		-- objCurDayImg:SetTextureID("DiDa.Canlender.Current")
 		--
-		if bSeqFrameAniEnd then--上次的动画已经做完了
-			bSeqFrameAniEnd = false
-			tFunHelper.RunSeqFrameAni(objCurDayImg, "DiDa.seq_ani", function() bSeqFrameAniEnd = true end, 1200, false)
+		DoSeqFrameAni()
+		if not OnLayoutChangeCookie then
+			OnLayoutChangeCookie = true--Helper:AddListener暂不支持返回cookie
+			Helper:AddListener("OnLayoutChange", DoSeqFrameAni)
 		end
+		
 	end
 	
 	objCurDayImg:SetVisible(bShowBkg)
