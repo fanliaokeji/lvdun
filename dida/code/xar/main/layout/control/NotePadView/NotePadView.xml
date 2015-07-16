@@ -309,6 +309,7 @@
 									<eventlist>
 										<event name="OnEditChange" file="NotePadView.xml.lua" func="OnEditChange" />
 										<event name="OnSelChange" file="NotePadView.xml.lua" func="OnSelChange" />
+										<event name="OnControlMouseLeave" file="NotePadView.xml.lua" func="OnControlMouseLeave" />
 									</eventlist>
 								</obj>
 								<obj id="save.btn" class="TipAddin.Button">

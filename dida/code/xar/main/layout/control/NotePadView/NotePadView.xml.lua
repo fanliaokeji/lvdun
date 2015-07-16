@@ -108,6 +108,7 @@ function OnClickSave(self)
 	local attr = owner:GetAttribute()
 	local data = attr.data
 	if not data or not data.txtFilePath then
+		Helper:Assert(false, "no txtFilePath")
 		return
 	end
 	local editCtrl = owner:GetControlObject("edit.ctrl")
@@ -374,4 +375,11 @@ function OnEditChange(self)
 	local owner = self:GetOwnerControl()
 	local saveBtn = owner:GetControlObject("save.btn")
 	saveBtn:Enable(true)
+end
+
+function OnControlMouseLeave(self)
+	--内容发生变化，保存按钮可用
+	local owner = self:GetOwnerControl()
+	local saveBtn = owner:GetControlObject("save.btn")
+	OnClickSave(saveBtn)
 end
