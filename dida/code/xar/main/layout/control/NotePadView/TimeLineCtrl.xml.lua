@@ -451,7 +451,8 @@ function MoveItemListPanel(objRootCtrl, nScrollPos)
 	local nHeight = nB-nT
 	local nNewT = 0-nScrollPos
 	
-	objContainer:SetObjPos(nL, nNewT, nR, nNewT+nHeight)
+	--objContainer:SetObjPos(nL, nNewT, nR, nNewT+nHeight)
+	objContainer:SetObjPos(0, nNewT, "father.width", nNewT+nHeight)
 end
 
 function OnScrollBarMouseWheel(self, name, x, y, distance)
