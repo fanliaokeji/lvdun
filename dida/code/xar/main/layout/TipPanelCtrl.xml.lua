@@ -87,6 +87,7 @@ function OnClickCalendar(self)
 	calendarView:SetChildrenVisible(true)
 	
 	curViewIndex = 1
+	Helper:DispatchEvent("OnLayoutChange", curViewIndex)
 end
 
 local UpdateNotePadListCookie = nil
