@@ -194,7 +194,8 @@ function OnBind(self)
 		attr.EditWidth = width-1
 		attr.EditHeight = height - 4
 	end
-    edit:SetObjPos(attr.EditLeft, attr.EditTop, ""..attr.EditLeft.."+"..attr.EditWidth, ""..attr.EditTop.."+"..attr.EditHeight)
+	--这里SetObjPos给了具体数值，父窗口发生变化时edit无法随之变化，暂时注掉
+    -- edit:SetObjPos(attr.EditLeft, attr.EditTop, ""..attr.EditLeft.."+"..attr.EditWidth, ""..attr.EditTop.."+"..attr.EditHeight)
     self:SetEnable(attr.Enable)
 end
 
