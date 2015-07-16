@@ -108,7 +108,6 @@ function OnClickSave(self)
 	local attr = owner:GetAttribute()
 	local data = attr.data
 	if not data or not data.txtFilePath then
-		Helper:Assert(false, "no txtFilePath")
 		return
 	end
 	local editCtrl = owner:GetControlObject("edit.ctrl")
