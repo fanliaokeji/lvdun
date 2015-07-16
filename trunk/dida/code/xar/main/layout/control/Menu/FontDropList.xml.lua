@@ -90,7 +90,7 @@ end
 
 function BindMenuContainer(self, objMenuContainer, nMaxShowHistory, nTotalCount)
 	local attr = self:GetAttribute()
-	attr.nLinePerPage = 12
+	attr.nLinePerPage = 10
 	attr.nTotalLineCount = nTotalCount
 
 	self:OnInitControl(objMenuContainer)
