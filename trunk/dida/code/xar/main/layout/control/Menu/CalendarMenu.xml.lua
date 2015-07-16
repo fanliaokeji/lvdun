@@ -7,6 +7,7 @@ function OnSelect_open(self)
 	local attr = clndrItem:GetAttribute()
 	tClndrContent = attr.tClndrContent
 	if type(tClndrContent) ~= "table" then
+		Helper:Assert(false, "tClndrContent is not table")
 		return
 	end
 	local sDate = tClndrContent.solarcalendar
@@ -24,7 +25,7 @@ end
 function OnInit_open(self)
 	local clndrItem = GetRelateObject(self)
 	local attr = clndrItem:GetAttribute()
-	tClndrContent = attr.tClndrContent
+	local tClndrContent = attr.tClndrContent
 	if type(tClndrContent) ~= "table" then
 		self:SetEnable(false)
 		return
@@ -45,8 +46,9 @@ end
 function OnSelect_new(self)
 	local clndrItem = GetRelateObject(self)
 	local attr = clndrItem:GetAttribute()
-	tClndrContent = attr.tClndrContent
+	local tClndrContent = attr.tClndrContent
 	if type(tClndrContent) ~= "table" then
+		Helper:Assert(false, "tClndrContent is not table")
 		return
 	end
 	local sDate = tClndrContent.solarcalendar
