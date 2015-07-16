@@ -9,15 +9,16 @@ local Helper = XLGetGlobal("Helper")
 function OnLoadLuaFile()
 	local ret, path = Helper:GetCommandStrValue("/path")
 	local startFromRet, sstartfrom = Helper:GetCommandStrValue("/sstartfrom ")
+	Helper:LOG("command file path: ret£º", ret, " path: ", path)
 	if not ret then
 		local command = tipUtil:GetCommandLine()
-		path = string.match(command, ".*(%a:\\.*)%s*")
+		path = string.match(command, ".*(%a:\\.*)\"%s*")
 		-- XLMessageBox(path)
 		Helper:LOG("command file path: ", path)
 	end
 	
 	local modelessWnd = nil
-	--¸¸´°¿Ú¾ä±ú
+	--¸¸´°¿Ú¾ä±úÖÃ¿Õ
 	if path and path ~= "" and tipUtil:QueryFileExists(path) then
 		modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["filePath"] = path, ["bIndependentNotePad"] = true})
 	else
