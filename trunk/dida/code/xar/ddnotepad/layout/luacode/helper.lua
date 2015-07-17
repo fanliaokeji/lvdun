@@ -476,6 +476,30 @@ function Helper:QueryRegValue(sPath)
 	end
 	return nil
 end
+function Helper:QueryRegValueEx(sPath, sRegKey)
+	if not self:IsRealString(sPath) then
+		return nil
+	end
+	
+	local sRegRoot, sRegPath= string.match(sPath, "^(.-)[\\/](.*)")
+	if self:IsRealString(sRegRoot) and self:IsRealString(sRegPath) then
+		return tipUtil:QueryRegValue(sRegRoot, sRegPath, sRegKey or "")
+	end
+	return nil
+end
+
+function Helper:DeleteRegKey(sPath)
+	if not self:IsRealString(sPath) then
+		return nil
+	end
+	
+	local sRegRoot, sRegPath = string.match(sPath, "^(.-)[\\/](.*)")
+	if self:IsRealString(sRegRoot) and self:IsRealString(sRegPath) then
+		LOG("sRegRoot: ", sRegRoot, " sRegPath: ", sRegPath)
+		return tipUtil:DeleteRegKey(sRegRoot, sRegPath)
+	end
+	return nil
+end
 
 function Helper:SetRegValue(sPath, value)
 	-- tipUtil提供的SetRegValue方法，若sRegPath不存在，则设置失败
@@ -487,10 +511,29 @@ function Helper:SetRegValue(sPath, value)
 	if self:IsRealString(sRegRoot) and self:IsRealString(sRegPath) then
 		--若路径不存在，先创建之
 		-- XLMessageBox("sRegRoot: "..tostring(sRegRoot).." sRegPath: "..tostring(sRegPath))
-		if not tipUtil:QueryRegKeyExists(sRegRoot, sRegPath) then
-			tipUtil:CreateRegKey(sRegRoot, sRegPath)
+		if not tipUtil:QueryRegKeyExists(sRegRoot, sRegPath) then--这里需优化
+			tipUtil:CreateRegKey(sRegRoot, sRegPath)--.."\\"..sRegKey
 		end
 		self:Assert(tipUtil:QueryRegKeyExists(sRegRoot, sRegPath), "reg path not exisit! : "..tostring(value))
+		LOG("sRegRoot: ", sRegRoot, " sRegPath: ", sRegPath, " sRegKey: ", sRegKey, " value: ", value)
+		return tipUtil:SetRegValue(sRegRoot, sRegPath, sRegKey or "", value or "")
+	end
+	return false
+end
+function Helper:SetRegValueEx(sPath, sRegKey, value)
+	-- tipUtil提供的SetRegValue方法，若sRegPath不存在，则设置失败
+	if not self:IsRealString(sPath) then
+		self:Assert(false, "sPath is not"..tostring(sPath))
+		return false
+	end
+	local sRegRoot, sRegPath = string.match(sPath, "^(.-)[\\/](.*)")
+	if self:IsRealString(sRegRoot) and self:IsRealString(sRegPath) then
+		--若路径不存在，先创建之
+		if not tipUtil:QueryRegKeyExists(sRegRoot, sRegPath) then--这里需优化
+			tipUtil:CreateRegKey(sRegRoot, sRegPath)--.."\\"..sRegKey
+		end
+		self:Assert(tipUtil:QueryRegKeyExists(sRegRoot, sRegPath), "reg path not exisit! : "..tostring(value))
+		LOG("sRegRoot: ", sRegRoot, " sRegPath: ", sRegPath, " sRegKey: ", sRegKey, " value: ", value)
 		return tipUtil:SetRegValue(sRegRoot, sRegPath, sRegKey or "", value or "")
 	end
 	return false
