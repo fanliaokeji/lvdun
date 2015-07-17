@@ -11,6 +11,8 @@ public:
 	static void ExitCalendar(HWND hWnd, bool sendExitMsg);
 	static bool IsDiDaCalendarStartRunEnable();
 	static void EnableDiDaCalendarStartRun(bool enable);
+	static bool IsDDNotepadAssociationTxt();
+	static void DDNotepadAssociationTxt(bool enable);
 private:
 	// util
 	static std::wstring GetDiDaCalendarFilePath();
