@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <UxTheme.h>
+#include <tchar.h>
 
 extern HMODULE g_hModule;
 
@@ -17,6 +18,14 @@ static BOOL ShellExec(const wchar_t* lpFile, const wchar_t* lpParameters, int nS
 	sei.lpParameters = lpParameters;
 	sei.nShow = nShow;
 	return static_cast<int>(ShellExecuteEx(&sei)) > 32;
+}
+
+
+static bool IsVistaOrHigher()
+{
+	DWORD dwVersion = GetVersion();
+	DWORD dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
+	return dwMajorVersion >= 6;
 }
 
 void DiDaClockControl::ModifySystemDateTime()
@@ -149,6 +158,130 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 		::RegDeleteValue(hKey, key_name);
 		::RegCloseKey(hKey);
 	}
+}
+
+bool DiDaClockControl::IsDDNotepadAssociationTxt()
+{
+	wchar_t szValue[MAX_PATH] = {0};
+	DWORD cbData = sizeof(szValue);
+	DWORD dwRegType = REG_SZ;
+	
+	HKEY hKey = NULL;
+	
+	LONG lOpenResult = ERROR_SUCCESS;
+	if (IsVistaOrHigher())
+	{
+		lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice", 0, KEY_READ, &hKey);
+	} 
+	else
+	{
+		lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt", 0, KEY_READ, &hKey);
+	}
+	if (ERROR_SUCCESS != lOpenResult)
+	{
+		return false;
+	}
+	
+	const wchar_t* szValueName = L"Progid";
+	
+	if (ERROR_SUCCESS != ::RegQueryValueEx(hKey, szValueName, NULL, &dwRegType, reinterpret_cast<LPBYTE>(szValue), &cbData))
+	{
+		::RegCloseKey(hKey);
+		return false;
+	}
+	
+	if (wcsicmp(szValue,L"ddtxtfile") == 0)
+	{
+		::RegCloseKey(hKey);
+		return true;
+	}
+	::RegCloseKey(hKey);
+	return false;
+}
+
+void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
+{
+	HKEY hTxtKey = NULL;
+
+	LONG lTxtResult = ERROR_SUCCESS;
+	if (IsVistaOrHigher())
+	{
+		lTxtResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice", 0, KEY_READ|KEY_WRITE, &hTxtKey);
+	} 
+	else
+	{
+		lTxtResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt", 0, KEY_READ|KEY_WRITE, &hTxtKey);
+	}
+
+	if (!enable)
+	{
+		wchar_t szBackUp[MAX_PATH] = {0};
+		DWORD cbData = sizeof(szBackUp);
+		DWORD dwRegType = REG_SZ;
+
+		
+		if (ERROR_SUCCESS != lTxtResult)
+		{
+			return;
+		}
+
+		const wchar_t* szBackUp_ValueName = L"ddnotepad_backup";
+		if (ERROR_SUCCESS != ::RegQueryValueEx(hTxtKey, szBackUp_ValueName, NULL, &dwRegType, reinterpret_cast<LPBYTE>(szBackUp), &cbData))
+		{
+			LONG lRet = ::RegDeleteValue(hTxtKey,L"Progid");
+		}
+		else
+		{
+			::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szBackUp), (wcslen(szBackUp)) *sizeof(wchar_t)); 
+		}
+		::RegCloseKey(hTxtKey);
+		return;
+	}
+	
+	HKEY hDDKey = NULL;
+	if (ERROR_SUCCESS == ::RegOpenKeyEx(HKEY_CLASSES_ROOT, L"ddtxtfile", 0, KEY_READ, &hDDKey))
+	{
+		::RegCloseKey(hDDKey);
+		wchar_t szValue[MAX_PATH] = {0};
+		DWORD cbData = sizeof(szValue);
+		DWORD dwRegType = REG_SZ;
+		if (ERROR_SUCCESS == ::RegQueryValueEx(hTxtKey,  L"Progid", NULL, &dwRegType, reinterpret_cast<LPBYTE>(szValue), &cbData))
+		{
+			::RegSetValueEx(hTxtKey, L"ddnotepad_backup", 0, REG_SZ, reinterpret_cast<const BYTE*>(szValue), (wcslen(szValue)) * sizeof(wchar_t));		
+		}
+		wchar_t *szAssociation = L"ddtxtfile";
+		::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szAssociation), (wcslen(szAssociation)) * sizeof(wchar_t));	
+		::RegCloseKey(hTxtKey);
+		return;
+	}
+	//HKEY_CLASSES_ROOT\ddtxtfile 不存在 拉起进程另处理
+	std::wstring strDIDAPath = GetDiDaCalendarFilePath();
+	if(strDIDAPath.empty()) {
+		return;
+	}
+	size_t nPos = strDIDAPath.rfind(L"\\");
+	if (nPos == std::wstring::npos)
+	{
+		return ;
+	}
+	std::wstring strDir = strDIDAPath.substr(0,nPos+1);
+	wchar_t szDDNotePad[MAX_PATH] = {0};
+	::PathCombine(szDDNotePad,strDir.c_str(),L"ddnotepad.exe");
+	if (!::PathFileExistsW(szDDNotePad))
+	{
+		return ;
+	}
+	wchar_t *szOpera = NULL;
+	if (IsVistaOrHigher())
+	{
+		szOpera = L"runas";
+	} 
+	else
+	{
+		szOpera = L"open";
+	}
+	std::wstring strParam = L"/sstartfrom explorer /association 1";
+	::ShellExecute(NULL,szOpera,szDDNotePad,strParam.c_str(),NULL,SW_HIDE);
 }
 
 void DiDaClockControl::Command(int cmd)

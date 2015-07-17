@@ -175,12 +175,20 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	const int IMID_CHANGEDATETIME = 0x1003;
 	const int IMID_ABOUTDIDA = 0x1004;
 	const int IMID_EXIT = 0x1005;
+	const int IMID_ASSOCIATIONTXT = 0x1006;
 	bool isDiDaCalendarStartRunEnable = DiDaClockControl::IsDiDaCalendarStartRunEnable();
 	if(isDiDaCalendarStartRunEnable) {
 		AppendMenu(hMenu, MF_STRING | MF_CHECKED, IMID_STARTLAUNCH, L"开机启动");
 	}
 	else {
 		AppendMenu(hMenu, MF_STRING, IMID_STARTLAUNCH, L"开机启动");
+	}
+	bool isDDNotepadAssociationTxt = DiDaClockControl::IsDDNotepadAssociationTxt();
+	if(isDDNotepadAssociationTxt) {
+		AppendMenu(hMenu, MF_STRING | MF_CHECKED, IMID_ASSOCIATIONTXT, L"关联txt格式");
+	}
+	else {
+		AppendMenu(hMenu, MF_STRING, IMID_ASSOCIATIONTXT, L"关联txt格式");
 	}
 	AppendMenu(hMenu, MF_STRING, IMID_UPDATE, L"软件升级");
 	AppendMenu(hMenu, MF_STRING, IMID_CHANGEDATETIME, L"调整日期时间");
@@ -190,6 +198,9 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	switch(menuId) {
 	case IMID_STARTLAUNCH:
 		DiDaClockControl::EnableDiDaCalendarStartRun(!isDiDaCalendarStartRunEnable);
+		break;
+	case IMID_ASSOCIATIONTXT:
+		DiDaClockControl::DDNotepadAssociationTxt(!isDDNotepadAssociationTxt);
 		break;
 	case IMID_UPDATE:
 		DiDaClockControl::Update(hWnd);
