@@ -236,7 +236,11 @@ function GetSubTable()
 			["list.video.baidu.com"] = {
 				["strName"] = "百度视频", 
 				["bState"] = true, 
-			}, 
+			},
+			["crsky.com"] = {
+				["strName"] = "非凡软件", 
+				["bState"] = true, 
+			},
 		}, 
 	}
 	return t
