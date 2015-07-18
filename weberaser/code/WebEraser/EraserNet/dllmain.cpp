@@ -130,16 +130,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			std::wstring filename(szPath);
 			std::size_t pos = filename.find_last_of(L'\\');
 			if(pos == std::string::npos) {
-				return FALSE;
+				return S_FALSE;
 			}
 			filename = filename.substr(pos + 1);
 			for(std::size_t index = 0; index < filename.size(); ++index) {
 				filename[index] = std::towlower(filename[index]);
 			}
-			if (filename == L"weberaser.exe")
-			{
-				return TRUE;
-			}
+
 			bool find = false;
 			for(std::size_t index = 0; index < sizeof(app_table) / sizeof(app_table[0]); ++index) {
 				if(filename == app_table[index]) {
@@ -158,7 +155,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			}
 
 			if(!find) {
-				return FALSE;
+				return S_FALSE;
 			}
 			WinsockHooker::AttachHook();
 		}
