@@ -86,9 +86,10 @@ function OnTitleEditFocusChange(self, isFocus)
 		local attr = owner:GetAttribute()
 		local data = attr.data
 		if not data then return end
-		data.title = self:GetText()
-		
-		owner:FireExtEvent("UpdateNoteList")
+		-- data.title = self:GetText()
+		local saveBtn = owner:GetControlObject("save.btn")
+		OnClickSave(saveBtn)
+		-- owner:FireExtEvent("UpdateNoteList")
 	end
 end
 
@@ -108,20 +109,22 @@ function OnClickSave(self)
 	local attr = owner:GetAttribute()
 	local data = attr.data
 	if not data or not data.txtFilePath then
+		Helper:Assert(false, "no txtFilePath")
 		return
 	end
 	local editCtrl = owner:GetControlObject("edit.ctrl")
-	local baseEdit = editCtrl:GetControlObject("newedit.edit")
-	--写edit中的文字到txt中
-	tipUtil:WriteStringToFile(data.txtFilePath, editCtrl:GetText())
 	
+	--写edit中的文字到txt中
+	local str = editCtrl:GetText()
+	local ret = tipUtil:WriteStringToFile(data.txtFilePath, str)
+	Helper:LOG("data.txtFilePath: ", data.txtFilePath, " str: ", tipUtil:ReadFileToString(data.txtFilePath), " editCtrl:GetText(): ", str, " ret: ", ret)
 	--更新标题
 	local headtitleEdit = owner:GetControlObject("headtitle.edit")
 	local newTitle = headtitleEdit:GetText()
 	
 	data.title = "" ~= newTitle and newTitle or data.title
 	owner:FireExtEvent("UpdateNoteList")
-	editCtrl:SetFocus(false)
+	-- editCtrl:SetFocus(false)
 end
 
 local testMenuTable = 
@@ -196,8 +199,12 @@ function SetData(self, data)
 		-- editCtrl:SetText("点击添加记事")
 		-- return 
 	-- end
-	
-	editCtrl:SetText(strInTxt or "")
+	if not strInTxt then
+		Helper:LOG("strInTxt is nil")
+		editCtrl:SetText("")
+	else
+		editCtrl:SetText(strInTxt)
+	end
 end
 
 function ProcessClick(self, id)
