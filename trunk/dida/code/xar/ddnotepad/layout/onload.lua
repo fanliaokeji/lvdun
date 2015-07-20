@@ -1,7 +1,7 @@
 local tipUtil = XLGetObject("API.Util")
 
 function LoadLuaModule(tFile, curDocPath)
---tFile¿ÉÒÔ´«luaÎÄ¼ş¾ø¶ÔÂ·¾¶¡¢Ïà¶ÔÂ·¾¶
+--tFileå¯ä»¥ä¼ luaæ–‡ä»¶ç»å¯¹è·¯å¾„ã€ç›¸å¯¹è·¯å¾„
 	if "table" == type(tFile) then
 		for index, value in ipairs(tFile) do
 			if "string" == type(value) and value ~= "" then
@@ -31,7 +31,7 @@ end
 local File = {
 "luacode\\objectbase.lua",
 "luacode\\helper.lua",
--- "luacode\\functionhelper.lua",
+"luacode\\helper_token.lua",
 "NotePad.lua",
 }
 LoadLuaModule(File, __document)
