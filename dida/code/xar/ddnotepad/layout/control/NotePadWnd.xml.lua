@@ -1,5 +1,6 @@
 local Helper = XLGetGlobal("Helper")
 local tipUtil = XLGetObject("API.Util")
+local NotePad = XLGetGlobal("NotePad", NotePad)
 
 local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosX"
 local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iWindowPosY"
@@ -74,6 +75,7 @@ function OnCreate(self)
 	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
 	
 	Helper:SendConvStatistic(tStatInfo)
+	NotePad:DownloadRemoteConfig()
 end
 
 function OnInitNotePad(self)
@@ -111,7 +113,7 @@ function OnClickClose(self)
 	Helper:SendConvStatistic(tStatInfo)
 	--保存完毕，退出
 	-- Helper:DestoryModelessWnd("NotePadWnd")
-	tipUtil:Exit("Exit")
+	NotePad:Exit()
 end	
 	
 function OnSize(self, _type, width, height)
