@@ -60,6 +60,7 @@ function Helper:LoadLuaTable(sFilePath)
 		return nil
 	end
 	
+	sFilePath = tipUtil:ExpandEnvironmentStrings(sFilePath)
 	if not tipUtil:QueryFileExists(sFilePath) then
 		LOG("QueryFileExists false! sFilePath: ", sFilePath)
 		return nil
@@ -91,6 +92,8 @@ function Helper:SaveLuaTable(tTable, sFilePath)
 		self:Assert(false, "The first parameter's type of function SaveLuaTable must be table")
 		return
 	end
+	
+	sFilePath = tipUtil:ExpandEnvironmentStrings(sFilePath)
 	-- tipUtil提供的SaveLuaTableToLuaFile方法，若lua文件所在的目录不存在，则保存失败
 	local folder = string.match(sFilePath, "(.+)\\.+")
 	if not tipUtil:QueryFileExists(folder) then
