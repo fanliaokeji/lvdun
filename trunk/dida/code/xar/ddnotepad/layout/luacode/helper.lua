@@ -18,6 +18,8 @@ function LOG(...)--该方法使用频率较高，单独挂到全局一份
 	
 	local traceInfo = debug.traceback("", 2)
 	local s = string.gsub(traceInfo, "\n", " < ") 
+	s = string.gsub(s, "	", "") 
+	s = string.gsub(s, "< stack traceback: (<.-<)", "< stack traceback:")
 	s =string.sub(s,1, 512)
 	
 	--应控制调用堆栈长度与日志内容长度
@@ -54,7 +56,7 @@ function Helper:IsRealString(str)
 end
 
 function Helper:LoadLuaTable(sFilePath)
-	if type(str) ~= "string" or str == "" then
+	if type(sFilePath) ~= "string" or sFilePath == "" then
 		return nil
 	end
 	
@@ -560,3 +562,18 @@ function Helper:GetCommandStrValue(strKey)
 	return bRet, strValue
 end
 --封装动画方法
+
+function Helper:GetHttpFile(url, savePath, token)
+	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
+	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
+										if 0 == nRet then
+											LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
+											self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+										else
+											--此时nRet即为errorcode
+											LOG("DispatchEvent: OnDownloadFailed token: ", token, " nRet: ", nRet)
+											
+											self:DispatchEvent("OnDownloadFailed", token, nRet, url, strHeaders)
+										end
+									end)
+end
