@@ -62,6 +62,7 @@
 			</obj>
 		</children>
 		<eventlist>
+			<event name="OnControlMouseLeave" file="RemindPanle.xml.lua" func="OnControlMouseLeaveEdit" />
 			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitControlEdit" />
 			<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
 		</eventlist>

@@ -53,7 +53,13 @@ function OnFocusChangeEdit(self, isfocus)
 		bkg:SetTextureID(attr.HoverBkgID)
 	else
 		bkg:SetTextureID(attr.NormalBkgID)
+		OnChangeEdit(self, true)
 	end
+end
+
+function OnControlMouseLeaveEdit(self)
+	--local edit = self:GetControlObject("edit")
+	--edit:SetFocus(false)
 end
 
 function StringFormat02d(str)
@@ -82,14 +88,15 @@ function OnInitControlEdit(self)
 	end
 end
 
-function OnChangeEdit(self)
+function OnChangeEdit(self, bForce)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	local text = self:GetText()
-	if self:GetMaxLength() > string.len(text) then
+	if not bForce and self:GetMaxLength() > string.len(text) then
 		return
 	end
 	local nText = tonumber(text)
+	self:SetText(StringFormat02d(nText))
 	if type(attr.MaxNumber) == "number" and type(nText) == "number" and nText > attr.MaxNumber then
 		self:SetText(StringFormat02d(attr.MaxNumber))
 	end
