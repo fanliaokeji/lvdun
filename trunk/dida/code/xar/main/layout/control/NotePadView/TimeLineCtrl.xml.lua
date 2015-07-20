@@ -30,6 +30,15 @@ function OnLButtonDown(self, x, y)
 		local attr2 = ownerattr.cursel:GetAttribute()
 		attr2.select = false
 		OnInitControl(ownerattr.cursel)--改变背景色
+		local ckctrl = ownerattr.cursel:GetControlObject("ForegroundCheckBox")
+		local ckctrlattr = ckctrl:GetAttribute()
+		if not ckctrlattr.ischeck then
+			ckctrlattr.NormalBkgID = "uncheck"
+			ckctrlattr.HoverBkgID = "uncheck"
+			ckctrlattr.DownBkgID = "uncheck"
+			ckctrlattr.DisableBkgID  = "uncheck"
+			ckctrl:Updata()
+		end
 	 end
 	 ownerattr.cursel = self
 	 attr.select = true
@@ -37,11 +46,25 @@ function OnLButtonDown(self, x, y)
 	 local data = attr.data
 	 if type(data[2]) == "table"  then
 		data[2]["expand"] = not data[2]["expand"]
-		gSelectData = data[2][1]
+		if data[2]["expand"] then
+			gSelectData = data[2][1]
+		else
+			gSelectData = nil
+		end
 		ReBuildList(owner)
 		--owner:FireExtEvent("OnSelect", attr.data[2][1])
 	 else
 		gSelectData = data
+		ControlUpdateDelBtnState(owner)
+		local ckctrl = self:GetControlObject("ForegroundCheckBox")
+		local ckctrlattr = ckctrl:GetAttribute()
+		if not ckctrlattr.ischeck then
+			ckctrlattr.NormalBkgID = "check.normal"
+			ckctrlattr.HoverBkgID = "check.hover"
+			ckctrlattr.DownBkgID = "check.normal"
+			ckctrlattr.DisableBkgID  = "check.normal"
+			ckctrl:Updata()
+		end
 		owner:FireExtEvent("OnSelect", attr.data)
 	 end
 end
@@ -134,6 +157,17 @@ function SetDataChild(self, data)
 		ckctrlattr.DisableBkgID  = "check.normal"
 		ckctrl:Updata()
 	end
+	--如果是选中的，界面CHECKBOX需要置为选中状态
+	if gSelectData == data then
+		local ckctrl = self:GetControlObject("ForegroundCheckBox")
+		local ckctrlattr = ckctrl:GetAttribute()
+		--ckctrlattr.ischeck = true
+		ckctrlattr.NormalBkgID = "check.normal"
+		ckctrlattr.HoverBkgID = "check.hover"
+		ckctrlattr.DownBkgID = "check.normal"
+		ckctrlattr.DisableBkgID  = "check.normal"
+		ckctrl:Updata()
+	end
 end
 
 function OnClickCheckBox(self)
@@ -144,6 +178,11 @@ function OnClickCheckBox(self)
 	if attr.ischeck then
 		attr.ischeck = false
 		owattr.data.ischeck = false
+		if gSelectData == owattr.data then
+			gSelectData = nil
+		end
+	elseif gSelectData == owattr.data then
+		gSelectData = nil
 	else
 		attr.ischeck = true
 		owattr.data.ischeck = true
@@ -180,7 +219,25 @@ function CheckIsAllUnCheck(self)
 	delctrl:Updata()
 end
 
+function ControlUpdateDelBtnState(self)
+	local layout = self:GetControlObject("BottomListLayout")
+	local delctrl = self:GetControlObject("HeadDeleteBtn")
+	local attr = delctrl:GetAttribute() 
+	if IsAllUnCheck(layout) then
+		attr.NormalBkgID = "del.normal2"
+		attr.HoverBkgID = "del.hover2"
+		attr.DownBkgID = "del.normal2"
+		attr.DisableBkgID  = "del.normal2"
+	else
+		attr.NormalBkgID = "del.normal"
+		attr.HoverBkgID = "del.hover"
+		attr.DownBkgID = "del.normal"
+		attr.DisableBkgID  = "del.normal"
+	end
+	delctrl:Updata()
+end
 function IsAllUnCheck(layout)
+	if gSelectData ~= nil then return false end
 	local nCount = layout:GetChildCount()
 	local obj
 	local bRet = true
@@ -209,16 +266,16 @@ function OnClickDel(self)
 		FunctionObj.ShowDeleteNotepadRemindWnd("notepad", function()
 			DeleteData()
 			if 0 == #tNotepadListData then
-				rootctrl:FireExtEvent("OnClearItem")
+				--rootctrl:FireExtEvent("OnClearItem")
 			end
 			ReBuildList(rootctrl)
 			--删完恢复显示状态
-			local attr = self:GetAttribute()
+			--[[local attr = self:GetAttribute()
 			attr.NormalBkgID = "del.normal2"
 			attr.HoverBkgID = "del.hover2"
 			attr.DownBkgID = "del.normal2"
 			attr.DisableBkgID  = "del.normal2"
-			self:Updata()
+			self:Updata()]]--
 		end)
 	end
 end
@@ -289,6 +346,9 @@ function DeleteData()
 						gSelectData = nil 
 					end
 					table.remove(v, i)
+				elseif gSelectData == v[i] then--当前选择的必定要被删除
+					gSelectData = nil
+					table.remove(v, i)
 				else
 					i = i + 1
 				end
@@ -299,9 +359,6 @@ function DeleteData()
 		end
 	end
 	for i, v in ipairs(tNeedDel) do
-		if gSelectData == tNotepadListData[v] then--删除了当前选中的data
-			gSelectData = nil
-		end
 		tNotepadListData[v] = nil
 	end
 	
@@ -317,10 +374,13 @@ function GetSortKey()
 	return tSort
 end
 
-function ReBuildList(self)
+function ReBuildList(self, fdata)
 	local attr = self:GetAttribute()
 	attr.prevobj = nil
 	attr.cursel = nil
+	if fdata then
+		gSelectData = fdata
+	end
 	local layout = self:GetControlObject("BottomListLayout")
 	layout:RemoveAllChild()
 	local tKeys = GetSortKey()
@@ -338,6 +398,7 @@ function ReBuildList(self)
 	else
 		self:FireExtEvent("OnSelect", nil)
 	end
+	ControlUpdateDelBtnState(self)
 	SaveNotepadListData2File()
 	ResetScrollBar(self)
 end

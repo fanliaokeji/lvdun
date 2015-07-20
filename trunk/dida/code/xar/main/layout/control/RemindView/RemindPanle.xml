@@ -166,8 +166,8 @@
 		</children>
 		<eventlist>
 			<event name="OnInitControl" file="RemindPanle.xml.lua" func="OnInitSimpleTitleCtrl" />
-			<event name="OnControlMouseEnter" file="RemindPanle.xml.lua" func="OnMouseEnterSimpleTitleCtrl" />
-			<event name="OnControlMouseLeave" file="RemindPanle.xml.lua" func="OnMouseLeaveSimpleTitleCtrl" />
+			<event name="OnLButtonDown" file="RemindPanle.xml.lua" func="OnLButtonDownSimpleTitleCtrl" />
+			<event name="OnControlFocusChange" file="RemindPanle.xml.lua" func="OnControlFocusChangeSTC" />
 			<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
 		</eventlist>
 		</objtemplate>
@@ -182,6 +182,7 @@
 		<event_def>
 			<UpdateRemindList>
 				<param>
+					<table />
 				</param>
 			</UpdateRemindList>
 		</event_def>
@@ -236,6 +237,9 @@
 							<text>内容：斑马斑马 你不要睡觉啦
 		再给我看看你受伤的尾巴，我不想去触碰你伤口的疤</text>
 						</attr>
+						<eventlist>
+							<event name="OnEnableChange" file="RemindPanle.xml.lua" func="OnEnableChangeCtrol" />
+						</eventlist>
 					</obj>
 					<obj id="BottomCheckPanle" class="LayoutObject">
 						<attr>

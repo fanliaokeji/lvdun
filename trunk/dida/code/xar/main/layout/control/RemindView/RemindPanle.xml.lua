@@ -5,7 +5,14 @@ function OnEnableChangeCtrol(self, isEnable)
 		if isEnable then
 			self:SetTextColorResID("262624")
 		else
-			self:SetTextColorResID("CCCCCC")
+			self:SetTextColorResID("999999")
+		end
+		return
+	elseif self:GetClass() == "EditObject" then
+		if isEnable then
+			self:SetTextColorID("262624")
+		else
+			self:SetTextColorID("999999")
 		end
 		return
 	end
@@ -18,7 +25,7 @@ function OnEnableChangeCtrol(self, isEnable)
 		if isEnable then
 			text:SetTextColorResID(attr.NormalTextColor)
 		else
-			text:SetTextColorResID("CCCCCC")
+			text:SetTextColorResID("999999")
 		end
 	end
 	local edit = self:GetControlObject("edit")
@@ -29,7 +36,7 @@ function OnEnableChangeCtrol(self, isEnable)
 		if isEnable then
 			edit:SetTextColorID(attr.NormalEditColor)
 		else
-			edit:SetTextColorID("CCCCCC")
+			edit:SetTextColorID("999999")
 		end
 	end
 	local button = self:GetControlObject("button")
@@ -76,16 +83,19 @@ function OnInitControlEdit(self)
 end
 
 function OnChangeEdit(self)
-	--[[local owner = self:GetOwnerControl()
+	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	local text = self:GetText()
+	if self:GetMaxLength() > string.len(text) then
+		return
+	end
 	local nText = tonumber(text)
 	if type(attr.MaxNumber) == "number" and type(nText) == "number" and nText > attr.MaxNumber then
 		self:SetText(StringFormat02d(attr.MaxNumber))
 	end
 	if type(attr.MinNumber) == "number" and type(nText) == "number" and nText < attr.MinNumber then
 		self:SetText(StringFormat02d(attr.MinNumber))
-	end]]--
+	end
 	local owner = self:GetOwnerControl()
 	owner:FireExtEvent("OnChange")
 end
@@ -158,8 +168,16 @@ function SwichShowTitleCtrl(self, bEdit)
 		local strText = text:GetText()
 		edit:SetText(strText)
 		text:SetVisible(false)
-		edit:SetSelAll()--奇怪，全选没有效果
 		edit:SetVisible(true)
+		--edit:FireExtEvent("OnLButtonDown", 1, 1)
+		edit:SetSelNone()
+		
+		local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+		timerManager:SetTimer(function(item, id)
+			item:KillTimer(id)
+			edit:SetSelAll()
+			edit:SetFocus(true)
+		end, 50)
 	else
 		local strText = edit:GetText()
 		text:SetText(strText)
@@ -170,12 +188,14 @@ function SwichShowTitleCtrl(self, bEdit)
 	end
 end
 
-function OnMouseEnterSimpleTitleCtrl(self)
+function OnLButtonDownSimpleTitleCtrl(self)
 	SwichShowTitleCtrl(self, true)
 end
 
-function OnMouseLeaveSimpleTitleCtrl(self)
-	SwichShowTitleCtrl(self, false)
+function OnControlFocusChangeSTC(self, bfocus)
+	if not bfocus then
+		SwichShowTitleCtrl(self, false)
+	end
 end
 
 function SetText(self, text)
@@ -443,7 +463,7 @@ function OnClickBottomSaveBtn(self)
 		data["hour"] = EditHourWeekedit:GetText()
 		data["min"] = EditMinuteWeekedit:GetText()
 	end
-	owner:FireExtEvent("UpdateRemindList")
+	owner:FireExtEvent("UpdateRemindList", data)
 end
 
 --取消 
@@ -461,9 +481,10 @@ function SetData(self, data)
 	if data == nil then
 		OnInitControlRemindPanle(self)
 		SwichShowSaveCancelBtn(self, false)
-		titlectrl:SetText("")
+		titlectrl:SetText("标题：这个一定要填写")
 		RightTimeObj:SetVisible(false)
-		CenterEditObj:SetText("")
+		CenterEditObj:SetText("内容：可填可不填")
+		--CenterEditObj:
 		self:SetEnable(false)
 		self:SetChildrenEnable(false)
 	else
