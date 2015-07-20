@@ -162,13 +162,32 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 
 bool DiDaClockControl::IsDDNotepadAssociationTxt()
 {
+	HKEY hCurrentKey = NULL;
+	LONG lOpenResult = ERROR_SUCCESS;
+	DWORD dwAssociated = 0;
+	DWORD cbAssociated = sizeof(DWORD);
+	DWORD dwRegDWORDType = REG_DWORD;
+	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\ddnotepad", 0, KEY_READ, &hCurrentKey);
+	if (ERROR_SUCCESS != lOpenResult)
+	{
+		return false;
+	}
+	if (ERROR_SUCCESS != ::RegQueryValueEx(hCurrentKey, L"Associated", NULL, &dwRegDWORDType, reinterpret_cast<LPBYTE>(&dwAssociated), &cbAssociated))
+	{
+		::RegCloseKey(hCurrentKey);
+		return false;
+	}
+	::RegCloseKey(hCurrentKey);
+	if (1 != dwAssociated)
+	{
+		return false;
+	}
+	DWORD dwRegType = REG_SZ;
 	wchar_t szValue[MAX_PATH] = {0};
 	DWORD cbData = sizeof(szValue);
-	DWORD dwRegType = REG_SZ;
-	
+
 	HKEY hKey = NULL;
 	
-	LONG lOpenResult = ERROR_SUCCESS;
 	if (IsVistaOrHigher())
 	{
 		lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice", 0, KEY_READ, &hKey);
@@ -189,7 +208,7 @@ bool DiDaClockControl::IsDDNotepadAssociationTxt()
 		::RegCloseKey(hKey);
 		return false;
 	}
-	
+
 	if (wcsicmp(szValue,L"ddtxtfile") == 0)
 	{
 		::RegCloseKey(hKey);
@@ -201,6 +220,24 @@ bool DiDaClockControl::IsDDNotepadAssociationTxt()
 
 void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 {
+	HKEY hCurrentKey = NULL;
+	LONG lOpenResult = ERROR_SUCCESS;
+	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\ddnotepad", 0, KEY_READ|KEY_WRITE, &hCurrentKey);
+	if (ERROR_SUCCESS != lOpenResult)
+	{
+		LONG lRet;
+		lOpenResult = RegCreateKey(HKEY_CURRENT_USER,  L"SOFTWARE\\ddnotepad", &hCurrentKey);
+		if (ERROR_SUCCESS != lOpenResult)
+		{
+			return;
+		}
+	}
+	if (!enable)
+	{
+		::RegDeleteValue(hCurrentKey,L"Associated");
+		::RegCloseKey(hCurrentKey);
+		return;
+	}
 	HKEY hTxtKey = NULL;
 
 	LONG lTxtResult = ERROR_SUCCESS;
@@ -213,30 +250,30 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 		lTxtResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt", 0, KEY_READ|KEY_WRITE, &hTxtKey);
 	}
 
-	if (!enable)
-	{
-		wchar_t szBackUp[MAX_PATH] = {0};
-		DWORD cbData = sizeof(szBackUp);
-		DWORD dwRegType = REG_SZ;
+	//if (!enable)
+	//{
+	//	wchar_t szBackUp[MAX_PATH] = {0};
+	//	DWORD cbData = sizeof(szBackUp);
+	//	DWORD dwRegType = REG_SZ;
 
-		
-		if (ERROR_SUCCESS != lTxtResult)
-		{
-			return;
-		}
+	//	
+	//	if (ERROR_SUCCESS != lTxtResult)
+	//	{
+	//		return;
+	//	}
 
-		const wchar_t* szBackUp_ValueName = L"ddnotepad_backup";
-		if (ERROR_SUCCESS != ::RegQueryValueEx(hTxtKey, szBackUp_ValueName, NULL, &dwRegType, reinterpret_cast<LPBYTE>(szBackUp), &cbData))
-		{
-			LONG lRet = ::RegDeleteValue(hTxtKey,L"Progid");
-		}
-		else
-		{
-			::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szBackUp), (wcslen(szBackUp)) *sizeof(wchar_t)); 
-		}
-		::RegCloseKey(hTxtKey);
-		return;
-	}
+	//	const wchar_t* szBackUp_ValueName = L"ddnotepad_backup";
+	//	if (ERROR_SUCCESS != ::RegQueryValueEx(hTxtKey, szBackUp_ValueName, NULL, &dwRegType, reinterpret_cast<LPBYTE>(szBackUp), &cbData))
+	//	{
+	//		LONG lRet = ::RegDeleteValue(hTxtKey,L"Progid");
+	//	}
+	//	else
+	//	{
+	//		::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szBackUp), (wcslen(szBackUp)) *sizeof(wchar_t)); 
+	//	}
+	//	::RegCloseKey(hTxtKey);
+	//	return;
+	//}
 	
 	HKEY hDDKey = NULL;
 	if (ERROR_SUCCESS == ::RegOpenKeyEx(HKEY_CLASSES_ROOT, L"ddtxtfile", 0, KEY_READ, &hDDKey))
@@ -252,6 +289,10 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 		wchar_t *szAssociation = L"ddtxtfile";
 		::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szAssociation), (wcslen(szAssociation)) * sizeof(wchar_t));	
 		::RegCloseKey(hTxtKey);
+		
+		DWORD dwAssociated = 1;
+		::RegSetValueEx(hCurrentKey, L"Associated", 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dwAssociated), sizeof(DWORD));
+		::RegCloseKey(hCurrentKey);
 		return;
 	}
 	//HKEY_CLASSES_ROOT\ddtxtfile 不存在 拉起进程另处理
