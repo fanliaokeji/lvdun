@@ -167,7 +167,7 @@ function OnClickRemind(self)
 	
 	UpdateRemindListCookie = UpdateRemindListCookie or 
 								remindView:AttachListener("UpdateRemindList", false, 
-											function() 
+											function(self, evt, data) 
 													remindPreView:ReBuildRemindList(data)
 											end)
 	
@@ -247,8 +247,8 @@ function OnInitControl(self)
 	end
 	
 	notePadView:AttachListener("UpdateNoteList", false, 
-				function() 
-						notePadPreView:ReBuildRemindList()
+				function(self, evt, data) 
+						notePadPreView:ReBuildRemindList(data)
 				end)
 	
 	curViewIndex = 1

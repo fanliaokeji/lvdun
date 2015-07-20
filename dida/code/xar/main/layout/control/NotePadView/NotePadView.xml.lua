@@ -123,7 +123,7 @@ function OnClickSave(self)
 	local newTitle = headtitleEdit:GetText()
 	
 	data.title = "" ~= newTitle and newTitle or data.title
-	owner:FireExtEvent("UpdateNoteList")
+	owner:FireExtEvent("UpdateNoteList", data)
 	-- editCtrl:SetFocus(false)
 end
 
@@ -181,7 +181,7 @@ function SetData(self, data)
 		if tipUtil:QueryFileExists(txtFilePath) then
 			data.txtFilePath = txtFilePath
 			--保存data到文件
-			self:FireExtEvent("UpdateNoteList")
+			self:FireExtEvent("UpdateNoteList", data)
 		end
 	end
 	

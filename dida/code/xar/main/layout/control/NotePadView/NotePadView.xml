@@ -63,6 +63,7 @@
 		<event_def>
 			<UpdateNoteList>
 				<param>
+					<table />
 				</param>
 			</UpdateNoteList>
 		</event_def>
