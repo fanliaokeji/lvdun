@@ -207,6 +207,8 @@ function OnLoadLuaFile()
 	if startFromRet and assRet and "explorer" == sstartfrom then
 		if "1" == association then
 			SetTxtAssociation()
+			--抢了关联之后，写上
+			Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\didanotepad\\Associated", 1)
 			return
 		end
 	end
