@@ -103,15 +103,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>466</width>
-			<height>438</height>
+			<width>800</width>
+			<height>600</height>
 		</attr>
 		<obj id="root" class="TextureObject">
 		    <attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>466</width>
-				<height>438</height>
+				<width>800</width>
+				<height>600</height>
 				<texture>texture.editwnd.shadow</texture>
 			</attr>		
 			<children>
