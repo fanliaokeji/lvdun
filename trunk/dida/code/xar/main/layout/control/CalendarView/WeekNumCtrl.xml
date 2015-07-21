@@ -26,7 +26,7 @@
 				<obj id="Sunday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>0</left>
-						<text>周日</text>
+						<text>日</text>
 						<textcolor>orange.weekend</textcolor>
 					</attr>
 				</obj>
@@ -34,42 +34,42 @@
 				<obj id="Monday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68</left>
-						<text>周一</text>
+						<text>一</text>
 					</attr>
 				</obj>
 				
 				<obj id="Tuesday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68*2</left>
-						<text>周二</text>
+						<text>二</text>
 					</attr>
 				</obj>
 				
 				<obj id="Wendesday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68*3</left>
-						<text>周三</text>
+						<text>三</text>
 					</attr>
 				</obj>
 				
 				<obj id="Thusday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68*4</left>
-						<text>周四</text>
+						<text>四</text>
 					</attr>
 				</obj>
 				
 				<obj id="Friday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68*5</left>
-						<text>周五</text>
+						<text>五</text>
 					</attr>
 				</obj>
 				
 				<obj id="Satuday" class="TextObject" templateid="weeknum.item">
 					<attr>
 						<left>68*6</left>
-						<text>周六</text>
+						<text>六</text>
 						<textcolor>orange.weekend</textcolor>
 					</attr>
 				</obj>

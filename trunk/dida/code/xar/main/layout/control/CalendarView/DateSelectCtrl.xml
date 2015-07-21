@@ -61,13 +61,25 @@
 						<left>19</left>
 						<top>19</top>
 						<width>77</width>
-						<height>300</height>
+						<height>277</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
 						<event name="OnFocusChange" file="DateSelectCtrl.xml.lua" func="OnFocusYearDropList" />
 						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitYearDropList" />
 					</eventlist>
+				</obj>
+				<obj id="DropList.Year.Text" class="TextObject">
+					<attr>
+						<left>80</left>
+						<top>-4</top>
+						<width>30</width>
+						<height>300</height>
+						<zorder>9999999</zorder>
+						<textcolor>262624</textcolor>
+						<font>font.text16</font>
+						<text>年</text>
+					</attr>
 				</obj>
 				<obj id="Combobox.Month" class="TipAddin.Button">
 					<attr>
@@ -82,7 +94,7 @@
 						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
 						<TextColor>262624</TextColor>
 						<TextFont>font.text16.Arial</TextFont>
-						<LeftTextPos>-3</LeftTextPos>
+						<LeftTextPos>-13</LeftTextPos>
 						<TopTextPos>-20</TopTextPos>
 						<TextHeight>15</TextHeight>
 					</attr>
@@ -91,12 +103,24 @@
 						<event name="OnInitControl" file="DateSelectCtrl.xml.lua" func="OnInitMonthBox" />
 					</eventlist>
 				</obj>
+				<obj id="DropList.Month.Text" class="TextObject">
+					<attr>
+						<left>130</left>
+						<top>-5</top>
+						<width>30</width>
+						<height>300</height>
+						<zorder>9999999</zorder>
+						<textcolor>262624</textcolor>
+						<font>font.text16</font>
+						<text>月</text>
+					</attr>
+				</obj>
 				<obj id="DropList.Month" class="MonthDropList">
 					<attr>
 						<left>19+77+2</left>
 						<top>22</top>
 						<width>77</width>
-						<height>300</height>
+						<height>277</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>
@@ -131,7 +155,7 @@
 						<DownBkgID>DiDa.DropDown.Arrow.Hover</DownBkgID>
 						<HoverBkgID>DiDa.DropDown.Arrow.Hover</HoverBkgID>
 						<DisableBkgID>DiDa.DropDown.Arrow.Normal</DisableBkgID>
-						<TextColor>B8181D</TextColor>
+						<TextColor>FF4400</TextColor>
 						<TextFont>font.text15</TextFont>
 						<LeftTextPos>-12</LeftTextPos>
 						<TopTextPos>-22</TopTextPos>
@@ -146,7 +170,7 @@
 						<left>267</left>
 						<top>19</top>
 						<width>77</width>
-						<height>200</height>
+						<height>187</height>
 						<zorder>9999999</zorder>
 					</attr>
 					<eventlist>

@@ -47,8 +47,8 @@ end
 
 function InitSmallCalendar(self)
 	local objCalendar = self:GetControlObject("CalendarCtrl.Small")
-	objCalendar:CreateClndrItemList(5, 7, "CalendarItem.Small")
-	InitLineContainer(objCalendar, 5)
+	objCalendar:CreateClndrItemList(6, 7, "CalendarItem.Small")
+	InitLineContainer(objCalendar, 6)
 end
 
 function ShowBigCalendar(objRootCtrl, tClndrContent, strYearMonth)
