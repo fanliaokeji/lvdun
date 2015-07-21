@@ -2,7 +2,7 @@
 	<objtemplate id="calendarmenu.context" class="MenuObject" templateid="menu.object.template">
 		<attr>
 			<ItemTop>4</ItemTop>
-			<ItemLeft>5</ItemLeft>
+			<ItemLeft>-1</ItemLeft>
 			<ItemRight>10</ItemRight>
 		</attr>
 		<children>
@@ -28,7 +28,7 @@
 	
 			<obj id="cancel" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>取消</Text>
+					<Text>取消            </Text>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="CalendarMenu.xml.lua" function="OnSelect_cancel" />
@@ -50,8 +50,8 @@
 			<attr>
 				<left>0</left>
 				<top>0</top>
-			<width>107</width>
-			<height>79</height>
+				<width>107</width>
+				<height>79</height>
 			</attr>
 			<children>
 				<obj id="Menu.Context" class="NormalMenu">

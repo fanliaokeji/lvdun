@@ -156,7 +156,7 @@ function ChangeCalendarState(nFestIndex)
 	local nMoutn = tonumber(strMonth)
 	if nMoutn then
 		strMonth = string.format("%02d", nMoutn)
-		objDateSelect:SetMonthText(strMonth.."月")
+		objDateSelect:SetMonthText(strMonth)--.."月"
 		tFunHelper.UpdateCalendarContent()
 	end		
 end

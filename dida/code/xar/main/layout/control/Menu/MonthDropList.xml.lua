@@ -90,7 +90,7 @@ function OnSelectMonth(objMenuItem)
 	local nMonth = tonumber(strMonth) 
 	strMonth = string.format("%02d", nMonth)
 	
-	objDateSelect:SetMonthText(strMonth.."月")
+	objDateSelect:SetMonthText(strMonth)--.."月"
 	objDateSelect:ResetFestivalText()
 	tFunHelper.UpdateCalendarContent()
 end

@@ -105,7 +105,7 @@ end
 
 
 function OnSelectYear(objMenuItem)
-	local strText = objMenuItem:GetText() .. " 年"
+	local strText = objMenuItem:GetText()-- .. " 年"
 	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
 	objDateSelect:SetYearText(strText)
 	objDateSelect:ResetFestivalText()
