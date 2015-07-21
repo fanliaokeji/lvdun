@@ -69,7 +69,7 @@ function AddYear(self, nDiff)
 		nCurYear = nBeginYear
 	end
 	
-	local strYearText = tostring(nCurYear).." 年"
+	local strYearText = tostring(nCurYear)--.." 年"
 	self:SetYearText(strYearText)
 end
 
@@ -93,7 +93,7 @@ function AddMonth(self, nDiff)
 	end
 	
 	local strMonth = string.format("%02d", nCurMonth)
-	local strMonthText = tostring(strMonth).." 月"
+	local strMonthText = tostring(strMonth)--.." 月"
 	self:SetMonthText(strMonthText)
 end
 
@@ -157,7 +157,7 @@ end
 
 function OnInitYearBox(self)
 	local nCurYear = os.date("%Y")
-	local strText = tostring(nCurYear)..tostring(" 年")
+	local strText = tostring(nCurYear)--..tostring(" 年")
 	self:SetText(strText)
 end
 
@@ -174,7 +174,7 @@ end
 function OnInitMonthBox(self)
 	local nCurMonth = os.date("%m")
 	local strMonth = string.format("%02d", nCurMonth)
-	local strText = tostring(strMonth)..tostring(" 月")
+	local strText = tostring(strMonth)--..tostring(" 月")
 	
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:SetMonthText(strText)
@@ -254,12 +254,12 @@ end
 
 function ResetCtrlText(objRootCtrl)
 	local strYear = os.date("%Y")
-	objRootCtrl:SetYearText(strYear.." 年")
+	objRootCtrl:SetYearText(strYear)--.." 年"
 	
 	local strMonth = os.date("%m")
 	local nMonth = tonumber(strMonth)
 	strMonth = string.format("%02d", nMonth)
-	objRootCtrl:SetMonthText(strMonth.." 月")
+	objRootCtrl:SetMonthText(strMonth)--.." 月"
 	
 	objRootCtrl:ResetFestivalText()
 end	

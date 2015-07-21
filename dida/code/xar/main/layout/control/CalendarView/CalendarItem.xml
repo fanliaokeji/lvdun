@@ -48,7 +48,7 @@
 								<height>father.height</height>
 								<valign>center</valign>
 								<halign>center</halign>
-								<font>font.number19</font>
+								<font>font.number22</font>
 								<textcolor>262624</textcolor>
 								<zorder>999999</zorder>
 							</attr>		
@@ -62,7 +62,7 @@
 								<height>father.height</height>
 								<valign>bottom</valign>
 								<halign>center</halign>
-								<font>font.text11</font>
+								<font>font.text12</font>
 								<textcolor>999999</textcolor>
 								<zorder>999999</zorder>
 							</attr>		
@@ -92,8 +92,8 @@
 						</obj>
 						<obj id="Calendar.hasitem" class="TextureObject">
 							<attr>
-								<left>19</left>
-								<top>12</top>
+								<left>20</left>
+								<top>11</top>
 								<width>28</width> 
 								<height>26</height>
 								<texture>notepad.day.hasitem</texture>
@@ -119,7 +119,7 @@
 										<height>father.height</height>
 										<valign>left</valign>
 										<halign>top</halign>
-										<font>font.text9</font>
+										<font>font.text10</font>
 										<textcolor>999999</textcolor>
 										<text>班</text>
 										<zorder>999999</zorder>
@@ -132,8 +132,8 @@
 							<attr>
 								<left>1</left>
 								<top>1</top>
-								<width>23</width> 
-								<height>19</height>
+								<width>27</width> 
+								<height>22</height>
 								<texture>DiDa.Canlender.Holiday</texture>
 								<visible>false</visible>
 							</attr>		
@@ -141,12 +141,12 @@
 								<obj id="Calendar.Vacation.Text" class="TextObject">
 									<attr>
 										<left>2</left>
-										<top>-2</top>
+										<top>-1</top>
 										<width>father.width</width> 
 										<height>father.height</height>
 										<valign>left</valign>
 										<halign>top</halign>
-										<font>font.text9</font>
+										<font>font.text10</font>
 										<textcolor>system.white</textcolor>
 										<text>休</text>
 										<zorder>999999</zorder>

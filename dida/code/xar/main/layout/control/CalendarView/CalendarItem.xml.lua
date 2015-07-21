@@ -28,7 +28,7 @@ end
 
 
 function SetAllTextGray(self)
-	 SetAllTextColorRes(self, "CCCCCC", "CCCCCC")
+	 SetAllTextColorRes(self, "DDE4F0", "DDE4F0")
 end
 
 function SetAllTextWeekend(self)
@@ -37,12 +37,12 @@ end
 
 
 function SetTextSpecialday(self)
-	SetAllTextColorRes(self, "", "FF4A50")
+	SetAllTextColorRes(self, "", "orange.weekend")
 end
 
 
 function SetCHNTextTermDay(self)
-	SetAllTextColorRes(self, "", "FF4A50")
+	SetAllTextColorRes(self, "", "orange.weekend")
 end
 
 local bSeqFrameAniEnd = true
