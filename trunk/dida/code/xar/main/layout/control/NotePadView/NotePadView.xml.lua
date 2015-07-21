@@ -165,7 +165,7 @@ function SetData(self, data)
 	local createDate = self:GetControlObject("createdate.text")
 	local editCtrl = self:GetControlObject("edit.ctrl")
 	local blankBkg = editCtrl:GetControlObject("edit.blank.bkg")
-	local createDateText = "创建时间:"..os.date("%Y-%m-%d  %H:%M", data.createtime)
+	local createDateText = "创建时间："..os.date("%Y-%m-%d  %H:%M", data.createtime)
 	headTitle:SetText(data.title)
 	createDate:SetText(createDateText)
 	

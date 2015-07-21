@@ -15,8 +15,8 @@
 					<top>0</top>
 					<width>father.width</width>
 					<height>father.height</height>
-					<destcolor>system.white</destcolor>
-					<srccolor>system.white</srccolor>
+					<destcolor>EBF1F9</destcolor>
+					<srccolor>EBF1F9</srccolor>
 					<srcpt>0,0</srcpt>
 					<destpt>father.width,father.height</destpt>
 					<filltype>Monochrome</filltype>
@@ -77,9 +77,9 @@
 		<eventlist>
 			<event name="OnLButtonDown" file="RemindTimeLineCtrl.xml.lua" func="OnLButtonDown" />
 			<event name="OnLButtonUp" file="RemindTimeLineCtrl.xml.lua" func="OnLButtonUp" />
-			<event name="OnMouseEnter" file="RemindTimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<!--event name="OnMouseEnter" file="RemindTimeLineCtrl.xml.lua" func="OnMouseEnter" />
 			<event name="OnMouseLeave" file="RemindTimeLineCtrl.xml.lua" func="OnMouseLeave" />
-			<event name="OnInitControl" file="RemindTimeLineCtrl.xml.lua" func="OnInitControl" />
+			<event name="OnInitControl" file="RemindTimeLineCtrl.xml.lua" func="OnInitControl" /-->
 		</eventlist>
 		</objtemplate>
 	</control>
@@ -158,19 +158,19 @@
 						<attr>
 							<left>26+26+7</left>
 							<top>5+18+3</top>
-							<width>9</width>
-							<height>9</height>
+							<width>12</width>
+							<height>11</height>
 							<texture>timer</texture>
 						</attr>
 					</obj>
 					<obj id="BottomTimerText" class="TextObject">
 						<attr>
-							<left>26+26+7+9+1</left>
-							<top>5+18</top>
+							<left>26+26+7+9+4</left>
+							<top>5+18+1</top>
 							<width>100</width>
-							<height>16</height>
+							<height>18</height>
 							<textcolor>7DCA81</textcolor>
-							<font>font.text9</font>
+							<font>font.text11</font>
 						</attr>
 					</obj>
 				</children>
@@ -179,8 +179,8 @@
 		<eventlist>
 			<event name="OnLButtonDown" file="RemindTimeLineCtrl.xml.lua" func="OnLButtonDown" />
 			<event name="OnLButtonUp" file="RemindTimeLineCtrl.xml.lua" func="OnLButtonUp" />
-			<event name="OnMouseEnter" file="RemindTimeLineCtrl.xml.lua" func="OnMouseEnter" />
-			<event name="OnMouseLeave" file="RemindTimeLineCtrl.xml.lua" func="OnMouseLeave" />
+			<!--event name="OnMouseEnter" file="RemindTimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<event name="OnMouseLeave" file="RemindTimeLineCtrl.xml.lua" func="OnMouseLeave" /-->
 			<event name="OnInitControl" file="RemindTimeLineCtrl.xml.lua" func="OnInitControl" />
 		</eventlist>
 		</objtemplate>
@@ -221,10 +221,10 @@
 							<top>9</top>
 							<width>36</width>
 							<height>36</height>
-							<NormalBkgID>del.normal2</NormalBkgID>
+							<NormalBkgID>del.hover</NormalBkgID>
 							<HoverBkgID>del.hover2</HoverBkgID>
 							<DownBkgID>del.hover2</DownBkgID>
-							<DisableBkgID>del.normal2</DisableBkgID>
+							<DisableBkgID>del.hover</DisableBkgID>
 						</attr>
 						<eventlist>
 							<event name="OnClick" file="RemindTimeLineCtrl.xml.lua" func="OnClickDel" />
@@ -254,8 +254,8 @@
 					<width>father.width</width>
 					<height>father.height-55-44</height>
 					<limitchild>1</limitchild>
-					<destcolor>system.white</destcolor>
-					<srccolor>system.white</srccolor>
+					<destcolor>EBF1F9</destcolor>
+					<srccolor>EBF1F9</srccolor>
 					<srcpt>0,0</srcpt>
 					<destpt>father.width,father.height-55-44</destpt>
 					<filltype>Monochrome</filltype>

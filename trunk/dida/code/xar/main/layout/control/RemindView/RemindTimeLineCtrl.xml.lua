@@ -204,14 +204,14 @@ function CheckIsAllUnCheck(self)
 	local delctrl = rootctrl:GetControlObject("HeadDeleteBtn")
 	local attr = delctrl:GetAttribute()
 	if IsAllUnCheck(parent) then
-		attr.NormalBkgID = "del.normal2"
+		attr.NormalBkgID = "del.hover"
 		attr.HoverBkgID = "del.hover2"
-		attr.DownBkgID = "del.normal2"
-		attr.DisableBkgID  = "del.normal2"
+		attr.DownBkgID = "del.hover2"
+		attr.DisableBkgID  = "del.hover"
 	else
 		attr.NormalBkgID = "del.normal"
-		attr.HoverBkgID = "del.hover"
-		attr.DownBkgID = "del.normal"
+		attr.HoverBkgID = "del.normal2"
+		attr.DownBkgID = "del.normal2"
 		attr.DisableBkgID  = "del.normal"
 	end
 	delctrl:Updata()
@@ -222,14 +222,14 @@ function ControlUpdateDelBtnState(self)
 	local delctrl = self:GetControlObject("HeadDeleteBtn")
 	local attr = delctrl:GetAttribute() 
 	if IsAllUnCheck(layout) then
-		attr.NormalBkgID = "del.normal2"
+		attr.NormalBkgID = "del.hover"
 		attr.HoverBkgID = "del.hover2"
-		attr.DownBkgID = "del.normal2"
-		attr.DisableBkgID  = "del.normal2"
+		attr.DownBkgID = "del.hover2"
+		attr.DisableBkgID  = "del.hover"
 	else
 		attr.NormalBkgID = "del.normal"
-		attr.HoverBkgID = "del.hover"
-		attr.DownBkgID = "del.normal"
+		attr.HoverBkgID = "del.normal2"
+		attr.DownBkgID = "del.normal2"
 		attr.DisableBkgID  = "del.normal"
 	end
 	delctrl:Updata()
