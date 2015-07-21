@@ -15,8 +15,8 @@
 					<top>0</top>
 					<width>father.width</width>
 					<height>father.height</height>
-					<destcolor>system.white</destcolor>
-					<srccolor>system.white</srccolor>
+					<destcolor>EBF1F9</destcolor>
+					<srccolor>EBF1F9</srccolor>
 					<srcpt>0,0</srcpt>
 					<destpt>father.width,father.height</destpt>
 					<filltype>Monochrome</filltype>
@@ -77,9 +77,9 @@
 		<eventlist>
 			<event name="OnLButtonDown" file="TimeLineCtrl.xml.lua" func="OnLButtonDown" />
 			<event name="OnLButtonUp" file="TimeLineCtrl.xml.lua" func="OnLButtonUp" />
-			<event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<!--event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
 			<event name="OnMouseLeave" file="TimeLineCtrl.xml.lua" func="OnMouseLeave" />
-			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitControl" />
+			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitControl" /-->
 		</eventlist>
 		</objtemplate>
 	</control>
@@ -111,11 +111,11 @@
 					<obj id="HourSecond" class="TextObject">
 						<attr>
 							<left>6</left>
-							<top>17</top>
+							<top>16</top>
 							<width>30</width>
-							<height>14</height>
+							<height>16</height>
 							<textcolor>999999</textcolor>
-							<font>font.text8</font>
+							<font>font.text9</font>
 						</attr>
 					</obj>
 					
@@ -171,8 +171,8 @@
 		<eventlist>
 			<event name="OnLButtonDown" file="TimeLineCtrl.xml.lua" func="OnLButtonDown" />
 			<event name="OnLButtonUp" file="TimeLineCtrl.xml.lua" func="OnLButtonUp" />
-			<event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
-			<event name="OnMouseLeave" file="TimeLineCtrl.xml.lua" func="OnMouseLeave" />
+			<!--event name="OnMouseEnter" file="TimeLineCtrl.xml.lua" func="OnMouseEnter" />
+			<event name="OnMouseLeave" file="TimeLineCtrl.xml.lua" func="OnMouseLeave" /-->
 			<event name="OnInitControl" file="TimeLineCtrl.xml.lua" func="OnInitControl" />
 		</eventlist>
 		</objtemplate>
@@ -235,10 +235,10 @@
 							<top>9</top>
 							<width>36</width>
 							<height>36</height>
-							<NormalBkgID>new.normal</NormalBkgID>
-							<HoverBkgID>new.hover</HoverBkgID>
-							<DownBkgID>new.hover</DownBkgID>
-							<DisableBkgID>new.normal</DisableBkgID>
+							<NormalBkgID>new.hover</NormalBkgID>
+							<HoverBkgID>new.hover2</HoverBkgID>
+							<DownBkgID>new.hover2</DownBkgID>
+							<DisableBkgID>new.hover</DisableBkgID>
 						</attr>
 						<eventlist>
 							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickHeadAddBtn" />
@@ -253,8 +253,8 @@
 					<width>father.width</width>
 					<height>father.height-55-44</height>
 					<limitchild>1</limitchild>
-					<destcolor>system.white</destcolor>
-					<srccolor>system.white</srccolor>
+					<destcolor>EBF1F9</destcolor>
+					<srccolor>EBF1F9</srccolor>
 					<srcpt>0,0</srcpt>
 					<destpt>father.width,father.height-55-44</destpt>
 					<filltype>Monochrome</filltype>

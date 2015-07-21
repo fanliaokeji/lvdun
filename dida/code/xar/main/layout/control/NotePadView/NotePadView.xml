@@ -117,12 +117,12 @@
 								</obj>
 								<obj id="createdate.text" class="TextObject">
 									<attr>
-										<left>father.width - 163 - 15</left>
+										<left>father.width - 163 - 2</left>
 										<top>38</top>
 										<width>163</width> 
 										<height>14</height>
 										<textcolor>999999</textcolor>
-										<font>font.text12</font>
+										<font>font.text11</font>
 										<text>创建时间:2015-05-07 10:10</text>
 									</attr>			
 								</obj>
