@@ -35,7 +35,10 @@ function GetFontSizeConfig()
 		local ret = Helper:SaveLuaTable(configTable, configPath)
 		-- XLMessageBox(tostring(ret))
 	end
-	
+	if not configTable.FontSize then
+		configTable.FontSize = {8, 9, 11, 12, 14, 16, 18, 20, 24, 28, 32}
+		local ret = Helper:SaveLuaTable(configTable, configPath)
+	end
 	Helper:Assert(configTable.FontSize, "configTable.FontSize is nil")
 	return configTable.FontSize
 end
