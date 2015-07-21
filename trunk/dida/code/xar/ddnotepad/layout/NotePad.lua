@@ -226,7 +226,10 @@ function OnLoadLuaFile()
 		if not path then
 			path = string.match(command, ".*(\\\\.*)\"%s*")
 		end
-		
+		-- if not path then--command有可能只是一个路径
+			-- path = string.match(command, ".*(%a:\\.*).txt")
+			-- path = path..".txt"
+		-- end
 		Helper:LOG("command file path: ", path, " command: ", command)
 	end
 	
@@ -248,9 +251,17 @@ function OnLoadLuaFile()
 		--拉起系统原来的txt处理程序
 		openCmd = string.lower(openCmd)
 		local exePath = string.match(openCmd, "\"*(.-.exe)")
-		Helper:LOG("exePath: ", tostring(exePath), "\n openCmd: ", tostring(openCmd))
+		Helper:LOG("exePath: ", tostring(exePath), " openCmd: ", tostring(openCmd), " path: ", path)
 		exePath = tipUtil:ExpandEnvironmentStrings(exePath)
 		
+		--这个exePath一定不能是ddnotepad.exe本身，否则肯定会把机器搞死
+		local exeName = string.match(string.lower(exePath), ".*\\(.*).exe")
+		if "ddnotepad" == exeName then
+			exePath = tipUtil:ExpandEnvironmentStrings("%SystemRoot%\\system32\\NOTEPAD.EXE")
+			Helper:LOG("exeName: "..exeName)
+		else
+			Helper:LOG("exeName: "..exeName)
+		end
 		local ret = tipUtil:ShellExecute(nil, "open", exePath, path, "", "SW_SHOW")
 	else
 		--父窗口句柄置空
