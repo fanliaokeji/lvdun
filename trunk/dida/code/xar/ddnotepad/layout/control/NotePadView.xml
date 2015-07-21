@@ -121,7 +121,7 @@
 										<top>38</top>
 										<width>163</width> 
 										<height>14</height>
-										<textcolor>HeadTitle.TextColor</textcolor>
+										<textcolor>999999</textcolor>
 										<font>font.text12</font>
 										<text>创建时间:2015-05-07 10:10</text>
 									</attr>			
