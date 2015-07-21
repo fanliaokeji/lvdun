@@ -41,6 +41,7 @@ end
 	-- %installdir%\ddnotepad.exe /path c:\test.txt /sstartfrom desktop
 -- ;抢txt关联
 function SetTxtAssociation()
+Helper:LOG("SetTxtAssociation==>: ")
 	local didaDir = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstDir")
 	local ddnotepadDir = didaDir.."\\program\\ddnotepad.exe"
 	if not tipUtil:QueryFileExists(ddnotepadDir) then
@@ -201,14 +202,18 @@ function CheckExeDiDa()
 end
 --]]
 function OnLoadLuaFile()
+	Helper:LOG("OnLoadLuaFile")
 	local ret, path = Helper:GetCommandStrValue("/path")
 	local startFromRet, sstartfrom = Helper:GetCommandStrValue("/sstartfrom")
 	local assRet, association = Helper:GetCommandStrValue("/association")
 	if startFromRet and assRet and "explorer" == sstartfrom then
 		if "1" == association then
 			SetTxtAssociation()
+			Helper:LOG("after SetTxtAssociation")
 			--抢了关联之后，写上
 			Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\didanotepad\\Associated", 1)
+			--退出进程
+			tipUtil:Exit("Exit")
 			return
 		end
 	end
@@ -222,12 +227,12 @@ function OnLoadLuaFile()
 			path = string.match(command, ".*(\\\\.*)\"%s*")
 		end
 		
-		Helper:LOG("command file path: ", path)
+		Helper:LOG("command file path: ", path, " command: ", command)
 	end
 	
 	--检查安装界面是否勾选了”关联“
 	local modelessWnd = nil
-	local iAssociated = Helper:QueryRegValue("HKEY_CURRENT_USER\\Software\\didanotepad\\Associated")
+	local iAssociated = Helper:QueryRegValue("HKEY_CURRENT_USER\\Software\\ddnotepad\\Associated")
 	local sysVersion =  Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\CurrentVersion")
 	local regPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt"
 	if tonumber(sysVersion) > 6.0 then
@@ -241,7 +246,9 @@ function OnLoadLuaFile()
 		
 	if 1 ~= iAssociated and Helper:IsRealString(openCmd) and Helper:IsRealString(path) then
 		--拉起系统原来的txt处理程序
-		local exePath = string.match(openCmd, "(.-.EXE)")
+		openCmd = string.lower(openCmd)
+		local exePath = string.match(openCmd, "\"*(.-.exe)")
+		Helper:LOG("exePath: ", tostring(exePath), "\n openCmd: ", tostring(openCmd))
 		exePath = tipUtil:ExpandEnvironmentStrings(exePath)
 		
 		local ret = tipUtil:ShellExecute(nil, "open", exePath, path, "", "SW_SHOW")
