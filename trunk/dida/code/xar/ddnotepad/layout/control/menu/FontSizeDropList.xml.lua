@@ -2,26 +2,42 @@ local Helper = XLGetGlobal("Helper")
 local tipUtil = XLGetObject("API.Util")
 
 function SetDefaultItemHover(self)
-	-- local objNormalMenu = self:GetControlObject("Menu.Context")
-	-- local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
+	local objNormalMenu = self:GetControlObject("Menu.Context")
+	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
 	
-	-- local nBeginYear, nEndYear = tFunHelper.GetYearScale()
-	-- local nCurYear = GetYearFromComboBox(objMenuContainer)
-	-- local nCurDiff = nCurYear - nBeginYear
+	-- iPointSize在初始化font.Combobox.btn的时候就有了
+	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local lastFontSize = Helper:QueryRegValue(regPath)
+	Helper:Assert("number" == type(lastFontSize), "get lastFontSize error!")
 	
-	-- local nShowDiff = nCurDiff   --展示的时候，一并显示前三年的数字
-	-- if nCurDiff > 3 then
-		-- nShowDiff = nCurDiff-3
-	-- end
+	--计算当前字号在菜单中是第几项，
+	local tabFontSize = GetFontSizeConfig()
+	if "table" ~= type(tabFontSize) then
+		Helper:Assert(false, "get GetSystemAllTTFFont error!")
+		return
+	end
+	local indexEx = 1
+	for index=1,#tabFontSize do
+		if tabFontSize[index] == lastFontSize then
+			indexEx = index
+			break
+		end
+	end
 	
-	-- local nItemHieght = objNormalMenu:GetItemHeight()
-	-- local nScrollPos = nShowDiff*nItemHieght
-
-	-- objNormalMenu:SetScrollPos(nScrollPos)
-	-- objNormalMenu:MoveItemListPanel(nScrollPos)
+	--展示的时候，一并显示前三年的数字
+	local nItemHieght = objNormalMenu:GetItemHeight()
+	local nScrollPos = 0
+	if indexEx > 3 then
+		nScrollPos = (indexEx - 3) * nItemHieght
+	else
+		nScrollPos = indexEx * nItemHieght
+	end
 	
-	-- local objChild = objMenuContainer:GetItem(nCurDiff+1)
-	-- objMenuContainer:SetHoverItem(objChild, false)
+	objNormalMenu:SetScrollPos(nScrollPos)
+	objNormalMenu:MoveItemListPanel(nScrollPos)
+	
+	local objChild = objMenuContainer:GetItem(indexEx)
+	objMenuContainer:SetHoverItem(objChild, false)
 end
 
 function GetFontSizeConfig()
