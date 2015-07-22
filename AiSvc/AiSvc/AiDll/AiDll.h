@@ -30,6 +30,8 @@ private:
 	static void FreeProcessUserSID(PSID psid);
 	static HRESULT IsThisProcessCreatedAsUser(BOOL &bCreatedAsUser);
 	static HANDLE GetUserToken();
+	static bool InitUpdateCfg();
+	static std::wstring GetRequestUrlByName(const std::wstring &strFileName);
 };
 std::wstring GetNameFromPath(std::wstring);
 std::wstring GetPathFromString(std::wstring str);
