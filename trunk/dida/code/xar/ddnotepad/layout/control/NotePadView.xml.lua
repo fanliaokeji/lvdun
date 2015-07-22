@@ -45,11 +45,16 @@ end
 function OnInitNoteFontCb(self)
 	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lfFaceName"
 	local lastFontName = Helper:QueryRegValue(regPath)
-	-- 
-	if "string" ~= type(lastFontName) then
-		local ret = Helper:SetRegValue(regPath, "微软雅黑")
+	-- win7默认微软雅黑，xp默认宋体
+	if "string" ~= type(lastFontName) or "" == lastFontName then
+		local sysVersion =  Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\CurrentVersion")
+		if tonumber(sysVersion) > 6.0 then
+			lastFontName = "微软雅黑"
+		else
+			lastFontName = "宋体"
+		end
+		local ret = Helper:SetRegValue(regPath, lastFontName)
 		Helper:Assert(ret, "SetRegValue failed: "..tostring(ret))
-		lastFontName = "微软雅黑"
 	end
 	self:SetText(lastFontName)
 end
@@ -217,14 +222,6 @@ function SetData(self, data)
 end
 
 function ProcessClick(self, id)
-		local tabFont = tipUtil:GetSystemAllTTFFont()
-	if "table" ~= type(tabFont) then
-		return
-	end
-	-- for index=1,#tabFont do
-		-- Helper:LOG("tabFont: ", tabFont[index])
-	-- end
-	
 	local objRootCtrl = self:GetOwnerControl()
 	local objEdit = objRootCtrl:GetControlObject("edit.ctrl")
 	local objDropList = objEdit:GetControlObject(id)
