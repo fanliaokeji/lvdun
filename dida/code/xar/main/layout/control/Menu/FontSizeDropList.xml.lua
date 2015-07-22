@@ -1,28 +1,43 @@
-local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local Helper = XLGetGlobal("Helper")
-local tipUtil = tFunHelper.tipUtil
+local tipUtil = XLGetObject("API.Util")
 
 function SetDefaultItemHover(self)
-	-- local objNormalMenu = self:GetControlObject("Menu.Context")
-	-- local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
+	local objNormalMenu = self:GetControlObject("Menu.Context")
+	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
 	
-	-- local nBeginYear, nEndYear = tFunHelper.GetYearScale()
-	-- local nCurYear = GetYearFromComboBox(objMenuContainer)
-	-- local nCurDiff = nCurYear - nBeginYear
+	-- iPointSize在初始化font.Combobox.btn的时候就有了
+	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local lastFontSize = Helper:QueryRegValue(regPath)
+	Helper:Assert("number" == type(lastFontSize), "get lastFontSize error!")
 	
-	-- local nShowDiff = nCurDiff   --展示的时候，一并显示前三年的数字
-	-- if nCurDiff > 3 then
-		-- nShowDiff = nCurDiff-3
-	-- end
+	--计算当前字号在菜单中是第几项，
+	local tabFontSize = GetFontSizeConfig()
+	if "table" ~= type(tabFontSize) then
+		Helper:Assert(false, "get GetSystemAllTTFFont error!")
+		return
+	end
+	local indexEx = 1
+	for index=1,#tabFontSize do
+		if tabFontSize[index] == lastFontSize then
+			indexEx = index
+			break
+		end
+	end
 	
-	-- local nItemHieght = objNormalMenu:GetItemHeight()
-	-- local nScrollPos = nShowDiff*nItemHieght
-
-	-- objNormalMenu:SetScrollPos(nScrollPos)
-	-- objNormalMenu:MoveItemListPanel(nScrollPos)
+	--展示的时候，一并显示前三年的数字
+	local nItemHieght = objNormalMenu:GetItemHeight()
+	local nScrollPos = 0
+	if indexEx > 3 then
+		nScrollPos = (indexEx - 3) * nItemHieght
+	else
+		nScrollPos = indexEx * nItemHieght
+	end
 	
-	-- local objChild = objMenuContainer:GetItem(nCurDiff+1)
-	-- objMenuContainer:SetHoverItem(objChild, false)
+	objNormalMenu:SetScrollPos(nScrollPos)
+	objNormalMenu:MoveItemListPanel(nScrollPos)
+	
+	local objChild = objMenuContainer:GetItem(indexEx)
+	objMenuContainer:SetHoverItem(objChild, false)
 end
 
 function GetFontSizeConfig()
@@ -36,7 +51,10 @@ function GetFontSizeConfig()
 		local ret = Helper:SaveLuaTable(configTable, configPath)
 		-- XLMessageBox(tostring(ret))
 	end
-	
+	if not configTable.FontSize then
+		configTable.FontSize = {8, 9, 11, 12, 14, 16, 18, 20, 24, 28, 32}
+		local ret = Helper:SaveLuaTable(configTable, configPath)
+	end
 	Helper:Assert(configTable.FontSize, "configTable.FontSize is nil")
 	return configTable.FontSize
 end
@@ -76,7 +94,6 @@ function OnMouseWheel(self, x, y, distance)
 end
 
 function CreateMenuItem(self, itemID)	
-	local nBeginYear, nEndYear = tFunHelper.GetYearScale()
 	local templateMananger = XLGetObject("Xunlei.UIEngine.TemplateManager")	
 	local objMenuItemTempl = templateMananger:GetTemplate("menu.context.item", "ObjectTemplate")
 	if objMenuItemTempl == nil then
@@ -113,34 +130,6 @@ function OnSelectFont(objMenuItem)
 	--发事件,通知设置Edit字体
 	local owner = objMenuItem:GetOwnerControl()
 	owner:FireExtEvent("OnSelectFont", strText)
-	
-	--根据字体、字号，索引该Font是否已存在，不存在则创建字体
-	
-	--
-	
-	
-	-- local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
-	-- objDateSelect:SetYearText(strText)
-	-- objDateSelect:ResetFestivalText()
-	
-	-- tFunHelper.UpdateCalendarContent()
-end
-
-function GetYearFromComboBox(objMenuContainer)
-	local objDateSelect = tFunHelper.GetMainCtrlChildObj("DiDa.CalendarView:DiDa.DateSelectCtrl")
-	if not objDateSelect then
-		local strYear = os.date("%Y")
-		return tonumber(strYear)
-	end
-	
-	local objYearBox = objDateSelect:GetControlObject("Combobox.Year")
-
-	local strText = objYearBox:GetText()
-	if not IsRealString(strText) then
-		return
-	end
-	local _, _, strYear = string.find(strText, "(%d*)[^%d]*")
-	return tonumber(strYear)
 end
 
 function RouteToFather(self)
