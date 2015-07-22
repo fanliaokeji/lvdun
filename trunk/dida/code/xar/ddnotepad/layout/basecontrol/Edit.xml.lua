@@ -1,3 +1,5 @@
+local Helper = XLGetGlobal("Helper")
+
 function SetRange(self, nMin, nMax)
 	if nMin == nil then
 		nMin = 0
@@ -15,6 +17,7 @@ function SetRange(self, nMin, nMax)
 	attr.Min = nMin
 	attr.Max = nMax
 end
+
 function SetState(self, state)
     local attr = self:GetAttribute()
     if attr.NowState ~= state then
@@ -28,7 +31,7 @@ function SetState(self, state)
             if attr.NormalBkgID then
 				bkg:SetTextureID(attr.NormalBkgID)
 			end
-			edit:SetTextColorID(attr.Color)
+			-- edit:SetTextColorID(attr.Color)
         elseif attr.NowState == 1 then
 			if attr.IsFloat then
 				if not attr.auto_set_text then 
@@ -37,10 +40,10 @@ function SetState(self, state)
 				self:AddTip("可输入范围"..attr.Min.."到"..attr.Max)
 			end
             bkg:SetTextureID(attr.HoverBkgID)
-			edit:SetTextColorID(attr.HoverColor)
+			-- edit:SetTextColorID(attr.HoverColor)
         elseif attr.NowState == 2 then
             bkg:SetTextureID(attr.DisableBkgID)
-			edit:SetTextColorID(attr.DisableColor)
+			-- edit:SetTextColorID(attr.DisableColor)
         end
     end
 end
@@ -89,10 +92,12 @@ function GetIsPassword( self )
     local edit = self:GetControlObject("newedit.edit")
 	return edit:GetIsPassword()
 end
+
 function SetIsPassword( self, b)
 	local edit = self:GetControlObject("newedit.edit")
 	edit:SetIsPassword(b)
 end
+
 function GetText(self)
     local edit = self:GetControlObject("newedit.edit")
 	local ownerattr = edit:GetOwnerControl():GetAttribute()
@@ -143,11 +148,13 @@ function GetEnable(self)
 	local attr = self:GetAttribute()
 	return attr.Enable
 end
+
 function SetTextHintFont(fontid)
 	local attr = self:GetAttribute()
 	attr.TextHintFont = fontid
 	self:GetControlObject("text.hint"):SetTextFontResID(attr.TextHintFont)
 end
+
 function SetTextHintColor(colorid)
 	local attr = self:GetAttribute()
 	attr.TextHintColor = colorid
@@ -470,9 +477,16 @@ function OnInitControl(self)
 			attr.__fPopTipsFunction = f
 		end
 	end
+	
+	local mainXar = Helper.xarManager:GetXARByIndex(0)
+	local fontObj = mainXar:GetFont(attr.Font)
+	local fontHeight,_,_,_,_,_,_,_,_,_,_,_,_,fontFacename,_,_,_ = fontObj:GetInfo()
+	
     local edit = self:GetControlObject("newedit.edit")
-	edit:SetFontID( attr.Font )
-	edit:SetTextColorID( attr.Color)
+	edit:SetInsertCharFormat( {["height"] = fontHeight, ["facename"] = fontFacename, } )
+	
+	-- edit:SetFontID( attr.Font )
+	-- edit:SetTextColorID( attr.Color)
     edit:SetReadOnly(attr.ReadOnly)
     edit:SetMultiline(attr.Multiline)
 	edit:SetReadOnly(not attr.Enable)
@@ -524,15 +538,25 @@ function Control_OnFocusChange( self, status )
 	end
 end
 
-function OnVScroll(self, int1 ,int2)
+local bActiveSetEditScroll = false
+function OnVScroll(self, event, int1 ,int2)
+	Helper:LOG("event: ", event, " int1: ", int1, " int2: ", int2)
 	local edit = self:GetOwnerControl():GetControlObject("newedit.edit")
 	local pos = self:GetScrollPos()
-	if int2 == 1 then
-		self:SetScrollPos( pos - 15, true )
-	elseif int2 == 2 then
-		self:SetScrollPos( pos + 15, true )
+	if int1 == 1 then
+		-- self:SetScrollPos( pos - 15, true )
+		edit:SetScrollPos(true, pos)
+	elseif int1 == 2 then
+		-- self:SetScrollPos( pos + 15, true )
+		edit:SetScrollPos(true, pos)
+	elseif int1 == 4 then
+		-- self:SetScrollPos( int2, true )
+		Helper:LOG("AboutScrollBarAA:OnVScroll int EditCtrl int1: 4 int2: ", int2)
+		bActiveSetEditScroll = true --人为调用editObject的SetScrollPos，不应该再在里面发OnSetSBPos事件
+		edit:SetScrollPos(true, int2)
+		Helper:LOG("AboutScrollBarAA:OnVScroll int EditCtrl int1: 4 int2: end: ", self:GetScrollPos())
+		bActiveSetEditScroll = false
 	end
-	edit:SetScrollPos(true, self:GetScrollPos())
 end
 
 function OnHScroll( self, int1, int2)
@@ -660,10 +684,14 @@ function OnGetSBRange(self, vertical)
 	end
 end
 
+local falg = nil
 function OnSetSBPos(self, vertical, pos)
 	if vertical then
 		local var = self:GetOwnerControl():GetControlObject("vsb")
-		var:SetScrollPos(pos, true)
+		Helper:LOG("AboutScrollBarAA: OnSetSBPos：", pos, " pos*3.135: ", math.ceil(pos*3.135))
+		if not bActiveSetEditScroll then
+			var:SetScrollPos(pos, true)
+		end
 	else
 		local var = self:GetOwnerControl():GetControlObject("hsb")
 		var:SetScrollPos(pos, true)
@@ -683,10 +711,10 @@ end
 function Edit_OnRButtonUp( self, x, y, flag )
 	local attr = self:GetOwnerControl():GetAttribute()
 	if attr.ShowMenu and not self:GetIsPassword() then
-		XLSetGlobal("xmp.cur.edit",self)
-		local x, y = XMP.XmpPre.self:GetCursorPos()
-		local wnd = self:GetOwner():GetBindHostWnd()
-		XMP.WndFactory.CreateMenuEx(x, y, "Singleton.MenuHostWnd", "tree.edit.menu.context", "context_menu", wnd:GetWndHandle())
+		-- XLSetGlobal("xmp.cur.edit",self)
+		-- local x, y = XMP.XmpPre.self:GetCursorPos()
+		-- local wnd = self:GetOwner():GetBindHostWnd()
+		-- XMP.WndFactory.CreateMenuEx(x, y, "Singleton.MenuHostWnd", "tree.edit.menu.context", "context_menu", wnd:GetWndHandle())
 	end
 end
 
@@ -779,7 +807,6 @@ function Delete_OnSelect( self )
 	end
 end
 
-
 function SelAll_OnInit( self )
     local edit = XLGetGlobal( "xmp.cur.edit" )
     if edit ~= nil then
@@ -826,6 +853,7 @@ function OnScrollBarMouseWheel( self, name, x, y, distance )
 	local ThumbPos = self:GetThumbPos()
     self:SetThumbPos(ThumbPos - distance/10)
 end
+
 function LineIndex( self, line )
 	local edit = self:GetControlObject("newedit.edit")
 	if edit ~= nil then
@@ -849,7 +877,6 @@ function ScrollCaret( self )
 	end
 end
 
-
 function SetIsNumber(self,isnumber)
 	local edit = self:GetControlObject("newedit.edit")
 	if edit then
@@ -862,7 +889,34 @@ function SetViewInset(self,...)
 	local edit = self:GetControlObject("newedit.edit")
 	edit:SetViewInset(left,top,right,buttom)
 end
+
 function SetTextColor(self,colorid)
 	local edit = self:GetControlObject("newedit.edit")
-	edit:SetTextColorID(colorid)
+	-- edit:SetTextColorID(colorid)
+	
+	-- local richEdit = self:GetControlObject("newedit.edit")
+	-- local formatTable = {["textcolor"] = colorID, }
+	-- richEdit:SetInsertCharFormat(formatTable)
+	
+	-- 将编辑框里现有的文本也设成这种字体
+	-- local oldSelBkgColor = richEdit:GetSelBkgColor()
+	-- richEdit:SetSelBkgColor(("RGBA(0,0,0,0)"))
+	-- richEdit:SetSelAll()
+	-- richEdit:SetSelectCharFormat(formatTable)
+	-- richEdit:SetSelNone()
+	-- richEdit:SetSelBkgColor(oldSelBkgColor)
+end
+
+function SetFontID(self, fontID, iSize)
+	local richEdit = self:GetControlObject("newedit.edit")
+	local formatTable = {["facename"] = fontID, ["height"] = iSize, }
+	richEdit:SetInsertCharFormat(formatTable)
+	
+	--将编辑框里现有的文本也设成这种字体
+	local oldSelBkgColor = richEdit:GetSelBkgColor()
+	richEdit:SetSelBkgColor(("RGBA(0,0,0,0)"))
+	richEdit:SetSelAll()
+	richEdit:SetSelectCharFormat(formatTable)
+	richEdit:SetSelNone()
+	richEdit:SetSelBkgColor(oldSelBkgColor)
 end

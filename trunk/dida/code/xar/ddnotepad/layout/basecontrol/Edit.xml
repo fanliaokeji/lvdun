@@ -133,6 +133,7 @@
 			<ScrollCaret file="Edit.xml.lua" func="ScrollCaret" />
 			<SetIsNumber file="Edit.xml.lua" func="SetIsNumber" />
 			<SetViewInset file="Edit.xml.lua" func="SetViewInset" />
+			<SetFontID file="Edit.xml.lua" func="SetFontID" />
 			
 			<SetTextHintFont file="Edit.xml.lua" func="SetTextHintFont" />
 			<SetTextHintColor file="Edit.xml.lua" func="SetTextHintColor" />
@@ -198,14 +199,13 @@
 								<limitchild>1</limitchild>
 							</attr>
 							<children>
-								<obj id="newedit.edit" class="EditObject">
+								<obj id="newedit.edit" class="RichEditObject">
 									<attr>
 										<left>0</left>
 										<top>0</top>
 										<width>father.width</width>
 										<height>father.height</height>
-										<zorder>1</zorder>
-										<transparent>1</transparent>										
+										<zorder>1</zorder>										
 									</attr>
 									<children>
 										<obj id="text.hint" class="TextObject">
@@ -283,6 +283,7 @@
 										<event name="OnGetSBPos" file="Edit.xml.lua" func="OnGetSBPos"/>
 										<event name="OnGetSBIdealSize" file="Edit.xml.lua" func="OnGetSBIdealSize"/>
 										<event name="OnSetSBRect" file="Edit.xml.lua" func="OnSetSBRect"/>
+										<event name="OnRButtonUp" file="Edit.xml.lua" func="Edit_OnRButtonUp" />
 										<event name="OnKeyDown" file="Edit.xml.lua" func="Edit_OnKeyDown"/>
 										<event name="OnKeyUp" file="Edit.xml.lua" func="Edit_OnKeyUp"/>
 									</eventlist>
