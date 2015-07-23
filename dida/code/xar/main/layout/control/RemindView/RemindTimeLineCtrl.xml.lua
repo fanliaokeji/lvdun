@@ -279,6 +279,17 @@ function OnClickDel(self)
 	end
 end
 
+function ReportData()
+	local tStatInfo = {}
+	
+	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+	tStatInfo.strEL = strSource or ""
+	tStatInfo.strEC = "addremind"  --增加提醒项
+	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEV = 1
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
 --父节点的+号按钮
 function OnClickAddBtn(self)
 	local owner = self:GetOwnerControl()
@@ -288,6 +299,7 @@ function OnClickAddBtn(self)
 	data[2]["expand"] = false
 	SaveRemindListData2File()
 	OnLButtonDown(owner)
+	ReportData()
 end
 
 --顶部大+号按钮
@@ -328,6 +340,7 @@ function OnClickHeadAddBtn(self)
 	end
 	SaveRemindListData2File()
 	local owner = self:GetOwnerControl()
+	ReportData()
 	ReBuildList(owner)
 end
 
