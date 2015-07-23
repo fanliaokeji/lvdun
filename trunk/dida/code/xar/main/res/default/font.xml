@@ -17,6 +17,8 @@
 		<font id="微软雅黑.18" height="18" facename="微软雅黑" /> 
 		<font id="font.number18" height="18" facename="Arial" /> 
 		<font id="font.number19" height="19" facename="Arial" /> 
+		<font id="font.number21" height="21" facename="Arial" /> 
+		<font id="font.number22" height="22" facename="Arial" /> 
 		<font id="font.text23" height="23" facename="微软雅黑" /> 
 		<font id="font.text22.bold" height="18" facename="微软雅黑" weight="bold"/> 
 	</resource>
