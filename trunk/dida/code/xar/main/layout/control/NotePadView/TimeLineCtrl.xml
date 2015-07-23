@@ -235,10 +235,10 @@
 							<top>9</top>
 							<width>36</width>
 							<height>36</height>
-							<NormalBkgID>new.hover</NormalBkgID>
-							<HoverBkgID>new.hover2</HoverBkgID>
-							<DownBkgID>new.hover2</DownBkgID>
-							<DisableBkgID>new.hover</DisableBkgID>
+							<NormalBkgID>new.normal</NormalBkgID>
+							<HoverBkgID>new.hover</HoverBkgID>
+							<DownBkgID>new.hover</DownBkgID>
+							<DisableBkgID>new.normal</DisableBkgID>
 						</attr>
 						<eventlist>
 							<event name="OnClick" file="TimeLineCtrl.xml.lua" func="OnClickHeadAddBtn" />

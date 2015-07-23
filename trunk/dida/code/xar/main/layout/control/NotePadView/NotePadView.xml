@@ -315,12 +315,14 @@
 								</obj>
 								<obj id="save.btn" class="TipAddin.Button">
 									<attr>
-										<left>269</left>
+										<left>271</left>
 										<top>398</top>
 										<width>80</width> 
 										<height>27</height>
 										<Text>保存</Text>
-										<LeftTextPos>26</LeftTextPos>
+										<LeftTextPos>28</LeftTextPos>
+										<TopTextPos>5</TopTextPos>
+										<TextHeight>16</TextHeight>
 										<TextColor>system.white</TextColor>
 										<TextFont>font.text12</TextFont>
 										<NormalBkgID>save.btn.bkg.normal</NormalBkgID>
@@ -334,12 +336,14 @@
 								</obj>
 								<obj id="cancel.btn" class="TipAddin.Button">
 									<attr>
-										<left>269 + 80 + 27</left>
+										<left>269 + 80 + 23</left>
 										<top>398</top>
 										<width>80</width> 
 										<height>26</height>
 										<Text>取消</Text>
-										<LeftTextPos>27</LeftTextPos>
+										<LeftTextPos>28</LeftTextPos>
+										<TopTextPos>5</TopTextPos>
+										<TextHeight>16</TextHeight>
 										<TextColor>HeadTitle.TextColor</TextColor>
 										<TextFont>font.text12</TextFont>
 										<NormalBkgID>cancel.btn.bkg.normal</NormalBkgID>
