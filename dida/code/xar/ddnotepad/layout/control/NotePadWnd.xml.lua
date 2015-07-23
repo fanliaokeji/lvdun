@@ -71,8 +71,12 @@ function OnCreate(self)
 	self:AddInputFilter(false,InputFilter)
 	
 	local tStatInfo = {}
-	tStatInfo.strEC = "runtime"
-	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
+	tStatInfo.strEC = "ddnotepad_startup"
+	--EA:报Dida的版本号
+	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\Ver")
+	
+	--EL:本次启动的来源
+	tStatInfo.strEL = (userData and userData.startFrom) or "startfrom_unknown"
 	
 	Helper:SendConvStatistic(tStatInfo)
 	NotePad:DownloadRemoteConfig()
@@ -106,11 +110,11 @@ end
 
 function OnClickClose(self)
 	
-	local tStatInfo = {}
-	tStatInfo.strEC = "exit"
-	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
+	-- local tStatInfo = {}
+	-- tStatInfo.strEC = "exit"
+	-- tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
 	
-	Helper:SendConvStatistic(tStatInfo)
+	-- Helper:SendConvStatistic(tStatInfo)
 	--保存完毕，退出
 	-- Helper:DestoryModelessWnd("NotePadWnd")
 	NotePad:Exit()
