@@ -76,7 +76,7 @@ function OnCreate(self)
 	tStatInfo.strEA = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\Ver")
 	
 	--EL:本次启动的来源
-	tStatInfo.strEL = (userData and userData.startFrom) or "startfrom_unknown"
+	tStatInfo.strEL = (userData and userData.startFrom) or "unknown"
 	
 	Helper:SendConvStatistic(tStatInfo)
 	NotePad:DownloadRemoteConfig()
