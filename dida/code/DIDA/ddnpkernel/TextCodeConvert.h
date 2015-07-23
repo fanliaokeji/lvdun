@@ -181,20 +181,22 @@ inline void ConvertTextCodeToUTF8WithOutBOM(std::string& strInput,TextCode &tc)
 	{
 	case TC_UTF8 :
 		  {
-			  //strTarget = strInput;
+			  strInput.erase(0,3);
 			  break;
 		  }
 	case TC_UNICODE :
 		  {
+			   strInput.erase(0,2);
 			  std::wstring strUniCode(reinterpret_cast<const wchar_t*> (strInput.c_str()),strInput.size()/2);
 			  strInput = _T2UTF(strUniCode);
 			  break;
 		  }
 	case TC_UNICODEBIGENDIAN :
 		  {
+			   strInput.erase(0,2);
 			  std::wstring strUniCode(reinterpret_cast<const wchar_t*> (strInput.c_str()),strInput.size()/2);
 			  strUniCode = SwapHighAndLowByte(strUniCode);
-			  strInput = _T2UTF(strUniCode);	
+			  strInput = _T2UTF(strUniCode);
 			  break;
 		  }
 	case TC_ANSI :
@@ -217,6 +219,8 @@ inline void ConvertUTF8WithOutBOMByTextCode(std::string& strInput,TextCode tc)
 	case TC_UTF8 :
 		  {
 			  //strTarget = strInput;
+			  char szHead[4] = {0xEF,0xBB,0xBF,0x0};
+			  strInput.insert(0,szHead,3);
 			  break;
 		  }
 	case TC_UNICODE :
@@ -225,6 +229,8 @@ inline void ConvertUTF8WithOutBOMByTextCode(std::string& strInput,TextCode tc)
 			  strInput.clear();
 			  strInput.resize(strUniCode.size()*2);
 			  strInput.assign( reinterpret_cast<const char*> (strUniCode.c_str()),strUniCode.size()*2); 
+			  char szHead[3] = {0xFF,0xFE,0x0};
+			  strInput.insert(0,szHead,2);
 			  break;
 		  }
 	case TC_UNICODEBIGENDIAN :
@@ -234,6 +240,8 @@ inline void ConvertUTF8WithOutBOMByTextCode(std::string& strInput,TextCode tc)
 			  strInput.clear();
 			  strInput.resize(strUniCode.size()*2);
 			  strInput.assign( reinterpret_cast<const char*> (strUniCode.c_str()),strUniCode.size()*2);
+			  char szHead[3] = {0xFE,0xFF,0x0};
+			  strInput.insert(0,szHead,2);
 			  break;
 		  }
 	case TC_ANSI :
