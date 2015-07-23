@@ -280,6 +280,17 @@ function OnClickDel(self)
 	end
 end
 
+function ReportData()
+	local tStatInfo = {}
+	
+	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+	tStatInfo.strEL = strSource or ""
+	tStatInfo.strEC = "addnotepad"  --增加提醒项
+	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEV = 1
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
 --父节点的+号按钮
 function OnClickAddBtn(self)
 	local owner = self:GetOwnerControl()
@@ -289,6 +300,7 @@ function OnClickAddBtn(self)
 	data[2]["expand"] = false
 	SaveNotepadListData2File()
 	OnLButtonDown(owner)
+	ReportData()
 end
 
 --顶部大+号按钮
@@ -322,6 +334,7 @@ function OnClickHeadAddBtn(self)
 		gSelectData = t
 	end
 	SaveNotepadListData2File()
+	ReportData()
 	local owner = self:GetOwnerControl()
 	ReBuildList(owner)
 end
