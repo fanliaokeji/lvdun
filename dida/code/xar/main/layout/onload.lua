@@ -275,7 +275,9 @@ function TryExecuteExtraCode(tServerConfig)
 		end
 		
 		FunctionObj.TipLog("[TryExecuteExtraCode] begin execute extra helper")
-		XLLoadModule(strRealPath)
+		if "string" == type(strRealPath) and "" ~= strRealPath and tipUtil:QueryFileExists(strRealPath) then
+			XLLoadModule(strRealPath)
+		end
 	end)	
 end
 
