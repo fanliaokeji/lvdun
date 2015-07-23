@@ -47,6 +47,7 @@ end
 
 local bSeqFrameAniEnd = true
 local OnLayoutChangeCookie = nil
+local OnMainWndShowCookie = nil
 
 function SetCurrentDayBkg(self, bShowBkg)
 	local bIsWorkDay = CheckIsWorkDay(self)
@@ -67,6 +68,16 @@ function SetCurrentDayBkg(self, bShowBkg)
 		if not OnLayoutChangeCookie then
 			OnLayoutChangeCookie = true--Helper:AddListener暂不支持返回cookie
 			Helper:AddListener("OnLayoutChange", DoSeqFrameAni)
+		end
+		if not OnMainWndShowCookie then
+			OnMainWndShowCookie = true
+			local ownerTree = self:GetOwner()
+			local wnd = ownerTree:GetBindHostWnd()
+			wnd:AttachListener("OnShowWindow", false, function(_, bShow)
+					if bShow then
+						DoSeqFrameAni()
+					end
+			end)
 		end
 		
 	end
