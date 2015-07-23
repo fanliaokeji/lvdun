@@ -266,9 +266,9 @@ function OnLoadLuaFile()
 	else
 		--父窗口句柄置空
 		if path and path ~= "" and tipUtil:QueryFileExists(path) then
-			modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["filePath"] = path, ["bIndependentNotePad"] = true})
+			modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["filePath"] = path, ["bIndependentNotePad"] = true, ["startFrom"] = sstartfrom})
 		else
-			modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["bIndependentNotePad"] = true})
+			modelessWnd = Helper:CreateModelessWnd("NotePadWnd", "NotePadWndTree", nil, {["bIndependentNotePad"] = true, ["startFrom"] = sstartfrom})
 		end
 	end
 	-- if startFromRet and "association" == sstartfrom then
