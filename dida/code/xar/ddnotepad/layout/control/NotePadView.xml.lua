@@ -356,8 +356,8 @@ function SetEditFont(editCtrl)
 		mainXar:CreateFont({["id"]=fontID, ["height"]=lastFontSize, ["facename"]=lastFontName})
 	end
 	
-	local editBaseCtrl = editCtrl:GetControlObject("newedit.edit")
-	editBaseCtrl:SetFontID(fontID)
+	-- local editBaseCtrl = editCtrl:GetControlObject("newedit.edit")
+	editCtrl:SetFontID(lastFontName, lastFontSize)
 end
 
 function OnSelectFont(self, event, fontName)
@@ -408,7 +408,7 @@ function OnEditChange(self)
 	--监听系统退出事件
 	local wndTree = self:GetOwner()
 	local wnd = wndTree:GetBindHostWnd()
-	OnCloseCookie = OnCloseCookie or wnd:AttachListener("OnClose", false, function()
+	OnCloseCookie = OnCloseCookie or (wnd and wnd:AttachListener("OnClose", false, function()
 					local text = self:GetText()
 					if not text or "" == text then
 						return
@@ -421,5 +421,5 @@ function OnEditChange(self)
 					if fileText and "" ~= fileText and fileText ~= text then
 						OnClickSave(saveBtn) 
 					end
-				end)
+				end))
 end
