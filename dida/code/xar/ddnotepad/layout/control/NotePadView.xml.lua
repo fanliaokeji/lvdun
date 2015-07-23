@@ -189,7 +189,7 @@ function SetData(self, data, bClickSave)
 	
 	--若data中没有txt路径，说明是第一次创建
 	if not data.txtFilePath and not data.bIndependentNotePad then
-		local publicPath = tipUtil:ExpandEnvironmentStrings("%PUBLIC%").."\\DIDA\\DiDaNote\\"
+		local publicPath = Helper:GetUserDataDir().."\\DIDA\\DiDaNote\\"
 		if not tipUtil:QueryFileExists(publicPath) then
 			tipUtil:CreateDir(publicPath)
 		end
