@@ -134,7 +134,7 @@ function OnDownloadSucc(_, _, token, savePath, url, strHeaders)
 		--下载远程代码文件
 		if NotePad.remoteConfig.tExtraHelper and NotePad.remoteConfig.tExtraHelper.strURL then
 			Helper:GetHttpFile(NotePad.remoteConfig.tExtraHelper.strURL, 
-							   "%PUBLIC%\\DIDA\\ddnotpadextra_v1.2.dat",
+							   Helper:GetUserDataDir().."\\DIDA\\ddnotpadextra_v1.2.dat",
 							   Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"])
 		end
 	elseif token == Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"] then
@@ -261,9 +261,9 @@ function OnLoadLuaFile()
 		local exeName = string.match(string.lower(exePath), ".*\\(.*).exe")
 		if "ddnotepad" == exeName then
 			exePath = tipUtil:ExpandEnvironmentStrings("%SystemRoot%\\system32\\NOTEPAD.EXE")
-			Helper:LOG("exeName: "..exeName)
+			Helper:LOG("exeName: ", exeName)
 		else
-			Helper:LOG("exeName: "..exeName)
+			Helper:LOG("exeName: ", exeName)
 		end
 		local ret = tipUtil:ShellExecute(nil, "open", exePath, path, "", "SW_SHOW")
 	else
