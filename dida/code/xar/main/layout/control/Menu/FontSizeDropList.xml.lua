@@ -41,8 +41,8 @@ function SetDefaultItemHover(self)
 end
 
 function GetFontSizeConfig()
-	local configPath = tipUtil:ExpandEnvironmentStrings("%PUBLIC%").."\\DIDA\\ddnotepad\\defaultcfg.dat"
-	local configPathAA = tipUtil:ExpandEnvironmentStrings("%PUBLIC%").."\\DIDA\\AA\\AA\\AA\\AA\\AA\\AA\\defaultcfg.dat"
+	local configPath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\defaultcfg.dat"
+	local configPathAA = Helper:GetUserDataDir().."\\DIDA\\AA\\AA\\AA\\AA\\AA\\AA\\defaultcfg.dat"
 	local configTable = Helper:LoadLuaTable(configPath)
 	
 	if "table" ~= type(configTable) then
