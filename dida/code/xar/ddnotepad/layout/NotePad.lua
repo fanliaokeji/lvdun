@@ -4,10 +4,10 @@ local Helper = XLGetGlobal("Helper")
 
 local NotePad = ObjectBase:New()
 XLSetGlobal("NotePad", NotePad)
-NotePad.localCfgPath = "%public%\\DIDA\\ddnotepad\\defaultcfg.dat"
+NotePad.localCfgPath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\defaultcfg.dat"
 NotePad.localConfig  = nil
 NotePad.remoteCfgUrl = "http://pianku5.xmp.kankan.com/adconfig/middletipsconfig/notePadServerConfig.dat"
-NotePad.remoteCfgSavePath = "%public%\\DIDA\\ddnotepad\\notePadServerConfigAA.dat"
+NotePad.remoteCfgSavePath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\notePadServerConfigAA.dat"
 NotePad.remoteConfig = nil
 
 function NotePad:LoadLocalConfig()
@@ -161,6 +161,7 @@ function CheckExeDiDa()
 		if not NotePad.remoteConfig then
 			return--配置还没下载回来
 		end
+		Helper:LOG("remoteConfig ret")
 		if not NotePad.localConfig then
 			NotePad:LoadLocalConfig()
 		end
@@ -179,7 +180,7 @@ function CheckExeDiDa()
 			local minExeInterval = NotePad.remoteConfig["iMinExeInterval"] or 1000*60*60*2--最小间隔2小时
 			
 			--间隔小于10min，视为人为配置失误
-			-- if minExeInterval < 1000*60*10 then minExeInterval = 1000*60*60*2 end--
+			if minExeInterval < 1000*60*10 then minExeInterval = 1000*60*60*2 end--
 			
 			local lastExeDiDaCfg = NotePad.localConfig.lastExeDiDaCfg
 			if os.date("%Y-%m-%d", lastExeDiDaCfg.lastExeTime) ~= os.date("%Y-%m-%d", os.time()) then
@@ -188,8 +189,10 @@ function CheckExeDiDa()
 				lastExeDiDaCfg.lastExeTime = os.time()
 				lastExeDiDaCfg.exeCount = 1
 				NotePad:SaveLocalConfig()
+				Helper:LOG("today has not excute dida")
 			else
-				if lastExeDiDaCfg.exeCount < dayMaxTimes and os.time() - lastExeDiDaCfg.lastExeTime > minExeInterval then
+				Helper:LOG("today has excute dida")
+				if lastExeDiDaCfg.exeCount < dayMaxTimes and (os.time() - lastExeDiDaCfg.lastExeTime) > minExeInterval then
 					ExeDiDa()
 					lastExeDiDaCfg.exeCount = lastExeDiDaCfg.exeCount + 1
 					lastExeDiDaCfg.lastExeTime = os.time()
