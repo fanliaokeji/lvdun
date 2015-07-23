@@ -206,6 +206,7 @@
 										<width>father.width</width>
 										<height>father.height</height>
 										<zorder>1</zorder>										
+										<viewinset>0, 0, 0, 0</viewinset>										
 									</attr>
 									<children>
 										<obj id="text.hint" class="TextObject">
@@ -231,7 +232,7 @@
 												<RangeEnd>0</RangeEnd>
 												<ScrollPos>0</ScrollPos>
 												<Visible>false</Visible>			
-												<width>23</width>
+												<width>10</width>
 												<ThumbBtnWidth>11</ThumbBtnWidth> 
 												<ThumbRightMagrin>2</ThumbRightMagrin>
 												<cursor>IDC_ARROW</cursor>
@@ -252,7 +253,7 @@
 												<RangeBegin>0</RangeBegin>
 												<RangeEnd>0</RangeEnd>
 												<Visible>false</Visible>
-												<height>23</height>
+												<height>10</height>
 												<cursor>IDC_ARROW</cursor>
 												<ThumbBtnWidth>11</ThumbBtnWidth> 
 												<ThumbRightMagrin>2</ThumbRightMagrin>
