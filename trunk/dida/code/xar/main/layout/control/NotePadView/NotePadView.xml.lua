@@ -176,7 +176,7 @@ function SetData(self, data)
 	
 	--若data中没有txt路径，说明是第一次创建
 	if not data.txtFilePath then
-		local publicPath = tipUtil:ExpandEnvironmentStrings("%PUBLIC%").."\\DIDA\\DiDaNote\\"
+		local publicPath = Helper:GetUserDataDir().."\\DIDA\\DiDaNote\\"
 		if not tipUtil:QueryFileExists(publicPath) then
 			tipUtil:CreateDir(publicPath)
 		end

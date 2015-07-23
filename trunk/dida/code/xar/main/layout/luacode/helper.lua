@@ -166,6 +166,17 @@ function Helper:UrlDecode(srcUrl)
     return string.gsub(srcUrl, "+", " ")
 end
 
+function Helper:GetUserDataDir()
+	local strPublicEnv = "%PUBLIC%"
+	local strRet = tipUtil:ExpandEnvironmentStrings(strPublicEnv)
+	if strRet == nil or strRet == "" or strRet == strPublicEnv then
+		local nCSIDL_COMMON_APPDATA = 35 --CSIDL_COMMON_APPDATA(0x0023)
+		strRet = tipUtil:GetSpecialFolderPathEx(nCSIDL_COMMON_APPDATA)
+	end
+	return strRet
+end
+
+
 Helper.timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 Helper.treeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
 Helper.objectFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
