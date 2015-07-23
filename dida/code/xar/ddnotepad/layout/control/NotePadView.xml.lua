@@ -129,10 +129,10 @@ function OnClickSave(self)
 
 	tipUtil:WriteStringToFileEx(data.txtFilePath, string.gsub(editCtrl:GetText(), "\r", "\r\n"), data.txtCodingType)
 	owner:FireExtEvent("UpdateNoteList")
-	editCtrl:SetFocus(false)
+	-- editCtrl:SetFocus(false)
 	
 	data.title = string.match(data.txtFilePath, ".*\\(.*)")
-	SetData(owner, data)
+	SetData(owner, data, true)
 end
 
 local testMenuTable = 
@@ -170,7 +170,7 @@ function OnLButtonUpSizeCb(self)
 	ProcessClick(self, "DropList.FontSize")
 end
 
-function SetData(self, data)
+function SetData(self, data, bClickSave)
 	local attr = self:GetAttribute()
 	attr.data = data
 	if not data then 
@@ -203,7 +203,7 @@ function SetData(self, data)
 		end
 	end
 	
-	if data.txtFilePath then 
+	if data.txtFilePath and not bClickSave then 
 		local tc, strInTxt = tipUtil:ReadFileToStringEx(data.txtFilePath)
 		editCtrl:SetText(strInTxt)
 		data.txtCodingType = tc
@@ -211,7 +211,7 @@ function SetData(self, data)
 	--隐藏图片
 	blankBkg:SetVisible(false)
 	editCtrl:SetEnable(true)
-	editCtrl:SetFocus(true)
+	-- editCtrl:SetFocus(true)
 	--读取txt中的文字到edit中
 	
 	-- if "string" ~= type(strInTxt) then
