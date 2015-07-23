@@ -145,6 +145,16 @@ function Helper:GetFileExt(sFilePath)--可以是文件名、路径、url
 	return string.match(sFilePath, ".*(%.%w+).*")
 end
 
+function Helper:GetUserDataDir()
+	local strPublicEnv = "%PUBLIC%"
+	local strRet = tipUtil:ExpandEnvironmentStrings(strPublicEnv)
+	if strRet == nil or strRet == "" or strRet == strPublicEnv then
+		local nCSIDL_COMMON_APPDATA = 35 --CSIDL_COMMON_APPDATA(0x0023)
+		strRet = tipUtil:GetSpecialFolderPathEx(nCSIDL_COMMON_APPDATA)
+	end
+	return strRet
+end
+
 --UrlEncode、UrlDecode需大量测试
 function Helper:UrlEncode(srcUrl)
 	if type(srcUrl) ~= "string" or "" == srcUrl then
