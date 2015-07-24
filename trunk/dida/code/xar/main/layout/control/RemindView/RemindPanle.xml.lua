@@ -1,4 +1,5 @@
 local tipUtil = XLGetObject("API.Util")
+local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 
 function OnEnableChangeCtrol(self, isEnable)
 	if self:GetClass() == "TextObject" then
@@ -478,6 +479,7 @@ function OnClickBottomCancelBtn(self)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	owner:SetData(attr.data)
+	tFunHelper.ChangeView(1)
 end
 
 function SetData(self, data)

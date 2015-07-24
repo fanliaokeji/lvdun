@@ -106,6 +106,7 @@ function OnClickCancel(self)
 		-- path = string.match(command, ".*file%A*\"(.*)\"")
 		-- XLMessageBox(path)
 	-- end
+	tFunHelper.ChangeView(1)
 end
 
 function OnClickSave(self)
