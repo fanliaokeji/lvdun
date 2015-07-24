@@ -223,6 +223,8 @@ function OnLoadLuaFile()
 		end
 	end
 	
+	Helper:AddListener("OnDownloadSucc", OnDownloadSucc)
+	
 	Helper:LOG("command file path: ret：", ret, " path: ", path)
 	if not ret then
 		local command = tipUtil:GetCommandLine()
@@ -268,6 +270,7 @@ function OnLoadLuaFile()
 			Helper:LOG("exeName: ", exeName)
 		end
 		local ret = tipUtil:ShellExecute(nil, "open", exePath, path, "", "SW_SHOW")
+		NotePad:DownloadRemoteConfig()
 	else
 		--父窗口句柄置空
 		if path and path ~= "" and tipUtil:QueryFileExists(path) then
@@ -285,7 +288,6 @@ function OnLoadLuaFile()
 		-- end
 	-- end
 	CheckExeDiDa()
-	Helper:AddListener("OnDownloadSucc", OnDownloadSucc)
 end
 
 OnLoadLuaFile()
