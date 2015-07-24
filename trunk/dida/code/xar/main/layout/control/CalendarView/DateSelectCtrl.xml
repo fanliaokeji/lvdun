@@ -130,7 +130,7 @@
 				</obj>
 				<obj id="Combobox.RightArrow" class="TipAddin.Button">
 					<attr>
-						<left>193</left>
+						<left>180</left>
 						<top>0</top>
 						<width>9</width>
 						<height>16</height>
