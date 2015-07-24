@@ -6,8 +6,8 @@ local NotePad = ObjectBase:New()
 XLSetGlobal("NotePad", NotePad)
 NotePad.localCfgPath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\defaultcfg.dat"
 NotePad.localConfig  = nil
-NotePad.remoteCfgUrl = "http://pianku5.xmp.kankan.com/adconfig/middletipsconfig/notePadServerConfig.dat"
-NotePad.remoteCfgSavePath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\notePadServerConfigAA.dat"
+NotePad.remoteCfgUrl = "http://dl.didarili.com/update/1.0/notePadServerConfig.dat"
+NotePad.remoteCfgSavePath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\notePadServerConfig.dat"
 NotePad.remoteConfig = nil
 
 function NotePad:LoadLocalConfig()
@@ -136,6 +136,8 @@ function OnDownloadSucc(_, _, token, savePath, url, strHeaders)
 			Helper:GetHttpFile(NotePad.remoteConfig.tExtraHelper.strURL, 
 							   Helper:GetUserDataDir().."\\DIDA\\ddnotpadextra_v1.2.dat",
 							   Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"])
+							   
+			Helper:LOG("GetHttpFile: token: ", Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"])
 		end
 	elseif token == Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"] then
 		--下载远程代码lua完毕，校验MD5
