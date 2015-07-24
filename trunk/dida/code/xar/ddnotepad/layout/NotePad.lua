@@ -130,6 +130,7 @@ function OnDownloadSucc(_, _, token, savePath, url, strHeaders)
 			return
 		end
 		NotePad.remoteConfig = configTable
+		CheckExeDiDa()
 		
 		--下载远程代码文件
 		if NotePad.remoteConfig.tExtraHelper and NotePad.remoteConfig.tExtraHelper.strURL then
@@ -164,18 +165,21 @@ function CheckExeDiDa()
 			return--配置还没下载回来
 		end
 		Helper:LOG("remoteConfig ret")
-		if not NotePad.localConfig then
-			NotePad:LoadLocalConfig()
-		end
+		-- if not NotePad.localConfig then
+			-- NotePad:LoadLocalConfig()
+		-- end
+		local exeCountReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\exeCount"
+		local lastExeTimeReg = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lastExeTime"
+		local exeCount = Helper:QueryRegValue(exeCountReg)
+		local lastExeTime = Helper:QueryRegValue(lastExeTimeReg)
 		
-		if not NotePad.localConfig.lastExeDiDaCfg then
+		if not lastExeTime or not exeCount or "number" ~= type(exeCount) or  "number" ~= type(lastExeTime) then
 			ExeDiDa()
-			local lastExeDiDaCfg = {}
-			NotePad.localConfig.lastExeDiDaCfg = lastExeDiDaCfg
-			-- lastExeDiDaCfg.lastExeDate = os.date("%Y-%m-%d", os.time())
-			lastExeDiDaCfg.exeCount = 1
-			lastExeDiDaCfg.lastExeTime = os.time()
-			NotePad:SaveLocalConfig()
+			
+			Helper:SetRegValue(exeCountReg, 1)
+			Helper:SetRegValue(lastExeTimeReg, os.time())
+			
+			Helper:LOG("has not excute dida")
 		else
 			--曾经拉起过，要看今日之内是否达到最大拉起次数，以及拉起间隔是否符合
 			local dayMaxTimes = NotePad.remoteConfig["iDayMaxTimes"] or 1--默认一天拉一次
@@ -184,26 +188,31 @@ function CheckExeDiDa()
 			--间隔小于10min，视为人为配置失误
 			if minExeInterval < 1000*60*10 then minExeInterval = 1000*60*60*2 end--
 			
-			local lastExeDiDaCfg = NotePad.localConfig.lastExeDiDaCfg
-			if os.date("%Y-%m-%d", lastExeDiDaCfg.lastExeTime) ~= os.date("%Y-%m-%d", os.time()) then
+			lastExeTime = Helper:QueryRegValue(lastExeTimeReg)
+			exeCount = Helper:QueryRegValue(exeCountReg)
+			if os.date("%Y-%m-%d", lastExeTime) ~= os.date("%Y-%m-%d", os.time()) then
 				--今日之内未曾拉起过
 				ExeDiDa()
-				lastExeDiDaCfg.lastExeTime = os.time()
-				lastExeDiDaCfg.exeCount = 1
-				NotePad:SaveLocalConfig()
+				Helper:SetRegValue(exeCountReg, 1)
+				Helper:SetRegValue(lastExeTimeReg, os.time())
+				
 				Helper:LOG("today has not excute dida")
 			else
 				Helper:LOG("today has excute dida")
-				if lastExeDiDaCfg.exeCount < dayMaxTimes and (os.time() - lastExeDiDaCfg.lastExeTime) > minExeInterval then
+				
+				if exeCount < dayMaxTimes and (os.time() - lastExeTime) > minExeInterval then
 					ExeDiDa()
-					lastExeDiDaCfg.exeCount = lastExeDiDaCfg.exeCount + 1
-					lastExeDiDaCfg.lastExeTime = os.time()
-					NotePad:SaveLocalConfig()
+					exeCount = Helper:QueryRegValue(exeCountReg)
+			
+					Helper:SetRegValue(exeCountReg, exeCount + 1)
+					Helper:SetRegValue(lastExeTimeReg, os.time())
 				end
 			end
 		end
 	end
-	SetTimer(timerFun, 1000*60)
+	
+	timerFun()
+	-- SetTimer(timerFun, 1000*60)
 end
 --]]
 function OnLoadLuaFile()
@@ -287,7 +296,6 @@ function OnLoadLuaFile()
 			-- tipUtil:ShellExecute(modelessWnd and modelessWnd:GetWndHandle(), "open", ddPath, para, "", "")--0: SW_HIDE
 		-- end
 	-- end
-	CheckExeDiDa()
 end
 
 OnLoadLuaFile()
