@@ -1,6 +1,7 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
+local OnLayoutChangeCookie = false
 --strYearMonth：年月查询
 function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
 	if type(tClndrContent) ~= "table" then
@@ -19,6 +20,18 @@ function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
 		end		
 	end
 	
+	OnLayoutChangeCookie = OnLayoutChangeCookie or Helper:AddListener("OnLayoutChange", function(_, _, curViewIndex)
+		if 1 ~= curViewIndex then
+			return
+		end
+		for nIndex, tContent in ipairs(tClndrContent) do
+			local strKey = "ClndrItem_"..tostring(nIndex)
+			local objCurItem = objRootCtrl:GetControlObject(strKey)
+			if objCurItem then
+				SetVacBackGround(objCurItem, tContent)   --放假或上班的背景
+			end
+		end
+	end)
 	ClearFocusDay(objRootCtrl)
 	ClearSelectBkg(objRootCtrl)
 	
