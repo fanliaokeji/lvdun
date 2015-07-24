@@ -429,9 +429,9 @@ function CreateNode(self, data)
 	end
 	local newNode
 	if type(data[2]) ~= "table" then
-		newNode = objFactory:CreateUIObject("S"..data["createtime"]..data["idx"], "TimeLineListItemChild")
+		newNode = objFactory:CreateUIObject("S"..data["createtime"], "TimeLineListItemChild")
 	else
-		newNode = objFactory:CreateUIObject("S"..data[1], "TimeLineListItemHead")
+		newNode = objFactory:CreateUIObject("S"..data[1].."_Head", "TimeLineListItemHead")
 	end
 	--默认选择第一个
 	if attr.cursel == nil and gSelectData == nil and not data[2] then
@@ -581,6 +581,18 @@ function CheckDayRecord(self, sDate)--sDate为所查询当天的字符串，如2
 	return resultCount, newestTime
 end
 
+function GetItemByData(self, data)
+	local createtime = nil
+	if "table" == type(data) then
+		createtime = data.createtime
+	else
+		createtime = data
+	end
+	
+	local itemID = "S"..createtime
+	return self:GetControlObject(itemID)
+end
+
 function AddItemByDate(self, sDate)
 	local year, month, day = string.sub(sDate, 1, 4), string.sub(sDate, 5, 6), string.sub(sDate, 7, 8)
 	local curDayBegin = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=0, min=0, sec=1})
@@ -594,6 +606,12 @@ function AddItemByDate(self, sDate)
 			
 			table.insert(data, 1, t)
 			ReBuildList(self)
+			
+			--将新加的选中
+			local newItemObj = GetItemByData(self, t)
+			if newItemObj then
+				OnLButtonDown(newItemObj)
+			end
 			return
 		end
 	end
@@ -605,5 +623,11 @@ function AddItemByDate(self, sDate)
 	tNotepadListData[tostring(curDayBegin)] = t
 	
 	ReBuildList(self)
+	
+	--将新加的选中
+	local newItemObj = GetItemByData(self, t[1])
+	if newItemObj then
+		OnLButtonDown(newItemObj)
+	end
 end
 
