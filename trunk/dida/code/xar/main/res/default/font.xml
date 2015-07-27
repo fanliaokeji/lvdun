@@ -1,4 +1,4 @@
-<XLUE>
+﻿<XLUE>
 	<resource>
 		<font id="default.font" height="12" facename="微软雅黑" />
 		
@@ -8,6 +8,7 @@
 		<font id="font.text11" height="11" facename="微软雅黑" /> 
 		<font id="font.text12" height="12" facename="微软雅黑" /> 
 		<font id="font.text13" height="13" facename="微软雅黑" /> 
+		<font id="font.text13.xp" height="13" facename="宋体" />
 		<font id="font.text14" height="14" facename="微软雅黑" /> 
 		<font id="font.text15" height="15" facename="微软雅黑" />
 		<font id="font.text15.arial.bold" height="15" facename="Arial" weight="bold" /> 		
