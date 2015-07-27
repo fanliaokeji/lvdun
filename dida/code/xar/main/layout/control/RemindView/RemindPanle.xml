@@ -56,7 +56,7 @@
 					<height>father.height</height>
 					<textcolor>262624</textcolor>
 					<font>font.text13</font>
-					<valign>top</valign>
+					<valign>center</valign>
 					<halign>left</halign>
 				</attr>
 			</obj>
@@ -109,7 +109,7 @@
 					<height>20</height>
 					<textcolor>262624</textcolor>
 					<font>font.text13</font>
-					<valign>top</valign>
+					<valign>center</valign>
 					<halign>left</halign>
 					<text>气泡提醒</text>
 				</attr>
@@ -289,7 +289,7 @@
 									<height>20</height>
 									<textcolor>262624</textcolor>
 									<font>font.text12</font>
-									<valign>top</valign>
+									<valign>center</valign>
 									<halign>left</halign>
 									<text>重复：</text>
 								</attr>
@@ -366,7 +366,7 @@
 									<height>20</height>
 									<textcolor>262624</textcolor>
 									<font>font.text12</font>
-									<valign>top</valign>
+									<valign>center</valign>
 									<halign>left</halign>
 									<text>提醒时间：</text>
 								</attr>

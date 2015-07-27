@@ -80,6 +80,9 @@ function OnInitControlEdit(self)
 	local txt = self:GetControlObject("text")
 	txt:SetObjPos2(attr.ImgWidth+5, "(father.height-"..attr.ImgHeight..")/2", attr.ImgWidth, attr.ImgHeight)
 	txt:SetText(attr.Text)
+	if tFunHelper.IsUACOS() then
+		txt:SetTextFontResID("font.text13.xp")
+	end
 	local edit = self:GetControlObject("edit")
 	edit:SetMaxLength(attr.LimitLen)
 	if type(attr.DefaultText) == "string" and  attr.DefaultText ~= "" then
@@ -125,6 +128,9 @@ function OnInitSimpleCheckBox(self)
 	button:Updata()
 	button:SetObjPos2(0, "(father.height-"..attr.ImgHeight..")/2", attr.ImgWidth, attr.ImgHeight)
 	text:SetText(attr.Text)
+	if tFunHelper.IsUACOS() then
+		text:SetTextFontResID("font.text13.xp")
+	end
 	local nNeedLen = text:GetTextExtent()
 	text:SetObjPos2(attr.ImgWidth+attr.Space, 0, nNeedLen, "father.height")
 end
@@ -303,6 +309,7 @@ function ShowPerDayEdit(RemindTimeRightWeekCk, bOnlyShowPerDay)
 		EditTimeLayout:SetChildrenVisible(true)
 		EditTimeLayout:SetObjPos2(0, 34, "father.width", 22)
 	end
+	UpdateData2UI(owner)
 end
 
 function ShowYearMonthEdit(RemindTimeRightTimeEdit, bOnlyShowDayHour)
@@ -321,6 +328,23 @@ function ShowYearMonthEdit(RemindTimeRightTimeEdit, bOnlyShowDayHour)
 		EditDayHourMinLayout:SetChildrenVisible(true)
 		EditDayHourMinLayout:SetObjPos2(118, 0, "father.width-118", 22)
 	end
+	UpdateData2UI(owner)
+end
+
+function UpdateData2UI(self)
+	local attr = self:GetAttribute()
+	local data = attr.data or {}
+	local EditHourWeek = self:GetControlObject("EditHourWeek")
+	local EditMinuteWeek = self:GetControlObject("EditMinuteWeek")
+	local y, mon, d, h, m = tipUtil:FormatCrtTime(tipUtil:GetCurrentUTCTime() or 0)
+	EditHourWeek:SetEditText(data["hour"] or h)
+	EditMinuteWeek:SetEditText(data["min"] or m)
+	local dc = self:GetControlObject("EditDayTimeEdit")
+	local hc = self:GetControlObject("EditHourTimeEdit")
+	local minc = self:GetControlObject("EditMinuteTimeEdit")
+	dc:SetEditText(data["day"] or d)
+	hc:SetEditText(data["hour"] or h)
+	minc:SetEditText(data["min"] or m)
 end
 
 function SwichShowSaveCancelBtn(self, bShow)
@@ -502,9 +526,17 @@ function SetData(self, data)
 		self:SetChildrenEnable(true)
 		RightTimeObj:SetVisible(true)
 		SwichShowSaveCancelBtn(self, true)
-		titlectrl:SetText(data["title"])
+		if data["title"] == "新建提醒" then
+			titlectrl:SetText("标题：这个一定要填写")
+		else
+			titlectrl:SetText(data["title"])
+		end
 		RightTimeObj:SetText("创建时间："..GetSimpleTimeStr(data["createtime"]))
-		CenterEditObj:SetText(data["content"] or "")
+		if not data["content"] or data["content"] == "" then
+			CenterEditObj:SetText("内容：可填可不填")
+		else
+			CenterEditObj:SetText(data["content"] or "")
+		end
 		local CheckBoxOnce = self:GetControlObject("CheckBoxOnce")
 		local CheckBoxEveryDay = self:GetControlObject("CheckBoxEveryDay")
 		local CheckBoxEveryWeek = self:GetControlObject("CheckBoxEveryWeek")
@@ -512,7 +544,7 @@ function SetData(self, data)
 		if data["ntype"] == 1 then
 			OnClickCheckBox1(CheckBoxOnce)
 			local nOnceTargetTime = data["noncetargettime"]
-			ShowOnceTargetTime(self, nOnceTargetTime) 
+			ShowOnceTargetTime(self, nOnceTargetTime or tipUtil:GetCurrentUTCTime()) 
 		elseif data["ntype"] == 2 then
 			OnClickCheckBox1(CheckBoxEveryDay)
 		elseif data["ntype"] == 3 then
@@ -534,8 +566,15 @@ function SetData(self, data)
 				end
 				local EditHourWeek = self:GetControlObject("EditHourWeek")
 				local EditMinuteWeek = self:GetControlObject("EditMinuteWeek")
-				EditHourWeek:SetEditText(data["hour"])
-				EditMinuteWeek:SetEditText(data["min"])
+				local y, mon, d, h, m = tipUtil:FormatCrtTime(tipUtil:GetCurrentUTCTime() or 0)
+				EditHourWeek:SetEditText(data["hour"] or h)
+				EditMinuteWeek:SetEditText(data["min"] or m)
+				local dc = self:GetControlObject("EditDayTimeEdit")
+				local hc = self:GetControlObject("EditHourTimeEdit")
+				local minc = self:GetControlObject("EditMinuteTimeEdit")
+				dc:SetEditText(data["day"] or d)
+				hc:SetEditText(data["hour"] or h)
+				minc:SetEditText(data["min"] or m)
 		end
 		if not data["bopen"] then
 			local CheckBoxNA = self:GetControlObject("CheckBoxNA")

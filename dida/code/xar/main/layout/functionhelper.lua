@@ -285,6 +285,14 @@ function SendDiDaReport(nOPeration)
 	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
 end
 
+function IsUACOS()
+	local bRet = true
+	local iMax, iMin = tipUtil:GetOSVersion()
+	if type(iMax) == "number" and iMax <= 5 then
+		bRet = false
+	end
+	return bRet
+end
 
 function NewAsynGetHttpFile(strUrl, strSavePath, bDelete, funCallback, nTimeoutInMS)
 	local bHasAlreadyCallback = false
@@ -316,9 +324,6 @@ end
 
 function CheckMD5(strFilePath, strExpectedMD5) 
 	local bPassCheck = false
-	if IsNilString(strExpectedMD5) then
-		return true
-	end
 	if not IsNilString(strFilePath) then
 		local strMD5 = tipUtil:GetMD5Value(strFilePath)
 		TipLog("[CheckMD5] strFilePath = " .. tostring(strFilePath) .. ", strMD5 = " .. tostring(strMD5))
@@ -339,7 +344,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 		return
 	end
 
-	if CheckMD5(strSavePath, strCheckMD5) then
+	if not IsNilString(strCheckMD5) and CheckMD5(strSavePath, strCheckMD5) then
 		TipLog("[DownLoadFileWithCheck]File Already existed")
 		fnCallBack(1, strSavePath)
 		return
@@ -350,7 +355,7 @@ function DownLoadFileWithCheck(strURL, strSavePath, strCheckMD5, fnCallBack)
 				.. ", strURL = " .. tostring(strURL) .. ", strDownLoadPath = " .. tostring(strDownLoadPath))
 		if 0 == bRet then
 			strSavePath = strDownLoadPath
-            if CheckMD5(strSavePath, strCheckMD5) then
+            if IsNilString(strCheckMD5) or CheckMD5(strSavePath, strCheckMD5) then
 				fnCallBack(bRet, strSavePath)
 			else
 				TipLog("[DownLoadFileWithCheck]Did Not Pass MD5 Check")
@@ -681,10 +686,10 @@ function ShowRemindBubble(data)
 	local ExitRemindText3 = objRootCtrl:GetObject("ExitRemind.Text3")
 	local ExitRemindText4 = objRootCtrl:GetObject("ExitRemind.Text4")
 	local LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(data["createtime"])
-	local strData = string.format("记事时间：%04d-%02d-%02d     %02d-%02d-%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
+	local strData = string.format("记事时间：%04d-%02d-%02d     %02d:%02d:%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
 	ExitRemindText1:SetText(strData)
 	LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(data["remindtime"])
-	strData = string.format("提醒时间：%04d-%02d-%02d     %02d-%02d-%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
+	strData = string.format("提醒时间：%04d-%02d-%02d     %02d:%02d:%02d", LYear, LMonth, LDay, LHour, LMinute, LSecond)
 	ExitRemindText2:SetText(strData)
 	ExitRemindText3:SetText("提醒标题："..tostring(data["title"]))
 	ExitRemindText4:SetText("提醒内容："..tostring(data["content"]))
@@ -1386,7 +1391,7 @@ obj.GetDllPath = GetDllPath
 obj.KillClockWindow = KillClockWindow
 obj.CheckTimeIsAnotherDay = CheckTimeIsAnotherDay
 obj.SendDiDaReport = SendDiDaReport
-
+obj.IsUACOS = IsUACOS
 
 obj.RunSeqFrameAni = RunSeqFrameAni
 
