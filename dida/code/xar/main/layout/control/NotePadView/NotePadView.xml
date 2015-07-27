@@ -109,7 +109,7 @@
 										<textcolor>HeadTitle.TextColor</textcolor>
 										<font>font.text15</font>
 										<readonly>0</readonly>
-										<text>测试用标题</text> 
+										<text>这个一定要填写</text> 
 									</attr>		
 									<eventlist>
 										<event name="OnFocusChange" file="NotePadView.xml.lua" func="OnTitleEditFocusChange" />
