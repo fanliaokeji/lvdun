@@ -297,6 +297,9 @@ end
 
 function OnCommandLine(tParam)
 	if tFunHelper.CheckIsNeedShow() then
+		if string.find(tParam[1], "embedding") then
+			return
+		end
 		ShowHostWnd()
 	end
 end
