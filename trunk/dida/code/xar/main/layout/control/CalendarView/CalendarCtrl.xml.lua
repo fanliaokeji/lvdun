@@ -1,4 +1,5 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
+local Helper = XLGetGlobal("Helper")
 local tipUtil = tFunHelper.tipUtil
 
 local OnLayoutChangeCookie = false
@@ -231,6 +232,11 @@ function CheckIsSpecialday(tClndrItem)
 	return false
 end
 
+
+local OnLayoutChangeCookie = nil
+local OnMainWndShowCookie = nil
+local mainWnd = nil
+
 function ClearFocusDay(objRootCtrl)
 	local attr = objRootCtrl:GetAttribute()
 	local nFocusDayIndex = attr.FocusDayIndex
@@ -239,6 +245,15 @@ function ClearFocusDay(objRootCtrl)
 		local strKey = "ClndrItem_"..tostring(nFocusDayIndex)
 		local objLastItem = objRootCtrl:GetControlObject(strKey)
 		if objLastItem then
+			if OnLayoutChangeCookie then
+				Helper:RemoveListener("OnLayoutChange", OnLayoutChangeCookie)
+				OnLayoutChangeCookie = nil
+			end
+			if OnMainWndShowCookie then
+				mainWnd:RemoveListener("OnShowWindow", OnMainWndShowCookie)
+				OnMainWndShowCookie = nil
+			end
+		
 			objLastItem:SetCurrentDayBkg(false)
 		end
 	end
@@ -247,14 +262,25 @@ end
 function SetFocusDay(objRootCtrl, nFocusDayIdx)
 	if nFocusDayIdx == 0 then
 		return
-	end
-
+	end	
 	local attr = objRootCtrl:GetAttribute()
 	local nFocusDayIndex = attr.FocusDayIndex
 		
 	local strKey = "ClndrItem_"..tostring(nFocusDayIdx)
 	local objCurItem = objRootCtrl:GetControlObject(strKey)
-	if objCurItem then
+	if objCurItem then	
+		if not OnLayoutChangeCookie then
+			OnLayoutChangeCookie = Helper:AddListener("OnLayoutChange", function() objCurItem:SetCurrentDayBkg(true) end)
+		end
+		if not OnMainWndShowCookie then
+			local ownerTree = objRootCtrl:GetOwner()
+			mainWnd = ownerTree:GetBindHostWnd()
+			OnMainWndShowCookie = mainWnd:AttachListener("OnShowWindow", false, function(_, bShow)
+					if bShow then
+						objCurItem:SetCurrentDayBkg(true)
+					end
+			end)
+		end
 		objCurItem:SetCurrentDayBkg(true)
 	end
 	

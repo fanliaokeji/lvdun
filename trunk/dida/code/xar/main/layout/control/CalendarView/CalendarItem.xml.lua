@@ -1,4 +1,5 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
+local Helper = XLGetGlobal("Helper")
 local tipUtil = tFunHelper.tipUtil
 
 --方法
@@ -46,40 +47,17 @@ function SetCHNTextTermDay(self)
 end
 
 local bSeqFrameAniEnd = true
-local OnLayoutChangeCookie = nil
-local OnMainWndShowCookie = nil
-
 function SetCurrentDayBkg(self, bShowBkg)
 	local bIsWorkDay = CheckIsWorkDay(self)
 	local objCurDayImg = self:GetControlObject("Calendar.Current")
 	
-	local function DoSeqFrameAni()
-		if bSeqFrameAniEnd then--上次的动画已经做完了
-			bSeqFrameAniEnd = false
-			tFunHelper.RunSeqFrameAni(objCurDayImg, "DiDa.seq_ani", function() bSeqFrameAniEnd = true end, 1200, false)
-		end
-	end
 	if bIsWorkDay then
 		objCurDayImg:SetResID("DiDa.Canlender.Current.Work.Bitmap")
 	else
-		-- objCurDayImg:SetTextureID("DiDa.Canlender.Current")
-		--
-		DoSeqFrameAni()
-		if not OnLayoutChangeCookie then
-			OnLayoutChangeCookie = true--Helper:AddListener暂不支持返回cookie
-			Helper:AddListener("OnLayoutChange", DoSeqFrameAni)
+		if bSeqFrameAniEnd then
+			bSeqFrameAniEnd = false
+			tFunHelper.RunSeqFrameAni(objCurDayImg, "DiDa.seq_ani", function() bSeqFrameAniEnd = true end, 1200, false)
 		end
-		if not OnMainWndShowCookie then
-			OnMainWndShowCookie = true
-			local ownerTree = self:GetOwner()
-			local wnd = ownerTree:GetBindHostWnd()
-			wnd:AttachListener("OnShowWindow", false, function(_, bShow)
-					if bShow then
-						DoSeqFrameAni()
-					end
-			end)
-		end
-		
 	end
 	
 	objCurDayImg:SetVisible(bShowBkg)
@@ -207,13 +185,16 @@ end
 
 
 function CheckIsWorkDay(objRootCtrl)
+	Helper:LOG("CheckIsWorkDay===>")
 	local attr = objRootCtrl:GetAttribute()
 	local tContent = attr.tClndrContent
 	if type(tContent) ~= "table" then
 		return false
 	end
 	
+	
 	local strDate = tContent.solarcalendar
+	Helper:LOG("CheckIsWorkDay solarcalendar: ", tContent.solarcalendar)
 	return tFunHelper.CheckIsWorkDay(strDate)
 end
 ------------------
