@@ -28,7 +28,8 @@
 	
 			<obj id="cancel" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>取消            </Text>
+					<Text>取消</Text>
+					<TextPos>-35</TextPos>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="CalendarMenu.xml.lua" function="OnSelect_cancel" />
