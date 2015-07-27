@@ -642,6 +642,19 @@ function PreTipMain()
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
 end
 
+function ReSetFont()
+	local graphicFactory = XLGetObject("Xunlei.XLGraphic.Factory.Object")
+	
+	--当前系统若是xp，就把defaultfont字体设置成 黑体
+	local sysVersion =  Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\CurrentVersion")
+	if tonumber(sysVersion) > 6.0 then
+		graphicFactory:SetConfigFontName("微软雅黑")
+	else
+		graphicFactory:SetConfigFontName("黑体")
+	end
+end
+
+ReSetFont()
 PreTipMain()
 
 
