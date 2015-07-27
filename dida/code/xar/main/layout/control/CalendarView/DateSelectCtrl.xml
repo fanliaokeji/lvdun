@@ -74,11 +74,13 @@
 						<left>80</left>
 						<top>-4</top>
 						<width>30</width>
-						<height>300</height>
+						<height>20</height>
 						<zorder>9999999</zorder>
 						<textcolor>262624</textcolor>
 						<font>font.text16</font>
 						<text>年</text>
+						<valign>center</valign>
+						<halign>left</halign>
 					</attr>
 				</obj>
 				<obj id="Combobox.Month" class="TipAddin.Button">
@@ -106,13 +108,15 @@
 				<obj id="DropList.Month.Text" class="TextObject">
 					<attr>
 						<left>130</left>
-						<top>-5</top>
+						<top>-4</top>
 						<width>30</width>
-						<height>300</height>
+						<height>20</height>
 						<zorder>9999999</zorder>
 						<textcolor>262624</textcolor>
 						<font>font.text16</font>
 						<text>月</text>
+						<valign>center</valign>
+						<halign>left</halign>
 					</attr>
 				</obj>
 				<obj id="DropList.Month" class="MonthDropList">
