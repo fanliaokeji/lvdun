@@ -110,9 +110,9 @@ function Helper:LoadLuaModule(tFile, curDocPath)
 				local dstPath = curDocPath.."\\..\\"..value
 				if XLModuleExists(dstPath) then
 					XLUnloadModule(dstPath)
-					XLLoadModule(dstPath)
+					return XLLoadModule(dstPath)
 				else
-					XLLoadModule(dstPath)
+					return XLLoadModule(dstPath)
 				end
 				
 			end
@@ -123,9 +123,9 @@ function Helper:LoadLuaModule(tFile, curDocPath)
 		end
 		if XLModuleExists(tFile) then
 			XLUnloadModule(tFile)
-			XLLoadModule(tFile)
+			return XLLoadModule(tFile)
 		else
-			XLLoadModule(tFile)
+			return XLLoadModule(tFile)
 		end
 	end
 end
