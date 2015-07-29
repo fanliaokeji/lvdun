@@ -61,6 +61,7 @@
 			</children>
 			<eventlist>
 				<event name="OnInitControl" file="CalendarView.xml.lua" func="OnInitCalendarView" />
+				<event name="OnLButtonDown" file="CalendarView.xml.lua" func="OnClickCalendarView" />
 			</eventlist>
 		</objtemplate>
 	</control>

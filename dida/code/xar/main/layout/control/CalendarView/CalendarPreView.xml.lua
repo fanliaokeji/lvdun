@@ -27,3 +27,7 @@ function OnInitCalendarPreView(self)
 	
 	tFunHelper.GetWeatherInfo(Sunccess, Fail)
 end
+
+function OnClickCalendarPreView()
+
+end
