@@ -120,6 +120,14 @@ function ReSetTxtAssociation()
 	Helper:DeleteRegKey("HKEY_CLASSES_ROOT\\Applications\\ddnotepad.exe")
 end
 --
+function OnDownloadFailed(_, _, token, ret, url, strHeaders)
+	if token == Helper.TOKEN["DOWNLOAD_SERVERCONFIG_FILE"] then
+		if NotePad.bFakeOpen then NotePad:Exit() end
+	elseif token == Helper.TOKEN["DOWNLOAD_REMOTECODE_FILE"] then
+		if NotePad.bFakeOpen then NotePad:Exit() end
+	end
+end
+
 function OnDownloadSucc(_, _, token, savePath, url, strHeaders)
 	-- XLMessageBox("ownerObj: "..tostring(ownerObj).." event")
 	if token == Helper.TOKEN["DOWNLOAD_SERVERCONFIG_FILE"] then
@@ -244,6 +252,7 @@ function OnLoadLuaFile()
 	end
 	
 	Helper:AddListener("OnDownloadSucc", OnDownloadSucc)
+	Helper:AddListener("OnDownloadFailed", OnDownloadFailed)
 	
 	Helper:LOG("command file path: ret：", ret, " path: ", path)
 	if not ret then
