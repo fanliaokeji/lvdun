@@ -227,8 +227,8 @@ function OnInitControlRemindPanle(self)
 	RemindTimeRightWeekCk:SetChildrenVisible(false)
 	--local CheckBoxBubble = self:GetControlObject("CheckBoxBubble")
 	--CheckBoxBubble:SetCheck(true)
-	local CheckBoxOnce = self:GetControlObject("CheckBoxOnce")
-	OnClickCheckBox1(CheckBoxOnce)
+	local CheckBoxNA = self:GetControlObject("CheckBoxNA")
+	OnClickCheckBox1(CheckBoxNA)
 end
 
 local tCheckBox1 = {CheckBoxNA=1, CheckBoxBubble=1}
@@ -517,7 +517,6 @@ function SetData(self, data)
 		titlectrl:SetText("标题：这个一定要填写")
 		RightTimeObj:SetVisible(false)
 		CenterEditObj:SetText("内容：可填可不填")
-		--CenterEditObj:
 		self:SetEnable(false)
 		self:SetChildrenEnable(false)
 	else
