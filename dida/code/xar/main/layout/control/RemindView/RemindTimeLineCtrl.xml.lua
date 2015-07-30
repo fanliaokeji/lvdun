@@ -295,7 +295,7 @@ function OnClickAddBtn(self)
 	local owner = self:GetOwnerControl()
 	local oattr = owner:GetAttribute()
 	local data = oattr.data
-	table.insert(data[2], 1, {["title"] = "新建提醒", ["createtime"] = tipUtil:GetCurrentUTCTime(), ["type"]="准时提醒",["ntype"]=1,["bopen"]=true})
+	table.insert(data[2], 1, {["title"] = "新建提醒", ["createtime"] = tipUtil:GetCurrentUTCTime(), ["type"]="准时提醒",["ntype"]=1,["bopen"]=false})
 	data[2]["expand"] = false
 	SaveRemindListData2File()
 	OnLButtonDown(owner)
@@ -324,7 +324,7 @@ function OnClickHeadAddBtn(self)
 		t[1].createtime = tipUtil:GetCurrentUTCTime()
 		t[1].type = "准时提醒"
 		t[1].ntype=1
-		t[1].bopen = true
+		t[1].bopen = false
 		gSelectData = t[1]
 		tRemindListData[tostring(nCurUTC)] = t
 	else
@@ -334,7 +334,7 @@ function OnClickHeadAddBtn(self)
 		t.createtime = tipUtil:GetCurrentUTCTime()
 		t.type = "准时提醒"
 		t.ntype=1
-		t.bopen = true
+		t.bopen = false
 		table.insert(data, 1, t)
 		gSelectData = t
 	end
