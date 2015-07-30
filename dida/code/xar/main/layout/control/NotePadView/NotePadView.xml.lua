@@ -10,11 +10,17 @@ function OnInitNotePadView(self)
 	local pasteBtn = self:GetControlObject("toolbar.paste.btn")
 	local saveBtn = self:GetControlObject("save.btn")
 	local editCtrl = self:GetControlObject("edit.ctrl")
+	local headtitle = self:GetControlObject("headtitle.edit")
+	local headtitleText = self:GetControlObject("headtitle.text")
 	local blankBkg = editCtrl:GetControlObject("edit.blank.bkg")
 	
 	SetEditFont(editCtrl)
 	editCtrl:SetText("")
 	editCtrl:SetEnable(false)
+	headtitle:SetEnable(false)
+	headtitleText:SetTextColorResID("999999")
+	headtitle:SetTextColorID("999999")
+	headtitle:SetText("这个一定要填写")
 	blankBkg:SetVisible(true)
 	
 	newBtn:Enable(false)
@@ -84,9 +90,22 @@ function OnPreViewSel(self, userData)
 	-- baseEditCtrl:SetFontID()
 end
 
+local bHasSelAll = false
+function OnTitleEditClick(self, isFocus)
+	if bHasSelAll then
+		return
+	end
+	SetOnceTimer(function()
+			self:SetSelAll()
+			bHasSelAll = true
+			self:SetFocus(true)
+		end, 50)
+end
+
 function OnTitleEditFocusChange(self, isFocus)
 	if not isFocus then--失去焦点时保存标题
 		--保存标题
+		bHasSelAll = false
 		local owner = self:GetOwnerControl()
 		local attr = owner:GetAttribute()
 		local data = attr.data
@@ -171,6 +190,7 @@ function SetData(self, data)
 	local createDate = self:GetControlObject("createdate.text")
 	local editCtrl = self:GetControlObject("edit.ctrl")
 	local blankBkg = editCtrl:GetControlObject("edit.blank.bkg")
+	local headtitleText = self:GetControlObject("headtitle.text")
 	local createDateText = "创建时间："..os.date("%Y-%m-%d  %H:%M", data.createtime)
 	headTitle:SetText(data.title)
 	createDate:SetText(createDateText)
@@ -198,6 +218,9 @@ function SetData(self, data)
 	--隐藏图片
 	blankBkg:SetVisible(false)
 	editCtrl:SetEnable(true)
+	headTitle:SetEnable(true)
+	headtitleText:SetTextColor("#3F5483")
+	headTitle:SetTextColor("#3F5483")
 	editCtrl:SetFocus(true)
 	--读取txt中的文字到edit中
 	local strInTxt = tipUtil:ReadFileToString(data.txtFilePath)

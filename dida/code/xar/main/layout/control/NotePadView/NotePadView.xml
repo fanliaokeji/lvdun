@@ -112,6 +112,7 @@
 										<text>这个一定要填写</text> 
 									</attr>		
 									<eventlist>
+										<event name="OnLButtonDown" file="NotePadView.xml.lua" func="OnTitleEditClick" />
 										<event name="OnFocusChange" file="NotePadView.xml.lua" func="OnTitleEditFocusChange" />
 									</eventlist>
 								</obj>
