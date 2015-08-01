@@ -185,7 +185,7 @@ function TryForceUpdate(tServerConfig, strKey)
 	local tForceUpdate = tNewVersionInfo[strKey or "tForceUpdate"]
 	if(type(tForceUpdate)) ~= "table" then
 		if strKey == "tForceUpdate" then
-			TryForceUpdate(tServerConfig, "tFakeUpdate")
+			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
 		return 
 	end
@@ -195,7 +195,7 @@ function TryForceUpdate(tServerConfig, strKey)
 	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 		or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
 		if strKey == "tForceUpdate" then
-			TryForceUpdate(tServerConfig, "tFakeUpdate")
+			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
 		return
 	end
@@ -205,7 +205,7 @@ function TryForceUpdate(tServerConfig, strKey)
 	FunctionObj.TipLog("[TryForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
 	if not bPassCheck then
 		if strKey == "tForceUpdate" then
-			TryForceUpdate(tServerConfig, "tFakeUpdate")
+			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
 		return 
 	end
@@ -216,7 +216,7 @@ function TryForceUpdate(tServerConfig, strKey)
 		FunctionObj.SetIsUpdating(false)
 		if not IsRealString(strRealPath) then
 			if strKey == "tForceUpdate" then
-				TryForceUpdate(tServerConfig, "tFakeUpdate")
+				TryForceUpdate(tServerConfig, "tSoftUpdate")
 			end
 			return
 		end
