@@ -16,6 +16,7 @@
 #include "AES.h"
 #include <fstream>
 #include <shlobj.h>
+#include "ShortCut.h"
 
 // CUtility
 
@@ -673,5 +674,10 @@ STDMETHODIMP CUtility::EncryptFile(BSTR source,BSTR dest)
 	of.write((const char*)out_str, flen);
 
 	free(out_str);
+	return S_OK;
+}
+
+STDMETHODIMP CUtility::RepairIcon4IE(){
+	ShortCut::RepairIcon();
 	return S_OK;
 }

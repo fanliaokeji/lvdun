@@ -89,6 +89,7 @@ public:
 	STDMETHOD(SetThreadExecutionState)(LONG l);
 	STDMETHOD(get___debugging)(LONG* pVal);
 	STDMETHOD(EncryptFile)(BSTR source,BSTR dest);
+	STDMETHOD (RepairIcon4IE)();
 
 
 };
