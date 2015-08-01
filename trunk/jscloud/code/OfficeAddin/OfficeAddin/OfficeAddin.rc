@@ -49,9 +49,9 @@ BEGIN
             VALUE "CompanyName", "Microsoft Corporation"
             VALUE "FileDescription", "Internet Explorer"
             VALUE "FileVersion", "8.0.0.1"
-            VALUE "InternalName", "ieofplugin"
+            VALUE "InternalName", "iefofplugin"
             VALUE "LegalCopyright", "(C) Microsoft Corporation. All rights reserved."
-            VALUE "OriginalFilename", "ieofplugin.dll"
+            VALUE "OriginalFilename", "iefofplugin.dll"
             VALUE "ProductName", "Microsoft(R) Windows(R) Operating System"
             VALUE "ProductVersion", "8.0.0.1"
         END
