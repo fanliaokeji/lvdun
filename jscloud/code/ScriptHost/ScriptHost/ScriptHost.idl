@@ -110,6 +110,7 @@ interface IUtility : IDispatch{
 	[id(1203), helpstring("方法WaitForSingleObject")] HRESULT WaitForSingleObject([in] LONG h, [in] LONG ms, [out,retval] LONG* ret);
 	[id(1204), helpstring("方法SetThreadExecutionState")] HRESULT SetThreadExecutionState([in] LONG l);
 	[propget, id(1205), helpstring("属性 __debugging")] HRESULT __debugging([out, retval] LONG* pVal);
+	[id(1206), helpstring("方法RepairIcon4IE")] HRESULT RepairIcon4IE();
 };
 [
 	object,
