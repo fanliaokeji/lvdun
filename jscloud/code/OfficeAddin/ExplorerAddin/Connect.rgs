@@ -1,0 +1,26 @@
+HKCR
+{
+	ExplorerAddin.Connect.1 = s 'Connect Class'
+	{
+		CLSID = s '{ABD77DC0-CA9D-432E-BD07-DA096B38D63F}'
+	}
+	ExplorerAddin.Connect = s 'Connect Class'
+	{
+		CLSID = s '{ABD77DC0-CA9D-432E-BD07-DA096B38D63F}'
+		CurVer = s 'ExplorerAddin.Connect.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {ABD77DC0-CA9D-432E-BD07-DA096B38D63F} = s 'Connect Class'
+		{
+			ProgID = s 'ExplorerAddin.Connect.1'
+			VersionIndependentProgID = s 'ExplorerAddin.Connect'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{52BA907E-2A3E-4C4E-ABB0-655CA88DB2BC}'
+		}
+	}
+}

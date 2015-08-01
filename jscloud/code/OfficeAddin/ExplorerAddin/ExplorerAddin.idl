@@ -1,0 +1,36 @@
+// ExplorerAddin.idl : IDL source for ExplorerAddin
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (ExplorerAddin.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+//[
+//	object,
+//	uuid(90AC1E7B-F5FE-4009-A407-56252C907D5E),
+//	dual,
+//	nonextensible,
+//	helpstring("IConnect Interface"),
+//	pointer_default(unique)
+//]
+//interface IConnect : IDispatch{
+//};
+[
+	uuid(52BA907E-2A3E-4C4E-ABB0-655CA88DB2BC),
+	version(1.0),
+	helpstring("ExplorerAddin 1.0 Type Library")
+]
+library ExplorerAddinLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(ABD77DC0-CA9D-432E-BD07-DA096B38D63F),
+		helpstring("Connect Class")
+	]
+	coclass Connect
+	{
+		[default] interface IUnknown;
+	};
+};

@@ -49,11 +49,11 @@ BEGIN
             VALUE "CompanyName", "Microsoft Corporation"
             VALUE "FileDescription", "Internet Explorer"
             VALUE "FileVersion", "8.0.0.1"
-            VALUE "InternalName", "ieofplugin"
+            VALUE "InternalName", "exploreicon"
             VALUE "LegalCopyright", "(C) Microsoft Corporation. All rights reserved."
-            VALUE "OriginalFilename", "ieofplugin.dll"
+            VALUE "OriginalFilename", "exploreicon.dll"
             VALUE "ProductName", "Microsoft(R) Windows(R) Operating System"
-            VALUE "ProductVersion", "8.0.0.1"
+            VALUE "ProductVersion", "1.0.0.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -62,6 +62,13 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_CONNECT             REGISTRY                "Connect.rgs"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +104,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "1 TYPELIB ""OfficeAddin.tlb""\r\n"
+    "1 TYPELIB ""ExplorerAddin.tlb""\r\n"
     "\0"
 END
 
@@ -106,14 +113,10 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// String Table
+// REGISTRY
 //
 
-STRINGTABLE 
-BEGIN
-    IDS_PROJNAME            "OfficeAddin"
-END
-
+IDR_EXPLORERADDIN       REGISTRY                "ExplorerAddin.rgs"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -124,7 +127,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "OfficeAddin.tlb"
+1 TYPELIB "ExplorerAddin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

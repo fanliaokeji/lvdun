@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="OfficeAddin"
-	ProjectGUID="{ACF044DE-2FE4-4F58-8672-1446BB96E1A6}"
-	RootNamespace="OfficeAddin"
+	Name="ExplorerAddin"
+	ProjectGUID="{2F779D2C-DEFD-4DFD-8A78-5316B6A23022}"
+	RootNamespace="ExplorerAddin"
 	Keyword="AtlProj"
 	TargetFrameworkVersion="196613"
 	>
@@ -43,11 +43,11 @@
 				MkTypLibCompatible="false"
 				TargetEnvironment="1"
 				GenerateStublessProxies="true"
-				TypeLibraryName="$(IntDir)/OfficeAddin.tlb"
-				HeaderFileName="OfficeAddin_i.h"
+				TypeLibraryName="$(IntDir)/ExplorerAddin.tlb"
+				HeaderFileName="ExplorerAddin_i.h"
 				DLLDataFileName=""
-				InterfaceIdentifierFileName="OfficeAddin_i.c"
-				ProxyFileName="OfficeAddin_p.c"
+				InterfaceIdentifierFileName="ExplorerAddin_i.c"
+				ProxyFileName="ExplorerAddin_p.c"
 				ValidateParameters="true"
 			/>
 			<Tool
@@ -80,8 +80,9 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="Wtsapi32.lib Userenv.lib"
 				LinkIncremental="2"
-				ModuleDefinitionFile=".\OfficeAddin.def"
+				ModuleDefinitionFile=".\ExplorerAddin.def"
 				GenerateDebugInformation="true"
+				GenerateMapFile="false"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -134,11 +135,11 @@
 				MkTypLibCompatible="false"
 				TargetEnvironment="1"
 				GenerateStublessProxies="true"
-				TypeLibraryName="$(IntDir)/OfficeAddin.tlb"
-				HeaderFileName="OfficeAddin_i.h"
+				TypeLibraryName="$(IntDir)/ExplorerAddin.tlb"
+				HeaderFileName="ExplorerAddin_i.h"
 				DLLDataFileName=""
-				InterfaceIdentifierFileName="OfficeAddin_i.c"
-				ProxyFileName="OfficeAddin_p.c"
+				InterfaceIdentifierFileName="ExplorerAddin_i.c"
+				ProxyFileName="ExplorerAddin_p.c"
 				ValidateParameters="true"
 			/>
 			<Tool
@@ -170,7 +171,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="Wtsapi32.lib Userenv.lib"
 				LinkIncremental="1"
-				ModuleDefinitionFile=".\OfficeAddin.def"
+				ModuleDefinitionFile=".\ExplorerAddin.def"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapExports="true"
@@ -241,15 +242,15 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\OfficeAddin.cpp"
+				RelativePath=".\ExplorerAddin.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OfficeAddin.def"
+				RelativePath=".\ExplorerAddin.def"
 				>
 			</File>
 			<File
-				RelativePath=".\OfficeAddin.idl"
+				RelativePath=".\ExplorerAddin.idl"
 				>
 			</File>
 			<File
@@ -295,10 +296,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScopeResourceHandle.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -317,7 +314,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OfficeAddin.rc"
+				RelativePath=".\ExplorerAddin.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\ExplorerAddin.rgs"
 				>
 			</File>
 		</Filter>
@@ -326,7 +327,7 @@
 			SourceControlFiles="false"
 			>
 			<File
-				RelativePath=".\OfficeAddin_i.c"
+				RelativePath=".\ExplorerAddin_i.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -348,10 +349,14 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\OfficeAddin_i.h"
+				RelativePath=".\ExplorerAddin_i.h"
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\ReadMe.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

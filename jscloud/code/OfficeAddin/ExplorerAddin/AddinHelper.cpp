@@ -31,7 +31,7 @@ bool AddinHelper::IsInitialized() const
 	return this->m_isInitialized;
 }
 
-void AddinHelper::Initialize(const std::wstring& configFile, bool isService)
+void AddinHelper::Initialize(const std::wstring& configFile, bool isService, const std::wstring& launchSrc)
 {
 	wchar_t profileStringBuffer[MAX_PATH];
 	::GetPrivateProfileString(L"main", L"productname", L"", profileStringBuffer, MAX_PATH, configFile.c_str());
@@ -50,16 +50,17 @@ void AddinHelper::Initialize(const std::wstring& configFile, bool isService)
 		return;
 	}
 	scriptHostFullPath += hostdll;
-	this->Initialize(productName, mutex, scriptHostFullPath, isService);
+	this->Initialize(productName, mutex, scriptHostFullPath, isService, launchSrc);
 }
 
-void AddinHelper::Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostFullPath, bool isService)
+void AddinHelper::Initialize(const std::wstring& productName, const std::wstring& mutexName, const std::wstring& scriptHostFullPath, bool isService, const std::wstring& launchSrc)
 {
 	this->m_productName = productName;
 	this->m_mutexName = mutexName;
 	this->m_scriptHostFullPath = scriptHostFullPath;
 	this->m_isService = isService;
 	this->m_isInitialized = true;
+	this->m_launchSrc = launchSrc;
 }
 
 bool AddinHelper::EnsureOwnerMutex()
@@ -301,7 +302,7 @@ bool AddinHelper::LaunchJsEngineFromService(const std::wstring& jsEnginePath)
 		TSERROR4CXX("CreateProcessAsUser fail. Error: " << ::GetLastError());
 		result = false;
 	}
-	::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
+	//::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
 	return result;
 }
 
@@ -336,8 +337,13 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 	if (::GetAndCheckX86Rundll32ExeFilePath(rundll32Path, MAX_PATH) == FALSE) {
 		return false;
 	}
+	
+	if (m_launchSrc.empty())
+	{
+		m_launchSrc = L"officeaddin";
+	}
 
-	std::wstring parameters = engineName + L",ScreenSaverEx /src:officeaddin";
+	std::wstring parameters = engineName + L",ScreenSaverEx /src:" + m_launchSrc;
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -351,6 +357,7 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 
 DWORD AddinHelper::GetIntervalTime() const
 {
+	TSAUTO();
 	DWORD dwResult = 3600;
 	std::wstring subKey = L"Software\\";
 	subKey += this->m_productName;
@@ -432,6 +439,7 @@ DWORD AddinHelper::GetIntervalTime() const
 	}
 	else {
 		ATL::CRegKey key;
+		TSERROR4CXX("GetIntervalTime subKey: " << subKey.c_str());
 		if(key.Open(HKEY_CURRENT_USER, subKey.c_str()) != ERROR_SUCCESS) {
 			return dwResult;
 		}
@@ -440,6 +448,7 @@ DWORD AddinHelper::GetIntervalTime() const
 			return dwResult;
 		}
 		dwResult = dwInterval;
+		TSERROR4CXX("GetIntervalTime dwInterval: " << dwInterval);
 	}
 	if (dwResult < 600) {
 		dwResult = 600;
