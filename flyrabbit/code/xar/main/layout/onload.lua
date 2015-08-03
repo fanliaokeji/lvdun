@@ -69,6 +69,14 @@ function SendStartupReportGgl(bShowWnd)
 	if not bShowWnd then
 		tStatInfo.strEC = "startup"  --进入上报
 		tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+		--增加一条启动上报
+		local tStatInfo2 = {}
+		tStatInfo2.strEL = strSource or ""
+		tStatInfo2.strEC = "startup"
+		tStatInfo2.strEA = FunctionObj.GetMinorVer() or ""
+		tStatInfo2.strTID = "UA-65881069-1"
+		tStatInfo2.strEV = 1
+		FunctionObj.TipConvStatistic(tStatInfo2)
 	else
 		tStatInfo.strEC = "showui" 	 --展示上报
 		tStatInfo.strEA = FunctionObj.GetInstallSrc() or ""

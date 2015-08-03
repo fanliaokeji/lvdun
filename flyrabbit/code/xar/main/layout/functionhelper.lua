@@ -249,6 +249,7 @@ function TipConvStatistic(tStat)
 	local strEA = tStatInfo.strEA 
 	local strEL = tStatInfo.strEL
 	local strEV = tStatInfo.strEV
+	local strTID = tStatInfo.strTID or "UA-62827200-1"
 	
 	if IsNilString(strEC) then
 		strEC = strDefaultNil
@@ -266,7 +267,7 @@ function TipConvStatistic(tStat)
 		strEV = 1
 	end
 	
-	local strUrl = "http://www.google-analytics.com/collect?v=1&tid=UA-62827200-1&cid="..tostring(strCID)
+	local strUrl = "http://www.google-analytics.com/collect?v=1&tid="..strTID.."&cid="..tostring(strCID)
 						.."&t=event&ec="..tostring(strEC).."&ea="..tostring(strEA)
 						.."&el="..tostring(strEL).."&ev="..tostring(strEV)
 	
