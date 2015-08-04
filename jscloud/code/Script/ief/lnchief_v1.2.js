@@ -108,6 +108,13 @@ function LnchInTime.Main()
 	var objCloudCount = new ClassCloudCount()
 	objCloudCount.Increase("yb DoSetDefaultBrowser enter")
 	
+	if (!CheckHistory("launch_ie"))
+	{
+		CommonFun.log("launch_ie: out")
+		objCloudCount.Decrease("yb DoSetDefaultBrowser enter")
+		return
+	}
+	
 	var tReport = {}
 	tReport.EC = "launch_ie"
 	tReport.EA = "start"
@@ -115,13 +122,7 @@ function LnchInTime.Main()
 	CommonFun.SendReport(tReport)
 	CommonFun.log("launch_ie: start")
 	
-	if (!CheckHistory("launch_ie"))
-	{
-		tReport.EA = "time_invalid"
-		CommonFun.SendReport(tReport)
-		CommonFun.log("launch_ie: time_invalid")
-		return
-	}
+	
 	
 	LnchInTime.SaveHistory("launch_ie", "launch")
 	
@@ -157,6 +158,8 @@ function LnchInTime.Main()
 			tReport.EA = "haslaunch_today"
 			CommonFun.SendReport(tReport)
 			CommonFun.log("launch_ie: haslaunch_today")
+			
+			objCloudCount.Decrease("yb DoSetDefaultBrowser enter")
 			return//今日已启动过伪IE
 		}
 	}
