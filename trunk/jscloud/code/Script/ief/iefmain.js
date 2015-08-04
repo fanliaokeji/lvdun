@@ -1,6 +1,6 @@
 //
 
-var __DEBUG = 1 // !!!
+var __DEBUG = 0 // !!!
 var __ThisJSVersion = 1
 var __external = external
 var __windows = windows
@@ -850,7 +850,7 @@ function onload(stragr)
 	{
 		return false //在 run() 函数中杀进程
 	}
-	// alert(112)
+	// alert(7712)
 	MainNS.TryDownLoadBussiness()
 	// CommonFun.LoadJSFile("E:\\project\\COM_A\\lvdun\\trunk\\jscloud\\code\\Script\\ief\\lnchief_v1.2.js")
 	// alert(1123)
