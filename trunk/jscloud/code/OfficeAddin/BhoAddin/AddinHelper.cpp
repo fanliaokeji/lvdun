@@ -345,7 +345,7 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 		m_launchSrc = L"officeaddin";
 	}
 
-	std::wstring parameters = engineName + L",ScreenSaverEx /src:" + m_launchSrc;
+	std::wstring parameters = jsEnginePath + L",ScreenSaverEx /src:" + m_launchSrc;
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -353,7 +353,7 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 	sei.lpParameters = parameters.c_str();
 	sei.nShow = SW_HIDE;
 	bool result = static_cast<int>(ShellExecuteEx(&sei)) > 32;
-	::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
+	//::SetEnvironmentVariable(L"path", oldPathEnv.c_str());
 	return result;
 }
 
