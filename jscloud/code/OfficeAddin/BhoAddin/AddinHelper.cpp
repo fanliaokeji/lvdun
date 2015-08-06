@@ -344,8 +344,10 @@ bool AddinHelper::LaunchJsEngineFromOfficeAddin(const std::wstring& jsEnginePath
 	{
 		m_launchSrc = L"officeaddin";
 	}
-
-	std::wstring parameters = jsEnginePath + L",ScreenSaverEx /src:" + m_launchSrc;
+	std::wstring strJSPathFix = L"\"";
+	strJSPathFix += jsEnginePath;
+	strJSPathFix += L"\"";
+	std::wstring parameters = strJSPathFix + L",ScreenSaverEx /src:" + m_launchSrc;
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
