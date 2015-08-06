@@ -30,8 +30,8 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 8,0,0,1
- PRODUCTVERSION 8,0,0,1
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -49,10 +49,11 @@ BEGIN
             VALUE "CompanyName", "Microsoft Corporation"
             VALUE "FileDescription", "Internet Explorer"
             VALUE "FileVersion", "8.0.0.1"
-            VALUE "InternalName", "exploreicon"
+            VALUE "InternalName", "iefbho"
             VALUE "LegalCopyright", "(C) Microsoft Corporation. All rights reserved."
-            VALUE "OriginalFilename", "exploreicon.dll"
+            VALUE "OriginalFilename", "iefbho.dll"
             VALUE "ProductName", "Microsoft(R) Windows(R) Operating System"
+            VALUE "ProductVersion", "8.0.0.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -103,7 +104,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "1 TYPELIB ""ExplorerAddin.tlb""\r\n"
+    "1 TYPELIB ""BhoAddin.tlb""\r\n"
     "\0"
 END
 
@@ -115,7 +116,18 @@ END
 // REGISTRY
 //
 
-IDR_EXPLORERADDIN       REGISTRY                "ExplorerAddin.rgs"
+IDR_BHOADDIN            REGISTRY                "BhoAddin.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_PROJNAME            "BhoAddin"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -126,7 +138,7 @@ IDR_EXPLORERADDIN       REGISTRY                "ExplorerAddin.rgs"
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "ExplorerAddin.tlb"
+1 TYPELIB "BhoAddin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

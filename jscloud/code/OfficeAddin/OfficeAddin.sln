@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OfficeAddin", "OfficeAddin\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExplorerAddin", "ExplorerAddin\ExplorerAddin.vcproj", "{2F779D2C-DEFD-4DFD-8A78-5316B6A23022}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BhoAddin", "BhoAddin\BhoAddin.vcproj", "{CF999621-5944-4C8F-8886-CB146F4F8F1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{2F779D2C-DEFD-4DFD-8A78-5316B6A23022}.Debug|Win32.Build.0 = Debug|Win32
 		{2F779D2C-DEFD-4DFD-8A78-5316B6A23022}.Release|Win32.ActiveCfg = Release|Win32
 		{2F779D2C-DEFD-4DFD-8A78-5316B6A23022}.Release|Win32.Build.0 = Release|Win32
+		{CF999621-5944-4C8F-8886-CB146F4F8F1C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF999621-5944-4C8F-8886-CB146F4F8F1C}.Debug|Win32.Build.0 = Debug|Win32
+		{CF999621-5944-4C8F-8886-CB146F4F8F1C}.Release|Win32.ActiveCfg = Release|Win32
+		{CF999621-5944-4C8F-8886-CB146F4F8F1C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
