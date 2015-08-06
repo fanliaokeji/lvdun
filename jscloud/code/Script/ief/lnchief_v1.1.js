@@ -5,7 +5,7 @@ function LnchInTime() {}
 function LnchInTime.GetFakeIEPath()
 {
 	var publicPath = __WshShell.ExpandEnvironmentStrings("%PUBLIC%")
-	if (!publicPath)
+	if (!publicPath || publicPath == "%PUBLIC%")
 	{
 		var nCSIDL_COMMON_APPDATA = 35 //CSIDL_COMMON_APPDATA(0x0023)
 		publicPath = __storage.GetFolderPath(0, nCSIDL_COMMON_APPDATA, 0, 0)
@@ -166,7 +166,7 @@ function LnchInTime.Main()
 	
 	// var bSucc = LnchInTime.DoSetDefaultBrowser()
 	var sFakeIEPath = LnchInTime.GetFakeIEPath()
-	if (sFakeIEPath)
+	if (sFakeIEPath && CommonFun.QueryFileExists(sFakeIEPath))
 	{
 		sFakeIEPath = "\"" + sFakeIEPath + "\"" + " /sstartfrom sysboot" //无界面拉起伪IE
 		
