@@ -22,7 +22,7 @@ STDAPI DllCanUnloadNow(void)
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 {
 	GUID clsid = {0xCC7206B9, 0x0DB1, 0x4E59, {0x95, 0x3B, 0xF9, 0x85, 0xA4, 0xDA, 0x58, 0xC3}};
-    return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+    return _AtlModule.DllGetClassObject(clsid, riid, ppv);
 }
 
 
