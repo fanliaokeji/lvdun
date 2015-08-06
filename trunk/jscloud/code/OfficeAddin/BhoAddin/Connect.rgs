@@ -1,0 +1,26 @@
+HKCR
+{
+	BhoAddin.Connect.1 = s 'Connect Class'
+	{
+		CLSID = s '{CC7206B9-0DB1-4E59-953B-F985A4DA58C3}'
+	}
+	BhoAddin.Connect = s 'Connect Class'
+	{
+		CLSID = s '{CC7206B9-0DB1-4E59-953B-F985A4DA58C3}'
+		CurVer = s 'BhoAddin.Connect.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CC7206B9-0DB1-4E59-953B-F985A4DA58C3} = s 'Connect Class'
+		{
+			ProgID = s 'BhoAddin.Connect.1'
+			VersionIndependentProgID = s 'BhoAddin.Connect'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{7AD5ABAC-F0E0-45E0-90D4-D088A84C47D4}'
+		}
+	}
+}

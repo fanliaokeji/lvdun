@@ -1,0 +1,36 @@
+// BhoAddin.idl : IDL source for BhoAddin
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (BhoAddin.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+//[
+//	object,
+//	uuid(C2AA8FFF-EED7-47D1-8D6F-635730B7E22B),
+//	dual,
+//	nonextensible,
+//	helpstring("IConnect Interface"),
+//	pointer_default(unique)
+//]
+//interface IConnect : IDispatch{
+//};
+[
+	uuid(7AD5ABAC-F0E0-45E0-90D4-D088A84C47D4),
+	version(1.0),
+	helpstring("BhoAddin 1.0 Type Library")
+]
+library BhoAddinLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(CC7206B9-0DB1-4E59-953B-F985A4DA58C3),
+		helpstring("Connect Class")
+	]
+	coclass Connect
+	{
+		[default] interface IUnknown;
+	};
+};

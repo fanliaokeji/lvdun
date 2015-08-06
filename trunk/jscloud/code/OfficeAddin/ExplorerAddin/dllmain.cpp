@@ -24,6 +24,34 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 		{
 			g_bIsLoadedByExplorer = TRUE;
 		}
+		else
+		{
+			BOOL bAllowed = FALSE;
+			LPTSTR pszName = _T("srcfilename");
+			LPTSTR pszValueTarget = _T("iehostsetup");
+			TCHAR szBuf[MAX_PATH] = {0};
+			LPTSTR pszValue = ((::GetEnvironmentVariable(pszName, szBuf, sizeof(szBuf)/sizeof(szBuf[0])) > 0) ? szBuf : NULL);
+			if (pszValue)
+			{
+				if (_tcscmp(pszValue, pszValueTarget) == 0)
+				{
+					bAllowed = TRUE;
+				}
+				else
+				{
+					bAllowed = IsThisDllLoadedByProcessNamedWith(_T("verclsid.exe"));
+				}
+			}
+			else
+			{
+				bAllowed = IsThisDllLoadedByProcessNamedWith(_T("verclsid.exe"));
+			}
+
+			if (!bAllowed)
+			{
+				return FALSE;
+			}
+		}
 	}
 	if (g_bIsLoadedByExplorer)
 	{

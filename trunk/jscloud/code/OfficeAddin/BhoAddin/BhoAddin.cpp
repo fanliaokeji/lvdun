@@ -1,15 +1,16 @@
-// ExplorerAddin.cpp : Implementation of DLL Exports.
+// BhoAddin.cpp : Implementation of DLL Exports.
 
 
 #include "stdafx.h"
 #include "resource.h"
-#include "ExplorerAddin_i.h"
+#include "BhoAddin_i.h"
 #include "dllmain.h"
 
 extern HINSTANCE g_hThisModule;
 
 static HRESULT UnregisterAddin(const std::wstring& clsid);
 static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& dllPath);
+
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
 {
@@ -20,8 +21,8 @@ STDAPI DllCanUnloadNow(void)
 // Returns a class factory to create an object of the requested type
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 {
-	GUID clsid = {0xABD77DC0, 0xCA9D, 0x432E, {0xBD, 0x07, 0xDA, 0x09, 0x6B, 0x38, 0xD6, 0x3F}};
-    return _AtlModule.DllGetClassObject(clsid, riid, ppv);
+	GUID clsid = {0xCC7206B9, 0x0DB1, 0x4E59, {0x95, 0x3B, 0xF9, 0x85, 0xA4, 0xDA, 0x58, 0xC3}};
+    return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
 
@@ -29,8 +30,6 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 STDAPI DllRegisterServer(void)
 {
     // registers object, typelib and all interfaces in typelib
-    //HRESULT hr = _AtlModule.DllRegisterServer();
-
 	wchar_t path[MAX_PATH];
 	::GetModuleFileName(g_hThisModule, path, MAX_PATH);
 	std::wstring dllPath = path;
@@ -41,7 +40,7 @@ STDAPI DllRegisterServer(void)
 	TSINFO4CXX("Dll Path: " << dllPath);
 	TSINFO4CXX("Config File Path: " << configFile);
 	wchar_t buffer[100];
-	::GetPrivateProfileString(L"explorer", L"clsid", L"", buffer, 100,configFile.c_str());
+	::GetPrivateProfileString(L"bho", L"clsid", L"", buffer, 100,configFile.c_str());
 	std::wstring clsid = buffer;
 	if (clsid.empty()) {
 		return E_FAIL;
@@ -62,7 +61,7 @@ STDAPI DllUnregisterServer(void)
 	configFile += L"config.ini";
 	TSINFO4CXX("Config File Path: " << configFile);
 	wchar_t buffer[100];
-	::GetPrivateProfileString(L"explorer", L"clsid", L"", buffer, 100,configFile.c_str());
+	::GetPrivateProfileString(L"bho", L"clsid", L"", buffer, 100,configFile.c_str());
 	std::wstring clsid = buffer;
 	if (clsid.empty()) {
 		return E_FAIL;
@@ -101,6 +100,7 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
     return hr;
 }
 
+
 static HRESULT RegisterClassRoot(const std::wstring& clsid, const std::wstring& dllPath)
 {
 	ATL::CRegKey key;
@@ -114,40 +114,6 @@ static HRESULT RegisterClassRoot(const std::wstring& clsid, const std::wstring& 
 		return HRESULT_FROM_WIN32(lStatus);
 	}
 	lStatus = key.SetStringValue(L"ThreadingModel", L"Apartment");
-	if (lStatus != ERROR_SUCCESS) {
-		return HRESULT_FROM_WIN32(lStatus);
-	}
-	key.Close();
-	return S_OK;
-}
-
-static HRESULT RegisterIconOverlay(const std::wstring& clsid)
-{
-	ATL::CRegKey key;
-	std::wstring iconOverlayKey = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ShellIconOverlayIdentifiers\\";
-	iconOverlayKey += L" DeskUpdateRemind";
-	LSTATUS lStatus = key.Create(HKEY_LOCAL_MACHINE, iconOverlayKey.c_str());
-	if (lStatus != ERROR_SUCCESS) {
-		return HRESULT_FROM_WIN32(lStatus);
-	}
-	lStatus = key.SetStringValue(NULL, clsid.c_str());
-	if (lStatus != ERROR_SUCCESS) {
-		return HRESULT_FROM_WIN32(lStatus);
-	}
-	key.Close();
-	return S_OK;
-}
-
-static HRESULT RegisterCopyHook(const std::wstring& clsid)
-{
-	ATL::CRegKey key;
-	std::wstring copyHookKey = L"Directory\\shellex\\CopyHookHandlers\\";
-	copyHookKey += L"AYBSharing";
-	LSTATUS lStatus = key.Create(HKEY_CLASSES_ROOT, copyHookKey.c_str());
-	if (lStatus != ERROR_SUCCESS) {
-		return HRESULT_FROM_WIN32(lStatus);
-	}
-	lStatus = key.SetStringValue(NULL, clsid.c_str());
 	if (lStatus != ERROR_SUCCESS) {
 		return HRESULT_FROM_WIN32(lStatus);
 	}
@@ -184,14 +150,9 @@ static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& dllP
 	{
 		return hr;
 	}
-	hr = RegisterIconOverlay(clsid);
-	TSINFO4CXX("RegisterIconOverlay,hr = " << hr);
 
-	hr = RegisterCopyHook(clsid);
-	TSINFO4CXX("RegisterCopyHook,hr = " << hr);
-
-	//hr = RegisterBho(clsid);
-	//TSINFO4CXX("RegisterBho,hr = " << hr);
+	hr = RegisterBho(clsid);
+	TSINFO4CXX("RegisterBho,hr = " << hr);
 	return S_OK;
 
 }
@@ -200,36 +161,15 @@ static HRESULT UnregisterAddin(const std::wstring& clsid)
 {
 	HRESULT hr = S_OK;
 	ATL::CRegKey key;
-
-	//delete IconOverlay
-	LSTATUS lStatus = key.Open(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ShellIconOverlayIdentifiers");
-	if (lStatus == ERROR_SUCCESS) {
-		lStatus = key.RecurseDeleteKey(L" DeskUpdateRemind");
-		key.Close();
-	}
-	if (lStatus != ERROR_SUCCESS) {
-		hr = HRESULT_FROM_WIN32(lStatus);
-	}
-	
-	//delete CopyHook
-	lStatus = key.Open(HKEY_CLASSES_ROOT, L"Directory\\shellex\\CopyHookHandlers");
-	if (lStatus == ERROR_SUCCESS) {
-		lStatus = key.RecurseDeleteKey(L"AYBSharing");
-		key.Close();
-	}
-	if (lStatus != ERROR_SUCCESS) {
-		hr = HRESULT_FROM_WIN32(lStatus);
-	}
-
 	//delete BHO
-	//lStatus = key.Open(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Browser Helper Objects");
-	//if (lStatus == ERROR_SUCCESS) {
-	//	lStatus = key.RecurseDeleteKey(clsid.c_str());
-	//	key.Close();
-	//}
-	//if (lStatus != ERROR_SUCCESS) {
-	//	hr = HRESULT_FROM_WIN32(lStatus);
-	//}
+	LSTATUS lStatus = key.Open(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Browser Helper Objects");
+	if (lStatus == ERROR_SUCCESS) {
+		lStatus = key.RecurseDeleteKey(clsid.c_str());
+		key.Close();
+	}
+	if (lStatus != ERROR_SUCCESS) {
+		hr = HRESULT_FROM_WIN32(lStatus);
+	}
 
 	//delete HKCR
 	lStatus = key.Open(HKEY_CLASSES_ROOT, L"CLSID");
