@@ -180,6 +180,24 @@ function TryForceUpdate(tServerConfig, strKey)
 		FunctionObj.TipLog("[TryForceUpdate] CheckCommonUpdateTime failed")
 		return		
 	end
+	--假升级判断一下安装时间
+	if strKey == "tSoftUpdate" then
+		local strInstTime = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallTimes")
+		local nInstTime = tonumber(strInstTime)
+		local bInstTimeRet = false
+		if type(nInstTime) == "number" then
+			local nYear, nMonth, nDay = tipUtil:FormatCrtTime(nInstTime)
+			local nCurUTC = tipUtil:GetCurrentUTCTime()
+			local ncYear, ncMonth, ncDay = tipUtil:FormatCrtTime(nCurUTC)
+			if ncDay ~= nDay or nMonth ~= ncMonth or ncYear ~= nYear then
+				bInstTimeRet = true
+			end
+		end
+		if not bInstTimeRet then
+			FunctionObj.TipLog("[TryForceUpdate] check InstallTimes failed, key == tSoftUpdate")
+			return
+		end
+	end
 
 	local tNewVersionInfo = tServerConfig["tNewVersionInfo"] or {}
 	local tForceUpdate = tNewVersionInfo[strKey or "tForceUpdate"]
@@ -290,7 +308,12 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	end
 	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
-	TryForceUpdate(tServerConfig, "tForceUpdate")
+	--增加处理/noliveup命令行
+	local cmdString = tipUtil:GetCommandLine()
+	local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
+	if not bRet then
+		TryForceUpdate(tServerConfig, "tForceUpdate")
+	end
 	FixUserConfig(tServerConfig)
 	TryExecuteExtraCode(tServerConfig)
 end
@@ -486,9 +509,9 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
-function DownLoadGS()
+function DownLoadGS(strUrl)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
-	local strPacketURL = "http://down.lvdun123.com/client/GsSetup_0006.exe"
+	local strPacketURL = strUrl or "http://down.lvdun123.com/client/GsSetup_0006.exe"
 	local strSaveDir = tipUtil:GetSystemTempPath()
 	local strSavePath = tipUtil:PathCombine(strSaveDir, "GsSetup_0006.exe")
 	
@@ -526,13 +549,15 @@ function ProcessCommandLine()
 	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
 	if not IsRealString(strGSPath) or not tipUtil:QueryFileExists(strGSPath) then
 		if string.find(tostring(cmdString), "/kbls") then
-			DownLoadGS()
+			local bRet, strUrl = FunctionObj.GetCommandStrValue("/kbls")
+			DownLoadGS(strUrl)
 		elseif string.find(tostring(cmdString), "/kbl") then
 			local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
+			local bRet, strUrl = FunctionObj.GetCommandStrValue("/kbl")
 			FunctionObj.TipLog("ProcessCommandLine, type of SetLoseFocusNoHideFlag is "..type(SetLoseFocusNoHideFlag))
 			SetLoseFocusNoHideFlag(true)
 			FunctionObj.ShowDeleteNotepadRemindWnd("querybind", function()
-				DownLoadGS()
+				DownLoadGS(strUrl)
 			end)
 		end
 	end
