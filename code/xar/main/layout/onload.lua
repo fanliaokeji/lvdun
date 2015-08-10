@@ -1964,42 +1964,43 @@ function CheckServerRuleFile(tServerConfig)
 	local strServerVideoMD5 = FetchValueByPath(tServerData, {"tServerDataV", "strMD5"})
 	local strServerWebURL = FetchValueByPath(tServerData, {"tServerDataW", "strURL"})
 	local strServerWebMD5 = FetchValueByPath(tServerData, {"tServerDataW", "strMD5"})
-	if not IsRealString(strServerVideoURL) or not IsRealString(strServerWebURL) 
-	   or not IsRealString(strServerVideoMD5) or not IsRealString(strServerWebMD5) then
-		TipLog("[CheckServerRuleFile] get server rule info failed , start tipmain ")
-		DeleteServerRule("ServerDataV.dat")
-		DeleteServerRule("ServerDataW.dat")
-		TipMain()
-		return
-	end
 	
-	local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
-	local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
-	if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
-		strVideoSavePath = GetCfgPathWithName("DataV.dat")
-	end
-	if not IsRealString(strWebSavePath) or not tipUtil:QueryFileExists(strWebSavePath) then
-		strWebSavePath = GetCfgPathWithName("DataW.dat")
-	end
-	
-	local strDataVMD5 = tipUtil:GetMD5Value(strVideoSavePath)
-	local strDataWMD5 = tipUtil:GetMD5Value(strWebSavePath)
 	local tDownRuleList = {}
-	
-	if tostring(strDataVMD5) ~= strServerVideoMD5 then
-		DeleteServerRule("ServerDataV.dat")
-		local nIndex = #tDownRuleList+1
-		tDownRuleList[nIndex] = {}
-		tDownRuleList[nIndex]["strURL"] = strServerVideoURL
-		tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataV.dat")
+	if not IsRealString(strServerWebURL) or not IsRealString(strServerWebMD5) then
+		TipLog("[CheckServerRuleFile] get server rule info failed , delete ServerDataW.dat ")
+		DeleteServerRule("ServerDataW.dat")
+	else
+		local strWebSavePath = GetCfgPathWithName("ServerDataW.dat")
+		if not IsRealString(strWebSavePath) or not tipUtil:QueryFileExists(strWebSavePath) then
+			strWebSavePath = GetCfgPathWithName("DataW.dat")
+		end
+		local strDataWMD5 = tipUtil:GetMD5Value(strWebSavePath)
+		if tostring(strDataWMD5) ~= strServerWebMD5 then
+			DeleteServerRule("ServerDataW.dat")
+			local nIndex = #tDownRuleList+1
+			tDownRuleList[nIndex] = {}
+			tDownRuleList[nIndex]["strURL"] = strServerWebURL
+			tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataW.dat")
+		end
 	end
 	
-	if tostring(strDataWMD5) ~= strServerWebMD5 then
-		DeleteServerRule("ServerDataW.dat")
-		local nIndex = #tDownRuleList+1
-		tDownRuleList[nIndex] = {}
-		tDownRuleList[nIndex]["strURL"] = strServerWebURL
-		tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataW.dat")
+	if not IsRealString(strServerVideoURL) or not IsRealString(strServerVideoMD5) then
+		TipLog("[CheckServerRuleFile] get server rule info failed , delete ServerDataV.dat ")
+		DeleteServerRule("ServerDataV.dat")
+	else
+		local strVideoSavePath = GetCfgPathWithName("ServerDataV.dat")
+		if not IsRealString(strVideoSavePath) or not tipUtil:QueryFileExists(strVideoSavePath) then
+			strVideoSavePath = GetCfgPathWithName("DataV.dat")
+		end
+		
+		local strDataVMD5 = tipUtil:GetMD5Value(strVideoSavePath)
+		if tostring(strDataVMD5) ~= strServerVideoMD5 then
+			DeleteServerRule("ServerDataV.dat")
+			local nIndex = #tDownRuleList+1
+			tDownRuleList[nIndex] = {}
+			tDownRuleList[nIndex]["strURL"] = strServerVideoURL
+			tDownRuleList[nIndex]["strPath"] = GetCfgPathWithName("ServerDataV.dat")
+		end
 	end
 	
 	DownLoadServerRule(tDownRuleList)
