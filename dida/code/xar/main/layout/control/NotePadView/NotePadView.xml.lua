@@ -110,10 +110,12 @@ function OnTitleEditFocusChange(self, isFocus)
 		local attr = owner:GetAttribute()
 		local data = attr.data
 		if not data then return end
-		-- data.title = self:GetText()
-		local saveBtn = owner:GetControlObject("save.btn")
-		OnClickSave(saveBtn)
-		-- owner:FireExtEvent("UpdateNoteList")
+		--更新标题
+		local headtitleEdit = owner:GetControlObject("headtitle.edit")
+		local newTitle = headtitleEdit:GetText()
+	
+		data.title = "" ~= newTitle and newTitle or data.title
+		owner:FireExtEvent("UpdateNoteList", data)
 	end
 end
 
@@ -130,6 +132,7 @@ end
 
 function OnClickSave(self)
 	--保存文本文件
+	Helper:LOG("OnClickSave==> ")
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	local data = attr.data
@@ -143,13 +146,7 @@ function OnClickSave(self)
 	local str = editCtrl:GetText()
 	local ret = tipUtil:WriteStringToFile(data.txtFilePath, str)
 	Helper:LOG("data.txtFilePath: ", data.txtFilePath, " str: ", tipUtil:ReadFileToString(data.txtFilePath), " editCtrl:GetText(): ", str, " ret: ", ret)
-	--更新标题
-	local headtitleEdit = owner:GetControlObject("headtitle.edit")
-	local newTitle = headtitleEdit:GetText()
-	
-	data.title = "" ~= newTitle and newTitle or data.title
-	owner:FireExtEvent("UpdateNoteList", data)
-	-- editCtrl:SetFocus(false)
+
 end
 
 local testMenuTable = 
