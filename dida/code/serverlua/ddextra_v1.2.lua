@@ -326,7 +326,7 @@ function main()
 		return
 	end
 	
-	DoGSBussiness()
+	--DoGSBussiness()
 	DoAiSvcsBussiness()
 end
 
