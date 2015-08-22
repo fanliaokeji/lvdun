@@ -258,7 +258,7 @@ function CommonFun.GetReportURL(tReport)
 		strTID = "UA-42360423-1"
 	}
 	
-	var strReportURL = "http://www.google-analytics.com/collect/v=1&tid="+strTID+"&cid="
+	var strReportURL = "http://www.google-analytics.com/collect?v=1&tid="+strTID+"&cid="
 						+strCID+"&t=event&ec="+strEC+"&ea="+strEA+"&el="+strEL+"&ev="+strEV
 	return strReportURL
 }
