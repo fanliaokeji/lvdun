@@ -1,0 +1,8 @@
+<XLUE>
+	<resource>
+		<bitmap id="TipMain.Bg" path="bitmap\bg.png" />
+		<texture id="TipMain.Close.Normal" image="bitmap\close.normal.png" />
+		<texture id="TipMain.Close.Hover" image="bitmap\close.hover.png" />
+		<texture id="TipMain.Close.Down" image="bitmap\close.down.png" />
+	</resource>
+</XLUE>
