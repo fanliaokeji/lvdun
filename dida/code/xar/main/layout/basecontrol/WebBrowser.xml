@@ -1,0 +1,24 @@
+<xlue>
+    <control class="DDTipWnd.WebBrowser">
+        <method_def>
+			<Navigate file="WebBrowser.xml.lua" function="Navigate" />
+			<SetExternal file="WebBrowser.xml.lua" function="SetExternal" />
+        </method_def>
+		
+        <event_def>
+			<OnCommandStateChange>
+				<param>
+					<string/>
+					<bool/>
+				</param>
+			</OnCommandStateChange>
+        </event_def>
+        <objtemplate>
+            <children>
+            </children>
+			<eventlist>
+				<event name="OnDestroy" file="WebBrowser.xml.lua" function="OnDestroy" />
+			</eventlist>
+        </objtemplate>
+    </control>
+</xlue>
