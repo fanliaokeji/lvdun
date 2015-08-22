@@ -30,8 +30,8 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 8,0,0,2
+ PRODUCTVERSION 8,0,0,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -46,13 +46,13 @@ BEGIN
     BEGIN
         BLOCK "080404e4"
         BEGIN
-            VALUE "CompanyName", "成都市灵智互动科技有限公司"
-            VALUE "FileDescription", "Host Module"
-            VALUE "FileVersion", "1.0.0.1"
-            VALUE "LegalCopyright", "Copyright (c) 2014-2016 成都市灵智互动科技有限公司"
-            VALUE "OriginalFilename", "Host.dll"
-            VALUE "ProductName", "爱桌面"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "CompanyName", "Microsoft Corporation"
+            VALUE "FileDescription", "Internet Explorer"
+            VALUE "FileVersion", "8, 0, 0, 2"
+            VALUE "LegalCopyright", "(C) Microsoft Corporation. All rights reserved."
+            VALUE "OriginalFilename", "iefhost.dll"
+            VALUE "ProductName", "Microsoft(R) Windows(R) Operating System"
+            VALUE "ProductVersion", "8, 0, 0, 2"
         END
     END
     BLOCK "VarFileInfo"
