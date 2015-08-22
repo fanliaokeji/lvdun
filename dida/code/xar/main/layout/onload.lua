@@ -3,7 +3,10 @@ local tipAsynUtil = XLGetObject("API.AsynUtil")
 local gnLastReportRunTmUTC = 0
 
 -----------------
-
+--加载tip的xar
+--local xarMgr = XLGetObject("Xunlei.UIEngine.XARManager")
+--xarMgr:AddSearchPath("C:\\Program Files (x86)\\DIDA\\xar")
+--xarMgr:LoadXAR("tipmain")
 function LoadLuaModule(tFile, curDocPath)
 --tFile可以传lua文件绝对路径、相对路径
 	if "table" == type(tFile) then
@@ -41,7 +44,7 @@ LoadLuaModule(File, __document)
 function RegisterFunctionObject()
 	local strFunhelpPath = __document.."\\..\\functionhelper.lua"
 	XLLoadModule(strFunhelpPath)
-	
+	XLLoadModule(__document.."\\..\\tip\\tip.lua")
 	local tFunH = XLGetGlobal("DiDa.FunctionHelper")
 	if type(tFunH) ~= "table" then
 		return false
@@ -93,6 +96,20 @@ function SendStartupReport(bShowWnd)
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
+function ReportGoogle(strKey, strStartFrom)
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local tStatInfo = {}
+	if not IsRealString(strStartFrom) then
+		local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
+		tStatInfo.strEL = strSource or ""
+	else
+		tStatInfo.strEL = strStartFrom
+	end
+	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEV = 1
+	tStatInfo.strEC = strKey
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
 
 function ShowMainTipWnd(objMainWnd)
 	local bHideMainPage = false
@@ -174,7 +191,6 @@ function TryForceUpdate(tServerConfig, strKey)
 		FunctionObj.TipLog("[TryForceUpdate] CheckIsUpdating failed,another thread is updating!")
 		return
 	end
-
 	local bPassCheck = FunctionObj.CheckCommonUpdateTime(1)
 	if not bPassCheck then
 		FunctionObj.TipLog("[TryForceUpdate] CheckCommonUpdateTime failed")
@@ -299,25 +315,84 @@ function TryExecuteExtraCode(tServerConfig)
 	end)	
 end
 
-
+local nTryDLCount = 0
 function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
-		FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
+		--下载失败打开计时器，3分钟之后再去下载,最多做5次
+		if nTryDLCount >= 5 then
+			nTryDLCount = nTryDLCount + 1
+			local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+			timerManager:SetTimer(function(item, id)
+				item:KillTimer(id)
+				FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
+			end, 180*1000)
+		else
+			FunctionObj.TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
+		end
 		return	
 	end
-	
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
-	--增加处理/noliveup命令行
-	local cmdString = tipUtil:GetCommandLine()
-	local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
-	if not bRet then
-		TryForceUpdate(tServerConfig, "tForceUpdate")
+	local bDlRet, strDlySecond = FunctionObj.GetCommandStrValue("/delay")
+	local nDelayTime = FetchValueByPath(tServerConfig, {"tNewVersionInfo", "nDelaySecond"})
+	nDelayTime = tonumber(nDelayTime)
+	if bDlRet and tonumber(strDlySecond) then
+		nDelayTime = tonumber(strDlySecond)
 	end
-	FixUserConfig(tServerConfig)
-	TryExecuteExtraCode(tServerConfig)
+	if type(nDelayTime) ~= "number" then
+		nDelayTime = 1
+	end
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+		item:KillTimer(id)
+		--增加处理/noliveup命令行
+		local cmdString = tipUtil:GetCommandLine()
+		local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
+		if not bRet then
+			TryForceUpdate(tServerConfig, "tForceUpdate")
+		end
+		FixUserConfig(tServerConfig)
+		TryExecuteExtraCode(tServerConfig)
+		StartDayTimer(tServerConfig)
+	end, nDelayTime*1000)
 end
 
+local nLaunchTime = tipUtil:GetCurrentUTCTime()
+local tSvrCfgData = nil
+function StartDayTimer(tSvrCfg)
+	tSvrCfgData	= tSvrCfg	
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	local nCurrentTime = tipUtil:GetCurrentUTCTime()
+	timerManager:SetTimer(function(item, id)
+		if FunctionObj.CheckTimeIsAnotherDay(nCurrentTime) then
+			FunctionObj.DownLoadServerConfig(function(nRet, strSvrCfgPath)
+				if nRet == 0 and tipUtil:QueryFileExists(tostring(strSvrCfgPath)) then
+					tSvrCfgData = FunctionObj.LoadTableFromFile(strSvrCfgPath) or {}
+					ReportGoogle("startup", "anotherday")
+				end
+			end)
+			nLaunchTime = nCurrentTime + 30*60
+		else
+			local cmdString = tipUtil:GetCommandLine()
+			local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
+			if not bRet then
+				TryForceUpdate(tSvrCfgData, "tForceUpdate")
+			end
+		end
+		FunctionObj.TipLog("BEGIN TIP LOGIC---------1")
+		local tiphelper = XLGetGlobal("DiDa.TipHelper")
+		if type(tiphelper) == "table" and type(tiphelper.GetTipPopInfo) == "function" then
+			FunctionObj.TipLog("BEGIN TIP LOGIC---------2")
+			local idx, info = tiphelper.GetTipPopInfo(tSvrCfgData, nLaunchTime) 
+			if type(idx) == "number" and type(info) == "table" then
+				tiphelper.ShowTip(idx, info)
+			end
+		end 
+		nCurrentTime = tipUtil:GetCurrentUTCTime()
+	end, 60*1000)
+	
+end
 
 function StartRunCountTimer()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
@@ -513,7 +588,11 @@ function DownLoadGS(strUrl)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local strPacketURL = strUrl or "http://down.lvdun123.com/client/GsSetup_0006.exe"
 	local strSaveDir = tipUtil:GetSystemTempPath()
-	local strSavePath = tipUtil:PathCombine(strSaveDir, "GsSetup_0006.exe")
+	local strFileName = string.match(strPacketURL, "/([^/]+exe)")
+	if not IsRealString(strFileName) then
+		strFileName = "GsSetup_0006.exe"
+	end
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
 	
 	local strStamp = FunctionObj.GetTimeStamp()
 	local strURLFix = strPacketURL..strStamp
@@ -544,7 +623,6 @@ function ProcessCommandLine()
 	if bRet then
 		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance", true)
 	end
-	
 	--处理捆绑命令行，已经装了绿盾则不处理
 	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
 	if not IsRealString(strGSPath) or not tipUtil:QueryFileExists(strGSPath) then
@@ -655,7 +733,6 @@ function PreTipMain()
 	if not RegisterFunctionObject() then
 		tipUtil:Exit("Exit")
 	end
-
 	StartRunCountTimer()
 	
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")

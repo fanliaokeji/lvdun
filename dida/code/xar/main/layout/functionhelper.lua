@@ -42,6 +42,9 @@ function LoadTableFromFile(strDatFilePath)
 	local tResult = nil
 
 	if IsRealString(strDatFilePath) and tipUtil:QueryFileExists(strDatFilePath) then
+		if XLModuleExists(strDatFilePath) then
+			XLUnloadModule(strDatFilePath)
+		end
 		local tMod = XLLoadModule(strDatFilePath)
 		if type(tMod) == "table" and type(tMod.GetSubTable) == "function" then
 			local tDat = tMod.GetSubTable()
@@ -498,6 +501,7 @@ function RegSetValue(sPath, value)
 	if IsRealString(sPath) then
 		local sRegRoot, sRegPath, sRegKey = string.match(sPath, "^(.-)[\\/](.*)[\\/](.-)$")
 		if IsRealString(sRegRoot) and IsRealString(sRegPath) then
+			tipUtil:CreateRegKey(sRegRoot, sRegPath)
 			return tipUtil:SetRegValue(sRegRoot, sRegPath, sRegKey or "", value or "")
 		end
 	end
@@ -1051,6 +1055,7 @@ local g_tPopupWndList = {
 	[2] = {"TipExitRemindWnd", "TipExitRemindTree"},
 	[3] = {"TipUpdateWnd", "TipUpdateTree"},
 	[4] = {"TipRemindBubbleWnd", "TipRemindBubbleTree"},
+	--[5] = {"TipCommon", "TipCommonTree"},
 }
 
 function CreatePopupTipWnd()
@@ -1295,7 +1300,7 @@ function CheckUpdateTimeSpan(nTimeInDay, strUpdateType)
 		return true
 	end	
 	
-	return false
+	return false, nTimeInSec-nTimeSpan
 end
 
 
@@ -1416,6 +1421,7 @@ obj.CheckIsYearInVacList = CheckIsYearInVacList
 obj.UpdateBackTodayStyle = UpdateBackTodayStyle
 obj.ShowDeleteNotepadRemindWnd = ShowDeleteNotepadRemindWnd
 obj.ShowRemindBubble = ShowRemindBubble
+obj.CreateWndByName = CreateWndByName
 
 --文件
 obj.GetCfgPathWithName = GetCfgPathWithName
