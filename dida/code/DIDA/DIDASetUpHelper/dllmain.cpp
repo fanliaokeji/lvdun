@@ -231,7 +231,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 
 }
 
-extern "C" __declspec(dllexport) void NsisTSLOG(TCHAR* pszInfo)
+extern "C" __declspec(dllexport) void NsisTSLOG(char* pszInfo)
 {
 	if(pszInfo == NULL)
 		return;

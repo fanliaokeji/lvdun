@@ -62,8 +62,8 @@ IDI_ICON1               ICON                    "res\\shortcut.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,18
- PRODUCTVERSION 1,0,0,18
+ FILEVERSION 1,0,0,19
+ PRODUCTVERSION 1,0,0,19
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -80,12 +80,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "深圳市中伟泰科技有限公司"
             VALUE "FileDescription", "DIDA Application"
-            VALUE "FileVersion", "1, 0, 0, 18"
+            VALUE "FileVersion", "1, 0, 0, 19"
             VALUE "InternalName", "DIDA"
             VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市中伟泰科技有限公司"
             VALUE "OriginalFilename", "DIDA.exe"
             VALUE "ProductName", "嘀嗒日历"
-            VALUE "ProductVersion", "1, 0, 0, 18"
+            VALUE "ProductVersion", "1, 0, 0, 19"
         END
     END
     BLOCK "VarFileInfo"

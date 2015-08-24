@@ -39,9 +39,9 @@ echo ±àÒëÍê³É
   echo cd /d %%~dp0
   echo for /r %%%%i in ^(*.dll *.exe^) do ^(
   echo if %%%%~ni == DIDASetUpHelper ^(
-  echo copy /y %%%%i "D:\ÂÌ¶ÜSVN\dida\bin\setup\bin\"
+  echo copy /y %%%%i "..\..\..\..\..\bin\setup\bin\"
   echo ^) else ^(
-  echo copy /y %%%%i "D:\ÂÌ¶ÜSVN\dida\bin\setup\input_main\program\"
+  echo copy /y %%%%i "..\..\..\..\..\bin\setup\input_main\program\"
   echo ^)
   echo ^)
   echo pause
