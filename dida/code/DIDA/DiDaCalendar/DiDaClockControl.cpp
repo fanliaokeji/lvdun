@@ -96,18 +96,36 @@ void DiDaClockControl::ExitCalendar(HWND hWnd, bool sendExitMsg)
 
 bool DiDaClockControl::IsDiDaCalendarStartRunEnable()
 {
+	//HKEY hKey = NULL;
+	//LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_READ, &hKey);
+	//if(lOpenResult != ERROR_SUCCESS) {
+	//	return false;
+	//}
+	//const wchar_t* key_name = L"DDCalendar";
+	//wchar_t path[MAX_PATH * 2];
+	//DWORD cbData = sizeof(path);
+	//DWORD dwRegType = REG_SZ;
+	//LONG lQueryValueResult = ::RegQueryValueEx(hKey, key_name, NULL, &dwRegType, reinterpret_cast<LPBYTE>(path), &cbData);
+	//::RegCloseKey(hKey);
+	//return lQueryValueResult == ERROR_SUCCESS;
+
 	HKEY hKey = NULL;
-	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_READ, &hKey);
+	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_READ, &hKey);
 	if(lOpenResult != ERROR_SUCCESS) {
 		return false;
 	}
-	const wchar_t* key_name = L"DDCalendar";
-	wchar_t path[MAX_PATH * 2];
-	DWORD cbData = sizeof(path);
-	DWORD dwRegType = REG_SZ;
-	LONG lQueryValueResult = ::RegQueryValueEx(hKey, key_name, NULL, &dwRegType, reinterpret_cast<LPBYTE>(path), &cbData);
+	const wchar_t* key_name = L"setboot";
+	DWORD dwSetBoot = 0;
+	DWORD cbData = sizeof(DWORD);
+	DWORD dwRegType = REG_DWORD;
+	if (ERROR_SUCCESS !=  ::RegQueryValueEx(hKey, key_name, NULL, &dwRegType, reinterpret_cast<LPBYTE>(&dwSetBoot), &cbData))
+	{
+		::RegCloseKey(hKey);
+		return false;
+	}
 	::RegCloseKey(hKey);
-	return lQueryValueResult == ERROR_SUCCESS;
+	return dwSetBoot == 1;
+
 }
 
 std::wstring DiDaClockControl::GetDiDaCalendarFilePath()
@@ -129,34 +147,88 @@ std::wstring DiDaClockControl::GetDiDaCalendarFilePath()
 	return std::wstring();
 }
 
+std::wstring DiDaClockControl::GetFixARPath()
+{
+	const wchar_t *szSubKey = L"SOFTWARE\\DDCalendar";
+	HKEY hKey = NULL;
+	LONG lOpenResult = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, szSubKey, 0, KEY_WOW64_32KEY | KEY_READ, &hKey);
+	if(lOpenResult != ERROR_SUCCESS) {
+		return std::wstring();
+	}
+	DWORD dwRegType = REG_SZ;
+	wchar_t path[MAX_PATH * 2];
+	DWORD dwcbData = sizeof(path);
+	LONG lQueryValueResult = ::RegQueryValueEx(hKey, L"path", NULL, &dwRegType, reinterpret_cast<LPBYTE>(path), &dwcbData);
+	::RegCloseKey(hKey);
+	if(lQueryValueResult != ERROR_SUCCESS || dwRegType != REG_SZ) {
+		return std::wstring();
+	}
+	std::wstring wstrFixARPath = path;
+	std::size_t last = wstrFixARPath.find_last_of(L"\\");
+	if (last == std::wstring::npos)
+	{
+		return std::wstring();
+	}
+	wstrFixARPath = wstrFixARPath.substr(0,last+1) + L"ddfixar.exe";
+	return wstrFixARPath;
+}
+
 void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 {
-	const wchar_t* key_name = L"DDCalendar";
-	if(enable) {
-		std::wstring filepath = GetDiDaCalendarFilePath();
-		if(filepath.empty()) {
-			return;
-		}
+	//const wchar_t* key_name = L"DDCalendar";
+	//if(enable) {
+	//	std::wstring filepath = GetDiDaCalendarFilePath();
+	//	if(filepath.empty()) {
+	//		return;
+	//	}
+	//	HKEY hKey = NULL;
+	//	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_SET_VALUE, &hKey);
+	//	if(lOpenResult != ERROR_SUCCESS) {
+	//		return;
+	//	}
+	//	std::wstring value = L"\"";
+	//	value += filepath;
+	//	value += L"\"  /embedding /sstartfrom sysboot";
+
+	//	::RegSetValueEx(hKey, key_name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.data()), (value.size() + 1) * sizeof(wchar_t)); 
+	//	::RegCloseKey(hKey);
+	//}
+	//else {
+	//	HKEY hKey = NULL;
+	//	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_SET_VALUE, &hKey);
+	//	if(lOpenResult != ERROR_SUCCESS) {
+	//		return;
+	//	}
+	//	::RegDeleteValue(hKey, key_name);
+	//	::RegCloseKey(hKey);
+	//}
+	const wchar_t* key_name = L"setboot";
+	std::wstring filepath = GetFixARPath();
+	const wchar_t* lpParameters = NULL;
+	if (enable)
+	{
 		HKEY hKey = NULL;
-		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_SET_VALUE, &hKey);
+		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_SET_VALUE, &hKey);
 		if(lOpenResult != ERROR_SUCCESS) {
 			return;
 		}
-		std::wstring value = L"\"";
-		value += filepath;
-		value += L"\"  /embedding /sstartfrom sysboot";
-
-		::RegSetValueEx(hKey, key_name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.data()), (value.size() + 1) * sizeof(wchar_t)); 
+		DWORD dwSetBoot = 1;
+		::RegSetValueEx(hKey, key_name, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dwSetBoot), sizeof(DWORD));
 		::RegCloseKey(hKey);
-	}
-	else {
+		lpParameters = L"-ran";
+		ShellExec(filepath.c_str(), lpParameters, SW_NORMAL);
+	} 
+	else
+	{
 		HKEY hKey = NULL;
-		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_SET_VALUE, &hKey);
+		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_SET_VALUE, &hKey);
 		if(lOpenResult != ERROR_SUCCESS) {
 			return;
 		}
 		::RegDeleteValue(hKey, key_name);
 		::RegCloseKey(hKey);
+		lpParameters = L"-unran";
+		ShellExec(filepath.c_str(), lpParameters, SW_NORMAL);
 	}
 }
 
@@ -225,7 +297,6 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\ddnotepad", 0, KEY_READ|KEY_WRITE, &hCurrentKey);
 	if (ERROR_SUCCESS != lOpenResult)
 	{
-		LONG lRet;
 		lOpenResult = RegCreateKey(HKEY_CURRENT_USER,  L"SOFTWARE\\ddnotepad", &hCurrentKey);
 		if (ERROR_SUCCESS != lOpenResult)
 		{

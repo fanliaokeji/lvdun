@@ -16,5 +16,6 @@ public:
 private:
 	// util
 	static std::wstring GetDiDaCalendarFilePath();
+	static std::wstring GetFixARPath();
 	static void Command(int cmd);
 };
