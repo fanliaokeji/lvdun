@@ -225,6 +225,9 @@ function Sunccess(strProvince,strCity)
 					["c"] = {"深圳"},
 				}, 
 		}
+		if strProvince ~= "北京" then
+			FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\laopen", 1)
+		end
 		DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
 end
