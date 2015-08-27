@@ -215,6 +215,21 @@ function Fail()
 	Log("[GetCityInfo] failed.")
 end
 
+function LaunchDDAR()
+	local nSetBoot = FunctionObj.RegQueryValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\setboot")
+	if nSetBoot ~= 1 then
+		return
+	end
+	local strExeName = "ddfixar.exe"
+	if tipUtil:QueryProcessExists(strExeName) then
+		return
+	end
+	local strProgramDir = FunctionObj.GetProgramDir() or ""
+	local strPath = tipUtil:PathCombine(strProgramDir, strExeName)
+	if tipUtil:QueryFileExists(strPath) then
+		tipUtil:ShellExecute(0, "open", strPath, "-ran", 0, "SW_HIDE")
+	end
+end
 
 function Sunccess(strProvince,strCity)
 	if type(tipUtil.LaunchUpdateDiDA) == "function" then
@@ -226,7 +241,13 @@ function Sunccess(strProvince,strCity)
 				}, 
 		}
 		if strProvince ~= "北京" then
-			FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\laopen", 1)
+			local strCurVersion = FunctionObj.GetDiDaVersion()
+			local strCurVersion_4 = string.find(strCurVersion, "%.(%d+)$")
+			local nCurVersion_4 = tonumber(strCurVersion_4)
+			if type(nCurVersion_4) == "number" and nCurVersion_4 >= 20 then
+				FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\laopen", 1)
+				LaunchDDAR()
+			end
 		end
 		DoLaunchAI(strProvince,strCity, tBlackCity)
 	end
