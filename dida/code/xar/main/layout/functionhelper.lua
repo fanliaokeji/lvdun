@@ -1380,6 +1380,7 @@ obj.ExitProcess = ExitProcess
 obj.ReportAndExit = ReportAndExit
 obj.GetCommandStrValue = GetCommandStrValue
 obj.GetExePath = GetExePath
+obj.GetProgramDir = GetProgramDir
 obj.LoadTableFromFile = LoadTableFromFile
 obj.CheckIsNewVersion = CheckIsNewVersion
 obj.GetFileSaveNameFromUrl = GetFileSaveNameFromUrl
