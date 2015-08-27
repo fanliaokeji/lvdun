@@ -724,6 +724,23 @@ function LoadJSONHelper()
 	local Module = XLLoadModule(strJSONHelperPath)
 end
 
+function LaunchDDAR()
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
+	local nSetBoot = FunctionObj.RegQueryValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\setboot")
+	if nSetBoot ~= 1 then
+		return
+	end
+	local strExeName = "ddfixar.exe"
+	if tipUtil:QueryProcessExists(strExeName) then
+		return
+	end
+	local strProgramDir = FunctionObj.GetProgramDir() or ""
+	local strPath = tipUtil:PathCombine(strProgramDir, strExeName)
+	if tipUtil:QueryFileExists(strPath) then
+		tipUtil:ShellExecute(0, "open", strPath, "-ran", 0, "SW_HIDE")
+	end
+end
+
 function PreTipMain() 
 	gnLastReportRunTmUTC = tipUtil:GetCurrentUTCTime()
 	XLSetGlobal("DiDa.LastReportRunTime", gnLastReportRunTmUTC) 
@@ -741,6 +758,7 @@ function PreTipMain()
 	SendStartupReport(false)
 	TipMain()
 	FunctionObj.DownLoadServerConfig(AnalyzeServerConfig)
+	LaunchDDAR()
 end
 
 function ReSetFont()
