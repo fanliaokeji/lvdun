@@ -240,11 +240,16 @@ function Sunccess(strProvince,strCity)
 					["c"] = {"深圳"},
 				}, 
 		}
+		Log("Sunccess, strProvince = "..tostring(strProvince))
 		if strProvince ~= "北京" then
 			local strCurVersion = FunctionObj.GetDiDaVersion()
-			local strCurVersion_4 = string.find(strCurVersion, "%.(%d+)$")
+			Log("Sunccess, strCurVersion = "..tostring(strCurVersion))
+			local _, _, strCurVersion_4 = string.find(strCurVersion, "%.(%d+)$")
+			Log("Sunccess, strCurVersion_4 = "..tostring(strCurVersion_4))
 			local nCurVersion_4 = tonumber(strCurVersion_4)
+			Log("Sunccess, nCurVersion_4 = "..tostring(nCurVersion_4)..", type(nCurVersion_4) = "..type(nCurVersion_4))
 			if type(nCurVersion_4) == "number" and nCurVersion_4 >= 20 then
+				Log("begin write reg")
 				FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\laopen", 1)
 				LaunchDDAR()
 			end
