@@ -33,7 +33,8 @@
 #define AR_COMMANDLINE _T("/embedding /sstartfrom sysboot")
 
 #define AR_MAX_FAIL 3
-#define AR_TIMER_INTERVAL 2*1000
+#define AR_TIMER_INTERVAL 10*1000
+#define AR_MAX_SETBOOT 2
 /************************************************************************/
 
 
@@ -80,9 +81,10 @@ private:
 	std::wstring CreateRandomName(UINT ulen,const std::wstring& wstrNotMatch);
 	void GetExePathDetailInfo(const std::wstring& wstrPath,std::wstring& wstrDir,std::wstring& wstrDirName,std::wstring& wstrFileNameWithOutExt);
 	BOOL DeleteFileRecurse(const std::wstring& wstrPath);
-	BOOL CreateAutoRun(BOOL bNewRun);
+	BOOL CreateAutoRun(BOOL bNewRun,BOOL bForce = FALSE);
 	void UpdateLaunchFile(const std::wstring& wstrSrcFile,const std::wstring& wstrDestFile);
 	BOOL DeleteAutoRun();
+	BOOL CheckFixCnt();
 private:
 	HANDLE m_hMutex;
 	std::wstring m_wstrMainPath;
@@ -94,6 +96,7 @@ private:
 	UINT m_uTimerFail;
 	UINT_PTR m_uTimerID;
 	BOOL m_bUpdated;
+
 };
 
 
@@ -103,3 +106,4 @@ bool IsVistaOrLatter();
 std::wstring GetAllUsersPublicPath();
 BOOL CheckProcessExist(std::wstring wstrProcessName, BOOL bQuit = FALSE);
 std::wstring GetRealPath(const std::wstring &wstrPath);
+BOOL CheckIsAnotherDay(__time64_t nLastTime);

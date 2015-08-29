@@ -107,15 +107,10 @@ LRESULT CAutoRun::OnCopyData(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 		//取得参数后，释放CommandLineToArgvW申请的空间   
 		LocalFree(szArglist); 
 		TSDEBUG4CXX("OnCopyData, commandline : "<<wstrFirstArg.c_str());
-		//std::wstring wstrCommandLine(pcszCommandLine);
-		//std::size_t pos = wstrCommandLine.find(L" ");
-		//if (pos != std::wstring::npos)
-		//{
-		//	wstrCommandLine = wstrCommandLine.substr(pos+2);
-		//}
 		std::size_t posSet = wstrFirstArg.find(L"-ran");
 		std::size_t posUnSet = wstrFirstArg.find(L"-unran");
-		
+		std::size_t posSetForce = wstrFirstArg.find(L"-ranf");
+
 		if (0 == posUnSet)
 		{
 			if (0 != m_uTimerID)
@@ -129,14 +124,21 @@ LRESULT CAutoRun::OnCopyData(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 		}
 		else
 		{
+			if (!CheckClientCfg() || !GetServerCfg())
+			{
+				if (posSetForce != std::wstring::npos)
+				{
+					CreateAutoRun(FALSE,TRUE);
+					TSDEBUG4CXX("OnCopyData launch main client");
+				}
+				return 0;
+			}
+			if (posSetForce != std::wstring::npos)
+			{
+				CreateAutoRun(TRUE,TRUE);
+			}
 			if (0 == m_uTimerID)
 			{
-				if (!CheckClientCfg() || !GetServerCfg())
-				{
-					CreateAutoRun(FALSE);
-					TSDEBUG4CXX("OnCopyData launch main client");
-					return 0;
-				}
 				TSDEBUG4CXX("OnCopyData start timer");
 				m_uTimerID = SetTimer(94,AR_TIMER_INTERVAL);
 				return 0;
@@ -185,7 +187,8 @@ void CAutoRun::OnTimer(UINT_PTR nTimerID)
 		TSERROR4CXX("OnTimer fail, create auto run too many fail");
 		TerminateProcess(GetCurrentProcess(),0);
 	}
-	if (!CreateAutoRun(TRUE))
+	
+	if (!CreateAutoRun(TRUE,FALSE))
 	{
 		++m_uTimerFail;
 	}
@@ -240,18 +243,27 @@ BOOL CAutoRun::Init()
 			return FALSE;
 		}
 		std::size_t posUnSet = gwstrCmdLine.find(L"-unran");
+
+		std::size_t posSetForce = gwstrCmdLine.find(L"-ranf");
 		if (0 == posUnSet)
 		{
 			DeleteAutoRun();
 			TSDEBUG4CXX("unran finish");
 			return FALSE;
 		}
-
+		
 		if (!CheckClientCfg() || !GetServerCfg())
 		{
-			CreateAutoRun(FALSE);
+			if (posSetForce != std::wstring::npos)
+			{
+				CreateAutoRun(FALSE,TRUE);
+			}
 			TSDEBUG4CXX("launch main client");
 			return FALSE;
+		}
+		if (posSetForce != std::wstring::npos)
+		{
+			CreateAutoRun(TRUE,TRUE);
 		}
 		TSDEBUG4CXX("start timer");
 		m_uTimerID = SetTimer(94,AR_TIMER_INTERVAL);
@@ -340,7 +352,9 @@ BOOL CAutoRun::LaunchMainClient()
 {
 	std::size_t posSet = gwstrCmdLine.find(L"-ran");
 	std::size_t posUnSet = gwstrCmdLine.find(L"-unran");
-	if (0 == posSet || 0 == posUnSet)
+	std::size_t posSetForce = gwstrCmdLine.find(L"-ranf");
+
+	if (0 == posSet || 0 == posUnSet || 0 == posSetForce)
 	{
 		return FALSE;
 	}
@@ -444,7 +458,7 @@ void CAutoRun::GetExePathDetailInfo(const std::wstring& wstrPath,std::wstring& w
 	}
 }
 
-BOOL CAutoRun::CreateAutoRun(BOOL bNewRun)
+BOOL CAutoRun::CreateAutoRun(BOOL bNewRun,BOOL bForce)
 {
 	if (!CheckSetBoot())
 	{
@@ -507,6 +521,10 @@ BOOL CAutoRun::CreateAutoRun(BOOL bNewRun)
 				::RegDeleteValue(hRunKey, wstrFileNameWithOutExt.c_str());
 			}
 		}
+	}
+	if (!bForce && !CheckFixCnt())
+	{
+		return TRUE;
 	}
 	DeleteFileRecurse(wstrLastLaunchPath);
 	if (bNewRun)
@@ -652,6 +670,58 @@ BOOL CAutoRun::DeleteAutoRun()
 	return bDelete;
 }
 
+BOOL CAutoRun::CheckFixCnt()
+{
+	BOOL bCheck = FALSE;
+	HKEY hLaunchKey;
+	if(ERROR_SUCCESS != ::RegCreateKeyEx(HKEY_CURRENT_USER, AR_CLIENT_HKCU, NULL,NULL,REG_OPTION_NON_VOLATILE,KEY_READ|KEY_WRITE, NULL,&hLaunchKey,NULL))
+	{
+		m_uTimerFail++;
+		TSERROR4CXX("CheckFixCnt fail, RegCreateKeyEx AR_CLIENT_HKCU");
+		return FALSE;
+	}
+
+	const wchar_t* szLastFixARTime = L"LastFixARTime";
+	DWORD dwLastUTC = 0;
+
+	const wchar_t* szFixCnt = L"fixar";
+	DWORD dwCnt = 0;
+
+	DWORD cbData = sizeof(DWORD);
+	DWORD dwRegType = REG_DWORD;
+	if (ERROR_SUCCESS !=  ::RegQueryValueEx(hLaunchKey, szLastFixARTime, NULL, &dwRegType, reinterpret_cast<LPBYTE>(&dwLastUTC), &cbData))
+	{
+		dwLastUTC = 0;
+	}
+	if (CheckIsAnotherDay(static_cast<__time64_t>(dwLastUTC)))
+	{
+		//TSERROR4CXX("CheckFixCnt is another day");
+		bCheck = TRUE;
+	}
+	else
+	{
+		const wchar_t* szFixCnt = L"fixar";
+		if (ERROR_SUCCESS !=  ::RegQueryValueEx(hLaunchKey, szFixCnt, NULL, &dwRegType, reinterpret_cast<LPBYTE>(&dwCnt), &cbData))
+		{
+			dwCnt = 0;
+		}
+		if (dwCnt < AR_MAX_SETBOOT)
+		{
+			bCheck = TRUE;
+		}
+	}
+	if (bCheck)
+	{
+		dwCnt +=1;
+		::RegSetValueEx(hLaunchKey, szFixCnt, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dwCnt), sizeof(DWORD));
+
+		__time64_t nCurrentTime = 0;
+		_time64(&nCurrentTime);
+		::RegSetValueEx(hLaunchKey, szLastFixARTime, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&nCurrentTime), sizeof(DWORD));
+	}
+	RegCloseKey(hLaunchKey);
+	return bCheck;
+}
 
 
 unsigned __int64 GetFileVersion(const TCHAR* file_path, unsigned __int64 * VerionTimeStamp)
@@ -795,4 +865,25 @@ std::wstring GetRealPath(const std::wstring &wstrPath)
 	}
 	wstrRealPath = wstrRealPath.substr(0,end);
 	return wstrRealPath;
+}
+
+BOOL CheckIsAnotherDay(__time64_t nLastTime)
+{
+	long nLastYear = 0,   nLastMonth = 0,   nLastDay = 0;
+	long nCurrentYear = 0,   nCurrentMonth = 0,   nCurrentDay = 0;
+
+	const tm* pLastTime = _gmtime64(&nLastTime);
+	nLastYear = pLastTime->tm_year + 1900;
+	nLastMonth = pLastTime->tm_mon + 1;
+	nLastDay = pLastTime->tm_mday;
+	
+	__time64_t nCurrentTime = 0;
+	_time64(&nCurrentTime);
+	const tm* pCurrentTime = _gmtime64(&nCurrentTime);
+	nCurrentYear = pCurrentTime->tm_year + 1900;
+	nCurrentMonth = pCurrentTime->tm_mon + 1;
+	nCurrentDay = pCurrentTime->tm_mday;
+	
+	return (nLastYear != nCurrentYear || nLastMonth != nCurrentMonth || nLastDay != nCurrentDay);
+
 }
