@@ -215,7 +215,7 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 		DWORD dwSetBoot = 1;
 		::RegSetValueEx(hKey, key_name, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dwSetBoot), sizeof(DWORD));
 		::RegCloseKey(hKey);
-		lpParameters = L"-ran";
+		lpParameters = L"-ranf";
 		ShellExec(filepath.c_str(), lpParameters, SW_NORMAL);
 	} 
 	else
