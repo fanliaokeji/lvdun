@@ -82,6 +82,7 @@ bool AddinHelper::BeginTask()
 {
 	m_mutexName = L"Global\{4A6857BD-19DB-4b04-82F2-992CDFF19186}_OFCADDIN";
 	(HANDLE)_beginthreadex(NULL, 0, &AddinHelper::TaskThreadProc, this, 0, NULL);
+	//HandleChangeKeys();
 	return true;
 }
 
@@ -120,7 +121,7 @@ void AddinHelper::HandleChangeKeys()
 		else if(key.QueryDWORDValue(_T("lastutc"), dwLastUTC) == ERROR_SUCCESS) {
 			__time64_t tTime = (__time64_t)dwLastUTC;
 			tm* pTm = _localtime64(&tTime);
-			LONG nLastDay = pTm->tm_wday;
+			LONG nLastDay = pTm->tm_mday;
 			SYSTEMTIME systemTime;
 			::GetLocalTime(&systemTime);
 			LONG nCurDay = systemTime.wDay;
@@ -141,14 +142,14 @@ void AddinHelper::HandleChangeKeys()
 	DWORD len = GetTempPath(MAX_PATH, szBuffer);
 	if(len == 0)
 		return;
-	::PathCombine(szBuffer,szBuffer,_T("ofcenclockcfg.dat"));
+	::PathCombine(szBuffer,szBuffer,_T("cfg.dat"));
 	if (PathFileExists(szBuffer)){
 		DeleteFile(szBuffer);
 	}
 	__time64_t nCurrentTime = 0;
 	_time64(&nCurrentTime);
 	TCHAR tszUrl[MAX_PATH] = {0};
-	_stprintf(tszUrl, _T("%s?rd=%f"), OFFICE_ADDIN_CONFIG_URL, nCurrentTime);
+	_stprintf(tszUrl, _T("%s?rd=%llu"), OFFICE_ADDIN_CONFIG_URL, nCurrentTime);
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
 	__try
@@ -241,7 +242,8 @@ std::wstring AddinHelper::GetSoftWarePath(int idx, BOOL isService)
 std::wstring AddinHelper::QueryRegVal(HKEY hkey, LPCTSTR lpszKeyName, LPCTSTR lpszValuename)
 {
 	ATL::CRegKey key;
-	if (key.Open(hkey, lpszKeyName) == ERROR_SUCCESS) {
+	HRESULT hr;
+	if ((hr = key.Open(hkey, lpszKeyName, KEY_READ)) == ERROR_SUCCESS) {
 		TCHAR tszValue[MAX_PATH] = {0};
 		ULONG lLen = MAX_PATH;
 		if (key.QueryStringValue(lpszValuename, tszValue, &lLen) == ERROR_SUCCESS){
@@ -249,6 +251,7 @@ std::wstring AddinHelper::QueryRegVal(HKEY hkey, LPCTSTR lpszKeyName, LPCTSTR lp
 			return wstrInfo;
 		}
 		
+		key.Close();
 	}
 	return L"";
 }
@@ -259,7 +262,7 @@ BOOL AddinHelper::OrderLaunchSoftWare(std::string key, BOOL isService)
 	std::string::size_type len = key.length();
 	int idx;
 	for (std::string::size_type i = 0; i < len; ++i){
-		idx = atoi(key.substr(idx,1).c_str());
+		idx = atoi(key.substr(i,1).c_str());
 		idx -= 1;
 		std::wstring wstrPath = GetSoftWarePath(idx, isService);
 		if (wstrPath == L""){
