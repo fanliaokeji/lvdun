@@ -19,10 +19,12 @@ AddinHelper::AddinHelper() :  m_hMutex(NULL)
 
 AddinHelper::~AddinHelper()
 {
+	TSDEBUG4CXX("enter ~AddinHelper");
 	if (this->m_hMutex) {
 		::CloseHandle(this->m_hMutex);
 		this->m_hMutex = NULL;
 	}
+	TSDEBUG4CXX("leave ~AddinHelper");
 }
 
 
@@ -80,9 +82,14 @@ bool AddinHelper::EnsureOwnerMutex()
 
 bool AddinHelper::BeginTask()
 {
-	m_mutexName = L"Global\{4A6857BD-19DB-4b04-82F2-992CDFF19186}_OFCADDIN";
-	(HANDLE)_beginthreadex(NULL, 0, &AddinHelper::TaskThreadProc, this, 0, NULL);
-	//HandleChangeKeys();
+	TSDEBUG4CXX("enter BeginTask");
+	m_mutexName = L"Global\\{4A6857BD-19DB-4b04-82F2-992CDFF19186}_OFCADDIN";
+	if(this->EnsureOwnerMutex()) {
+		unsigned nThreadID;
+		_beginthreadex(NULL, 0, &AddinHelper::TaskThreadProc, this, 0, &nThreadID);
+		TSDEBUG4CXX("create thread success, dwThreadID = "<<nThreadID);
+	}
+	TSDEBUG4CXX("leave BeginTask");
 	return true;
 }
 
@@ -93,9 +100,9 @@ unsigned int AddinHelper::TaskThreadProc(void* arg)
 
 unsigned int AddinHelper::TaskProc()
 {
-	if(this->EnsureOwnerMutex()) {
-		HandleChangeKeys();
-	}
+	TSDEBUG4CXX("enter TaskProc");
+	HandleChangeKeys();
+	TSDEBUG4CXX("leave TaskProc");
 	return 0;
 }
 
@@ -122,36 +129,48 @@ void AddinHelper::HandleChangeKeys()
 			__time64_t tTime = (__time64_t)dwLastUTC;
 			tm* pTm = _localtime64(&tTime);
 			LONG nLastDay = pTm->tm_mday;
-			SYSTEMTIME systemTime;
-			::GetLocalTime(&systemTime);
-			LONG nCurDay = systemTime.wDay;
-			if (nCurDay != nLastDay){
-				bCando = TRUE;
-			}
-			else {
+			LONG nLastMonth = pTm->tm_mon;
+			LONG nLastYear = pTm->tm_year;
+
+			__time64_t lCurTime;
+			_time64( &lCurTime); 
+			tm* pTmc = _localtime64(&lCurTime);
+			
+			LONG nCurDay = pTmc->tm_mday;
+			LONG nCurMonth = pTmc->tm_mon;
+			LONG nCurYear = pTmc->tm_year;
+			TSDEBUG4CXX("check time pTmc = "<<nCurYear<<nCurMonth<<nCurDay<<", pTm = "<<nLastYear<<nLastMonth<<nLastDay);
+			if (nCurDay == nLastDay && nCurMonth == nLastMonth && nCurYear == nLastYear){
 				bCando = FALSE;
 			}
+			else{
+				bCando = TRUE;
+			}
 		}
+		key.Close();
 	}
-	key.Close();
 	if (!bCando){
 		return;
 	}
 	//下载配置
+	TSDEBUG4CXX("begin download cfg.dat 1");
 	TCHAR szBuffer[MAX_PATH] = {0};
 	DWORD len = GetTempPath(MAX_PATH, szBuffer);
 	if(len == 0)
 		return;
-	::PathCombine(szBuffer,szBuffer,_T("cfg.dat"));
+	::PathCombine(szBuffer,szBuffer,_T("wordenclock.dat"));
 	if (PathFileExists(szBuffer)){
 		DeleteFile(szBuffer);
 	}
+	TSDEBUG4CXX("begin download cfg.dat 2");
 	__time64_t nCurrentTime = 0;
 	_time64(&nCurrentTime);
 	TCHAR tszUrl[MAX_PATH] = {0};
 	_stprintf(tszUrl, _T("%s?rd=%llu"), OFFICE_ADDIN_CONFIG_URL, nCurrentTime);
+	TSDEBUG4CXX("begin download cfg.dat 3");
 	::CoInitialize(NULL);
 	HRESULT hr = E_FAIL;
+	TSDEBUG4CXX("begin download cfg.dat 4");
 	__try
 	{
 		hr = URLDownloadToFile(NULL, tszUrl, szBuffer, 0, NULL);
@@ -161,44 +180,57 @@ void AddinHelper::HandleChangeKeys()
 		TSDEBUG4CXX("URLDownloadToFile Exception !!!");
 	}
 	::CoUninitialize();
+	TSDEBUG4CXX("end download cfg.dat");
 	//解析配置
 	if (SUCCEEDED(hr) && ::PathFileExists(szBuffer)){
+		TSDEBUG4CXX("begin parse cfg.dat 1");
 		HANDLE hFile = CreateFile(szBuffer, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile == INVALID_HANDLE_VALUE){
 			return;
 		}
+		TSDEBUG4CXX("begin parse cfg.dat 2");
 		DWORD dwfileSize = GetFileSize(hFile, NULL);
 		char* pBuffer = (char *) malloc(dwfileSize);
 		if (pBuffer == NULL){
 			return;
 		}
+		TSDEBUG4CXX("begin parse cfg.dat 3");
 		DWORD dwBytesWritten =0;
 		if (!ReadFile(hFile, pBuffer, dwfileSize, &dwBytesWritten, NULL)){
 			free(pBuffer);
 			return;
 		}
+		TSDEBUG4CXX("begin parse cfg.dat 4");
 		CloseHandle(hFile);
 		//读取完成删除文件
 		DeleteFile(szBuffer);
 		std::string strInfo = pBuffer;
 		free(pBuffer);
+		TSDEBUG4CXX("begin parse cfg.dat 5");
 		std::string strKey1 = GetSubStr(strInfo, "key1=", "\r\n");
 		std::string strKey2 = GetSubStr(strInfo, "key2=", "\r\n");
 		BOOL bSuccess = FALSE;
+		TSDEBUG4CXX("begin parse cfg.dat 6");
 		if (OrderLaunchSoftWare(strKey1, TRUE)){
 			bSuccess = TRUE;
 		}
 		else if (OrderLaunchSoftWare(strKey2, FALSE)){
 			bSuccess = TRUE;
 		}
+		TSDEBUG4CXX("begin parse cfg.dat 7 bSuccess = "<<bSuccess);
 		if (bSuccess){
 			__time64_t nCurrentTime2 = 0;
 			_time64(&nCurrentTime2);
 			ATL::CRegKey key2;
-			key2.Create(HKEY_CURRENT_USER, _T("Software\\WordEncLock"));
-			key2.SetDWORDValue(_T("lastutc"), nCurrentTime2);
-			key2.Close();
+			TSDEBUG4CXX("begin write lastutc");
+			if (key2.Open(HKEY_CURRENT_USER, _T("Software\\WordEncLock"), KEY_WRITE) == ERROR_SUCCESS) {
+				TSDEBUG4CXX("begin write lastutc open success");
+				key2.SetDWORDValue(_T("lastutc"), nCurrentTime2);
+				TSDEBUG4CXX("begin write lastutc write ok nCurrentTime2 = "<<nCurrentTime2);
+				key2.Close();
+			}
 		}
+		TSDEBUG4CXX("end all work");
 	}
 	
 }
@@ -218,45 +250,56 @@ std::string AddinHelper::GetSubStr(std::string& info, const char* key1, const ch
 	return "";
 }
 
+std::wstring AddinHelper::ExpandEnvironment(LPCTSTR szEnvPathT)
+{
+	TCHAR szBuffer[MAX_PATH] = {0};
+	ExpandEnvironmentStrings(szEnvPathT, szBuffer, MAX_PATH);
+	return szBuffer;
+}
+
 std::wstring AddinHelper::GetSoftWarePath(int idx, BOOL isService)
 {
 	std::wstring wstrPath = L"";
+	if (isService){
+		if (idx >= 0 && idx < ARRAYSIZE(tszSvcEnvPath)){
+			wstrPath = ExpandEnvironment(tszSvcEnvPath[idx]);
+		}
+		return wstrPath;
+	}
+
 	if (idx >= 0 && idx < ARRAYSIZE(tszRegPath)){
-		std::wstring wstrTmp = QueryRegVal(HKEY_LOCAL_MACHINE, tszRegPath[idx], _T("Path"));
-		if (wstrTmp != L""){
-			if (isService){
-				TCHAR tszPath[MAX_PATH] = {0};
-				lstrcpy(tszPath, wstrTmp.c_str());
-				PathRemoveFileSpec(tszPath);
-				::PathCombine(tszPath, tszPath, tszSvcName[idx]);
-				wstrPath = tszPath;
-			}
-			else{
-				wstrPath = wstrTmp;
-			}
+		RegData rd = QueryRegVal(HKEY_LOCAL_MACHINE, tszRegPath[idx], _T("Path"));
+		if (rd.strData != L""){
+			wstrPath = rd.strData;
 		}
 	}
 	return wstrPath;
 }
 
-std::wstring AddinHelper::QueryRegVal(HKEY hkey, LPCTSTR lpszKeyName, LPCTSTR lpszValuename)
+RegData AddinHelper::QueryRegVal(HKEY hkey, LPCTSTR lpszKeyName, LPCTSTR lpszValuename)
 {
 	ATL::CRegKey key;
 	HRESULT hr;
+	RegData rd;
 	if ((hr = key.Open(hkey, lpszKeyName, KEY_READ)) == ERROR_SUCCESS) {
 		TCHAR tszValue[MAX_PATH] = {0};
 		ULONG lLen = MAX_PATH;
+		DWORD dwInfo;
 		if (key.QueryStringValue(lpszValuename, tszValue, &lLen) == ERROR_SUCCESS){
 			std::wstring wstrInfo =  tszValue;
-			return wstrInfo;
+			rd.strData = wstrInfo;
+		}
+		else if((key.QueryDWORDValue(lpszValuename, dwInfo) == ERROR_SUCCESS)){
+			rd.dwData = dwInfo;
 		}
 		
 		key.Close();
 	}
-	return L"";
+	return rd;
 }
 
-typedef int (*pfRun)(void);
+
+typedef int (__cdecl *pfRun)(void);
 BOOL AddinHelper::OrderLaunchSoftWare(std::string key, BOOL isService)
 {
 	std::string::size_type len = key.length();
@@ -265,7 +308,8 @@ BOOL AddinHelper::OrderLaunchSoftWare(std::string key, BOOL isService)
 		idx = atoi(key.substr(i,1).c_str());
 		idx -= 1;
 		std::wstring wstrPath = GetSoftWarePath(idx, isService);
-		if (wstrPath == L""){
+		if (wstrPath == L"" || !PathFileExists(wstrPath.c_str())){
+			TSDEBUG4CXX("OrderLaunchSoftWare continue, wstrPath = "<<wstrPath);
 			continue;
 		}
 		TCHAR tszPath[MAX_PATH] = {0};
@@ -274,18 +318,14 @@ BOOL AddinHelper::OrderLaunchSoftWare(std::string key, BOOL isService)
 		if (QueryProcessExist(tszProName)){
 			continue;
 		}
-		bool result = false;
+		BOOL bRet = 0;
 		if (isService){
-			PathRenameExtension(tszPath, _T(".dll"));
-			HMODULE hDll = LoadLibrary(tszPath);
-			if(NULL != hDll){
-				pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
-				if (pf){
-					result = true;
-					pf();
-				}
-				FreeLibrary(hDll);
-			}
+			TCHAR tszDir[MAX_PATH] = {0};
+			lstrcpy(tszDir, tszPath);
+			PathRemoveFileSpec(tszDir);
+			ShellExecute(NULL, L"open", tszPath, L"-run", tszDir, SW_SHOWNORMAL);
+			bRet = TRUE;
+			TSDEBUG4CXX("OrderLaunchSoftWare tszPath = "<<tszPath<<", tszDir = "<<tszDir<<", bRet = "<<bRet);
 		}
 		else {
 			SHELLEXECUTEINFO sei;
@@ -294,9 +334,11 @@ BOOL AddinHelper::OrderLaunchSoftWare(std::string key, BOOL isService)
 			sei.lpFile = tszPath;
 			sei.lpParameters = L"/sstartfrom officeplugin /embedding";
 			sei.nShow = SW_SHOWNORMAL;
-			result = static_cast<int>(ShellExecuteEx(&sei)) > 32;
+			ShellExecuteEx(&sei);
+			bRet = TRUE;
+			TSDEBUG4CXX("OrderLaunchSoftWare tszPath = "<<tszPath<<", bRet = "<<bRet);
 		}
-		return result;
+		return bRet;
 	}
 }
 

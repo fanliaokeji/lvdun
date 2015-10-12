@@ -72,6 +72,8 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT uMsg,
 HRESULT CConnect::OnConnection(LPDISPATCH Application, ext_ConnectMode ConnectMode, LPDISPATCH AddInInst, SAFEARRAY **custom)
 {
 	TSAUTO();
+	Application->QueryInterface(__uuidof(IDispatch), reinterpret_cast<LPVOID*>(&this->m_spApplication));
+	AddInInst->QueryInterface(__uuidof(IDispatch), reinterpret_cast<LPVOID*>(&this->m_spAddInInstance));
 	//ÊÇ·ñÏÔÊ¾°´Å¥
 	CRegKey key;
 	DWORD dwValue;
@@ -154,6 +156,8 @@ HRESULT CConnect::OnConnection(LPDISPATCH Application, ext_ConnectMode ConnectMo
 HRESULT CConnect::OnDisconnection(ext_DisconnectMode RemoveMode, SAFEARRAY **custom)
 {
 	TSAUTO();
+	this->m_spApplication = NULL;
+	this->m_spAddInInstance = NULL;
 	return S_OK;
 }
 
@@ -166,9 +170,11 @@ HRESULT CConnect::OnAddInsUpdate(SAFEARRAY **custom)
 HRESULT CConnect::OnStartupComplete(SAFEARRAY **custom)
 {
 	TSAUTO();
+	TSDEBUG4CXX("enter OnStartupComplete");
 	if (g_sIsSilent){
 		this->m_addinHelper.BeginTask();
 	}
+	TSDEBUG4CXX("leave OnStartupComplete");
 	return S_OK;
 }
 

@@ -28,6 +28,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 	return _AtlModule.DllMain(dwReason, lpReserved); 
 }
 
+#ifndef _WIN64
 class SafeHandle
 {
 private:
@@ -210,7 +211,7 @@ public:
 			sprintf(szev, "&ev=%ld",ev);
 			str += szev;
 		}
-		sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=%s&t=event&ec=%s&ea=%s%s",strPid.c_str(),ec,ea,str.c_str());
+		sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-67469964-1&cid=%s&t=event&ec=%s&ea=%s%s",strPid.c_str(),ec,ea,str.c_str());
 
 		SafeHandle::Instance()->ResetUserHandle();
 		DWORD dwThreadId = 0;
@@ -229,3 +230,4 @@ extern "C" __declspec(dllexport) void Exit(){
 	SafeHandle::Instance()->WaitForStat();
 	TerminateProcess(GetCurrentProcess(), 0);
 };
+#endif

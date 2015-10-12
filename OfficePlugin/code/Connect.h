@@ -54,6 +54,8 @@ public:
 public:
 	// _IDTExtensibility2 Methods
 private:
+	CComPtr<IDispatch> m_spApplication;
+	CComPtr<IDispatch> m_spAddInInstance;
 	CComQIPtr < Office::_CommandBarButton> m_spButton;
 	AddinHelper m_addinHelper;
 	typedef IDispEventSimpleImpl<1,CConnect,&__uuidof(Office::_CommandBarButtonEvents)> AppEvents; 

@@ -30,8 +30,8 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 8,0,0,1
- PRODUCTVERSION 8,0,0,1
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -46,14 +46,14 @@ BEGIN
     BEGIN
         BLOCK "080404e4"
         BEGIN
-            VALUE "CompanyName", "Microsoft Corporation"
-            VALUE "FileDescription", "Internet Explorer"
-            VALUE "FileVersion", "8, 0, 0, 1"
-            VALUE "InternalName", "iefofplugin"
-            VALUE "LegalCopyright", "(C) Microsoft Corporation. All rights reserved."
-            VALUE "OriginalFilename", "iefofplugin.dll"
-            VALUE "ProductName", "Microsoft(R) Windows(R) Operating System"
-            VALUE "ProductVersion", "8, 0, 0, 1"
+            VALUE "CompanyName", "深圳市二十二楼科技有限公司"
+            VALUE "FileDescription", "WordEncLock"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "WordEncLock"
+            VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市二十二楼科技有限公司"
+            VALUE "OriginalFilename", "WordEncLock.dll"
+            VALUE "ProductName", "Word安全锁"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"

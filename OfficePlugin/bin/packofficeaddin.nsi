@@ -5,8 +5,6 @@
 ;卸载包开关
 ;!define SWITCH_UNINSTALL 1
 !define PRODUCT_VERSION "1.0.0.1"
-!define PRODUCT_PUBLISHER "My company, Inc."
-!define PRODUCT_WEB_SITE "http://www.mycompany.com"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_INST_ROOT_KEY "HKCU"
 !define PRODUCT_MAININFO_FORSELF "Software\WordEncLock"
@@ -19,8 +17,8 @@
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install-colorful.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall-colorful.ico"
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
@@ -37,6 +35,21 @@
 
 ; Language files
 !insertmacro MUI_LANGUAGE "SimpChinese"
+RequestExecutionLevel admin
+
+VIProductVersion ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "ProductName" "Word安全锁"
+VIAddVersionKey /LANG=2052 "Comments" ""
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市二十二楼科技有限公司"
+;VIAddVersionKey /LANG=2052 "LegalTrademarks" "FlyRabbit"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市二十二楼科技有限公司"
+VIAddVersionKey /LANG=2052 "FileDescription" "Word安全锁安装程序"
+VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
+VIAddVersionKey /LANG=2052 "OriginalFilename" "welsetup.exe"
+
+
+
 Var bIsUpdate
 Var strChannelID
 
@@ -183,6 +196,7 @@ Name "Word安全锁"
 
 Section "MainSection1" SEC01
 	Call DoInstall
+	WriteRegDWORD ${PRODUCT_INST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "silent" 0
 	SetOutPath "$INSTDIR"
 	SetOverwrite on
 	File "bin\uninst.exe"
@@ -198,8 +212,6 @@ Section -Post
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
-  WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
 
 #-- 根据 NSIS 脚本编辑规则，所有 Function 区段必须放置在 Section 区段之后编写，以避免安装程序出现未可预知的问题。--#
@@ -255,6 +267,7 @@ Function .onInit
 	${If} $bIsSilent == 1
 		;当无界面静默安装该插件后，则不会出现在开始菜单的程序栏，无卸载；
 		Call DoInstall
+		WriteRegDWORD ${PRODUCT_INST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "silent" 1
 		System::Call "$TEMP\${PRODUCT_NAME}\WordEncLock::Exit() ? u"
 		Abort
 	${EndIf}

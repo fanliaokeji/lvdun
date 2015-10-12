@@ -34,5 +34,5 @@ using namespace VBE6;
 using namespace Word;
 
 #define TSLOG
-#define TSLOG_GROUP "OfficeAddin"
+#define TSLOG_GROUP "DD"
 #include "tslog\tslog.h"
