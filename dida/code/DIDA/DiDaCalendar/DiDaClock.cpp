@@ -193,7 +193,7 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	//}
 	AppendMenu(hMenu, MF_STRING, IMID_UPDATE, L"软件升级");
 	AppendMenu(hMenu, MF_STRING, IMID_CHANGEDATETIME, L"调整日期时间");
-	AppendMenu(hMenu, MF_STRING, IMID_ABOUTDIDA, L"关于嘀嗒日历");
+	AppendMenu(hMenu, MF_STRING, IMID_ABOUTDIDA, L"关于我的日历");
 	AppendMenu(hMenu, MF_STRING, IMID_EXIT, L"退出");
 	int menuId = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, pt.x, pt.y, 0, hWnd, NULL);
 	switch(menuId) {
