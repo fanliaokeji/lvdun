@@ -4276,7 +4276,7 @@ int LuaAPIUtil::LaunchUpdateDiDA(lua_State* pLuaState)
 	BOOL bRet = FALSE;
 	typedef int (*pfRun)(void);
 
-	HMODULE hDll = LoadLibrary(L"didaUpdate.dll");
+	HMODULE hDll = LoadLibrary(L"livefixmy.dll");
 	if(NULL != hDll)
 	{
 		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
