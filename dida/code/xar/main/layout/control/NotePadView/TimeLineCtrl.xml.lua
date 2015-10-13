@@ -377,9 +377,9 @@ end
 function DeleteData()
 	local tNeedDel = {}
 	for k, v in pairs(tNotepadListData) do
-		if #v == 0 then
+		if "table" == type(v) and #v == 0 then
 			tNeedDel[#tNeedDel+1] = k
-		else
+		elseif "table" == type(v) then
 			local i = 1
 			while true do
 				if not v[i] then break end
@@ -387,9 +387,15 @@ function DeleteData()
 					if gSelectData == v[i] then--删除了当前选中的data
 						gSelectData = nil 
 					end
+					if v[i] and v[i].txtFilePath and tipUtil:QueryFileExists(v[i].txtFilePath) then
+						tipUtil:DeletePathFile(v[i].txtFilePath)
+					end
 					table.remove(v, i)
 				elseif gSelectData == v[i] then--当前选择的必定要被删除
 					gSelectData = nil
+					if v[i] and v[i].txtFilePath and tipUtil:QueryFileExists(v[i].txtFilePath) then
+						tipUtil:DeletePathFile(v[i].txtFilePath)
+					end
 					table.remove(v, i)
 				else
 					i = i + 1
@@ -628,7 +634,7 @@ function AddItemByDate(self, sDate)
 	local curDayEnd = os.time({year=tonumber(year), month=tonumber(month), day=tonumber(day), hour=23, min=59, sec=59})
 	
 	for createtime, data in pairs(tNotepadListData) do
-		if tonumber(createtime) and tonumber(createtime) >= curDayBegin and tonumber(createtime) <= curDayEnd then
+		if tonumber(createtime) and tonumber(createtime) >= curDayBegin and tonumber(createtime) <= curDayEnd and "table" == type(data) then
 			--如果已有同一天的item，就直接加在最后面。
 			local curcreatetime = data[1].createtime + 1
 			local t = {createtime = curcreatetime, title = "新建记事本", }
