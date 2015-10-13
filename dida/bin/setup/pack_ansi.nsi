@@ -489,6 +489,7 @@ Function MergeConfig
 	StrCmp $0 "" End
 	IfFileExists "$0" 0 End
 	IfFileExists "$0\DIDA" 0 End
+	IfFileExists "$0\mycalendar" End
 	CopyFiles /silent "$0\DIDA" "$0\mycalendar"
 	RMDir /r /REBOOTOK "$0\DIDA"
 	
@@ -619,16 +620,12 @@ Function CmdSilentInstall
 	${GetOptions} $R4 "/s"  $R0
 	IfErrors FunctionReturn 0
 	SetSilent silent
-	;SetOutPath "$TEMP\${PRODUCT_NAME}"
-	;SetOverwrite on
-	;File "bin\mycalendarsetup.dll"
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
 	${EndIf}
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
-		;System::Call 'mycalendarsetup::GetFileVersionString(t $0, t) i(r0, .r1).r2'
 		${GetFileVersion} $0 $1
 		${VersionCompare} $1 ${PRODUCT_VERSION} $2
 		${If} $2 == "2" ;已安装的版本低于该版本
@@ -651,24 +648,16 @@ Function CmdSilentInstall
 	;发退出消息
 	Call CloseExe
 	Call DoInstall
-	;我的日历静默安装时，直接自动关联txt格式
-	;暂时关闭关联txt功能
-	;Call SetTxtAssociation
-	WriteRegDWORD HKCU "Software\ddnotepad" "Associated" 0
 	;将安装方式写入注册表
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
-	;Sleep 2000
 	SetOutPath "$INSTDIR\program"
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
-	;添加dida记事本快捷方式
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\嘀嗒记事本.lnk" "$INSTDIR\program\ddnotepad.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;锁定到任务栏
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		;CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
@@ -677,14 +666,6 @@ Function CmdSilentInstall
 		Call GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0
-			;ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			;StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			;Call RefreshIcon
-			;Sleep 500
-			;SetOutPath "$INSTDIR\program"
-			;CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
-			;ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-			
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
@@ -695,12 +676,6 @@ Function CmdSilentInstall
 		${EndIf}
 	${Endif}
 	
-	;SetOutPath "$INSTDIR\program"
-	;桌面快捷方式
-	;CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\shortcut.ico"
-	;${RefreshShellIcons}
-	;StrCpy $R0 "$DESKTOP\${SHORTCUT_NAME}.lnk"
-	;Call RefreshIcon
 	;静默安装根据命令行开机启动
 	System::Call "kernel32::GetCommandLineA() t.R1"
 	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
@@ -711,7 +686,6 @@ Function CmdSilentInstall
 	IfErrors +3 0
 	StrCpy $Bool_Sysstup 1
 	${SetSysBoot}
-	;WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /sstartfrom sysboot /embedding'
 	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	System::Call "kernel32::GetCommandLineA() t.R1"
@@ -732,13 +706,7 @@ Function CmdSilentInstall
 	${EndIf}
 	
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "ddfixar.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
-	;捆绑360
-	;${If} ${PRODUCT_VERSION} == "1.0.0.5"
-	;	IfFileExists "$INSTDIR\program\360ini.dll" 0 +3
-	;	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-	;	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-	;${EndIf}
+	ExecShell open "myfixar.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
 	ExitInstal:
 	Call ExitWithCheck
 	Abort
@@ -1241,6 +1209,7 @@ Function OnClick_Return
 	ShowWindow $BGImage 1
 	ShowWindow $Btn_Next 1
 	ShowWindow $Btn_Agreement 1
+	ShowWindow $ck_sysstup 1
 	ShowWindow $ck_xieyi 1
 	ShowWindow $Btn_Zidingyi 1
 	
@@ -1637,8 +1606,6 @@ Function NSD_TimerFun
 	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
-	;添加dida记事本快捷方式
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\嘀嗒记事本.lnk" "$INSTDIR\program\ddnotepad.exe" "/sstartfrom startmenuprograms"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 
@@ -1699,7 +1666,7 @@ Function OnClick_FreeUse
 	${Else}
 		StrCpy $R1 "noupdate"
 	${EndIf}
-	ExecShell open "ddfixar.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
+	ExecShell open "myfixar.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
 	${IF} $Bool_bind360install == 1
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
