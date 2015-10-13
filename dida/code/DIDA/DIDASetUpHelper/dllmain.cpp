@@ -375,7 +375,7 @@ extern "C" __declspec(dllexport) void Send2DidaAnyHttpStat(CHAR *op, CHAR *cid, 
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}*/
-	std::string str = "http://stat.didarili.com:8082/c?peerid=";
+	std::string str = "http://stat.tie7.com:8082/c?peerid=";
 	str += szPid;
 	str += "&appid=1001&proid=12";
 	str += "&op=";
