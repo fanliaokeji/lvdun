@@ -17,7 +17,7 @@ function OnShowWindow(self, bVisible)
 	local objTree = self:GetBindUIObjectTree()
 	local objHostWnd = objTree:GetBindHostWnd()
 	if objHostWnd then
-		objHostWnd:SetTitle("嘀嗒在线升级")
+		objHostWnd:SetTitle("我的在线升级")
 	end
 	
 	local objRootCtrl = objTree:GetUIObject("root.layout")
@@ -275,7 +275,7 @@ function SetVersionText(objRootCtrl)
 	
 	local strVersion = tNewVersionInfo.strVersion
 	
-	local strText = "发现新版本嘀嗒日历V"..tostring(strVersion)
+	local strText = "发现新版本我的日历V"..tostring(strVersion)
 	objVersion:SetText(strText)
 	
 	local objText1 = objContent:GetObject("TipUpdate.Content.Text1")

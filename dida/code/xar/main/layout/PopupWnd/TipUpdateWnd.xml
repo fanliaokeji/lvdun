@@ -68,7 +68,7 @@
 										<top>20</top>
 										<width>215</width>
 										<height>25</height>
-										<text>嘀嗒日历在线升级</text>
+										<text>我的日历在线升级</text>
 										<textcolor>system.white</textcolor>
 										<font>font.text22.bold</font>
 										<valign>center</valign>
@@ -130,7 +130,7 @@
 												<top>0</top>
 												<width>father.width</width>
 												<height>20</height>
-												<text>发现新版本嘀嗒日历</text>
+												<text>发现新版本我的日历</text>
 												<textcolor>system.white</textcolor>
 												<font>font.text15</font>
 												<valign>center</valign>
