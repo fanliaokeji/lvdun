@@ -17,12 +17,12 @@ if not %errorlevel%==0 (
 	goto done
 )
 cd /d "%basedir:~1,-1%\Release"
-call :printversion "%cd%\DIDA.exe" DIDA.exe
-call :printversion "%cd%\ddnotepad.exe" ddnotepad.exe
+call :printversion "%cd%\mycalendar.exe" mycalendar.exe
+call :printversion "%cd%\myfixar.exe" myfixar.exe
 for /r %%i in (*.dll) do (
    call :printversion "%%i" %%~nxi
 )
-for %%b in (DIDA,ddnotepad,DDKernel,ddnpkernel,DiDaCalendar,DiDaCalendar64,DIDASetUpHelper) do (
+for %%b in (mycalendar,myfixar,mycalendarsetup,mykernel,myrlcalendar,myrlcalendar64) do (
 	md !pdbdir!\%%b_cod
 	copy /y "%basedir:~1,-1%%%b\Release\*.cod" !pdbdir!\%%b_cod\
 )
@@ -38,7 +38,7 @@ echo ±‡“ÎÕÍ≥…
   echo @echo off
   echo cd /d %%~dp0
   echo for /r %%%%i in ^(*.dll *.exe^) do ^(
-  echo if %%%%~ni == DIDASetUpHelper ^(
+  echo if %%%%~ni == mycalendarsetup ^(
   echo copy /y %%%%i "..\..\..\..\..\bin\setup\bin\"
   echo ^) else ^(
   echo copy /y %%%%i "..\..\..\..\..\bin\setup\input_main\program\"
@@ -63,7 +63,7 @@ set bin_path=%bin_path:\=\\%
 set bin_path=%bin_path:~1,-1%
 echo printversion bin_path=%bin_path%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') do (
-	if "%bin_path:~-8%" == "DIDA.exe" (
+	if "%bin_path:~-14%" == "mycalendar.exe" (
 		set pdbdir=%basedir:~1,-1%\%%i\pdb__!build_date!__!build_time!__!random!\
 		echo begin make pdbdir= !pdbdir!
 		md !pdbdir!
