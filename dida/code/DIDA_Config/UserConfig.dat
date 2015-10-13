@@ -1,6 +1,6 @@
 function GetSubTable()
 	local t = {
-		["strServerConfigURL"] = "http://dl.didarili.com/update/1.0/DiDaServerConfig.dat", 
+		["strServerConfigURL"] = "http://dl.tie7.com/update/1.0/serverconfig.dat", 
 	}
 	return t
 end
