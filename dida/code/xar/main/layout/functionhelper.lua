@@ -632,7 +632,7 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 		strCenterTextureID = "DiDa.ExitRemind.Exit.Center"
 		strRemindText = "是否需要为您新增广告过滤功能？"
 		strRemindText1 = "您的电脑日历已升级成功"
-		strTitle = "嘀嗒-任务栏日历"
+		strTitle = "我的-任务栏日历"
 		nStartPos = 42
 		tCenterPos={141, 2, 177, 135}
 	else
@@ -659,7 +659,7 @@ function ShowDeleteNotepadRemindWnd(strType, callback)
 		["callback"] = callback,
 		["restore"] = function()
 						Exitbtn:SetText("退出")
-						title:SetText("嘀嗒-任务栏日历")
+						title:SetText("我的-任务栏日历")
 						CenterImg:SetTextureID("DiDa.ExitRemind.Exit.Center")
 						CenterImg:SetObjPos2(141, 2, 177, 135)
 						ExitRemindText1:SetVisible(true)
