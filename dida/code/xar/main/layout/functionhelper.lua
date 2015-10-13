@@ -170,7 +170,7 @@ end
 
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId")
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\PeerId")
 	if IsRealString(strPeerID) then
 		return strPeerID
 	end
@@ -180,13 +180,13 @@ function GetPeerID()
 		return ""
 	end
 	
-	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\PeerId", strRandPeerID)
+	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\PeerId", strRandPeerID)
 	return strRandPeerID
 end
 
 --渠道
 function GetInstallSrc()
-	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallSource")
+	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\InstallSource")
 	if not IsNilString(strInstallSrc) then
 		return tostring(strInstallSrc)
 	end
@@ -280,7 +280,7 @@ function SendDiDaReport(nOPeration)
 		strPort = "8083"
 	end
 	
-	local strUrl = "http://stat.didarili.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+	local strUrl = "http://stat.tie7.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
 					.."&proid=12&op="..tostring(nOPeration).."&cid="..(strChannelID)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
@@ -1198,7 +1198,7 @@ function GetCfgPathWithName(strCfgName)
 		return ""
 	end
 	
-	local strCfgFilePath = tipUtil:PathCombine(strBaseDir, "DiDa\\"..tostring(strCfgName))
+	local strCfgFilePath = tipUtil:PathCombine(strBaseDir, "mycalendar\\"..tostring(strCfgName))
 	return strCfgFilePath or ""
 end
 
