@@ -170,7 +170,7 @@ function LaunchDDAR()
 	if nSetBoot ~= 1 then
 		return
 	end
-	local strExeName = "ddfixar.exe"
+	local strExeName = "myfixar.exe"
 	if tipUtil:QueryProcessExists(strExeName) then
 		return
 	end
