@@ -18,10 +18,6 @@ Var Btn_Guanbi
 Var Txt_Browser
 Var Btn_Browser
 Var Edit_BrowserBg
-;勾选文件关联
-Var ck_txtassoc
-Var Lbl_txtassoc
-Var Bool_txtassoc
 
 Var ck_DeskTopLink
 Var Bool_DeskTopLink
@@ -55,20 +51,20 @@ Var str_ChannelID
 
 !define INSTALL_CHANNELID "0001"
 
-!define PRODUCT_NAME "DIDA"
-!define SHORTCUT_NAME "嘀嗒日历"
-!define PRODUCT_VERSION "1.0.0.20"
-!define VERSION_LASTNUMBER 20
+!define PRODUCT_NAME "mycalendar"
+!define SHORTCUT_NAME "我的日历"
+!define PRODUCT_VERSION "1.0.0.23"
+!define VERSION_LASTNUMBER 23
 !define NeedSpace 10240
-!define EM_OUTFILE_NAME "DIDASetupV${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
+!define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
-!define PRODUCT_PUBLISHER "DIDA"
+!define PRODUCT_PUBLISHER "mycalendar"
 !define PRODUCT_WEB_SITE ""
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define PRODUCT_MAININFO_FORSELF "Software\DDCalendar"
+!define PRODUCT_MAININFO_FORSELF "Software\mycalendar"
 
 ;卸载包开关（请不要轻易打开）
 ;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
@@ -99,12 +95,12 @@ SetFont 宋体 9
 RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
-VIAddVersionKey /LANG=2052 "ProductName" "${SHORTCUT_NAME}"
+VIAddVersionKey /LANG=2052 "ProductName" "我的日历"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "深圳市中伟泰科技有限公司"
-;VIAddVersionKey /LANG=2052 "LegalTrademarks" "DIDA"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市中伟泰科技有限公司"
-VIAddVersionKey /LANG=2052 "FileDescription" "${SHORTCUT_NAME}安装程序"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市二十二楼科技有限公司"
+;VIAddVersionKey /LANG=2052 "LegalTrademarks" "mycalendar"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2015-2017 深圳市二十二楼科技有限公司"
+VIAddVersionKey /LANG=2052 "FileDescription" "我的日历安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "OriginalFilename" ${EM_OUTFILE_NAME}
@@ -126,7 +122,7 @@ Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 !else
 	OutFile "bin\${EM_OUTFILE_NAME}"
 !endif
-InstallDir "$PROGRAMFILES\DIDA"
+InstallDir "$PROGRAMFILES\mycalendar"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 Section MainSetup
@@ -166,6 +162,45 @@ SectionEnd
 !define CreateLabel `!insertmacro _CreateLabel`
 /*封装创建ui的接口end*/
 
+;循环杀进程
+!macro _FKillProc strProcName
+	Push $R3
+	Push $R0
+	${For} $R3 0 6
+		FindProcDLL::FindProc "${strProcName}.exe"
+		${If} $R3 == 6
+		${AndIf} $R0 != 0
+			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
+			Abort
+		${ElseIf} $R0 != 0
+			KillProcDLL::KillProc "${strProcName}.exe"
+			Sleep 250
+		${Else}
+			${Break}
+		${EndIf}
+	${Next}
+	Push $R0
+	Push $R3
+!macroend
+!define FKillProc "!insertmacro _FKillProc"
+
+!macro _RenameDeleteFile strFilePath BeginRename RenameOK
+	Push $1
+	Push $0
+	IfFileExists ${strFilePath} 0 ${RenameOK}
+	${BeginRename}:
+	System::Call 'kernel32::QueryPerformanceCounter(*l.r1)'
+	System::Int64Op $1 % 1000
+	Pop $0
+	IfFileExists "$R0.$0" ${BeginRename}
+	Rename $R0 "$R0.$0"
+	Delete /REBOOTOK "$R0.$0"
+	${RenameOK}:
+	Pop $0
+	Pop $1
+!macroend
+!define RenameDeleteFile "!insertmacro _RenameDeleteFile"
+
 Var isMainUIShow
 Function HandlePageChange
 	${If} $MSG = 0x408
@@ -198,152 +233,17 @@ Function Random
 FunctionEnd
 
 Function CloseExe
-	${For} $R3 0 6
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddfixar.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddfixar.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddnotepad.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddnotepad.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
+	${FKillProc} "DIDA"
+	${FKillProc} "ddfixar"
+	${FKillProc} "ddnotepad"
+	${FKillProc} "mycalendar"
+	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::FindClockWindow() i.r0"
 	${If} $0 != 0
 		SendMessage $0 1344 100 100
 	${EndIf}
 	Sleep 250
-FunctionEnd
-
-;创建ddtxtfile节点
-Function CreateHKCRddtxtfile
-	IfFileExists "$INSTDIR\program\ddnotepad.exe" 0 EndFunc
-	Push $0
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$0" "6.0" $1
-	${If} $1 == 2
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt"
-	${Else}
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice"
-	${EndIf}
-	ReadRegStr $0 HKCU $2 "Progid"
-	StrCpy $1 ""
-	${If} $0 != "ddtxtfile"
-	${AndIf} $0 != ""
-		  ReadRegStr $1 HKCR "$0\DefaultIcon" ""
-	${EndIf}
-	;先找HKCU下的， 再找HKCR下.txt正在使用的，最后直接找txtfile的，最最后写死一个值
-	${If} $1 == ""
-		ReadRegStr $0 HKCR ".txt" ""
-		ReadRegStr $1 HKCR "$0\DefaultIcon" ""
-		${If} $1 == ""
-			ReadRegStr $1 HKCR "txtfile\DefaultIcon" ""
-		${EndIf}
-		${If} $1 == ""
-			StrCpy $1 "%SystemRoot%\system32\imageres.dll,-102"
-		${EndIf}
-	${EndIf}
-	WriteRegStr HKCR "ddtxtfile\DefaultIcon" "" "$1"
-	WriteRegStr HKCR "ddtxtfile\shell\open\command" "" '"$INSTDIR\program\ddnotepad.exe" "%1" /sstartfrom association'
-	Pop $2
-	Pop $1
-	Pop $0
-	EndFunc:
-FunctionEnd
-;抢txt关联
-Function SetTxtAssociation
-	IfFileExists "$INSTDIR\program\ddnotepad.exe" 0 EndFunc
-	Push $0
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$0" "6.0" $1
-	${If} $1 == 2
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt"
-	${Else}
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice"
-	${EndIf}
-	ReadRegStr $0 HKCU $2 "Progid"
-	${If} $1 != 2
-		DeleteRegKey HKCU $2
-	${EndIf}
-	StrCpy $1 ""
-	${If} $0 != "ddtxtfile"
-	${AndIf} $0 != ""
-		  WriteRegStr HKCU $2 "ddnotepad_backup" "$0"
-	${EndIf}
-	Call CreateHKCRddtxtfile
-	WriteRegStr HKCU $2 "Progid" "ddtxtfile"
-	;添加到打开方式列表
-	WriteRegStr HKCR "Applications\ddnotepad.exe\shell\open\command" "" '"$INSTDIR\program\ddnotepad.exe" "%1" /sstartfrom association'
-	WriteRegStr HKCR "Applications\ddnotepad.exe\shell\edit\command" "" '"$INSTDIR\program\ddnotepad.exe" "%1" /sstartfrom association'
-	Pop $2
-	Pop $1
-	Pop $0
-	EndFunc:
-FunctionEnd
-
-;恢复txt关联
-Function un.ReSetTxtAssociation
-	Push $0
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$0" "6.0" $1
-	${If} $1 == 2
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt"
-	${Else}
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice"
-	${EndIf}
-	
-	ReadRegStr $0 HKCU $2 "Progid"
-	ReadRegStr $1 HKCU $2 "ddnotepad_backup"
-	${If} $0 == "ddtxtfile"
-		DeleteRegKey HKCR "ddtxtfile"
-		;DeleteRegKey HKCU $2
-		DeleteRegValue HKCU $2 "Progid"
-	${EndIf}
-	${If} $1 != ""
-		WriteRegStr HKCU $2 "Progid" "$1"
-	${EndIf}
-	DeleteRegValue  HKCU $2 "ddnotepad_backup"
-	;从打开方式列表删除
-	DeleteRegKey HKCR "Applications\ddnotepad.exe"
-	Pop $2
-	Pop $1
-	Pop $0
 FunctionEnd
 
 Function NSISModifyCfgFile
@@ -353,7 +253,7 @@ Function NSISModifyCfgFile
 	push $3
 	StrCpy $1 ${NSIS_MAX_STRLEN}
 	StrCpy $0 ""
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
 	StrCpy $3 ""
 	${If} $0 != ""
 		ClearErrors
@@ -389,29 +289,29 @@ FunctionEnd
 		push $1
 		push $2
 		;干掉老的开机启动
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar"
 		;判断lpath是否存在
 		StrCpy $1 "true"
 		ClearErrors
-		ReadRegStr $0 HKCU "Software\DDCalendar" "lpath"
+		ReadRegStr $0 HKCU "Software\mycalendar" "lpath"
 		IfErrors 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot error')"
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot error')"
 		StrCpy $1 "false"
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
 		${If} $1 != "false"
 			${If} $0 != ""
 			${AndIf} $0 != 0
 				IfFileExists "$0" +3 0
-				System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
+				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
 				StrCpy $1 "false"
 			${Else}
 				StrCpy $1 "false"
 			${EndIf}
 		${EndIf}
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
 		;设置/取消开机启动
 		${If} $Bool_Sysstup == 1
-			WriteRegDWORD HKCU "Software\DDCalendar" "setboot" 1
+			WriteRegDWORD HKCU "Software\mycalendar" "setboot" 1
 			${If} $1 != "false"
 				;文件存在
 				push $0
@@ -419,20 +319,20 @@ FunctionEnd
 				Call ${strCallFlag}GetLastPart
 				pop $2
 				StrCpy $1 $2 -4
-				System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
 				;在RUN下面找，有则不做
 				ClearErrors
 				ReadRegStr $1 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				IfErrors 0 hasfind
 					${StrFilter} $0 "-" "" "" $0
-					System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
-					StrCpy $2 "$INSTDIR\program\ddfixar.exe"
+					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
+					StrCpy $2 "$INSTDIR\program\myfixar.exe"
 					${StrFilter} $2 "-" "" "" $2
-					System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
+					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
 					${If} $0 != $2
 					${AndIf} $0 != "$2"
 					${AndIf} $0 != ""
-						System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
+						System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
 						push $0
 						Call ${strCallFlag}GetParent
 						pop $0
@@ -440,23 +340,23 @@ FunctionEnd
 						${If} "$1" == "$2"
 							RMDir /r "$0"
 						${Else}
-							System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
+							System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
 						${EndIf}
 					${EndIf}
-					WriteRegStr HKCU "Software\DDCalendar" "lpath" "$INSTDIR\program\ddfixar.exe"
-					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "ddfixar" '"$INSTDIR\program\ddfixar.exe"'
+					WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
+					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe"'
 				hasfind:
 			${Else}
 				;文件不存在
-				WriteRegStr HKCU "Software\DDCalendar" "lpath" "$INSTDIR\program\ddfixar.exe"
-				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "ddfixar" '"$INSTDIR\program\ddfixar.exe"'
+				WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
+				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe"'
 			${EndIf}
 		${Else}
 			${If} "${strCallFlag}" == "un."
-				DeleteRegKey HKCU "Software\DDCalendar"
+				DeleteRegKey HKCU "Software\mycalendar"
 			${Else}
-				DeleteRegValue HKCU "Software\DDCalendar" "lpath"
-				DeleteRegValue HKCU "Software\DDCalendar" "setboot"
+				DeleteRegValue HKCU "Software\mycalendar" "lpath"
+				DeleteRegValue HKCU "Software\mycalendar" "setboot"
 			${EndIf}
 			${If} $1 != "false"
 				;lpath存在
@@ -467,16 +367,16 @@ FunctionEnd
 				StrCpy $1 $2 -4
 				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				
-				System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
 				${StrFilter} $0 "-" "" "" $0
-				System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
-				StrCpy $2 "$INSTDIR\program\ddfixar.exe"
+				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
+				StrCpy $2 "$INSTDIR\program\myfixar.exe"
 				${StrFilter} $2 "-" "" "" $2
-				System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
+				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
 				${If} $0 != $2
 				${AndIf} $0 != "$2"
 				${AndIf} $0 != ""
-					System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
+					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
 					push $0
 					Call ${strCallFlag}GetParent
 					pop $0
@@ -484,12 +384,12 @@ FunctionEnd
 					${If} "$1" == "$2"
 						RMDir /r "$0"
 					${Else}
-						System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
+						System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
 					${EndIf}
 				${EndIf}
 			${Else}
 				;lpath不存在do nothing
-				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "ddfixar"
+				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar"
 			${EndIf}
 		${EndIf}
 		pop $2
@@ -503,13 +403,120 @@ FunctionEnd
 !define SetSysBoot 'Call InstSetSysBoot'
 !define UnSetSysBoot 'Call un.InstSetSysBoot'
 
+;卸载老的文件
+Function UnstOld
+	Push $0
+	Push $1
+	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
+	StrCmp $0 "" End
+	IfFileExists $0 0 End
+	;注册表
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DIDA"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\App Paths\DIDA.exe"
+	DeleteRegKey HKCU "Software\ddnotepad"
+	;删除自用的注册表信息
+	DeleteRegKey HKLM "Software\DDCalendar"
+	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "ddfixar"
+	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
+	DeleteRegKey HKCU "Software\DDCalendar"
+		
+	;删除
+	RMDir /r "$0\xar"
+	Delete "$0\uninst.exe"
+	RMDir /r "$0\program"
+	RMDir /r "$0\res"
+	
+	 ;文件被占用则改一下名字
+	${RenameDeleteFile} "$0\program\myrlcalendar64.dll" BeginRename1 EndRename1
+	${RenameDeleteFile} "$0\program\myrlcalendar.dll" BeginRename2 EndRename2
+
+	System::Call 'Shlwapi::PathIsDirectoryEmpty(t "$0")i.r1'
+	${If} $1 == 1
+		RMDir /r "$0"
+	${EndIf}
+	End:
+	Pop $1
+	Pop $0
+FunctionEnd
+
+;卸载老的快捷方式
+Function UnstOldLink
+	Push $0 
+	Push $1
+	Push $2
+	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
+	StrCmp $0 "" End
+	IfFileExists $0 0 End
+	
+	ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$1" "6.0" $2
+	${if} $2 == 2
+		Delete "$QUICKLAUNCH\嘀嗒日历.lnk"
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b 0, t '$STARTMENU\嘀嗒日历.lnk')"
+	${else}
+		Call GetPinPath
+		${If} $0 != "" 
+		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\嘀嗒日历.lnk"
+			StrCpy $1 "$0\TaskBar\嘀嗒日历.lnk"
+			Call RefreshIcon
+			Sleep 200
+			ExecShell startunpin "$0\StartMenu\嘀嗒日历.lnk"
+			StrCpy $1 "$0\StartMenu\嘀嗒日历.lnk"
+			Call RefreshIcon
+			Sleep 200
+		${EndIf}
+	${Endif}
+	IfFileExists "$DESKTOP\嘀嗒日历.lnk" 0 +2
+		Delete "$DESKTOP\嘀嗒日历.lnk"
+	IfFileExists "$STARTMENU\嘀嗒日历.lnk" 0 +2
+		Delete "$STARTMENU\嘀嗒日历.lnk"
+	RMDir /r "$SMPROGRAMS\嘀嗒日历"
+	End:
+	Pop $2
+	Pop $1
+	Pop $0
+FunctionEnd
+
+;合并配置文件
+Function MergeConfig
+	Push $0
+	Push $1
+	Push $2
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
+	StrCmp $0 "" End
+	IfFileExists "$0" 0 End
+	IfFileExists "$0\DIDA" 0 End
+	CopyFiles /silent "$0\DIDA" "$0\mycalendar"
+	RMDir /r /REBOOTOK "$0\DIDA"
+	
+	Delete "$0\mycalendar\didaserverconfigb16.dat"
+	Delete "$0\mycalendar\DiDaServerConfig.dat"
+	Delete "$0\mycalendar\UserConfig.dat"
+	;重命名文件夹
+	CopyFiles /silent "$0\mycalendar\ddnotepad" "$0\mycalendar\notepadcfg"
+	RMDir /r /REBOOTOK "$0\mycalendar\ddnotepad"
+	CopyFiles /silent "$0\mycalendar\DiDaNote" "$0\mycalendar\notefile"
+	RMDir /r /REBOOTOK "$0\mycalendar\DiDaNote"
+	End:
+	Pop $2
+	Pop $1
+	Pop $0
+FunctionEnd
+
 Var Bool_IsUpdate
 Function DoInstall
+  ;卸载老的文件
+  Call UnstOld
+  ;合并配置文件
+  Call MergeConfig
   ;释放配置到public目录
   SetOutPath "$TEMP\${PRODUCT_NAME}"
   StrCpy $1 ${NSIS_MAX_STRLEN}
   StrCpy $0 ""
-  System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetProfileFolder(t) i(.r0).r2' 
+  System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
   ${If} $0 == ""
 	HideWindow
 	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
@@ -530,28 +537,8 @@ Function DoInstall
   RMDir /r "$INSTDIR\xar"
   RMDir /r "$INSTDIR\res"
   ;文件被占用则改一下名字
-  StrCpy $R4 "$INSTDIR\program\DiDaCalendar64.dll"
-  IfFileExists $R4 0 RenameOK
-  Delete $R4
-  IfFileExists $R4 0 RenameOK
-  BeginRename:
-  Push "1000" 
-  Call Random
-  Pop $0
-  IfFileExists "$R4.$0" BeginRename
-  Rename $R4 "$R4.$0"
-  RenameOK:
-  StrCpy $R4 "$INSTDIR\program\DiDaCalendar.dll"
-  IfFileExists $R4 0 RenameOK2
-  Delete $R4
-  IfFileExists $R4 0 RenameOK2
-  BeginRename2:
-  Push "1000" 
-  Call Random
-  Pop $0
-  IfFileExists "$R4.$0" BeginRename2
-  Rename $R4 "$R4.$0"
-  RenameOK2:
+  ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll" BeginRename1 EndRename1
+  ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll" BeginRename2 EndRename2
   
   ;释放主程序文件到安装目录
   SetOutPath "$INSTDIR"
@@ -584,17 +571,17 @@ Function DoInstall
   IfErrors 0 +2
   StrCpy $R3 "1"
   ${If} $Bool_IsUpdate == 0
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
   ${Else}
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
   ${EndIf}  
  ;写入自用的注册表信息
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
-  System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
+  System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
   ;注册表增加版本信息
@@ -608,7 +595,7 @@ Function DoInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PackageName" "$R1"
   ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
   ${If} $0 == ""
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetPeerID(t) i(.r0).r1'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetPeerID(t) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
   ${EndIf}
   
@@ -634,14 +621,14 @@ Function CmdSilentInstall
 	SetSilent silent
 	;SetOutPath "$TEMP\${PRODUCT_NAME}"
 	;SetOverwrite on
-	;File "bin\DIDASetUpHelper.dll"
+	;File "bin\mycalendarsetup.dll"
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${If} $0 != ""
 		StrCpy $INSTDIR "$0"
 	${EndIf}
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
 	IfFileExists $0 0 StartInstall
-		;System::Call 'DIDASetUpHelper::GetFileVersionString(t $0, t) i(r0, .r1).r2'
+		;System::Call 'mycalendarsetup::GetFileVersionString(t $0, t) i(r0, .r1).r2'
 		${GetFileVersion} $0 $1
 		${VersionCompare} $1 ${PRODUCT_VERSION} $2
 		${If} $2 == "2" ;已安装的版本低于该版本
@@ -658,12 +645,15 @@ Function CmdSilentInstall
 			Goto StartInstall
 		${EndIf}
 	StartInstall:
+	;卸载老的快捷方式
+	Call UnstOldLink
 	
 	;发退出消息
 	Call CloseExe
 	Call DoInstall
-	;嘀嗒日历静默安装时，直接自动关联txt格式
-	Call SetTxtAssociation
+	;我的日历静默安装时，直接自动关联txt格式
+	;暂时关闭关联txt功能
+	;Call SetTxtAssociation
 	WriteRegDWORD HKCU "Software\ddnotepad" "Associated" 0
 	;将安装方式写入注册表
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
@@ -681,8 +671,8 @@ Function CmdSilentInstall
 		;CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar" "$INSTDIR\res\shortcut.ico"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-		System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+		System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
 		Call GetPinPath
 		${If} $0 != "" 
@@ -721,8 +711,8 @@ Function CmdSilentInstall
 	IfErrors +3 0
 	StrCpy $Bool_Sysstup 1
 	${SetSysBoot}
-	;WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /sstartfrom sysboot /embedding'
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetTime(*l) i(.r0).r1'
+	;WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /sstartfrom sysboot /embedding'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "ShowIntroduce" "$0"
 	System::Call "kernel32::GetCommandLineA() t.R1"
 	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
@@ -746,8 +736,8 @@ Function CmdSilentInstall
 	;捆绑360
 	;${If} ${PRODUCT_VERSION} == "1.0.0.5"
 	;	IfFileExists "$INSTDIR\program\360ini.dll" 0 +3
-	;	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-	;	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	;	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+	;	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
 	;${EndIf}
 	ExitInstal:
 	Call ExitWithCheck
@@ -756,36 +746,8 @@ Function CmdSilentInstall
 FunctionEnd
 
 Function ExitWithCheck
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
-FunctionEnd
-
-Function UnstallOnlyFile
-	;删除
-	RMDir /r "$1\appimage"
-	RMDir /r "$1\xar"
-	Delete "$1\uninst.exe"
-	RMDir /r "$1\program"
-	RMDir /r "$1\res"
-	
-	 ;文件被占用则改一下名字
-	StrCpy $R4 "$1\program\GsNet32.dll"
-	IfFileExists $R4 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call Random
-	Pop $2
-	IfFileExists "$R4.$2" BeginRename
-	Rename $R4 "$R4.$2"
-	Delete /REBOOTOK "$R4.$2"
-	RenameOK:
-	
-	StrCpy "$R0" "$1"
-	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
-	Pop $R1
-	${If} $R1 == 1
-		RMDir /r "$1"
-	${EndIf}
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::SetUpExit()"
 FunctionEnd
 
 Function UpdateChanel
@@ -818,7 +780,7 @@ Function .onInit
 		WriteUninstaller "$EXEDIR\uninst.exe"
 		Abort
 	${EndIf}
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "DIDASETUP_INSTALL_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "mycalendarSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
@@ -832,7 +794,7 @@ Function .onInit
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
-	File "bin\DIDASetUpHelper.dll"
+	File "bin\mycalendarsetup.dll"
 	File "input_main\program\Microsoft.VC90.CRT.manifest"
 	File "input_main\program\msvcp90.dll"
 	File "input_main\program\msvcr90.dll"
@@ -978,50 +940,17 @@ FunctionEnd
 Function ClickSure2
 	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
 	ShowWindow $HWNDPARENT ${SW_HIDE}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Call ExitWithCheck
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddfixar.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Call ExitWithCheck
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddfixar.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
+	${FKillProc} "DIDA"
+	${FKillProc} "ddfixar"
+	${FKillProc} "ddnotepad"
+	${FKillProc} "mycalendar"
+	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::FindClockWindow() i.r0"
 	${If} $0 != 0
 		SendMessage $0 1344 100 100
 	${EndIf}
-	Sleep 100
-	;检查dida记事本进程
-	FindProcDLL::FindProc "ddnotepad.exe"
-	${If} $R0 != 0
-		StrCpy $R6 "检测嘀嗒记事本正在运行，"
-		StrCpy $R8 "是否强制结束？"
-		GetFunctionAddress $R7 ClickSure3
-		Call GsMessageBox
-	${Else}
-		Call ClickSure3
-	${EndIf}
+	Call ClickSure3
 FunctionEnd
 
 Function ClickSure1
@@ -1029,9 +958,15 @@ Function ClickSure1
 	ShowWindow $HWNDPARENT ${SW_HIDE}
 	Sleep 100
 	;发退出消息
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+	FindProcDLL::FindProc "DIDA.exe"
 	${If} $R0 == 0
 		FindProcDLL::FindProc "ddfixar.exe"
+	${EndIf}
+	${If} $R0 == 0
+		FindProcDLL::FindProc "mycalendar.exe"
+	${EndIf}
+	${If} $R0 == 0
+		FindProcDLL::FindProc "myfixar.exe"
 	${EndIf}
 	${If} $R0 != 0
 		StrCpy $R6 "检测${SHORTCUT_NAME}正在运行，"
@@ -1044,23 +979,6 @@ Function ClickSure1
 FunctionEnd
 
 Function ClickSure3
-	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
-	ShowWindow $HWNDPARENT ${SW_HIDE}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddnotepad.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddnotepad.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	
-	Sleep 250
 	StrCpy $R9 1 ;Goto the next page
     Call RelGotoPage
 FunctionEnd
@@ -1196,7 +1114,7 @@ Function OnClick_BrowseButton
 	Pop $R1 ; last part "ProgramName"
 	${If} $R1 == 0
 	${Orif} $R1 == ""
-		StrCpy $R1 "DIDA"
+		StrCpy $R1 "mycalendar"
 	${EndIf}
 
 	nsDialogs::SelectFolderDialog "请选择 $R0 安装的文件夹:" "$R0"
@@ -1300,8 +1218,6 @@ Function onClickZidingyi
 	ShowWindow $Btn_Agreement ${SW_HIDE}
 	ShowWindow $ck_xieyi ${SW_HIDE}
 	ShowWindow $ck_sysstup ${SW_HIDE}
-	ShowWindow $ck_txtassoc ${SW_HIDE}
-	ShowWindow $Lbl_txtassoc ${SW_HIDE}
 	ShowWindow $Btn_Zidingyi ${SW_HIDE}
 	ShowWindow $BGImage ${SW_HIDE}
 	
@@ -1326,9 +1242,6 @@ Function OnClick_Return
 	ShowWindow $Btn_Next 1
 	ShowWindow $Btn_Agreement 1
 	ShowWindow $ck_xieyi 1
-	ShowWindow $ck_txtassoc 1
-	ShowWindow $Lbl_txtassoc 1
-	ShowWindow $ck_sysstup 1
 	ShowWindow $Btn_Zidingyi 1
 	
 	
@@ -1383,7 +1296,7 @@ Function onClickGuanbi
 
 	StrCpy $3 33
 	IntOp $3 $3 + $Int_FontOffset
-	${NSW_CreateLabel} 65 $3 190 45 "您确定要退出嘀嗒日历安装程序？"
+	${NSW_CreateLabel} 65 $3 190 45 "您确定要退出我的日历安装程序？"
 	Pop $4
     SetCtlColors $4 "00A0F0" transparent ;背景设成透明
 	SendMessage $4 ${WM_SETFONT} $Handle_Font 0
@@ -1402,8 +1315,8 @@ FunctionEnd
 
 Function OnClickQuitOK
 	HideWindow
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::SetUpExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -1435,18 +1348,6 @@ Function OnClick_CheckToolBarLink
     ${EndIf}
 	ShowWindow $ck_ToolBarLink ${SW_HIDE}
 	ShowWindow $ck_ToolBarLink ${SW_SHOW}
-FunctionEnd
-
-Function OnClick_TxtAssoc
-	${IF} $Bool_txtassoc == 1
-        IntOp $Bool_txtassoc $Bool_txtassoc - 1
-        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_txtassoc
-    ${ELSE}
-        IntOp $Bool_txtassoc $Bool_txtassoc + 1
-        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_txtassoc
-    ${EndIf}
-	ShowWindow $ck_txtassoc ${SW_HIDE}
-	ShowWindow $ck_txtassoc ${SW_SHOW}
 FunctionEnd
 
 ;处理页面跳转的命令
@@ -1514,11 +1415,6 @@ Function WelcomePage
 	Call SkinBtn_Next
 	GetFunctionAddress $3 onClickNext
     SkinBtn::onClick $1 $3
-    
-	;勾选文件关联
-	StrCpy $Bool_txtassoc 1
-	${CreateButton} 115 289 20 20 "checkbox2.bmp" OnClick_TxtAssoc $ck_txtassoc
-	${CreateLabel} 138 289 80 20 "关联txt格式" "666666" $Handle_Font OnClick_TxtAssoc $Lbl_txtassoc
 	
 	;勾选同意协议
 	${NSD_CreateButton} 221 289 20 20 ""
@@ -1677,6 +1573,8 @@ Var PB_ProgressBar
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
+	;卸载老的快捷方式
+	Call UnstOldLink
     !if 1   ;是否在后台运行,1有效
         GetFunctionAddress $0 InstallationMainFun
         BgWorker::CallAndWait
@@ -1702,8 +1600,8 @@ Function NSD_TimerFun
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			SetOutPath "$TEMP\${PRODUCT_NAME}"
-			IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-			System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+			IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+			System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 		${else}
 			Call GetPinPath
 			${If} $0 != "" 
@@ -1730,9 +1628,9 @@ Function NSD_TimerFun
 	${EndIf}
 	
 	/*${If} $Bool_Sysstup == 1
-		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
+		WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar" '"$INSTDIR\program\${PRODUCT_NAME}.exe" /embedding /sstartfrom sysboot'
 	${Else}
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar"
 	${EndIf}
 	*/
 	${SetSysBoot}
@@ -1781,7 +1679,7 @@ Function InstallationMainFun
 	Push "\"
 	Call GetLastPart
 	Pop $R1
-	${If} $R1 == "DIDASetup${PRODUCT_VERSION}.exe" 
+	${If} $R1 == "mycalendarSetup${PRODUCT_VERSION}.exe" 
 		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
 	${Else}
 		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "nosilent"
@@ -1789,15 +1687,6 @@ Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
-	;设置文本关联
-	${If} $Bool_txtassoc == 1
-		Call SetTxtAssociation
-		WriteRegDWORD HKCU "Software\ddnotepad" "Associated" 1
-	${Else}
-		;就算用户在安装的时候 没有勾选关联txt 也要 写下HKEY_CLASSES_ROOT\ddtxtfile
-		Call CreateHKCRddtxtfile
-		WriteRegDWORD HKCU "Software\ddnotepad" "Associated" 0
-	${EndIf}
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
 	Sleep 1000
@@ -1814,8 +1703,8 @@ Function OnClick_FreeUse
 	${IF} $Bool_bind360install == 1
 		HideWindow
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		;System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-		;System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		;System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
+		;System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
 		Call OnClickQuitOK
 	${Else}
 		Call OnClickQuitOK
@@ -1926,12 +1815,12 @@ FunctionEnd
 
 Function RefreshIcon
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::RefleshIcon(t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::RefleshIcon(t "$R0")'
 FunctionEnd
 
 Function GetPinPath
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetUserPinPath(t) i(.r0)'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetUserPinPath(t) i(.r0)'
 FunctionEnd
 
 
@@ -1958,7 +1847,7 @@ FunctionEnd
 
 Var Handle_Font2
 Function un.onInit
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "DIDASETUP_INSTALL_MUTEX") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "mycalendarSETUP_INSTALL_MUTEX") i .r1 ?e'
 	Pop $R0
 	StrCmp $R0 0 +2
 	Abort
@@ -1979,7 +1868,7 @@ Function un.onInit
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
-	File "bin\DIDASetUpHelper.dll"
+	File "bin\mycalendarsetup.dll"
 	
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
@@ -2053,28 +1942,6 @@ Function un.OnClick_ContinueUse
 	Call un.OnClick_FinishUnstall
 FunctionEnd
 
-Function un.Random
-	Exch $0
-	Push $1
-	System::Call 'kernel32::QueryPerformanceCounter(*l.r1)'
-	System::Int64Op $1 % $0
-	Pop $0
-	Pop $1
-	Exch $0
-FunctionEnd
-
-Function un.RenameDeleteFile
-	IfFileExists $R0 0 RenameOK
-	BeginRename:
-	Push "1000" 
-	Call un.Random
-	Pop $0
-	IfFileExists "$R0.$0" BeginRename
-	Rename $R0 "$R0.$0"
-	Delete /REBOOTOK "$R0.$0"
-	RenameOK:
-FunctionEnd
-
 Function un.DoUninstall
 	;删除
 	RMDir /r "$INSTDIR\xar"
@@ -2083,10 +1950,8 @@ Function un.DoUninstall
 	RMDir /r "$INSTDIR\res"
 	
 	 ;文件被占用则改一下名字
-	StrCpy $R0 "$INSTDIR\program\DiDaCalendar64.dll"
-	Call un.RenameDeleteFile
-	StrCpy $R0 "$INSTDIR\program\DiDaCalendar.dll"
-	Call un.RenameDeleteFile
+	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll" BeginRename1 EndRename1
+	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll" BeginRename2 EndRename2
 	
 	
 	StrCpy "$R0" "$INSTDIR"
@@ -2110,7 +1975,7 @@ Function un.UNSD_TimerFun
 		DeleteRegKey HKCU "Software\ddnotepad"
 		 ;删除自用的注册表信息
 		;DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
-		;DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
+		;DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar"
 		StrCpy $Bool_Sysstup 0
 		${UnSetSysBoot}
 	${EndIf}
@@ -2120,8 +1985,6 @@ Function un.UNSD_TimerFun
 	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
 		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
 	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
-	;恢复txt关联
-	Call un.ReSetTxtAssociation
 	
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
 	ShowWindow $Btn_ContinueUse ${SW_HIDE}
@@ -2140,7 +2003,7 @@ Function un.UNSD_TimerFun
 	
 	${If} $R0 == ""
 	${OrIf} $R0 == 0
-	${OrIf} $R0 == "DIDASetup${PRODUCT_VERSION}.exe"
+	${OrIf} $R0 == "mycalendarSetup${PRODUCT_VERSION}.exe"
 	${OrIf} $R2 == "true"
 		StrCpy $Bool_ToolBarLink 0
 		ShowWindow $ck_ToolBarLink ${SW_HIDE}
@@ -2155,62 +2018,28 @@ FunctionEnd
 
 Function un.RefreshIcon
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::RefleshIcon(t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::RefleshIcon(t "$R0")'
 FunctionEnd
 
 Function un.GetPinPath
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::GetUserPinPath(t) i(.r0)'
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetUserPinPath(t) i(.r0)'
 FunctionEnd
 
 Function un.OnClick_CruelRefused
 	EnableWindow $Btn_CruelRefused 0
 	EnableWindow $Btn_ContinueUse 0
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
-	${For} $R3 0 6
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddfixar.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddfixar.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddnotepad.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddnotepad.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
+	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
+	${FKillProc} "DIDA"
+	${FKillProc} "ddfixar"
+	${FKillProc} "ddnotepad"
+	${FKillProc} "mycalendar"
+	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::FindClockWindow() i.r0"
 	${If} $0 != 0
 		SendMessage $0 1344 100 100
 	${EndIf}
@@ -2221,8 +2050,8 @@ Function un.OnClick_CruelRefused
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
 		Call un.GetPinPath
 		${If} $0 != "" 
@@ -2269,9 +2098,9 @@ FunctionEnd
 Function un.OnClick_FinishUnstall
 	;SendMessage $HWNDPARENT ${WM_CLOSE} 0 0
 	HideWindow
-	IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +3
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::WaitForStat()"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::SetUpExit()"
+	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +3
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::SetUpExit()"
 	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
 	Push $R2
 	Push "\"
@@ -2289,8 +2118,8 @@ FunctionEnd
 Function un.OnClick_FinishUnstall2
 	HideWindow
 	${If} $Bool_ToolBarLink == 1
-		IfFileExists "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::DownLoadLvDunAndInstall()"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::DownLoadLvDunAndInstall()"
 	${EndIf}
 	Call un.OnClick_FinishUnstall
 FunctionEnd
@@ -2370,66 +2199,20 @@ Function un.GsMessageBox
 FunctionEnd
 
 Function un.ClickSure
-	${For} $R3 0 6
-		FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "${PRODUCT_NAME}.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddfixar.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddfixar.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
+	${FKillProc} "DIDA"
+	${FKillProc} "ddfixar"
+	${FKillProc} "ddnotepad"
+	${FKillProc} "mycalendar"
+	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\DIDASetUpHelper::FindClockWindow() i.r0"
+	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::FindClockWindow() i.r0"
 	${If} $0 != 0
 		SendMessage $0 1344 100 100
 	${EndIf}
-	Sleep 100
-	
-	;检查dida记事本进程
-	FindProcDLL::FindProc "ddnotepad.exe"
-	${If} $R0 != 0
-		StrCpy $R6 "检测嘀嗒记事本正在运行，"
-		StrCpy $R8 "是否强制结束？"
-		GetFunctionAddress $R7 un.ClickSure2
-		Call un.GsMessageBox
-	${Else}
-		Call un.ClickSure2
-	${EndIf}
+	Call un.ClickSure2
 FunctionEnd
 
 Function un.ClickSure2
-	${For} $R3 0 6
-		FindProcDLL::FindProc "ddnotepad.exe"
-		${If} $R3 == 6
-		${AndIf} $R0 != 0
-			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新操作，如果还不行请到官方网站寻求帮助"
-			Abort
-		${ElseIf} $R0 != 0
-			KillProcDLL::KillProc "ddnotepad.exe"
-			Sleep 250
-		${Else}
-			${Break}
-		${EndIf}
-	${Next}
-	Sleep 250
 	StrCpy $9 "userchoice"
 	SendMessage $HWNDPARENT 0x408 1 0
 FunctionEnd
@@ -2438,9 +2221,15 @@ Function un.MyUnstallMsgBox
 	push $0
 	call un.myGUIInit
 	;发退出消息
-	FindProcDLL::FindProc "${PRODUCT_NAME}.exe"
+	FindProcDLL::FindProc "DIDA.exe"
 	${If} $R0 == 0
 		FindProcDLL::FindProc "ddfixar.exe"
+	${EndIf}
+	${If} $R0 == 0
+		FindProcDLL::FindProc "mycalendar.exe"
+	${EndIf}
+	${If} $R0 == 0
+		FindProcDLL::FindProc "myfixar.exe"
 	${EndIf}
 	${If} $R0 != 0
 		StrCpy $R6 "检测${SHORTCUT_NAME}正在运行，"
