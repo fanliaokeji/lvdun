@@ -3,6 +3,34 @@ local tipUtil = XLGetObject("API.Util")
 local tNotepadListData = nil--记事本数据
 local gSelectData = nil
 
+--处理旧的记事本列表数据
+function HandleOldData()
+	if "table" ~= type(tNotepadListData) then return end
+	if tNotepadListData.bHandleOld then return end --已经处理过了
+	
+	print("HandleOldData")
+	for key, value in pairs(tNotepadListData) do
+		if "table" == type(value) then
+			for i= #value, 1, -1 do
+				if value[i] and value[i].txtFilePath then
+					--将之前的txt在安装新的mycalendar时已拷贝到新的目录
+					local newPath, nReplace = string.gsub(value[i].txtFilePath, "DIDA", "mycalendar")
+					newPath, nReplace = string.gsub(newPath, "DiDaNote", "notefile")
+					if tipUtil:QueryFileExists(newPath) then
+						value[i].txtFilePath = newPath
+					else
+						table.remove(value, i)
+					end
+				else
+					table.remove(value, i)
+				end
+			end
+		end
+	end
+	SaveNotepadListData2File()
+	tNotepadListData.bHandleOld = true
+end
+
 --加载数据
 function LoadNotepadListData()
 	local strPath = FunctionObj.GetCfgPathWithName("notepad.dat")
@@ -11,6 +39,7 @@ function LoadNotepadListData()
 		return
 	end
 	tNotepadListData = FunctionObj.LoadTableFromFile(strPath)
+	HandleOldData()
 end
 
 --保存数据
