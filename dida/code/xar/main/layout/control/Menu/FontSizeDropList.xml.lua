@@ -6,7 +6,7 @@ function SetDefaultItemHover(self)
 	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
 	
 	-- iPointSize在初始化font.Combobox.btn的时候就有了
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\iPointSize"
 	local lastFontSize = Helper:QueryRegValue(regPath)
 	Helper:Assert("number" == type(lastFontSize), "get lastFontSize error!")
 	
@@ -41,8 +41,7 @@ function SetDefaultItemHover(self)
 end
 
 function GetFontSizeConfig()
-	local configPath = Helper:GetUserDataDir().."\\DIDA\\ddnotepad\\defaultcfg.dat"
-	local configPathAA = Helper:GetUserDataDir().."\\DIDA\\AA\\AA\\AA\\AA\\AA\\AA\\defaultcfg.dat"
+	local configPath = Helper:GetUserDataDir().."\\mycalendar\\notepadcfg\\defaultcfg.dat"
 	local configTable = Helper:LoadLuaTable(configPath)
 	
 	if "table" ~= type(configTable) then

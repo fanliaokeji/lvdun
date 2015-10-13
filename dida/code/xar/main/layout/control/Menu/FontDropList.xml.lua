@@ -8,7 +8,7 @@ function SetDefaultItemHover(self)
 	local objMenuContainer = objNormalMenu:GetControlObject("context_menu")
 	
 	-- lfFaceName在初始化font.Combobox.btn的时候就有了
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lfFaceName"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\lfFaceName"
 	local lastFontName = Helper:QueryRegValue(regPath)
 	Helper:Assert("string" == type(lastFontName) and "" ~= lastFontName, "get lastFontName error!")
 	
