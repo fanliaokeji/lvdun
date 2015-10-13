@@ -142,7 +142,7 @@ end
 function WriteLastLaunchTime()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local nCurrnetTime = tipUtil:GetCurrentUTCTime()
-	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\DDCalendar\\LastLaunchTime"
+	local strRegPath = "HKEY_CURRENT_USER\\SOFTWARE\\mycalendar\\LastLaunchTime"
 	FunctionObj.RegSetValue(strRegPath, nCurrnetTime)
 end
 
@@ -198,7 +198,7 @@ function TryForceUpdate(tServerConfig, strKey)
 	end
 	--假升级判断一下安装时间
 	if strKey == "tSoftUpdate" then
-		local strInstTime = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\DDCalendar\\InstallTimes")
+		local strInstTime = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\InstallTimes")
 		local nInstTime = tonumber(strInstTime)
 		local bInstTimeRet = false
 		if type(nInstTime) == "number" then
@@ -675,8 +675,8 @@ function InjectDLL()
 		if bHasInject then
 			return
 		end
-		local strDllPath32 = FunctionObj.GetDllPath("DiDaCalendar.dll") 
-		local strDllPath64 = FunctionObj.GetDllPath("DiDaCalendar64.dll") 
+		local strDllPath32 = FunctionObj.GetDllPath("myrlcalendar.dll") 
+		local strDllPath64 = FunctionObj.GetDllPath("myrlcalendar64.dll") 
 		
 		if IsRealString(strDllPath32) and tipUtil:QueryFileExists(strDllPath32)
 			and IsRealString(strDllPath64) and tipUtil:QueryFileExists(strDllPath64) then
@@ -726,7 +726,7 @@ end
 
 function LaunchDDAR()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper")
-	local nSetBoot = FunctionObj.RegQueryValue("HKEY_CURRENT_USER\\Software\\DDCalendar\\setboot")
+	local nSetBoot = FunctionObj.RegQueryValue("HKEY_CURRENT_USER\\Software\\mycalendar\\setboot")
 	if nSetBoot ~= 1 then
 		return
 	end
