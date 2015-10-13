@@ -63,6 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comsupp.lib"
+				OutputFile="$(OutDir)\mycalendarsetup.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
@@ -140,6 +141,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comsupp.lib"
+				OutputFile="$(OutDir)\mycalendarsetup.dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"

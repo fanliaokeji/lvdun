@@ -101,7 +101,7 @@ bool DiDaClockControl::IsDiDaCalendarStartRunEnable()
 	//if(lOpenResult != ERROR_SUCCESS) {
 	//	return false;
 	//}
-	//const wchar_t* key_name = L"DDCalendar";
+	//const wchar_t* key_name = L"mycalendar";
 	//wchar_t path[MAX_PATH * 2];
 	//DWORD cbData = sizeof(path);
 	//DWORD dwRegType = REG_SZ;
@@ -110,7 +110,7 @@ bool DiDaClockControl::IsDiDaCalendarStartRunEnable()
 	//return lQueryValueResult == ERROR_SUCCESS;
 
 	HKEY hKey = NULL;
-	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_READ, &hKey);
+	LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\mycalendar", 0, KEY_READ, &hKey);
 	if(lOpenResult != ERROR_SUCCESS) {
 		return false;
 	}
@@ -130,7 +130,7 @@ bool DiDaClockControl::IsDiDaCalendarStartRunEnable()
 
 std::wstring DiDaClockControl::GetDiDaCalendarFilePath()
 {
-	const wchar_t *szSubKey = L"SOFTWARE\\DDCalendar";
+	const wchar_t *szSubKey = L"SOFTWARE\\mycalendar";
 	HKEY hKey = NULL;
 	LONG lOpenResult = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, szSubKey, 0, KEY_WOW64_32KEY | KEY_READ, &hKey);
 	if(lOpenResult != ERROR_SUCCESS) {
@@ -149,7 +149,7 @@ std::wstring DiDaClockControl::GetDiDaCalendarFilePath()
 
 std::wstring DiDaClockControl::GetFixARPath()
 {
-	const wchar_t *szSubKey = L"SOFTWARE\\DDCalendar";
+	const wchar_t *szSubKey = L"SOFTWARE\\mycalendar";
 	HKEY hKey = NULL;
 	LONG lOpenResult = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, szSubKey, 0, KEY_WOW64_32KEY | KEY_READ, &hKey);
 	if(lOpenResult != ERROR_SUCCESS) {
@@ -175,7 +175,7 @@ std::wstring DiDaClockControl::GetFixARPath()
 
 void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 {
-	//const wchar_t* key_name = L"DDCalendar";
+	//const wchar_t* key_name = L"mycalendar";
 	//if(enable) {
 	//	std::wstring filepath = GetDiDaCalendarFilePath();
 	//	if(filepath.empty()) {
@@ -208,7 +208,7 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 	if (enable)
 	{
 		HKEY hKey = NULL;
-		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_SET_VALUE, &hKey);
+		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\mycalendar", 0, KEY_SET_VALUE, &hKey);
 		if(lOpenResult != ERROR_SUCCESS) {
 			return;
 		}
@@ -221,7 +221,7 @@ void DiDaClockControl::EnableDiDaCalendarStartRun(bool enable)
 	else
 	{
 		HKEY hKey = NULL;
-		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\DDCalendar", 0, KEY_SET_VALUE, &hKey);
+		LONG lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\mycalendar", 0, KEY_SET_VALUE, &hKey);
 		if(lOpenResult != ERROR_SUCCESS) {
 			return;
 		}
@@ -239,7 +239,7 @@ bool DiDaClockControl::IsDDNotepadAssociationTxt()
 	DWORD dwAssociated = 0;
 	DWORD cbAssociated = sizeof(DWORD);
 	DWORD dwRegDWORDType = REG_DWORD;
-	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\ddnotepad", 0, KEY_READ, &hCurrentKey);
+	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\mynotepad", 0, KEY_READ, &hCurrentKey);
 	if (ERROR_SUCCESS != lOpenResult)
 	{
 		return false;
@@ -281,7 +281,7 @@ bool DiDaClockControl::IsDDNotepadAssociationTxt()
 		return false;
 	}
 
-	if (wcsicmp(szValue,L"ddtxtfile") == 0)
+	if (wcsicmp(szValue,L"mytxtfile") == 0)
 	{
 		::RegCloseKey(hKey);
 		return true;
@@ -294,10 +294,10 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 {
 	HKEY hCurrentKey = NULL;
 	LONG lOpenResult = ERROR_SUCCESS;
-	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\ddnotepad", 0, KEY_READ|KEY_WRITE, &hCurrentKey);
+	lOpenResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\mynotepad", 0, KEY_READ|KEY_WRITE, &hCurrentKey);
 	if (ERROR_SUCCESS != lOpenResult)
 	{
-		lOpenResult = RegCreateKey(HKEY_CURRENT_USER,  L"SOFTWARE\\ddnotepad", &hCurrentKey);
+		lOpenResult = RegCreateKey(HKEY_CURRENT_USER,  L"SOFTWARE\\mynotepad", &hCurrentKey);
 		if (ERROR_SUCCESS != lOpenResult)
 		{
 			return;
@@ -333,7 +333,7 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 	//		return;
 	//	}
 
-	//	const wchar_t* szBackUp_ValueName = L"ddnotepad_backup";
+	//	const wchar_t* szBackUp_ValueName = L"mynotepad_backup";
 	//	if (ERROR_SUCCESS != ::RegQueryValueEx(hTxtKey, szBackUp_ValueName, NULL, &dwRegType, reinterpret_cast<LPBYTE>(szBackUp), &cbData))
 	//	{
 	//		LONG lRet = ::RegDeleteValue(hTxtKey,L"Progid");
@@ -347,7 +347,7 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 	//}
 	
 	HKEY hDDKey = NULL;
-	if (ERROR_SUCCESS == ::RegOpenKeyEx(HKEY_CLASSES_ROOT, L"ddtxtfile", 0, KEY_READ, &hDDKey))
+	if (ERROR_SUCCESS == ::RegOpenKeyEx(HKEY_CLASSES_ROOT, L"mytxtfile", 0, KEY_READ, &hDDKey))
 	{
 		::RegCloseKey(hDDKey);
 		wchar_t szValue[MAX_PATH] = {0};
@@ -355,9 +355,9 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 		DWORD dwRegType = REG_SZ;
 		if (ERROR_SUCCESS == ::RegQueryValueEx(hTxtKey,  L"Progid", NULL, &dwRegType, reinterpret_cast<LPBYTE>(szValue), &cbData))
 		{
-			::RegSetValueEx(hTxtKey, L"ddnotepad_backup", 0, REG_SZ, reinterpret_cast<const BYTE*>(szValue), (wcslen(szValue)) * sizeof(wchar_t));		
+			::RegSetValueEx(hTxtKey, L"mynotepad_backup", 0, REG_SZ, reinterpret_cast<const BYTE*>(szValue), (wcslen(szValue)) * sizeof(wchar_t));		
 		}
-		wchar_t *szAssociation = L"ddtxtfile";
+		wchar_t *szAssociation = L"mytxtfile";
 		::RegSetValueEx(hTxtKey, L"Progid", 0, REG_SZ, reinterpret_cast<const BYTE*>(szAssociation), (wcslen(szAssociation)) * sizeof(wchar_t));	
 		::RegCloseKey(hTxtKey);
 		
@@ -366,7 +366,7 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 		::RegCloseKey(hCurrentKey);
 		return;
 	}
-	//HKEY_CLASSES_ROOT\ddtxtfile 不存在 拉起进程另处理
+	//HKEY_CLASSES_ROOT\mytxtfile 不存在 拉起进程另处理
 	std::wstring strDIDAPath = GetDiDaCalendarFilePath();
 	if(strDIDAPath.empty()) {
 		return;
@@ -378,7 +378,7 @@ void DiDaClockControl::DDNotepadAssociationTxt(bool enable)
 	}
 	std::wstring strDir = strDIDAPath.substr(0,nPos+1);
 	wchar_t szDDNotePad[MAX_PATH] = {0};
-	::PathCombine(szDDNotePad,strDir.c_str(),L"ddnotepad.exe");
+	::PathCombine(szDDNotePad,strDir.c_str(),L"mynotepad.exe");
 	if (!::PathFileExistsW(szDDNotePad))
 	{
 		return ;

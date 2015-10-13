@@ -183,13 +183,14 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	else {
 		AppendMenu(hMenu, MF_STRING, IMID_STARTLAUNCH, L"开机启动");
 	}
-	bool isDDNotepadAssociationTxt = DiDaClockControl::IsDDNotepadAssociationTxt();
-	if(isDDNotepadAssociationTxt) {
-		AppendMenu(hMenu, MF_STRING | MF_CHECKED, IMID_ASSOCIATIONTXT, L"关联txt格式");
-	}
-	else {
-		AppendMenu(hMenu, MF_STRING, IMID_ASSOCIATIONTXT, L"关联txt格式");
-	}
+	/*去除关联txt的功能*/
+	//bool isDDNotepadAssociationTxt = DiDaClockControl::IsDDNotepadAssociationTxt();
+	//if(isDDNotepadAssociationTxt) {
+	//	AppendMenu(hMenu, MF_STRING | MF_CHECKED, IMID_ASSOCIATIONTXT, L"关联txt格式");
+	//}
+	//else {
+	//	AppendMenu(hMenu, MF_STRING, IMID_ASSOCIATIONTXT, L"关联txt格式");
+	//}
 	AppendMenu(hMenu, MF_STRING, IMID_UPDATE, L"软件升级");
 	AppendMenu(hMenu, MF_STRING, IMID_CHANGEDATETIME, L"调整日期时间");
 	AppendMenu(hMenu, MF_STRING, IMID_ABOUTDIDA, L"关于嘀嗒日历");
@@ -199,9 +200,9 @@ void DiDaClock::TrackMenu(HWND hWnd)
 	case IMID_STARTLAUNCH:
 		DiDaClockControl::EnableDiDaCalendarStartRun(!isDiDaCalendarStartRunEnable);
 		break;
-	case IMID_ASSOCIATIONTXT:
-		DiDaClockControl::DDNotepadAssociationTxt(!isDDNotepadAssociationTxt);
-		break;
+	//case IMID_ASSOCIATIONTXT:
+	//	DiDaClockControl::DDNotepadAssociationTxt(!isDDNotepadAssociationTxt);
+	//	break;
 	case IMID_UPDATE:
 		DiDaClockControl::Update(hWnd);
 		break;

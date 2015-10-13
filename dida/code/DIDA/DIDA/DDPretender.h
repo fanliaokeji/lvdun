@@ -38,7 +38,7 @@ public:
 		}
 
 
-		m_hDDKernel = LoadLibrary(_T("DDKernel.dll"));
+		m_hDDKernel = LoadLibrary(_T("mykernel.dll"));
 		if (NULL == m_hDDKernel)
 		{
 			return;

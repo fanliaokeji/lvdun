@@ -70,12 +70,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "深圳市二十二楼科技有限公司"
-            VALUE "FileDescription", "DIDASetUpHelper Module"
+            VALUE "FileDescription", "mycalendarsetup Module"
             VALUE "FileVersion", "1, 0, 0, 22"
-            VALUE "InternalName", "DIDASetUpHelper"
+            VALUE "InternalName", "mycalendarsetup"
             VALUE "LegalCopyright", "Copyright (c) 2015-2017 深圳市二十二楼科技有限公司"
-            VALUE "OriginalFilename", "DIDASetUpHelper.dll"
-            VALUE "ProductName", "嘀嗒日历"
+            VALUE "OriginalFilename", "mycalendarsetup.dll"
+            VALUE "ProductName", "我的日历"
             VALUE "ProductVersion", "1, 0, 0, 22"
         END
     END
