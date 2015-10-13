@@ -61,7 +61,7 @@
 								<halign>left</halign>
 								<font>font.text15</font>
 								<textcolor>system.white</textcolor>
-								<text>关于嘀嗒日历</text>
+								<text>关于我的日历</text>
 							</attr>		
 						</obj>
 						
@@ -89,7 +89,7 @@
 								<halign>left</halign>
 								<font>font.text13</font>
 								<textcolor>3F5483</textcolor>
-								<text>嘀嗒日历 版权所有</text>
+								<text>我的日历 版权所有</text>
 							</attr>		
 						</obj>
 						
