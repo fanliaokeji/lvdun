@@ -40,7 +40,7 @@ end
 
 --默认字体微软雅黑、12号 
 function OnInitNoteFontCb(self)
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lfFaceName"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\lfFaceName"
 	local lastFontName = Helper:QueryRegValue(regPath)
 	-- win7默认微软雅黑，xp默认宋体
 	if "string" ~= type(lastFontName) or "" == lastFontName then
@@ -57,7 +57,7 @@ function OnInitNoteFontCb(self)
 end
 
 function OnInitNoteSizeCb(self)
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\iPointSize"
 	local lastFontSize = Helper:QueryRegValue(regPath)
 	if "number" ~= type(lastFontSize) then
 		Helper:SetRegValue(regPath, 12)
@@ -194,7 +194,7 @@ function SetData(self, data)
 	
 	--若data中没有txt路径，说明是第一次创建
 	if not data.txtFilePath then
-		local publicPath = Helper:GetUserDataDir().."\\DIDA\\DiDaNote\\"
+		local publicPath = Helper:GetUserDataDir().."\\mycalendar\\notefile\\"
 		if not tipUtil:QueryFileExists(publicPath) then
 			tipUtil:CreateDir(publicPath)
 		end
@@ -349,11 +349,11 @@ end
 
 function SetEditFont(editCtrl)
 	--通过注册表获取当前字体大小
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lfFaceName"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\lfFaceName"
 	local lastFontName = Helper:QueryRegValue(regPath) 
 	Helper:Assert(lastFontName, "lastFontSize is nil")
 	
-	local regSizePath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local regSizePath = "HKEY_CURRENT_USER\\Software\\mycalendar\\iPointSize"
 	local lastFontSize = Helper:QueryRegValue(regSizePath)
 	Helper:Assert(lastFontSize, "lastFontSize is nil")
 	
@@ -371,7 +371,7 @@ function SetEditFont(editCtrl)
 end
 
 function OnSelectFont(self, event, fontName)
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\lfFaceName"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\lfFaceName"
 	local lastFontName = Helper:QueryRegValue(regPath) 
 	if fontName == lastFontName then
 		return
@@ -389,7 +389,7 @@ function OnSelectFont(self, event, fontName)
 end
 
 function OnSelectFontSize(self, event, sSize)
-	local regPath = "HKEY_CURRENT_USER\\Software\\ddnotepad\\iPointSize"
+	local regPath = "HKEY_CURRENT_USER\\Software\\mycalendar\\iPointSize"
 	local lastFontSize = Helper:QueryRegValue(regPath) 
 	local iSize = tonumber(sSize)
 	if iSize == lastFontSize then
