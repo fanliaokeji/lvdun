@@ -167,6 +167,9 @@ bool CService::StartService(std::wstring wstrService)
 
 bool CService::RunService()
 {
+#ifdef UNREGSVR_NAME_L
+	UnInstallService(UNREGSVR_NAME_L);
+#endif
 	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
 	std::wstring exe = EXE_NAME_L;
 

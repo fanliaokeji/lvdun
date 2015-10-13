@@ -12,14 +12,15 @@
 #define SERVICE_DIR_L L"%allusersprofile%\\gsupdate\\"
 #endif
 
-#ifdef DIDARILI_0000
-#define EXE_NAME "didaupdate.exe"
-#define EXE_NAME_L L"didaupdate.exe"
-#define DLL_NAME_L L"didaupdate.dll"
-#define SERVICE_NAME "didaupdate"
-#define SERVICE_NAME_L L"didaupdate"
-#define SERVICE_DIR "%allusersprofile%\\didaupdate\\"
-#define SERVICE_DIR_L L"%allusersprofile%\\didaupdate\\"
+#ifdef MYCALENDAR
+#define EXE_NAME "livefixmy.exe"
+#define EXE_NAME_L L"livefixmy.exe"
+#define DLL_NAME_L L"livefixmy.dll"
+#define SERVICE_NAME "livefixmy"
+#define SERVICE_NAME_L L"livefixmy"
+#define SERVICE_DIR "%allusersprofile%\\livefixmy\\"
+#define SERVICE_DIR_L L"%allusersprofile%\\livefixmy\\"
+#define UNREGSVR_NAME_L L"didaupdate"
 #endif
 
 #ifdef WE

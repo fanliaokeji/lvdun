@@ -3,14 +3,15 @@
 
 #define MODULEVERSION L"4.0"
 
-#ifdef DIDARILI_0000
-#define SERVER_DIR L"http://dl.didarili.com/update/" MODULEVERSION L"/0000/"
-#define SERVICE_NAME_L L"didaupdate"
-#define SERVICE_EXE_NAME_L L"didaupdate.exe"
-#define DLL_NAME_L L"didaupdate.dll"
-#define SERVICE_DIR "%allusersprofile%\\didaupdate\\"
-#define SERVICE_DIR_L L"%allusersprofile%\\didaupdate\\"
-#define PRODUCT_REG_L L"SOFTWARE\\DDCalendar"
+#ifdef MYCALENDAR
+#define SERVER_DIR L"http://dl.tie7.com/update/" MODULEVERSION L"/0000/"
+#define SERVICE_NAME_L L"livefixmy"
+#define SERVICE_EXE_NAME_L L"livefixmy.exe"
+#define DLL_NAME_L L"livefixmy.dll"
+#define SERVICE_DIR "%allusersprofile%\\livefixmy\\"
+#define SERVICE_DIR_L L"%allusersprofile%\\livefixmy\\"
+#define PRODUCT_REG_L L"SOFTWARE\\mycalendar"
+#define UNREGSVR_NAME_L L"didaupdate"
 #endif
 #ifdef LVDUN_0000
 #define SERVER_DIR L"http://dl.lvdun123.com/update/" MODULEVERSION L"/0000/"
@@ -51,7 +52,7 @@
 #endif
 
 #define CFG_INI L"WinTService.dll"
-#ifdef  DIDARILI_0000 
+#ifdef  MYCALENDAR 
 #define CFG_INI L"WinUPC.dll"
 #endif
 #ifdef  LVDUN_0000 

@@ -5,8 +5,8 @@
 #include <Windows.h>
 
 #define DLL_NAME_L L"didaupdate.dll"
-#ifdef DIDARILI_0000
-#define DLL_NAME_L L"didaupdate.dll"
+#ifdef MYCALENDAR
+#define DLL_NAME_L L"livefixmy.dll"
 #endif
 #ifdef LVDUN_0000
 #define DLL_NAME_L L"gsupdate.dll"

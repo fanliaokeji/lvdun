@@ -220,7 +220,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DIDARILI_0000|Win32"
+			Name="MYCALENDAR|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"

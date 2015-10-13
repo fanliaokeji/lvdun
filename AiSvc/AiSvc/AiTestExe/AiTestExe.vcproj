@@ -162,7 +162,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DIDARILI_0000|Win32"
+			Name="MYCALENDAR|Win32"
 			OutputDirectory="..\..\bin\Release\DIDARILI_0000"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -188,7 +188,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="DIDARILI_0000;WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="MYCALENDAR;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -490,7 +490,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="DIDARILI_0000|Win32"
+					Name="MYCALENDAR|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

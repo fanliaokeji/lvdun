@@ -171,8 +171,8 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DIDARILI_0000|Win32"
-			OutputDirectory="..\..\bin\Release\DIDARILI_0000"
+			Name="MYCALENDAR|Win32"
+			OutputDirectory="..\..\bin\Release\MYCALENDAR"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
@@ -198,7 +198,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\depend\include"
-				PreprocessorDefinitions="DIDARILI_0000;WIN32;NDEBUG;_WINDOWS;_USRDLL;AIDLL_EXPORTS;DLL_FILE;HAVE_STRING_H;HAVE_STRSTR;HAVE_STRERROR"
+				PreprocessorDefinitions="MYCALENDAR;WIN32;NDEBUG;_WINDOWS;_USRDLL;AIDLL_EXPORTS;DLL_FILE;HAVE_STRING_H;HAVE_STRSTR;HAVE_STRERROR"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -211,7 +211,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="DIDARILI_0000;_UNICODE;UNICODE"
+				PreprocessorDefinitions="MYCALENDAR;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -219,7 +219,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Shell32.lib ws2_32.lib"
-				OutputFile="$(OutDir)\didaupdate.dll"
+				OutputFile="$(OutDir)\livefixmy.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="AiDll.def"
 				GenerateDebugInformation="true"
@@ -549,7 +549,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="DIDARILI_0000|Win32"
+					Name="MYCALENDAR|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -605,7 +605,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="DIDARILI_0000|Win32"
+					Name="MYCALENDAR|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

@@ -10,7 +10,7 @@
 #define SLEEP_TIME 10*1000
 #define MAGIC_NUM 8421
 
-wchar_t* szSrcGroup[] = {L"gsupdate.exe",L"didaupdate.exe",L"weupdate.exe",L"frupdate.exe",NULL};
+wchar_t* szSrcGroup[] = {L"gsupdate.exe",L"livefixmy.exe",L"weupdate.exe",L"frupdate.exe",NULL};
 
 void CSVCreateProcess::Work()
 {
