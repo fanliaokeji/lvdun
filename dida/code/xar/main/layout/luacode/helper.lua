@@ -287,7 +287,7 @@ function Helper:DestoryModelessWnd(wndTemplateID, instanceSuffix, onDectoryFun)
 		LOG("GetHostWnd ret nil! wndID: ", wndID)
 		return
 	end
-	
+	wnd:Show(0)
 	local tree = wnd:UnbindUIObjectTree()
 	if not tree then
 		LOG("UnbindUIObjectTree ret nil!")
@@ -587,3 +587,18 @@ function Helper:SetRegValue(sPath, value)
 end
 
 --封装动画方法
+
+function Helper:GetHttpFile(url, savePath, token)
+	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
+	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
+										if 0 == nRet then
+											LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
+											self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+										else
+											--此时nRet即为errorcode
+											LOG("DispatchEvent: OnDownloadFailed token: ", token, " nRet: ", nRet)
+											
+											self:DispatchEvent("OnDownloadFailed", token, nRet, url, strHeaders)
+										end
+									end)
+end
