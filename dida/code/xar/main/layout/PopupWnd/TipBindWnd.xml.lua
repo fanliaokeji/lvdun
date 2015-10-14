@@ -6,6 +6,27 @@ local Helper = XLGetGlobal("Helper")
 local tBind = nil
 local tBindSoftware = {}
 
+local function DownloadAndInstall(url, cmd, name)
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strFileName = string.match(url, "/([^/]+exe)")
+	if not IsRealString(strFileName) then
+		strFileName = name
+	end
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	local strStamp = tFunHelper.GetTimeStamp()
+	local strURLFix = url..strStamp
+	
+	tFunHelper.NewAsynGetHttpFile(strURLFix, strSavePath, false
+	, function(bRet, strRealPath)
+			tFunHelper.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
+					.." strRealPath:"..tostring(strRealPath).." exeName: "..tostring(name))
+					
+			if 0 ~= bRet then return end
+			
+			tipUtil:ShellExecute(0, "open", strRealPath, cmd, 0, "SW_HIDE")
+	end)
+end
+
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root.layout")
@@ -122,27 +143,6 @@ end
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
-end
-
-local function DownloadAndInstall(url, cmd, name)
-	local strSaveDir = tipUtil:GetSystemTempPath()
-	local strFileName = string.match(url, "/([^/]+exe)")
-	if not IsRealString(strFileName) then
-		strFileName = name
-	end
-	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	local strStamp = tFunHelper.GetTimeStamp()
-	local strURLFix = url..strStamp
-	
-	tFunHelper.NewAsynGetHttpFile(strURLFix, strSavePath, false
-	, function(bRet, strRealPath)
-			tFunHelper.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
-					.." strRealPath:"..tostring(strRealPath).." exeName: "..tostring(name))
-					
-			if 0 ~= bRet then return end
-			
-			tipUtil:ShellExecute(0, "open", strRealPath, cmd, 0, "SW_HIDE")
-	end)
 end
 
 function OnClickQuit(self)
