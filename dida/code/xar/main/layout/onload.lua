@@ -1,7 +1,7 @@
 local tipUtil = XLGetObject("API.Util")
 local tipAsynUtil = XLGetObject("API.AsynUtil")
 local gnLastReportRunTmUTC = 0
-
+local g_ServerConfig = nil
 -----------------
 --加载tip的xar
 --local xarMgr = XLGetObject("Xunlei.UIEngine.XARManager")
@@ -38,8 +38,11 @@ end
 local File = {
 "luacode\\objectbase.lua",
 "luacode\\helper.lua",
+"luacode\\helper_token.lua",
 }
 LoadLuaModule(File, __document)
+
+local Helper = XLGetGlobal("Helper")
 
 function RegisterFunctionObject()
 	local strFunhelpPath = __document.."\\..\\functionhelper.lua"
@@ -333,6 +336,7 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 		return	
 	end
 	local tServerConfig = FunctionObj.LoadTableFromFile(strServerPath) or {}
+	g_ServerConfig = tServerConfig
 	local bDlRet, strDlySecond = FunctionObj.GetCommandStrValue("/delay")
 	local nDelayTime = FetchValueByPath(tServerConfig, {"tNewVersionInfo", "nDelaySecond"})
 	nDelayTime = tonumber(nDelayTime)
@@ -611,6 +615,7 @@ function DownLoadGS(strUrl)
 	end)
 end
 
+local BindExeCookie = nil
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local cmdString = tipUtil:GetCommandLine()
@@ -624,21 +629,37 @@ function ProcessCommandLine()
 		FunctionObj.ShowPopupWndByName("TipUpdateWnd.Instance", true)
 	end
 	--处理捆绑命令行，已经装了绿盾则不处理
-	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\Path")
-	if not IsRealString(strGSPath) or not tipUtil:QueryFileExists(strGSPath) then
-		if string.find(tostring(cmdString), "/kbls") then
-			local bRet, strUrl = FunctionObj.GetCommandStrValue("/kbls")
-			DownLoadGS(strUrl)
-		elseif string.find(tostring(cmdString), "/kbl") then
-			local SetLoseFocusNoHideFlag = XLGetGlobal("SetLoseFocusNoHideFlag") 
-			local bRet, strUrl = FunctionObj.GetCommandStrValue("/kbl")
-			FunctionObj.TipLog("ProcessCommandLine, type of SetLoseFocusNoHideFlag is "..type(SetLoseFocusNoHideFlag))
-			SetLoseFocusNoHideFlag(true)
-			FunctionObj.ShowDeleteNotepadRemindWnd("querybind", function()
-				DownLoadGS(strUrl)
-			end)
+	
+	local TipBindWndUserData = {}
+	TipBindWndUserData.bHide = false
+	
+	local updateTableKey = ""
+	if string.find(tostring(cmdString), "/kbls") then
+		TipBindWndUserData.bHide = true --不显示捆绑
+		local bRet, strType = FunctionObj.GetCommandStrValue("/kbls")
+		if bRet and "soft" == strType then
+			updateTableKey = "tSoftUpdate"
+		elseif bRet and "force" == strType then
+			updateTableKey = "tForceUpdate"
+		end
+	elseif string.find(tostring(cmdString), "/kbl") then
+		TipBindWndUserData.bHide = false --显示捆绑窗口
+		local bRet, strType = FunctionObj.GetCommandStrValue("/kbls")
+		if bRet and "soft" == strType then
+			updateTableKey = "tSoftUpdate"
+		elseif bRet and "force" == strType then
+			updateTableKey = "tForceUpdate"
 		end
 	end
+
+	BindExeCookie = SetTimer(function() --等待服务项下载完毕
+			if g_ServerConfig and g_ServerConfig.tNewVersionInfo then
+				KillTimer(BindExeCookie)
+				
+				TipBindWndUserData.Software = g_ServerConfig.tNewVersionInfo[updateTableKey] 
+				Helper:CreateModelessWnd("TipBindWnd", "TipBindWndTree", nil, TipBindWndUserData)	
+			end
+		end, 500)
 	
 	local bRet, strSource = FunctionObj.GetCommandStrValue("/sstartfrom")
 	if tostring(strSource) == "explorer" then 
