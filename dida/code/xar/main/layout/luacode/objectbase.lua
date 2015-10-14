@@ -14,7 +14,6 @@ function ObjectBase:New(obj)
 	return obj
 end
 
--- Helper:AddListener暂不支持返回cookie
 function ObjectBase:AddListener(event, callBack, ownerObj, bAddToEnd)
 	assert("string" == type(event), "param1 event must be string")
 	if not self.listener[event] then
@@ -29,8 +28,6 @@ function ObjectBase:AddListener(event, callBack, ownerObj, bAddToEnd)
 	else
 		table.insert(self.listener[event], 1, {["callBack"] = callBack, ["ownerObj"] = ownerObj})
 	end
-	
-	return callBack
 end
 
 function ObjectBase:DispatchEvent(event, ...)
