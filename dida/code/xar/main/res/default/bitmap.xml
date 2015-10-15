@@ -25,6 +25,9 @@
 		<texture id="DiDa.ArrowRight.Month.Normal" image="bitmap\DiDa.ArrowRight.Month.Normal.png" />
 		<texture id="DiDa.ArrowRight.Month.Hover" image="bitmap\DiDa.ArrowRight.Month.Hover.png" />
 		
+		<texture id="TipBindWnd.checkbox.check" image="bitmap\TipBindWnd.checkbox.check.png" />
+		<texture id="TipBindWnd.checkbox.uncheck" image="bitmap\TipBindWnd.checkbox.uncheck.png" />
+		
 		<texture id="DiDa.BackToToday.Normal" image="bitmap\DiDa.BackToToday.Normal.png" />
 		<texture id="DiDa.BackToToday.Hover" image="bitmap\DiDa.BackToToday.Hover.png" />
 		
