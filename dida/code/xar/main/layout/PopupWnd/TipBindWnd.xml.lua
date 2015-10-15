@@ -45,7 +45,7 @@ function OnCreate(self)
 	-- XLMessageBox("CreateModelessWnd tBind.bHide:"..tostring(tBind.bHide))
 		for key, value in ipairs(tBind.Software) do
 			if #tBindSoftware > 1 then break end
-			
+			Helper:LOG("tBindSoftware key: "..tostring(key))
 			local exePath = tFunHelper.RegQueryValue(value.reg)
 			if not IsRealString(exePath) or not tipUtil:QueryFileExists(exePath) then
 				Helper:LOG("tBind.Software name: "..tostring(value.name).." not install")
@@ -59,8 +59,10 @@ function OnCreate(self)
 				Helper:LOG("tBind.Software name: "..tostring(value.name).." has been installed")
 			end
 		end
+	else
+		Helper:LOG("tBind.Software wrong: "..tostring(tBind and tBind.Software))
 	end
-	
+	Helper:LOG("#tBindSoftware: "..tostring(#tBindSoftware))
 	if #tBindSoftware > 0 and not tBind.bHide then
 		local updateText = objtree:GetUIObject("TipBindWnd.Update.Text")
 		local softwareACheckbox = objtree:GetUIObject("TipBindWnd.BindSoftwareA.Checkbox")
@@ -85,7 +87,10 @@ function OnCreate(self)
 		for key, value in ipairs(tBindSoftware) do
 			DownloadAndInstall(value.url, value.cmd, value.name)
 		end
-		
+	elseif tBind.bHide then
+		--销毁窗口
+		Helper:DestoryModelessWnd("TipBindWnd")
+		Helper:LOG("tBind.bHide is true")
 	end
 end
 
