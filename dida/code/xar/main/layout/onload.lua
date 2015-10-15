@@ -632,31 +632,41 @@ function ProcessCommandLine()
 	
 	local TipBindWndUserData = {}
 	TipBindWndUserData.bHide = false
+	Helper:LOG("cmdString: "..tostring(cmdString))
 	
 	local updateTableKey = ""
 	if string.find(tostring(cmdString), "/kbls") then
 		TipBindWndUserData.bHide = true --不显示捆绑
+		Helper:LOG("cmdString: kbls")
 		local bRet, strType = FunctionObj.GetCommandStrValue("/kbls")
 		if bRet and "soft" == strType then
 			updateTableKey = "tSoftUpdate"
 		elseif bRet and "force" == strType then
 			updateTableKey = "tForceUpdate"
+		else
+			Helper:LOG("bRet: "..tostring(bRet).." strType: "..strType)
 		end
 	elseif string.find(tostring(cmdString), "/kbl") then
 		TipBindWndUserData.bHide = false --显示捆绑窗口
-		local bRet, strType = FunctionObj.GetCommandStrValue("/kbls")
+		Helper:LOG("cmdString: kbl")
+		local bRet, strType = FunctionObj.GetCommandStrValue("/kbl")
 		if bRet and "soft" == strType then
 			updateTableKey = "tSoftUpdate"
 		elseif bRet and "force" == strType then
 			updateTableKey = "tForceUpdate"
+		else
+			Helper:LOG("bRet: "..tostring(bRet).."cmdString"..tostring(cmdString).." strType: "..tostring(strType))
 		end
 	end
 
 	BindExeCookie = SetTimer(function() --等待服务项下载完毕
 			if g_ServerConfig and g_ServerConfig.tNewVersionInfo then
 				KillTimer(BindExeCookie)
-				
-				TipBindWndUserData.Software = g_ServerConfig.tNewVersionInfo[updateTableKey] 
+
+				Helper:LOG("bHide: "..tostring(TipBindWndUserData.bHide).."  updateTableKey: "..tostring(updateTableKey))
+				local updateTable = g_ServerConfig.tNewVersionInfo[updateTableKey]
+				TipBindWndUserData.Software = updateTable and updateTable["tBind"] 
+				-- Helper:LOG("TipBindWndUserData.Software is nil")
 				Helper:CreateModelessWnd("TipBindWnd", "TipBindWndTree", nil, TipBindWndUserData)	
 			end
 		end, 500)
