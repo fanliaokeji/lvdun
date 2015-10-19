@@ -169,7 +169,7 @@ std::wstring DiDaClockControl::GetFixARPath()
 	{
 		return std::wstring();
 	}
-	wstrFixARPath = wstrFixARPath.substr(0,last+1) + L"ddfixar.exe";
+	wstrFixARPath = wstrFixARPath.substr(0,last+1) + L"myfixar.exe";
 	return wstrFixARPath;
 }
 
