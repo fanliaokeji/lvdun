@@ -81,15 +81,15 @@
 						
 						<obj id="TipAbout.CopyRight" class="TextObject">
 							<attr>
-								<left>136</left>
+								<left>100</left>
 								<top>220</top>
-								<width>117</width> 
+								<width>220</width> 
 								<height>18</height>
 								<valign>center</valign>
 								<halign>left</halign>
 								<font>font.text13</font>
 								<textcolor>3F5483</textcolor>
-								<text>我的日历 版权所有</text>
+								<text>嘀嗒日历 品牌升级为 我的日历</text>
 							</attr>		
 						</obj>
 						
