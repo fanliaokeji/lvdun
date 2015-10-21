@@ -68,7 +68,7 @@ for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') d
 		echo begin make pdbdir= !pdbdir!
 		md !pdbdir!
 		if errorlevel 0 ( echo made pdbdir success,pdbdir=!pdbdir!)
-		set unsigdir=!pdbdir!didabinary_unsigned%%i
+		set unsigdir=!pdbdir!myrlbinary_unsigned%%i
 		md !unsigdir!
 		echo about create commit_setup_log.txt
 		copy /y nul !pdbdir!\commit_setup_log.txt
