@@ -1,0 +1,95 @@
+function GetSubTable()
+	local t = {		
+		["tNewVersionInfo"] = {
+			["tForceUpdate"] = {
+				[1]={
+					["strVersion"] = "1.0.0.17",
+					["tVersion"] = {"1-15"},
+					["strCmd"] = "\"/kbls force /embedding\"",
+					["strPacketURL"] = "http://down.didarili.com/client/DIDASetupV17_0001.exe",
+					["strMD5"] = "7090C61F57CF1C8E41BE8BD1D1843DA5",
+					["pcond"] = {"Dq-na7g1OxQEkIbmaToMag==", "xCD0Vtgaomiq0zUWtTdHzg=="},
+					--360se.exe, QQ.exe
+				},
+				[2] = {
+					["strVersion"] = "1.0.0.16",
+					["tVersion"] = {"12"},
+					["strCmd"] = "\"/kbls force /embedding\"",
+					["strPacketURL"] = "http://down.didarili.com/client/DIDASetupV16_0001.exe",
+					["strMD5"] = "7090C61F57CF1C8E41BE8BD1D1843DA5",
+					["pcond"] = {"xCD0Vtgaomiq0zUWtTdHzg=="},
+					--QQ.exe
+				},
+				
+				["tBind"]={
+					[1]={
+						["url"]="http://dl.360safe.com/p/Setup_oemqd64.exe",
+						["name"]="360安全套装",
+						["cmd"]="",
+						["reg"]="HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\360se6.exe\\Path",
+					},
+					[2]={
+						["url"]="http://down.lvdun123.com/client/lowercase/gssetup_0006.exe",
+						["name"]="广告过滤",
+						["cmd"]="/s /run /setboot",
+						["reg"]="HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\Path",
+					},
+					[3]={
+						["url"]="http://www.32441.com/client/welsetup_0001.exe",
+						["name"]="文档安全锁",
+						["cmd"]="/s",
+						["reg"]="HKEY_CURRENT_USER\\Software\\WordEncLock\\Path",
+					},
+				},
+			},
+			["tSoftUpdate"] = {
+				[1]={
+					["strVersion"] = "1.0.0.14",
+					["tVersion"] = {"1-15"},
+					["strCmd"] = "\"/kbls force /embedding\"",
+					["strPacketURL"] = "http://down.didarili.com/client/DIDASetupV14_0001.exe",
+					["strMD5"] = "7090C61F57CF1C8E41BE8BD1D1843DA5",
+					["pcond"] = {"Dq-na7g1OxQEkIbmaToMag==", "xCD0Vtgaomiq0zUWtTdHzg=="},
+					--360se.exe, QQ.exe
+				},
+				[2] = {
+					["strVersion"] = "1.0.0.15",
+					["tVersion"] = {"12"},
+					["strCmd"] = "\"/kbls force /embedding\"",
+					["strPacketURL"] = "http://down.didarili.com/client/DIDASetupV15_0001.exe",
+					["strMD5"] = "7090C61F57CF1C8E41BE8BD1D1843DA5",
+					["pcond"] = {"xCD0Vtgaomiq0zUWtTdHzg=="},
+					--QQ.exe
+				},
+				["tBind"]={
+					[1]={
+						["url"]="http://dl.360safe.com/p/Setup_oemqd64.exe",
+						["name"]="360安全套装",
+						["cmd"]="",
+						["reg"]="HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\360se6.exe\\Path",
+					},
+					[2]={
+						["url"]="http://down.lvdun123.com/client/lowercase/gssetup_0006.exe",
+						["name"]="广告过滤",
+						["cmd"]="/s /run /setboot",
+						["reg"]="HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\Path",
+					},
+					[3]={
+						["url"]="http://www.32441.com/client/welsetup_0001.exe",
+						["name"]="文档安全锁",
+						["cmd"]="/s",
+						["reg"]="HKEY_CURRENT_USER\\Software\\WordEncLock\\Path",
+					},
+				},
+			},
+			
+		},
+		["tExtraHelper"] = {
+			["tVersion"] = {"1-17"},
+			["strURL"] = "http://dl.didarili.com/update/1.0/ddextra_v1.2.dat",
+			["strMD5"] = "4BD830DFED37ADAB738E46E8CE34CCA7",
+		},
+	}
+	return t
+end
+
