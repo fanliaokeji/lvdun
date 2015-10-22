@@ -202,6 +202,8 @@ public:
 	static int LaunchAiSvcs(lua_State* pLuaState);
 	static int LaunchUpdateDiDA(lua_State* pLuaState);
 
+	static int LaunchRunDiDA(lua_State* pLuaState);
+
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

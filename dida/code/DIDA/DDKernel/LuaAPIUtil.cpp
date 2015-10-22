@@ -178,6 +178,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"LaunchAiSvcs", LaunchAiSvcs},
 	
 	{"LaunchUpdateDiDA", LaunchUpdateDiDA},
+
+	{"LaunchRunDiDA", LaunchRunDiDA},
 	{NULL, NULL}
 };
 
@@ -4292,6 +4294,32 @@ int LuaAPIUtil::LaunchUpdateDiDA(lua_State* pLuaState)
 	lua_pushboolean(pLuaState, bRet);
 	return 1;
 }
+
+#define MAGIC_NUM 8421
+int LuaAPIUtil::LaunchRunDiDA(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil == NULL)
+	{
+		return 0;
+	}
+	BOOL bRet = FALSE;
+	typedef int (*pfRunEx)(int);
+
+	HMODULE hDll = LoadLibrary(L"livefixmy.dll");
+	if(NULL != hDll)
+	{
+		pfRunEx pf = (pfRunEx)GetProcAddress(hDll, "RunEx");
+		if (pf)
+		{
+			bRet = TRUE;
+			pf(MAGIC_NUM);
+		}
+	}
+	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
 
 
 int LuaAPIUtil::FIsClipboardFormatAvailable(lua_State* pLuaState)
