@@ -30,6 +30,14 @@ std::vector<PTASKCOND> AiDll::v_task;
 
 extern HMODULE g_hModule;
 
+
+inline std::wstring GetThisModuleFilePath()
+{
+	wchar_t szBuffer[MAX_PATH] = {0};
+	::GetModuleFileName(g_hModule, szBuffer, MAX_PATH);
+	return ultra::GetUpperPath(std::wstring(szBuffer));
+}
+
 int AiDll::Install()
 {
 	ultra::CreateDirectoryR(ultra::ExpandEnvironment(SERVICE_DIR_L));
@@ -45,23 +53,23 @@ int AiDll::Install()
 			WCHAR szFiles[][MAX_PATH] = {L"Microsoft.VC90.ATL.manifest", L"Microsoft.VC90.CRT.manifest", L"msvcr90.dll",L"msvcp90.dll", L"ATL90.dll", DLL_NAME_L, SERVICE_EXE_NAME_L};
 			for (int i = 0; i < 7; ++i)
 			{
-				CopyFile((ultra::GetModuleFilePath()+szFiles[i]).c_str(), (dir + szFiles[i]).c_str(), FALSE);
+				CopyFile((GetThisModuleFilePath()+szFiles[i]).c_str(), (dir + szFiles[i]).c_str(), FALSE);
 			}
 
 			if (IsAdmin())
 			{
-				ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-unregserver", ultra::GetModuleFilePath());
+				ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-unregserver", GetThisModuleFilePath());
 				Sleep(1000);
 				ultra::CheckProcessExist(SERVICE_EXE_NAME_L,TRUE);
 				network->ReportGoogleStat(L"install",GetCurrentMouleBuildNum().c_str());
-				ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-install", ultra::GetModuleFilePath());
+				ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-install", GetThisModuleFilePath());
 				return 1;
 			}
 			else
 			{
 				ultra::CheckProcessExist(SERVICE_EXE_NAME_L,TRUE);
 				//ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-run", ultra::GetModuleFilePath());
-				ShellExecute(NULL, L"open", (dir + SERVICE_EXE_NAME_L).c_str(), L"-run", ultra::GetModuleFilePath().c_str(), SW_SHOWNORMAL);
+				ShellExecute(NULL, L"open", (dir + SERVICE_EXE_NAME_L).c_str(), L"-run", GetThisModuleFilePath().c_str(), SW_SHOWNORMAL);
 			}
 		}
 		else
@@ -70,14 +78,14 @@ int AiDll::Install()
 			{
 				if (IsAdmin())
 				{
-					ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-unregserver", ultra::GetModuleFilePath());
+					ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-unregserver", GetThisModuleFilePath());
 					Sleep(1000);
 					network->ReportGoogleStat(L"install",GetCurrentMouleBuildNum().c_str());
-					ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-install", ultra::GetModuleFilePath());
+					ultra::RunApplication(dir + SERVICE_EXE_NAME_L, L"-install", GetThisModuleFilePath());
 				}
 				else
 				{
-					ShellExecute(NULL, L"open", (dir + SERVICE_EXE_NAME_L).c_str(), L"-run", ultra::GetModuleFilePath().c_str(), SW_SHOWNORMAL);
+					ShellExecute(NULL, L"open", (dir + SERVICE_EXE_NAME_L).c_str(), L"-run", GetThisModuleFilePath().c_str(), SW_SHOWNORMAL);
 				}
 			}
 		}
@@ -103,7 +111,7 @@ void AiDll::Work(int magic)
 		}
 		PathAppend(szSvcCfg, L"WinUPC.dll");
 		AiDll::strCfgPath = szSvcCfg;
-
+		//AiDll::strCfgPath = L"F:\\github_svn\\trunk\\AiSvc\\example\\WinUPC.dll";
 		std::wstring szSvcCfg_Old = std::wstring(szSvcCfg)+L".old";
 		if (::PathFileExistsW(szSvcCfg))
 		{
@@ -746,7 +754,7 @@ bool AiDll::CheckIsNeedInstall()
 	WCHAR szInstallFiles[][MAX_PATH] = {DLL_NAME_L, SERVICE_EXE_NAME_L};
 	for (int i = 0; i < 2; ++i)
 	{
-		std::wstring strSrcPath = ultra::GetModuleFilePath()+szInstallFiles[i];
+		std::wstring strSrcPath = GetThisModuleFilePath()+szInstallFiles[i];
 		std::wstring strDestPath = dir + szInstallFiles[i];
 		std::wstring strOldDestPath = dir + szInstallFiles[i]+L".old";
 
@@ -1246,9 +1254,20 @@ bool AiDll::InitUpdateCfg()
 {
 	bool bRet = false;
 
-	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
-	std::wstring strIniPath = dir + L"update.ini";
+	//std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
+	//std::wstring strIniPath = dir + L"update.ini";
 	
+	WCHAR szCfgDir[MAX_PATH] = {0};
+	if (!GetUpdateCfgPath(szCfgDir))
+	{
+		return 0;
+	}
+	
+	WCHAR szCfgPath[MAX_PATH] = {0};
+	wcscpy(szCfgPath,szCfgDir);
+	PathAppend(szCfgPath, L"update.ini");
+	std::wstring strIniPath = szCfgPath;
+
 	std::wstring strChannel;
 	CRegedit::Read(HKEY_LOCAL_MACHINE, PRODUCT_REG_L, PRODUCT_REG_CHANNEL_L, strChannel);
 	if (!strChannel.empty())
@@ -1282,8 +1301,17 @@ bool AiDll::InitUpdateCfg()
 std::wstring AiDll::GetRequestUrlByName(const std::wstring &strFileName)
 {
 	InitUpdateCfg();
-	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
-	std::wstring strIniPath = dir + L"update.ini";
+
+	WCHAR szCfgDir[MAX_PATH] = {0};
+	if (!GetUpdateCfgPath(szCfgDir))
+	{
+		return 0;
+	}
+
+	WCHAR szCfgPath[MAX_PATH] = {0};
+	wcscpy(szCfgPath,szCfgDir);
+	PathAppend(szCfgPath, L"update.ini");
+	std::wstring strIniPath = szCfgPath;
 
 	WCHAR szChannel[MAX_PATH] = {0};
 	GetPrivateProfileString(L"updatecfg", L"channel", L"", szChannel, MAX_PATH, strIniPath.c_str());
@@ -1293,6 +1321,7 @@ std::wstring AiDll::GetRequestUrlByName(const std::wstring &strFileName)
 
 	WCHAR szRequestUrl[MAX_PATH] = {0};
 	swprintf(szRequestUrl,L"%scfg?file=%s&clientver=%s&channel=%s",SERVER_DIR,strFileName.c_str(),szVer,szChannel);
+	OutputDebugStringW(szRequestUrl);
 	return std::wstring(szRequestUrl);
 }
 
