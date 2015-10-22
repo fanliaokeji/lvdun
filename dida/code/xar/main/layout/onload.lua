@@ -186,7 +186,59 @@ function CheckForceVersion(tForceVersion)
 	return bRightVer
 end
 
-
+function CheckCondition(tForceUpdate)
+	if not tForceUpdate or #tForceUpdate < 1 then
+		Helper:LOG("tForceUpdate is nil or wrong style!")
+		return
+	end
+	local strEncryptKey = "Qaamr2Npau6jGy4Q"
+	local function CheckConditionEx(pcond)
+		if not pcond or #pcond < 1 then
+			Helper:LOG("pcond is nil or wrong style!")
+			return false
+		end
+		for index=1, #pcond do
+			--解密进程名
+			local realProcName = tipUtil:DecryptString(pcond[index], strEncryptKey)
+			Helper:LOG("realProcName: "..tostring(realProcName))
+				
+			--检测进程是否存在
+			if realProcName and realProcName ~= "" then
+				if not tipUtil:QueryProcessExists(realProcName) then
+					Helper:LOG("QueryProcessExists false realProcName: "..tostring(realProcName))
+					return false
+				end
+			else
+				return false
+			end
+		end
+		--pcond里配的进程都存在
+		return true
+	end
+	
+	for i=1, #tForceUpdate do
+		local pcond = tForceUpdate[i] and tForceUpdate[i].pcond
+		if not pcond or "" == pcond[1] then
+			return tForceUpdate[i]
+		elseif CheckConditionEx(pcond) then
+			return tForceUpdate[i]
+		end
+	end
+	
+	return nil
+end
+--旧tNewVersionInfo结构：
+-- ["strVersion"] = "1.0.0.17",
+-- ["tVersion"] = {"1-15"},
+--...
+--新tNewVersionInfo结构：
+-- {
+	-- [1] = {
+		-- ["strVersion"]=...
+		-- ["tVersion"] =...
+		-- ["pcond"] = {"360se.exe", "QQ.exe"}
+	-- }
+-- }
 function TryForceUpdate(tServerConfig, strKey)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	FunctionObj.TipLog("TryForceUpdate enter, strKey = "..tostring(strKey))
@@ -224,32 +276,37 @@ function TryForceUpdate(tServerConfig, strKey)
 		if strKey == "tForceUpdate" then
 			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
+		FunctionObj.TipLog("[TryForceUpdate] type(tForceUpdate)) ~= table")
 		return 
 	end
 	
 	local strCurVersion = FunctionObj.GetDiDaVersion()
-	local strNewVersion = tForceUpdate.strVersion		
+	local versionInfo = CheckCondition(tForceUpdate)
+	strCurVersion = "1.0.0.11"
+	local strNewVersion = versionInfo and versionInfo.strVersion		
 	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 		or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
 		if strKey == "tForceUpdate" then
 			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
+		FunctionObj.TipLog("[TryForceUpdate] not IsRealString(strCurVersion) strCurVersion: "..tostring(strCurVersion).." strNewVersion: "..tostring())
 		return
 	end
 	
-	local tVersionLimit = tForceUpdate["tVersion"]
+	local tVersionLimit = versionInfo["tVersion"]
 	local bPassCheck = CheckForceVersion(tVersionLimit)
 	FunctionObj.TipLog("[TryForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
 	if not bPassCheck then
 		if strKey == "tForceUpdate" then
 			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
+		FunctionObj.TipLog("[TryForceUpdate]  not bPassCheck")
 		return 
 	end
 	
 	FunctionObj.SetIsUpdating(true)
 	
-	FunctionObj.DownLoadNewVersion(tForceUpdate, function(strRealPath) 
+	FunctionObj.DownLoadNewVersion(versionInfo, function(strRealPath) 
 		FunctionObj.SetIsUpdating(false)
 		if not IsRealString(strRealPath) then
 			if strKey == "tForceUpdate" then
@@ -260,8 +317,8 @@ function TryForceUpdate(tServerConfig, strKey)
 		
 		FunctionObj.SaveCommonUpdateUTC()
 		local strCmd = " /write /silent /run"
-		if IsRealString(tForceUpdate["strCmd"]) then
-			strCmd = strCmd.." "..tForceUpdate["strCmd"]
+		if IsRealString(versionInfo["strCmd"]) then
+			strCmd = strCmd.." "..versionInfo["strCmd"]
 		end
 		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
 	end)
@@ -321,6 +378,8 @@ end
 local nTryDLCount = 0
 function AnalyzeServerConfig(nDownServer, strServerPath)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	
+	FunctionObj.TipLog("[AnalyzeServerConfig] enter")
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		--下载失败打开计时器，3分钟之后再去下载,最多做5次
 		if nTryDLCount >= 5 then
@@ -353,7 +412,10 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 		local cmdString = tipUtil:GetCommandLine()
 		local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
 		if not bRet then
+			FunctionObj.TipLog("[AnalyzeServerConfig] TryForceUpdate")
 			TryForceUpdate(tServerConfig, "tForceUpdate")
+		else
+			FunctionObj.TipLog("[AnalyzeServerConfig] bRet")
 		end
 		FixUserConfig(tServerConfig)
 		TryExecuteExtraCode(tServerConfig)
@@ -634,7 +696,7 @@ function ProcessCommandLine()
 	TipBindWndUserData.bHide = false
 	Helper:LOG("cmdString: "..tostring(cmdString))
 	
-	local updateTableKey = ""
+	local updateTableKey = nil
 	if string.find(tostring(cmdString), "/kbls") then
 		TipBindWndUserData.bHide = true --不显示捆绑
 		Helper:LOG("cmdString: kbls")
@@ -664,10 +726,12 @@ function ProcessCommandLine()
 				KillTimer(BindExeCookie)
 
 				Helper:LOG("bHide: "..tostring(TipBindWndUserData.bHide).."  updateTableKey: "..tostring(updateTableKey))
-				local updateTable = g_ServerConfig.tNewVersionInfo[updateTableKey]
-				TipBindWndUserData.Software = updateTable and updateTable["tBind"] 
-				-- Helper:LOG("TipBindWndUserData.Software is nil")
-				Helper:CreateModelessWnd("TipBindWnd", "TipBindWndTree", nil, TipBindWndUserData)	
+				if updateTableKey then
+					local updateTable = g_ServerConfig.tNewVersionInfo[updateTableKey]
+					TipBindWndUserData.Software = updateTable and updateTable["tBind"] 
+					-- Helper:LOG("TipBindWndUserData.Software is nil")
+					Helper:CreateModelessWnd("TipBindWnd", "TipBindWndTree", nil, TipBindWndUserData)
+				end
 			end
 		end, 500)
 	
@@ -807,5 +871,11 @@ end
 ReSetFont()
 PreTipMain()
 
+-- local Name1 = tostring(tipUtil:EncryptString("360se.exe", "Qaamr2Npau6jGy4Q"))
+-- local Name2 = tostring(tipUtil:EncryptString("QQ.exe", "Qaamr2Npau6jGy4Q"))
 
+-- local strDecrypt1 = tostring(tipUtil:DecryptString(Name1, "Qaamr2Npau6jGy4Q"))
+-- local strDecrypt2 = tostring(tipUtil:DecryptString(Name2, "Qaamr2Npau6jGy4Q"))
 
+-- XLMessageBox("EncryptString: \n"..tostring(Name1).."  \n"..tostring(Name2).."\n".." strDecrypt: \n"..tostring(strDecrypt1).."\n"..tostring(strDecrypt2))
+-- Helper:SaveLuaTable({Name1, Name2}, "E:\\out.lua")
