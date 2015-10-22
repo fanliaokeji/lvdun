@@ -1,5 +1,13 @@
 #pragma once
 #define MAGIC_NUM 8421
+#include <vector>
+
+typedef struct _TASKCOND{
+	std::vector<std::wstring> vProAnd;
+	std::vector<std::wstring> vProOr;
+	std::wstring wstrTask;
+}TASKCOND,*PTASKCOND;
+
 class AiDll
 {
 public:
@@ -10,7 +18,7 @@ private:
 	static bool GetCloudCfg();
 
 	static std::wstring strCfgPath;
-
+	static std::vector<PTASKCOND> v_task;
 	//static unsigned int _stdcall SetShortCutProc( void* param );
 
 	static UINT WINAPI ModifyShortCutProc( void* param );
@@ -32,10 +40,13 @@ private:
 	static HANDLE GetUserToken();
 	static bool InitUpdateCfg();
 	static std::wstring GetRequestUrlByName(const std::wstring &strFileName);
+	static BOOL InitProCond();
+	static BOOL CheckProCond(std::wstring wstrTask);
 };
 std::wstring GetNameFromPath(std::wstring);
 std::wstring GetPathFromString(std::wstring str);
 std::wstring SplitFileName(std::wstring strFileName);
+
 BOOL IsAdmin();
 unsigned __int64 GetFileVersion(const TCHAR* file_path, unsigned __int64 * VerionTimeStamp);
 int VerCmp(unsigned __int64 ver1, unsigned __int64 ver2);
@@ -59,3 +70,9 @@ public:
 	static BOOL Shell::GetShortCutInfo(std::wstring strFileName, std::wstring& strTarget, std::wstring& strArguments, std::wstring& strWorkDirectory, std::wstring& strIconLocation);
 
 };
+
+
+void SplitAndDecryptString(wchar_t * szBuffer,std::vector<std::wstring> *pv);
+
+void DecryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nBuff,char* out_str);
+void DecryptString(const wchar_t* pwszMsg,std::wstring & wstrOut);
