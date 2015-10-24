@@ -1333,7 +1333,7 @@ function DownLoadServerConfig(fnCallBack, nTimeInMs)
 	local tUserConfig = ReadConfigFromMemByKey("tUserConfig") or {}
 	
 	-- local strConfigURL = tUserConfig["strServerConfigURL"]
-	local strConfigURL = tUserConfig["strServerConfigURL_25"]--25及以后的版本
+	local strConfigURL = tUserConfig["strServerConfigURL"]--25及以后的版本
 	if not IsRealString(strConfigURL) then
 		fnCallBack(-1)
 		return
