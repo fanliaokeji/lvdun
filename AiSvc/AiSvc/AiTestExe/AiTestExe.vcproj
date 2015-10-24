@@ -163,7 +163,7 @@
 		</Configuration>
 		<Configuration
 			Name="MYCALENDAR|Win32"
-			OutputDirectory="..\..\bin\Release\DIDARILI_0000"
+			OutputDirectory="..\..\bin\Release\MYCALENDAR"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
