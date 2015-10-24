@@ -53,8 +53,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "mycalendar"
 !define SHORTCUT_NAME "我的日历"
-!define PRODUCT_VERSION "1.0.0.23"
-!define VERSION_LASTNUMBER 23
+!define PRODUCT_VERSION "1.0.0.25"
+!define VERSION_LASTNUMBER 25
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
@@ -163,13 +163,14 @@ SectionEnd
 /*封装创建ui的接口end*/
 
 ;循环杀进程
-!macro _FKillProc strProcName
+!macro _FKillProc bSilent strProcName
 	Push $R3
 	Push $R0
 	${For} $R3 0 6
 		FindProcDLL::FindProc "${strProcName}.exe"
 		${If} $R3 == 6
 		${AndIf} $R0 != 0
+		${AndIf} ${bSilent} != 0
 			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
 			Abort
 		${ElseIf} $R0 != 0
@@ -182,7 +183,8 @@ SectionEnd
 	Push $R0
 	Push $R3
 !macroend
-!define FKillProc "!insertmacro _FKillProc"
+!define FKillProc "!insertmacro _FKillProc 0 "
+!define SKillProc "!insertmacro _FKillProc 1 "
 
 !macro _RenameDeleteFile strFilePath BeginRename RenameOK
 	Push $1
@@ -192,9 +194,9 @@ SectionEnd
 	System::Call 'kernel32::QueryPerformanceCounter(*l.r1)'
 	System::Int64Op $1 % 1000
 	Pop $0
-	IfFileExists "$R0.$0" ${BeginRename}
-	Rename $R0 "$R0.$0"
-	Delete /REBOOTOK "$R0.$0"
+	IfFileExists "${strFilePath}.$0" ${BeginRename}
+	Rename ${strFilePath} "${strFilePath}.$0"
+	Delete /REBOOTOK "${strFilePath}.$0"
 	${RenameOK}:
 	Pop $0
 	Pop $1
@@ -403,13 +405,55 @@ FunctionEnd
 !define SetSysBoot 'Call InstSetSysBoot'
 !define UnSetSysBoot 'Call un.InstSetSysBoot'
 
+;恢复txt关联
+Function ReSetTxtAssociation
+	Push $0
+	Push $1
+	Push $2
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} "$0" "6.0" $1
+	${If} $1 == 2
+		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt"
+	${Else}
+		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice"
+	${EndIf}
+	
+	ReadRegStr $0 HKCU $2 "Progid"
+	ReadRegStr $1 HKCU $2 "ddnotepad_backup"
+	${If} $0 == "ddtxtfile"
+		DeleteRegKey HKCR "ddtxtfile"
+		;DeleteRegValue HKCU $2 "Progid"
+	${EndIf}
+	${If} $1 != ""
+		;WriteRegStr HKCU $2 "Progid" "$1"
+	${EndIf}
+	DeleteRegValue  HKCU $2 "ddnotepad_backup"
+	;从打开方式列表删除
+	DeleteRegKey HKCR "Applications\ddnotepad.exe"
+	Pop $2
+	Pop $1
+	Pop $0
+FunctionEnd
+
 ;卸载老的文件
 Function UnstOld
 	Push $0
 	Push $1
+	Push $2
 	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
 	StrCmp $0 "" End
 	IfFileExists $0 0 End
+	;恢复txt关联
+	Call ReSetTxtAssociation
+	;杀服务项
+	${SKillProc} "didaupdate"
+	${SKillProc} "didaupdate"
+	System::Call "kernel32::GetEnvironmentVariable(t 'allusersprofile', t .r2, i 256)"
+	IfFileExists $2 0 EndDelSvr
+	RMDir /r /REBOOTOK  "$2\didaUpdate"
+	IfFileExists "$2\didaUpdate\didaupdate.exe" 0 EndDelSvr
+	${RenameDeleteFile} "$2\didaUpdate\didaupdate.exe" BeginRename3 EndRename3
+	EndDelSvr:
 	;注册表
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DIDA"
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\App Paths\DIDA.exe"
@@ -435,19 +479,20 @@ Function UnstOld
 		RMDir /r "$0"
 	${EndIf}
 	End:
+	Pop $2
 	Pop $1
 	Pop $0
 FunctionEnd
 
 ;卸载老的快捷方式
 Function UnstOldLink
+	Call CloseExe
 	Push $0 
 	Push $1
 	Push $2
 	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
 	StrCmp $0 "" End
 	IfFileExists $0 0 End
-	
 	ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$1" "6.0" $2
 	${if} $2 == 2
@@ -459,14 +504,8 @@ Function UnstOldLink
 		Call GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\嘀嗒日历.lnk"
-			StrCpy $1 "$0\TaskBar\嘀嗒日历.lnk"
-			Call RefreshIcon
-			Sleep 200
-			ExecShell startunpin "$0\StartMenu\嘀嗒日历.lnk"
-			StrCpy $1 "$0\StartMenu\嘀嗒日历.lnk"
-			Call RefreshIcon
-			Sleep 200
+			Delete "$0\TaskBar\嘀嗒日历.lnk"
+			Delete "$0\StartMenu\嘀嗒日历.lnk"
 		${EndIf}
 	${Endif}
 	IfFileExists "$DESKTOP\嘀嗒日历.lnk" 0 +2
