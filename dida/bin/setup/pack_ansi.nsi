@@ -53,8 +53,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "mycalendar"
 !define SHORTCUT_NAME "我的日历"
-!define PRODUCT_VERSION "1.0.0.25"
-!define VERSION_LASTNUMBER 25
+!define PRODUCT_VERSION "1.0.0.26"
+!define VERSION_LASTNUMBER 26
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
@@ -271,7 +271,7 @@ Function NSISModifyCfgFile
 		done:
 	${EndIf}
 	${If} $3 != ""
-		${WordReplace} $3 "DiDaServerConfig.dat" "didaserverconfigb16.dat" "+*" $3
+		${WordReplace} $3 "serverconfig.dat" "serverconfig25.dat" "+*" $3
 		ClearErrors
 		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.dat" w
 		IfErrors done2
