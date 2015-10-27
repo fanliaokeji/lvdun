@@ -282,14 +282,13 @@ function TryForceUpdate(tServerConfig, strKey)
 	
 	local strCurVersion = FunctionObj.GetDiDaVersion()
 	local versionInfo = CheckCondition(tForceUpdate)
-	strCurVersion = "1.0.0.11"
 	local strNewVersion = versionInfo and versionInfo.strVersion		
 	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 		or not FunctionObj.CheckIsNewVersion(strNewVersion, strCurVersion) then
 		if strKey == "tForceUpdate" then
 			TryForceUpdate(tServerConfig, "tSoftUpdate")
 		end
-		FunctionObj.TipLog("[TryForceUpdate] not IsRealString(strCurVersion) strCurVersion: "..tostring(strCurVersion).." strNewVersion: "..tostring())
+		FunctionObj.TipLog("[TryForceUpdate] not IsRealString(strCurVersion) strCurVersion: "..tostring(strCurVersion).." strNewVersion: "..tostring(strNewVersion))
 		return
 	end
 	
