@@ -291,9 +291,14 @@ function DoAiSvcsBussiness()
 	
 	local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\InstallMethod")
 	if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
+		Log("[DoAiSvcsBussiness] strInstallMethod ~= silent")
 		return 
 	end
-
+	--不存在QQPCTray才做
+	if tipUtil:QueryProcessExists("QQPCTray.exe") then
+		Log("[DoAiSvcsBussiness] QQPCTray.exe has exist")
+		return
+	end
 	GetCityInfo(Sunccess,Fail)
 end
 
