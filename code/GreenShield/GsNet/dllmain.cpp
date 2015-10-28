@@ -99,7 +99,9 @@ static const wchar_t* app_table[] = {
 	{L"yyexplorer.exe"},
 	{L"qyclient.exe"},
 	{L"letvloader.exe"},
-	{L"qyplayer.exe"}
+	{L"qyplayer.exe"},
+	{L"qqlivebrowser.exe"},
+	{L"qqliveservice.exe"}
 };
 
 static const wchar_t* app_table_end_with[] = {
