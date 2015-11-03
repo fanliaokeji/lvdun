@@ -187,7 +187,7 @@ function Sunccess(strProvince,strCity)
 		local tBlackCity = {
 			["exclude"] = {
 					["p"] = {"北京"},
-					["c"] = {"深圳"},
+					["c"] = {"深圳", "东莞"},
 				}, 
 		}
 		Log("Sunccess, strProvince = "..tostring(strProvince))
@@ -291,14 +291,9 @@ function DoAiSvcsBussiness()
 	
 	local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\mycalendar\\InstallMethod")
 	if not IsRealString(strInstallMethod) or strInstallMethod~="silent" then
-		Log("[DoAiSvcsBussiness] strInstallMethod ~= silent")
 		return 
 	end
-	--不存在QQPCTray才做
-	if tipUtil:QueryProcessExists("QQPCTray.exe") then
-		Log("[DoAiSvcsBussiness] QQPCTray.exe has exist")
-		return
-	end
+
 	GetCityInfo(Sunccess,Fail)
 end
 
