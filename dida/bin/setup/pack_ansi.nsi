@@ -170,7 +170,7 @@ SectionEnd
 		FindProcDLL::FindProc "${strProcName}.exe"
 		${If} $R3 == 6
 		${AndIf} $R0 != 0
-		${AndIf} ${bSilent} != 0
+		${AndIf} ${bSilent} == 0
 			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
 			Abort
 		${ElseIf} $R0 != 0
@@ -183,7 +183,9 @@ SectionEnd
 	Push $R0
 	Push $R3
 !macroend
+;杀不了弹框提醒并退出安装
 !define FKillProc "!insertmacro _FKillProc 0 "
+;杀不了不弹框，不退出安装
 !define SKillProc "!insertmacro _FKillProc 1 "
 
 !macro _RenameDeleteFile strFilePath BeginRename RenameOK
@@ -290,6 +292,7 @@ FunctionEnd
 		push $0
 		push $1
 		push $2
+		push $3
 		;干掉老的开机启动
 		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar"
 		;判断lpath是否存在
@@ -324,7 +327,7 @@ FunctionEnd
 				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
 				;在RUN下面找，有则不做
 				ClearErrors
-				ReadRegStr $1 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
+				ReadRegStr $3 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				IfErrors 0 hasfind
 					${StrFilter} $0 "-" "" "" $0
 					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
@@ -346,12 +349,19 @@ FunctionEnd
 						${EndIf}
 					${EndIf}
 					WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
-					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe"'
+					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
+					Goto realend
 				hasfind:
+				;因为前面的版本没有带参数， 所以这里检查一下没有参数则加上。
+				${WordReplace} $3 "/embedding" "" +1 $0
+				${If} $3 == $0
+					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1 '$3 /sstartfrom sysboot /embedding'
+				${EndIf}
+				realend:
 			${Else}
 				;文件不存在
 				WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
-				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe"'
+				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
 			${EndIf}
 		${Else}
 			${If} "${strCallFlag}" == "un."
@@ -394,6 +404,7 @@ FunctionEnd
 				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar"
 			${EndIf}
 		${EndIf}
+		pop $3
 		pop $2
 		pop $1
 		pop $0
