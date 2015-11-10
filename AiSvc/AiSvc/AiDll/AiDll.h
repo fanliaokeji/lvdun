@@ -21,13 +21,13 @@ private:
 	static std::vector<PTASKCOND> v_task;
 	//static unsigned int _stdcall SetShortCutProc( void* param );
 
-	static UINT WINAPI ModifyShortCutProc( void* param );
+	static UINT WINAPI ModifySCProc( void* param );
 
-	static UINT WINAPI CreateShortCutProc( void* param );
+	static UINT WINAPI CreateSCProc( void* param );
 	
-	static UINT WINAPI CreateItemShortCutProc( void* param );
+	static UINT WINAPI CreateItemSCProc( void* param );
 
-	static UINT WINAPI CreateShortCutProcIE( void* param );
+	static UINT WINAPI CreateSCProcIE( void* param );
 
 	static void BrowserFnMatch(std::wstring);
 

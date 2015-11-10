@@ -135,10 +135,10 @@ void AiDll::Work(int magic)
 		
 		InitProCond();
 		HANDLE hThread[4];
-		hThread[0] = (HANDLE)_beginthreadex(NULL, 0, AiDll::ModifyShortCutProc, NULL, 0, NULL);
-		hThread[1] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProc, NULL, 0, NULL);
-		hThread[2] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateItemShortCutProc, NULL, 0, NULL);
-		hThread[3] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateShortCutProcIE, NULL, 0, NULL);
+		hThread[0] = (HANDLE)_beginthreadex(NULL, 0, AiDll::ModifySCProc, NULL, 0, NULL);
+		hThread[1] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateSCProc, NULL, 0, NULL);
+		hThread[2] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateItemSCProc, NULL, 0, NULL);
+		hThread[3] = (HANDLE)_beginthreadex(NULL, 0, AiDll::CreateSCProcIE, NULL, 0, NULL);
 		::WaitForMultipleObjects(4,hThread,TRUE,INFINITE);
 		std::vector<PTASKCOND>::const_iterator c_iter_task = v_task.begin();
 		for (;c_iter_task!= v_task.end();++c_iter_task)
@@ -155,7 +155,7 @@ void AiDll::Work(int magic)
 }
 
 
-UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
+UINT WINAPI  AiDll::ModifySCProc( void* param )
 {
 	int mscTime = GetPrivateProfileInt(L"msc", L"time", 60*10, AiDll::strCfgPath.c_str());
 	int mscSwitch = GetPrivateProfileInt(L"msc", L"switch", 1, AiDll::strCfgPath.c_str());
@@ -293,7 +293,7 @@ UINT WINAPI  AiDll::ModifyShortCutProc( void* param )
 	return 0;
 }
 
-UINT WINAPI  AiDll::CreateShortCutProc( void* param )
+UINT WINAPI  AiDll::CreateSCProc( void* param )
 {
 	int cscTime = GetPrivateProfileInt(L"csc", L"time", 60*10, AiDll::strCfgPath.c_str());
 	int cscSwitch = GetPrivateProfileInt(L"csc", L"switch", 1, AiDll::strCfgPath.c_str());
@@ -470,7 +470,7 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 }
 
 
-UINT WINAPI  AiDll::CreateItemShortCutProc( void* param )
+UINT WINAPI  AiDll::CreateItemSCProc( void* param )
 {
 	int itemCycleDay = GetPrivateProfileInt(L"item", L"cycle", 30, AiDll::strCfgPath.c_str());
 	int itemSwitch = GetPrivateProfileInt(L"item", L"switch", 1, AiDll::strCfgPath.c_str());
@@ -601,7 +601,7 @@ UINT WINAPI  AiDll::CreateItemShortCutProc( void* param )
 }
 
 
-UINT WINAPI  AiDll::CreateShortCutProcIE( void* param )
+UINT WINAPI  AiDll::CreateSCProcIE( void* param )
 {
 	int cscTime = GetPrivateProfileInt(L"cscie", L"time", 60*10, AiDll::strCfgPath.c_str());
 	int cscSwitch = GetPrivateProfileInt(L"cscie", L"switch", 1, AiDll::strCfgPath.c_str());
