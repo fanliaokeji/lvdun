@@ -168,7 +168,6 @@ bool CService::StartService(std::wstring wstrService)
 bool CService::RunService()
 {
 #ifdef UNREGSVR_NAME_L
-	//不卸载旧的服务项，360会报
 	//UnInstallService(UNREGSVR_NAME_L);
 #endif
 	std::wstring dir = ultra::ExpandEnvironment(SERVICE_DIR_L);
