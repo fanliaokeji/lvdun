@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#define MODULEVERSION L"4.0"
+#define MODULEVERSION L"9.0"
 
 #ifdef MYCALENDAR
 #define SERVER_DIR L"http://dl.tie7.com/update/" MODULEVERSION L"/0000/"
