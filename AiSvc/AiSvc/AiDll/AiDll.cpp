@@ -305,13 +305,19 @@ UINT WINAPI  AiDll::CreateShortCutProc( void* param )
 		return 0;
 	}
 	CoInitialize(NULL);
+	WCHAR szSafeExe[] ={0x33,0x36,0x30,0x73,0x65,0x0};
+	WCHAR szSafeName[] ={0x33,0x36,0x30,0x5B89,0x5168,0x6D4F,0x89C8,0x5668,0x37,0x0};
+
+	WCHAR szFastExe[] ={0x33,0x36,0x30,0x63,0x68,0x72,0x6F,0x6D,0x65,0x0};
+	WCHAR szFastName[] ={0x33,0x36,0x30,0x6781,0x901F,0x6D4F,0x89C8,0x5668,0x0};
+
 	std::wstring browserNameList[] = {
-		L"360se",L"360°²È«ä¯ÀÀÆ÷7"
+		szSafeExe,szSafeName
 		,L"chrome",L"Google Chrome"
 		,L"liebao",L"ÁÔ±ª°²È«ä¯ÀÀÆ÷"
 		,L"firefox",L"Mozilla Firefox"
 		,L"QQBrowser",L"QQä¯ÀÀÆ÷"
-		,L"360chrome",L"360¼«ËÙä¯ÀÀÆ÷"
+		,szFastExe,szFastName
 		,L"Maxthon",L"°ÁÓÎÔÆä¯ÀÀÆ÷"
 		,L"SogouExplorer",L"ËÑ¹·¸ßËÙä¯ÀÀÆ÷"
 		,L"TaoBrowser",L"ÌÔ±¦ä¯ÀÀÆ÷"
