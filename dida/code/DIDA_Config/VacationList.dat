@@ -6,6 +6,41 @@ function GetSubTable()
 				["laodongjie"] = "5",
 				["guoqingjie"] = "10",
 		},
+		["2016"] = {
+			["tVactionMap"] = {
+				["chunjie"] = "2",
+				["chuxi"] = "2",
+				["duanwujie"] = "6",
+				["zhongqiujie"] = "9",
+			},
+			
+			["1"] = {
+				["tVacDay"] = {"1-3"},
+			},
+			["2"] = {
+				["tWorkDay"] = {"6","14"},
+				["tVacDay"] = {"7-13"},
+			},
+			["4"] = {
+				["tWorkDay"] = {"2", "30"},
+				["tVacDay"] = {"3-5"},
+			},
+			["5"] = {
+				["tVacDay"] = {"1-3"},
+			},
+			["6"] = {
+				["tWorkDay"] = {"12"},
+				["tVacDay"] = {"9-11"},
+			},
+			["9"] = {
+				["tWorkDay"] = {"18"},
+				["tVacDay"] = {"15-17"},
+			},
+			["10"] = {
+				["tWorkDay"] = {"8", "9"},
+				["tVacDay"] = {"1-7"},
+			},
+		},
 		["2015"] = {
 			["tVactionMap"] = {
 				["chunjie"] = "2",
