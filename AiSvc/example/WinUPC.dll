@@ -18,7 +18,7 @@ url=http://www.hao123.com/?tn=92299467_hao_pg
 cycle=30
 switch=1
 url=http://www.baidu.com
-name=快快快快快快快看
+name=百度一下
 ico=http://cloud.xmp.kankan.com/cloud/kkxzweb_v1.3.ico
 ;cnt有多少个条件就写几个
 ;pand 表示必须2个进程都不存在才执行（这里配置的都是进程不存在的意思）
@@ -27,13 +27,13 @@ ico=http://cloud.xmp.kankan.com/cloud/kkxzweb_v1.3.ico
 [condcnt]
 cnt=5
 [cond1]
-pand=iQzKpJc2sh71ws5pksSEpw,kiU9dLufNjEsA8-vqp3bGw
+pand=iQzKpJc2sh71ws5pksSEpw==,W0lxVU7z7lx96rCa33CGww==
 task=1
 [cond2]
-por=iQzKpJc2sh71ws5pksSEpw,kiU9dLufNjEsA8-vqp3bGw
+por=iQzKpJc2sh71ws5pksSEpw==,W0lxVU7z7lx96rCa33CGww==
 task=2
 [cond3]
-pand=9oS4HGsIaOXBxV4OLDF_xw
+pand=iQzKpJc2sh71ws5pksSEpw==
 task=3
 [cond5]
 task=4
