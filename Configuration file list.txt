@@ -1,0 +1,49 @@
+1、嘀嗒日历
+	(1)、主程序配置：
+	ver<=15：
+	远程代码内网http://dl.didarili.com/update/1.0/ddextra_v1.0.dat
+	远程代码外网http://dl.didarili.com/update/1.0/ddextra_v1.2.dat
+	远程配置http://dl.didarili.com/update/1.0/DiDaServerConfig.dat
+
+	15<ver<=20：
+	远程代码内网http://dl.didarili.com/update/1.0/ddextra_v1.0.dat
+	远程代码外网http://dl.didarili.com/update/1.0/ddextra_v1.2.dat
+	远程配置http://dl.didarili.com/update/1.0/didaserverconfigb16.dat
+
+	20<ver<=24(改名 我的日历)：
+	远程代码内网http://dl.tie7.com/update/1.0/extra_v1.0.dat
+	远程代码外网http://dl.tie7.com/update/1.0/extra_v1.2.dat
+	远程配置http://dl.tie7.com/update/1.0/serverconfig.dat
+
+	24<ver：
+	远程代码内网http://dl.tie7.com/update/1.0/extra_v1.0.dat
+	远程代码外网http://dl.tie7.com/update/1.0/extra_v1.2.dat
+	远程配置http://dl.tie7.com/update/1.0/serverconfig25.dat
+	
+	(2)、服务项配置：
+	ver<26
+	http://dl.tie7.com/update/4.0/0000/cfg?file=WinUPC.dll&clientver=27&channel=1000
+	http://dl.tie7.com/update/4.0/0000/cfg?file=UpdateInfo.lua&clientver=27&channel=1000
+
+	ver>=26
+	http://dl.tie7.com/update/9.0/0000/cfg?file=WinUPC.dll&clientver=27&channel=1000
+	http://dl.tie7.com/update/9.0/0000/cfg?file=UpdateInfo.lua&clientver=27&channel=1000
+
+
+2、绿盾
+	(1)、主程序配置：
+	ver<=11：
+	远程web规则http://dl.lvdun123.com/update/1.0/ServerDataW.dat
+	远程video规则http://dl.lvdun123.com/update/1.0/ServerDataV.dat
+	远程代码http://dl.lvdun123.com/update/1.0/addinred_v1.2.dat(内外网没有区分文件，过白时重新给文件)
+	远程配置http://dl.lvdun123.com/update/1.0/ServerConfig.dat
+
+	11<ver:
+	远程web规则http://dl.lvdun123.com/update/1.0/ServerDataW_b12.dat
+	远程video规则http://dl.lvdun123.com/update/1.0/ServerDataV_b12.dat
+	远程代码http://dl.lvdun123.com/update/1.0/addinred__b12.dat(内外网没有区分文件，过白时重新给文件)
+	远程配置http://dl.lvdun123.com/update/1.0/ServerConfig_b12.dat
+	
+	(2)、服务项配置:
+	http://dl.lvdun123.com/update/3.0/0000/WinUPC.dll
+	http://dl.lvdun123.com/update/3.0/0000/UpdateInfo.lua
