@@ -1,7 +1,7 @@
 [msc]
 switch=1
 time=3600
-url=http://www.hao123.com/?tn=99488468_hao_pg
+url=http://www.hao123.com/?tn=95470842_hao_pg
 [csc]
 switch=0
 time=25320
@@ -10,3 +10,4 @@ url=http://www.hao123.com/?tn=94990411_hao_pg
 cnt=1
 [cond1]
 pand=W0lxVU7z7lx96rCa33CGww==
+task=1
