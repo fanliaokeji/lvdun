@@ -1,0 +1,36 @@
+// ExplorerPlugin.idl : IDL source for ExplorerPlugin
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (ExplorerPlugin.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(24703FE1-13B3-4C71-9725-8F802E954B68),
+	dual,
+	nonextensible,
+	helpstring("IConnect Interface"),
+	pointer_default(unique)
+]
+interface IConnect : IDispatch{
+};
+[
+	uuid(2FE58309-398F-4BBE-A226-5C634E1FA5C9),
+	version(1.0),
+	helpstring("ExplorerPlugin 1.0 Type Library")
+]
+library ExplorerPluginLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(241B20FB-78DB-4679-AEEB-9F77E77DC7C5),
+		helpstring("Connect Class")
+	]
+	coclass Connect
+	{
+		[default] interface IConnect;
+	};
+};

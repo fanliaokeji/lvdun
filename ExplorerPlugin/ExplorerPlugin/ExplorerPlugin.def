@@ -1,0 +1,10 @@
+; ExplorerPlugin.def : Declares the module parameters.
+
+LIBRARY      "ExplorerPlugin.DLL"
+
+EXPORTS
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+	DllInstall		PRIVATE
