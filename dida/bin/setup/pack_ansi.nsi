@@ -433,7 +433,6 @@ FunctionEnd
 !macro _RegExplorerPlugin strOp
 	System::Call "kernel32::SetEnvironmentVariable(t 'srcfilename', t 'mysoftwaresetup')"
 	${If} ${strOp} == "reg"
-		File "explorer_plugin\config.ini"
 		${If} ${RunningX64}
 			!define LIBRARY_X64
 			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorer_plugin\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
