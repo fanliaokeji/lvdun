@@ -10,6 +10,7 @@ extern HINSTANCE g_hThisModule;
 
 static HRESULT UnregisterAddin(const std::wstring& clsid);
 static HRESULT RegisterAddin(const std::wstring& clsid, const std::wstring& dllPath);
+static std::wstring strClsidW = L"{89E76F95-82D7-4d5e-BC4D-1169E10F5BF2}";
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
 {
@@ -35,39 +36,14 @@ STDAPI DllRegisterServer(void)
 	wchar_t path[MAX_PATH];
 	::GetModuleFileName(g_hThisModule, path, MAX_PATH);
 	std::wstring dllPath = path;
-	std::wstring configFile = dllPath;
-	for (;!configFile.empty() && configFile[configFile.size() - 1] != L'\\'; configFile.resize(configFile.size() - 1))
-		;
-	configFile += L"config.ini";
-	TSINFO4CXX("Dll Path: " << dllPath);
-	TSINFO4CXX("Config File Path: " << configFile);
-	wchar_t buffer[100];
-	::GetPrivateProfileString(L"explorer", L"clsid", L"", buffer, 100,configFile.c_str());
-	std::wstring clsid = buffer;
-	if (clsid.empty()) {
-		return E_FAIL;
-	}
-	return RegisterAddin(clsid,dllPath);
+	return RegisterAddin(strClsidW,dllPath);
 }
 
 
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
-	wchar_t path[MAX_PATH];
-	::GetModuleFileName(g_hThisModule, path, MAX_PATH);
-	std::wstring configFile = path;
-	for (;!configFile.empty() && configFile[configFile.size() - 1] != L'\\'; configFile.resize(configFile.size() - 1))
-		;
-	configFile += L"config.ini";
-	TSINFO4CXX("Config File Path: " << configFile);
-	wchar_t buffer[100];
-	::GetPrivateProfileString(L"explorer", L"clsid", L"", buffer, 100,configFile.c_str());
-	std::wstring clsid = buffer;
-	if (clsid.empty()) {
-		return E_FAIL;
-	}
-	return UnregisterAddin(clsid);
+	return UnregisterAddin(strClsidW);
 }
 
 // DllInstall - Adds/Removes entries to the system registry per user

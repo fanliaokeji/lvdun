@@ -673,8 +673,8 @@
 		</Configuration>
 		<Configuration
 			Name="MYCALENDAR|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)\MYCALENDAR"
+			IntermediateDirectory="$(ConfigurationName)\x64"
 			ConfigurationType="2"
 			UseOfATL="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"

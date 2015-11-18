@@ -28,7 +28,7 @@ using namespace ATL;
 #include <tslog\tslog.h>
 
 #ifdef MYCALENDAR
-	//此互斥量保证只被1个宿主进程加载本dll
+	//此互斥量保证本dll只被1个宿主进程加载
 	#define ONEPROCESSMUTEX L"{B6A3F13B-ED68-4115-9EC9-60E4E4408589}"
 	//此互斥量保证只有1个拉起逻辑被执行(宿主可多次触发拉起逻辑)
 	#define GLOBALMUTXNAME L"Global\\{C3F5E7B7-46CF-445a-ACE9-7DCC9FD345F2}_ExplorerPlugin"
@@ -47,7 +47,7 @@ using namespace ATL;
 	//开机启动项名称
 	#define SYSBOOTNAME L""
 #elif defined LVDUN_0000
-	//此互斥量保证只被1个宿主进程加载本dll
+	//此互斥量保证本dll只被1个宿主进程加载
 	#define ONEPROCESSMUTEX L"{2C55D214-C83F-4a69-A5C3-1955F3FC0ACD}"
 	//此互斥量保证只有1个拉起逻辑被执行(宿主可多次触发拉起逻辑)
 	#define GLOBALMUTXNAME L"Global\\{FB215D88-ACE8-48f0-8C92-D5ABAC4DD8DF}_ExplorerPlugin"
