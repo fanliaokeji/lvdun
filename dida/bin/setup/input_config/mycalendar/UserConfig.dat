@@ -1,0 +1,6 @@
+function GetSubTable()
+	local t = {
+		["strServerConfigURL"] = "http://dl.tie7.com/update/1.0/serverconfig25.dat", 
+	}
+	return t
+end

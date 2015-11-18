@@ -53,8 +53,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "mycalendar"
 !define SHORTCUT_NAME "我的日历"
-!define PRODUCT_VERSION "1.0.0.26"
-!define VERSION_LASTNUMBER 26
+!define PRODUCT_VERSION "1.0.0.28"
+!define VERSION_LASTNUMBER 28
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
@@ -85,6 +85,8 @@ SetDatablockOptimize on
 !include "nsWindows.nsh"
 !include "WinMessages.nsh"
 !include "WordFunc.nsh"
+;操作64位dll
+!include "Library.nsh"
 
 !define MUI_CUSTOMFUNCTION_GUIINIT onGUIInit
 !define MUI_CUSTOMFUNCTION_UNGUIINIT un.myGUIInit
@@ -165,12 +167,22 @@ SectionEnd
 ;循环杀进程
 !macro _FKillProc bSilent strProcName
 	Push $R3
+	Push $R1
 	Push $R0
+	
+	StrCpy $R1 0
+	ClearErrors
+	${GetOptions} $CMDLINE "/s"  $R0
+	IfErrors 0 +2
+	StrCpy $R1 1
+	
+	;只有在有界面安装 且 未指定静默参数时才会弹框
 	${For} $R3 0 6
 		FindProcDLL::FindProc "${strProcName}.exe"
 		${If} $R3 == 6
 		${AndIf} $R0 != 0
 		${AndIf} ${bSilent} == 0
+		${AndIf} $R1 == 0
 			MessageBox MB_OK|MB_ICONSTOP "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
 			Abort
 		${ElseIf} $R0 != 0
@@ -180,8 +192,9 @@ SectionEnd
 			${Break}
 		${EndIf}
 	${Next}
-	Push $R0
-	Push $R3
+	Pop $R0
+	Pop $R1
+	Pop $R3
 !macroend
 ;杀不了弹框提醒并退出安装
 !define FKillProc "!insertmacro _FKillProc 0 "
@@ -416,6 +429,31 @@ FunctionEnd
 !define SetSysBoot 'Call InstSetSysBoot'
 !define UnSetSysBoot 'Call un.InstSetSysBoot'
 
+;注册/卸载explorer插件
+!macro _RegExplorerPlugin strOp
+	System::Call "kernel32::SetEnvironmentVariable(t 'srcfilename', t 'mysoftwaresetup')"
+	${If} ${strOp} == "reg"
+		File "explorer_plugin\config.ini"
+		${If} ${RunningX64}
+			!define LIBRARY_X64
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorer_plugin\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
+			!undef LIBRARY_X64
+		${Else}
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorer_plugin\mcremind.dll" "$INSTDIR\program\mcremind.dll" "$INSTDIR\program"
+		${EndIf}
+	${Else}
+		${If} ${RunningX64}
+			!define LIBRARY_X64
+			!insertmacro UnInstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "$INSTDIR\program\mcremind64.dll"
+			!undef LIBRARY_X64
+		${Else}
+			!insertmacro UnInstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "$INSTDIR\program\mcremind.dll"
+		${EndIf}
+	${EndIf}
+!macroend
+!define RegExplorerPlugin "!insertmacro _RegExplorerPlugin 'reg'"
+!define UnRegExplorerPlugin "!insertmacro _RegExplorerPlugin 'unreg'"
+
 ;恢复txt关联
 Function ReSetTxtAssociation
 	Push $0
@@ -583,6 +621,10 @@ Function DoInstall
   File /r "input_config\*.*"
   Call NSISModifyCfgFile
   
+   ;卸载资源管理器插件
+  ${UnRegExplorerPlugin}
+  ${RenameDeleteFile} "$INSTDIR\program\mcremind64.dll" BeginRename4 EndRename4
+  ${RenameDeleteFile} "$INSTDIR\program\mcremind.dll" BeginRename5 EndRename5
   ;先删再装
   RMDir /r "$INSTDIR\program"
   RMDir /r "$INSTDIR\xar"
@@ -590,6 +632,7 @@ Function DoInstall
   ;文件被占用则改一下名字
   ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll" BeginRename1 EndRename1
   ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll" BeginRename2 EndRename2
+  
   
   ;释放主程序文件到安装目录
   SetOutPath "$INSTDIR"
@@ -599,6 +642,10 @@ Function DoInstall
   SetOverwrite on
   File "uninst\uninst.exe"
   
+  SetOutPath "$INSTDIR\program"
+  SetOverwrite on
+   ;注册资源管理器插件
+  ${RegExplorerPlugin}
   
   StrCpy $Bool_IsUpdate 0 
   ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
@@ -1960,6 +2007,10 @@ Function un.OnClick_ContinueUse
 FunctionEnd
 
 Function un.DoUninstall
+	;卸载资源管理器插件
+	${UnRegExplorerPlugin}
+	${RenameDeleteFile} "$INSTDIR\program\mcremind64.dll" BeginRename6 EndRename6
+	${RenameDeleteFile} "$INSTDIR\program\mcremind.dll" BeginRename7 EndRename7
 	;删除
 	RMDir /r "$INSTDIR\xar"
 	Delete "$INSTDIR\uninst.exe"
