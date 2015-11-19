@@ -162,12 +162,13 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 		local nStep = nCurUTC - nLaunchUTC
 		FunctionObj.TipLog("i = "..i..", nStep = "..nStep)
 		--富文本tip, 今天没有弹过， 满足开机延时
-		--绿盾推广tip， 未安装绿盾，距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
+		--绿盾推广tip，还需额外判断: 未安装绿盾，距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
 		if not CheckTipWndExist() and CheckTipVersion(info["tVersion"]) and type(info["nDelayMins"]) == "number" then
-			if txt == "richtext" and CheckTipHistory("nTipLastPopUTC_"..i) and nStep >= info["nDelayMins"]*60 then
-				return i, info
-			elseif text == "lvdun" and not CheckLvdunHasInstall() and CheckLvdunHistory() then 
-				return i, info
+			if CheckTipHistory("nTipLastPopUTC_"..i) and nStep >= info["nDelayMins"]*60 then
+				if txt == "richtext" or
+					(txt == "lvdun" and not CheckLvdunHasInstall() and CheckLvdunHistory()) then 
+					return i, info
+				end
 			end
 		end
 	end
