@@ -174,7 +174,8 @@ end
 local function save_lastpoptime(idx, info)
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local txt = string.lower(tostring(info["text"]))
-	tUserConfig["nAllTipLastPopUTC"] = tUserConfig["nTipLastPopUTC_"..idx] = tipUtil:GetCurrentUTCTime()
+	tUserConfig["nAllTipLastPopUTC"] = tipUtil:GetCurrentUTCTime())
+	tUserConfig["nTipLastPopUTC_"..idx] = tUserConfig["nAllTipLastPopUTC"]
 	if txt == "lvdun" then tUserConfig["nLvdunTipLastPopUTC"] = tUserConfig["nAllTipLastPopUTC"] end
 	FunctionObj.SaveConfigToFileByKey("tUserConfig")
 end
