@@ -133,9 +133,12 @@ end
 
 --[[
 {
-	tVersion = {"26-27"},--日历版本区间
-	nDelayMins = 2*60,--延时时间。
-	text = "richtext",--tip类型，用文本来标识。有以下类型：richtext 富文本; lvdun 推广绿盾。
+	tVersion = {"26-27"},--日历版本区间,可不填，没有此项表示不限制版本
+	nDelayMins = 2*60,--延时时间，必填。
+	text = "richtext",--tip类型，必填，用文本来标识。有以下类型：richtext 富文本; lvdun 推广绿盾。
+	url = "http://down.lvdun123.com/client/GsSetup_0006.exe", --text=lvdun时必填
+	cmd = "/s /run", --可选，text=lvdun时传入安装的命令行
+	link="",--富文本链接，text=richtext时必填，
 }
 ]]--
 function GetTipPopInfo(tSvrData, nLaunchUTC)
