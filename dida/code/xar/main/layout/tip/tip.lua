@@ -93,7 +93,7 @@ function CheckTipHistory(strKey)
 end
 
 --距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
-function CheckLvdunHistory()
+function CheckLvdunHistory(nServerDay)
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nNow = tipUtil:GetCurrentUTCTime() or 0
 	local nLastAll = tUserConfig["nAllTipLastPopUTC"]
@@ -102,7 +102,7 @@ function CheckLvdunHistory()
 		if type(last) ~= "number" then return true end
 		return nNow-last > step
 	end
-	return check_poptime(tonumber(nLastAll), 3600) and check_poptime(tonumber(nLastLd), 7*24*3600)
+	return check_poptime(tonumber(nLastAll), 3600) and check_poptime(tonumber(nLastLd), (nServerDay or 7)*24*3600)
 end
 
 --是否安装绿盾
@@ -139,6 +139,7 @@ end
 	url = "http://down.lvdun123.com/client/GsSetup_0006.exe", --text=lvdun时必填
 	cmd = "/s /run", --可选，text=lvdun时传入安装的命令行
 	link="",--富文本链接，text=richtext时必填，
+	["nInterval"] = 7,--绿盾的弹出间隔天数
 }
 ]]--
 function GetTipPopInfo(tSvrData, nLaunchUTC)
@@ -166,7 +167,7 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 		if not CheckTipWndExist() and CheckTipVersion(info["tVersion"]) and type(info["nDelayMins"]) == "number" then
 			if CheckTipHistory("nTipLastPopUTC_"..i) and nStep >= info["nDelayMins"]*60 then
 				if txt == "richtext" or
-					(txt == "lvdun" and not CheckLvdunHasInstall() and CheckLvdunHistory()) then 
+					(txt == "lvdun" and not CheckLvdunHasInstall() and CheckLvdunHistory(tonumber(info["nInterval"]))) then 
 					return i, info
 				end
 			end
