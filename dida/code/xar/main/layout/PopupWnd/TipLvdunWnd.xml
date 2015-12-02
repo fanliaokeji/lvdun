@@ -1,0 +1,90 @@
+<xlue>
+	<objtreetemplate id="TipLvdunWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>390</width>
+			<height>257</height>
+		</attr>
+
+		<obj id="root.layout" class="CaptionObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>275</width>
+				<height>274</height>
+			</attr>				
+			<children>					
+				<!--标题栏-->
+				<obj id="TipLvdun.GifBkg" class="SeqImageObject">
+					<attr>
+						<left>0</left>  
+						<top>0</top>
+						<width>275</width>
+						<height>274</height>
+						<gif>TipLvdun.GifBkg.bkg</gif>
+						<loop>1</loop>
+						<reverse>0</reverse>
+					</attr>
+					<children>
+						<obj id="TipLvdunWnd.CloseBtn" class="TipAddin.Button">
+							<attr>
+								<left>father.width-7-22</left>
+								<top>84</top>
+								<width>22</width>
+								<height>22</height>
+								<cursor>IDC_HAND</cursor>
+								<NormalBkgID>TipLvdun.close.normal</NormalBkgID>
+								<DownBkgID>TipLvdun.close.hover</DownBkgID>
+								<HoverBkgID>TipLvdun.close.hover</HoverBkgID>
+								<DisableBkgID>TipLvdun.close.normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipLvdunWnd.xml.lua" func="OnClickCloseBtn" />
+							</eventlist>
+						</obj>	
+						<obj id="TipLvdunWnd.Click" class="TipAddin.Button">
+							<attr>
+								<left>37</left>
+								<top>220</top>
+								<width>196</width>
+								<height>34</height>
+								<cursor>IDC_HAND</cursor>
+								<NormalBkgID>TipLvdun.click.normal</NormalBkgID>
+								<DownBkgID>TipLvdun.click.hover</DownBkgID>
+								<HoverBkgID>TipLvdun.click.hover</HoverBkgID>
+								<DisableBkgID>TipLvdun.click.normal</DisableBkgID>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="TipLvdunWnd.xml.lua" func="OnClickOKBtn" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="TipLvdunWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>390</width>
+            <height>257</height>
+           
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="TipLvdunWnd.xml.lua" func="OnCreate"/>
+			<event name="OnShowWindow" file="TipLvdunWnd.xml.lua" func="OnShowWindow" />
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
