@@ -586,8 +586,6 @@ function Helper:SetRegValue(sPath, value)
 	return false
 end
 
---封装动画方法
-
 function Helper:GetHttpFile(url, savePath, token)
 	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
 	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
@@ -602,3 +600,5 @@ function Helper:GetHttpFile(url, savePath, token)
 										end
 									end)
 end
+
+Helper:LoadLuaModule("helper_animation.lua", __document)
