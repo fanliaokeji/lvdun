@@ -1,5 +1,6 @@
 local tipUtil = XLGetObject("API.Util")
 local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+local Helper = XLGetGlobal("Helper")
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
@@ -223,6 +224,11 @@ function ShowLvdunTip(idx, info)
 	local function tip_callback_cancel()
 	end
 	--创建tip界面...
+	local TipLvdunWndUserData = {
+		["tip_callback_ok"] = tip_callback_ok,
+		["tip_callback_cancel"] = tip_callback_cancel,
+	}
+	Helper:CreateModelessWnd("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData)
 	save_lastpoptime(idx, info)
 end
 
@@ -242,3 +248,14 @@ local obj = {}
 obj.ShowTip = ShowTip
 obj.GetTipPopInfo = GetTipPopInfo
 XLSetGlobal("DiDa.TipHelper", obj)
+
+-- function tip_callback_ok(strInfo)
+	-- XLMessageBox(tostring(strInfo).."tip_callback_ok")
+-- end
+	
+-- local TipLvdunWndUserData = {
+	-- ["tip_callback_ok"] = tip_callback_ok,
+-- }
+
+-- SetOnceTimer(function() Helper:CreateModelessWnd("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData)
+			-- end, 3000)
