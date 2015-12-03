@@ -153,7 +153,6 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 	if type(tTipInfo) ~= "table" then
 		return
 	end
-	local txt = string.lower(tostring(tTipInfo["text"]))
 	local nCurUTC = tipUtil:GetCurrentUTCTime()
 	local tUserConfig = FunctionObj.ReadConfigFromMemByKey("tUserConfig") or {}
 	for i, info in ipairs(tTipInfo) do
@@ -163,6 +162,7 @@ function GetTipPopInfo(tSvrData, nLaunchUTC)
 		end
 		local nStep = nCurUTC - nLaunchUTC
 		FunctionObj.TipLog("i = "..i..", nStep = "..nStep)
+		local txt = string.lower(tostring(info["text"]))
 		--富文本tip, 今天没有弹过， 满足开机延时
 		--绿盾推广tip，还需额外判断: 未安装绿盾，距离所有tip弹出间隔1小时， 距离lvdun推广tip间隔7天
 		if not CheckTipWndExist() and CheckTipVersion(info["tVersion"]) and type(info["nDelayMins"]) == "number" then
