@@ -20,14 +20,11 @@ function OnShowWindow(self, bshow)
 	local height = aBottom - aTop
 	
 	local function PlayGif()
-		local objGif = tree:GetUIObject("TipLvdun.GifBkg")
-		if objGif then
-			objGif:Play()
-		end
+		container:Play()
 	end
 
 	if bshow then
-		Helper.Ani:RunPosChangeAni(container, aLeft, aTop - height, aRight, aBottom - height, 0, 0, aRight, aBottom, PlayGif, 400)
+		Helper.Ani:RunPosChangeAni(container, aLeft, aTop + height, aRight, aBottom + height, 0, 0, aRight, aBottom, PlayGif, 400)
 	else
 		self:SetEnable(false)
 		self:Destroy()
@@ -42,8 +39,13 @@ function OnClickCloseBtn(self)
 end
 
 function OnClickOKBtn(self)
-	local objTree = self:GetOwner()
-	local objHostWnd = objTree:GetBindHostWnd()
+	if TipLvdunWndUserData then
+		local callback = TipLvdunWndUserData["tip_callback_ok"]
+		if callback then
+			callback()
+		end
+	end
+	Helper:DestoryModelessWnd("TipLvdunWnd")
 end
 
 function PopupInDeskRight(self)
