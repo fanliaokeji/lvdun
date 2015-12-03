@@ -29,7 +29,7 @@ function Animation:RunPosChangeAni(obj, startLeft, startTop, startRight, startBo
 	local function onAniFinish(_,old,new)
 		if new == 4 then
 			self.AniMap[objHandle] = nil
-			if fun then fun(obj) end
+			if aniFinishCallBack then aniFinishCallBack(obj) end
 		end
 		return true
 	end
