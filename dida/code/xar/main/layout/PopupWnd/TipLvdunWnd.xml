@@ -80,6 +80,7 @@
             <minheight>50</minheight>
 			<sysmenu>0</sysmenu>
 			<appwindow>0</appwindow>
+			<topmost>1</topmost>
         </attr>
 		 <eventlist>
             <event name="OnCreate" file="TipLvdunWnd.xml.lua" func="OnCreate"/>
