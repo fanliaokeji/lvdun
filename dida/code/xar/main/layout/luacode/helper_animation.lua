@@ -43,3 +43,39 @@ function Animation:RunPosChangeAni(obj, startLeft, startTop, startRight, startBo
 	posChangeAni:Resume()
 	return posChangeAni
 end
+
+function Animation:RunSeqFrameAni(object, seqResID, fun, total_time, loop)	
+	if not object then
+		return
+	end
+	self:StopObjectAni(obj)
+	totalTime = totalTime or 500
+	if loop == nil then
+		loop = true
+	end
+	
+	object:SetVisible(true)
+	local aniFactory = XLGetObject("Xunlei.UIEngine.AnimationFactory")
+	local seqFramAni = aniFactory:CreateAnimation("SeqFrameAnimation")
+	seqFramAni:SetLoop(loop)
+	seqFramAni:SetResID(seqResID)
+	seqFramAni:SetTotalTime(total_time)
+	
+	local objHandle = object:GetHandle()
+	local function OnAniFinish(_, old, new)
+		if new == 4 then
+			self.AniMap[objHandle] = nil
+			if fun then fun(obj) end
+		end
+		return true
+	end
+	
+	seqFramAni:BindImageObj(object)
+	local tree = object:GetOwner()
+	tree:AddAnimation(seqFramAni)
+	seqFramAni:AttachListener(true, OnAniFinish)
+	
+	self.AniMap[objHandle] = seqFramAni
+	seqFramAni:Resume()
+	return seqFramAni
+end
