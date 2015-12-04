@@ -15,16 +15,16 @@
 				<height>274</height>
 			</attr>				
 			<children>					
-				<!--标题栏-->
-				<obj id="TipLvdun.GifBkg" class="SeqImageObject">
+				<!--标题栏
+				<obj id="TipLvdun.GifBkg" class="SeqImageObject">-->
+				<obj id="TipLvdun.GifBkg" class="ImageObject">
 					<attr>
 						<left>0</left>  
 						<top>0</top>
 						<width>275</width>
 						<height>274</height>
-						<gif>TipLvdun.GifBkg.bkg</gif>
-						<loop>1</loop>
-						<reverse>0</reverse>
+						<!--<gif>TipLvdun.GifBkg.bkg</gif>-->
+						<image>DiDa.lvduntip.bgk</image>
 					</attr>
 					<children>
 						<obj id="TipLvdunWnd.CloseBtn" class="TipAddin.Button">

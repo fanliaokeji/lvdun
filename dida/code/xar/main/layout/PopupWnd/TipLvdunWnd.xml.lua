@@ -21,7 +21,8 @@ function OnShowWindow(self, bshow)
 	local height = aBottom - aTop
 	
 	local function PlayGif()
-		container:Play()
+		-- container:Play()
+		Helper.Ani:RunSeqFrameAni(container, "DiDa.lvdun_seq_ani", nil, 2200)
 	end
 
 	if bshow then
