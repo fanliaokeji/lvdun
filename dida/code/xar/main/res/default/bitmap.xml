@@ -68,6 +68,8 @@
 		<texture id="DiDa.UpdateWnd.MinBtn.Hover" image="bitmap\DiDa.UpdateWnd.MinBtn.Hover.png" />
 		
 		<imageseq id="DiDa.seq_ani" folder="bitmap\seq_ani" />
+		<imageseq id="DiDa.lvdun_seq_ani" folder="bitmap\lvdun_seq_ani" />
+		<bitmap id="DiDa.lvduntip.bgk" path="bitmap\lvdun_seq_ani\1.png" />
 		<bitmap id="texture.curday.bkg" path="bitmap\seq_ani\15.png" />
 		
 		<texture id="weather.rain.bkg" image="bitmap\bkg\weather.rain.bkg.png" />
