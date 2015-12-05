@@ -50,7 +50,7 @@ function OnShowWindow(self, bshow)
 	Helper:LOG("OnShowWindow  bshow: ", bshow)
 	local tree = self:GetBindUIObjectTree()
 	if not tree then
-		XMP.LOG("[TipLvdunWnd] OnShowWindow: tree is nil")
+		Helper:LOG("[TipLvdunWnd] OnShowWindow: tree is nil")
 		return
 	end
 	local container = tree:GetUIObject("TipLvdun.GifBkg")
@@ -70,7 +70,6 @@ function OnShowWindow(self, bshow)
 		ReportGoogle("show")
 	else
 		self:SetEnable(false)
-		self:Destroy()
 	end
 end
 
