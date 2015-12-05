@@ -94,7 +94,8 @@ function OnClickOKBtn(self)
 	
 	EndTimer()
 	ReportGoogle("click")
-	Helper:DestoryModelessWnd("TipLvdunWnd")
+	-- Helper:DestoryModelessWnd("TipLvdunWnd")
+	Helper:DestoryModelessWndEx("TipLvdunWnd", "TipCommon.Instance")
 end
 
 function PopupInDeskRight(self)
