@@ -29,7 +29,7 @@ end
 function StartTimer()
 	EndTimer()
 	local nHoldMins = TipLvdunWndUserData["tipInfo"] and TipLvdunWndUserData["tipInfo"]["nHoldMins"]
-	nHoldMins = tonumber(nHoldMins) or 2
+	nHoldMins = tonumber(nHoldMins) or 0.5
 	Helper:LOG("StartTimer Enter  nHoldMins: "..tostring(nHoldMins))
 	
 	gHoldTimer = SetOnceTimer(function(item, id)
