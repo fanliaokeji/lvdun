@@ -2,6 +2,44 @@ local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 local TipLvdunWndUserData = nil
 local Helper = XLGetGlobal("Helper")
+
+function ReportGoogle(strStat)
+	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
+	local tStatInfo = {}
+	
+	tStatInfo.strEC = "tipstat"
+	tStatInfo.strEA = TipLvdunWndUserData["tipInfo"] and TipLvdunWndUserData["tipInfo"].id
+	tStatInfo.strEL = tostring(strStat)
+	tStatInfo.strEV = 1
+	
+	FunctionObj.TipConvStatistic(tStatInfo)
+end
+
+local gHostWnd = nil
+local gHoldTime = 0
+local gHoldTimer = nil
+function EndTimer()
+	Helper:LOG("EndTimer Enter")
+	if gHoldTimer then
+		KillTimer(gHoldTimer)
+		gHoldTimer = nil
+	end
+end
+
+function StartTimer()
+	EndTimer()
+	local nHoldMins = TipLvdunWndUserData["tipInfo"] and TipLvdunWndUserData["tipInfo"]["nHoldMins"]
+	nHoldMins = tonumber(nHoldMins) or 2
+	Helper:LOG("StartTimer Enter  nHoldMins: "..tostring(nHoldMins))
+	
+	gHoldTimer = SetOnceTimer(function(item, id)
+					Helper:LOG("StartTimer SetOnceTimer Enter")
+					ReportGoogle("autoclose")
+					Helper:DestoryModelessWndEx("TipLvdunWnd", "TipCommon.Instance")
+					gHoldTimer = nil
+	end, 1000*60*nHoldMins)
+end
+
 function OnCreate( self )
 	Helper:LOG("OnCreate Enter")
 	TipLvdunWndUserData = self:GetUserData()
@@ -27,7 +65,9 @@ function OnShowWindow(self, bshow)
 
 	if bshow then
 		Helper:LOG("OnShowWindow do ani")
+		StartTimer()
 		Helper.Ani:RunPosChangeAni(container, aLeft, aTop + height, aRight, aBottom + height, 0, 0, aRight, aBottom, PlayGif, 400)
+		ReportGoogle("show")
 	else
 		self:SetEnable(false)
 		self:Destroy()
@@ -38,7 +78,10 @@ function OnClickCloseBtn(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	
-	Helper:DestoryModelessWnd("TipLvdunWnd")
+	-- Helper:DestoryModelessWnd("TipLvdunWnd")
+	EndTimer()
+	ReportGoogle("close")
+	Helper:DestoryModelessWndEx("TipLvdunWnd", "TipCommon.Instance")
 end
 
 function OnClickOKBtn(self)
@@ -48,6 +91,9 @@ function OnClickOKBtn(self)
 			callback()
 		end
 	end
+	
+	EndTimer()
+	ReportGoogle("click")
 	Helper:DestoryModelessWnd("TipLvdunWnd")
 end
 
