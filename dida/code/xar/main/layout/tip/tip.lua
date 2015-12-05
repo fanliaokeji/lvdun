@@ -227,8 +227,11 @@ function ShowLvdunTip(idx, info)
 	local TipLvdunWndUserData = {
 		["tip_callback_ok"] = tip_callback_ok,
 		["tip_callback_cancel"] = tip_callback_cancel,
+		["tipIndex"] = idx,
+		["tipInfo"] = info,
 	}
-	Helper:CreateModelessWnd("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData)
+	-- Helper:CreateModelessWnd("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData)
+	Helper:CreateModelessWndEx("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData, "TipCommon.Instance")
 	save_lastpoptime(idx, info)
 end
 
@@ -255,7 +258,9 @@ XLSetGlobal("DiDa.TipHelper", obj)
 	
 -- local TipLvdunWndUserData = {
 	-- ["tip_callback_ok"] = tip_callback_ok,
+	-- ["tipIndex"] = 1,
+	-- ["tipInfo"] = {["nHoldMins"] = 1},
 -- }
 
--- SetOnceTimer(function() Helper:CreateModelessWnd("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData)
+-- SetOnceTimer(function() Helper:CreateModelessWndEx("TipLvdunWnd", "TipLvdunWndTree", nil, TipLvdunWndUserData, "TipCommon.Instance")
 			-- end, 3000)
