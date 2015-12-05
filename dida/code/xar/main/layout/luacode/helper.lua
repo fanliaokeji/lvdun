@@ -280,6 +280,45 @@ function Helper:CreateModelessWnd(wndTemplateID, treeTemplateID, parentWnd, user
 	return modelessWnd, tree
 end
 
+function Helper:CreateModelessWndEx(wndTemplateID, treeTemplateID, parentWnd, userData, manualWndID, manualTreeID, onBindFunc)
+	LOG("-->Helper CreateModelessWndEx")
+	local wndTemplate = self.templateMananger:GetTemplate(wndTemplateID, "HostWndTemplate")
+	if not wndTemplate then return end
+
+	local modelessWndID = manualWndID or wndTemplateID..".Instance"
+	LOG("modelessWndID: ", modelessWndID, " manualWndID: ", manualWndID)
+	
+	local modelessWnd = wndTemplate:CreateInstance(modelessWndID)
+	if not modelessWnd then 
+		Helper:Assert(false, "modelessWnd is nil")
+		return 
+	end
+	
+	local treeTemplate = self.templateMananger:GetTemplate(treeTemplateID,"ObjectTreeTemplate")
+	if not treeTemplate then return end
+	
+	local treeID = manualTreeID or treeTemplateID..".Instance"
+	LOG("treeID: ", treeID, " manualTreeID: ", manualTreeID)
+	
+	local tree = treeTemplate:CreateInstance(treeID)
+	if not tree then return end
+	
+	--绑定对象树
+	modelessWnd:BindUIObjectTree(tree)
+	if "function" == type(onBindFunc) then
+		onBindFunc(modelessWnd, tree)
+	end
+	
+	--传入userData
+	modelessWnd:SetUserData(userData)
+	
+	--创建窗口
+	modelessWnd:Create(parentWnd)
+	
+	LOG("<--Helper CreateModelessWndEx")
+	return modelessWnd, tree
+end
+
 function Helper:DestoryModelessWnd(wndTemplateID, instanceSuffix, onDectoryFun)
 	local wndID = instanceSuffix and wndTemplateID.."."..instanceSuffix or wndTemplateID..".Instance"
 	local wnd = self.hostWndManager:GetHostWnd(wndID)
@@ -300,6 +339,25 @@ function Helper:DestoryModelessWnd(wndTemplateID, instanceSuffix, onDectoryFun)
 	self.hostWndManager:RemoveHostWnd(wndID)
 end
 
+function Helper:DestoryModelessWndEx(wndTemplateID, manualWndID, onDectoryFun)
+	local wndID = manualWndID or wndTemplateID..".Instance"
+	local wnd = self.hostWndManager:GetHostWnd(wndID)
+	if not wnd then
+		LOG("GetHostWnd ret nil! wndID: ", wndID)
+		return
+	end
+	wnd:Show(0)
+	local tree = wnd:UnbindUIObjectTree()
+	if not tree then
+		LOG("UnbindUIObjectTree ret nil!")
+		return
+	end
+	if "function" == type(onDectoryFun) then
+		onDectoryFun(wnd, tree)
+	end
+	self.treeManager:DestroyTree(tree)
+	self.hostWndManager:RemoveHostWnd(wndID)
+end
 --menuTable格式：
 --{
 	--item1:{id, text, bSplitter, iconID, hotKey, userData, OnInitFun, OnSelectFun, 
