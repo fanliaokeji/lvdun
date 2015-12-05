@@ -1,14 +1,13 @@
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local tipUtil = tFunHelper.tipUtil
 
-
-function ReportGoogle(strKey)
+function ReportGoogle(id, action)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local tStatInfo = {}
-	tStatInfo.strEL = FunctionObj.GetInstallSrc() or ""
-	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEC = "tipstat"
+	tStatInfo.strEA = id
+	tStatInfo.strEL = action
 	tStatInfo.strEV = 1
-	tStatInfo.strEC = strKey
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
@@ -49,7 +48,7 @@ function StartTimer()
 					gHostWnd:Destroy()
 					hostwndManager:RemoveHostWnd("TipCommon.Instance")
 				end
-				ReportGoogle("tipautoclose_"..tData[1])
+				ReportGoogle(tData[2]["id"], "autoclose")
 			end
 		end, 1000)
 	end
@@ -71,7 +70,7 @@ function OnCloseBtnClick(self)
 	local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	if objHostWnd then
 		local tData = objHostWnd:GetUserData()
-		ReportGoogle("tipmanualclose_"..tData[1])
+		ReportGoogle(tData[2]["id"], "close")
 		local objtree = objHostWnd:GetBindUIObjectTree()
 		objHostWnd:UnbindUIObjectTree()
 		local objtreeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
@@ -108,7 +107,7 @@ function OnShowWindow(self, bShow)
 		objtree:AddAnimation(posAni)
 		posAni:Resume()
 		local tData = gHostWnd:GetUserData()
-		ReportGoogle("tipshow_"..tData[1])
+		ReportGoogle(tData[2]["id"], "show")
 		StartTimer()
 		self:SetEnable(true)
 	else

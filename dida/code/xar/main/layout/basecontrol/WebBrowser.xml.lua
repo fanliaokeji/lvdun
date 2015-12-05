@@ -4,13 +4,14 @@ function SetExternal( self, webevent )
 	attr.External = webevent
 end
 
-function ReportGoogle(strKey)
+function ReportGoogle(id, action)
 	local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 	local tStatInfo = {}
-	tStatInfo.strEL = FunctionObj.GetInstallSrc() or ""
-	tStatInfo.strEA = FunctionObj.GetMinorVer() or ""
+	tStatInfo.strEC = "tipstat"
+	tStatInfo.strEA = id
+	tStatInfo.strEL = action
 	tStatInfo.strEV = 1
-	tStatInfo.strEC = strKey
+	
 	FunctionObj.TipConvStatistic(tStatInfo)
 end
 
@@ -89,7 +90,7 @@ function Navigate( self, url )
 														frameHostWnd:Show(0)
 														if frameHostWnd then
 															local tData = frameHostWnd:GetUserData()
-															ReportGoogle("tipclick_"..tData[1])
+															ReportGoogle(tData[2]["id"], "click")
 															local objtree = frameHostWnd:GetBindUIObjectTree()
 															frameHostWnd:UnbindUIObjectTree()
 															local objtreeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
@@ -140,7 +141,7 @@ function Navigate( self, url )
 											local objtree = self:GetOwner()
 											local hostwmd = objtree:GetBindHostWnd()
 											local tData = hostwmd:GetUserData()
-											ReportGoogle("tiperrorclose_"..tData[1])
+											ReportGoogle(tData[2]["id"], "errorclose")
 										end
 									end
 								end
