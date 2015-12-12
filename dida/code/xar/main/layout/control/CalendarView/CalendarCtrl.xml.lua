@@ -2,7 +2,7 @@ local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
 local Helper = XLGetGlobal("Helper")
 local tipUtil = tFunHelper.tipUtil
 
-local OnLayoutChangeCookie = false
+local OnLayoutChangeCookieEx = false
 --strYearMonth：年月查询
 function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
 	if type(tClndrContent) ~= "table" then
@@ -21,7 +21,7 @@ function ShowClndrContent(objRootCtrl, tClndrContent, strYearMonth)
 		end		
 	end
 	
-	OnLayoutChangeCookie = OnLayoutChangeCookie or Helper:AddListener("OnLayoutChange", function(_, _, curViewIndex)
+	OnLayoutChangeCookieEx = OnLayoutChangeCookieEx or Helper:AddListener("OnLayoutChange", function(_, _, curViewIndex)
 		if 1 ~= curViewIndex then
 			return
 		end
@@ -264,8 +264,6 @@ function SetFocusDay(objRootCtrl, nFocusDayIdx)
 		return
 	end	
 	local attr = objRootCtrl:GetAttribute()
-	local nFocusDayIndex = attr.FocusDayIndex
-		
 	local strKey = "ClndrItem_"..tostring(nFocusDayIdx)
 	local objCurItem = objRootCtrl:GetControlObject(strKey)
 	if objCurItem then	
