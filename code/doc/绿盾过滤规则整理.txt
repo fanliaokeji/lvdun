@@ -1,0 +1,73 @@
+1,基本规则：
+  使用通配符匹配某一类url。
+  例A：http://*/ad
+
+2，首匹配、尾匹配、域名匹配（“|” 与 “||”）
+   例A，假若有url：http://google.com/?key=http://aaa.com/ad,则会过滤掉不该过滤的
+  
+   首匹配： 将“|”放在一条规则的最开始处，则该条规则会仅从URL最开始处匹配。
+   例B: |http://*/ad        则会仅从开头处匹配
+   尾匹配： 将“|”放在一条规则的最末尾处，则该条规则会仅从URL最末尾处匹配，这种情况很少用。
+   域名匹配：以例说明，若相同时匹配如下三条URL：
+   http://example.com/flash.swf、
+   https://example.com/flash.swf、
+   http://www.example.com/flash.swf，只需定义如下匹配规则：
+   
+   例C: ||example.com/flash.swf
+   
+3，例外规则、白名单(@@)
+   例B，会将URL：http://XXX.com/admin/index.html 意外过滤，可将该URL做成例外规则（白名单）
+   例D: |http://*/ad@@|http://XXX.com/admin/index.html
+   通常会将所有的例外放在规则文件最前面，形成一个白名单，过滤时优先检查白名单
+   例E: @@|http://XXX.com/admin/index.html
+        |http://*/ad
+		
+4，分隔符
+	除 _ - . % 之外的任何字符(当然不包括字母和数字)，都可用作分隔符
+	例A，会匹成功配URL： http://XXX.com/admin.asp，
+	例F: http://*/ad/ 则不会匹配到上述URL
+	
+5，过滤规则选项($)
+	例G: |http://*.com/ad/$domain=~www.s1979.com|~www.tradelink-ebiz.com
+	释义：不过滤域名www.s1979.com 和 www.tradelink-ebiz.com 下的ad/目录下的广告
+	
+	$后面可跟的选项有：script、image、domain、sitekey、match-case等
+	详见：https://adblockplus.org/zh_CN/filters#basic
+	
+6，隐藏规则(##)
+	例H：www.ddpan.com##div.adv,div#advz1,div.adv2,ins.adsbygoogle
+	详释：
+	<div class="textad"> 
+		Cheapest tofu, only here and now!
+	</div>
+	想去此广告，则规则为： ##div.textad(点后面跟类名)
+	
+	<div id="sponsorad">
+			Really cheap tofu, click here!
+	</div>
+	想去此广告，则规则为：  ##div#sponsorad(井号后面跟id)
+	
+	<textad>  
+		Only here you get the best tofu!
+	</textad>
+	想去此广告，则规则为： ##textad(直接跟标签名)
+	
+	想一条规则去上述三个广告，则为：##div.textad,div#sponsorad,textad
+	
+	##前面可跟多个域名，作为限制，例如：
+	想去某一特定网站的上述三广告，则为： example.com##div.textad,div#sponsorad,textad
+	想不去某一网站的上述三广告，则为： ~example.com##div.textad,div#sponsorad,textad
+	
+7，置换规则(.*\\$s@.*@.*@.* 或者 .*\\$s@.*@.*@$)
+    例I：||win007.com$s@ShowAd=true@ShowAd=false@
+	将带有域名“win007.com”的URL里的“ShowAd=true” 置换为“ShowAd=true”
+	
+8，重定向规则(@#@)
+	例J：@#@|http://www.hao123.com/|$http://www.hao123.com/?tn=95393113_hao_pg
+   将以“http://www.hao123.com/”开头的URL的头部替换为“http://www.hao123.com/?tn=95393113_hao_pg”
+   
+9, |#| 与 $$$ 
+   例K: |http://api.cupid.qiyi.com/policy2?a=qc_100001_$$$iqiyi.com|pps.tv
+   
+   例L: ||doubleclick.net/$third-party,domain=~bestbuy.ca$$$v.ifeng.com|#|2
+   绿盾在视频广告过滤时， |#|2 不弹过滤框
