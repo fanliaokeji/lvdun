@@ -28,6 +28,8 @@ function ObjectBase:AddListener(event, callBack, ownerObj, bAddToEnd)
 	else
 		table.insert(self.listener[event], 1, {["callBack"] = callBack, ["ownerObj"] = ownerObj})
 	end
+	
+	return callBack
 end
 
 function ObjectBase:DispatchEvent(event, ...)
