@@ -242,23 +242,65 @@ public:
 			DesktopIcon::UpdateIcon(nLastDay-1);
 		}
 	};
+	static BOOL& TimerState(){
+		static BOOL m_btimer = FALSE;
+		TSDEBUG4CXX("TimerState, m_btimer = "<<m_btimer);
+		return m_btimer;
+	};
+	static void Timer4UpdateIcon(HWND hwnd){
+		TSDEBUG4CXX("Timer4UpdateIcon enter");
+		//先杀掉计时器
+		BOOL timerstate = TimerState();
+		if (timerstate){
+			KillTimer(hwnd, 2);
+			timerstate = FALSE;
+		}
+		__time64_t lCurTime;
+		_time64( &lCurTime); 
+		tm* pTmc = _localtime64(&lCurTime);
+		int pmHour = pTmc->tm_hour, pmMin = pTmc->tm_min, pmSecond = pTmc->tm_sec;
+		int dv_Hour = 23 - pmHour, dv_Min = 59 - pmMin, dv_Sec = 59 - pmSecond;
+		//得到时间变化需要的秒数
+		int lastvalue =  dv_Hour*3600 + dv_Min*60 + dv_Sec + 1;
+		TSDEBUG4CXX("Timer4UpdateIcon pmHour = "<<pmHour<<", pmMin = "<<pmMin<<", pmSecond "<<pmSecond \
+			<<"\r\ndv_Hour = "<<dv_Hour<<", dv_Min = "<<dv_Min<<", dv_Sec = "<<dv_Sec \
+			<<"\r\n lastvalue = "<<lastvalue);
+		//计时器id是2
+		::SetTimer(hwnd, 2, lastvalue*1000, NULL);
+		timerstate = TRUE;;
+
+	};
 	static LRESULT CALLBACK MyWinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		switch(msg)
 		{
 		case WM_CREATE:
 			::SetTimer(hwnd, 1, 3600*1000, NULL);
+			Timer4UpdateIcon(hwnd);
 			break;
 		case WM_DESTROY:
 			KillTimer(hwnd, 1);
+			if (TimerState()){
+				KillTimer(hwnd, 2);
+			}
 			PostQuitMessage(0);
 			break;
 		case WM_TIMECHANGE:
 			UpdateDayOfMoth();
+			Timer4UpdateIcon(hwnd);
 			break;
 		case WM_TIMER:
 			TSDEBUG4CXX("WM_TIMER enter");
-			AddinHelper::HandleLaunch();
+			if (wparam == 1){
+				AddinHelper::HandleLaunch();
+			}
+			else if (wparam == 2){
+				if (TimerState()){
+					KillTimer(hwnd, 2);
+				}
+				UpdateDayOfMoth();
+				Timer4UpdateIcon(hwnd);
+			}
 			break;
 		default:
 			break;

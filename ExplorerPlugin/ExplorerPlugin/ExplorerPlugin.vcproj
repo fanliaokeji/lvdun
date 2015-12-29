@@ -710,7 +710,7 @@
 				AdditionalIncludeDirectories="..\inc"
 				PreprocessorDefinitions="MYCALENDAR;WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				ExceptionHandling="0"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
