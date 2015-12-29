@@ -612,7 +612,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="inc"
+				AdditionalIncludeDirectories="..\inc"
 				PreprocessorDefinitions="MYCALENDAR;WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -871,6 +871,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Lock.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -957,6 +961,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Lock.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -984,6 +992,134 @@
 			</File>
 			<File
 				RelativePath=".\ExplorerPlugin.rgs"
+				>
+			</File>
+			<File
+				RelativePath=".\icon1.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon10.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon11.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon12.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon13.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon14.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon15.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon16.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon17.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon18.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon19.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon2.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon20.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon21.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon22.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon23.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon24.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon25.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon26.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon27.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon28.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon29.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon3.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon30.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon31.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon32.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon4.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon5.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon6.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon7.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon8.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\icon9.ico"
 				>
 			</File>
 		</Filter>

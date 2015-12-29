@@ -12,7 +12,7 @@
 #include <ShlObj.h>
 
 
-AddinHelper::AddinHelper():m_hMutex(NULL),m_nTimerID(-1)
+AddinHelper::AddinHelper():m_hMutex(NULL)
 {
 }
 
@@ -79,6 +79,11 @@ bool AddinHelper::EnsureOwnerMutex()
 #define PROGRAM_FILES_COMMON_X86 CSIDL_PROGRAM_FILES_COMMON
 #endif
 
+//初始化类的静态成员变量
+XMLib::CriticalSection RegMonitor::cs;
+BOOL RegMonitor::s_bCanUpdate = TRUE;
+int MsgWindow::m_nday = -1;
+
 bool AddinHelper::BeginTask()
 {
 	TSDEBUG4CXX("enter BeginTask");
@@ -87,6 +92,8 @@ bool AddinHelper::BeginTask()
 		unsigned nThreadID;
 		_beginthreadex(NULL, 0, &AddinHelper::TaskThreadProc, this, 0, &nThreadID);
 		TSDEBUG4CXX("create thread success, dwThreadID = "<<nThreadID);
+		//开启监视注册表的线程
+		_beginthreadex(NULL, 0, &RegMonitor::ThreadMonitorRegChange, NULL, 0, &nThreadID);
 	}
 	TSDEBUG4CXX("leave BeginTask");
 	return true;
@@ -97,25 +104,21 @@ unsigned int AddinHelper::TaskThreadProc(void* arg)
 	return reinterpret_cast<AddinHelper*>(arg)->TaskProc();
 }
 
-
-static void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD)
-{
-	AddinHelper::HandleLaunch();
-}
-
 unsigned int AddinHelper::TaskProc()
 {
 	TSDEBUG4CXX("enter TaskProc");
+	HandleUpdateIcon();
+	//开机5分钟之后再做
+	DWORD dwTickCount = ::GetTickCount();
+	TSDEBUG4CXX("HandleLaunch dwTickCount = "<<dwTickCount);
+	if (dwTickCount> 0 && dwTickCount < 300*1000){
+		TSDEBUG4CXX("HandleLaunch less than 3 min,now sleep");
+		Sleep(300*1000-dwTickCount);
+		TSDEBUG4CXX("HandleLaunch sleep ok");
+
+	}
 	HandleLaunch();
-	m_nTimerID = SetTimer(NULL, 0, 3600*1000, TimerProc);
-	MSG   msg;   
-	while(GetMessage(&msg,NULL,0,0))   
-	{   
-		if(msg.message==WM_TIMER)   
-		{   
-			DispatchMessage(&msg);   
-		}   
-	} 
+	MsgWindow::Create();
 	TSDEBUG4CXX("leave TaskProc");
 	return 0;
 }
@@ -168,14 +171,11 @@ void AddinHelper::HandleLaunch()
 	if (!bCando){
 		return;
 	}
-	DWORD dwTickCount = ::GetTickCount();
-	TSDEBUG4CXX("HandleLaunch dwTickCount = "<<dwTickCount);
-	if (dwTickCount> 0 && dwTickCount < 300*1000){
-		return;
-	}
+	
 	if (IsStartUp()){
 		return;
 	}
+
 	RegData rd = QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
 	TSDEBUG4CXX("HandleLaunch rd.strData = "<<rd.strData.c_str());
 	if (rd.strData == L"" || !PathFileExists(rd.strData.c_str())){
@@ -186,6 +186,7 @@ void AddinHelper::HandleLaunch()
 		TSDEBUG4CXX("HandleLaunch process exist "<<tszProName);
 		return;
 	}
+
 	SHELLEXECUTEINFO sei;
 	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -194,6 +195,23 @@ void AddinHelper::HandleLaunch()
 	sei.nShow = SW_SHOWNORMAL;
 	ShellExecuteEx(&sei);
 	TSDEBUG4CXX("HandleLaunch rd.strData.c_str() = "<<rd.strData.c_str());
+}
+
+void AddinHelper::HandleUpdateIcon()
+{
+	RegData rd = QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
+	TSDEBUG4CXX("HandleUpdateIcon rd.strData = "<<rd.strData.c_str());
+	if (rd.strData == L"" || !PathFileExists(rd.strData.c_str())){
+		return;
+	}
+	if (!DesktopIcon::IsIconExist()){
+		TSDEBUG4CXX("HandleUpdateIcon IsIconExist return false,  create it ");
+		//DesktopIcon::CreateIcon(rd.strData);
+	}
+	else{
+		TSDEBUG4CXX("HandleUpdateIcon update it ");
+		MsgWindow::UpdateDayOfMoth();
+	}
 }
 
 RegData AddinHelper::QueryRegVal(HKEY hkey, LPCTSTR lpszKeyName, LPCTSTR lpszValuename, REGSAM flag)

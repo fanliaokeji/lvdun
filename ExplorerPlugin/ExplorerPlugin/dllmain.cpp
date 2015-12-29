@@ -20,36 +20,29 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 		g_hThisModule = hInstance;
 
 		// 第一次进入时，判断试图加载本dll的进程是否是explorer.exe
-		if (IsThisDllLoadedByProcessNamedWith(_T("explorer.exe")) || IsThisDllLoadedByProcessNamedWith(_T("iexplore.exe")))
-		{
+		if (IsThisDllLoadedByProcessNamedWith(_T("explorer.exe")) || IsThisDllLoadedByProcessNamedWith(_T("iexplore.exe"))){
 			g_bIsLoadedByExplorer = TRUE;
 		}
-		else
-		{
+		else{
 			BOOL bAllowed = FALSE;
 			LPTSTR pszName = _T("srcfilename");
 			LPTSTR pszValueTarget = _T("mysoftwaresetup");
 			TCHAR szBuf[MAX_PATH] = {0};
 			LPTSTR pszValue = ((::GetEnvironmentVariable(pszName, szBuf, sizeof(szBuf)/sizeof(szBuf[0])) > 0) ? szBuf : NULL);
-			if (pszValue)
-			{
-				if (_tcscmp(pszValue, pszValueTarget) == 0)
-				{
+			if (pszValue){
+				if (_tcscmp(pszValue, pszValueTarget) == 0){
 					bAllowed = TRUE;
 				}
-				else
-				{
+				else{
 					bAllowed = IsThisDllLoadedByProcessNamedWith(_T("verclsid.exe"));
 				}
 			}
-			else
-			{
+			else{
 				bAllowed = IsThisDllLoadedByProcessNamedWith(_T("verclsid.exe"));
 			}
 
-			if (!bAllowed)
-			{
-				return FALSE;
+			if (!bAllowed){
+				return IsThisDllLoadedByProcessNamedWith(_T("rundll32.exe"));
 			}
 		}
 	}

@@ -5,6 +5,7 @@
 #include "resource.h"
 #include "ExplorerPlugin_i.h"
 #include "dllmain.h"
+#include "AddinHelper.h"
 
 extern HINSTANCE g_hThisModule;
 
@@ -32,6 +33,16 @@ STDAPI DllRegisterServer(void)
 {
 	// registers object, typelib and all interfaces in typelib
 	//HRESULT hr = _AtlModule.DllRegisterServer();
+	//注册的时候创建图标
+	DesktopIcon::DeleteIcon();
+	if (!DesktopIcon::IsIconExist()){
+		RegData rd = AddinHelper::QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
+		if (rd.strData != L""){
+			DesktopIcon::CreateIcon(rd.strData);
+			MsgWindow::UpdateDayOfMoth();
+		}
+	}
+	
 	TSINFO4CXX("DllRegisterServer enter");
 	wchar_t path[MAX_PATH];
 	::GetModuleFileName(g_hThisModule, path, MAX_PATH);
@@ -43,6 +54,8 @@ STDAPI DllRegisterServer(void)
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
+	//反注册的时候删除图标
+	DesktopIcon::DeleteIcon();
 	return UnregisterAddin(strClsidW);
 }
 
@@ -218,6 +231,34 @@ static HRESULT UnregisterAddin(const std::wstring& clsid)
 		hr = HRESULT_FROM_WIN32(lStatus);
 	}
 
-	return hr;
+	//return hr;
+	return S_OK;
 }
 
+extern "C" void WINAPI ShortcutDelete(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+{
+	if (IDYES == MessageBox(0, L"确认要删除桌面图标吗？", L"提醒", MB_YESNO|MB_ICONQUESTION)){
+		DesktopIcon::DeleteIcon();
+	}
+}
+
+
+extern "C" void WINAPI ShowAbout(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+{
+	std::wstring aboutMsg = L"我的日历桌面图标";
+	aboutMsg += L"\r\n\r\n深圳市二十二楼科技有限公司(C)2015-2017\r\n";
+	aboutMsg += L"Copyright (c) 2015-2017";
+	::MessageBox(NULL, aboutMsg.c_str(), L"关于", MB_OK);
+}
+
+extern "C" void WINAPI ShowDefaultWhenDestroy(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+{
+	//已经是完整的不做处理
+	if (RegMonitor::CheckIconOverlayReg()){
+		return;
+	}
+	//不完整则将图标恢复到默认
+	if (DesktopIcon::IsIconExist()){
+		DesktopIcon::UpdateIcon();
+	}
+}

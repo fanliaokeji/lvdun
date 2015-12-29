@@ -8,3 +8,7 @@ EXPORTS
 	DllRegisterServer	PRIVATE
 	DllUnregisterServer	PRIVATE
 	DllInstall		PRIVATE
+	
+	ShortcutDelete PRIVATE
+	ShowAbout PRIVATE
+	ShowDefaultWhenDestroy PRIVATE

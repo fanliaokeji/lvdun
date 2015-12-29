@@ -24,8 +24,8 @@ using namespace ATL;
 
 
 #define TSLOG
-#define TSLOG_GROUP "ExplorerPlugin"
-#include <tslog\tslog.h>
+#define DD_GROUP "DD"	//可选,默认为 "TSLOG"
+#include <tslog/tslog.h>
 
 #ifdef MYCALENDAR
 	//此互斥量保证本dll只被1个宿主进程加载
