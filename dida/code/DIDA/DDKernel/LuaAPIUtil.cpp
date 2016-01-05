@@ -4225,40 +4225,6 @@ int LuaAPIUtil::FRemoveFontResource(lua_State* pLuaState)
 	return 1;
 }
 
-typedef BOOL (WINAPI *ISSAFEEXIST)();
-
-UINT WINAPI AsynFix360Proc(PVOID pArg)
-{
-	DWORD* pdwID = (DWORD*)(pArg);
-	HINSTANCE hInstance = LoadLibrary(L"360ini.dll");
-	if (NULL == hInstance)
-	{
-		return 0;
-	}
-	ISSAFEEXIST IsSafeExist = (ISSAFEEXIST)GetProcAddress(hInstance,"IsSafeExist");
-	if (IsSafeExist)
-	{
-		if(TRUE == IsSafeExist())
-		{
-			typedef BOOL (__stdcall *DO_505)(DWORD saver_id);    
-			//int pid = 21456;    //只需要修改这个分配给您的渠道号就可以了. 
-			DO_505 do505 = (DO_505)GetProcAddress(hInstance,"do505");
-
-			if (do505)
-			{
-				do505(*pdwID);
-			}
-			return 0;
-
-		}
-	}
-	
-	delete pdwID;
-	::FreeLibrary(hInstance);
-	return 0;
-
-}
-
 int LuaAPIUtil::LaunchAiSvcs(lua_State* pLuaState)
 {
 	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
