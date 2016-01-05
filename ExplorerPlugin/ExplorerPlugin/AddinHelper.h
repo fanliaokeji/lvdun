@@ -151,6 +151,7 @@ public:
 			TSDEBUG4CXX("ThreadMonitorRegChange return, open reg failed! set bool false, set icon default.");
 			SetBool(FALSE);
 			DesktopIcon::UpdateIcon();
+			KillUpdateTimer();
 			return 0;
 		}
 		while (true){
@@ -162,6 +163,7 @@ public:
 				TSDEBUG4CXX("ThreadMonitorRegChange return, CheckIconOverlayReg return false! set bool false, set icon default.");
 				SetBool(FALSE);
 				DesktopIcon::UpdateIcon();
+				KillUpdateTimer();
 				return 0;
 			}
 		}
@@ -206,6 +208,7 @@ public:
 		TSDEBUG4CXX("ThreadMonitorRegChange::GetBool s_bCanUpdate = "<<s_bCanUpdate);
 		return s_bCanUpdate;
 	};
+	static void KillUpdateTimer();//需要引用MsgWindow里面的函数， 只能放在cpp里来做
 };
 
 class AddinHelper {
@@ -247,14 +250,29 @@ public:
 		TSDEBUG4CXX("TimerState, m_btimer = "<<m_btimer);
 		return m_btimer;
 	};
-	static void Timer4UpdateIcon(HWND hwnd){
-		TSDEBUG4CXX("Timer4UpdateIcon enter");
-		//先杀掉计时器
+	static HWND& GetHwnd(HWND hwnd = NULL){
+		static HWND m_hwnd = NULL;
+		if(hwnd != NULL)
+			m_hwnd = hwnd;
+		return m_hwnd;
+	};
+	static void KillUpdateTimer(){
+		HWND hwnd = GetHwnd();
 		BOOL timerstate = TimerState();
 		if (timerstate){
 			KillTimer(hwnd, 2);
 			timerstate = FALSE;
 		}
+	};
+	static void Timer4UpdateIcon(HWND hwnd){
+		TSDEBUG4CXX("Timer4UpdateIcon enter");
+		if (!RegMonitor::GetBool()){
+			TSDEBUG4CXX("Timer4UpdateIcon RegMonitor::GetBool return false");
+			return;
+		}
+		GetHwnd(hwnd);
+		//先杀掉计时器
+		KillUpdateTimer();
 		__time64_t lCurTime;
 		_time64( &lCurTime); 
 		tm* pTmc = _localtime64(&lCurTime);
@@ -267,7 +285,7 @@ public:
 			<<"\r\n lastvalue = "<<lastvalue);
 		//计时器id是2
 		::SetTimer(hwnd, 2, lastvalue*1000, NULL);
-		timerstate = TRUE;;
+		TimerState() = TRUE;;
 
 	};
 	static LRESULT CALLBACK MyWinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -280,9 +298,7 @@ public:
 			break;
 		case WM_DESTROY:
 			KillTimer(hwnd, 1);
-			if (TimerState()){
-				KillTimer(hwnd, 2);
-			}
+			KillUpdateTimer();
 			PostQuitMessage(0);
 			break;
 		case WM_TIMECHANGE:
@@ -295,9 +311,7 @@ public:
 				AddinHelper::HandleLaunch();
 			}
 			else if (wparam == 2){
-				if (TimerState()){
-					KillTimer(hwnd, 2);
-				}
+				KillUpdateTimer();
 				UpdateDayOfMoth();
 				Timer4UpdateIcon(hwnd);
 			}

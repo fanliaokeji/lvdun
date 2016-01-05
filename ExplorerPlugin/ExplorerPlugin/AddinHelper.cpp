@@ -307,3 +307,8 @@ BOOL AddinHelper::IsStartUp()
 	TSDEBUG4CXX("IsStartUp return true");
 	return TRUE;
 }
+
+void RegMonitor::KillUpdateTimer()
+{
+	MsgWindow::KillUpdateTimer();
+}
