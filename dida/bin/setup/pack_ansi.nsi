@@ -12,6 +12,10 @@ Var ck_xieyi
 Var Bool_Xieyi
 Var ck_sysstup
 Var Bool_Sysstup
+
+Var ck_desktop
+Var Lbl_desktop
+Var Bool_DesktopDate
 Var Btn_Zidingyi
 Var Btn_Zuixiaohua
 Var Btn_Guanbi
@@ -53,8 +57,8 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "mycalendar"
 !define SHORTCUT_NAME "我的日历"
-!define PRODUCT_VERSION "1.0.0.28"
-!define VERSION_LASTNUMBER 28
+!define PRODUCT_VERSION "1.0.0.29"
+!define VERSION_LASTNUMBER 29
 !define NeedSpace 10240
 !define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
@@ -250,9 +254,6 @@ Function Random
 FunctionEnd
 
 Function CloseExe
-	${FKillProc} "DIDA"
-	${FKillProc} "ddfixar"
-	${FKillProc} "ddnotepad"
 	${FKillProc} "mycalendar"
 	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -435,10 +436,10 @@ FunctionEnd
 	${If} ${strOp} == "reg"
 		${If} ${RunningX64}
 			!define LIBRARY_X64
-			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorer_plugin\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "input_main\program\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
 			!undef LIBRARY_X64
 		${Else}
-			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorer_plugin\mcremind.dll" "$INSTDIR\program\mcremind.dll" "$INSTDIR\program"
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "input_main\program\mcremind.dll" "$INSTDIR\program\mcremind.dll" "$INSTDIR\program"
 		${EndIf}
 	${Else}
 		${If} ${RunningX64}
@@ -453,153 +454,8 @@ FunctionEnd
 !define RegExplorerPlugin "!insertmacro _RegExplorerPlugin 'reg'"
 !define UnRegExplorerPlugin "!insertmacro _RegExplorerPlugin 'unreg'"
 
-;恢复txt关联
-Function ReSetTxtAssociation
-	Push $0
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$0" "6.0" $1
-	${If} $1 == 2
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt"
-	${Else}
-		StrCpy $2 "Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice"
-	${EndIf}
-	
-	ReadRegStr $0 HKCU $2 "Progid"
-	ReadRegStr $1 HKCU $2 "ddnotepad_backup"
-	${If} $0 == "ddtxtfile"
-		DeleteRegKey HKCR "ddtxtfile"
-		;DeleteRegValue HKCU $2 "Progid"
-	${EndIf}
-	${If} $1 != ""
-		;WriteRegStr HKCU $2 "Progid" "$1"
-	${EndIf}
-	DeleteRegValue  HKCU $2 "ddnotepad_backup"
-	;从打开方式列表删除
-	DeleteRegKey HKCR "Applications\ddnotepad.exe"
-	Pop $2
-	Pop $1
-	Pop $0
-FunctionEnd
-
-;卸载老的文件
-Function UnstOld
-	Push $0
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
-	StrCmp $0 "" End
-	IfFileExists $0 0 End
-	;恢复txt关联
-	Call ReSetTxtAssociation
-	;杀服务项
-	${SKillProc} "didaupdate"
-	${SKillProc} "didaupdate"
-	System::Call "kernel32::GetEnvironmentVariable(t 'allusersprofile', t .r2, i 256)"
-	IfFileExists $2 0 EndDelSvr
-	RMDir /r /REBOOTOK  "$2\didaUpdate"
-	IfFileExists "$2\didaUpdate\didaupdate.exe" 0 EndDelSvr
-	${RenameDeleteFile} "$2\didaUpdate\didaupdate.exe" BeginRename3 EndRename3
-	EndDelSvr:
-	;注册表
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DIDA"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\App Paths\DIDA.exe"
-	DeleteRegKey HKCU "Software\ddnotepad"
-	;删除自用的注册表信息
-	DeleteRegKey HKLM "Software\DDCalendar"
-	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "ddfixar"
-	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "DDCalendar"
-	DeleteRegKey HKCU "Software\DDCalendar"
-		
-	;删除
-	RMDir /r "$0\xar"
-	Delete "$0\uninst.exe"
-	RMDir /r "$0\program"
-	RMDir /r "$0\res"
-	
-	 ;文件被占用则改一下名字
-	${RenameDeleteFile} "$0\program\myrlcalendar64.dll" BeginRename1 EndRename1
-	${RenameDeleteFile} "$0\program\myrlcalendar.dll" BeginRename2 EndRename2
-
-	System::Call 'Shlwapi::PathIsDirectoryEmpty(t "$0")i.r1'
-	${If} $1 == 1
-		RMDir /r "$0"
-	${EndIf}
-	End:
-	Pop $2
-	Pop $1
-	Pop $0
-FunctionEnd
-
-;卸载老的快捷方式
-Function UnstOldLink
-	Call CloseExe
-	Push $0 
-	Push $1
-	Push $2
-	ReadRegStr $0 HKLM "Software\DDCalendar" "InstDir"
-	StrCmp $0 "" End
-	IfFileExists $0 0 End
-	ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
-	${VersionCompare} "$1" "6.0" $2
-	${if} $2 == 2
-		Delete "$QUICKLAUNCH\嘀嗒日历.lnk"
-		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b 0, t '$STARTMENU\嘀嗒日历.lnk')"
-	${else}
-		Call GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0
-			Delete "$0\TaskBar\嘀嗒日历.lnk"
-			Delete "$0\StartMenu\嘀嗒日历.lnk"
-		${EndIf}
-	${Endif}
-	IfFileExists "$DESKTOP\嘀嗒日历.lnk" 0 +2
-		Delete "$DESKTOP\嘀嗒日历.lnk"
-	IfFileExists "$STARTMENU\嘀嗒日历.lnk" 0 +2
-		Delete "$STARTMENU\嘀嗒日历.lnk"
-	RMDir /r "$SMPROGRAMS\嘀嗒日历"
-	End:
-	Pop $2
-	Pop $1
-	Pop $0
-FunctionEnd
-
-;合并配置文件
-Function MergeConfig
-	Push $0
-	Push $1
-	Push $2
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
-	StrCmp $0 "" End
-	IfFileExists "$0" 0 End
-	IfFileExists "$0\DIDA" 0 End
-	IfFileExists "$0\mycalendar" End
-	CopyFiles /silent "$0\DIDA" "$0\mycalendar"
-	RMDir /r /REBOOTOK "$0\DIDA"
-	
-	Delete "$0\mycalendar\didaserverconfigb16.dat"
-	Delete "$0\mycalendar\DiDaServerConfig.dat"
-	Delete "$0\mycalendar\UserConfig.dat"
-	;重命名文件夹
-	CopyFiles /silent "$0\mycalendar\ddnotepad" "$0\mycalendar\notepadcfg"
-	RMDir /r /REBOOTOK "$0\mycalendar\ddnotepad"
-	CopyFiles /silent "$0\mycalendar\DiDaNote" "$0\mycalendar\notefile"
-	RMDir /r /REBOOTOK "$0\mycalendar\DiDaNote"
-	End:
-	Pop $2
-	Pop $1
-	Pop $0
-FunctionEnd
-
 Var Bool_IsUpdate
 Function DoInstall
-  ;卸载老的文件
-  Call UnstOld
-  ;合并配置文件
-  Call MergeConfig
   ;释放配置到public目录
   SetOutPath "$TEMP\${PRODUCT_NAME}"
   StrCpy $1 ${NSIS_MAX_STRLEN}
@@ -641,10 +497,6 @@ Function DoInstall
   SetOverwrite on
   File "uninst\uninst.exe"
   
-  SetOutPath "$INSTDIR\program"
-  SetOverwrite on
-   ;注册资源管理器插件
-  ${RegExplorerPlugin}
   
   StrCpy $Bool_IsUpdate 0 
   ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
@@ -696,6 +548,12 @@ Function DoInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
   ${EndIf}
   
+  ${If} $Bool_DesktopDate == 1
+	SetOutPath "$INSTDIR\program"
+	SetOverwrite on
+	;注册资源管理器插件
+	${RegExplorerPlugin}
+  ${EndIf}
   
   ;写入通用的注册表信息
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -738,9 +596,9 @@ Function CmdSilentInstall
 			Goto StartInstall
 		${EndIf}
 	StartInstall:
-	;卸载老的快捷方式
-	Call UnstOldLink
 	
+	;静默安装 默认勾选桌面日期
+	StrCpy $Bool_DesktopDate 1
 	;发退出消息
 	Call CloseExe
 	Call DoInstall
@@ -1004,9 +862,6 @@ FunctionEnd
 Function ClickSure2
 	ShowWindow $Hwnd_MsgBox ${SW_HIDE}
 	ShowWindow $HWNDPARENT ${SW_HIDE}
-	${FKillProc} "DIDA"
-	${FKillProc} "ddfixar"
-	${FKillProc} "ddnotepad"
 	${FKillProc} "mycalendar"
 	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -1022,13 +877,7 @@ Function ClickSure1
 	ShowWindow $HWNDPARENT ${SW_HIDE}
 	Sleep 100
 	;发退出消息
-	FindProcDLL::FindProc "DIDA.exe"
-	${If} $R0 == 0
-		FindProcDLL::FindProc "ddfixar.exe"
-	${EndIf}
-	${If} $R0 == 0
-		FindProcDLL::FindProc "mycalendar.exe"
-	${EndIf}
+	FindProcDLL::FindProc "mycalendar.exe"
 	${If} $R0 == 0
 		FindProcDLL::FindProc "myfixar.exe"
 	${EndIf}
@@ -1164,7 +1013,17 @@ Function OnClick_CheckSysstup
     ${EndIf}
 FunctionEnd
 
-
+Function OnClick_DesktopDate
+	${IF} $Bool_DesktopDate == 1
+        IntOp $Bool_DesktopDate $Bool_DesktopDate - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox1.bmp $ck_desktop
+    ${ELSE}
+        IntOp $Bool_DesktopDate $Bool_DesktopDate + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $ck_desktop
+    ${EndIf}
+	ShowWindow $ck_desktop ${SW_HIDE}
+	ShowWindow $ck_desktop ${SW_SHOW}
+FunctionEnd
 
 Function OnClick_BrowseButton
 	Pop $0
@@ -1492,13 +1351,18 @@ Function WelcomePage
 
 	
 	;勾选开机启动
-	${NSD_CreateButton} 388 268 20 20 ""
+	${NSD_CreateButton} 390 268 20 20 ""
 	Pop $ck_sysstup
 	StrCpy $1 $ck_sysstup
 	SkinBtn::Set /IMGID=$PLUGINSDIR\checkbox2.bmp $1
 	GetFunctionAddress $3 OnClick_CheckSysstup
     SkinBtn::onClick $1 $3
 	StrCpy $Bool_Sysstup 1
+	
+	;开启桌面日期
+	StrCpy $Bool_DesktopDate 1
+	${CreateButton} 290 268 20 20 "checkbox2.bmp" OnClick_DesktopDate $ck_desktop
+	${CreateLabel} 311 268 80 20 "显示桌面日期" "666666" $Handle_Font OnClick_DesktopDate $Lbl_desktop
 	
 	
     ;用户协议
@@ -1638,8 +1502,6 @@ Var PB_ProgressBar
 Function NSD_TimerFun
 	GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::KillTimer $0
-	;卸载老的快捷方式
-	Call UnstOldLink
     !if 1   ;是否在后台运行,1有效
         GetFunctionAddress $0 InstallationMainFun
         BgWorker::CallAndWait
@@ -2100,9 +1962,6 @@ Function un.OnClick_CruelRefused
 	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
 	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
 	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
-	${FKillProc} "DIDA"
-	${FKillProc} "ddfixar"
-	${FKillProc} "ddnotepad"
 	${FKillProc} "mycalendar"
 	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -2266,9 +2125,6 @@ Function un.GsMessageBox
 FunctionEnd
 
 Function un.ClickSure
-	${FKillProc} "DIDA"
-	${FKillProc} "ddfixar"
-	${FKillProc} "ddnotepad"
 	${FKillProc} "mycalendar"
 	${FKillProc} "myfixar"
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -2288,13 +2144,7 @@ Function un.MyUnstallMsgBox
 	push $0
 	call un.myGUIInit
 	;发退出消息
-	FindProcDLL::FindProc "DIDA.exe"
-	${If} $R0 == 0
-		FindProcDLL::FindProc "ddfixar.exe"
-	${EndIf}
-	${If} $R0 == 0
-		FindProcDLL::FindProc "mycalendar.exe"
-	${EndIf}
+	FindProcDLL::FindProc "mycalendar.exe"
 	${If} $R0 == 0
 		FindProcDLL::FindProc "myfixar.exe"
 	${EndIf}
