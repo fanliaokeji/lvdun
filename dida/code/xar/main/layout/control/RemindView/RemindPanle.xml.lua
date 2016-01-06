@@ -1,5 +1,6 @@
 local tipUtil = XLGetObject("API.Util")
 local tFunHelper = XLGetGlobal("DiDa.FunctionHelper")
+local Helper = XLGetGlobal("Helper")
 
 function OnEnableChangeCtrol(self, isEnable)
 	if self:GetClass() == "TextObject" then
@@ -408,7 +409,7 @@ function OnClickBottomSaveBtn(self)
 	data["title"] = titlectrlattr.Text
 	--内容
 	local CenterEditObj = owner:GetControlObject("CenterEditObj")
-	data["content"] = CenterEditObj:GetText()
+	data["content"] = Helper:UrlEncode(CenterEditObj:GetText())
 	--无提醒选择框
 	local CheckBoxNA = owner:GetControlObject("CheckBoxNA")
 	local CheckBoxNAattr = CheckBoxNA:GetAttribute()
@@ -534,7 +535,7 @@ function SetData(self, data)
 		if not data["content"] or data["content"] == "" then
 			CenterEditObj:SetText("内容：可填可不填")
 		else
-			CenterEditObj:SetText(data["content"] or "")
+			CenterEditObj:SetText(Helper:UrlDecode(data["content"]) or "")
 		end
 		local CheckBoxOnce = self:GetControlObject("CheckBoxOnce")
 		local CheckBoxEveryDay = self:GetControlObject("CheckBoxEveryDay")

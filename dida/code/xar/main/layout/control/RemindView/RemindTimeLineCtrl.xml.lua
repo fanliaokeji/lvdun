@@ -1,6 +1,7 @@
 local FunctionObj = XLGetGlobal("DiDa.FunctionHelper") 
 local tipUtil = XLGetObject("API.Util")
-local tRemindListData = nil--记事本数据
+local Helper = XLGetGlobal("Helper")
+local tRemindListData = nil--提醒数据
 local gSelectData = nil
 
 --加载数据
@@ -10,7 +11,20 @@ function LoadRemindListData()
 		tRemindListData = {}
 		return
 	end
-	tRemindListData = FunctionObj.LoadTableFromFile(strPath)
+	tRemindListData = FunctionObj.LoadTableFromFile(strPath) or {}
+	--新老兼容处理
+	if tRemindListData.ver ~= 2.0 then
+		for _, v in pairs(tRemindListData) do
+			if type(v) == "table" then
+				for _, vv in ipairs(v) do
+					if vv["content"] ~= nil then
+						vv["content"] = Helper:UrlEncode(vv["content"])
+					end
+				end
+			end
+		end
+		tRemindListData.ver = 2.0
+	end
 end
 
 --保存数据

@@ -8,8 +8,10 @@
         <event_def>
         </event_def>
 		<objtemplate>
-            <children>				
-				<obj id="root.layout" class="CaptionObject">
+            <children>
+				<!--modify by WANGWEI 因为主界面不能拖动，所以提醒和记事本也同样处理-->
+				<!--obj id="root.layout" class="CaptionObject"-->
+				<obj id="root.layout" class="LayoutObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
