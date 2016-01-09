@@ -37,6 +37,9 @@ private:
 	static void EncryptAESToFileHelper(const unsigned char* pszKey, const char* pszMsg, unsigned char* out_str, int& nlen);
 	static void DecryptFileAESHelper(const unsigned char* pszKey, const unsigned char* pszMsg, int nlen, unsigned char* out_str);
 
+	static void EncryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nBuff,char* out_str);
+	static void DecryptAESHelper(unsigned char* pszKey, const char* pszMsg, int&nMsg,int& nBuff,char* out_str);
+
 	enum ShortCutPosition
 	{
 		DESKTOP = 0,
@@ -172,7 +175,10 @@ public:
 	static int OpenURL(lua_State* pLuaState);
 	static int OpenURLIE(lua_State* pLuaState);	
 	static int ShellExecuteEX(lua_State* pLuaState);
+	static int SetClipboardText(lua_State* pLuaState);
 
+	static int EncryptString(lua_State* pLuaState);
+	static int DecryptString(lua_State* pLuaState);
 	static int EncryptAESToFile(lua_State* pLuaState);
 	static int DecryptFileAES(lua_State* pLuaState);
 	

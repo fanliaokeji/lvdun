@@ -9,6 +9,7 @@
 #include "LuaGSUtil.h"
 #include "LuaAPIHelper.h"
 #include "GSApp.h"
+#include "AES.h"
 #include "PeeIdHelper.h"
 #include "..\GsNetFilter\GsNetFilter.h"
 #include "commonshare\md5.h"
@@ -143,11 +144,13 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"OpenURL", OpenURL},
 	{"OpenURLIE", OpenURLIE},
 	{"ShellExecute", ShellExecuteEX},
+	{"SetClipboardText", SetClipboardText},
 
 
 	{"EncryptAESToFile", EncryptAESToFile},
 	{"DecryptFileAES", DecryptFileAES},
-	
+	{"EncryptString", EncryptString},
+	{"DecryptString", DecryptString},
 	{"Encrypt_AES_BASE64", Encrypt_AES_BASE64},
 	{"Decrypt_AES_BASE64", Decrypt_AES_BASE64},
 
@@ -2377,6 +2380,54 @@ int LuaGSUtil::ShellExecuteEX(lua_State* pLuaState)
 	return 1;
 }
 
+int LuaGSUtil::SetClipboardText(lua_State* pLuaState)
+{
+	LuaGSUtil** ppGSUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppGSUtil == NULL)
+	{
+		return 0;
+	}
+	HGLOBAL hglbCopy;
+	LPTSTR  lptstrCopy;
+
+	const char* sLuaText = luaL_checkstring(pLuaState, 2);
+	CComBSTR bstrText;
+	if(sLuaText)
+	{
+		LuaStringToCComBSTR(sLuaText,bstrText);
+	}
+	size_t  nlength = _tcslen(bstrText);
+
+	if (!::OpenClipboard(::GetActiveWindow()))
+	{
+		lua_pushboolean(pLuaState, false);
+		return 1;
+	}
+
+	EmptyClipboard();
+	hglbCopy = GlobalAlloc(GMEM_MOVEABLE,(nlength + 1) * sizeof(TCHAR)); 
+	if (hglbCopy == NULL) 
+	{ 
+		CloseClipboard(); 
+		lua_pushboolean(pLuaState, false);
+		return 1;
+	} 
+
+	// Lock the handle and copy the text to the buffer. 
+	lptstrCopy = (LPTSTR)GlobalLock(hglbCopy); 
+	memcpy(lptstrCopy, bstrText, (nlength + 1) * sizeof(TCHAR)); 
+
+	GlobalUnlock(hglbCopy); 
+	// Place the handle on the clipboard. 
+
+	SetClipboardData(CF_UNICODETEXT, hglbCopy); 
+	CloseClipboard();
+
+	lua_pushboolean(pLuaState, true);
+	return 1;
+
+}
+
 int LuaGSUtil::QueryProcessExists(lua_State* pLuaState)
 {
 	int iValue = 0;
@@ -4291,5 +4342,103 @@ int LuaGSUtil::LaunchUpdate(lua_State* pLuaState)
 		}
 	}
 	lua_pushboolean(pLuaState, bRet);
+	return 1;
+}
+
+void LuaGSUtil::EncryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nBuff,char* out_str)
+{	
+	strcpy(out_str,pszMsg);
+	try
+	{
+		AES aes(pszKey);
+		aes.Cipher((char*)out_str, strlen(pszMsg));
+	}
+	catch (...)
+	{
+		memset(out_str, 0, nBuff + 1);
+		strcpy(out_str, pszMsg);
+	}
+}
+void LuaGSUtil::DecryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nMsg,int& nBuff,char* out_str)
+{
+	memcpy(out_str,pszMsg,nMsg);
+	try
+	{
+		AES aes(pszKey);
+		aes.InvCipher(out_str, nMsg);
+	}
+	catch(...)
+	{
+		memset(out_str, 0, nBuff + 1);
+		memcpy(out_str,pszMsg,nMsg);
+	}
+}
+int LuaGSUtil::EncryptString(lua_State* pLuaState)
+{
+	LuaGSUtil** ppUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* pszData = lua_tostring(pLuaState, 2);
+		const char* pszKey = lua_tostring(pLuaState, 3);
+		if (pszKey == NULL || pszData == NULL)
+		{
+			return 0;
+		}
+		int ubuff = strlen(pszKey)>16?strlen(pszKey):16;
+		char* pszNewKey = new(std::nothrow) char[ubuff+1];
+		memset(pszNewKey,0,ubuff+1);
+		strcpy_s(pszNewKey,ubuff+1,pszKey);
+
+		int msglen = strlen(pszData);
+		int flen = ((msglen >> 4) + 1) << 4;
+		char* out_str = (char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+
+		EncryptAESHelper((unsigned char*)pszNewKey, pszData,flen, out_str);
+		delete[] pszNewKey;
+
+		std::string strBase64 = base64_encode((unsigned char *)out_str,flen);
+		lua_pushstring(pLuaState, strBase64.c_str());
+		free(out_str);
+		return 1;
+	}
+	lua_pushnil(pLuaState);
+	return 1;
+}
+
+
+int LuaGSUtil::DecryptString(lua_State* pLuaState)
+{
+	LuaGSUtil** ppUtil = (LuaGSUtil **)luaL_checkudata(pLuaState, 1, GS_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* pszBase64Data = lua_tostring(pLuaState, 2);
+		const char* pszKey = lua_tostring(pLuaState, 3);
+		if (pszKey == NULL || pszBase64Data == NULL)
+		{
+			return 0;
+		}
+		std::string strData = base64_decode(pszBase64Data);
+		if (strData.size() <= 0)
+		{
+			return 0;
+		}
+
+		int ubuff = strlen(pszKey)>16?strlen(pszKey):16;
+		char* pszNewKey = new(std::nothrow) char[ubuff+1];
+		memset(pszNewKey,0,ubuff+1);
+		strcpy_s(pszNewKey,ubuff+1,pszKey);
+
+		int flen = ((strData.length() >> 4) + 1) << 4;
+		char* out_str = (char*)malloc(flen + 1);
+		memset(out_str, 0, flen + 1);
+		int isize = (int)strData.length();
+		DecryptAESHelper((unsigned char*)pszNewKey, (const char*)strData.c_str(),isize, flen,out_str);
+		delete[] pszNewKey;
+		lua_pushstring(pLuaState, (const char*)out_str);
+		free(out_str);
+		return 1;
+	}
+	lua_pushnil(pLuaState);
 	return 1;
 }

@@ -315,6 +315,14 @@
 			Name="Helper"
 			>
 			<File
+				RelativePath=".\AES.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AES.h"
+				>
+			</File>
+			<File
 				RelativePath=".\AjaxDownloadHelper.cpp"
 				>
 			</File>
