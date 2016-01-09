@@ -631,7 +631,7 @@ function SetWndForeGround(objHostWnd)
 	end
 
 	if not IsUserFullScreen() then
-		objHostWnd:SetTopMost(true)
+		-- objHostWnd:SetTopMost(true)
 		if type(tipUtil.SetWndPos) == "function" then
 			local hWnd = objHostWnd:GetWndHandle()
 			if hWnd ~= nil then
