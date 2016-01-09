@@ -1,6 +1,6 @@
 local tipUtil = XLGetObject("GS.Util")
 local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
-
+local Helper =  XLGetGlobal("Helper")
 -----事件----
 function OnClickCloseBtn(self)
 	HideWndToTray(self)
@@ -21,14 +21,39 @@ function OnClickMinBtn(self)
 end
 
 function OnClickConfigBtn(self)
-	local objRootCtrl = self:GetOwnerControl()
-	objRootCtrl:SetCaptionStyle(false)
-	local bOpenSucc = tFunctionHelper.OpenPanel("ChildCtrl_Config")
+	-- local objRootCtrl = self:GetOwnerControl()
+	-- objRootCtrl:SetCaptionStyle(false)
+	-- local bOpenSucc = tFunctionHelper.OpenPanel("ChildCtrl_Config")
 	
-	if not bOpenSucc then
-		tFunctionHelper.OpenPanel("ChildCtrl_AdvCount")
-		objRootCtrl:SetCaptionStyle(true)
-	end
+	-- if not bOpenSucc then
+		-- tFunctionHelper.OpenPanel("ChildCtrl_AdvCount")
+		-- objRootCtrl:SetCaptionStyle(true)
+	-- end
+	
+	local wndTree = self:GetOwner()
+	local wnd = wndTree:GetBindHostWnd()
+	local maskWnd, maskWndTree = Helper:CreateTransparentMask(wnd)
+	
+	--创建“设置“窗口之前，先创建一个半透明蒙层（Mask）窗口覆盖到主窗口上，再以Mask窗口为父窗口创建”设置“窗口
+	--此时”设置“窗口已经成为主窗口的 孙子 窗口
+	local userData = {["maskWndParent"] = wnd, ["parentWnd"] = maskWnd}
+	Helper:CreateModalWnd("ConfigWnd", "ConfigWndTree", maskWnd:GetWndHandle(), userData)
+end
+
+function OnClickHomePage(self)
+	local url = "http://www.lvdun123.com"
+	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
+end
+
+function OnClickShare(self)
+	local wndTree = self:GetOwner()
+	local wnd = wndTree:GetBindHostWnd()
+	local maskWnd, maskWndTree = Helper:CreateTransparentMask(wnd)
+	
+	--创建“设置“窗口之前，先创建一个半透明蒙层（Mask）窗口覆盖到主窗口上，再以Mask窗口为父窗口创建”设置“窗口
+	--此时”设置“窗口已经成为主窗口的 孙子 窗口  所以，比较好的方法就是：“不要跟强势的场景处在同一组内”
+	local userData = {["parentWnd"] = maskWnd, ["maskWndParent"] = wnd}
+	Helper:CreateModalWnd("ShareWnd", "ShareWndTree", maskWnd:GetWndHandle(), userData)
 end
 
 
