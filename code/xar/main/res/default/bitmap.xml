@@ -60,9 +60,13 @@
 		<texture id="Greenwall.ConfigElem.ElemBkg.Hover" image="bitmap\GreenWall.ConfigElem.ElemBkg.Hover.png" />
 		
 		<texture id="GreenWall.FilterConfig.Menu.Bkg" image="bitmap\GreenWall.FilterConfig.Menu.Bkg.png" />
-		<texture id="GreenWall.FilterConfig.Menu.Select" image="bitmap\GreenWall.FilterConfig.Menu.Select.png" />			
+		<texture id="GreenWall.FilterConfig.Menu.Select" image="bitmap\GreenWall.FilterConfig.Menu.Select.png" />
+		
+		<texture id="GreenWall.Count.Number.Bkg" image="bitmap\GreenWall.Count.Number.Bkg.png" />			
+		<texture id="ShareWnd.Bkg" image="bitmap\ShareWndImage\ShareWnd.Bkg.png" />			
 				
 		<bitmap id="GreenWall.Logo" path="bitmap\GreenWall.Logo.png"/>
+		<bitmap id="GreenWall.Logo.Old" path="bitmap\GreenWall.Logo.Old.png"/>
 		<bitmap id="Number_0" path="bitmap\number_0.png"/>
 		<bitmap id="Number_1" path="bitmap\number_1.png"/>
 		<bitmap id="Number_2" path="bitmap\number_2.png"/>
@@ -86,6 +90,9 @@
 		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
 		<texture id="GreenWall.BtnClose.Down"   image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
 		<texture id="GreenWall.BtnClose.Disable" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
+		
+		<texture id="GreenWall.TipWnd.BtnClose.Normal" image="bitmap\GreenWall.Caption.TipWnd.BtnClose.Normal.png" />
+		<texture id="GreenWall.TipWnd.BtnClose.Hover" image="bitmap\GreenWall.Caption.TipWnd.BtnClose.Hover.png" />
 
 		<texture id="GreenWall.BtnMin.Normal" image="bitmap\GreenWall.Caption.BtnMin.Normal.png" />
 		<texture id="GreenWall.MainWnd.BtnMin.Normal" image="bitmap\GreenWall.Caption.MainWnd.BtnMin.Normal.png" />
@@ -130,5 +137,35 @@
 		<texture id="FilterBubble.Low.Bkg" image="bitmap\GreenWall.FilterBubble.Low.Bkg.png" />
 		<texture id="GreenWall.FilterBubble.CheckBox.Empty" image="bitmap\GreenWall.FilterBubble.CheckBox.Empty.png" />
 		<texture id="GreenWall.FilterBubble.CheckBox.Check" image="bitmap\GreenWall.FilterBubble.CheckBox.Check.png" />
+		
+		<texture id="GreenWall.MainWndBkg" image="bitmap\GreenWall.MainWndBkg.png" />
+		<texture id="GreenWall.Caption.HomePage.Normal" image="bitmap\GreenWall.Caption.HomePage.Normal.png" />
+		<texture id="GreenWall.Caption.HomePage.Hover" image="bitmap\GreenWall.Caption.HomePage.Hover.png" />
+		<texture id="GreenWall.Caption.Share.Normal" image="bitmap\GreenWall.Caption.Share.Normal.png" />
+		<texture id="GreenWall.Caption.Share.Hover" image="bitmap\GreenWall.Caption.Share.Hover.png" />
+		
+		<texture id="GreenWall.SwitchFilter.Close.Normal" image="bitmap\GreenWall.SwitchFilter.Close.Normal.png" />
+		<texture id="GreenWall.SwitchFilter.Close.Hover"  image="bitmap\GreenWall.SwitchFilter.Close.Hover.png" />
+		<texture id="GreenWall.SwitchFilter.Open.Normal"  image="bitmap\GreenWall.SwitchFilter.Open.Normal.png" />
+		<texture id="GreenWall.SwitchFilter.Open.Hover"   image="bitmap\GreenWall.SwitchFilter.Open.Hover.png" />
+		
+		<texture id="GreenWall.UserHelper.Normal"   image="bitmap\GreenWall.UserHelper.Normal.png" />
+		<texture id="GreenWall.UserHelper.Hover"   image="bitmap\GreenWall.UserHelper.Hover.png" />
+		<texture id="GreenWall.RankingList.Normal"   image="bitmap\GreenWall.RankingList.Normal.png" />
+		<texture id="GreenWall.RankingList.Hover"   image="bitmap\GreenWall.RankingList.Hover.png" />
+		<texture id="GreenWall.Feedback.Normal"   image="bitmap\GreenWall.Feedback.Normal.png" />
+		<texture id="GreenWall.Feedback.Hover"   image="bitmap\GreenWall.Feedback.Hover.png" />
+		
+		<texture id="ShareWnd.Share.Weibo.Normal"   image="bitmap\ShareWndImage\ShareWnd.Share.Weibo.Normal.png" />
+		<texture id="ShareWnd.Share.Weibo.Hover"   image="bitmap\ShareWndImage\ShareWnd.Share.Weibo.Hover.png" />
+		<texture id="ShareWnd.Share.QQZone.Normal"   image="bitmap\ShareWndImage\ShareWnd.Share.QQZone.Normal.png" />
+		<texture id="ShareWnd.Share.QQZone.Hover"   image="bitmap\ShareWndImage\ShareWnd.Share.QQZone.Hover.png" />
+		<texture id="ShareWnd.Share.QQ.Normal"   image="bitmap\ShareWndImage\ShareWnd.Share.QQ.Normal.png" />
+		<texture id="ShareWnd.Share.QQ.Hover"   image="bitmap\ShareWndImage\ShareWnd.Share.QQ.Hover.png" />
+		<texture id="ShareWnd.Share.Douban.Normal"   image="bitmap\ShareWndImage\ShareWnd.Share.Douban.Normal.png" />
+		<texture id="ShareWnd.Share.Douban.Hover"   image="bitmap\ShareWndImage\ShareWnd.Share.Douban.Hover.png" />
+		
+		<imageseq id="GreenWall.Seq_ani" folder="bitmap\GreenWall.Animation" />
+		<bitmap   id="GreenWall.Init.Bitmap" path="bitmap\GreenWall.Animation\1.png" />
 	</resource>
 </XLUE>
