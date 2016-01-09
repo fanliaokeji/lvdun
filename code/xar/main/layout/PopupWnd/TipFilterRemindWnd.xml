@@ -73,7 +73,9 @@
 						<TextColor>999999</TextColor>
 					</attr>
 					<eventlist>
+						<!--
 						<event name="OnClick" file="..\control\BodyPanel\ChildCtrl_AdvFilter.xml.lua" func="OnClickPopupCancle" />
+						-->
 					</eventlist>
 				</obj>		
 				
@@ -92,7 +94,8 @@
 						<TextColor>system.white</TextColor>
 					</attr>
 					<eventlist>
-						<event name="OnClick" file="..\control\BodyPanel\ChildCtrl_AdvFilter.xml.lua" func="OnClickPopupEnter" />
+						<!--<event name="OnClick" file="..\control\BodyPanel\ChildCtrl_AdvFilter.xml.lua" func="OnClickPopupEnter" />
+						-->
 					</eventlist>
 				</obj>		
 				
@@ -107,13 +110,10 @@
             <top>0</top>
             <width>399</width>
             <height>181</height>
-            <cacheleft>0</cacheleft>
-            <cachetop>0</cachetop>
 
             <topmost>1</topmost>
             <visible>0</visible>
             <enable>1</enable>
-            <active>0</active>
             <maxbox>0</maxbox>
             <minbox>1</minbox>
             <minwidth>50</minwidth>
