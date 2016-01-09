@@ -34,8 +34,8 @@
 								<left>0</left>
 								<top>0</top>
 								<width>father.width</width>
-								<height>father.height-5</height>
-								<texture>GreenWall.MainWndCenter.Bkg</texture>
+								<height>father.height</height>
+								<texture>GreenWall.MainWndBkg</texture>
 							</attr>	
 							<children>
 								<obj id="TipCtrl.MainWnd.MainBody" class="MainBodyCtrl">
@@ -57,6 +57,7 @@
 								<width>father.width</width>
 								<height>5</height>
 								<texture>GreenWall.MainWndBottom.Bkg</texture>
+								<visible>false</visible>
 							</attr>
 						</obj>
 						
@@ -72,15 +73,15 @@
 		<attr>
 			<left>0</left>
 			<top>0</top>
-			<width>320</width>
-			<height>339</height>
+			<width>690</width>
+			<height>422</height>
 		</attr>
 		<obj id="root.layout" class="TipMainWndRootCtrl" >
 			<attr>
 			    <left>0</left>
 				<top>0</top>
-				<width>320</width>
-				<height>339</height>
+				<width>690</width>
+				<height>422</height>
 			</attr>
 			<children>
 				<obj id="root.ctrl" class="TipMainPanelRootCtrl" >
