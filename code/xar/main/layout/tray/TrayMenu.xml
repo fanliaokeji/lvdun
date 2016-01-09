@@ -12,14 +12,6 @@
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Update" />
 				</eventlist>
 			</obj>
-			<obj id="officialwebsite" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>官方网站</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Website" />
-				</eventlist>
-			</obj>
 			<obj id="introduce" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
 					<Text>功能特性</Text>
@@ -36,14 +28,6 @@
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Filter" />
 					<event name="OnInit" file="TrayMenu.xml.lua" function="OnInit_Filter" />
-				</eventlist>
-			</obj>
-			<obj id="contact" class="MenuItemObject" templateid="menu.context.item">
-				<attr>
-					<Text>问题反馈</Text>
-				</attr>
-				<eventlist>
-					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Contact" />
 				</eventlist>
 			</obj>
 			<obj id="about" class="MenuItemObject" templateid="menu.context.item">
@@ -78,7 +62,7 @@
 				<left>0</left>
 				<top>0</top>
 				<width>210</width>
-				<height>225</height>
+				<height>172</height>
 			</attr>
 			<children>
 				<obj id="TrayMenu.Title" class="TextureObject">
