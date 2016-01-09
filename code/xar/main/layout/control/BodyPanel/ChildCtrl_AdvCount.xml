@@ -21,73 +21,179 @@
 						<width>father.width</width>
 						<height>257</height>
 						<texture>GreenWall.AdvCount.FilterClose.Bkg</texture>
-					</attr>				
+					</attr>		
 				</obj>	
 				
-				<obj id="ChildCtrl_AdvCount.MainWnd.FilterOpen" class="SeqImageObject">
+				<!--<obj id="ChildCtrl_AdvCount.MainWnd.FilterOpen" class="SeqImageObject">-->
+				<obj id="ChildCtrl_AdvCount.MainWnd.FilterOpen" class="TextureObject">
 					<attr>
 						<left>0</left>  
 						<top>0</top>
 						<width>father.width</width>
 						<height>257</height>
-						<gif>GreenWall.AdvCount.FilterOpen.Bkg</gif>
+						<!--<gif>GreenWall.AdvCount.FilterOpen.Bkg</gif>
 						<loop>1</loop>
-						<reverse>0</reverse>
+						<reverse>0</reverse>-->
 					</attr>
+					<children>
+						<obj id="ChildCtrl_AdvCount.Ani.FilterOpen" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>300</width> 
+								<height>300</height>
+								<image>GreenWall.Init.Bitmap</image>	
+							</attr>		
+						</obj>	
+					</children>		
 				</obj>	
 				
-				<obj id="ChildCtrl_AdvCount.MainWnd.Container" class="LayoutObject">
+				<obj id="ChildCtrl_AdvCount.Number.Bkg" class="TextureObject">
 					<attr>
-						<left>0</left>
-						<top>200</top>
-						<width>father.width</width>
-						<height>55</height>
+						<left>296</left>
+						<top>171</top>
+						<width>191</width>
+						<height>43</height>
+						<texture>GreenWall.Count.Number.Bkg</texture>
 					</attr>
-				</obj>	
-							
+					<children>
+						<obj id="ChildCtrl_AdvCount.MainWnd.Container" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>43</height>
+							</attr>
+						</obj>	
+					</children>		
+				</obj>
+				
+				
 				<obj id="ChildCtrl_AdvCount.LowBkg" class="TextureObject">
 					<attr>
 						<left>0</left>
-						<top>257</top>
+						<top>303</top>
 						<width>father.width</width>
-						<height>78</height>
+						<height>100</height>
 						<texture>GreenWall.AdvCount.Low.Bkg</texture>
 					</attr>
 					<children>
 						<obj id="ChildCtrl_AdvCount.Low.Text" class="TextObject">
 							<attr>
-								<left>21</left>
-								<top>17</top>
-								<width>father.width/2</width>
+								<left>37</left>
+								<top>father.height - 25</top>
+								<width>130</width>
 								<height>20</height>
 								<text>累计节省广告时间</text>
-								<font>font.default13</font>
-								<textcolor>4D4D4D</textcolor>
+								<font>font.text15</font>
+								<textcolor>536978</textcolor>
 							</attr>
 						</obj>
 						
 						<obj id="ChildCtrl_AdvCount.Low.Time" class="ClockCtrl">
 							<attr>
-								<left>21</left>
-								<top>28</top>
-								<width>father.width/2</width>
+								<left>170</left>
+								<top>father.height - 35</top>
+								<width>240</width>
 								<height>40</height>
 							</attr>
 						</obj>
 						
 						<obj id="ChildCtrl_AdvCount.Switch.Filter" class="TextureObject">
 							<attr>
-								<left>father.width-(18+101)</left>
-								<top>(father.height-35)/2</top>
-								<width>101</width>
-								<height>42</height>
-								<texture>GreenWall.SwitchFilter.Open</texture>
+								<left>(father.width-196)/2</left>
+								<top>-23</top>
+								<width>196</width>
+								<height>46</height>
+								<texture>GreenWall.SwitchFilter.Open.Normal</texture>
 								<cursor>IDC_HAND</cursor>
 							</attr>
 							<eventlist>
-								<event name="OnLButtonUp" file="ChildCtrl_AdvCount.xml.lua" func="OnClickSwitchFilter" />
+								<event name="OnLButtonUp"  file="ChildCtrl_AdvCount.xml.lua" func="OnClickSwitchFilter" />
+								<event name="OnMouseMove"  file="ChildCtrl_AdvCount.xml.lua" func="OnMouseMoveSwitch" />
+								<event name="OnMouseLeave" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseLeaveSwitch" />
 							</eventlist>
 						</obj>
+						<!-- -->
+						<obj id="ChildCtrl_AdvCount.UserHelper.Img" class="TipAddin.Button">
+							<attr>
+								<left>father.width - 108*3 + 4</left>
+								<top>70</top>
+								<width>26</width>
+								<height>25</height>
+								<NormalBkgID>GreenWall.UserHelper.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.UserHelper.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.UserHelper.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.UserHelper.Normal</DisableBkgID>
+							</attr>									
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_AdvCount.xml.lua" func="OnClickUserHelper" />
+							</eventlist>
+						</obj>
+						<obj id="ChildCtrl_AdvCount.UserHelper" class="TextObject">
+							<attr>
+								<left>father.width - 108*3 + 27 + 4</left>
+								<top>79</top>
+								<width>55</width>
+								<height>18</height>
+								<text>使用帮助</text>
+								<font>font.text12</font>
+								<textcolor>536978</textcolor>
+							</attr>
+						</obj>
+						<obj id="ChildCtrl_AdvCount.RankingList.Img" class="TipAddin.Button">
+							<attr>
+								<left>father.width - 108*2</left>
+								<top>70</top>
+								<width>26</width>
+								<height>25</height>
+								<NormalBkgID>GreenWall.RankingList.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.RankingList.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.RankingList.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.RankingList.Normal</DisableBkgID>
+							</attr>									
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_AdvCount.xml.lua" func="OnClickRankingList" />
+							</eventlist>
+						</obj>
+						<obj id="ChildCtrl_AdvCount.RankingList" class="TextObject">
+							<attr>
+								<left>father.width - 108*2 + 30</left>
+								<top>79</top>
+								<width>55</width>
+								<height>18</height>
+								<text>过滤排名</text>
+								<font>font.text12</font>
+								<textcolor>536978</textcolor>
+							</attr>
+						</obj>
+						<obj id="ChildCtrl_AdvCount.Feedback.Img" class="TipAddin.Button">
+							<attr>
+								<left>father.width - 112</left>
+								<top>70</top>
+								<width>26</width>
+								<height>25</height>
+								<NormalBkgID>GreenWall.Feedback.Normal</NormalBkgID>
+								<DownBkgID>GreenWall.Feedback.Hover</DownBkgID>
+								<HoverBkgID>GreenWall.Feedback.Hover</HoverBkgID>
+								<DisableBkgID>GreenWall.Feedback.Normal</DisableBkgID>
+							</attr>									
+							<eventlist>
+								<event name="OnClick" file="ChildCtrl_AdvCount.xml.lua" func="OnClickFeedback" />
+							</eventlist>
+						</obj>
+						<obj id="ChildCtrl_AdvCount.Feedback" class="TextObject">
+							<attr>
+								<left>father.width - 112 + 27</left>
+								<top>79</top>
+								<width>55</width>
+								<height>18</height>
+								<text>问题反馈</text>
+								<font>font.text12</font>
+								<textcolor>536978</textcolor>
+							</attr>
+						</obj>
+							
 					</children>
 				</obj>
 			</children>
@@ -111,8 +217,8 @@
 					<attr>
 						<left>0</left>
 						<top>0</top>
-						<width>37</width>
-						<height>55</height>
+						<width>father.width</width>
+						<height>father.height</height>
 						<texture></texture>
 						<limitchild>1</limitchild>
 					</attr>
@@ -128,10 +234,10 @@
 							<children>
 								<obj id="AdvCountElem.Number1.Img" class="ImageObject">
 									<attr>
-										<left>5</left>
-										<top>9</top>
-										<width>27</width>
-										<height>36</height>
+										<left>0</left>
+										<top>0</top>
+										<width>33</width>
+										<height>43</height>
 									</attr>
 								</obj>	
 							</children>
@@ -147,10 +253,10 @@
 							<children>
 								<obj id="AdvCountElem.Number2.Img" class="ImageObject">
 									<attr>
-										<left>5</left>
-										<top>9</top>
-										<width>27</width>
-										<height>36</height>
+										<left>0</left>
+										<top>0</top>
+										<width>33</width>
+										<height>43</height>
 									</attr>
 								</obj>	
 							</children>

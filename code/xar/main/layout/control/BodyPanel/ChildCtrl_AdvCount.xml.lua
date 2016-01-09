@@ -29,7 +29,7 @@ function ChangeSwitchFilter(objRootCtrl)
 	Inner_ChangeSwitchFilter(objFilterSwitch)
 	SaveAdvOpenState()
 	tFunctionHelper.SetNotifyIconState()
-	SetBkgStyle(objRootCtrl)
+	--SetBkgStyle(objRootCtrl)
 end
 
 ---事件---
@@ -51,6 +51,21 @@ function OnClickSwitchFilter(self)
 	SendReport(tStatInfo)
 end
 
+function OnMouseMoveSwitch(self)
+	if g_bFilterOpen then
+		self:SetTextureID("GreenWall.SwitchFilter.Open.Hover")
+	else
+		self:SetTextureID("GreenWall.SwitchFilter.Close.Hover")
+	end
+end
+
+function OnMouseLeaveSwitch(self)
+	if g_bFilterOpen then
+		self:SetTextureID("GreenWall.SwitchFilter.Open.Normal")
+	else
+		self:SetTextureID("GreenWall.SwitchFilter.Close.Normal")
+	end
+end
 
 function OnShowPanel(self, bShow)
 	local attr = self:GetAttribute()
@@ -171,11 +186,11 @@ function Inner_ChangeSwitchFilter(objFilterSwitch)
 	end
 
 	if g_bFilterOpen then
-		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Close")
+		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Close.Normal")
 		g_bFilterOpen = false
 		tFunctionHelper.SwitchGSFilter(false)
 	else
-		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Open")
+		objFilterSwitch:SetTextureID("GreenWall.SwitchFilter.Open.Normal")
 		g_bFilterOpen = true
 		tFunctionHelper.SwitchGSFilter(true)
 	end
@@ -244,7 +259,8 @@ function InitAdvCount(objRootCtrl)
 	
 	local nFatherLeft, nFatherTop, nFatherRight, nFatherBottom = objFather:GetObjPos(objElem)
 	local nFatherWidth = nFatherRight - nFatherLeft
-	local nElemWidth = 32
+	local nElemWidth  = 32
+	local nElemheight = 43
 	
 	for nIndex=1, g_nElemCount do
 		strKey = "AdvCountElem_"..tostring(nIndex)
@@ -254,9 +270,10 @@ function InitAdvCount(objRootCtrl)
 		end
 		
 		objFather:AddChild(objElem)
-		local nWhiteSpace = (nFatherWidth - g_nElemCount*nElemWidth)/2 + 1
-		local nNewLeft = nFatherWidth - (nWhiteSpace + nIndex*nElemWidth)
-		objElem:SetObjPos(nNewLeft, 0, nNewLeft+nElemWidth, "father.height")
+		--local nWhiteSpace = (nFatherWidth - g_nElemCount*nElemWidth)/2 + 1
+		--local nNewLeft = nFatherWidth - (nWhiteSpace + nIndex*nElemWidth)
+		local nNewLeft = (g_nElemCount - nIndex)* nElemWidth
+		objElem:SetObjPos(nNewLeft, 0, nNewLeft+nElemWidth, nElemheight)
 		
 		g_tCountElemList[#g_tCountElemList+1] = objElem		
 	end
@@ -477,24 +494,47 @@ function PopupUpdateWndForInstall(strRealPath, tNewVersionInfo)
 	tFunctionHelper.SaveAutoUpdateUTC()
 end
 
-
+local imageCloseAni = nil
+local imageOpenAni = nil
 function SetBkgStyle(objRootCtrl)
 	local objBkgClose = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.MainWnd.FilterClose")
+	
 	local objBkgOpen = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.MainWnd.FilterOpen")
+	local imageOpen = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.Ani.FilterOpen")
 	
 	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local bFilterOpen = tUserConfig["bFilterOpen"]
 	
-	objBkgClose:SetVisible(not bFilterOpen)
-	objBkgOpen:SetVisible(bFilterOpen)
+	objBkgClose:SetVisible(false)
+	objBkgClose:SetChildrenVisible(false)
+	objBkgOpen:SetVisible(true)
+	objBkgOpen:SetChildrenVisible(true)
 	
-	if bFilterOpen then
-		objBkgOpen:Play()
-	else
-		objBkgOpen:Stop()
+	if not imageOpenAni then
+		imageOpenAni = Helper.Ani:RunSeqFrameAni(imageOpen, "GreenWall.Seq_ani", nil, 3600, true)
 	end
 end
 
+function OnClickUserHelper(self)
+	local url = "http://www.lvdun123.com/help/index.html"
+	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
+end
+
+function OnClickRankingList(self)
+	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
+	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
+	
+	local url = "http://www.lvdun123.com/top/?count="
+	url = url..tostring(nFilterCount)
+	url = url.."&time="..tostring(os.time())
+	
+	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
+end
+
+function OnClickFeedback(self)
+	local url = "http://weibo.com/5458208915/Daws0gc9R"
+	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
+end
 
 ----------------------------------
 
