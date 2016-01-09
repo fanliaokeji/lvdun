@@ -2,7 +2,7 @@
 	<objtemplate id="timestyle" class="TextObject">
 		<attr>
 			<height>father.height</height>
-			<textcolor>478613</textcolor>
+			<textcolor>4BB18C</textcolor>
 			<font>font.default16</font>
 			<valign>center</valign>
 			<halign>center</halign>
