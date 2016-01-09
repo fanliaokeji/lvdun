@@ -1850,7 +1850,7 @@ end
 function CheckCondition(tForceUpdate)
 	if not tForceUpdate or #tForceUpdate < 1 then
 		Helper:LOG("tForceUpdate is nil or wrong style!")
-		XLMessageBox("tForceUpdate is nil or wrong style!")
+		-- XLMessageBox("tForceUpdate is nil or wrong style!")
 		return
 	end
 	local strEncryptKey = "Qaamr2Npau6jGy4Q"
