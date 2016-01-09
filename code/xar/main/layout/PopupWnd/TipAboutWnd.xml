@@ -31,7 +31,7 @@
 								<top>5</top>
 								<width>19</width>
 								<height>22</height>
-								<image>GreenWall.Logo</image>
+								<image>GreenWall.Logo.Old</image>
 							</attr>
 						</obj>
 						<obj id="TipAbout.Caption.Text" class="TextObject">
@@ -115,13 +115,10 @@
             <top>0</top>
             <width>320</width>
             <height>243</height>
-            <cacheleft>0</cacheleft>
-            <cachetop>0</cachetop>
 
             <topmost>0</topmost>
             <visible>0</visible>
             <enable>1</enable>
-            <active>0</active>
             <maxbox>0</maxbox>
             <minbox>1</minbox>
             <minwidth>50</minwidth>
