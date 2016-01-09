@@ -1,0 +1,38 @@
+<xlue>
+	<objtreetemplate id="TransparentMaskWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+		<obj id="root" class="FillObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>2000</width>
+				<height>2000</height>
+				<zorder>100000</zorder>
+				<filltype>Monochrome</filltype>
+				<blendtype>Source</blendtype>
+			</attr>		
+		</obj>
+	</objtreetemplate>
+	<hostwndtemplate id="TransparentMaskWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>690</width>
+            <height>422</height>
+            
+            <enable>0</enable>
+            <maxbox>0</maxbox>
+            <minbox>0</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>>
+        </attr>
+    </hostwndtemplate>
+</xlue>
