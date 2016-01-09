@@ -1,0 +1,234 @@
+<xlue>
+	<objtreetemplate id="ShareWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>320</width>
+			<height>330</height>
+		</attr>
+		<obj id="root" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>320</width>
+				<height>330</height>
+				<texture>ShareWnd.Bkg</texture>
+			</attr>	
+			<children>
+				<obj id="ShareWnd.Caption" class="CaptionObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height - 50</height>
+					</attr>
+					<children>
+						<obj id="ShareWnd.Caption.Bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>30</height>
+								<texture>GreenWall.Caption.Bkg</texture>
+							</attr>	
+							<children>
+								<obj id="ShareWnd.Caption.Logo" class="ImageObject">
+									<attr>
+										<left>12</left>
+										<top>5</top>
+										<width>19</width>
+										<height>22</height>
+										<image>GreenWall.Logo.Old</image>
+									</attr>	
+								</obj>
+								<obj id="ShareWnd.Caption.Title" class="TextObject">
+									<attr>
+										<left>12 + 29 + 2</left>
+										<top>5</top>
+										<width>240</width>
+										<height>20</height>
+										<text>今天为您过滤广告</text>
+										<textcolor>system.black</textcolor>
+										<font>font.default12</font>
+										<valign>center</valign>
+										<halign>left</halign>
+									</attr>
+								</obj>
+								<obj id="ShareWnd.Caption.CloseBtn" class="TipAddin.Button">
+									<attr>
+										<left>father.width-25</left>
+										<top>9</top>
+										<width>12</width>
+										<height>12</height>
+										<NormalBkgID>GreenWall.TipWnd.BtnClose.Normal</NormalBkgID>
+										<DownBkgID>GreenWall.TipWnd.BtnClose.Normal</DownBkgID>
+										<HoverBkgID>GreenWall.TipWnd.BtnClose.Hover</HoverBkgID>
+										<DisableBkgID>GreenWall.TipWnd.BtnClose.Normal</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickCloseBtn" />
+									</eventlist>	
+								</obj>									
+							</children>
+						</obj>
+					</children>
+				</obj>
+				
+				<obj id="ShareWnd.Text.IntroductionA" class="TextObject">
+					<attr>
+						<left>25</left>
+						<top>73</top>
+						<width>father.width - 25</width>
+						<height>20</height>
+						<textcolor>system.white</textcolor>
+						<font>font.default16</font>
+						<valign>center</valign>
+						<halign>left</halign>
+						<text>绿盾广告管家，去广告就这么任性</text>
+					</attr>
+				</obj>
+				<obj id="ShareWnd.Text.IntroductionB" class="TextObject">
+					<attr>
+						<left>25</left>
+						<top>105</top>
+						<width>father.width - 25</width>
+						<height>20</height>
+						<textcolor>system.white</textcolor>
+						<font>font.default16</font>
+						<valign>center</valign>
+						<halign>left</halign>
+						<text>从此看视频再也没有广告，你值得拥有</text>
+					</attr>
+				</obj>
+				<obj id="ShareWnd.Text.IntroductionC" class="TextObject">
+					<attr>
+						<left>103</left>
+						<top>181</top>
+						<width>125</width>
+						<height>20</height>
+						<textcolor>6BA306</textcolor>
+						<font>font.default14</font>
+						<valign>center</valign>
+						<halign>left</halign>
+						<text>神器啊！必须分享</text>
+					</attr>
+				</obj>
+				<obj id="ShareWnd.Text.IntroductionD" class="EditObject">
+					<attr>
+						<left>70</left>
+						<top>300</top>
+						<width>father.width - 70</width>
+						<height>18</height>
+						<textcolor>3B3B3B</textcolor>
+						<font>font.default12</font>
+						<readonly>1</readonly>
+						<text>更多咨询请加QQ群:67542242</text>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonDown" file="ShareWnd.xml.lua" func="OnClickQQGroup" />
+						<event name="OnMouseMove" file="ShareWnd.xml.lua" func="OnMouseMoveQQGroup" />
+						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeaveQQGroup" />
+					</eventlist>
+				</obj>
+				
+				<obj id="ShareWnd.Share.Weibo" class="TipAddin.Button">
+					<attr>
+						<left>22</left>
+						<top>219</top>
+						<width>50</width>
+						<height>50</height>
+						<NormalBkgID>ShareWnd.Share.Weibo.Normal</NormalBkgID>
+						<DownBkgID>ShareWnd.Share.Weibo.Normal</DownBkgID>
+						<HoverBkgID>ShareWnd.Share.Weibo.Hover</HoverBkgID>
+						<DisableBkgID>ShareWnd.Share.Weibo.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickWeibo" />
+					</eventlist>	
+				</obj>
+				<obj id="ShareWnd.Share.QQ" class="TipAddin.Button">
+					<attr>
+						<left>97</left>
+						<top>219</top>
+						<width>50</width>
+						<height>50</height>
+						<NormalBkgID>ShareWnd.Share.QQ.Normal</NormalBkgID>
+						<DownBkgID>ShareWnd.Share.QQ.Normal</DownBkgID>
+						<HoverBkgID>ShareWnd.Share.QQ.Hover</HoverBkgID>
+						<DisableBkgID>ShareWnd.Share.QQ.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickQQ" />
+					</eventlist>	
+				</obj>
+				<obj id="ShareWnd.Share.Douban" class="TipAddin.Button">
+					<attr>
+						<left>171</left>
+						<top>219</top>
+						<width>50</width>
+						<height>50</height>
+						<NormalBkgID>ShareWnd.Share.Douban.Normal</NormalBkgID>
+						<DownBkgID>ShareWnd.Share.Douban.Normal</DownBkgID>
+						<HoverBkgID>ShareWnd.Share.Douban.Hover</HoverBkgID>
+						<DisableBkgID>ShareWnd.Share.Douban.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickDouban" />
+					</eventlist>	
+				</obj>
+				<obj id="ShareWnd.Share.QQZone" class="TipAddin.Button">
+					<attr>
+						<left>249</left>
+						<top>219</top>
+						<width>50</width>
+						<height>50</height>
+						<NormalBkgID>ShareWnd.Share.QQZone.Normal</NormalBkgID>
+						<DownBkgID>ShareWnd.Share.QQZone.Normal</DownBkgID>
+						<HoverBkgID>ShareWnd.Share.QQZone.Hover</HoverBkgID>
+						<DisableBkgID>ShareWnd.Share.QQZone.Normal</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickQQZone" />
+					</eventlist>	
+				</obj>
+				
+				<obj id="ShareWnd.Splitter" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>father.height - 4</top>
+						<width>father.width</width>
+						<height>4</height>
+						<texture>GreenWall.MainWndLow.Splitter</texture>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="ShareWnd" class="ModalHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>320</width>
+            <height>330</height>
+            
+            <topmost>0</topmost>
+            <visible>1</visible>
+            <enable>1</enable>
+            <maxbox>0</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>1</appwindow>
+            <fps>30</fps>
+			<blur>1</blur>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="ShareWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="ShareWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
