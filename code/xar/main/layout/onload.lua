@@ -8,6 +8,44 @@ local g_tipNotifyIcon = nil
 local g_bIsUpdating = false
 local tipUtil = XLGetObject("GS.Util")
 local tipAsynUtil = XLGetObject("GS.AsynUtil")
+local g_ServerConfig = nil
+
+function LoadLuaModule(tFile, curDocPath)
+--tFile可以传lua文件绝对路径、相对路径
+	if "table" == type(tFile) then
+		for index, value in ipairs(tFile) do
+			if "string" == type(value) and value ~= "" then
+				local dstPath = curDocPath.."\\..\\"..value
+				if XLModuleExists(dstPath) then
+					XLUnloadModule(dstPath)
+					XLLoadModule(dstPath)
+				else
+					XLLoadModule(dstPath)
+				end
+				
+			end
+		end
+	elseif "string" == type(tFile) and tFile ~= ""then
+		if curDocPath then
+			tFile = curDocPath.."\\..\\"..tFile
+		end
+		if XLModuleExists(tFile) then
+			XLUnloadModule(tFile)
+			XLLoadModule(tFile)
+		else
+			XLLoadModule(tFile)
+		end
+	end
+end
+
+local File = {
+"luacode\\objectbase.lua",
+"luacode\\helper.lua",
+"luacode\\helper_token.lua",
+}
+LoadLuaModule(File, __document)
+
+local Helper = XLGetGlobal("Helper")
 
 local g_tPopupWndList = {
 	[1] = {"TipFilterBubbleWnd", "TipFilterBubbleTree"},
@@ -108,6 +146,7 @@ function RegisterFunctionObject(self)
 	end
 	
 	local obj = {}
+	obj.TipLog = TipLog
 	obj.FailExitTipWnd = FailExitTipWnd
 	obj.TipConvStatistic = TipConvStatistic
 	obj.ReportAndExit = ReportAndExit
@@ -406,7 +445,7 @@ end
 function SwitchGSFilter(bOpen)
 	local bSucc = tipUtil:GSFilter(bOpen)
 	if not bSucc then
-		MessageBox(tostring("文件被损坏，请重新安装"))
+		MessageBox(tostring("文件被损坏，请重新安装 bOpen: ")..tostring(bOpen))
 		local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper")
 		TipLog("[SwitchGSFilter] GSFilter failed ")
 		FunctionObj:FailExitTipWnd(3)
@@ -1808,7 +1847,60 @@ function SaveAutoUpdateUTC()
 	SaveConfigToFileByKey("tUserConfig")
 end
 
-
+function CheckCondition(tForceUpdate)
+	if not tForceUpdate or #tForceUpdate < 1 then
+		Helper:LOG("tForceUpdate is nil or wrong style!")
+		XLMessageBox("tForceUpdate is nil or wrong style!")
+		return
+	end
+	local strEncryptKey = "Qaamr2Npau6jGy4Q"
+	local function CheckConditionEx(pcond)
+		if not pcond or #pcond < 1 then
+			Helper:LOG("pcond is nil or wrong style!")
+			return false
+		end
+		for index=1, #pcond do
+			--解密进程名
+			local realProcName = tipUtil:DecryptString(pcond[index], strEncryptKey)
+			Helper:LOG("realProcName: "..tostring(realProcName))
+				
+			--检测进程是否存在
+			if realProcName and realProcName ~= "" then
+				if not tipUtil:QueryProcessExists(realProcName) then
+					Helper:LOG("QueryProcessExists false realProcName: "..tostring(realProcName))
+					return false
+				end
+			else
+				return false
+			end
+		end
+		--pcond里配的进程都存在
+		return true
+	end
+	
+	for i=1, #tForceUpdate do
+		local pcond = tForceUpdate[i] and tForceUpdate[i].pcond
+		if not pcond or "" == pcond[1] then
+			return tForceUpdate[i]
+		elseif CheckConditionEx(pcond) then
+			return tForceUpdate[i]
+		end
+	end
+	
+	return nil
+end
+--旧tForceUpdate结构：
+-- ["strVersion"] = "1.0.0.17",
+-- ["tVersion"] = {"1-15"},
+--...
+--新tForceUpdate结构：
+-- {
+	-- [1] = {
+		-- ["strVersion"]=...
+		-- ["tVersion"] =...
+		-- ["pcond"] = {"360se.exe", "QQ.exe"}
+	-- }
+-- }
 function TryForceUpdate(tServerConfig)
 	if CheckIsUpdating() then
 		TipLog("[TryForceUpdate] CheckIsUpdating failed,another thread is updating!")
@@ -1828,13 +1920,15 @@ function TryForceUpdate(tServerConfig)
 	end
 	
 	local strCurVersion = GetGSVersion()
-	local strNewVersion = tForceUpdate.strVersion		
+	local versionInfo = CheckCondition(tForceUpdate)
+	local strNewVersion = versionInfo and versionInfo.strVersion		
 	if not IsRealString(strCurVersion) or not IsRealString(strNewVersion)
 		or not CheckIsNewVersion(strNewVersion, strCurVersion) then
+		TipLog("[TryForceUpdate] strCurVersion is nil or is not New Version")
 		return
 	end
 	
-	local tVersionLimit = tForceUpdate["tVersion"]
+	local tVersionLimit = versionInfo["tVersion"]
 	local bPassCheck = CheckForceVersion(tVersionLimit)
 	TipLog("[TryForceUpdate] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
 	if not bPassCheck then
@@ -1842,7 +1936,7 @@ function TryForceUpdate(tServerConfig)
 	end
 	
 	SetIsUpdating(true)
-	DownLoadNewVersion(tForceUpdate, function(strRealPath) 
+	DownLoadNewVersion(versionInfo, function(strRealPath) 
 		SetIsUpdating(false)
 	
 		if not IsRealString(strRealPath) then
@@ -1851,10 +1945,12 @@ function TryForceUpdate(tServerConfig)
 		
 		SaveCommonUpdateUTC()
 		local strCmd = " /write /silent /run"
+		if IsRealString(versionInfo["strCmd"]) then
+			strCmd = strCmd.." "..versionInfo["strCmd"]
+		end
 		tipUtil:ShellExecute(0, "open", strRealPath, strCmd, 0, "SW_HIDE")
 	end)
 end
-
 
 function TryExecuteExtraCode(tServerConfig)
 	local tExtraHelper = tServerConfig["tExtraHelper"] or {}
@@ -2006,7 +2102,6 @@ function CheckServerRuleFile(tServerConfig)
 	DownLoadServerRule(tDownRuleList)
 end
 
-
 function AnalyzeServerConfig(nDownServer, strServerPath)
 	if nDownServer ~= 0 or not tipUtil:QueryFileExists(tostring(strServerPath)) then
 		TipLog("[AnalyzeServerConfig] Download server config failed , start tipmain ")
@@ -2017,12 +2112,25 @@ function AnalyzeServerConfig(nDownServer, strServerPath)
 	end
 	
 	local tServerConfig = LoadTableFromFile(strServerPath) or {}
-	TryForceUpdate(tServerConfig)
+	g_ServerConfig = tServerConfig
+	-- TryForceUpdate(tServerConfig)
 	FixStartConfig(tServerConfig)
 	FixUserConfig(tServerConfig)
 	CheckServerRuleFile(tServerConfig)  --execut tipmain 
 	
 	TryExecuteExtraCode(tServerConfig)
+	
+	--增加处理/noliveup命令行
+	SetOnceTimer(function()
+					local cmdString = tipUtil:GetCommandLine()
+					local bRet = string.find(string.lower(tostring(cmdString)), "/noliveup")
+					if not bRet then
+						TipLog("[AnalyzeServerConfig] TryForceUpdate")
+						TryForceUpdate(tServerConfig)
+					else
+						TipLog("[AnalyzeServerConfig] bRet")
+					end
+				end, 1000)
 end
 
 
@@ -2093,6 +2201,58 @@ function ShowPopWndByCommand()
 	TryShowSysBootRemind(cmdString)
 end
 
+--[[ 升级后推荐捆绑 先不做
+local BindExeCookie = nil
+function ProcessCommandLine()
+	local FunctionObj = XLGetGlobal("GreenWallTip.FunctionHelper") 
+	local cmdString = tipUtil:GetCommandLine()
+	--处理捆绑命令行，已经装了则不处理
+	
+	local TipBindWndUserData = {}
+	TipBindWndUserData.bHide = false
+	Helper:LOG("ProcessCommandLine cmdString: "..tostring(cmdString))
+	
+	local updateTableKey = nil
+	if string.find(tostring(cmdString), "/kbls") then
+		TipBindWndUserData.bHide = true --不显示捆绑
+		Helper:LOG("ProcessCommandLine cmdString: kbls")
+		local bRet, strType = FunctionObj.GetCommandStrValue("/kbls")
+		if bRet and "soft" == strType then
+			updateTableKey = "tSoftUpdate"
+		elseif bRet and "force" == strType then
+			updateTableKey = "tForceUpdate"
+		else
+			Helper:LOG("ProcessCommandLine bRet: "..tostring(bRet).." strType: "..strType)
+		end
+	elseif string.find(tostring(cmdString), "/kbl") then
+		TipBindWndUserData.bHide = false --显示捆绑窗口
+		Helper:LOG("ProcessCommandLine cmdString: kbl")
+		local bRet, strType = FunctionObj.GetCommandStrValue("/kbl")
+		if bRet and "soft" == strType then
+			updateTableKey = "tSoftUpdate"
+		elseif bRet and "force" == strType then
+			updateTableKey = "tForceUpdate"
+		else
+			Helper:LOG("ProcessCommandLine bRet: "..tostring(bRet).."cmdString"..tostring(cmdString).." strType: "..tostring(strType))
+		end
+	end
+
+	BindExeCookie = BindExeCookie and SetTimer(function() --等待服务项下载完毕
+			if g_ServerConfig and g_ServerConfig.tNewVersionInfo then
+				KillTimer(BindExeCookie)
+
+				Helper:LOG("ProcessCommandLine bHide: "..tostring(TipBindWndUserData.bHide).."  updateTableKey: "..tostring(updateTableKey))
+				if updateTableKey then
+					local updateTable = g_ServerConfig.tNewVersionInfo[updateTableKey]
+					TipBindWndUserData.Software = updateTable and updateTable["tBind"] 
+					-- Helper:LOG("TipBindWndUserData.Software is nil")
+					-- Helper:CreateModelessWnd("TipBindWnd", "TipBindWndTree", nil, TipBindWndUserData)
+					XLMessageBox("捆绑软件窗口")
+				end
+			end
+		end, 500)
+end
+--]]
 
 function TipMain()
 	local bSucc = SendFileDataToFilterThread()
