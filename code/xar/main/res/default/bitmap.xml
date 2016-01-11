@@ -167,5 +167,7 @@
 		
 		<imageseq id="GreenWall.Seq_ani" folder="bitmap\GreenWall.Animation" />
 		<bitmap   id="GreenWall.Init.Bitmap" path="bitmap\GreenWall.Animation\1.png" />
+		
+		<texture id="texture.general.tip.bkg" type="NineInOne" image="bitmap\texture.general.tip.bkg.png" />
 	</resource>
 </XLUE>
