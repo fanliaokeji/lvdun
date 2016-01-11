@@ -111,3 +111,21 @@ function OnMouseLeaveQQGroup(self)
 	self:SetCursorID("IDC_ARROW")
 	Helper.Tip:DestoryTipWnd()
 end
+
+function OnMouseEnterWeibo(self)
+	Helper.Tip:SetTips("分享到新浪微博")
+end
+function OnMouseEnterQQ(self)
+	Helper.Tip:SetTips("分享给QQ好友和QQ群")
+end
+function OnMouseEnterDouban(self)
+	Helper.Tip:SetTips("分享到豆瓣")
+end
+
+function OnMouseEnterQQZone(self)
+	Helper.Tip:SetTips("分享到QQ空间")
+end
+
+function OnMouseLeave(self)
+	Helper.Tip:DestoryTipWnd()
+end

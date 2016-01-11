@@ -144,6 +144,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickWeibo" />
+						<event name="OnMouseEnter" file="ShareWnd.xml.lua" func="OnMouseEnterWeibo" />
+						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeave" />
 					</eventlist>	
 				</obj>
 				<obj id="ShareWnd.Share.QQ" class="TipAddin.Button">
@@ -159,6 +161,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickQQ" />
+						<event name="OnMouseEnter" file="ShareWnd.xml.lua" func="OnMouseEnterQQ" />
+						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeave" />
 					</eventlist>	
 				</obj>
 				<obj id="ShareWnd.Share.Douban" class="TipAddin.Button">
@@ -174,6 +178,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickDouban" />
+						<event name="OnMouseEnter" file="ShareWnd.xml.lua" func="OnMouseEnterDouban" />
+						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeave" />
 					</eventlist>	
 				</obj>
 				<obj id="ShareWnd.Share.QQZone" class="TipAddin.Button">
@@ -189,6 +195,8 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ShareWnd.xml.lua" func="OnClickQQZone" />
+						<event name="OnMouseEnter" file="ShareWnd.xml.lua" func="OnMouseEnterQQZone" />
+						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeave" />
 					</eventlist>	
 				</obj>
 				
