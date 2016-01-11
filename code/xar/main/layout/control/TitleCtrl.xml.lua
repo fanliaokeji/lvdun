@@ -133,3 +133,24 @@ function TipLog(strLog)
 		tipUtil:Log("@@TitleCtrl: " .. tostring(strLog))
 	end
 end
+
+function OnMouseEnterShareBtn(self)
+	Helper.Tip:SetTips("分享给好友")
+end
+function OnMouseEnterHomeBtn(self)
+	Helper.Tip:SetTips("官方网站")
+end
+function OnMouseEnterConfigBtn(self)
+	Helper.Tip:SetTips("设置")
+end
+function OnMouseEnterMinBtn(self)
+	Helper.Tip:SetTips("最小化")
+end
+
+function OnMouseEnterCloseBtn(self)
+	Helper.Tip:SetTips("关闭")
+end
+
+function OnMouseLeave(self)
+	Helper.Tip:DestoryTipWnd()
+end

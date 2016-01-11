@@ -58,6 +58,8 @@
 							</attr>
 							<eventlist>
 								<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickCloseBtn" />
+								<event name="OnMouseEnter" file="TitleCtrl.xml.lua" func="OnMouseEnterCloseBtn" />
+								<event name="OnMouseLeave" file="TitleCtrl.xml.lua" func="OnMouseLeave" />
 							</eventlist>
 						</obj>
 						
@@ -74,6 +76,8 @@
 							</attr>
 							<eventlist>
 								<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickMinBtn" />
+								<event name="OnMouseEnter" file="TitleCtrl.xml.lua" func="OnMouseEnterMinBtn" />
+								<event name="OnMouseLeave" file="TitleCtrl.xml.lua" func="OnMouseLeave" />
 							</eventlist>
 						</obj>
 						
@@ -90,6 +94,8 @@
 							</attr>
 							<eventlist>
 								<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickConfigBtn" />
+								<event name="OnMouseEnter" file="TitleCtrl.xml.lua" func="OnMouseEnterConfigBtn" />
+								<event name="OnMouseLeave" file="TitleCtrl.xml.lua" func="OnMouseLeave" />
 							</eventlist>
 						</obj>
 						<obj id="TipCtrl.Caption.HomePage" class="TipAddin.Button">
@@ -105,6 +111,8 @@
 							</attr>
 							<eventlist>
 								<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickHomePage" />
+								<event name="OnMouseEnter" file="TitleCtrl.xml.lua" func="OnMouseEnterHomeBtn" />
+								<event name="OnMouseLeave" file="TitleCtrl.xml.lua" func="OnMouseLeave" />
 							</eventlist>
 						</obj>
 						<obj id="TipCtrl.Caption.Share" class="TipAddin.Button">
@@ -120,6 +128,8 @@
 							</attr>
 							<eventlist>
 								<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickShare" />
+								<event name="OnMouseEnter" file="TitleCtrl.xml.lua" func="OnMouseEnterShareBtn" />
+								<event name="OnMouseLeave" file="TitleCtrl.xml.lua" func="OnMouseLeave" />
 							</eventlist>
 						</obj>
 					</children>				
