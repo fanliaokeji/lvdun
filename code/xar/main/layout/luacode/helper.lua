@@ -687,3 +687,4 @@ function Helper:GetHttpFile(url, savePath, token)
 end
 
 Helper:LoadLuaModule("helper_animation.lua", __document)
+Helper:LoadLuaModule("helper_tip.lua", __document)
