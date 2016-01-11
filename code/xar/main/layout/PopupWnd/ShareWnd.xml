@@ -126,7 +126,7 @@
 					</attr>
 					<eventlist>
 						<event name="OnLButtonDown" file="ShareWnd.xml.lua" func="OnClickQQGroup" />
-						<event name="OnMouseMove" file="ShareWnd.xml.lua" func="OnMouseMoveQQGroup" />
+						<event name="OnMouseEnter" file="ShareWnd.xml.lua" func="OnMouseEnterQQGroup" />
 						<event name="OnMouseLeave" file="ShareWnd.xml.lua" func="OnMouseLeaveQQGroup" />
 					</eventlist>
 				</obj>
