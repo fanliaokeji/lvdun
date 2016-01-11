@@ -56,6 +56,7 @@ XLLRTGlobalAPI LuaGSUtil::sm_LuaMemberFunctions[] =
 	{"Exit", Exit},	
 	{"GetPeerId", GetPeerId},
 	{"Log", Log},
+	{"IsLogEnable", IsLogEnable},
 	{"SaveLuaTableToLuaFile", SaveLuaTableToLuaFile},
 	{"GetCommandLine", GetCommandLine},
 	{"CommandLineToList", CommandLineToList},
@@ -3074,6 +3075,16 @@ int LuaGSUtil::GetSysWorkArea(lua_State* pLuaState)
 	}
 
 	lua_pushnil(pLuaState);
+	return 1;
+}
+
+int LuaGSUtil::IsLogEnable(lua_State* pLuaState)
+{
+	if (ISTSDEBUGVALID())
+		lua_pushboolean(pLuaState, 1);
+	else
+		lua_pushboolean(pLuaState, 0);
+
 	return 1;
 }
 

@@ -81,6 +81,7 @@ public:
 	static int Exit(lua_State* pLuaState);
 	static int GetPeerId(lua_State* pLuaState);
 	static int Log(lua_State* pLuaState);
+	static int IsLogEnable(lua_State* pLuaState);
 	static int SaveLuaTableToLuaFile(lua_State* pLuaState);
 	static int GetCommandLine(lua_State* pLuaState);
 	static int CommandLineToList(lua_State* pLuaState);
