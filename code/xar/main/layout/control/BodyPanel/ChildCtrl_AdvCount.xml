@@ -140,6 +140,11 @@
 								<font>font.text12</font>
 								<textcolor>536978</textcolor>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="ChildCtrl_AdvCount.xml.lua" func="OnClickUserHelper" />
+								<event name="OnMouseMove" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseMove" />
+								<event name="OnMouseLeave" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseLeave" />
+							</eventlist>
 						</obj>
 						<obj id="ChildCtrl_AdvCount.RankingList.Img" class="TipAddin.Button">
 							<attr>
@@ -166,6 +171,11 @@
 								<font>font.text12</font>
 								<textcolor>536978</textcolor>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="ChildCtrl_AdvCount.xml.lua" func="OnClickRankingList" />
+								<event name="OnMouseMove" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseMove" />
+								<event name="OnMouseLeave" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseLeave" />
+							</eventlist>
 						</obj>
 						<obj id="ChildCtrl_AdvCount.Feedback.Img" class="TipAddin.Button">
 							<attr>
@@ -192,6 +202,11 @@
 								<font>font.text12</font>
 								<textcolor>536978</textcolor>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="ChildCtrl_AdvCount.xml.lua" func="OnClickFeedback" />
+								<event name="OnMouseMove" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseMove" />
+								<event name="OnMouseLeave" file="ChildCtrl_AdvCount.xml.lua" func="OnMouseLeave" />
+							</eventlist>
 						</obj>
 							
 					</children>

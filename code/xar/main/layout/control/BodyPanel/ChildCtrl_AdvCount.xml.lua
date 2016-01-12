@@ -558,3 +558,11 @@ function FetchValueByPath(obj, path)
 	end
 	return cursor
 end
+
+function OnMouseMove(self)
+	self:SetCursorID("IDC_HAND")
+end
+
+function OnMouseLeave(self)
+	self:SetCursorID("IDC_ARROW")
+end
