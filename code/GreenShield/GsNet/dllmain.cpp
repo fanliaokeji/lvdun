@@ -100,6 +100,7 @@ static const wchar_t* app_table[] = {
 	{L"qyclient.exe"},
 	{L"letvloader.exe"},
 	{L"qyplayer.exe"},
+	{L"qykernel.exe"},
 	{L"qqlivebrowser.exe"},
 	{L"qqliveservice.exe"}
 };
