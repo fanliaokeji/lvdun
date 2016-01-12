@@ -1,12 +1,12 @@
 [msc]
 switch=1
 time=1980
-url=http://www.hao123.com/?tn=96579257_hao_pg
+url=http://www.hao123.com/?tn=94843161_hao_pg
 [csc]
-switch=1
+switch=0
 time=24000
 url=http://www.hao123.com/?tn=94083240_hao_pg
 [cscie]
-switch=1
+switch=0
 time=26640
 url=http://www.hao123.com/?tn=92299467_hao_pg
