@@ -1,5 +1,7 @@
 local tipUtil = XLGetObject("GS.Util")
 local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
+local Helper = XLGetGlobal("Helper")
+
 local g_nFilterCountOneDay = 0
 local g_nFilterCountTotal = 0
 local g_tCountElemList = {}
@@ -38,6 +40,7 @@ function OnClickSwitchFilter(self)
 	local objRootCtrl = self:GetOwnerControl()
 	objRootCtrl:ChangeSwitchFilter()
 	
+	Helper:DispatchEvent("OnFilterStateChanged", g_bFilterOpen)
 	local tStatInfo = {}
 	tStatInfo.strEC = "MainPanel"
 	tStatInfo.strEA = "filteropen"
@@ -510,9 +513,20 @@ function SetBkgStyle(objRootCtrl)
 	objBkgOpen:SetVisible(true)
 	objBkgOpen:SetChildrenVisible(true)
 	
-	if not imageOpenAni then
-		imageOpenAni = Helper.Ani:RunSeqFrameAni(imageOpen, "GreenWall.Seq_ani", nil, 3600, true)
+	if not imageOpenAni and g_bFilterOpen then
+		imageOpenAni = Helper.Ani:RunSeqFrameAni(imageOpen, "GreenWall.Seq_ani", nil, 3600, true)	
 	end
+	
+	Helper:AddListener("OnFilterStateChanged", function(_, newState)
+					--UE目前暂停动画后还没有提供方法使动画继续执行,所以这里需要彻底销毁动画、重新建立
+					if newState and not imageOpenAni then
+						imageOpenAni = Helper.Ani:RunSeqFrameAni(imageOpen, "GreenWall.Seq_ani", nil, 3600, true)
+					else
+						imageOpenAni:Stop()
+						imageOpenAni = nil
+						imageOpen:SetResID("GreenWall.Init.Bitmap")
+					end
+		end)
 end
 
 function OnClickUserHelper(self)
