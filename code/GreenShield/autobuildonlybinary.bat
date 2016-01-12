@@ -62,7 +62,7 @@ set bin_path=%bin_path:\=\\%
 set bin_path=%bin_path:~1,-1%
 echo printversion bin_path=%bin_path%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') do (
-	if "%bin_path:~-4,1000%" == ".exe" (
+	if "%bin_path:~-15,1000%" == "GreenShield.exe" (
 		set pdbdir=%basedir:~1,-1%\%%i\pdb__!build_date!__!build_time!__!random!\
 		echo begin make pdbdir= !pdbdir!
 		md !pdbdir!
