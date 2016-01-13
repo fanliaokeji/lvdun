@@ -99,7 +99,7 @@ function OnClickQQGroup(self)
 	--将QQ群号复制到剪切板，并给出提示
 	local qqGroupNum = "67542242"
 	local result = tipUtil:SetClipboardText(qqGroupNum)
-	--XLMessageBox("SetClipboardText result: "..tostring(result))
+	Helper.Tip:SetTips("已复制QQ群号")
 end
 
 function OnMouseEnterQQGroup(self)
