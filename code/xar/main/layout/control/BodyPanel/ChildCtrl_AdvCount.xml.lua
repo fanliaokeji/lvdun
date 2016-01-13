@@ -540,7 +540,9 @@ function OnClickRankingList(self)
 	
 	local url = "http://www.lvdun123.com/top/?count="
 	url = url..tostring(nFilterCount)
-	url = url.."&time="..tostring(os.time())
+	
+	local nCurFiltTime = tUserConfig["nFiltVideoTimeSec"] or 0
+	url = url.."&time="..tostring(nCurFiltTime)
 	
 	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
 end
