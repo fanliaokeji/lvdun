@@ -3,7 +3,7 @@ local tFunctionHelper = XLGetGlobal("GreenWallTip.FunctionHelper")
 local Helper = XLGetGlobal("Helper")
 
 local appKey = "1824709228"
-local lvdunImageUrl = "http://imgsrc.baidu.com/forum/w%3D580%3B/sign=25bad884d643ad4ba62e46c8b2395baf/2f738bd4b31c87015d0297c7207f9e2f0708ff5f.jpg"
+local lvdunImageUrl = "http://www.lvdun123.com/images/interface.jpg"
 local lvdunHomePageUrl = "http://www.lvdun123.com"
 --所需参数：appkey、title、count、pic、
 --ralateUid=5458208915关联用户的UID，分享微博会@该用户(可选)*/ 绿盾广告管家UID=5458208915
@@ -113,7 +113,7 @@ function GetShareUrl(sShareType,title,desc)
 		title = "绿盾广告管家"
 	end
 	if not desc then
-		desc = "推荐一款良心软件：@绿盾广告管家，可以过滤所有视频网站的片头缓冲广告。免费，亲测有效。看视频再也不用等广告简直爽到哭。。想要的自己百度去。。"
+		desc = "良心软件啊，竟然能过滤所有视频网站的缓冲广告。免费，亲测有效。看视频再也不用等广告简直爽到哭，下载地址：http://www.lvdun123.com/"
 	end
 	
 	local url = ""
