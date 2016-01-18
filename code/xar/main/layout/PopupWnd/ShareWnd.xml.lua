@@ -98,13 +98,15 @@ end
 function OnClickQQGroup(self)
 	--将QQ群号复制到剪切板，并给出提示
 	local qqGroupNum = "67542242"
-	local result = tipUtil:SetClipboardText(qqGroupNum)
-	Helper.Tip:SetTips("已复制QQ群号")
+	-- local result = tipUtil:SetClipboardText(qqGroupNum)
+	-- Helper.Tip:SetTips("已复制QQ群号")
+	local shareUrl = "tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A36373534323234322C2274696D655374616D70223A313435333130313939357D0A"
+	tipUtil:ShellExecute(0, "open", shareUrl, 0, 0, "SW_SHOWNORMAL")
 end
 
 function OnMouseEnterQQGroup(self)
 	self:SetCursorID("IDC_HAND")
-	Helper.Tip:SetTips("点击复制群号到剪切板")
+	Helper.Tip:SetTips("点击即可加入QQ群")
 end
 
 function OnMouseLeaveQQGroup(self)
