@@ -75,7 +75,8 @@ function OnClickWeibo(self)
 end
 
 function OnClickQQ(self)
-	local shareUrl = tFunctionHelper.GetShareUrl("qq")
+	local desc = "良心软件啊，竟然能过滤所有视频网站的缓冲广告。免费，亲测有效。看视频再也不用等广告简直爽到哭..."
+	local shareUrl = tFunctionHelper.GetShareUrl("qq", nil, desc)
 	if type(shareUrl) == "string" and shareUrl ~= "" then
 		tipUtil:ShellExecute(0, "open", shareUrl, 0, 0, "SW_SHOWNORMAL")
 	end
