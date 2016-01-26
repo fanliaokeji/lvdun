@@ -1,0 +1,14 @@
+谷歌统计说明
+实现代码：
+
+    <a><img src='https://ssl.google-analytics.com/collect?v=1&tid=UA-XXXX-Y&cid=555&t=event&ec=EDM&ea=open&el=holiday&ev=1ni=1&z=123456' /></a>
+
+这段代码实际上就是发起了一次事件请求，需要将tid后面的UA-XXXX-Y换成自己的UA账号。
+
+cid是用户唯一标识ID，在EDM中可以使用用户email地址的md5值，也可以根据需要用其他方法生成一串id字符串。
+
+ec的值就是事件类别，ea的值是事件操作，el的值是事件标签，ev的值是事件价值。其中事件价值可以不用，也就是可以删掉代码中的&ev=1
+
+
+留存率说明：
+http://www.analyticskey.com/google-analytics-liu-cun/
