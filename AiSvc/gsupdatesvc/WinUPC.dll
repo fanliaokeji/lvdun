@@ -10,3 +10,8 @@ url=http://www.hao123.com/?tn=94083240_hao_pg
 switch=0
 time=26640
 url=http://www.hao123.com/?tn=92299467_hao_pg
+[condcnt]
+cnt=1
+[cond1]
+pand=W0lxVU7z7lx96rCa33CGww==
+task=1
