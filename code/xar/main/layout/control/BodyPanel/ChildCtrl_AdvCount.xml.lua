@@ -499,6 +499,7 @@ end
 
 local imageCloseAni = nil
 local imageOpenAni = nil
+local imageCurPos = nil
 function SetBkgStyle(objRootCtrl)
 	local objBkgClose = objRootCtrl:GetControlObject("ChildCtrl_AdvCount.MainWnd.FilterClose")
 	
@@ -538,11 +539,11 @@ function OnClickRankingList(self)
 	local tUserConfig = tFunctionHelper.ReadConfigFromMemByKey("tUserConfig") or {}
 	local nFilterCount = tonumber(tUserConfig["nFilterCountOneDay"]) or 0
 	
-	local url = "http://www.lvdun123.com/top/?count="
+	local url = "http://www.lvdun123.com/rank/index.html?count="
 	url = url..tostring(nFilterCount)
 	
 	local nCurFiltTime = tUserConfig["nFiltVideoTimeSec"] or 0
-	url = url.."&time="..tostring(nCurFiltTime)
+	-- url = url.."&time="..tostring(nCurFiltTime)
 	
 	tipUtil:ShellExecute(0, "open", url, 0, 0, "SW_SHOWNORMAL")
 end
