@@ -5,8 +5,85 @@ using namespace std;
 #include <Windows.h>
 #include <shlobj.h>
 #include "Lock.h"
-
+#include <comutil.h>
 extern HINSTANCE g_hThisModule;
+
+class SendState{
+public:
+	static unsigned int __stdcall SendHttpStatThread(LPVOID pParameter){
+		CHAR szUrl[MAX_PATH] = {0};
+		strcpy(szUrl,(LPCSTR)pParameter);
+		delete [] pParameter;
+
+		CHAR szBuffer[MAX_PATH] = {0};
+		::CoInitialize(NULL);
+		HRESULT hr = E_FAIL;
+		__try
+		{
+			hr = ::URLDownloadToCacheFileA(NULL, szUrl, szBuffer, MAX_PATH, 0, NULL);
+		}
+		__except(EXCEPTION_EXECUTE_HANDLER)
+		{
+			TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
+		}
+		::CoUninitialize();
+		return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
+	};
+	static void GetPeerID(CHAR * pszPeerID){
+		strcpy(pszPeerID, "0000000000000000");
+		ATL::CRegKey key;
+		HRESULT hr;
+		if ((hr = key.Open(HKEY_LOCAL_MACHINE, L"Software\\mycalendar", KEY_READ | KEY_WOW64_32KEY)) == ERROR_SUCCESS) {
+			wchar_t szValueW[MAX_PATH] = {0};
+			ULONG lLen = MAX_PATH;
+			if (key.QueryStringValue(L"PeerId", szValueW, &lLen) == ERROR_SUCCESS){
+				strcpy(pszPeerID, (char*)(_bstr_t)szValueW);
+				TSDEBUG4CXX("GetPeerID szValueW = "<<szValueW<<", pszPeerID = "<<pszPeerID);
+			}
+			key.Close();
+		}
+	};
+	static string GetMinorVer(){
+		string ver = "0";
+		ATL::CRegKey key;
+		HRESULT hr;
+		if ((hr = key.Open(HKEY_LOCAL_MACHINE, L"Software\\mycalendar", KEY_READ | KEY_WOW64_32KEY)) == ERROR_SUCCESS) {
+			wchar_t szValueW[MAX_PATH] = {0};
+			ULONG lLen = MAX_PATH;
+			if (key.QueryStringValue(L"Ver", szValueW, &lLen) == ERROR_SUCCESS){
+				wstring fver = szValueW;
+				wstring::size_type pos = fver.rfind(L'.');
+				if (pos != wstring::npos){
+					ver = (char*)(_bstr_t)(fver.substr(pos+1,fver.length()-pos).c_str());
+				}
+				TSDEBUG4CXX("GetMinorVer szValueW = "<<szValueW<<", ver = "<<ver);
+			}
+			key.Close();
+		}
+		return ver;
+	};
+	static void Send( CHAR *ec, CHAR *el,const CHAR *ea = GetMinorVer().c_str(), long ev = 1){
+		if (ec == NULL || ea == NULL){
+			return ;
+		}
+		CHAR* szURL = new CHAR[MAX_PATH];
+		memset(szURL, 0, MAX_PATH);
+		char szPid[256] = {0};
+		GetPeerID(szPid);
+		std::string str = "";
+		if (el != NULL ){
+			str += "&el=";
+			str += el;
+		}
+		if (ev != 0){
+			CHAR szev[MAX_PATH] = {0};
+			sprintf(szev, "&ev=%ld",ev);
+			str += szev;
+		}
+		sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
+		_beginthreadex(NULL, 0, &SendHttpStatThread, szURL, 0, NULL);
+	};
+};
 
 class DesktopIcon{
 public:
@@ -222,6 +299,7 @@ public:
 	static unsigned int __stdcall TaskThreadProc(void* arg);
 	unsigned int TaskProc();
 	static void HandleLaunch();
+	static BOOL TodayNotDo();
 	static void HandleUpdateIcon();
 
 	bool IsVistaOrHigher() const;

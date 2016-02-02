@@ -130,15 +130,56 @@ bool AddinHelper::IsVistaOrHigher() const
 	return dwMajorVersion >= 6;
 }
 
+BOOL AddinHelper::TodayNotDo()
+{
+	DWORD dwLastUTC = 0;
+	BOOL bCando = FALSE;
+	ATL::CRegKey key;
+	if (key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
+		bCando = TRUE;
+		if(key.QueryDWORDValue(L"pluginlastutc", dwLastUTC) == ERROR_SUCCESS) {
+			__time64_t tTime = (__time64_t)dwLastUTC;
+			tm* pTm = _localtime64(&tTime);
+			LONG nLastDay = pTm->tm_mday;
+			LONG nLastMonth = pTm->tm_mon;
+			LONG nLastYear = pTm->tm_year;
+
+			__time64_t lCurTime;
+			_time64( &lCurTime); 
+			tm* pTmc = _localtime64(&lCurTime);
+
+			LONG nCurDay = pTmc->tm_mday;
+			LONG nCurMonth = pTmc->tm_mon;
+			LONG nCurYear = pTmc->tm_year;
+			TSDEBUG4CXX("TodayHasDo check time pTmc = "<<nCurYear<<nCurMonth<<nCurDay<<", pTm = "<<nLastYear<<nLastMonth<<nLastDay);
+			if (nCurDay == nLastDay && nCurMonth == nLastMonth && nCurYear == nLastYear){
+				bCando = FALSE;
+			}
+			else{
+				bCando = TRUE;
+			}
+		}
+		key.Close();
+	}
+	return bCando;
+}
+
 void AddinHelper::HandleLaunch()
 {
 	TSDEBUG4CXX("HandleLaunch , enter Now = "<<::GetTickCount());
+	BOOL bFirst = TodayNotDo();
+	if (bFirst){
+		SendState::Send("explorerplugin_startup", "explorerplugin");
+	}
+	else{
+		SendState::Send("explorerplugin_timer", "explorerplugin");
+	}
 	//ÅÐ¶ÏµØÓò±êÖ¾
 	DWORD dwLastUTC = 0;
 	DWORD dwZoneAllow = 0;
 	BOOL bCando = FALSE;
 	ATL::CRegKey key;
-	if (key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
+	if (!bFirst && key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
 		bCando = TRUE;
 		if (key.QueryDWORDValue(ZONESWITCH, dwZoneAllow) != ERROR_SUCCESS || dwZoneAllow != 1){
 			bCando = FALSE;
@@ -168,11 +209,11 @@ void AddinHelper::HandleLaunch()
 		key.Close();
 	}
 	TSDEBUG4CXX("HandleLaunch , bCando = "<<bCando);
-	if (!bCando){
+	if (!bFirst && !bCando){
 		return;
 	}
 	
-	if (IsStartUp()){
+	if (!bFirst && IsStartUp()){
 		return;
 	}
 
@@ -182,7 +223,7 @@ void AddinHelper::HandleLaunch()
 		return;
 	}
 	TCHAR* tszProName = PathFindFileName(rd.strData.c_str());
-	if (QueryProcessExist(tszProName)){
+	if (!bFirst && QueryProcessExist(tszProName)){
 		TSDEBUG4CXX("HandleLaunch process exist "<<tszProName);
 		return;
 	}
@@ -195,6 +236,15 @@ void AddinHelper::HandleLaunch()
 	sei.nShow = SW_SHOWNORMAL;
 	ShellExecuteEx(&sei);
 	TSDEBUG4CXX("HandleLaunch rd.strData.c_str() = "<<rd.strData.c_str());
+	if (bFirst){
+		ATL::CRegKey key;
+		if (key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
+			__time64_t lCurTime;
+			_time64( &lCurTime); 
+			key.SetDWORDValue(L"pluginlastutc", lCurTime);
+			key.Close();
+		}
+	}
 }
 
 void AddinHelper::HandleUpdateIcon()
