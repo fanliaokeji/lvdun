@@ -295,8 +295,21 @@ function ShowHostWnd()
 	end
 end
 
+function SendSate_ExplorerPlugin()
+	local tStatInfo = {}
+	tStatInfo.strEL = "explorerplugin"
+	tStatInfo.strEC = "explorerplugin_active"  --增加提醒项
+	tStatInfo.strEA = tFunHelper.GetMinorVer() or ""
+	tStatInfo.strEV = 1
+	tFunHelper.TipConvStatistic(tStatInfo)
+end
+
 function OnCommandLine(tParam)
 	if tFunHelper.CheckIsNeedShow() then
+		--插件激活日历上报
+		if string.find(tParam[1], "explorerplugin") then
+			SendSate_ExplorerPlugin()
+		end
 		if string.find(tParam[1], "embedding") then
 			return
 		end
