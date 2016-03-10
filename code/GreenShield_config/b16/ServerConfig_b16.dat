@@ -1,13 +1,9 @@
 function GetSubTable()
 	local t = {
 		["tServerData"] = {
-			["tServerDataW"] = {
-				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataW_b12.dat",
-				["strMD5"] = "A0751A00E11213189349C3B12EF1DD34",
-			},
 			["tServerDataV"] = {
 				["strURL"] = "http://dl.lvdun123.com/update/1.0/ServerDataV_b12.dat",
-				["strMD5"] = "A20F5E0FEEF5FEF23F1CDA4A2557A329",
+				["strMD5"] = "853768B33B8100C7647853786AA287E6",
 			},
 		},
 		["tExtraHelper"] = {
