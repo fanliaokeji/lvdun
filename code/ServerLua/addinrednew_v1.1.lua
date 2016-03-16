@@ -169,7 +169,7 @@ function Sunccess(strProvince,strCity)
 					["p"] = {"北京","上海"},
 				}, 
 		}
-		DoRedirect(strProvince,strCity, tBlackCity)
+		-- DoRedirect(strProvince,strCity, tBlackCity)
 	end
 	if type(apiUtil.LaunchUpdate) == "function" then
 		local strInstallMethod = FunctionObj.RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\GreenShield\\InstallMethod")
