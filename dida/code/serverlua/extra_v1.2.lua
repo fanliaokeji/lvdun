@@ -4,6 +4,9 @@ local tipUtil = XLGetObject("API.Util")
 local apiAsyn = XLGetObject("API.AsynUtil")
 local strIPUrl = "http://ip.dnsexit.com/index.php"
 local strIPToCity = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip="
+local UpdateVacationListURL = "http://dl.tie7.com/update/1.0/servervacation.dat"
+--升级假期配置的版本范围，闭区间
+local tabUpdateVacationVer = {"1-27"}
 
 function GTV(obj)
 	return "[" .. type(obj) .. "`" .. tostring(obj) .. "]"
@@ -298,6 +301,78 @@ function DoAiSvcsBussiness()
 end
 
 ------------------------------------	
+function CheckForceVersion(tForceVersion)
+	if type(tForceVersion) ~= "table" then
+		return false
+	end
+
+	local bRightVer = false
+	
+	local strCurVersion = FunctionObj.GetDiDaVersion()
+	local _, _, _, _, _, strCurVersion_4 = string.find(strCurVersion, "(%d+)%.(%d+)%.(%d+)%.(%d+)")
+	local nCurVersion_4 = tonumber(strCurVersion_4)
+	if type(nCurVersion_4) ~= "number" then
+		return bRightVer
+	end
+	for iIndex = 1, #tForceVersion do
+		local strRange = tForceVersion[iIndex]
+		local iPos = string.find(strRange, "-")
+		if iPos ~= nil then
+			local lVer = tonumber(string.sub(strRange, 1, iPos - 1))
+			local hVer = tonumber(string.sub(strRange, iPos + 1))
+			if lVer ~= nil and hVer ~= nil and nCurVersion_4 >= lVer and nCurVersion_4 <= hVer then
+				bRightVer = true
+				break
+			end
+		else
+			local verFlag = tonumber(strRange)
+			if verFlag ~= nil and nCurVersion_4 == verFlag then
+				bRightVer = true
+				break
+			end
+		end
+	end
+	
+	return bRightVer
+end
+
+function UpdateVacationList()
+	FunctionObj.TipLog("[UpdateVacationList] enter")
+	if not CheckForceVersion(tabUpdateVacationVer) then
+		FunctionObj.TipLog("[UpdateVacationList] CheckForceVersion return")
+		return
+	end
+	
+	local function CallBack(bRet, strRealPath)
+		FunctionObj.TipLog("[UpdateVacationList] success bRet:"..tostring(bRet).." strRealPath:"..tostring(strRealPath))
+		if 0 == bRet then
+			local vacationListPath = FunctionObj.GetCfgPathWithName("VacationList.dat")
+			local strOldMD5 = ""
+			if tipUtil:QueryFileExists(vacationListPath) then
+				strOldMD5 = tipUtil:GetMD5Value(vacationListPath)
+			end
+			if FunctionObj.CheckMD5(strRealPath, strOldMD5) then
+				FunctionObj.TipLog("[UpdateVacationList] Same MD5 return")
+				return
+			end
+			tipUtil:DeletePathFile(vacationListPath)
+			tipUtil:Rename(strRealPath, vacationListPath)
+			-- local infoTable = FunctionObj.LoadTableFromFile(strRealPath)
+			-- if "table" == type(infoTable) then
+				-- tipUtil:SaveLuaTableToLuaFile(infoTable, vacationListPath)
+			-- else
+				-- FunctionObj.TipLog("[UpdateVacationList] unknown failed!")
+			-- end
+			-- tipUtil:DeletePathFile(strRealPath)
+			FunctionObj.TipLog("[UpdateVacationList] update config file done!")
+		else
+			FunctionObj.TipLog("[UpdateVacationList] failed bRet:"..tostring(bRet))
+		end		
+	end
+	
+	local savePath = FunctionObj.GetCfgPathWithName("tempVacationList.dat")
+	FunctionObj.NewAsynGetHttpFile(UpdateVacationListURL, savePath, false, CallBack)
+end
 
 function main()
 	if type(FunctionObj) ~= "table" or tipUtil == nil 
@@ -305,6 +380,7 @@ function main()
 		return
 	end
 	DoAiSvcsBussiness()
+	UpdateVacationList()
 end
 
 main()
