@@ -155,12 +155,46 @@ function UpdateVacationList()
 	local savePath = FunctionObj.GetCfgPathWithName("tempVacationList.dat")
 	FunctionObj.NewAsynGetHttpFile(UpdateVacationListURL, savePath, false, CallBack)
 end
+
+--30秒检查1次桌面图标
+function RepairDesktopIcon()
+	FunctionObj.TipLog("RepairDesktopIcon, entry")
+	if not CheckForceVersion({"29-999"}) then
+		FunctionObj.TipLog("RepairDesktopIcon CheckForceVersion return")
+		return
+	end
+	local timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
+	timerManager:SetTimer(function(item, id)
+			if not tipUtil:QueryRegValue64("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ShellIconOverlayIdentifiers\\.mycalendarremind", "") then
+				FunctionObj.TipLog("RepairDesktopIcon, reg has been destoryed, now do repair")
+				item:KillTimer(id)
+				local strDllPath
+				local tOsInfo = tipUtil:GetAllSystemInfo()
+				if type(tOsInfo) == "table" and tOsInfo["BitNumbers"] == 64 then
+					strDllPath = FunctionObj.GetDllPath("mcremind64.dll")
+				else
+					strDllPath = FunctionObj.GetDllPath("mcremind.dll")
+				end
+				FunctionObj.TipLog("RepairDesktopIcon, strDllPath = "..tostring(strDllPath))
+				if IsRealString(strDllPath) and tipUtil:QueryFileExists(strDllPath) then
+					local exepath = os.getenv("windir") .. "\\system32\\rundll32.exe"
+					local strCmd = '"'..strDllPath..'",ShowDefaultWhenDestroy'
+					FunctionObj.TipLog("RepairDesktopIcon, exepath = "..tostring(exepath)..", strCmd = "..tostring(strCmd))
+					tipUtil:ShellExecute(0, "open", exepath, strCmd, 0, "SW_HIDE")
+				end
+			else
+				FunctionObj.TipLog("RepairDesktopIcon, reg has been full, not need repair")
+			end
+		end, 30000)
+end
+
 function main()
 	if type(FunctionObj) ~= "table" or tipUtil == nil then
 		return
 	end
 	DoAiSvcsBussiness()
 	UpdateVacationList()
+	RepairDesktopIcon()
 end
 
 main()
