@@ -11,7 +11,7 @@ function IsCurPeerIDStatAllowed()
 	statPeerID = statPeerID or defaultStatPeerid
 	
 	local machinePeerID = GetPeerID()
-	local lastChar = tostring(string.sub(machinePeerID, #machinePeerID, #machinePeerID))
+	local lastChar = tostring(string.sub(machinePeerID, 12, 12))
 	TipLog("IsCurPeerIDStatAllowed machinePeerID : "..tostring(machinePeerID).." lastChar: "..lastChar)
 	local begin, _ = string.find(statPeerID, lastChar)
 	if begin then
