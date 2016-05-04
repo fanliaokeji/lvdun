@@ -3,7 +3,25 @@ local tipAsynUtil = XLGetObject("API.AsynUtil")
 
 local gStatCount = 0
 local gForceExit = nil
+local defaultStatPeerid = "0123"
 
+function IsCurPeerIDStatAllowed()
+	local statPeerID = RegQueryValue("HKEY_CURRENT_USER\\Software\\mycalendar\\statpeerid")
+	TipLog("IsCurPeerIDStatAllowed statPeerID : "..tostring(statPeerID))
+	statPeerID = statPeerID or defaultStatPeerid
+	
+	local machinePeerID = GetPeerID()
+	local lastChar = tostring(string.sub(machinePeerID, #machinePeerID, #machinePeerID))
+	TipLog("IsCurPeerIDStatAllowed machinePeerID : "..tostring(machinePeerID).." lastChar: "..lastChar)
+	local begin, _ = string.find(statPeerID, lastChar)
+	if begin then
+		TipLog("IsCurPeerIDStatAllowed stat is allowed!")
+		return true
+	end
+	
+	TipLog("IsCurPeerIDStatAllowed stat not allowed!")
+	return false
+end
 
 function IsRealString(str)
 	return type(str) == "string" and str ~= ""
@@ -125,16 +143,17 @@ function SendRunTimeReport(nTimeSpanInSec, bExit)
 	tStatInfo.strEC = "runtime"
 	tStatInfo.strEA = GetInstallSrc() or ""
 	
-	local nRunTime = 0
-	local nLastReportRunTmUTC = XLGetGlobal("DiDa.LastReportRunTime") 
-	if bExit and nLastReportRunTmUTC ~= 0 then
-		nRunTime = math.abs(tipUtil:GetCurrentUTCTime() - nLastReportRunTmUTC)
-	else
-		nRunTime = nTimeSpanInSec
-	end
-	tStatInfo.strEV = nRunTime
+	--由于谷歌统计超标，去掉心跳上报
+	-- local nRunTime = 0
+	-- local nLastReportRunTmUTC = XLGetGlobal("DiDa.LastReportRunTime") 
+	-- if bExit and nLastReportRunTmUTC ~= 0 then
+		-- nRunTime = math.abs(tipUtil:GetCurrentUTCTime() - nLastReportRunTmUTC)
+	-- else
+		-- nRunTime = nTimeSpanInSec
+	-- end
+	-- tStatInfo.strEV = nRunTime
 	
-	TipConvStatistic(tStatInfo)
+	-- TipConvStatistic(tStatInfo)
 end
 
 
@@ -215,6 +234,9 @@ end
 
 
 function TipConvStatistic(tStat)
+	--由于谷歌统计超标,只取四分之一peerid上报
+	if not IsCurPeerIDStatAllowed() then end
+	
 	local rdRandom = tipUtil:GetCurrentUTCTime()
 	local tStatInfo = tStat or {}
 	local strDefaultNil = "null"
