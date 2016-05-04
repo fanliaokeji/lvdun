@@ -235,7 +235,7 @@ end
 
 function TipConvStatistic(tStat)
 	--由于谷歌统计超标,只取四分之一peerid上报
-	if not IsCurPeerIDStatAllowed() then end
+	if not IsCurPeerIDStatAllowed() then return end
 	
 	local rdRandom = tipUtil:GetCurrentUTCTime()
 	local tStatInfo = tStat or {}
