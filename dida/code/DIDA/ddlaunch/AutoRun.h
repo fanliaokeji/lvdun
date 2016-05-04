@@ -107,3 +107,5 @@ std::wstring GetAllUsersPublicPath();
 BOOL CheckProcessExist(std::wstring wstrProcessName, BOOL bQuit = FALSE);
 std::wstring GetRealPath(const std::wstring &wstrPath);
 BOOL CheckIsAnotherDay(__time64_t nLastTime);
+
+void LaunchUpdateDiDA();

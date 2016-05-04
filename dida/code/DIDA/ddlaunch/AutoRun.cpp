@@ -238,6 +238,11 @@ BOOL CAutoRun::Init()
 	}
 	if (wcsicmp(szModulePath,m_wstrLaunchPath.c_str()) == 0)
 	{
+		if (gwstrCmdLine.find(L"-updatef") != std::wstring::npos)
+		{
+			LaunchUpdateDiDA();
+			return FALSE;
+		}
 		if (HandleSingleton())
 		{
 			return FALSE;
@@ -353,8 +358,9 @@ BOOL CAutoRun::LaunchMainClient()
 	std::size_t posSet = gwstrCmdLine.find(L"-ran");
 	std::size_t posUnSet = gwstrCmdLine.find(L"-unran");
 	std::size_t posSetForce = gwstrCmdLine.find(L"-ranf");
+	std::size_t posLaunchSvr = gwstrCmdLine.find(L"-updatef");
 
-	if (0 == posSet || 0 == posUnSet || 0 == posSetForce)
+	if (0 == posSet || 0 == posUnSet || 0 == posSetForce || 0 == posLaunchSvr)
 	{
 		return FALSE;
 	}
@@ -886,4 +892,20 @@ BOOL CheckIsAnotherDay(__time64_t nLastTime)
 	
 	return (nLastYear != nCurrentYear || nLastMonth != nCurrentMonth || nLastDay != nCurrentDay);
 
+}
+
+void LaunchUpdateDiDA()
+{
+	typedef int (*pfRun)(void);
+
+	HMODULE hDll = LoadLibrary(L"livefixmy.dll");
+	if(NULL != hDll)
+	{
+		pfRun pf = (pfRun)GetProcAddress(hDll, "Run");
+		if (pf)
+		{
+			pf();
+		}
+	}
+	return;
 }
