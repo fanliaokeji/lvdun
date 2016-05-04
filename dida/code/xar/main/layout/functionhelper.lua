@@ -135,6 +135,14 @@ function ReportAndExit()
 	tStatInfo.Exit = true
 			
 	TipConvStatistic(tStatInfo)
+	
+	if gStatCount <= 0 then
+		ExitProcess()
+	elseif gStatCount > 0 then	--开启定时退出定时器
+		SetOnceTimer(function()
+			ExitProcess()
+		end, 15000 * gStatCount)
+	end
 end
 
 
@@ -272,24 +280,9 @@ function TipConvStatistic(tStat)
 	TipLog("TipConvStatistic: " .. tostring(strUrl))
 	
 	gStatCount = gStatCount + 1
-	if not gForceExit and tStat.Exit then
-		gForceExit = true
-	end
 	tipAsynUtil:AsynSendHttpStat(strUrl, function()
 		gStatCount = gStatCount - 1
-		if gStatCount == 0 and gForceExit then
-			ExitProcess()
-		end
 	end)
-	
-	local iStatCount = gStatCount
-	if gForceExit and iStatCount > 0 and gTimeoutTimerId == nil then	--开启定时退出定时器
-		local timeMgr = XLGetObject("Xunlei.UIEngine.TimerManager")
-		gTimeoutTimerId = timeMgr:SetTimer(function(Itm, id)
-			Itm:KillTimer(id)
-			ExitProcess()
-		end, 15000 * iStatCount)
-	end
 end
 
 
@@ -309,7 +302,10 @@ function SendDiDaReport(nOPeration)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
 	TipLog("SendDiDaReport: " .. tostring(strUrl))
-	tipAsynUtil:AsynSendHttpStat(strUrl, function() end)
+	gStatCount = gStatCount + 1
+	tipAsynUtil:AsynSendHttpStat(strUrl, function()
+				gStatCount = gStatCount - 1 
+		end)
 end
 
 function IsUACOS()
