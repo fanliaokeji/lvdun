@@ -57,9 +57,9 @@ Var str_ChannelID
 
 !define PRODUCT_NAME "mycalendar"
 !define SHORTCUT_NAME "我的日历"
-!define PRODUCT_VERSION "1.0.0.29"
-!define VERSION_LASTNUMBER 29
-!define NeedSpace 10240
+!define VERSION_LASTNUMBER 30
+!define PRODUCT_VERSION "1.0.0.${VERSION_LASTNUMBER}"
+!define NeedSpace 13312
 !define EM_OUTFILE_NAME "mycalendarsetupv${VERSION_LASTNUMBER}_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
@@ -70,7 +70,7 @@ Var str_ChannelID
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_MAININFO_FORSELF "Software\mycalendar"
 
-;卸载包开关（请不要轻易打开）
+;卸载开关
 ;!define SWITCH_CREATE_UNINSTALL_PAKAGE 1
 
 ;CRCCheck on
@@ -221,6 +221,33 @@ SectionEnd
 	Pop $1
 !macroend
 !define RenameDeleteFile "!insertmacro _RenameDeleteFile"
+
+!macro _SendStat strp1 strp2 strp3 np4
+	Push $0
+	Push $1
+	Push $2
+	ReadRegStr $0 HKCU "Software\mycalendar" "statpeerid"
+	ReadRegStr $1 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
+	${If} $1 != ""
+	${OrIf} $1 != 0
+		${If} $0 == ""
+		${OrIf} $0 == 0
+			StrCpy $0 "0123"
+		${EndIf}
+		${StrFilter} $0 "-" "" "" $0
+		${StrFilter} $1 "-" "" "" $1
+		StrCpy $2 $1 1 11
+		${WordReplace} $0 $2 "X" +1 $1
+		${If} $0 != $1
+			System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "${strp1}", t "${strp2}", t "${strp3}", i ${np4}) '
+		${EndIf}
+	${EndIf}
+	Pop $2
+	Pop $1
+	Pop $0
+!macroend
+!define SendStat "!insertmacro _SendStat"
+
 
 Var isMainUIShow
 Function HandlePageChange
@@ -436,10 +463,10 @@ FunctionEnd
 	${If} ${strOp} == "reg"
 		${If} ${RunningX64}
 			!define LIBRARY_X64
-			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "input_main\program\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorerplugin\mcremind64.dll" "$INSTDIR\program\mcremind64.dll" "$INSTDIR\program"
 			!undef LIBRARY_X64
 		${Else}
-			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "input_main\program\mcremind.dll" "$INSTDIR\program\mcremind.dll" "$INSTDIR\program"
+			!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_PROTECTED "explorerplugin\mcremind.dll" "$INSTDIR\program\mcremind.dll" "$INSTDIR\program"
 		${EndIf}
 	${Else}
 		${If} ${RunningX64}
@@ -456,113 +483,126 @@ FunctionEnd
 
 Var Bool_IsUpdate
 Function DoInstall
-  ;释放配置到public目录
-  SetOutPath "$TEMP\${PRODUCT_NAME}"
-  StrCpy $1 ${NSIS_MAX_STRLEN}
-  StrCpy $0 ""
-  System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
-  ${If} $0 == ""
+	;释放配置到public目录
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	StrCpy $1 ${NSIS_MAX_STRLEN}
+	StrCpy $0 ""
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
+	${If} $0 == ""
+		HideWindow
+		MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
+		Call OnClickQuitOK
+	${EndIf}
+	IfFileExists "$0" +4 0
 	HideWindow
 	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
 	Call OnClickQuitOK
-  ${EndIf}
-  IfFileExists "$0" +4 0
-  HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装，如果还不行请到官方网站寻求帮助"
-  Call OnClickQuitOK
-  
-  SetOutPath "$0"
-  SetOverwrite off
-  File /r "input_config\*.*"
-  Call NSISModifyCfgFile
-  
-   ;卸载资源管理器插件
-  ${UnRegExplorerPlugin}
-  ${RenameDeleteFile} "$INSTDIR\program\mcremind64.dll" BeginRename4 EndRename4
-  ${RenameDeleteFile} "$INSTDIR\program\mcremind.dll" BeginRename5 EndRename5
-  ;先删再装
-  RMDir /r "$INSTDIR\program"
-  RMDir /r "$INSTDIR\xar"
-  RMDir /r "$INSTDIR\res"
-  ;文件被占用则改一下名字
-  ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll" BeginRename1 EndRename1
-  ${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll" BeginRename2 EndRename2
-  
-  
-  ;释放主程序文件到安装目录
-  SetOutPath "$INSTDIR"
-  SetOverwrite on
-  File /r "input_main\*.*"
-  SetOutPath "$INSTDIR"
-  SetOverwrite on
-  File "uninst\uninst.exe"
-  
-  
-  StrCpy $Bool_IsUpdate 0 
-  ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
-  IfFileExists $0 0 +2
-  StrCpy $Bool_IsUpdate 1 
-  
-  ;上报统计
-  SetOutPath "$TEMP\${PRODUCT_NAME}"
-  System::Call "kernel32::GetCommandLineA() t.R1"
-  System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
-  ${WordReplace} $R1 $R2 "" +1 $R3
-  ${StrFilter} "$R3" "-" "" "" $R4
-  ClearErrors
-  ${GetOptions} $R4 "/source"  $R0
-  IfErrors 0 +2
-  StrCpy $R0 $str_ChannelID
-  ;是否静默安装
-  ClearErrors
-  ${GetOptions} $R4 "/s"  $R2
-  StrCpy $R3 "0"
-  IfErrors 0 +2
-  StrCpy $R3 "1"
-  ${If} $Bool_IsUpdate == 0
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "install", t "${VERSION_LASTNUMBER}", t "$R0", i 1) '
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "installmethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1) '
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
-  ${Else}
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "update", t "${VERSION_LASTNUMBER}", t "$R0", i 1)'
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "updatemethod", t "${VERSION_LASTNUMBER}", t "$R3", i 1)'
-  ${EndIf}  
- ;写入自用的注册表信息
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
-  System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-  ;注册表增加版本信息
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Ver" ${PRODUCT_VERSION}
-  ;写入安装包名字
+
+	;VacationList.dat需要强制覆盖
+	IfFileExists "$0\VacationList.dat" 0  +2
+	Delete "$0\VacationList.dat"
+	SetOutPath "$0"
+	SetOverwrite off
+	File /r "input_config\*.*"
+	Call NSISModifyCfgFile
+
+	;卸载资源管理器插件
+	${UnRegExplorerPlugin}
+	${RenameDeleteFile} "$INSTDIR\program\mcremind64.dll" BeginRename4 EndRename4
+	${RenameDeleteFile} "$INSTDIR\program\mcremind.dll" BeginRename5 EndRename5
+	;先删再装
+	RMDir /r "$INSTDIR\program"
+	RMDir /r "$INSTDIR\xar"
+	RMDir /r "$INSTDIR\res"
+	;文件被占用则改一下名字
+	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll" BeginRename1 EndRename1
+	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll" BeginRename2 EndRename2
+
+
+	;释放主程序文件到安装目录
+	SetOutPath "$INSTDIR"
+	SetOverwrite on
+	File /r "input_main\*.*"
+	SetOutPath "$INSTDIR"
+	SetOverwrite on
+	File "uninst\uninst.exe"
+
+
+	StrCpy $Bool_IsUpdate 0 
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
+	IfFileExists $0 0 +2
+	StrCpy $Bool_IsUpdate 1 
+
+	;上报统计
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	System::Call "kernel32::GetCommandLineA() t.R1"
+	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
+	${WordReplace} $R1 $R2 "" +1 $R3
+	${StrFilter} "$R3" "-" "" "" $R4
+	ClearErrors
+	${GetOptions} $R4 "/source"  $R0
+	IfErrors 0 +2
+	StrCpy $R0 $str_ChannelID
+	;是否静默安装
+	StrCpy $R3 "0"
+	ClearErrors
+	${GetOptions} $R4 "/s"  $R2
+	IfErrors 0 +2
+	StrCpy $R3 "1"
+
+	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
+	${If} $0 == ""
+		System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetPeerID(t) i(.r0).r1'
+		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
+	${EndIf}
+	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
+	${If} $Bool_IsUpdate == 0
+		${SendStat} "install" "$R1" "$R0" 1
+		${SendStat} "installmethod" "$R1" "$R3" 1
+		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '1', t '$R0', t '${PRODUCT_VERSION}')"
+	${Else}
+		${SendStat} "update" "$R1" "$R0" 1
+		${SendStat} "updatemethod" "$R1" "$R3" 1
+	${EndIf}  
+	;写入自用的注册表信息
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
+	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	;注册表增加版本信息
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Ver" ${PRODUCT_VERSION}
+	;写入安装包名字
 	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
 	Push $R2
 	Push "\"
 	Call GetLastPart
 	Pop $R1
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PackageName" "$R1"
-  ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
-  ${If} $0 == ""
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetPeerID(t) i(.r0).r1'
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
-  ${EndIf}
-  
-  ${If} $Bool_DesktopDate == 1
-	SetOutPath "$INSTDIR\program"
-	SetOverwrite on
-	;注册资源管理器插件
-	${RegExplorerPlugin}
-  ${EndIf}
-  
-  ;写入通用的注册表信息
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\program\${PRODUCT_NAME}.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+
+	${If} $Bool_DesktopDate == 1
+		SetOutPath "$INSTDIR\program"
+		SetOverwrite on
+		;注册资源管理器插件
+		${RegExplorerPlugin}
+		;非静默安装打图标
+		${If} $R3 == "1"
+			${If} ${RunningX64}
+				ExecShell open "rundll32.exe" '"$INSTDIR\program\mcremind64.dll",CreateDeskIcon' SW_HIDE
+			${Else}
+				ExecShell open "rundll32.exe" '"$INSTDIR\program\mcremind.dll",CreateDeskIcon' SW_HIDE
+			${EndIf}
+		${EndIf}
+	${EndIf}
+
+	;写入通用的注册表信息
+	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 FunctionEnd
 
 Function CmdSilentInstall
@@ -1137,12 +1177,16 @@ FunctionEnd
 
 Function onClickZidingyi
 	;HideWindow
+	ShowWindow $ck_desktop ${SW_HIDE}
+	ShowWindow $Lbl_desktop ${SW_HIDE}
 	ShowWindow $Btn_Next ${SW_HIDE}
 	ShowWindow $Btn_Agreement ${SW_HIDE}
 	ShowWindow $ck_xieyi ${SW_HIDE}
 	ShowWindow $ck_sysstup ${SW_HIDE}
 	ShowWindow $Btn_Zidingyi ${SW_HIDE}
 	ShowWindow $BGImage ${SW_HIDE}
+	
+	
 	
 	ShowWindow $BGImage2 1
 	ShowWindow $Edit_BrowserBg 1
@@ -1167,6 +1211,8 @@ Function OnClick_Return
 	ShowWindow $ck_sysstup 1
 	ShowWindow $ck_xieyi 1
 	ShowWindow $Btn_Zidingyi 1
+	ShowWindow $ck_desktop 1
+	ShowWindow $Lbl_desktop 1
 	
 	
 	ShowWindow $Edit_BrowserBg ${SW_HIDE}
@@ -1177,7 +1223,6 @@ Function OnClick_Return
 	ShowWindow $Btn_Install ${SW_HIDE}
 	ShowWindow $Btn_Return ${SW_HIDE}
 	ShowWindow $BGImage2 ${SW_HIDE}
-	;ShowWindow $HWNDPARENT ${SW_SHOW}
 	
 	ShowWindow $Btn_Zuixiaohua 1
 	ShowWindow $Btn_Guanbi 1
@@ -1292,12 +1337,13 @@ Function OnClick_Install
 	${OrIf} $INSTDIR == $6
 	${OrIf} $INSTDIR == $7
 		MessageBox MB_OK|MB_ICONSTOP "路径不合法"
+		Goto EndFunction
 	${Else}
 		StrCpy $8 ""
 		${DriveSpace} $7 "/D=F /S=K" $8
 		${If} $8 == ""
 			MessageBox MB_OK|MB_ICONSTOP "路径不合法"
-			Abort
+			Goto EndFunction
 		${EndIf}
 		IntCmp ${NeedSpace} $8 0 0 ErrorChunk
 		StrCpy $R9 1 ;Goto the next page
@@ -1305,8 +1351,8 @@ Function OnClick_Install
 		Goto EndFunction
 		ErrorChunk:
 			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}KB"
-		EndFunction:
 	${EndIf}
+	EndFunction:
 FunctionEnd
 
 Function WelcomePage
@@ -1627,9 +1673,6 @@ Function OnClick_FreeUse
 	ExecShell open "myfixar.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
 	${IF} $Bool_bind360install == 1
 		HideWindow
-		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		;System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360SafeAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
-		;System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Install360BrowserAsync(t '$INSTDIR\program\360ini.dll', t '${VERSION_LASTNUMBER}', t '$str_ChannelID', ) i.r1"
 		Call OnClickQuitOK
 	${Else}
 		Call OnClickQuitOK
@@ -1960,7 +2003,8 @@ Function un.OnClick_CruelRefused
 	EnableWindow $Btn_ContinueUse 0
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "uninstall", t "${VERSION_LASTNUMBER}", t "$str_ChannelID", i 1) '
+	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
+	${SendStat} "uninstall" "$R1" $str_ChannelID 1
 	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	${FKillProc} "mycalendar"
 	${FKillProc} "myfixar"
