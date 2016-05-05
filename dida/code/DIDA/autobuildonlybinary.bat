@@ -40,6 +40,10 @@ echo ±‡“ÎÕÍ≥…
   echo for /r %%%%i in ^(*.dll *.exe^) do ^(
   echo if %%%%~ni == mycalendarsetup ^(
   echo copy /y %%%%i "..\..\..\..\..\bin\setup\bin\"
+  echo ^) else if %%%%~ni == mcremind ^(
+  echo copy /y %%%%i "..\..\..\..\..\bin\setup\explorerplugin\"
+  echo ^) else if %%%%~ni == mcremind64 ^(
+  echo copy /y %%%%i "..\..\..\..\..\bin\setup\explorerplugin\"
   echo ^) else ^(
   echo copy /y %%%%i "..\..\..\..\..\bin\setup\input_main\program\"
   echo ^)
