@@ -3445,13 +3445,10 @@ int LuaAPIUtil::FGetAllSystemInfo(lua_State* pLuaState)
 			lua_settable(pLuaState, -3);
 		}
 		// system bits
-		BOOL bWow64Process = FALSE;
-		if ( IsWow64())
-		{
-			lua_pushstring(pLuaState, "BitNumbers");
-			lua_pushinteger(pLuaState, bWow64Process ? 64 : (unsigned(~0) > 0xFFFF ? 32 : 16));
-			lua_settable(pLuaState, -3);
-		}
+		BOOL bWow64Process = IsWow64();
+		lua_pushstring(pLuaState, "BitNumbers");
+		lua_pushinteger(pLuaState, bWow64Process ? 64 : (unsigned(~0) > 0xFFFF ? 32 : 16));
+		lua_settable(pLuaState, -3);
 		// cpu information
 		{
 			lua_pushstring(pLuaState, "CPU");
