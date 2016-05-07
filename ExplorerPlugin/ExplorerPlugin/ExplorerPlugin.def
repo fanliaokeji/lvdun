@@ -12,3 +12,4 @@ EXPORTS
 	ShortcutDelete PRIVATE
 	ShowAbout PRIVATE
 	ShowDefaultWhenDestroy PRIVATE
+	CreateDeskIcon PRIVATE

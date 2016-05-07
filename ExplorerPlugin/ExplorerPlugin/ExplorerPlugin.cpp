@@ -33,16 +33,6 @@ STDAPI DllRegisterServer(void)
 {
 	// registers object, typelib and all interfaces in typelib
 	//HRESULT hr = _AtlModule.DllRegisterServer();
-	//注册的时候创建图标
-	DesktopIcon::DeleteIcon();
-	if (!DesktopIcon::IsIconExist()){
-		RegData rd = AddinHelper::QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
-		if (rd.strData != L""){
-			DesktopIcon::CreateIcon(rd.strData);
-			MsgWindow::UpdateDayOfMoth();
-		}
-	}
-	
 	TSINFO4CXX("DllRegisterServer enter");
 	wchar_t path[MAX_PATH];
 	::GetModuleFileName(g_hThisModule, path, MAX_PATH);
@@ -260,5 +250,17 @@ extern "C" void WINAPI ShowDefaultWhenDestroy(HINSTANCE hInstance, DWORD dwReaso
 	//不完整则将图标恢复到默认
 	if (DesktopIcon::IsIconExist()){
 		DesktopIcon::UpdateIcon();
+	}
+}
+
+extern "C" void CreateDeskIcon()
+{
+	DesktopIcon::DeleteIcon();
+	if (!DesktopIcon::IsIconExist()){
+		RegData rd = AddinHelper::QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
+		if (rd.strData != L""){
+			DesktopIcon::CreateIcon(rd.strData);
+			MsgWindow::UpdateDayOfMoth();
+		}
 	}
 }

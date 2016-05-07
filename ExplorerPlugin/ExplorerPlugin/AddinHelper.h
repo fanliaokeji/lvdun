@@ -1,12 +1,22 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 #include <Windows.h>
 #include <shlobj.h>
 #include "Lock.h"
 #include <comutil.h>
 extern HINSTANCE g_hThisModule;
+
+class RegTool{
+	ATL::CRegKey m_key;
+public:
+	wstring ReadRegStr(HKEY hk, const wchar_t* szPath, const wchar_t* szKey, REGSAM flag =  KEY_READ);
+	DWORD ReadRegDWORD(HKEY hk, const wchar_t* szPath, const wchar_t* szKey, REGSAM flag =  KEY_READ);
+	~RegTool(){m_key.Close();};
+	ATL::CRegKey* operator-> (){return &m_key;};
+};
 
 class SendState{
 public:
@@ -62,8 +72,28 @@ public:
 		}
 		return ver;
 	};
+
+	static BOOL CheckStatPeerid(){
+		char szPid[17] = {0};
+		GetPeerID(szPid);
+		WCHAR szPidW[17] = {0};
+		wcscpy(szPidW, (WCHAR*)(_bstr_t)szPid);
+		RegTool rt;
+		wstring strsp = rt.ReadRegStr(HKEY_CURRENT_USER, L"Software\\mycalendar", L"statpeerid");
+		if (strsp == L""){
+			strsp = L"0123";
+		}
+		transform(strsp.begin(),strsp.end(),strsp.begin(),tolower);
+		_wcslwr_s(szPidW, wcslen(szPidW) + 1);
+		TSDEBUG4CXX("CheckStatPeerid strsp = "<<strsp.c_str()<<", szPidW[11] = "<<szPidW[11]);
+		if (szPidW[11] == 0 || strsp.find(szPidW[11]) == wstring::npos){
+			return FALSE;
+		}
+		return TRUE;
+	};
+
 	static void Send( CHAR *ec, CHAR *el,const CHAR *ea = GetMinorVer().c_str(), long ev = 1){
-		if (ec == NULL || ea == NULL){
+		if (ec == NULL || ea == NULL || !CheckStatPeerid()){
 			return ;
 		}
 		CHAR* szURL = new CHAR[MAX_PATH];
@@ -181,6 +211,9 @@ public:
 	};
 	//默认图索引是31,正常图片索引范围是0-30
 	static void UpdateIcon(int nIndex = 31){
+		if (!IsIconExist()){
+			return;
+		}
 		wchar_t path[MAX_PATH];
 		::GetModuleFileName(g_hThisModule, path, MAX_PATH);
 		wstring strIconW = path;
@@ -299,8 +332,9 @@ public:
 	static unsigned int __stdcall TaskThreadProc(void* arg);
 	unsigned int TaskProc();
 	static void HandleLaunch();
-	static BOOL TodayNotDo();
-	static void HandleUpdateIcon();
+	static void LaunchExe();
+	static void LaunchAi();
+	static BOOL TodayNotDo(const wchar_t* szValueName = L"pluginlastutc");
 
 	bool IsVistaOrHigher() const;
 	static RegData QueryRegVal(HKEY key, LPCTSTR lpszKeyName, LPCTSTR lpszValuename, REGSAM flag =  KEY_READ);
@@ -363,7 +397,7 @@ public:
 			<<"\r\n lastvalue = "<<lastvalue);
 		//计时器id是2
 		::SetTimer(hwnd, 2, lastvalue*1000, NULL);
-		TimerState() = TRUE;;
+		TimerState() = TRUE;
 
 	};
 	static LRESULT CALLBACK MyWinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

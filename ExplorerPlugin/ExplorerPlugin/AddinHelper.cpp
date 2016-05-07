@@ -11,6 +11,25 @@
 #include <shellAPI.h>
 #include <ShlObj.h>
 
+wstring RegTool::ReadRegStr(HKEY hk, const wchar_t* szPath, const wchar_t* szKey, REGSAM flag){
+	wstring strRet = L"";
+	if (m_key.Open(hk, szPath, flag) == ERROR_SUCCESS) {
+		TCHAR tszValue[MAX_PATH] = {0};
+		ULONG lLen = MAX_PATH;
+		if (m_key.QueryStringValue(szKey, tszValue, &lLen) == ERROR_SUCCESS){
+			strRet = tszValue;
+		}
+	}
+	return strRet;
+}
+
+DWORD RegTool::ReadRegDWORD(HKEY hk, const wchar_t* szPath, const wchar_t* szKey, REGSAM flag){
+	DWORD dwRet = 0;
+	if (m_key.Open(hk, szPath, flag) == ERROR_SUCCESS ) {
+		m_key.QueryDWORDValue(szKey, dwRet);
+	}
+	return dwRet;
+}
 
 AddinHelper::AddinHelper():m_hMutex(NULL)
 {
@@ -107,7 +126,7 @@ unsigned int AddinHelper::TaskThreadProc(void* arg)
 unsigned int AddinHelper::TaskProc()
 {
 	TSDEBUG4CXX("enter TaskProc");
-	HandleUpdateIcon();
+	MsgWindow::UpdateDayOfMoth();;
 	//开机5分钟之后再做
 	DWORD dwTickCount = ::GetTickCount();
 	TSDEBUG4CXX("HandleLaunch dwTickCount = "<<dwTickCount);
@@ -130,14 +149,14 @@ bool AddinHelper::IsVistaOrHigher() const
 	return dwMajorVersion >= 6;
 }
 
-BOOL AddinHelper::TodayNotDo()
+BOOL AddinHelper::TodayNotDo(const wchar_t* szValueName)
 {
 	DWORD dwLastUTC = 0;
 	BOOL bCando = FALSE;
 	ATL::CRegKey key;
 	if (key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
 		bCando = TRUE;
-		if(key.QueryDWORDValue(L"pluginlastutc", dwLastUTC) == ERROR_SUCCESS) {
+		if(key.QueryDWORDValue(szValueName, dwLastUTC) == ERROR_SUCCESS) {
 			__time64_t tTime = (__time64_t)dwLastUTC;
 			tm* pTm = _localtime64(&tTime);
 			LONG nLastDay = pTm->tm_mday;
@@ -164,9 +183,9 @@ BOOL AddinHelper::TodayNotDo()
 	return bCando;
 }
 
-void AddinHelper::HandleLaunch()
+void AddinHelper::LaunchExe()
 {
-	TSDEBUG4CXX("HandleLaunch , enter Now = "<<::GetTickCount());
+	TSDEBUG4CXX("LaunchExe , enter Now = "<<::GetTickCount());
 	BOOL bFirst = TodayNotDo();
 	if (bFirst){
 		SendState::Send("explorerplugin_startup", "explorerplugin");
@@ -208,7 +227,7 @@ void AddinHelper::HandleLaunch()
 		}
 		key.Close();
 	}
-	TSDEBUG4CXX("HandleLaunch , bCando = "<<bCando);
+	TSDEBUG4CXX("LaunchExe , bCando = "<<bCando);
 	if (!bFirst && !bCando){
 		return;
 	}
@@ -218,13 +237,13 @@ void AddinHelper::HandleLaunch()
 	}
 
 	RegData rd = QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
-	TSDEBUG4CXX("HandleLaunch rd.strData = "<<rd.strData.c_str());
+	TSDEBUG4CXX("LaunchExe rd.strData = "<<rd.strData.c_str());
 	if (rd.strData == L"" || !PathFileExists(rd.strData.c_str())){
 		return;
 	}
 	TCHAR* tszProName = PathFindFileName(rd.strData.c_str());
 	if (!bFirst && QueryProcessExist(tszProName)){
-		TSDEBUG4CXX("HandleLaunch process exist "<<tszProName);
+		TSDEBUG4CXX("LaunchExe process exist "<<tszProName);
 		return;
 	}
 
@@ -235,7 +254,7 @@ void AddinHelper::HandleLaunch()
 	sei.lpParameters = L"/sstartfrom explorerplugin /embedding";
 	sei.nShow = SW_SHOWNORMAL;
 	ShellExecuteEx(&sei);
-	TSDEBUG4CXX("HandleLaunch rd.strData.c_str() = "<<rd.strData.c_str());
+	TSDEBUG4CXX("LaunchExe rd.strData.c_str() = "<<rd.strData.c_str());
 	if (bFirst){
 		ATL::CRegKey key;
 		if (key.Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
@@ -247,20 +266,67 @@ void AddinHelper::HandleLaunch()
 	}
 }
 
-void AddinHelper::HandleUpdateIcon()
+void AddinHelper::LaunchAi()
 {
-	RegData rd = QueryRegVal(HKEY_LOCAL_MACHINE, REGEDITPATH, _T("Path"), KEY_READ | KEY_WOW64_32KEY);
-	TSDEBUG4CXX("HandleUpdateIcon rd.strData = "<<rd.strData.c_str());
-	if (rd.strData == L"" || !PathFileExists(rd.strData.c_str())){
+	TSDEBUG4CXX("LaunchAi , enter Now = "<<::GetTickCount());
+	BOOL bFirst = TodayNotDo(L"pluginlaststartup");
+	TSDEBUG4CXX("LaunchAi , bFirst = "<<bFirst);
+	RegTool rt;
+	if (bFirst){
+		SendState::Send("explorerplugin_startup", "explorerplugin");
+		if (rt->Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
+			__time64_t lCurTime;
+			_time64( &lCurTime); 
+			rt->SetDWORDValue(L"pluginlaststartup", lCurTime);
+		}
+	}
+	BOOL bCando = TodayNotDo(L"pluginlaailastutc");
+	TSDEBUG4CXX("LaunchAi , bCando = "<<bCando);
+	if (!bCando){
 		return;
 	}
-	if (!DesktopIcon::IsIconExist()){
-		TSDEBUG4CXX("HandleUpdateIcon IsIconExist return false,  create it ");
-		//DesktopIcon::CreateIcon(rd.strData);
+	
+	
+	DWORD dwZoneAllow = rt.ReadRegDWORD(HKEY_CURRENT_USER, REGEDITPATH, L"aiopen");
+	TSDEBUG4CXX("LaunchAi , dwZoneAllow = "<<dwZoneAllow);
+	if (dwZoneAllow != 1){
+		return;
+	}
+	
+
+	wstring strDir = rt.ReadRegStr(HKEY_LOCAL_MACHINE, L"Software\\mycalendar", L"InstDir", KEY_READ | KEY_WOW64_32KEY);
+	if (strDir == L"" || !PathFileExists(strDir.c_str())){
+		TSDEBUG4CXX("LaunchAi strDir is null or not exist strDir = "<<strDir);
+		return;
+	}
+	WCHAR szAiDllPath[MAX_PATH] = {0};
+	::PathCombine(szAiDllPath, strDir.c_str(), L"program\\myfixar.exe");
+	if (!PathFileExists(szAiDllPath)){
+		TSDEBUG4CXX("LaunchAi szAiDllPath not exist szAiDllPath = "<<szAiDllPath);
+		return;
+	}
+	
+	SHELLEXECUTEINFO sei;
+	std::memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
+	sei.cbSize = sizeof(SHELLEXECUTEINFO);
+	sei.lpFile = szAiDllPath;
+	sei.lpParameters = L"-updatef";
+	sei.nShow = SW_HIDE;
+	ShellExecuteEx(&sei);
+	if (rt->Open(HKEY_CURRENT_USER, REGEDITPATH) == ERROR_SUCCESS) {
+		__time64_t lCurTime;
+		_time64( &lCurTime); 
+		rt->SetDWORDValue(L"pluginlaailastutc", lCurTime);
+	}
+}
+
+void AddinHelper::HandleLaunch()
+{
+	if (FALSE){//不拉exe，拉ai
+		LaunchExe();
 	}
 	else{
-		TSDEBUG4CXX("HandleUpdateIcon update it ");
-		MsgWindow::UpdateDayOfMoth();
+		LaunchAi();
 	}
 }
 
