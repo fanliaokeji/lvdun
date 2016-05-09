@@ -243,6 +243,8 @@ function DoLaunchAI(strProvince,strCity, tBlackCity)
 	if not CheckIsInZone(strProvince,strCity,tBlackCity) then
 		Log("[DoLaunchAI] in black city")
 		return
+	else
+		FunctionObj.RegSetValue("HKEY_CURRENT_USER\\Software\\mycalendar\\aiopen", 1)
 	end
 	
 	local bret = tipUtil:LaunchUpdateDiDA()
