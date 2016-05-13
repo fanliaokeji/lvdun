@@ -62,18 +62,18 @@ VS_VERSION_INFO VERSIONINFO
  FILEFLAGS 0x0L
 #endif
  FILEOS 0x4L
- FILETYPE 0x1L
+ FILETYPE 0x2L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "FileDescription", "kuaikan Application"
+            VALUE "FileDescription", "atskernel Module"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "kuaikan"
+            VALUE "InternalName", "atskernel"
             VALUE "LegalCopyright", "Copyright (C) 2016"
-            VALUE "OriginalFilename", "kuaikan.exe"
+            VALUE "OriginalFilename", "atskernel.dll"
             VALUE "ProductName", "¿ì¿´"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
@@ -84,15 +84,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON1               ICON                    "..\\res\\mainexe.ico"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 

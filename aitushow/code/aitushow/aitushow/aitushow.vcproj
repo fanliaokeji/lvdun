@@ -240,10 +240,6 @@
 				RelativePath="..\res\mainexe.ico"
 				>
 			</File>
-			<File
-				RelativePath="..\res\Ö÷³ÌÐò.ico"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
