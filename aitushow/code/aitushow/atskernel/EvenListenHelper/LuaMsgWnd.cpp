@@ -141,3 +141,48 @@ LRESULT LuaMsgWindow::OnCopyData(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam
 
 	return 0;
 }
+
+
+void LuaMsgWindow::SetKeyboardHook()
+{
+	if (NULL==m_hKeyboardHook)
+	{
+		m_hKeyboardHook = ::SetWindowsHookEx(WH_KEYBOARD, LuaMsgWindow::Instance()->KeyboardProc, NULL, GetCurrentThreadId()); 	
+	}
+	return ;
+}
+
+void LuaMsgWindow::DelKeyboardHook()
+{	
+	if (m_hKeyboardHook)
+	{
+		::UnhookWindowsHookEx(m_hKeyboardHook);	
+		m_hKeyboardHook = NULL;
+	}
+	return ;
+}
+
+LRESULT CALLBACK LuaMsgWindow::KeyboardProc(int code, WPARAM wParam, LPARAM lParam)
+{
+	if(HC_NOREMOVE == code)
+		return CallNextHookEx (LuaMsgWindow::Instance()->m_hKeyboardHook, code, wParam, lParam);
+	HWND hFocus = ::GetActiveWindow();
+
+	
+	CComVariant avarParams[5];
+	avarParams[1] = CComVariant((LONG)wParam);
+	avarParams[0] = CComVariant((LONG)(ULONG_PTR)hFocus);
+	TSDEBUG4CXX("VKey : "<<(const unsigned int)wParam);
+	CComVariant varResult;
+	DISPPARAMS params = { avarParams, NULL, 2, 0 };
+	if(lParam & 0x80000000) //µ¯Æð
+	{
+		LuaMsgWindow::Instance()->Fire_LuaEvent("OnKeyUp", &params);
+	}
+	else
+	{
+		LuaMsgWindow::Instance()->Fire_LuaEvent("OnKeyDown", &params);
+	}
+
+	return CallNextHookEx (LuaMsgWindow::Instance()->m_hKeyboardHook, code, wParam, lParam);
+}

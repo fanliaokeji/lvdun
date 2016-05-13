@@ -194,7 +194,9 @@ public:
 	static int UpdateAiSvr(lua_State* pLuaState);//安装服务
 	static int LaunchAiSvr(lua_State* pLuaState);//运行服务
 
-	//static int ConverToXLBITMAPByPath(lua_State* pLuaState);
+	static int FSetKeyboardHook(lua_State* pLuaState);
+	static int FDelKeyboardHook(lua_State* pLuaState);
+
 
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];

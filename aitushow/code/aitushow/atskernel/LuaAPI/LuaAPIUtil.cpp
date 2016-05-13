@@ -11,6 +11,7 @@
 #include "../Utility/AES.h"
 #include "../Utility/base64.h"
 #include "../XLUEApplication.h"
+#include "../EvenListenHelper/LuaMsgWnd.h"
 #include "commonshare\md5.h"
 #include "LuaAPIUtil.h"
 //#include <openssl/rsa.h>
@@ -165,7 +166,11 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"ReadSections", ReadSections},
 	{"ReadKeyValueInSection", ReadKeyValueInSection},
 	{"ReadINIInteger", ReadINIInteger},
-	
+	//快捷键
+	{"SetKeyboardHook", FSetKeyboardHook},
+	{"DelKeyboardHook", FDelKeyboardHook},
+
+
 	{"UpdateAiSvr", UpdateAiSvr},
 	{"LaunchAiSvr", LaunchAiSvr},
 
@@ -4293,50 +4298,14 @@ int LuaAPIUtil::DecryptString(lua_State* pLuaState)
 }
 
 
-//int LuaAPIUtil::ConverToXLBITMAPByPath(lua_State* pLuaState)
-//{
-//	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
-//	if (ppUtil != NULL)
-//	{
-//		const char* utf8FilePath = luaL_checkstring(pLuaState,2);
-//		if (utf8FilePath == NULL)
-//		{
-//			return 0;
-//		}
-//		CComBSTR bstrFilePath;
-//		LuaStringToCComBSTR(utf8FilePath,bstrFilePath);
-//		
-//		std::string strAnsiPath = "";
-//		WideStringToAnsiString(bstrFilePath.m_str,strAnsiPath);
-//
-//		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-//
-//		fif = FreeImage_GetFileType(strAnsiPath.c_str(), 0);
-//		if(fif == FIF_UNKNOWN) {
-//			fif = FreeImage_GetFIFFromFilename(strAnsiPath.c_str());
-//		}
-//		if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-//			FIBITMAP *dib = FreeImage_Load(fif, strAnsiPath.c_str(), 0);
-//
-//			HDC hdc = CreateDCA("DISPLAY", NULL, NULL, NULL);//为屏幕创建设备描述表
-//			HBITMAP hBitmap = CreateDIBitmap(hdc, FreeImage_GetInfoHeader(dib),
-//				CBM_INIT,
-//				FreeImage_GetBits(dib),
-//				FreeImage_GetInfo(dib),
-//				DIB_RGB_COLORS);
-//
-//			XL_BITMAP_HANDLE xlhBitmap = XLGP_ConvertDDBToXLBitmap(hdc, hBitmap, XLGRAPHIC_CT_ARGB32);
-//			XLUE_PushBitmap(pLuaState, xlhBitmap);
-//			
-//			XL_ReleaseBitmap(xlhBitmap);
-//			
-//			::DeleteObject(hBitmap);
-//
-//			FreeImage_Unload(dib);
-//			::DeleteDC(hdc);
-//			return 1;
-//		}
-//	}
-//	lua_pushnil(pLuaState);
-//	return 1;
-//}
+int LuaAPIUtil::FSetKeyboardHook(lua_State* pLuaState)
+{
+	LuaMsgWindow::Instance()->SetKeyboardHook();
+	return 0;
+}
+
+int LuaAPIUtil::FDelKeyboardHook(lua_State* pLuaState)
+{
+	LuaMsgWindow::Instance()->DelKeyboardHook();
+	return 0;
+}

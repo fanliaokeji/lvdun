@@ -51,10 +51,14 @@ private:
 	}
 private:
 	HANDLE m_hMutex;
- 
-
-private:
 
 public:
 	LRESULT OnCopyData(UINT , WPARAM , LPARAM , BOOL&);
+public:
+	void SetKeyboardHook(void);
+	void DelKeyboardHook(void);
+private:
+	static LRESULT CALLBACK  KeyboardProc(int code, WPARAM wParam, LPARAM lParam);
+public:
+	HHOOK m_hKeyboardHook;
 };
