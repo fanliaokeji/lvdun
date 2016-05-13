@@ -3,7 +3,7 @@
 //
 // Design and implementation by
 // - Floris van den Berg (flvdberg@wxs.nl)
-// - Hervé Drolon (drolon@infonie.fr)
+// - Herv?Drolon (drolon@infonie.fr)
 //
 // Contributors:
 // - see changes log named 'Whatsnew.txt', see header of each .h and .cpp file
@@ -25,7 +25,7 @@
 
 #ifndef FREEIMAGE_H
 #define FREEIMAGE_H
-
+#pragma warning (disable:4819)
 // Version information ------------------------------------------------------
 
 #define FREEIMAGE_MAJOR_VERSION   3
