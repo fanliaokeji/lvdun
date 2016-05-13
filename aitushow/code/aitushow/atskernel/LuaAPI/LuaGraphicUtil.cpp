@@ -307,7 +307,10 @@ int LuaGraphicUtil::GetDirSupportImgPaths(lua_State* pLuaState)
 
 					//文件大小
 					lua_pushstring(pLuaState, "uFileSize");
-					lua_pushnumber(pLuaState, (fd.nFileSizeHigh * (MAXDWORD+1)) + fd.nFileSizeLow);
+					DWORDLONG dwHighBase = MAXDWORD;  
+					dwHighBase += 1;
+					DWORDLONG i64FileSize = (fd.nFileSizeHigh * dwHighBase) + fd.nFileSizeLow;
+					lua_pushnumber(pLuaState, (lua_Number)i64FileSize);
 					lua_settable(pLuaState, -3);
 
 					lua_rawseti(pLuaState, -2, i + 1);
