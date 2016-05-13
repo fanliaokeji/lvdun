@@ -353,6 +353,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Utility\NotifyIconMsg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility\NotifyIconMsg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Utility\PeeIdHelper.h"
 				>
 			</File>
@@ -394,6 +402,14 @@
 			</File>
 			<File
 				RelativePath=".\LuaAPI\LuaGraphicUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaAPI\LuaNotifyIcon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaAPI\LuaNotifyIcon.h"
 				>
 			</File>
 		</Filter>

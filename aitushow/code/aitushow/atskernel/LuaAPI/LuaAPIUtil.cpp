@@ -14,11 +14,7 @@
 #include "../EvenListenHelper/LuaMsgWnd.h"
 #include "commonshare\md5.h"
 #include "LuaAPIUtil.h"
-//#include <openssl/rsa.h>
-//#include <openssl/aes.h>
-//#include <openssl/evp.h>
-//#pragma comment(lib,"libeay32.lib")
-//#pragma comment(lib,"ssleay32.lib")
+#include "LuaNotifyIcon.h")
 #include <MsHtmcid.h>
 
 #include <mshtml.h> 
@@ -212,6 +208,7 @@ int LuaAPIUtil::Exit(lua_State* pLuaState)
 	{
 		return 0;
 	}
+	gsNotifyIcon.Hide();
 	theApp.ExitInstance();
 	return 0;
 }

@@ -3,6 +3,7 @@
 #include "LuaAPI/LuaAPIUtil.h"
 #include "LuaAPI/LuaAsynAPIUtil.h"
 #include "LuaAPI/LuaGraphicUtil.h"
+#include "LuaAPI/LuaNotifyIcon.h"
 #include "EvenListenHelper/LuaListenPre.h"
 #include "EvenListenHelper/LuaPrefactory.h"
 CRegisterLuaAPI::CRegisterLuaAPI()
@@ -27,6 +28,7 @@ BOOL CRegisterLuaAPI::Init(LPCTSTR lpCmdLine, LPVOID lpHookObj)
 	LuaAPIUtil::RegisterObj(hEnv);
 	LuaAsynUtil::RegisterSelf(hEnv);
 	LuaGraphicUtil::RegisterObj(hEnv);
+	LuaNotifyIcon::RegisterSelf(hEnv);
 
 	LuaListenPreFactory::RegisterObj(hEnv);
 	LuaListenPre::RegisterClass(hEnv);
