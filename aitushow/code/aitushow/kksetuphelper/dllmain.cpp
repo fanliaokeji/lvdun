@@ -11,7 +11,7 @@
 #include <tlhelp32.h>
 #include <atlstr.h>
 #include "..\atskernel\Utility\PeeIdHelper.h"
-HINSTANCE gInstance = NULL;
+#include "..\atskernel\Utility\FileAssociation.h"
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -354,7 +354,7 @@ extern "C" __declspec(dllexport) void DownLoadLvDunAndInstall()
 	return;
 }
 
-extern "C" __declspec(dllexport) void Send2DidaAnyHttpStat(CHAR *op, CHAR *cid, CHAR *ver)
+extern "C" __declspec(dllexport) void Send2KKAnyHttpStat(CHAR *op, CHAR *cid, CHAR *ver)
 {
 	if (op == NULL || cid == NULL)
 	{
@@ -571,4 +571,11 @@ bool IsVistaOrLatter()
 		}
 	}
 	return (osvi.dwMajorVersion >= 6);
+}
+
+extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL bDo)
+{
+	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
+	FileAssociation::Instance()->AssociateAll(szFileExtsW, bDo, TRUE);
+	FileAssociation::Instance()->Update();
 }

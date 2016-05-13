@@ -10,6 +10,8 @@
 #include "../Utility/PeeIdHelper.h"
 #include "../Utility/AES.h"
 #include "../Utility/base64.h"
+#include "../Utility/FileAssociation.h"
+#include <comdef.h>
 #include "../XLUEApplication.h"
 #include "../EvenListenHelper/LuaMsgWnd.h"
 #include "commonshare\md5.h"
@@ -165,6 +167,9 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//快捷键
 	{"SetKeyboardHook", FSetKeyboardHook},
 	{"DelKeyboardHook", FDelKeyboardHook},
+	//文件关联
+	{"IsAssociated", IsAssociated},
+	{"SetAssociate", SetAssociate},
 
 
 	{"UpdateAiSvr", UpdateAiSvr},
@@ -4294,6 +4299,45 @@ int LuaAPIUtil::DecryptString(lua_State* pLuaState)
 	return 1;
 }
 
+int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* pszData = lua_tostring(pLuaState, 2);
+		WCHAR* pszDataW = _bstr_t(pszData);
+		int bRetlua; 
+		if(_tcsicmp(pszDataW, L"") == 0){
+			bRetlua = 0;
+		}
+		else{
+			UINT flag = FileAssociation::Instance()->Associated(pszDataW);
+			bRetlua = (int)(flag&AssociateType::ProgID != 0);
+		}
+		lua_pushboolean(pLuaState, (int )bRetlua);
+	}
+	return 0;
+}
+
+int LuaAPIUtil::SetAssociate(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* pszData = lua_tostring(pLuaState, 2);
+		BOOL bDo = lua_toboolean(pLuaState, 3);
+		BOOL bNoUpdate = lua_toboolean(pLuaState, 4);
+		BOOL bIsAdmin = lua_toboolean(pLuaState, 5);
+		WCHAR* pszDataW = _bstr_t(pszData);
+		if(_tcsicmp(pszDataW, L"") != 0){
+			FileAssociation::Instance()->AssociateAll(pszDataW, bDo, bIsAdmin);
+			if (!bNoUpdate){
+				FileAssociation::Instance()->Update();
+			}
+		}
+	}
+	return 0;
+}
 
 int LuaAPIUtil::FSetKeyboardHook(lua_State* pLuaState)
 {
