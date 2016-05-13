@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aitushow", "aitushow\aitush
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "atskernel", "atskernel\atskernel.vcproj", "{E8F9CEBD-08DD-4CAD-AE68-1C6F1660166F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kksetuphelper", "kksetuphelper\kksetuphelper.vcproj", "{1D5DCBEF-CD34-404E-AEF8-992E4CF85647}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{E8F9CEBD-08DD-4CAD-AE68-1C6F1660166F}.Debug|Win32.Build.0 = Debug|Win32
 		{E8F9CEBD-08DD-4CAD-AE68-1C6F1660166F}.Release|Win32.ActiveCfg = Release|Win32
 		{E8F9CEBD-08DD-4CAD-AE68-1C6F1660166F}.Release|Win32.Build.0 = Release|Win32
+		{1D5DCBEF-CD34-404E-AEF8-992E4CF85647}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1D5DCBEF-CD34-404E-AEF8-992E4CF85647}.Debug|Win32.Build.0 = Debug|Win32
+		{1D5DCBEF-CD34-404E-AEF8-992E4CF85647}.Release|Win32.ActiveCfg = Release|Win32
+		{1D5DCBEF-CD34-404E-AEF8-992E4CF85647}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
