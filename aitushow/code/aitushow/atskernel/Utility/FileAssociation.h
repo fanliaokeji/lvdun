@@ -54,6 +54,7 @@ class FileAssociation{
 		UINT Associated(const std::wstring strFileExt);
 		void SetAssociate(std::wstring strFileExt, BOOL bAssociate = TRUE, BOOL bHasAdmin = FALSE);
 		void AssociateAll(std::wstring strFileExts, BOOL bAssociate = TRUE, BOOL bHasAdmin = FALSE);
+		void CreateImgKeyALL(std::wstring strFileExts);
 		void Update(){SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST , 0, 0);};
 	private:
 		FileAssociation(){};
@@ -367,6 +368,29 @@ void FileAssociation::AssociateAll(std::wstring strFileExts, BOOL bAssociate, BO
 			wsAssFirst = strFileExts;
 		}
 		SetAssociate(wsAssFirst, bAssociate, bHasAdmin);
+	} while (strFileExts.npos != stCutline);
+}
+
+void FileAssociation::CreateImgKeyALL(std::wstring strFileExts){
+	if (strFileExts.length() < 2){
+		return;
+	}
+	size_t stEnd = strFileExts.find_last_of(L";");
+	if (strFileExts.length() - 1 == stEnd){
+		strFileExts = strFileExts.substr(0, stEnd);
+	}
+	size_t stCutline = strFileExts.npos;
+	do{
+		stCutline = strFileExts.find_first_of(L";");
+		std::wstring wsAssFirst(L"");
+		if (strFileExts.npos != stCutline){
+			wsAssFirst = strFileExts.substr(0, stCutline);
+			strFileExts = strFileExts.substr(stCutline + 1);
+		}
+		else{
+			wsAssFirst = strFileExts;
+		}
+		CreateImgKey(wsAssFirst);
 	} while (strFileExts.npos != stCutline);
 }
 

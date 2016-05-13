@@ -578,4 +578,12 @@ extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL 
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
 	FileAssociation::Instance()->AssociateAll(szFileExtsW, bDo, TRUE);
 	FileAssociation::Instance()->Update();
+	delete [] szFileExtsW;
+}
+
+extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts)
+{
+	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
+	FileAssociation::Instance()->CreateImgKeyALL(szFileExtsW);
+	delete [] szFileExtsW;
 }
