@@ -1,5 +1,5 @@
 <xlue>
-	<objtreetemplate id="FrameWndTree" class="ObjectTreeTemplate">
+	<objtreetemplate id="ImageWndTree" class="ObjectTreeTemplate">
 		<attr>
 			<left>0</left>
 			<top>0</top>
@@ -43,7 +43,7 @@
 						<DisableBkgID>bitmap.fullscreen.close.normal</DisableBkgID>
 					</attr>
 					<eventlist>
-						<event name="OnClick" file="FrameWnd.xml.lua" func="OnClickCloseBtnWhileFullScreen" />
+						<event name="OnClick" file="ImageWnd.xml.lua" func="OnClickCloseBtnWhileFullScreen" />
 					</eventlist>	
 				</obj>
 				<obj id="FrameWnd.ResizeFrameWndCtrl" class="ResizeFrameWndCtrl">
@@ -76,7 +76,7 @@
 		</obj>
 	</objtreetemplate>
 
-    <hostwndtemplate id="FrameWnd" class="FrameHostWnd">
+    <hostwndtemplate id="ImageWnd" class="FrameHostWnd">
         <attr>
             <layered>1</layered>
             <left>0</left>
@@ -95,8 +95,8 @@
 			<appwindow>1</appwindow>
         </attr>
 		 <eventlist>
-            <event name="OnCreate" file="FrameWnd.xml.lua" func="OnCreate"/>
-            <event name="OnShowWindow" file="FrameWnd.xml.lua" func="OnShowWindow"/>
+            <event name="OnCreate" file="ImageWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="ImageWnd.xml.lua" func="OnShowWindow"/>
 			<event name="OnSize" >
 				local self,_type,width,height = ...
 				local objtree = self:GetBindUIObjectTree()

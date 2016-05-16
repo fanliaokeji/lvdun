@@ -1,0 +1,110 @@
+<xlue>
+	<objtreetemplate id="MainWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>875</width>
+			<height>515</height>
+		</attr>
+		<obj id="root" class="FillObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>875</width>
+				<height>515</height>
+				<filltype>Monochrome</filltype>
+				<srccolor>61,37,31,255</srccolor>
+				<destcolor>61,37,31,255</destcolor>
+			</attr>	
+			<children>
+				<obj id="MainWnd.ResizeFrameWndCtrl" class="ResizeFrameWndCtrl">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+				<!--全屏模式的按钮位于TitleCtrl，故进入全屏在TitleCtrl里处理-->
+				<obj id="MainWnd.TitleCtrl" class="TitleCtrlEx">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>30</height>
+					</attr>
+				</obj>
+				<obj id="MainWnd.LeftTreeContainer" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>30</top>
+						<width>195</width>
+						<height>father.height - 30 - 30</height>
+						<limitchild>1</limitchild>
+					</attr>
+				</obj>
+				<obj id="MainWnd.ResizeLine" class="LayoutObject">
+					<attr>
+						<left>196</left>
+						<top>30</top>
+						<width>2</width>
+						<height>father.height - 30 - 30</height>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonDown" file="MainWnd.xml.lua" func="OnLButtonDown_ResizeLine"/>
+						<event name="OnMouseMove" file="MainWnd.xml.lua" func="OnMouseMove_ResizeLine"/>
+						<event name="OnLButtonUp" file="MainWnd.xml.lua" func="OnLButtonUp_ResizeLine"/>
+					</eventlist>
+				</obj>
+				<obj id="MainWnd.ThumbnailContainer" class="LayoutObject">
+					<attr>
+						<left>195</left>
+						<top>30</top>
+						<width>father.width - 195</width>
+						<height>father.height - 30 - 30</height>
+						<limitchild>1</limitchild>
+					</attr>
+				</obj>
+				<obj id="MainWnd.BottomCtrl" class="BottomCtrl">
+					<attr>
+						<left>0</left>
+						<top>father.height - 30</top>
+						<width>father.width</width>
+						<height>30</height>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="MainWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>875</width>
+            <height>515</height>
+            
+            <topmost>0</topmost>
+            <visible>1</visible>
+            <enable>1</enable>
+            <maxbox>1</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>1</sysmenu>
+			<appwindow>1</appwindow>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="MainWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="MainWnd.xml.lua" func="OnShowWindow"/>
+			<event name="OnSize" >
+				local self,_type,width,height = ...
+				local objtree = self:GetBindUIObjectTree()
+				local root = objtree:GetRootObject()
+				root:SetObjPos(0,0,width,height)
+			</event>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>
