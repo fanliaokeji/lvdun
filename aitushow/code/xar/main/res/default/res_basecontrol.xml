@@ -1,9 +1,9 @@
 <!--为方便basecontrol移植，把里面用到的图片id、字体id、颜色id 统统放到这一个文件里，图片资源放到bitmap/basecontrol文件夹-->
 <XLUE>
 	<resource>
-		<!--图片id-->
-		<texture id="texture.menu.container.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.container.bkg.png" />
+		<!--                图片id             -->
 		
+		<!--滚动条-->
 		<imagelist id="imagelist.texture.scrollbarh.bottomarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.scrollbarh.bottomarrow.png"/>
 			<texture id="texture.scrollbarh.bottomarrow.normal"  imagelist="imagelist.texture.scrollbarh.bottomarrow" index="1" />
 			<texture id="texture.scrollbarh.bottomarrow.hover"   imagelist="imagelist.texture.scrollbarh.bottomarrow" index="2" />
@@ -23,14 +23,47 @@
 			<texture id="texture.scrollbarh.silder.disable" type="ThreeInOneV" imagelist="imagelist.texture.scrollbarh.silder" index="3" />
 		
 		<texture id="texture.scrollbarh.silderbkg" type="ThreeInOneV" image="bitmap\basecontrol\texture.scrollbarh.silderbkg.png" />
+		<!--滚动条-->
+		
+		<!--地址栏-->
+		<imagelist id="imagelist.texture.uparrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.uparrow.png"/>
+			<texture id="texture.addressedit.uparrow.normal"  imagelist="imagelist.texture.uparrow" index="1" />
+			<texture id="texture.addressedit.uparrow.hover"   imagelist="imagelist.texture.uparrow" index="2" />
+			<texture id="texture.addressedit.uparrow.down"    imagelist="imagelist.texture.uparrow" index="3" />
+			<texture id="texture.addressedit.uparrow.disable" imagelist="imagelist.texture.uparrow" index="4" />
+
+		<imagelist id="imagelist.texture.leftarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.leftarrow.png"/>
+			<texture id="texture.addressedit.leftarrow.normal"   imagelist="imagelist.texture.leftarrow" index="1" />
+			<texture id="texture.addressedit.leftarrow.hover"    imagelist="imagelist.texture.leftarrow" index="2" />
+			<texture id="texture.addressedit.leftarrow.down"     imagelist="imagelist.texture.leftarrow" index="3" />
+			<texture id="texture.addressedit.leftarrow.disable"  imagelist="imagelist.texture.leftarrow" index="4" />
+		
+		<imagelist id="imagelist.texture.rightarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.rightarrow.png"/>
+			<texture id="texture.addressedit.rightarrow.normal"   imagelist="imagelist.texture.rightarrow" index="1" />
+			<texture id="texture.addressedit.rightarrow.hover"    imagelist="imagelist.texture.rightarrow" index="2" />
+			<texture id="texture.addressedit.rightarrow.down"     imagelist="imagelist.texture.rightarrow" index="3" />
+			<texture id="texture.addressedit.rightarrow.disable"  imagelist="imagelist.texture.rightarrow" index="4" />
+		
+		<imagelist id="imagelist.bitmap.addressedit.icon" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.bitmap.addressedit.icon.png"/>
+			<bitmap id="bitmap.addressedit.icon.normal"   imagelist="imagelist.bitmap.addressedit.icon" index="1" />
+			<bitmap id="bitmap.addressedit.icon.disable"  imagelist="imagelist.bitmap.addressedit.icon" index="2" />
+		
+		<texture id="texture.addressedit.bkg" type="ThreeInOneH" image="bitmap\basecontrol\imagelist.bitmap.addressedit.bkg.png" />
+		<imagelist id="imagelist.texture.addressedit.arrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.addressedit.arrow.png"/>
+			<texture id="texture.addressedit.arrow"  imagelist="imagelist.texture.addressedit.arrow" index="2" />
+		
+		<!--地址栏-->
+		
+		<!--菜单-->
+		<texture id="texture.menu.container.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.container.bkg.png" />
 		
 		<imagelist id="imagelist.menu.item.bkg" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.menu.item.bkg.png"/>
 			<texture id="texture.menu.item.bkg" type="ThreeInOneH" imagelist="imagelist.menu.item.bkg" index="2" />
-		
+
 		<imagelist id="imagelist.menu.icon.del" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.menu.icon.del.png"/>
 			<bitmap id="bitmap.menu.icon.del.normal"  imagelist="imagelist.menu.icon.del" index="1" />
 			<bitmap id="bitmap.menu.icon.del.disable"  imagelist="imagelist.menu.icon.del" index="2" />
-		
+			
 		<imagelist id="imagelist.menu.icon.play" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.menu.icon.play.png"/>
 			<bitmap id="bitmap.menu.icon.play.normal"  imagelist="imagelist.menu.icon.play" index="1" />
 			<bitmap id="bitmap.menu.icon.play.disable"  imagelist="imagelist.menu.icon.play" index="2" />
@@ -43,6 +76,7 @@
 		<bitmap id="bitmap.menu.arrow.normal"  path="bitmap\basecontrol\bitmap.menu.submenu.arrow.png" />
 		
 		<texture id="texture.menu.splitter" type="ThreeInOneH" image="bitmap\basecontrol\texture.menu.splitter.png" />
+		<!--菜单-->
 		
 		<!--字体id-->
 		<font id="basecontrol.defaultfont.8" height="8" facename="defaultfont" /> 
