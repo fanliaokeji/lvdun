@@ -81,7 +81,7 @@
 				</obj>
 			</children>
 			<eventlist>
-				<event name="OnLButtonDown" file="Button.xml.lua" func="OnLButtonDown" />
+				<event name="OnLButtonDown" file="ScrollBarV.xml.lua" func="OnLButtonDown" />
 			</eventlist>
 		</objtemplate>
 	</control>
