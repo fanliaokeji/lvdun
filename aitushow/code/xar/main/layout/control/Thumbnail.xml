@@ -1,0 +1,82 @@
+<xlue><!--缩略图控件-->
+	<control class="Thumbnail">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<!--设置缩略图信息，包括缩略图句柄、原图路径、原图格式、原图大小等-->
+			<SetData />
+			<!--设置是否被选中-->
+			<Select />	
+		</method_def>
+		<event_def>
+			<OnPreSelect><!--点击缩略图控件时，发OnPreSelect，由缩略图Container决定是否Select(为了多选)-->
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnPreSelect>
+		</event_def>
+		<objtemplate>
+			<children>
+				<!-- 边框 -->
+				<obj id="Background" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="SourcePicExt" class="FillObject">
+							<attr>
+								<left>father.width - 29</left>
+								<top>0</top>
+								<width>29</width>
+								<height>15</height>
+								<srccolor>73,165,230,255</srccolor>
+								<destcolor>73,165,230,255</destcolor>
+							</attr>
+							<children>
+								<obj id="ExtText" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<font>basecontrol.defaultfont.8</font>
+										<color>basecontrol.white</color>
+										<halign>center</halign>
+										<valign>center</valign>	
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="Image" class="ImageObject">
+							<attr>
+								<left>2</left>
+								<top>2</top>
+								<width>father.width - 4</width>
+								<height>father.height - 4 - 2 - 15</height>
+							</attr>
+						</obj>
+						<obj id="FileName" class="TextObject">
+							<attr>
+								<left>2</left>
+								<top>father.height - 15</top>
+								<width>father.width - 4</width>
+								<height>15</height>
+								<font>basecontrol.defaultfont.12</font>
+								<color>basecontrol.white</color>
+								<halign>center</halign>
+								<valign>top</valign>
+							</attr>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnLButtonUp" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

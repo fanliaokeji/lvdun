@@ -1,0 +1,42 @@
+<xlue>	
+	<control class="MenuItemContainer">
+		<attr_def>
+			<attr name="BkgTexture" type="string" desc="菜单的背景，如有阴影，请指定item的四个offset值" >
+				<default>texture.menu.container.bkg</default>
+			</attr>
+			<attr name="LeftOffSet" type="int" desc="item的Left距离container的Left的偏移,为阴影留的" >
+				<default>0</default>
+			</attr>
+			<attr name="RightOffSet" type="int" desc="item的Right距离container的Right的偏移" >
+				<default>0</default>
+			</attr>
+			<attr name="TopOffSet" type="int" desc="item的Top距离container的Top的偏移" >
+				<default>0</default>
+			</attr>
+			<attr name="BottomOffSet" type="int" desc="item的Bottom距离container的Bottom的偏移" >
+				<default>0</default>
+			</attr>
+		</attr_def>
+		<method_def>
+			<AddItem/>
+		</method_def>
+
+		<objtemplate>
+			<children>
+				<obj id="container.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>1</width>
+						<height>1</height>
+					</attr>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl"/>
+				<event name="OnKeyDown"/>
+			</eventlist>
+		</objtemplate>	
+	</control>
+
+</xlue>

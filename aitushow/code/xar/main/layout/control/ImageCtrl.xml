@@ -1,0 +1,109 @@
+<xlue>
+	<control class="ImageCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetImagePath file="ImageCtrl.xml.lua" func="SetImagePath"/>
+			<SetFolder file="ImageCtrl.xml.lua" func="SetFolder"/>
+			<!--使用百分比对图片进行缩放，精确到1%-->
+			<Zoom file="ImageCtrl.xml.lua" func="Zoom"/>
+			<!--获取图片当前相较于原始尺寸的缩放比例，精确到1%-->
+			<GetZoomPercent file="ImageCtrl.xml.lua" func="GetZoomPercent"/>
+			<!--获取当前显示在窗口内的的图片区域，以图片左上角为(0,0)坐标-->
+			<GetShowRect file="ImageCtrl.xml.lua" func="GetShowRect"/>
+		</method_def>
+		<event_def>
+			<OnSwitchImage>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnSwitchImage>
+			<OnImageSizeChange>
+				<param>
+					<int /><!--当前显示宽度-->
+					<int /><!--当前显示高度-->
+					<int /><!--原图片宽度-->
+					<int /><!--原图片高度-->
+				</param>
+			</OnImageSizeChange>
+		</event_def>
+    <objtemplate>
+	<children>
+		<!-- 边框 -->
+		<obj id="Background" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+			</attr>
+			<children>
+				<obj id="LeftArrow" class="TipAddin.Button">
+					<attr>
+						<left>25</left>
+						<top>father.height/2 - 64</top>
+						<width>64</width>
+						<height>64</height>
+						<zorder>9999</zorder>
+						<NormalBkgID>imagelist.mainwnd.button.leftarrow.normal</NormalBkgID>
+						<DownBkgID>imagelist.mainwnd.button.leftarrow.down</DownBkgID>
+						<HoverBkgID>imagelist.mainwnd.button.leftarrow.hover</HoverBkgID>
+						<DisableBkgID>imagelist.mainwnd.button.leftarrow.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="ImageCtrl.xml.lua" func="OnClickLeftArrow" />
+					</eventlist>
+				</obj>
+				<obj id="ImageContainer" class="LayoutObject">
+					<attr>
+						<left>1</left>
+						<top>1</top>
+						<width>father.width-2</width>
+						<height>father.height-2</height>
+					</attr>
+					<children>
+						<obj id="Image" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+							<eventlist>
+							
+								<event name="OnLButtonDown" file="ImageCtrl.xml.lua" func="OnImageLButtonDown" />
+								<event name="OnLButtonUp"   file="ImageCtrl.xml.lua" func="OnImageLButtonUp" />
+								<event name="OnMouseMove" file="ImageCtrl.xml.lua" func="OnImageMouseMove" />
+								<event name="OnCaptureChange" file="ImageCtrl.xml.lua" func="OnImageCaptureChange" />
+								<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />
+								<event name="OnRButtonUp" file="ImageCtrl.xml.lua" func="OnImageRButtonUp" />
+							</eventlist>
+						</obj>
+						
+					</children>
+				</obj>
+				<obj id="RightArrow" class="TipAddin.Button">
+					<attr>
+						<left>father.width - 64 - 25</left>
+						<top>father.height/2 - 64</top>
+						<width>64</width>
+						<height>64</height>
+						<zorder>9999</zorder>
+						<NormalBkgID>imagelist.mainwnd.button.rightarrow.normal</NormalBkgID>
+						<DownBkgID>imagelist.mainwnd.button.rightarrow.down</DownBkgID>
+						<HoverBkgID>imagelist.mainwnd.button.rightarrow.hover</HoverBkgID>
+						<DisableBkgID>imagelist.mainwnd.button.rightarrow.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						
+					</eventlist>
+				</obj>
+			</children>
+		</obj>
+	</children>
+	<eventlist>
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>

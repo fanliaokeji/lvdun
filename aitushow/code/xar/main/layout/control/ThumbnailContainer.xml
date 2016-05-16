@@ -1,0 +1,67 @@
+<xlue><!--缩略图控件-->
+	<control class="ThumbnailContainer">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetFolder file="ThumbnailContainer.xml.lua" func="SetFolder"/>
+			<!--使用百分比对缩略图进行缩放，精确到1%-->
+			<Zoom file="ThumbnailContainer.xml.lua" func="Zoom"/>
+			<!--获取缩略图当前的缩放比例，最大缩略图264*320，精确到1%-->
+			<GetZoomPercent file="ThumbnailContainer.xml.lua" func="GetZoomPercent"/>
+			<!--获取缩略图当前选中的缩略图ID，应支持多选-->
+			<GetSelectedThumbnailCtrlID file="ThumbnailContainer.xml.lua" func="GetSelectedThumbnailCtrlID"/>
+			<!--刷新当前目录的显示，以便响应该目录的增、删-->
+			<Refresh file="ThumbnailContainer.xml.lua" func="Refresh"/>
+			
+		</method_def>
+		<event_def>
+			<OnSwitchImage>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnSwitchImage>
+			<OnImageSizeChange>
+				<param>
+					<int /><!--当前显示宽度-->
+					<int /><!--当前显示高度-->
+					<int /><!--原图片宽度-->
+					<int /><!--原图片高度-->
+				</param>
+			</OnImageSizeChange>
+		</event_def>
+    <objtemplate>
+	<children>
+		<!-- 边框 -->
+		<obj id="Background" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+			</attr>
+			<children>
+				<obj id="Container" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width - 10</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+				<obj id="Container.ScrollBar" class="ScrollBarH">
+					<attr>
+						<left>father.width - 10</left>
+						<top>0</top>
+						<width>10</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</children>
+	<eventlist>
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>

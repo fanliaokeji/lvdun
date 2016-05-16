@@ -1,0 +1,88 @@
+<xlue><!-- 垂直滚动条 -->
+	<control class="ScrollBarV">
+		<attr_def>
+			<attr name="NormalBkgID" type="string" />
+		</attr_def>
+		<method_def>
+			<!-- 设置滚动范围 -->
+			<SetScrollRange />
+			<!-- 设置显示区域的大小，结合ScrollRange计算滑块大小，并自己管理是否需要显示滚动条-->
+			<SetPageSize />
+		</method_def>
+		<event_def>
+			<OnScroll>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnScroll>
+		</event_def>
+		<objtemplate>
+			<children>
+				<!-- 背景 -->
+				<obj id="Background" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="TopArrow" class="TipAddin.Button">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>10</width>
+								<height>10</height>
+								<NormalBkgID>texture.scrollbarh.toparrow.normal</NormalBkgID>
+								<DownBkgID>texture.scrollbarh.toparrow.hover</DownBkgID>
+								<HoverBkgID>texture.scrollbarh.toparrow.hover</HoverBkgID>
+								<DisableBkgID>texture.scrollbarh.toparrow.normal</DisableBkgID>
+							</attr>
+						</obj>
+						<obj id="SliderAreaBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>10</top>
+								<width>father.width</width>
+								<height>father.height - 20</height>
+								<texture>texture.scrollbarh.silderbkg</texture>
+							</attr>
+							<children>
+								<obj id="Slider" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>10</top>
+										<width>father.width</width>
+										<height>20</height>
+										<!--
+										<NormalBkgID>texture.scrollbarh.silder.normal</NormalBkgID>
+										<DownBkgID>texture.scrollbarh.silder.hover</DownBkgID>
+										<HoverBkgID>texture.scrollbarh.silder.hover</HoverBkgID>
+										<DisableBkgID>texture.scrollbarh.silder.normal</DisableBkgID>
+										-->
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="BottomArrow" class="TipAddin.Button">
+							<attr>
+								<left>0</left>
+								<top>father.height - 10</top>
+								<width>10</width>
+								<height>10</height>
+								<NormalBkgID>texture.scrollbarh.bottomarrow.normal</NormalBkgID>
+								<DownBkgID>texture.scrollbarh.bottomarrow.hover</DownBkgID>
+								<HoverBkgID>texture.scrollbarh.bottomarrow.hover</HoverBkgID>
+								<DisableBkgID>texture.scrollbarh.bottomarrow.normal</DisableBkgID>
+							</attr>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnLButtonDown" file="Button.xml.lua" func="OnLButtonDown" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

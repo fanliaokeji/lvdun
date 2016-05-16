@@ -1,0 +1,34 @@
+<xlue>
+	<!--菜单的大背景(包括外缘阴影、圆角等), 来自于MenuItemContainer, 阴影尺寸取决于item个数以及item宽高-->
+	<objtemplate id="menu.common.container.template" class="MenuItemContainer" >
+		<attr>
+			<BkgTexture>texture.menu.container.bkg</BkgTexture>
+			<!--以下四个值要根据阴影图片的情况来设定-->
+			<LeftOffSet>1</LeftOffSet>
+			<RightOffSet>1	</RightOffSet>
+			<TopOffSet>1</TopOffSet>
+			<BottomOffSet>1</BottomOffSet>
+		</attr>
+	</objtemplate>
+	
+	<!--Template定义item共有的特征(例如字体、背景)-->
+	<objtemplate id="menu.common.item.template" class="MenuItem" >
+		<attr>
+			<Height>28</Height>
+			<Width>150</Width>
+			<TextFont>basecontrol.defaultfont.12</TextFont>
+			<NormalTextColor>basecontrol.white</NormalTextColor>
+			<DisableTextColor>basecontrol.gray</DisableTextColor>
+			<HoverBkgID>texture.menu.item.bkg</HoverBkgID>
+			<SubMenuArrowNormalBkgID>bitmap.menu.arrow.normal</SubMenuArrowNormalBkgID>
+			<SubMenuArrowDisableBkgID>bitmap.menu.arrow.disable</SubMenuArrowDisableBkgID>
+			
+			<!--以下属性，仅当item被指定为分割线的时候才会被用到，在menuTable里通过bSplitter属性设置一个item为分割线-->
+			<SplitterBkgID>texture.menu.splitter</SplitterBkgID>
+			<SplitterWidth>150</SplitterWidth>
+			<SplitterHeight>1</SplitterHeight>
+		</attr>
+	</objtemplate>
+
+
+</xlue>

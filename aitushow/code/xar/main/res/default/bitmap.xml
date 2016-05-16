@@ -1,0 +1,65 @@
+<XLUE>
+	<resource>
+		<texture id="MainWnd.bkg" image="bitmap\texture.framewnd.bkg.png" />
+		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
+		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
+		<texture id="GreenWall.BtnClose.Down"   image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
+		<texture id="GreenWall.BtnClose.Disable" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
+		
+		<texture id="texture.titlebar.bkg" type="ThreeInOneH" image="bitmap\texture.titlebar.bkg.png" />
+		<bitmap id="image.logo"  path="bitmap\bitmap.logo.png" />
+		
+		<imagelist id="imagelist.bitmap.fullscreen.close" splitter="1" blocksize="46" image="bitmap\imagelist.bitmap.fullscreen.close.png"/>
+			<texture id="bitmap.fullscreen.close.normal" imagelist="imagelist.bitmap.fullscreen.close" index="1" />
+			<texture id="bitmap.fullscreen.close.hover"  imagelist="imagelist.bitmap.fullscreen.close" index="2" />
+			
+		<imagelist id="imagelist.bitmap.title.close" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.close.png"/>
+			<texture id="bitmap.title.close.normal"   imagelist="imagelist.bitmap.title.close" index="1" />
+			<texture id="bitmap.title.close.hover"  imagelist="imagelist.bitmap.title.close" index="2" />
+			<texture id="bitmap.title.close.down"  imagelist="imagelist.bitmap.title.close" index="3" />
+			<texture id="bitmap.title.close.disable"  imagelist="imagelist.bitmap.title.close" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.max" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.max.png"/>
+			<texture id="bitmap.title.max.normal"   imagelist="imagelist.bitmap.title.max" index="1" />
+			<texture id="bitmap.title.max.hover"    imagelist="imagelist.bitmap.title.max" index="2" />
+			<texture id="bitmap.title.max.down"     imagelist="imagelist.bitmap.title.max" index="3" />
+			<texture id="bitmap.title.max.disable"  imagelist="imagelist.bitmap.title.max" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.min" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.min.png"/>
+			<texture id="bitmap.title.min.normal"   imagelist="imagelist.bitmap.title.min" index="1" />
+			<texture id="bitmap.title.min.hover"    imagelist="imagelist.bitmap.title.min" index="2" />
+			<texture id="bitmap.title.min.down"     imagelist="imagelist.bitmap.title.min" index="3" />
+			<texture id="bitmap.title.min.disable"  imagelist="imagelist.bitmap.title.min" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.restore" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.restore.png"/>
+			<texture id="bitmap.title.restore.normal"   imagelist="imagelist.bitmap.title.restore" index="1" />
+			<texture id="bitmap.title.restore.hover"    imagelist="imagelist.bitmap.title.restore" index="2" />
+			<texture id="bitmap.title.restore.down"     imagelist="imagelist.bitmap.title.restore" index="3" />
+			<texture id="bitmap.title.restore.disable"  imagelist="imagelist.bitmap.title.restore" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.setting" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.setting.png"/>
+			<texture id="bitmap.title.setting.normal"   imagelist="imagelist.bitmap.title.setting" index="1" />
+			<texture id="bitmap.title.setting.hover"    imagelist="imagelist.bitmap.title.setting" index="2" />
+			<texture id="bitmap.title.setting.down"     imagelist="imagelist.bitmap.title.setting" index="3" />
+			<texture id="bitmap.title.setting.disable"  imagelist="imagelist.bitmap.title.setting" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.fullscreen" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.fullscreen.png"/>
+			<texture id="bitmap.title.fullscreen.normal"   imagelist="imagelist.bitmap.title.fullscreen" index="1" />
+			<texture id="bitmap.title.fullscreen.hover"    imagelist="imagelist.bitmap.title.fullscreen" index="2" />
+			<texture id="bitmap.title.fullscreen.down"     imagelist="imagelist.bitmap.title.fullscreen" index="3" />
+			<texture id="bitmap.title.fullscreen.disable"  imagelist="imagelist.bitmap.title.fullscreen" index="3" />
+			
+		<imagelist id="imagelist.mainwnd.button.leftarrow" blocksize="64" splitter="1" image="bitmap\texture.left.arrow.png"/>
+			<texture id="imagelist.mainwnd.button.leftarrow.normal"  imagelist="imagelist.mainwnd.button.leftarrow" index="1" />
+			<texture id="imagelist.mainwnd.button.leftarrow.hover"   imagelist="imagelist.mainwnd.button.leftarrow" index="2" />
+			<texture id="imagelist.mainwnd.button.leftarrow.down"    imagelist="imagelist.mainwnd.button.leftarrow" index="3" />
+			<texture id="imagelist.mainwnd.button.leftarrow.disable" imagelist="imagelist.mainwnd.button.leftarrow" index="4" />
+		                           
+		<imagelist id="imagelist.mainwnd.button.rightarrow" blocksize="64" splitter="1" image="bitmap\texture.right.arrow.png"/>
+			<texture id="imagelist.mainwnd.button.rightarrow.normal"  imagelist="imagelist.mainwnd.button.rightarrow" index="1" />
+			<texture id="imagelist.mainwnd.button.rightarrow.hover"   imagelist="imagelist.mainwnd.button.rightarrow" index="2" />
+			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
+			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
+
+	</resource>
+</XLUE>

@@ -1,0 +1,106 @@
+<xlue>
+	<control class="ResizeFrameWndCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+		</method_def>
+		<event_def>
+			<OnClick>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnClick>
+		</event_def>
+    <objtemplate>
+	<children>
+		<obj id="mainwnd.resize.right" class="ResizeObject">
+			<attr>
+				<left>father.width-3</left>
+				<width>6</width>
+				<height>father.height</height>
+				<type>right</type>
+				<zorder>1000</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.bottom" class="ResizeObject">
+			<attr>
+				<top>father.height-3</top>
+				<width>father.width</width>
+				<height>6</height>
+				<type>bottom</type>
+				<zorder>1000</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.top" class="ResizeObject">
+			<attr>
+				<top>-3</top>
+				<width>father.width</width>
+				<height>6</height>
+				<type>top</type>
+				<zorder>1000</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.left" class="ResizeObject">
+			<attr>
+				<left>-3</left>
+				<width>6</width>
+				<height>father.height</height>
+				<type>left</type>
+				<zorder>1000</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.topleft" class="ResizeObject">
+			<attr>
+				<left>-3</left>
+				<top>-3</top>
+				<width>8</width>
+				<height>8</height>
+				<type>topleft</type>
+				<zorder>1100</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.bottomleft" class="ResizeObject">
+			<attr>
+				<left>-3</left>
+				<top>father.height-5</top>
+				<width>8</width>
+				<height>8</height>
+				<type>bottomleft</type>
+				<zorder>1100</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.topright" class="ResizeObject">
+			<attr>
+				<left>father.width-5</left>
+				<top>-3</top>
+				<width>8</width>
+				<height>8</height>
+				<type>topright</type>
+				<zorder>1100</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.resize.bottomright" class="ResizeObject">
+			<attr>
+				<left>father.width-10</left>
+				<top>father.height-10</top>
+				<width>12</width>
+				<height>12</height>
+				<type>bottomright</type>
+				<zorder>1100</zorder>
+			</attr>
+		</obj>
+		<obj id="mainwnd.Caption" class="CaptionObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+			</attr>
+		</obj>
+	</children>
+	<eventlist>
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>
