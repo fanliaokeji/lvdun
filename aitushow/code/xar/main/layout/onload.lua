@@ -41,7 +41,8 @@ local Helper = XLGetGlobal("Helper")
 function OnLoadLuaFile()
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
-	Helper:CreateModelessWnd("FrameWnd","FrameWndTree")
+	Helper:CreateModelessWnd("MainWnd","MainWndTree")
+	-- Helper:CreateModelessWnd("ImageWnd","ImageWndTree")
 end
 
 OnLoadLuaFile()
