@@ -64,6 +64,16 @@
 						<height>father.height - 30 - 30</height>
 						<limitchild>1</limitchild>
 					</attr>
+					<children>
+						<obj id="MainWnd.AddressEditCtrl" class="AddressEdit">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>27</height>
+							</attr>
+						</obj>
+					</children>
 				</obj>
 				<obj id="MainWnd.BottomCtrl" class="BottomCtrl">
 					<attr>
