@@ -42,6 +42,16 @@
 						<height>father.height - 30 - 30</height>
 						<limitchild>1</limitchild>
 					</attr>
+					<children>
+						<obj id="LeftPanel" class="LeftTreePanel">
+							 <attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+						</obj>
+					</children>
 				</obj>
 				<obj id="MainWnd.ResizeLine" class="LayoutObject">
 					<attr>

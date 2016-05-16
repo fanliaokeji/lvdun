@@ -1,0 +1,126 @@
+<xlue>
+<control class="LeftTreePanel">
+<objtemplate>
+<children>
+<obj id="PanelBkg" class="FillObject">
+	<attr>
+		<srccolor>2D3657</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>2D3657</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<srcpt>0,0</srcpt>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<top>0</top>
+		<zorder>1</zorder>
+		<filltype>Monochrome</filltype>
+	</attr>
+	<children>
+	<obj id="MyComputerIcon" class="ImageObject">
+		<attr>
+			<top>16</top>
+			<image>MyComputerIcon</image>
+			<height>16</height>
+			<left>2</left>
+			<zorder>2</zorder>
+			<width>16</width>
+		</attr>
+	</obj>
+	<obj id="MainText" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<wordellipsis>1</wordellipsis>
+			<valign>center</valign>
+			<left>26</left>
+			<width>father.width-26</width>
+			<top>14</top>
+			<font>default.font</font>
+			<height>22</height>
+			<zorder>2</zorder>
+			<text>我的电脑</text>
+		</attr>
+	</obj>
+	<obj id="TopLine" class="LineObject">
+		<attr>
+			<color>1F253D</color>
+			<left>0</left>
+			<width>father.width</width>
+			<top>48</top>
+			<destpt>father.width-1, 0</destpt>
+			<height>1</height>
+			<srcpt>0,0</srcpt>
+			<zorder>2</zorder>
+			<pen>pen.solid</pen>
+		</attr>
+	</obj>
+	<obj id="RightLine" class="LineObject">
+		<attr>
+			<color>1F253D</color>
+			<left>father.width-1</left>
+			<width>1</width>
+			<top>0</top>
+			<destpt>0, father.height</destpt>
+			<height>father.height</height>
+			<srcpt>0,0</srcpt>
+			<zorder>2</zorder>
+			<pen>pen.solid</pen>
+		</attr>
+	</obj>
+	<obj id="ContainerBox" class="LayoutObject">
+		<attr>
+			<top>51</top>
+			<limitchild>1</limitchild>
+			<height>father.height-51</height>
+			<left>0</left>
+			<width>father.width</width>
+		</attr>
+		<children>
+		<obj id="Container" class="LayoutObject">
+			<attr>
+				<height>father.height</height>
+				<top>0</top>
+				<left>0</left>
+				<width>father.width</width>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	<obj id="listbox.vscroll" class="ScrollBar">
+		<attr>
+			<Type>1</Type>
+			<ThumbBtn_normal>texture.scrollbarh.silder.normal</ThumbBtn_normal>
+			<ThumbBtn_hover>texture.scrollbarh.silder.hover</ThumbBtn_hover>
+			<ThumbBtn_down>texture.scrollbarh.silder.down</ThumbBtn_down>
+			<NormalBkn>texture.scrollbarh.silderbkg</NormalBkn>
+			<LeftBtn_normal>texture.scrollbarh.toparrow.normal</LeftBtn_normal>
+			<LeftBtn_hover>texture.scrollbarh.toparrow.hover</LeftBtn_hover>
+			<LeftBtn_down>texture.scrollbarh.toparrow.down</LeftBtn_down>
+			<RightBtn_normal>texture.scrollbarh.bottomarrow.normal</RightBtn_normal>
+			<RightBtn_hover>texture.scrollbarh.bottomarrow.hover</RightBtn_hover>
+			<RightBtn_down>texture.scrollbarh.bottomarrow.down</RightBtn_down>
+			<ThumbRightMagrin>1</ThumbRightMagrin>
+			<ThumbBtnWidth>12</ThumbBtnWidth>
+			<ThumbBtnLength>100</ThumbBtnLength>
+			<SideBtnLength>0</SideBtnLength>
+			<left>father.width - 8</left>
+			<top>51</top>
+			<width>8</width>
+			<height>father.height-51</height>
+			<zorder>99999</zorder>
+		</attr>
+		<eventlist>
+			<event name="OnScrollBarMouseWheel" file="LeftTreePanel.xml.lua" func="OnScrollBarMouseWheel"/>
+			<event name="OnMousePosEvent" file="LeftTreePanel.xml.lua" func="OnScrollMousePosEvent"/>
+			<event name="OnVScroll" file="LeftTreePanel.xml.lua" func="OnVScroll" />
+		</eventlist>
+	</obj>	
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="LeftTreePanel.xml.lua" func="LeftTreePanelOnInitControl" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

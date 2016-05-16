@@ -1,0 +1,104 @@
+<xlue>
+<control class="LeftTreeItem">
+<attr_def>
+	<attr name="MainIcon" type="string" />
+	<attr name="MainIconHover" type="string" />
+	<attr name="Text" type="string" />
+	<attr name="Select" type="bool" ><default>false</default></attr>
+	<attr name="HasChild" type="bool" ><default>false</default></attr>
+</attr_def>
+<method_def>
+	<Update file="LeftTreeItem.xml.lua" func="Update"/>
+</method_def>
+<event_def>
+	<OnSelect />
+	<OnStateChange>
+		<param>
+			<bool />
+		</param>
+	</OnStateChange>
+</event_def>
+<objtemplate>
+<children>
+<obj id="SelectBkg" class="FillObject">
+	<attr>
+		<srccolor>35AADC</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>35AADC</destcolor>
+		<left>-100</left>
+		<width>father.width+100</width>
+		<top>0</top>
+		<visible>0</visible>
+		<destpt>father.width+100,father.height</destpt>
+		<height>father.height</height>
+		<srcpt>-100,0</srcpt>
+		<zorder>1</zorder>
+		<alpha>255</alpha>
+		<filltype>Monochrome</filltype>
+	</attr>
+</obj>
+<obj id="HoverBkg" class="FillObject">
+	<attr>
+		<srccolor>50597B</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>50597B</destcolor>
+		<left>-100</left>
+		<width>father.width+100</width>
+		<top>0</top>
+		<visible>0</visible>
+		<destpt>father.width+100,father.height</destpt>
+		<height>father.height</height>
+		<srcpt>-100,0</srcpt>
+		<zorder>1</zorder>
+		<alpha>100</alpha>
+		<filltype>Monochrome</filltype>
+	</attr>
+</obj>
+<obj id="MarkIcon" class="ImageObject">
+	<attr>
+		<top>(father.height-9)/2</top>
+		<image>MarkIconNormal</image>
+		<zorder>2</zorder>
+		<height>9</height>
+		<visible>0</visible>
+		<left>0</left>
+		<width>9</width>
+	</attr>
+	<eventlist>
+		<event name="OnLButtonDown" file="LeftTreeItem.xml.lua" func="MarkIconOnLButtonDown" />
+	</eventlist>
+</obj>
+<obj id="MainIcon" class="ImageObject">
+	<attr>
+		<top>(father.height-16)/2</top>
+		<image>MainIconFoder</image>
+		<height>16</height>
+		<left>13</left>
+		<zorder>2</zorder>
+		<width>16</width>
+	</attr>
+</obj>
+<obj id="MainText" class="TextObject">
+	<attr>
+		<textcolor>system.white</textcolor>
+		<wordellipsis>2</wordellipsis>
+		<valign>center</valign>
+		<left>32</left>
+		<width>200</width>
+		<top>(father.height-20)/2</top>
+		<font>default.font</font>
+		<height>22</height>
+		<zorder>2</zorder>
+		<text>默认文字</text>
+	</attr>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnInitControl" />
+	<event name="OnLButtonDown" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnLButtonDown" />
+	<event name="OnMouseLeave" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnMouseLeave" />
+	<event name="OnMouseEnter" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnMouseEnter" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

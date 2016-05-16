@@ -60,6 +60,32 @@
 			<texture id="imagelist.mainwnd.button.rightarrow.hover"   imagelist="imagelist.mainwnd.button.rightarrow" index="2" />
 			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
 			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
+		<imagelist id="MainIconFoderImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconFoderImgs.png" />
+			<bitmap id="MainIconFoder" imagelist="MainIconFoderImgs" index="1"/>
+			<bitmap id="MainIconFoderHover" imagelist="MainIconFoderImgs" index="2"/>
+		<imagelist id="MainIconComputerImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconComputerImgs.png" />
+			<bitmap id="MainIconComputer" imagelist="MainIconComputerImgs" index="1"/>
+			<bitmap id="MainIconComputerHover" imagelist="MainIconComputerImgs" index="2"/>
+		<imagelist id="MainIconDeskImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDeskImgs.png" />
+			<bitmap id="MainIconDesk" imagelist="MainIconDeskImgs" index="1"/>
+			<bitmap id="MainIconDeskHover" imagelist="MainIconDeskImgs" index="2"/>
+		<imagelist id="MainIconDiskImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDiskImgs.png" />
+			<bitmap id="MainIconDisk" imagelist="MainIconDiskImgs" index="1"/>
+			<bitmap id="MainIconDiskHover" imagelist="MainIconDiskImgs" index="2"/>
+		<imagelist id="MainIconDocumentImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDocumentImgs.png" />
+			<bitmap id="MainIconDocument" imagelist="MainIconDocumentImgs" index="1"/>
+			<bitmap id="MainIconDocumentHover" imagelist="MainIconDocumentImgs" index="2"/>
+		<imagelist id="MainIconPictureImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconPictureImgs.png" />
+			<bitmap id="MainIconPicture" imagelist="MainIconPictureImgs" index="1"/>
+			<bitmap id="MainIconPictureHover" imagelist="MainIconPictureImgs" index="2"/>
+			
+		<imagelist id="MarkIconNormalImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MarkIconNormalImgs.png" />
+			<bitmap id="MarkIconNormal" imagelist="MarkIconNormalImgs" index="1"/>
+			<bitmap id="MarkIconNormal2" imagelist="MarkIconNormalImgs" index="2"/>
+		<imagelist id="MarkIconOpenImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MarkIconOpenImgs.png" />
+			<bitmap id="MarkIconOpen" imagelist="MarkIconOpenImgs" index="1"/>
+			<bitmap id="MarkIconOpen2" imagelist="MarkIconOpenImgs" index="2"/>
+		<bitmap id="MyComputerIcon" path="bitmap\tree\MyComputerIcon.png" />
 
 	</resource>
 </XLUE>
