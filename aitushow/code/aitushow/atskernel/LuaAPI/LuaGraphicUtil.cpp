@@ -287,6 +287,10 @@ int LuaGraphicUtil::GetDirSupportImgPaths(lua_State* pLuaState)
 					lua_pushstring(pLuaState, strTmp.c_str());
 					lua_settable(pLuaState, -3);
 
+					lua_pushstring(pLuaState, "szExt");
+					lua_pushstring(pLuaState, ultra::_T2UTF(wstrExt).c_str());
+					lua_settable(pLuaState, -3);
+
 					//上次修改时间为UTC		
 					SYSTEMTIME stUTC, stLocal;
 					FileTimeToSystemTime(&(fd.ftLastWriteTime), &stUTC);
@@ -353,6 +357,7 @@ int LuaGraphicUtil::GetMultiImgInfoByPaths(lua_State* pLuaState)
 			std::string strAnsiPath = "";
 			WideStringToAnsiString(bstrFilePath.m_str,strAnsiPath);
 			
+			strAnsiPath = ultra::ToLower(strAnsiPath);
 			int len = strAnsiPath.length();
 			char *pFilePath = new char[len+1];
 			strcpy_s(pFilePath,len+1,strAnsiPath.c_str());
