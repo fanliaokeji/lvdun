@@ -1,0 +1,23 @@
+<xlue>
+	<control class="BottomCtrl">
+		<attr_def>
+		</attr_def>
+		<method_def>
+		</method_def>
+		<event_def>
+			<OnClick>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnClick>
+		</event_def>
+    <objtemplate>
+	<children>
+		
+	</children>
+	<eventlist>
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>
