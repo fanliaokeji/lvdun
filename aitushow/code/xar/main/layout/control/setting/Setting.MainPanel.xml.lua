@@ -1,13 +1,19 @@
 function closeOnClick(self)
+	local owner = self:GetOwner()
+	local hostwnd = owner:GetBindHostWnd()
+	hostwnd:EndDialog(0)
 end
 
 function applyOnClick(self)
+
 end
 
 function confirmOnClick(self)
+	closeOnClick(self)
 end
 
 function cancelOnClick(self)
+	closeOnClick(self)
 end
 
 function LeftPanelOnSelect(self, evt, text)
