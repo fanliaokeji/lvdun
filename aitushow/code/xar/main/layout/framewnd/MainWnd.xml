@@ -50,6 +50,9 @@
 								<width>father.width</width>
 								<height>father.height</height>
 							</attr>
+							<eventlist>
+								<event name="OnSelect" file="MainWnd.xml.lua" func="LeftPanelOnSelect"/>
+							</eventlist>
 						</obj>
 					</children>
 				</obj>

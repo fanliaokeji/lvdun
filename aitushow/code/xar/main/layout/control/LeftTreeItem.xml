@@ -25,13 +25,13 @@
 		<srccolor>35AADC</srccolor>
 		<blendtype>Source</blendtype>
 		<destcolor>35AADC</destcolor>
-		<left>-100</left>
-		<width>father.width+100</width>
+		<left>-3000</left>
+		<width>father.width+4000</width>
 		<top>0</top>
 		<visible>0</visible>
-		<destpt>father.width+100,father.height</destpt>
+		<destpt>father.width+4000,father.height</destpt>
 		<height>father.height</height>
-		<srcpt>-100,0</srcpt>
+		<srcpt>-3000,0</srcpt>
 		<zorder>1</zorder>
 		<alpha>255</alpha>
 		<filltype>Monochrome</filltype>
@@ -42,13 +42,13 @@
 		<srccolor>50597B</srccolor>
 		<blendtype>Source</blendtype>
 		<destcolor>50597B</destcolor>
-		<left>-100</left>
-		<width>father.width+100</width>
+		<left>-3000</left>
+		<width>father.width+4000</width>
 		<top>0</top>
 		<visible>0</visible>
-		<destpt>father.width+100,father.height</destpt>
+		<destpt>father.width+4000,father.height</destpt>
 		<height>father.height</height>
-		<srcpt>-100,0</srcpt>
+		<srcpt>-3000,0</srcpt>
 		<zorder>1</zorder>
 		<alpha>100</alpha>
 		<filltype>Monochrome</filltype>

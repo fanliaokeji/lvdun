@@ -67,3 +67,7 @@ end
 function OnShowWindow(self, bVisible)
 	
 end
+
+function LeftPanelOnSelect(self, evt, dir)
+	XLMessageBox(tostring(dir))
+end

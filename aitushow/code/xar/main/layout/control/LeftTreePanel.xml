@@ -1,5 +1,12 @@
 <xlue>
 <control class="LeftTreePanel">
+<event_def>
+	<OnSelect>
+		<param>
+			<string />
+		</param>
+	</OnSelect>
+</event_def>
 <objtemplate>
 <children>
 <obj id="PanelBkg" class="FillObject">
@@ -100,7 +107,7 @@
 			<RightBtn_hover>texture.scrollbarh.bottomarrow.hover</RightBtn_hover>
 			<RightBtn_down>texture.scrollbarh.bottomarrow.down</RightBtn_down>
 			<ThumbRightMagrin>1</ThumbRightMagrin>
-			<ThumbBtnWidth>12</ThumbBtnWidth>
+			<ThumbBtnWidth>8</ThumbBtnWidth>
 			<ThumbBtnLength>100</ThumbBtnLength>
 			<SideBtnLength>0</SideBtnLength>
 			<left>father.width - 8</left>

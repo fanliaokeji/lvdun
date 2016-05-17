@@ -1,0 +1,56 @@
+local PathHelper = {}
+local Helper = XLGetGlobal("Helper")
+Helper.PathHelper = PathHelper
+
+local tipUtil = XLGetObject("API.Util")
+function PathHelper.GetDeskTopPath()
+	local nCSIDL_DESKTOP = 0
+	local bALnkExist = true
+	local bCLnkExist = true
+	local strPath = tipUtil:GetSpecialFolderPathEx(nCSIDL_DESKTOP)
+	return tipUtil:FindDirList(strPath)
+end
+
+function PathHelper.GetDocumentPath()
+	local nCSIDL_PERSONAL = 5
+	local bALnkExist = true
+	local bCLnkExist = true
+	local strPath = tipUtil:GetSpecialFolderPathEx(nCSIDL_PERSONAL)
+	return tipUtil:FindDirList(strPath)
+end
+
+function PathHelper.GetPicturePath()
+	local nCSIDL_MYPICTURES = 0x27
+	local bALnkExist = true
+	local bCLnkExist = true
+	local strPath = tipUtil:GetSpecialFolderPathEx(nCSIDL_MYPICTURES)
+	return tipUtil:FindDirList(strPath)
+end
+
+function PathHelper.GetDiskList()
+	local tAll = {"C:", "D:", "E:", "F:", "G", "H:", "I:", "J:", "K:", "L:", "M:", "N:"}
+	local tDisk = {}
+	for _, v in ipairs(tAll) do
+		if tipUtil:QueryFileExists(v) then
+			tDisk[#tDisk+1] = v
+		else
+			break
+		end
+	end
+	return tDisk
+end
+
+PathHelper.SpecialName = {
+	["C:"] = "本地磁盘(C:)",
+	["D:"] = "本地磁盘(D:)",
+	["E:"] = "本地磁盘(E:)",
+	["F:"] = "本地磁盘(F:)",
+	["G:"] = "本地磁盘(G:)",
+	["H:"] = "本地磁盘(H:)",
+	["I:"] = "本地磁盘(I:)",
+	["J:"] = "本地磁盘(J:)",
+	["K:"] = "本地磁盘(K:)",
+	["L:"] = "本地磁盘(L:)",
+	["M:"] = "本地磁盘(M:)",
+	["N:"] = "本地磁盘(N:)",
+}
