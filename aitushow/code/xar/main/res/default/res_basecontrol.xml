@@ -44,6 +44,12 @@
 			<texture id="texture.addressedit.rightarrow.down"     imagelist="imagelist.texture.rightarrow" index="3" />
 			<texture id="texture.addressedit.rightarrow.disable"  imagelist="imagelist.texture.rightarrow" index="4" />
 		
+		<imagelist id="imagelist.texture.addressedit.buttonbkg" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.addressedit.buttonbkg.png"/>
+			<texture id="texture.addressedit.buttonbkg.normal"  type="ThreeInOneH" imagelist="imagelist.texture.addressedit.buttonbkg" index="1" />
+			<texture id="texture.addressedit.buttonbkg.hover"   type="ThreeInOneH" imagelist="imagelist.texture.addressedit.buttonbkg" index="2" />
+			<texture id="texture.addressedit.buttonbkg.down"    type="ThreeInOneH" imagelist="imagelist.texture.addressedit.buttonbkg" index="3" />
+			<texture id="texture.addressedit.buttonbkg.disable" type="ThreeInOneH" imagelist="imagelist.texture.addressedit.buttonbkg" index="4" />
+		
 		<imagelist id="imagelist.bitmap.addressedit.icon" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.bitmap.addressedit.icon.png"/>
 			<bitmap id="bitmap.addressedit.icon.normal"   imagelist="imagelist.bitmap.addressedit.icon" index="1" />
 			<bitmap id="bitmap.addressedit.icon.disable"  imagelist="imagelist.bitmap.addressedit.icon" index="2" />
@@ -84,6 +90,7 @@
 		<font id="basecontrol.defaultfont.10" height="10" facename="defaultfont" /> 
 		<font id="basecontrol.defaultfont.11" height="11" facename="defaultfont" /> 
 		<font id="basecontrol.defaultfont.12" height="12" facename="defaultfont" /> 
+		<font id="basecontrol.defaultfont.13" height="13" facename="defaultfont" /> 
 		
 		<!--颜色id-->
 		<color id="basecontrol.black" red="0" green="0" blue="0" alpha="255" />
