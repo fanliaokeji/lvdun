@@ -1,4 +1,5 @@
 local Helper = XLGetGlobal("Helper")
+local PathHelper = Helper.PathHelper
 
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
@@ -68,6 +69,24 @@ function OnShowWindow(self, bVisible)
 	
 end
 
-function LeftPanelOnSelect(self, evt, dir)
-	XLMessageBox(tostring(dir))
+--左侧树选择事件
+function LeftPanelOnSelect(self, event, dir)
+	local realpath = PathHelper.GetRealPath(dir)
+	if not realpath then
+		return
+	end
+	local owner = self:GetOwner()
+	local addressobj = owner:GetUIObject("MainWnd.AddressEditCtrl")
+	addressobj:SetPath(realpath, true)
+end
+
+--地址栏变化事件
+function AddressEditCtrlOnPathChanged(self, event, dir)
+	local realpath = PathHelper.GetRealPath(dir)
+	if not realpath then
+		return
+	end
+	local owner = self:GetOwner()
+	local LeftPanel = owner:GetUIObject("LeftPanel")
+	LeftPanel:Update(realpath)
 end

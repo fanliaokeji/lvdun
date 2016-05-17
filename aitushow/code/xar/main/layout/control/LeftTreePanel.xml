@@ -7,6 +7,9 @@
 		</param>
 	</OnSelect>
 </event_def>
+<method_def>
+	<Update file="LeftTreePanel.xml.lua" func="Update"/>
+</method_def>
 <objtemplate>
 <children>
 <obj id="PanelBkg" class="FillObject">

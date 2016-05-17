@@ -10,7 +10,7 @@
 		<left>0</left>
 		<width>father.width</width>
 		<srcpt>0,0</srcpt>
-		<limit>1</limit>
+		<limitchild>1</limitchild>
 		<destpt>father.width,father.height</destpt>
 		<height>father.height</height>
 		<alpha>255</alpha>

@@ -85,6 +85,9 @@
 								<width>father.width</width>
 								<height>27</height>
 							</attr>
+							<eventlist>
+								<event name="OnPathChanged" file="MainWnd.xml.lua" func="AddressEditCtrlOnPathChanged"/>
+							</eventlist>
 						</obj>
 						<obj id="MainWnd.SliderCtrl" class="Slider">
 							<attr>

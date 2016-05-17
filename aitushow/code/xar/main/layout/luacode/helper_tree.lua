@@ -54,3 +54,31 @@ PathHelper.SpecialName = {
 	["M:"] = "本地磁盘(M:)",
 	["N:"] = "本地磁盘(N:)",
 }
+
+function PathHelper.GetRealPath(srcdir)
+	if tipUtil:QueryFileExists(srcdir) then
+		return srcdir
+	elseif srcdir == "我的文档" then
+		return tipUtil:GetSpecialFolderPathEx(5)
+	elseif srcdir == "我的图片" then
+		return tipUtil:GetSpecialFolderPathEx(0x27)
+	elseif srcdir == "桌面" then
+		return tipUtil:GetSpecialFolderPathEx(0)
+	else
+		return nil
+	end
+end
+
+local VrPaths = {
+	[tipUtil:GetSpecialFolderPathEx(0)] = "桌面", 
+	[tipUtil:GetSpecialFolderPathEx(0x27)] = "我的图片", 
+	[tipUtil:GetSpecialFolderPathEx(5)] = "我的文档", 
+}
+function PathHelper.GetVrPath(srcdir)
+	for path, vpath in pairs(VrPaths) do
+		if string.find(srcdir, path, 1, true) then
+			return vpath
+		end
+	end
+	return "计算机"
+end

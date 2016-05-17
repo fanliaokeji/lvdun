@@ -3,6 +3,34 @@ local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
 
+function Update(self, dir)
+	local attr = self:GetAttribute()
+	if attr.selectdir == dir then
+		return
+	end
+	local function openparent(dir)
+		dir = string.gsub(dir, "([/\\])$", "")
+		local parent = string.match(dir, "^(.*)[/\\][^/\\]+$")
+		if parent then
+			attr.opendirs[parent] = true
+			openparent(parent)
+		end
+	end
+	
+	local dirlist = tipUtil:FindDirList(dir)
+	if #dirlist > 0 then
+		attr.opendirs[dir] = not attr.opendirs[dir]
+	end
+	
+	local vpath  = PathHelper.GetVrPath(dir)
+	attr.opendirs[vpath] = true
+	openparent(dir)
+	attr.selectdir = dir
+		--self:FireExtEvent("OnSelect", dir)
+	ClearTree(self)
+	BuildTree(self)
+end
+
 function Dir2TreeView(self, dir, left, params)
 	local panelattr = self:GetAttribute()
 	panelattr.nodeindex = panelattr.nodeindex or 1
@@ -38,6 +66,7 @@ function Dir2TreeView(self, dir, left, params)
 	end
 	if panelattr.selectdir == dir then
 		attr.Select = true
+		panelattr.SelectItem = Item
 	else
 		attr.Select = false
 	end
@@ -71,6 +100,7 @@ function ClearTree(self)
 	Container:RemoveAllChild()
 	local panelattr = self:GetAttribute()
 	panelattr.nodeindex = 1
+	panelattr.SelectItem = nil
 end
 
 function BuildTree(self)
@@ -99,20 +129,35 @@ function ResetScrollBar(objRootCtrl)
 	local attr = objRootCtrl:GetAttribute()
 	local _, _, _, cb = Container:GetObjPos()
 	local l, t, r, b = fatherctrl:GetObjPos()
+	
 	if cb > b-t then
 		objScrollBar:SetScrollRange( 0, cb-b+t, true )
 		objScrollBar:SetPageSize(b-t, true)
 		objScrollBar:SetVisible(true)
 		objScrollBar:SetChildrenVisible(true)
 		objScrollBar:Show(true)
-		OnScrollMousePosEvent(objScrollBar)
-		fatherctrl:SetObjPos(l, t, "father.width-8", "father.height-51")
+		--OnScrollMousePosEvent(objScrollBar)
+		
+		--移动到选中的节点
+		local olddis = cb-b+t
+		local newdis = olddis
+		if attr.SelectItem then
+			local sl, st, sr, sb = attr.SelectItem:GetObjPos()
+			if sb > b-t then
+				newdis = sb-b+t
+			else
+				newdis = 0
+			end
+		end
+		MoveItemListPanel(objRootCtrl, newdis)
+		objScrollBar:SetScrollPos(newdis, true)
+		--fatherctrl:SetObjPos(l, t, "father.width-8", "father.height-51")
 	else
 		objScrollBar:SetScrollPos(0, true)	
 		objScrollBar:SetVisible(false)
 		objScrollBar:SetChildrenVisible(false)
 		MoveItemListPanel(objRootCtrl, 0)
-		fatherctrl:SetObjPos(l, t, "father.width", "father.height-51")
+		--fatherctrl:SetObjPos(l, t, "father.width", "father.height-51")
 		return true
 	end
 	return true

@@ -52,7 +52,7 @@ function OnClickButtonListBtn(self, btnSelf)
 	self:FireExtEvent("OnPathChanged", attr.curPath)
 end
 
-function SetPath(self, sPath)
+function SetPath(self, sPath, bNoNotify)
 	if not Helper.tipUtil:QueryFileExists(sPath) then
 		return false
 	end
@@ -97,7 +97,9 @@ function SetPath(self, sPath)
 		attr.pathHistoryQueue = Helper.FixedLengthQueue:New()
 	end
 	attr.pathHistoryQueue:Insert(sPath)
-	self:FireExtEvent("OnPathChanged", attr.curPath)
+	if not bNoNotify then
+		self:FireExtEvent("OnPathChanged", attr.curPath)
+	end
 end
 
 function GetPath(self)
