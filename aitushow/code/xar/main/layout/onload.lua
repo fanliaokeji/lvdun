@@ -31,6 +31,7 @@ local File = {
 "luacode\\objectbase.lua",
 "luacode\\helper.lua",
 "luacode\\helper_token.lua",
+"luacode\\helper_data.lua",
 "luacode\\helper_tree.lua",
 "menu\\ImageRClickMenu.lua",
 }

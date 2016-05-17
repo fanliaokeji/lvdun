@@ -97,10 +97,10 @@
 						</obj>
 						<obj id="EditObj" class="EditObject">
 							<attr>
-								<left>32</left>
-								<top>5</top>
-								<width>father.width - 32</width>
-								<height>father.height - 5</height>
+								<left>24</left>
+								<top>4</top>
+								<width>father.width - 24</width>
+								<height>father.height - 4</height>
 								<multiline>0</multiline>
 								<font>basecontrol.defaultfont.13</font>
 								<textcolor>system.white</textcolor>
@@ -117,7 +117,7 @@
 							<attr>
 								<left>32</left>
 								<top>0</top>
-								<width>father.width - 16</width>
+								<width>father.width - 32</width>
 								<height>father.height</height>
 							</attr>
 							<eventlist>

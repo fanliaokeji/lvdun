@@ -93,6 +93,10 @@ function SetPath(self, sPath)
 	end
 	
 	attr.curPath = sPath
+	if not attr.pathHistoryQueue then
+		attr.pathHistoryQueue = Helper.FixedLengthQueue:New()
+	end
+	attr.pathHistoryQueue:Insert(sPath)
 	self:FireExtEvent("OnPathChanged", attr.curPath)
 end
 
@@ -129,6 +133,7 @@ function OnEditFocusChange(self, bFocus)
 	self:SetVisible(false)
 	self:SetZorder(0)
 	self:SetText("")
+	
 	
 	local buttonListContainer = ownerCtrl:GetControlObject("ButtonListContainer")
 	buttonListContainer:SetVisible(true)
