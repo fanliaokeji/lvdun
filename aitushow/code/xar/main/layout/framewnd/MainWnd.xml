@@ -86,6 +86,23 @@
 								<height>27</height>
 							</attr>
 						</obj>
+						<obj id="MainWnd.SliderCtrl" class="Slider">
+							<attr>
+								<left>father.width - 160</left>
+								<top>50</top>
+								<width>76</width>
+								<height>14</height>
+								<BtnWidth>14</BtnWidth>
+								<BtnHeight>14</BtnHeight>
+								<BkgID>texture.slider.bkg</BkgID>			
+								<RightBkgID>texture.slider.bkg</RightBkgID>			
+								<LeftBkgID>texture.slider.leftbkg</LeftBkgID>			
+								<BtnNormalBkgID>texture.slider.btn</BtnNormalBkgID>
+								<BtnDownBkgID>texture.slider.btn</BtnDownBkgID>
+								<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
+								<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
+							</attr>
+						</obj>
 					</children>
 				</obj>
 				<obj id="MainWnd.BottomCtrl" class="BottomCtrl">

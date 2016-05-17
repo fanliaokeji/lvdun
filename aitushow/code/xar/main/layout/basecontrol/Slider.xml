@@ -1,0 +1,213 @@
+<xlue>
+	<control class="Slider">
+		<attr_def>
+			<!-- 1是纵向 0是横向 -->
+			<attr name="Type" type="int" >
+				<default>0</default>
+			</attr>
+			<attr name="BkgID" type="string" ><default>texture.playctrlwnd.ctrlview.win7view.center</default></attr>
+			<attr name="SliderWidth" type="int" /><!-- 保留 -->
+			<attr name="SliderHeight" type="int" /><!-- 保留 -->
+			<attr name="BtnWidth" type="int" />
+			<attr name="BtnHeight" type="int" />
+			<attr name="LeftBkgID" type="string" />
+			<attr name="RightBkgID" type="string" />
+			<attr name="BufferBkgID" type="string" />
+			<attr name="DisableRightBkgID" type="string" />
+			<attr name="DisableLeftBkgID" type="string" />
+			<attr name="DisableBufferBkgID" type="string" />
+			<attr name="BtnNormalBkgID" type="string" />
+			
+			<attr name="BtnDownBkgID" type="string" />
+			<attr name="BtnHoverBkgID" type="string" />
+			<attr name="BtnDisableBkgID" type="string" />
+			<attr name="BtnBkg4In1ID" type="string" />
+			
+			<attr name="Min" type="int">
+				<default>0</default>
+			</attr>
+			<attr name="Max" type="int">
+				<default>100</default>
+			</attr>
+			<attr name="Value" type="int">
+				<default>0</default>
+			</attr>
+			<attr name="BufferValue" type="int">
+				<default>0</default>
+			</attr>
+			<attr name="Visible" type="bool">
+				<default>true</default>
+			</attr>
+			<attr name="Enable" type="bool">
+				<default>true</default>
+			</attr>
+			<attr name="Grid" type="bool" desc="是否滑块按一格格滑动">
+				<default>false</default>
+			</attr>
+			<attr name="Step" type="int" desc="一格滑动多少">
+				<default>1</default>
+			</attr>
+		</attr_def>
+
+		<method_def>
+			<SetValue file="Slider.xml.lua" func="SetValue" />
+			<GetValue file="Slider.xml.lua" func="GetValue" />
+			<SetBufferValue file="Slider.xml.lua" func="SetBufferValue" />
+			<GetBufferValue file="Slider.xml.lua" func="GetBufferValue" />
+			<SetRange file="Slider.xml.lua" func="SetRange" />
+			<GetRange file="Slider.xml.lua" func="GetRange" />
+			<PosToValue file="Slider.xml.lua" func="PosToValue" />
+			<Show file="Slider.xml.lua" func="Show" />
+			<IsVisible file="Slider.xml.lua" func="IsVisible" />
+			<Enable file="Slider.xml.lua" func="Enable" />
+			<IsEnable file="Slider.xml.lua" func="IsEnable" />
+			<!-- <GetDataFromValue file="Slider.xml.lua" func="GetDataFromValue" />
+			<GetValueFromData file="Slider.xml.lua" func="GetValueFromData" /> -->
+			<SetUserData file="Slider.xml.lua" func="SetUserData" />
+			<GetUserData file="Slider.xml.lua" func="GetUserData" />
+			<SetStep file="Slider.xml.lua" func="SetStep" />
+			<GetStep file="Slider.xml.lua" func="GetStep" />
+		</method_def>
+        <event_def>
+            <OnSliderPosChange>
+                <param>
+                    <int/>
+                </param>
+            </OnSliderPosChange>
+			<OnSliderLButtonDown>
+				<param>
+					<int/>
+					<int/>
+					<int/>
+				</param>
+			</OnSliderLButtonDown>
+			<OnSliderMouseMove>
+				<param>
+					<int/>
+					<int/>
+				</param>
+			</OnSliderMouseMove>
+			<OnSliderMouseLeave />
+        </event_def>
+		<objtemplate>
+			<children>
+				<obj id="SliderLayout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>-20</top>
+						<width>father.width</width>
+						<height>father.height+20</height>
+						<alpha>2</alpha><!-- alpha为0或1时，接收不到鼠标消息 -->
+						<cursor>IDC_HAND</cursor>
+					</attr>
+					<children>
+						<obj id="LeftPart" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0-father.top</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<limitchild>1</limitchild>
+							</attr>
+							<children>
+								<obj id="LeftBkn" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="BufferPart" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0-father.top</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<limitchild>1</limitchild>
+							</attr>
+							<children>
+								<obj id="BufferBkn" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="RightPart" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0-father.top</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<limitchild>1</limitchild>
+							</attr>
+							<children>
+								<obj id="RightBkn" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="SliderButton" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>40</width>
+								<height>father.height</height>
+								<zorder>50</zorder>
+								<cursor>IDC_HAND</cursor>
+							</attr>
+							<children>
+								<obj id="button.bkg" class="TextureObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										
+									</attr>
+									<children>
+										<obj id="button.oldbkg" class="TextureObject">
+											<attr>
+												<left>0</left>
+												<top>0</top>
+												<width>father.width</width>
+												<height>father.height</height>
+												<alpha>0</alpha>
+											</attr>
+										</obj>
+									</children>
+								</obj>
+							</children>
+							<eventlist>
+								<event name="OnLButtonDown" file="Slider.xml.lua" func="OnBtnLButtonDown" />
+								<event name="OnLButtonUp" file="Slider.xml.lua" func="OnBtnLButtonUp" />
+								<event name="OnMouseMove" file="Slider.xml.lua" func="OnBtnMouseMove" />
+								<event name="OnMouseLeave" file="Slider.xml.lua" func="OnBtnMouseLeave" />
+							</eventlist>
+						</obj>
+					</children>
+					<eventlist>
+						<event name="OnLButtonDown" file="Slider.xml.lua" func="Slider_OnLButtonDown" />
+						<event name="OnMouseMove" file="Slider.xml.lua" func="Slider_OnMouseMove" />
+						<event name="OnMouseLeave" file="Slider.xml.lua" func="Slider_OnMouseLeave" />
+					</eventlist>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnPosChange" file="Slider.xml.lua" func="OnPosChange" />
+				<event name="OnInitControl" file="Slider.xml.lua" func="Slider_OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

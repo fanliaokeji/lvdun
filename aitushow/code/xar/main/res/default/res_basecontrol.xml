@@ -84,7 +84,14 @@
 		<texture id="texture.menu.splitter" type="ThreeInOneH" image="bitmap\basecontrol\texture.menu.splitter.png" />
 		<!--菜单-->
 		
-		<!--字体id-->
+		<!--进度条-->
+		<texture id="texture.slider.bkg" type="ThreeInOneH" image="bitmap\basecontrol\texture.slider.bkg.png" />
+		<texture id="texture.slider.leftbkg" type="ThreeInOneH" image="bitmap\basecontrol\texture.slider.leftbkg.png" />
+		<texture id="texture.slider.btn" image="bitmap\basecontrol\texture.slider.btn.png" />
+
+		<!--进度条-->
+		
+		<!--字体id -->
 		<font id="basecontrol.defaultfont.8" height="8" facename="defaultfont" /> 
 		<font id="basecontrol.defaultfont.9" height="9" facename="defaultfont" /> 
 		<font id="basecontrol.defaultfont.10" height="10" facename="defaultfont" /> 
