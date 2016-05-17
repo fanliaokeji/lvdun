@@ -1,0 +1,56 @@
+<xlue>
+<control class="Setting.LeftPanel">
+<event_def>
+	<OnSelect><param><string/></param></OnSelect>
+</event_def>
+<objtemplate>
+<children>
+<obj id="PanelBkg" class="FillObject">
+	<attr>
+		<srccolor>2D3657</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>2D3657</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<top>0</top>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<srcpt>0,0</srcpt>
+		<zorder>1</zorder>
+		<filltype>Monochrome</filltype>
+	</attr>
+	<children>
+	<obj id="ListItem1" class="Setting.LeftListItem">
+		<attr>
+			<top>10</top>
+			<Select>true</Select>
+			<height>30</height>
+			<Text>常规选项</Text>
+			<left>4</left>
+			<width>father.width-8</width>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.LeftPanel.xml.lua" func="ListItem1OnSelect" />
+		</eventlist>
+	</obj>
+	<obj id="ListItem2" class="Setting.LeftListItem">
+		<attr>
+			<top>41</top>
+			<height>30</height>
+			<Text>文件关联</Text>
+			<left>4</left>
+			<width>father.width-8</width>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.LeftPanel.xml.lua" func="ListItem2OnSelect" />
+		</eventlist>
+	</obj>
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="Setting.LeftPanel.xml.lua" func="SettingLeftPanelOnInitControl" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

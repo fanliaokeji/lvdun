@@ -7,6 +7,7 @@
 		<font id="font.text11" height="11" facename="defaultfont" /> 
 		<font id="font.text12" height="12" facename="defaultfont" /> 
 		<font id="font.text13" height="13" facename="defaultfont" /> 
+		<font id="font.text13.bold" height="13" facename="defaultfont" weight="bold"/> 
 		<font id="font.text13.xp" height="13" facename="宋体" />
 		<font id="font.text14" height="14" facename="defaultfont" /> 
 		<font id="font.text15" height="15" facename="defaultfont" />

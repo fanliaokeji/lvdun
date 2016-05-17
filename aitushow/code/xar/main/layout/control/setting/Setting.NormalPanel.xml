@@ -1,0 +1,233 @@
+<xlue>
+<control class="Setting.NormalPanel">
+<objtemplate>
+<children>
+<obj id="backgroud" class="FillObject">
+	<attr>
+		<srccolor>394264</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>394264</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<srcpt>0,0</srcpt>
+		<limit>1</limit>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<alpha>255</alpha>
+		<top>0</top>
+		<filltype>Monochrome</filltype>
+	</attr>
+	<children>
+	<obj id="titlehead1" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<text>基本选项</text>
+			<left>18</left>
+			<width>70</width>
+			<top>19</top>
+			<font>font.text13.bold</font>
+			<height>20</height>
+			<halign>left</halign>
+			<valign>center</valign>
+		</attr>
+	</obj>
+	<obj id="titleline1" class="LineObject">
+		<attr>
+			<top>29</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>77</left>
+			<width>father.width-77</width>
+		</attr>
+	</obj>
+	<obj id="chebox3" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>开机时启动快看</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>45</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+		</attr>
+	</obj>
+	<obj id="chebox4" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>删除图标时弹出提示窗口</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>71</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+		</attr>
+	</obj>
+	<obj id="titlehead2" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<text>旋转图片后的操作</text>
+			<left>18</left>
+			<width>120</width>
+			<top>97</top>
+			<font>font.text13.bold</font>
+			<height>20</height>
+			<halign>left</halign>
+			<valign>center</valign>
+		</attr>
+	</obj>
+	<obj id="titleline2" class="LineObject">
+		<attr>
+			<top>107</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>128</left>
+			<width>father.width-128</width>
+		</attr>
+	</obj>
+	<obj id="radio7" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Text>自动更名保存(推荐)</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>123</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectSaveOp" />
+		</eventlist>
+	</obj>
+	<obj id="radio8" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Text>覆盖原图</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>149</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectSaveOp" />
+		</eventlist>
+	</obj>
+	<obj id="radio9" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Text>不保存</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>175</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectSaveOp" />
+		</eventlist>
+	</obj>
+	<obj id="radio10" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Select>true</Select>
+			<Text>询问我</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>201</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+			<height>20</height>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectSaveOp" />
+		</eventlist>
+	</obj>
+	<obj id="titlehead3" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<text>点击关闭按钮</text>
+			<left>18</left>
+			<halign>left</halign>
+			<top>227</top>
+			<font>font.text13.bold</font>
+			<height>20</height>
+			<width>90</width>
+			<valign>center</valign>
+		</attr>
+	</obj>
+	<obj id="titleline3" class="LineObject">
+		<attr>
+			<top>237</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>101</left>
+			<width>father.width-101</width>
+		</attr>
+	</obj>
+	<obj id="radio13" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Select>true</Select>
+			<Text>关闭到系统托盘</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>253</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+			<height>20</height>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectExitOp" />
+		</eventlist>
+	</obj>
+	<obj id="radio14" class="CheckBox">
+		<attr>
+			<Type>radio</Type>
+			<CheckHover>setting_radio.hover</CheckHover>
+			<Text>立即退出程序</Text>
+			<left>26</left>
+			<width>150</width>
+			<top>279</top>
+			<CheckNormal>setting_radio.hover</CheckNormal>
+			<UnCheckNormal>setting_radio.normal</UnCheckNormal>
+			<height>20</height>
+			<UnCheckHover>setting_radio.normal</UnCheckHover>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectExitOp" />
+		</eventlist>
+	</obj>
+	</children>
+</obj>
+</children>
+</objtemplate>
+</control>
+</xlue>

@@ -33,6 +33,7 @@ local File = {
 "luacode\\helper_token.lua",
 "luacode\\helper_data.lua",
 "luacode\\helper_tree.lua",
+"luacode\\helper_selector.lua",
 "menu\\ImageRClickMenu.lua",
 }
 LoadLuaModule(File, __document)

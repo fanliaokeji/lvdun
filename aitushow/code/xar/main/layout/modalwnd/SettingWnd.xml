@@ -1,0 +1,43 @@
+<xlue>
+	<objtreetemplate id="SettingWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>540</width>
+			<height>400</height>
+		</attr>
+		<obj id="root" class="Setting.MainPanel">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>540</width>
+				<height>400</height>
+			</attr>	
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="SettingWnd" class="ModalHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>540</width>
+            <height>400</height>
+            
+            <topmost>0</topmost>
+            <visible>1</visible>
+            <enable>1</enable>
+            <maxbox>1</maxbox>
+            <minbox>1</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="SettingWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="SettingWnd.xml.lua" func="OnShowWindow"/>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

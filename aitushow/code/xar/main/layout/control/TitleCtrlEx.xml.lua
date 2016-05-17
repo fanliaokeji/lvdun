@@ -5,11 +5,14 @@ function SetTitleTextContent(self, text)
 end
 
 function OnClickSetting(self)
-	local objTree = self:GetOwner()
+	--[[local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	local imageCtrl = objTree:GetUIObject("FrameWnd.ImageCtrl")
 	local curZoomPercent = imageCtrl:GetZoomPercent()
-	imageCtrl:Zoom(curZoomPercent + 10)
+	imageCtrl:Zoom(curZoomPercent + 10)]]--
+	local objTree = self:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
 end
 
 --进入全屏模式，退出在FrameWnd里处理

@@ -77,11 +77,13 @@ function SetText(self, text)
 	end
 	local textObj = self:GetControlObject("Recomment")
 	textObj:SetText(text)
+	
+	SetTextStyle(self)
 end
 
-function GetText(self, text)
+function GetText(self)
 	local textObj = self:GetControlObject("Recomment")
-	textObj:SetText(text)
+	return textObj:GetText()
 end
 
 function SetTextColor(self, color)
@@ -117,12 +119,14 @@ function IsVisible(self)
     return attr.Visible
 end
 
+
 function OnLButtonDown(self, x, y)
 	local attr = self:GetAttribute()
 	if attr.Enable then
         self:SetState(2)
         self:SetCaptureMouse(true)
 		attr.CaptrueMouse = true
+		self:FireExtEvent("OnButtonMouseDown", x, y)
 	end
 end
 
@@ -140,7 +144,7 @@ function OnLButtonUp(self, x, y)
 	end
 end
 
-function OnMouseMove(self, x, y)
+function OnMouseEnter(self, x, y)
     local left, top, right, bottom = self:GetObjPos()
     local width, height = right - left, bottom - top
     
@@ -157,11 +161,18 @@ function OnMouseMove(self, x, y)
 	self:FireExtEvent("OnButtonMouseMove", x, y)
 end
 
+
+function RoutToFather(self)
+	self:RouteToFather()
+end
+
+
 function OnMouseLeave(self)
 	local attr = self:GetAttribute()
 	if attr.Enable then
 		self:SetState(0)
 	end
+	self:FireExtEvent("OnButtonMouseLeave")
 end
 
 function OnMouseHover( self, x, y )
@@ -194,14 +205,44 @@ function OnInitControl(self)
 		foreground:SetObjPos(attr.ForegroundLeftPos, (height - attr.ForegroundHeight) / 2, attr.ForegroundLeftPos + attr.ForegroundWidth, (height + attr.ForegroundHeight) / 2)
 	end
 	
-    self:SetText(attr.Text)
-	self:SetTextColor(attr.TextColor)
-	self:SetTextFont(attr.TextFont)
-	
+	self:SetText(attr.Text)
+	    
 	SetState(self, 0, true, true)
 	self:Enable(attr.Enable)
     self:Show(attr.Visible)
 end
+
+
+function SetTextStyle(objRootCtrl)
+	local attr = objRootCtrl:GetAttribute()
+	objRootCtrl:SetTextColor(attr.TextColor)
+	objRootCtrl:SetTextFont(attr.TextFont)
+	
+	local textObj = objRootCtrl:GetControlObject("Recomment")
+	local nLeftPos = attr.LeftTextPos
+	local nTopPos = attr.TopTextPos
+	local nHeight = attr.TextHeight
+	
+	local nWidth = textObj:GetTextExtent()
+	if nHeight > 0 then
+		textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, nTopPos+nHeight)
+	else
+		textObj:SetObjPos(nLeftPos, nTopPos, nLeftPos+nWidth, "father.height-"..tostring(nTopPos))
+	end
+	
+	if attr.LimitTextPos then
+		local textExtent = textObj:GetTextExtent()
+		if attr.LeftTextPos < 0 and textExtent > math.abs(attr.LeftTextPos) then
+			local left, top, right, bottom = textObj:GetObjPos()
+			textObj:SetObjPos(left, top, left+math.abs(attr.LeftTextPos), bottom)
+			textObj:SetEndEllipsis(true)
+		else
+			-- textObj:SetObjPos(0, 0, "father.width", "father.height")
+			textObj:SetEndEllipsis(false)
+		end
+	end
+end
+
 
 function OnEditFocusChange(edit, bFocus)
 	if not bFocus and edit:GetVisible() then
@@ -256,3 +297,36 @@ function OnEditKeyDown(self, uChar)
 		end
 	end
 end
+
+--文本可能超出父控件的范围。获取控件的最大可视范围。
+function GetVisiblePos(self)
+	local objRootCtrl = self
+	local objText = objRootCtrl:GetControlObject("Recomment")
+	local nRootL, nRootT, nRootR, nRootB = objRootCtrl:GetObjPos()
+	local nTextL, nTextT, nTextR, nTextB = objText:GetObjPos()
+	
+	if nTextL < 0 then
+		nRootL = nRootL + nTextL
+	end
+	
+	if nTextT < 0 then
+		nRootT = nRootT + nTextT
+	end 
+	
+	if nTextR > nRootR then
+		nRootR = nTextR
+	end 
+	
+	if nTextB > nRootB then
+		nRootB = nTextB
+	end 
+	
+	return nRootL, nRootT, nRootR, nRootB
+end
+
+
+
+
+
+
+

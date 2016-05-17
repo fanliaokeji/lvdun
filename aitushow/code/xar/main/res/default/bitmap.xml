@@ -60,6 +60,8 @@
 			<texture id="imagelist.mainwnd.button.rightarrow.hover"   imagelist="imagelist.mainwnd.button.rightarrow" index="2" />
 			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
 			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
+		
+		<!--左侧树-->
 		<imagelist id="MainIconFoderImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconFoderImgs.png" />
 			<bitmap id="MainIconFoder" imagelist="MainIconFoderImgs" index="1"/>
 			<bitmap id="MainIconFoderHover" imagelist="MainIconFoderImgs" index="2"/>
@@ -86,6 +88,66 @@
 			<bitmap id="MarkIconOpen" imagelist="MarkIconOpenImgs" index="1"/>
 			<bitmap id="MarkIconOpen2" imagelist="MarkIconOpenImgs" index="2"/>
 		<bitmap id="MyComputerIcon" path="bitmap\tree\MyComputerIcon.png" />
+		
+		<!--设置-->
+		<imagelist id="setting_apply" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_apply.png" />
+			<texture id="setting_apply.normal"   imagelist="setting_apply" index="1" />
+			<texture id="setting_apply.hover"   imagelist="setting_apply" index="2" />
+			<texture id="setting_apply.down"   imagelist="setting_apply" index="3" />
+		<imagelist id="setting_cancel" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_cancel.png" />
+			<texture id="setting_cancel.normal"   imagelist="setting_cancel" index="1" />
+			<texture id="setting_cancel.hover"   imagelist="setting_cancel" index="2" />
+			<texture id="setting_cancel.down"   imagelist="setting_cancel" index="3" />
+		<imagelist id="setting_check" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_check.png" />
+			<texture id="setting_check.normal"   imagelist="setting_check" index="1" />
+			<texture id="setting_check.hover"   imagelist="setting_check" index="2" />
+			<texture id="setting_check.down"   imagelist="setting_check" index="3" />
+		<imagelist id="setting_confirm" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_confirm.png" />
+			<texture id="setting_confirm.normal"   imagelist="setting_confirm" index="1" />
+			<texture id="setting_confirm.hover"   imagelist="setting_confirm" index="2" />
+			<texture id="setting_confirm.down"   imagelist="setting_confirm" index="3" />
+		<imagelist id="setting_radio" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_radio.png" />
+			<texture id="setting_radio.normal"   imagelist="setting_radio" index="1" />
+			<texture id="setting_radio.hover"   imagelist="setting_radio" index="2" />
+		<imagelist id="setting_uncheck" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_uncheck.png" />
+			<texture id="setting_uncheck.normal"   imagelist="setting_uncheck" index="1" />
+			<texture id="setting_uncheck.hover"   imagelist="setting_uncheck" index="2" />
+			<texture id="setting_uncheck.down"   imagelist="setting_uncheck" index="3" />
+		
+		
+		<!--工具栏-->
+		<imagelist id="toobar.fangda" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\fangda.png" />
+			<texture id="toobar.fangda.normal"   imagelist="toobar.fangda" index="1" />
+			<texture id="toobar.fangda.hover"   imagelist="toobar.fangda" index="2" />
+			<texture id="toobar.fangda.down"   imagelist="toobar.fangda" index="3" />
+		<imagelist id="toobar.shanchu" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shanchu.png" />
+			<texture id="toobar.shanchu.normal"   imagelist="toobar.shanchu" index="1" />
+			<texture id="toobar.shanchu.hover"   imagelist="toobar.shanchu" index="2" />
+			<texture id="toobar.shanchu.down"   imagelist="toobar.shanchu" index="3" />
+		<imagelist id="toobar.shangyizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shangyizhang.png" />
+			<texture id="toobar.shangyizhang.normal"   imagelist="toobar.shangyizhang" index="1" />
+			<texture id="toobar.shangyizhang.hover"   imagelist="toobar.shangyizhang" index="2" />
+			<texture id="toobar.shangyizhang.down"   imagelist="toobar.shangyizhang" index="3" />
+		<imagelist id="toobar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
+			<texture id="toobar.suoxiao.normal"   imagelist="toobar.suoxiao" index="1" />
+			<texture id="toobar.suoxiao.hover"   imagelist="toobar.suoxiao" index="2" />
+			<texture id="toobar.suoxiao.down"   imagelist="toobar.suoxiao" index="3" />
+		<imagelist id="toobar.xiayizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\xiayizhang.png" />
+			<texture id="toobar.xiayizhang.normal"   imagelist="toobar.xiayizhang" index="1" />
+			<texture id="toobar.xiayizhang.hover"   imagelist="toobar.xiayizhang" index="2" />
+			<texture id="toobar.xiayizhang.down"   imagelist="toobar.xiayizhang" index="3" />
+		<imagelist id="toobar.yibiyi" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\yibiyi.png" />
+			<texture id="toobar.yibiyi.normal"   imagelist="toobar.yibiyi" index="1" />
+			<texture id="toobar.yibiyi.hover"   imagelist="toobar.yibiyi" index="2" />
+			<texture id="toobar.yibiyi.down"   imagelist="toobar.yibiyi" index="3" />
+		<imagelist id="toobar.youxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\youxuanzhuan.png" />
+			<texture id="toobar.youxuanzhuan.normal"   imagelist="toobar.youxuanzhuan" index="1" />
+			<texture id="toobar.youxuanzhuan.hover"   imagelist="toobar.youxuanzhuan" index="2" />
+			<texture id="toobar.youxuanzhuan.down"   imagelist="toobar.youxuanzhuan" index="3" />
+		<imagelist id="toobar.zuoxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\zuoxuanzhuan.png" />
+			<texture id="toobar.zuoxuanzhuan.normal"   imagelist="toobar.zuoxuanzhuan" index="1" />
+			<texture id="toobar.zuoxuanzhuan.hover"   imagelist="toobar.zuoxuanzhuan" index="2" />
+			<texture id="toobar.zuoxuanzhuan.down"   imagelist="toobar.zuoxuanzhuan" index="3" />
 
 	</resource>
 </XLUE>

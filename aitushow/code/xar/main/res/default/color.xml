@@ -18,9 +18,15 @@
 		<color id="4BB18C" value="#4BB18C"/>
 		<color id="3B3B3B" value="#3B3B3B"/>
 		<color id="B1B9C4" value="#B1B9C4"/>
+		
+		<!--左侧树-->
 		<color id="35AADC" value="#35AADC" />
 		<color id="50597B" value="#50597B" />
 		<color id="2D3657" value="#2D3657" />
-		<color id="1F253D" value="#1F253D" />		
+		<color id="1F253D" value="#1F253D" />
+
+		<!--设置-->
+		<color id="394264" value="#394264" />
+		<color id="B8C2E1" value="#B8C2E1" />
 	</resource>
 </XLUE>

@@ -1,0 +1,158 @@
+<xlue>
+<control class="Setting.MainPanel">
+<objtemplate>
+<children>
+<obj id="PanelCaption" class="CaptionObject">
+	<attr>
+		<height>father.height</height>
+		<top>0</top>
+		<left>0</left>
+		<width>father.width</width>
+	</attr>
+	<children>
+	<obj id="TitleBar" class="FillObject">
+		<attr>
+			<srccolor>1F253D</srccolor>
+			<blendtype>Source</blendtype>
+			<destcolor>1F253D</destcolor>
+			<left>0</left>
+			<width>father.width</width>
+			<top>0</top>
+			<destpt>father.width,33</destpt>
+			<height>33</height>
+			<srcpt>0,0</srcpt>
+			<filltype>Monochrome</filltype>
+		</attr>
+		<children>
+		<obj id="close" class="TipAddin.Button">
+			<attr>
+				<top>5</top>
+				<HoverBkgID>bitmap.title.close.hover</HoverBkgID>
+				<NormalBkgID>bitmap.title.close.normal</NormalBkgID>
+				<DisableBkgID>bitmap.title.close.normal</DisableBkgID>
+				<DownBkgID>bitmap.title.close.down</DownBkgID>
+				<height>22</height>
+				<left>father.width-30</left>
+				<width>22</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="Setting.MainPanel.xml.lua" func="closeOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="titlehead" class="TextObject">
+			<attr>
+				<textcolor>system.white</textcolor>
+				<text>设置</text>
+				<left>20</left>
+				<halign>left</halign>
+				<top>0</top>
+				<font>font.text13.bold</font>
+				<height>father.height</height>
+				<width>50</width>
+				<valign>center</valign>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	<obj id="maintitleline" class="LineObject">
+		<attr>
+			<top>33</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>0</left>
+			<width>father.width</width>
+		</attr>
+	</obj>
+	<obj id="Leftline" class="LineObject">
+		<attr>
+			<top>0</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>0, father.height</destpt>
+			<height>father.height</height>
+			<color>50597B</color>
+			<left>0</left>
+			<width>1</width>
+		</attr>
+	</obj>
+	<obj id="LeftPanel" class="Setting.LeftPanel">
+		<attr>
+			<height>father.height-34</height>
+			<top>34</top>
+			<left>1</left>
+			<width>124</width>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.MainPanel.xml.lua" func="LeftPanelOnSelect" />
+		</eventlist>
+	</obj>
+	<obj id="NormalPanel" class="Setting.NormalPanel">
+		<attr>
+			<height>father.height-35</height>
+			<top>34</top>
+			<left>125</left>
+			<width>father.width-125</width>
+		</attr>
+	</obj>
+	<obj id="FileAssoPanel" class="Setting.FileAssoPanel">
+		<attr>
+			<height>father.height-35</height>
+			<top>34</top>
+			<left>125</left>
+			<width>father.width-125</width>
+		</attr>
+	</obj>
+	<obj id="confirm" class="TipAddin.Button">
+		<attr>
+			<top>father.height-39</top>
+			<HoverBkgID>setting_confirm.hover</HoverBkgID>
+			<NormalBkgID>setting_confirm.normal</NormalBkgID>
+			<DisableBkgID>setting_confirm.normal</DisableBkgID>
+			<DownBkgID>setting_confirm.down</DownBkgID>
+			<height>27</height>
+			<left>father.width-257</left>
+			<width>75</width>
+		</attr>
+		<eventlist>
+			<event name="OnClick" file="Setting.MainPanel.xml.lua" func="confirmOnClick" />
+		</eventlist>
+	</obj>
+	<obj id="cancel" class="TipAddin.Button">
+		<attr>
+			<top>father.height-39</top>
+			<HoverBkgID>setting_cancel.hover</HoverBkgID>
+			<NormalBkgID>setting_cancel.normal</NormalBkgID>
+			<DisableBkgID>setting_cancel.normal</DisableBkgID>
+			<DownBkgID>setting_cancel.down</DownBkgID>
+			<height>27</height>
+			<left>father.width-172</left>
+			<width>75</width>
+		</attr>
+		<eventlist>
+			<event name="OnClick" file="Setting.MainPanel.xml.lua" func="cancelOnClick" />
+		</eventlist>
+	</obj>
+	<obj id="apply" class="TipAddin.Button">
+		<attr>
+			<top>father.height-39</top>
+			<HoverBkgID>setting_apply.hover</HoverBkgID>
+			<NormalBkgID>setting_apply.normal</NormalBkgID>
+			<DisableBkgID>setting_apply.normal</DisableBkgID>
+			<DownBkgID>setting_apply.down</DownBkgID>
+			<height>27</height>
+			<left>father.width-87</left>
+			<width>75</width>
+		</attr>
+		<eventlist>
+			<event name="OnClick" file="Setting.MainPanel.xml.lua" func="applyOnClick" />
+		</eventlist>
+	</obj>
+	</children>
+</obj>
+</children>
+</objtemplate>
+</control>
+</xlue>

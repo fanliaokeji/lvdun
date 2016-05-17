@@ -1,0 +1,56 @@
+<xlue>
+<control class="CheckBox">
+<attr_def>
+	<attr name="UnCheckNormal" type="string" />
+	<attr name="UnCheckHover" type="string" />
+	<attr name="CheckNormal" type="string" />
+	<attr name="CheckHover" type="string" />
+	<attr name="ImgWidth" type="int" ><default>14</default></attr>
+	<attr name="ImgHeight" type="int" ><default>14</default></attr>
+	<attr name="Text" type="string" />
+	<attr name="Space" type="int" ><default>9</default></attr>
+	<attr name="Type" type="string" ><default>checkbox</default></attr>
+	<attr name="Select" type="bool" ><default>false</default></attr>
+</attr_def>
+<method_def>
+	<SetCheck file="CheckBox.xml.lua" func="SetCheck"/>
+</method_def>
+<event_def>
+	<OnSelect />
+</event_def>
+<objtemplate>
+<children>
+<obj id="button" class="TipAddin.Button">
+	<attr>
+		<height>13</height>
+		<top>0</top>
+		<left>0</left>
+		<width>13</width>
+	</attr>
+	<eventlist>
+		<event name="OnClick" file="CheckBox.xml.lua" func="buttonOnClick" />
+	</eventlist>
+</obj>
+<obj id="text" class="TextObject">
+	<attr>
+		<textcolor>B8C2E1</textcolor>
+		<text></text>
+		<left>19</left>
+		<halign>left</halign>
+		<top>0</top>
+		<font>font.text12</font>
+		<height>20</height>
+		<width>father.width-19</width>
+		<valign>center</valign>
+	</attr>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="CheckBox.xml.lua" func="CheckBoxOnInitControl" />
+	<event name="OnEnableChange" file="CheckBox.xml.lua" func="CheckBoxOnEnableChange" />
+	<event name="OnLButtonUp" file="CheckBox.xml.lua" func="CheckBoxOnLButtonUp" />
+	<event name="OnLButtonDown" file="CheckBox.xml.lua" func="CheckBoxOnLButtonDown" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>
