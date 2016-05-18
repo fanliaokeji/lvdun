@@ -10,9 +10,22 @@ function OnClickSetting(self)
 	local imageCtrl = objTree:GetUIObject("FrameWnd.ImageCtrl")
 	local curZoomPercent = imageCtrl:GetZoomPercent()
 	imageCtrl:Zoom(curZoomPercent + 10)]]--
+
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
+	--Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
+	--Helper:CreateModalWnd("MessageBoxWnd","MessageBoxWndTree", objHostWnd, {"确定要删除\"图片打开-图片编辑.PNG\"吗？", function() XLMessageBox(1) end})
+	Helper:CreateModalWnd("MessageBoxExWnd","MessageBoxExWndTree", objHostWnd, 
+			{
+				fn_coverold = 
+					function()
+						XLMessageBox("fn_coverold")
+					end, 
+				fn_renamesave = 
+					function()
+						XLMessageBox("fn_renamesave")
+					end, 
+			})
 end
 
 --进入全屏模式，退出在FrameWnd里处理

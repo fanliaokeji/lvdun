@@ -149,6 +149,29 @@
 			<texture id="toolbar.zuoxuanzhuan.normal"   imagelist="toolbar.zuoxuanzhuan" index="1" />
 			<texture id="toolbar.zuoxuanzhuan.hover"   imagelist="toolbar.zuoxuanzhuan" index="2" />
 			<texture id="toolbar.zuoxuanzhuan.down"   imagelist="toolbar.zuoxuanzhuan" index="3" />
+			
+		<!--对话框-->
+		<bitmap id="messagebox.icon"  path="bitmap\messagebox\icon.png" />
+		<imagelist id="messagebox.yes" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\yes.png" />
+			<texture id="messagebox.yes.normal"   imagelist="messagebox.yes" index="1" />
+			<texture id="messagebox.yes.hover"   imagelist="messagebox.yes" index="2" />
+			<texture id="messagebox.yes.down"   imagelist="messagebox.yes" index="3" />
+		<imagelist id="messagebox.no" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\no.png" />
+			<texture id="messagebox.no.normal"   imagelist="messagebox.no" index="1" />
+			<texture id="messagebox.no.hover"   imagelist="messagebox.no" index="2" />
+			<texture id="messagebox.no.down"   imagelist="messagebox.no" index="3" />
+		<imagelist id="messagebox.nosave" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\nosave.png" />
+			<texture id="messagebox.nosave.normal"   imagelist="messagebox.nosave" index="1" />
+			<texture id="messagebox.nosave.hover"   imagelist="messagebox.nosave" index="2" />
+			<texture id="messagebox.nosave.down"   imagelist="messagebox.nosave" index="3" />
+		<imagelist id="messagebox.coverold" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\coverold.png" />
+			<texture id="messagebox.coverold.normal"   imagelist="messagebox.coverold" index="1" />
+			<texture id="messagebox.coverold.hover"   imagelist="messagebox.coverold" index="2" />
+			<texture id="messagebox.coverold.down"   imagelist="messagebox.coverold" index="3" />
+		<imagelist id="messagebox.renamesave" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\renamesave.png" />
+			<texture id="messagebox.renamesave.normal"   imagelist="messagebox.renamesave" index="1" />
+			<texture id="messagebox.renamesave.hover"   imagelist="messagebox.renamesave" index="2" />
+			<texture id="messagebox.renamesave.down"   imagelist="messagebox.renamesave" index="3" />
 
 	</resource>
 </XLUE>

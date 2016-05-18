@@ -1,0 +1,160 @@
+<xlue>
+<control class="MessageBoxEx">
+<objtemplate>
+<children>
+<obj id="PanelCaption" class="CaptionObject">
+	<attr>
+		<height>father.height</height>
+		<top>0</top>
+		<left>0</left>
+		<width>father.width</width>
+	</attr>
+	<children>
+	<obj id="TitleBar" class="FillObject">
+		<attr>
+			<srccolor>1F253D</srccolor>
+			<blendtype>Source</blendtype>
+			<destcolor>1F253D</destcolor>
+			<left>0</left>
+			<width>father.width</width>
+			<top>0</top>
+			<destpt>father.width,28</destpt>
+			<height>28</height>
+			<srcpt>0,0</srcpt>
+			<filltype>Monochrome</filltype>
+		</attr>
+		<children>
+		<obj id="close" class="TipAddin.Button">
+			<attr>
+				<top>5</top>
+				<HoverBkgID>bitmap.title.close.hover</HoverBkgID>
+				<NormalBkgID>bitmap.title.close.normal</NormalBkgID>
+				<DisableBkgID>bitmap.title.close.normal</DisableBkgID>
+				<DownBkgID>bitmap.title.close.down</DownBkgID>
+				<height>22</height>
+				<left>father.width-30</left>
+				<width>22</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBoxEx.xml.lua" func="closeOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="titlehead" class="TextObject">
+			<attr>
+				<textcolor>system.white</textcolor>
+				<text>旋转图片</text>
+				<left>12</left>
+				<halign>left</halign>
+				<top>0</top>
+				<font>font.text13.bold</font>
+				<height>father.height</height>
+				<width>90</width>
+				<valign>center</valign>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	<obj id="MainPanel" class="FillObject">
+		<attr>
+			<srccolor>2D3657</srccolor>
+			<blendtype>Source</blendtype>
+			<destcolor>2D3657</destcolor>
+			<left>0</left>
+			<width>father.width</width>
+			<srcpt>0,28</srcpt>
+			<destpt>father.width,father.height-28</destpt>
+			<height>father.height-28</height>
+			<top>28</top>
+			<filltype>Monochrome</filltype>
+		</attr>
+		<children>
+		<obj id="MainIcon" class="ImageObject">
+			<attr>
+				<top>22</top>
+				<image>messagebox.icon</image>
+				<height>28</height>
+				<left>20</left>
+				<width>28</width>
+			</attr>
+		</obj>
+		<obj id="MainText" class="TextObject">
+			<attr>
+				<textcolor>system.white</textcolor>
+				<valign>top</valign>
+				<left>56</left>
+				<multiline>1</multiline>
+				<top>30</top>
+				<font>font.text12</font>
+				<height>father.height-30</height>
+				<text>您对图片进行了旋转操作，是否需要保存？
+覆盖原图可能造成图片质量下降，推荐使用自动更名保存。</text>
+				<halign>left</halign>
+				<width>father.width-56</width>
+			</attr>
+		</obj>
+		<obj id="renamesave" class="TipAddin.Button">
+			<attr>
+				<top>father.height-37</top>
+				<HoverBkgID>messagebox.renamesave.hover</HoverBkgID>
+				<NormalBkgID>messagebox.renamesave.normal</NormalBkgID>
+				<DisableBkgID>messagebox.renamesave.normal</DisableBkgID>
+				<DownBkgID>messagebox.renamesave.down</DownBkgID>
+				<height>25</height>
+				<left>father.width-273</left>
+				<width>93</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBoxEx.xml.lua" func="renamesaveOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="coverold" class="TipAddin.Button">
+			<attr>
+				<top>father.height-37</top>
+				<HoverBkgID>messagebox.coverold.hover</HoverBkgID>
+				<NormalBkgID>messagebox.coverold.normal</NormalBkgID>
+				<DisableBkgID>messagebox.coverold.normal</DisableBkgID>
+				<DownBkgID>messagebox.coverold.down</DownBkgID>
+				<height>25</height>
+				<left>father.width-170</left>
+				<width>73</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBoxEx.xml.lua" func="coveroldOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="nosave" class="TipAddin.Button">
+			<attr>
+				<top>father.height-37</top>
+				<HoverBkgID>messagebox.nosave.hover</HoverBkgID>
+				<NormalBkgID>messagebox.nosave.normal</NormalBkgID>
+				<DisableBkgID>messagebox.nosave.normal</DisableBkgID>
+				<DownBkgID>messagebox.nosave.down</DownBkgID>
+				<height>25</height>
+				<left>father.width-87</left>
+				<width>73</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBoxEx.xml.lua" func="nosaveOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="chebox" class="CheckBox">
+			<attr>
+				<CheckHover>setting_check.hover</CheckHover>
+				<Text>下次不再询问</Text>
+				<left>18</left>
+				<width>90</width>
+				<top>father.height-31</top>
+				<CheckNormal>setting_check.normal</CheckNormal>
+				<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+				<height>20</height>
+				<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	</children>
+</obj>
+</children>
+</objtemplate>
+</control>
+</xlue>
