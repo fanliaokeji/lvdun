@@ -116,38 +116,39 @@
 		
 		
 		<!--工具栏-->
-		<imagelist id="toobar.fangda" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\fangda.png" />
-			<texture id="toobar.fangda.normal"   imagelist="toobar.fangda" index="1" />
-			<texture id="toobar.fangda.hover"   imagelist="toobar.fangda" index="2" />
-			<texture id="toobar.fangda.down"   imagelist="toobar.fangda" index="3" />
-		<imagelist id="toobar.shanchu" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shanchu.png" />
-			<texture id="toobar.shanchu.normal"   imagelist="toobar.shanchu" index="1" />
-			<texture id="toobar.shanchu.hover"   imagelist="toobar.shanchu" index="2" />
-			<texture id="toobar.shanchu.down"   imagelist="toobar.shanchu" index="3" />
-		<imagelist id="toobar.shangyizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shangyizhang.png" />
-			<texture id="toobar.shangyizhang.normal"   imagelist="toobar.shangyizhang" index="1" />
-			<texture id="toobar.shangyizhang.hover"   imagelist="toobar.shangyizhang" index="2" />
-			<texture id="toobar.shangyizhang.down"   imagelist="toobar.shangyizhang" index="3" />
-		<imagelist id="toobar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
-			<texture id="toobar.suoxiao.normal"   imagelist="toobar.suoxiao" index="1" />
-			<texture id="toobar.suoxiao.hover"   imagelist="toobar.suoxiao" index="2" />
-			<texture id="toobar.suoxiao.down"   imagelist="toobar.suoxiao" index="3" />
-		<imagelist id="toobar.xiayizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\xiayizhang.png" />
-			<texture id="toobar.xiayizhang.normal"   imagelist="toobar.xiayizhang" index="1" />
-			<texture id="toobar.xiayizhang.hover"   imagelist="toobar.xiayizhang" index="2" />
-			<texture id="toobar.xiayizhang.down"   imagelist="toobar.xiayizhang" index="3" />
-		<imagelist id="toobar.yibiyi" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\yibiyi.png" />
-			<texture id="toobar.yibiyi.normal"   imagelist="toobar.yibiyi" index="1" />
-			<texture id="toobar.yibiyi.hover"   imagelist="toobar.yibiyi" index="2" />
-			<texture id="toobar.yibiyi.down"   imagelist="toobar.yibiyi" index="3" />
-		<imagelist id="toobar.youxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\youxuanzhuan.png" />
-			<texture id="toobar.youxuanzhuan.normal"   imagelist="toobar.youxuanzhuan" index="1" />
-			<texture id="toobar.youxuanzhuan.hover"   imagelist="toobar.youxuanzhuan" index="2" />
-			<texture id="toobar.youxuanzhuan.down"   imagelist="toobar.youxuanzhuan" index="3" />
-		<imagelist id="toobar.zuoxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\zuoxuanzhuan.png" />
-			<texture id="toobar.zuoxuanzhuan.normal"   imagelist="toobar.zuoxuanzhuan" index="1" />
-			<texture id="toobar.zuoxuanzhuan.hover"   imagelist="toobar.zuoxuanzhuan" index="2" />
-			<texture id="toobar.zuoxuanzhuan.down"   imagelist="toobar.zuoxuanzhuan" index="3" />
+		<texture id="toolbar.bkg" type="NineInOne" image="bitmap\toolbar\bkg.png" />
+		<imagelist id="toolbar.fangda" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\fangda.png" />
+			<texture id="toolbar.fangda.normal"   imagelist="toolbar.fangda" index="1" />
+			<texture id="toolbar.fangda.hover"   imagelist="toolbar.fangda" index="2" />
+			<texture id="toolbar.fangda.down"   imagelist="toolbar.fangda" index="3" />
+		<imagelist id="toolbar.shanchu" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shanchu.png" />
+			<texture id="toolbar.shanchu.normal"   imagelist="toolbar.shanchu" index="1" />
+			<texture id="toolbar.shanchu.hover"   imagelist="toolbar.shanchu" index="2" />
+			<texture id="toolbar.shanchu.down"   imagelist="toolbar.shanchu" index="3" />
+		<imagelist id="toolbar.shangyizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shangyizhang.png" />
+			<texture id="toolbar.shangyizhang.normal"   imagelist="toolbar.shangyizhang" index="1" />
+			<texture id="toolbar.shangyizhang.hover"   imagelist="toolbar.shangyizhang" index="2" />
+			<texture id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="3" />
+		<imagelist id="toolbar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
+			<texture id="toolbar.suoxiao.normal"   imagelist="toolbar.suoxiao" index="1" />
+			<texture id="toolbar.suoxiao.hover"   imagelist="toolbar.suoxiao" index="2" />
+			<texture id="toolbar.suoxiao.down"   imagelist="toolbar.suoxiao" index="3" />
+		<imagelist id="toolbar.xiayizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\xiayizhang.png" />
+			<texture id="toolbar.xiayizhang.normal"   imagelist="toolbar.xiayizhang" index="1" />
+			<texture id="toolbar.xiayizhang.hover"   imagelist="toolbar.xiayizhang" index="2" />
+			<texture id="toolbar.xiayizhang.down"   imagelist="toolbar.xiayizhang" index="3" />
+		<imagelist id="toolbar.yibiyi" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\yibiyi.png" />
+			<texture id="toolbar.yibiyi.normal"   imagelist="toolbar.yibiyi" index="1" />
+			<texture id="toolbar.yibiyi.hover"   imagelist="toolbar.yibiyi" index="2" />
+			<texture id="toolbar.yibiyi.down"   imagelist="toolbar.yibiyi" index="3" />
+		<imagelist id="toolbar.youxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\youxuanzhuan.png" />
+			<texture id="toolbar.youxuanzhuan.normal"   imagelist="toolbar.youxuanzhuan" index="1" />
+			<texture id="toolbar.youxuanzhuan.hover"   imagelist="toolbar.youxuanzhuan" index="2" />
+			<texture id="toolbar.youxuanzhuan.down"   imagelist="toolbar.youxuanzhuan" index="3" />
+		<imagelist id="toolbar.zuoxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\zuoxuanzhuan.png" />
+			<texture id="toolbar.zuoxuanzhuan.normal"   imagelist="toolbar.zuoxuanzhuan" index="1" />
+			<texture id="toolbar.zuoxuanzhuan.hover"   imagelist="toolbar.zuoxuanzhuan" index="2" />
+			<texture id="toolbar.zuoxuanzhuan.down"   imagelist="toolbar.zuoxuanzhuan" index="3" />
 
 	</resource>
 </XLUE>
