@@ -143,8 +143,16 @@ function ResetScrollBar(objRootCtrl)
 		local newdis = olddis
 		if attr.SelectItem then
 			local sl, st, sr, sb = attr.SelectItem:GetObjPos()
+			--当前选中的不在屏幕中间时
 			if sb > b-t then
+				--将选中的移动到底部
 				newdis = sb-b+t
+				--再判断是否可以移动到中间
+				if olddis - newdis > (b-t)/2 then
+					newdis = newdis + (b-t)/2
+				else
+					newdis = olddis
+				end
 			else
 				newdis = 0
 			end
