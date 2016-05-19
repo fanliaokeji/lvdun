@@ -14,18 +14,21 @@ function OnClickSetting(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	--Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
-	--Helper:CreateModalWnd("MessageBoxWnd","MessageBoxWndTree", objHostWnd, {"确定要删除\"图片打开-图片编辑.PNG\"吗？", function() XLMessageBox(1) end})
-	Helper:CreateModalWnd("MessageBoxExWnd","MessageBoxExWndTree", objHostWnd, 
-			{
-				fn_coverold = 
-					function()
-						XLMessageBox("fn_coverold")
-					end, 
-				fn_renamesave = 
-					function()
-						XLMessageBox("fn_renamesave")
-					end, 
-			})
+	local MSG = Helper.MessageBox
+	--[[local nRet, bCheck = MSG.MessageBoxEx(objHostWnd)
+	if MSG.ID_RENAMESAVE == nRet then
+		XLMessageBox("ID_RENAMESAVE, bCheck = "..tostring(bCheck))
+	elseif MSG.ID_COVEROLD == nRet then
+		XLMessageBox("ID_COVEROLD, bCheck = "..tostring(bCheck))
+	else
+		XLMessageBox("ID_CANCEL bCheck = "..tostring(bCheck))
+	end]]--
+	local nRet = MSG.MessageBox("您确定要删除这个图片吗？", objHostWnd)
+	if MSG.ID_YES == nRet then
+		XLMessageBox("ID_YES")
+	else
+		XLMessageBox("ID_CANCEL")
+	end
 end
 
 --进入全屏模式，退出在FrameWnd里处理

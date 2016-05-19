@@ -1,5 +1,6 @@
 local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
+local Tray = Helper.Tray
 
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
@@ -26,6 +27,7 @@ function OnCreate(self)
 		-- imageCtrl:SetImagePath(file)
 	-- end
 	-- Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
+	Tray.Init(self)
 end
 
 local isLButtonDown = false

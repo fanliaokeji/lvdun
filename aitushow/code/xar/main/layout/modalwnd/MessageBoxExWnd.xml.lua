@@ -7,6 +7,9 @@ end
 
 function OnCreate(self)
 	local HostWnd = GetMainWndHost()
+	if not HostWnd then
+		return 
+	end
 	local l, t, r, b = HostWnd:GetWindowRect()
 	local w, h = r-l, b-t
 	local _l, _t, _r, _b = self:GetWindowRect()

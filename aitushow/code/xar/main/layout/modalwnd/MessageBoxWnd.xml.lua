@@ -7,6 +7,9 @@ end
 
 function OnCreate(self)
 	local HostWnd = GetMainWndHost()
+	if not HostWnd then
+		return 
+	end
 	local l, t, r, b = HostWnd:GetWindowRect()
 	local w, h = r-l, b-t
 	local _l, _t, _r, _b = self:GetWindowRect()
@@ -21,12 +24,7 @@ function OnShowWindow(self, bVisible)
 	local objtree = self:GetBindUIObjectTree()
 	local MainText = objtree:GetUIObject("root"):GetObject("MainText")
 	local userdata = self:GetUserData()
-	if type(userdata) == "table" then
-		for _, v in ipairs(userdata) do
-			if type(v) == "string" then
-				MainText:SetText(v)
-				break
-			end
-		end
+	if type(userdata) == "string" then
+		MainText:SetText(userdata)
 	end
 end
