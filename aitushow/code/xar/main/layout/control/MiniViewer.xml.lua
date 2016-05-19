@@ -1,0 +1,135 @@
+function GetObjWH(obj)
+	local l, t, r, b = obj:GetObjPos()
+	return r-l, b-t
+end
+
+function GetObjXYWH(obj)
+	local l, t, r, b = obj:GetObjPos()
+	return l, t, r-l, b-t
+end
+
+--xoffset， yoffset分别表示大图距原始位置的横纵坐标偏移量， size_rates 当前大小 与 原始大小的比值
+function Update(self, xoffset, yoffset, size_rates)
+	local selarea = self:GetObject("selarea")
+	local attr = self:GetAttribute()
+	local x, y, w, h = GetObjXYWH(selarea)
+	local new_w = w/size_rates
+	local new_h = h/size_rates
+	local new_x = x + (w-new_w)/2
+	local new_y = y + (h-new_h)/2
+	newnew_x = new_x - xoffset/attr.rates
+	newnew_y = new_y - yoffset/attr.rates
+	if CheckSelArea(self, newnew_x, newnew_y, newnew_x + new_w, newnew_y + new_h) then
+		selarea:SetObjPos2(newnew_x, newnew_y, new_w, new_h)
+	else
+		selarea:SetObjPos2(new_x, new_y, new_w, new_h)
+	end
+	SyncInOutBmp(self)
+	local title = self:GetObject("title")
+	title:SetText("缩放至"..math.floor(size_rates*100).."%")
+end
+
+function SetObjBMP(obj, bitmap, rates)
+	local x, y, w, h = GetObjXYWH(obj)
+	local _, bw, bh = bitmap:GetInfo()
+	local new_w, new_h = bw/rates, bh/rates
+	local new_x, new_y = x + (w - new_w)/2, y + (h - new_h)/2
+	local new_bmp = bitmap:Stretch(new_w, new_h)
+	obj:SetObjPos2(new_x, new_y, new_w, new_h)
+	if new_bmp then
+		obj:SetBitmap(new_bmp)
+	end
+end
+
+--传入大图Bitmap对象
+function Init(self, bitmap)
+	if not bitmap then
+		return
+	end
+	local _, w, h = bitmap:GetInfo()
+	local fillobj = self:GetObject("fillobj")
+	local fw, fh = GetObjWH(fillobj)
+	local attr = self:GetAttribute()
+	if w/fw > h/fh then
+		attr.rates = w/fw
+	else
+		attr.rates = h/fh
+	end
+	local insideimg = self:GetObject("insideimg")
+	local outsideimg = self:GetObject("outsideimg") 
+	SetObjBMP(insideimg, bitmap, attr.rates)
+	SetObjBMP(outsideimg, bitmap, attr.rates)
+	local new_w, new_h = w/attr.rates, h/attr.rates
+	local new_x, new_y = (fw-new_w)/2, (fh-new_h)/2 
+	local selarea = self:GetObject("selarea")
+	selarea:SetObjPos2(new_x, new_y, new_w, new_h)
+	selarea:SetVisible(true)
+	selarea:SetChildrenVisible(true)
+	SyncInOutBmp(self)
+	self:GetObject("title"):SetText("1212")
+	self:SetVisible(true)
+	self:SetChildrenVisible(true)
+end
+
+--同步内外位图坐标
+function SyncInOutBmp(self)
+	local outsideimg = self:GetControlObject("outsideimg")
+	local insideimg = self:GetControlObject("insideimg")
+	local l, t, r, b = insideimg:GetAbsPos()
+	local _l, _t, _r, _b = outsideimg:GetAbsPos()
+	local dx, dy, w, h = l-_l, t-_t, r-l, b-t
+	local x, y = GetObjXYWH(outsideimg)
+	outsideimg:SetObjPos2(x+dx, y+dy, w, h)
+end
+
+--边界检查
+function CheckSelArea(self, l, t, r, b)
+	local insideimg = self:GetObject("insideimg")
+	local _l, _t, _r, _b = insideimg:GetObjPos()
+	if l >= _l and t >= _t and r <=_r and b <= _b then
+		return true
+	else
+		return false
+	end
+end
+
+function selareaOnMouseMove(self, x, y)
+	local ower = self:GetOwnerControl()
+	local attr = ower:GetAttribute()
+	if attr.press then
+		local parent = self:GetParent()
+		local pl, pt, pr, pb = parent:GetObjPos()
+		local w, h = pr-pl, pb-pt
+		local p = attr.press
+		local dx, dy = x-p.x, y-p.y
+		local l, t, r, b = self:GetObjPos()
+		l, t, r, b = l+dx, t+dy, r+dx, b+dy
+		if CheckSelArea(ower, l, t, r, b) then
+			self:SetObjPos(l, t, r, b)
+			SyncInOutBmp(ower)
+		end
+	end
+end
+
+function MiniViewerOnInitControl(self)
+	self:SetVisible(false)
+	self:SetChildrenVisible(false)
+	SyncInOutBmp(self)
+end
+
+function selareaOnLButtonUp(self, x, y)
+	local ower = self:GetOwnerControl()
+	local attr = ower:GetAttribute()
+	attr.press = nil
+end
+
+function closeOnClick(self)
+end
+
+function selareaOnLButtonDown(self, x, y)
+	local ower = self:GetOwnerControl()
+	local attr = ower:GetAttribute()
+	local l, t, r, b = self:GetObjPos()
+	attr.press = {l=l, t=t, r=r, b=b, x=x, y=y}
+end
+

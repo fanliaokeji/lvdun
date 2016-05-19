@@ -22,13 +22,18 @@ function OnClickSetting(self)
 		XLMessageBox("ID_COVEROLD, bCheck = "..tostring(bCheck))
 	else
 		XLMessageBox("ID_CANCEL bCheck = "..tostring(bCheck))
-	end]]--
+	end
 	local nRet = MSG.MessageBox("您确定要删除这个图片吗？", objHostWnd)
 	if MSG.ID_YES == nRet then
 		XLMessageBox("ID_YES")
 	else
 		XLMessageBox("ID_CANCEL")
-	end
+	end]]--
+	local MiniViewer = objTree:GetUIObject("MainWnd.MiniViewer")
+	local xgf= XLGetObject("Xunlei.XLGraphic.Factory.Object")
+	local bitmap = xgf:CreateBitmap("E:\\0104\\0107\\{DAC88B5E-C5B5-4D63-A58C-D7C8001B9E64}.png", "ARGB32")
+	MiniViewer:Init(bitmap)
+	MiniViewer:Update(100, 120, 2.8)
 end
 
 --进入全屏模式，退出在FrameWnd里处理

@@ -50,6 +50,8 @@
 	<event name="OnEnableChange" file="CheckBox.xml.lua" func="CheckBoxOnEnableChange" />
 	<event name="OnLButtonUp" file="CheckBox.xml.lua" func="CheckBoxOnLButtonUp" />
 	<event name="OnLButtonDown" file="CheckBox.xml.lua" func="CheckBoxOnLButtonDown" />
+	<event name="OnMouseLeave" file="CheckBox.xml.lua" func="CheckBoxOnMouseLeave" />
+	<event name="OnMouseEnter" file="CheckBox.xml.lua" func="CheckBoxOnMouseEnter" />
 </eventlist>
 </objtemplate>
 </control>

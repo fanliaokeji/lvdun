@@ -1,0 +1,105 @@
+<xlue>
+<control class="MiniViewer">
+<method_def>
+	<Update file="MiniViewer.xml.lua" func="Update"/>
+	<Init file="MiniViewer.xml.lua" func="Init"/>
+</method_def>
+<objtemplate>
+<children>
+<obj id="captionbkg" class="CaptionObject">
+	<attr>
+		<top>0</top>
+		<height>father.height</height>
+		<left>0</left>
+		<zorder>1</zorder>
+		<width>father.width</width>
+	</attr>
+	<children>
+	<obj id="title" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<valign>center</valign>
+			<left>5</left>
+			<halign>left</halign>
+			<top>5</top>
+			<font>default.font</font>
+			<height>25</height>
+			<width>father.width-10</width>
+		</attr>
+	</obj>
+	<obj id="close" class="TipAddin.Button">
+		<attr>
+			<top>5</top>
+			<HoverBkgID>bitmap.title.close.hover</HoverBkgID>
+			<NormalBkgID>bitmap.title.close.normal</NormalBkgID>
+			<DisableBkgID>bitmap.title.close.normal</DisableBkgID>
+			<DownBkgID>bitmap.title.close.down</DownBkgID>
+			<height>22</height>
+			<left>father.width-30</left>
+			<width>22</width>
+		</attr>
+		<eventlist>
+			<event name="OnClick" file="MiniViewer.xml.lua" func="closeOnClick" />
+		</eventlist>
+	</obj>
+	<obj id="insideimg" class="ImageObject">
+		<attr>
+			<top>father.width/3</top>
+			<image></image>
+			<height>father.height/2</height>
+			<left>0</left>
+			<width>father.width</width>
+		</attr>
+	</obj>
+	</children>
+</obj>
+<obj id="fillobj" class="FillObject">
+	<attr>
+		<srccolor>system.black</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>system.black</destcolor>
+		<alpha>120</alpha>
+		<width>father.width</width>
+		<srcpt>0,0</srcpt>
+		<left>0</left>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<top>0</top>
+		<zorder>999</zorder>
+		<filltype>Monochrome</filltype>
+	</attr>
+	<children>
+	<obj id="selarea" class="LayoutObject">
+		<attr>
+			<top>50</top>
+			<limitchild>1</limitchild>
+			<height>father.height-100</height>
+			<left>50</left>
+			<width>father.width-100</width>
+		</attr>
+		<eventlist>
+			<event name="OnLButtonUp" file="MiniViewer.xml.lua" func="selareaOnLButtonUp" />
+			<event name="OnLButtonDown" file="MiniViewer.xml.lua" func="selareaOnLButtonDown" />
+			<event name="OnMouseMove" file="MiniViewer.xml.lua" func="selareaOnMouseMove" />
+		</eventlist>
+		<children>
+		<obj id="outsideimg" class="ImageObject">
+			<attr>
+				<top>50</top>
+				<image></image>
+				<height>father.height-100</height>
+				<left>50</left>
+				<width>father.width-100</width>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="MiniViewer.xml.lua" func="MiniViewerOnInitControl" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

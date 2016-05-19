@@ -113,6 +113,7 @@ function ClearTree(self, dir)
 	--节点太多会导致卡顿，so节点大于50时清除其它打开的分支
 	if dir and panelattr.opendirs[dir] and panelattr.nodeindex > 50 then
 		panelattr.opendirs = {}
+		collectgarbage("collect")
 		panelattr.opendirs[dir] = true
 		local vpath  = PathHelper.GetVrPath(dir)
 		panelattr.opendirs[vpath] = true
