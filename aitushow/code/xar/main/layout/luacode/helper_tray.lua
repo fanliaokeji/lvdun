@@ -91,3 +91,10 @@ function Tray.Init(hostwnd)
 	Tray.Update()
 	Tray.TrayObject:Show()
 end
+
+function Tray.Hide()
+	local TrayObject = Tray.TrayObject
+	if TrayObject then
+		TrayObject:Hide()
+	end
+end

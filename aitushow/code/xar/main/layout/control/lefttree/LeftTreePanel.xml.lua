@@ -3,20 +3,30 @@ local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
 
+function openparent(attr, dir)
+	dir = string.gsub(dir, "([/\\])$", "")
+	local parent = string.match(dir, "^(.*)[/\\][^/\\]+$")
+	if parent then
+		attr.opendirs[parent] = true
+		openparent(attr, parent)
+	end
+end
+
+function Filter(dir)
+	if not dir then return end
+	dir = string.gsub(dir, "[/\\]$", "")
+	return string.upper(dir)
+end
+
 function Update(self, dir)
+	dir = Filter(dir)
 	local attr = self:GetAttribute()
 	if attr.selectdir == dir then
 		return
 	end
-	local function openparent(dir)
-		dir = string.gsub(dir, "([/\\])$", "")
-		local parent = string.match(dir, "^(.*)[/\\][^/\\]+$")
-		if parent then
-			attr.opendirs[parent] = true
-			openparent(parent)
-		end
-	end
 	
+	--无条件关闭其它分支
+	attr.opendirs = {}
 	local dirlist = tipUtil:FindDirList(dir)
 	if #dirlist > 0 then
 		attr.opendirs[dir] = not attr.opendirs[dir]
@@ -24,14 +34,14 @@ function Update(self, dir)
 	
 	local vpath  = PathHelper.GetVrPath(dir)
 	attr.opendirs[vpath] = true
-	openparent(dir)
+	openparent(attr, dir)
 	attr.selectdir = dir
-		--self:FireExtEvent("OnSelect", dir)
 	ClearTree(self)
 	BuildTree(self)
 end
 
 function Dir2TreeView(self, dir, left, params)
+	dir = Filter(dir)
 	local panelattr = self:GetAttribute()
 	panelattr.nodeindex = panelattr.nodeindex or 1
 	panelattr.opendirs = panelattr.opendirs or {}
@@ -75,7 +85,7 @@ function Dir2TreeView(self, dir, left, params)
 	Item:Update()
 	Item:AttachListener("OnStateChange", false, function(_self, event, bState)
 			panelattr.opendirs[dir] = bState
-			ClearTree(self)
+			ClearTree(self, dir)
 			BuildTree(self)
 		end)
 	Item:AttachListener("OnSelect", false, function()
@@ -86,7 +96,7 @@ function Dir2TreeView(self, dir, left, params)
 				panelattr.selectdir = dir
 				self:FireExtEvent("OnSelect", dir)
 			end
-			ClearTree(self)
+			ClearTree(self, dir)
 			BuildTree(self)
 		end)
 	local Container = self:GetControlObject("Container")
@@ -95,10 +105,19 @@ function Dir2TreeView(self, dir, left, params)
 	ResetScrollBar(self)
 end
 
-function ClearTree(self)
+--根据dir决定是否超过一定数量清除其它分支
+function ClearTree(self, dir)
 	local Container = self:GetControlObject("Container")
 	Container:RemoveAllChild()
 	local panelattr = self:GetAttribute()
+	--节点太多会导致卡顿，so节点大于50时清除其它打开的分支
+	if dir and panelattr.opendirs[dir] and panelattr.nodeindex > 50 then
+		panelattr.opendirs = {}
+		panelattr.opendirs[dir] = true
+		local vpath  = PathHelper.GetVrPath(dir)
+		panelattr.opendirs[vpath] = true
+		openparent(panelattr, dir)
+	end
 	panelattr.nodeindex = 1
 	panelattr.SelectItem = nil
 end

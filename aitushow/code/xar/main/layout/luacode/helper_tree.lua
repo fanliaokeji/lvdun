@@ -76,7 +76,7 @@ local VrPaths = {
 }
 function PathHelper.GetVrPath(srcdir)
 	for path, vpath in pairs(VrPaths) do
-		if string.find(srcdir, path, 1, true) then
+		if string.find(srcdir, string.upper(path), 1, true) or srcdir == vpath then
 			return vpath
 		end
 	end
