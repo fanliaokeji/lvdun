@@ -78,3 +78,17 @@ function LeftTreeItemOnInitControl(self)
 	--HoverBkg:SetObjPos(-l, t, "father.width+"..l, b)
 end
 
+function LeftTreeItemOnMouseWheel(self, x, y, distance)
+	local Vscroll = self:GetObject("control:listbox.vscroll")
+	local Hscroll = self:GetObject("control:listbox.hscroll")
+	if Vscroll:GetVisible() then
+		Vscroll:FireExtEvent("OnScrollBarMouseWheel", x, y, distance)
+	elseif Hscroll:GetVisible() then
+		Hscroll:FireExtEvent("OnScrollBarMouseWheel", x, y, distance)
+	end
+end
+
+function RouteToFather(self)
+	self:RouteToFather()
+end
+

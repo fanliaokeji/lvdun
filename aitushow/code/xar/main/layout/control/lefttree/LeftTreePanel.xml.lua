@@ -146,6 +146,20 @@ function LeftTreePanelOnInitControl(self)
 	BuildTree(self)
 end
 
+function RouteToFather(self)
+	self:RouteToFather()
+end
+
+function ContainerOnMouseWheel(self, x, y, distance)
+	local Vscroll = self:GetObject("control:listbox.vscroll")
+	local Hscroll = self:GetObject("control:listbox.hscroll")
+	if Vscroll:GetVisible() then
+		OnScrollBarMouseWheel(Vscroll, "",  x, y, distance )
+	elseif Hscroll:GetVisible() then
+		OnScrollBarMouseWheelH(Hscroll, "",  x, y, distance )
+	end
+end
+
 function AdjustScrolPos(self)
 	local VScroll = self:GetObject("listbox.vscroll")
 	local HScroll = self:GetObject("listbox.hscroll")

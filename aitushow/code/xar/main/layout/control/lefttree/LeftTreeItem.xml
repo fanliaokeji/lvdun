@@ -91,6 +91,12 @@
 		<zorder>2</zorder>
 		<text>默认文字</text>
 	</attr>
+	<eventlist>
+		<event name="OnMouseWheel" file="LeftTreeItem.xml.lua" func="RouteToFather" />
+		<event name="OnLButtonDown" file="LeftTreeItem.xml.lua" func="RouteToFather" />
+		<event name="OnMouseLeave" file="LeftTreeItem.xml.lua" func="RouteToFather" />
+		<event name="OnMouseEnter" file="LeftTreeItem.xml.lua" func="RouteToFather" />
+	</eventlist>
 </obj>
 </children>
 <eventlist>
@@ -98,6 +104,7 @@
 	<event name="OnLButtonDown" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnLButtonDown" />
 	<event name="OnMouseLeave" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnMouseLeave" />
 	<event name="OnMouseEnter" file="LeftTreeItem.xml.lua" func="LeftTreeItemOnMouseEnter" />
+	<event name="OnMouseWheel" file="LeftTreeItem.xml.lua" func="RouteToFather" />
 </eventlist>
 </objtemplate>
 </control>

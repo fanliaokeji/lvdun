@@ -93,6 +93,9 @@
 				<left>0</left>
 				<width>father.width</width>
 			</attr>
+			<eventlist>
+				<event name="OnMouseWheel" file="LeftTreePanel.xml.lua" func="ContainerOnMouseWheel" />
+			</eventlist>
 		</obj>
 		</children>
 	</obj>
