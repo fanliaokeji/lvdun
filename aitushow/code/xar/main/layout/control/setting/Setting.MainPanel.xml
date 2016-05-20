@@ -59,7 +59,7 @@
 			<top>33</top>
 			<srcpt>0,0</srcpt>
 			<pen>pen.solid</pen>
-			<destpt>father.width, 0</destpt>
+			<destpt>father.width-1, 0</destpt>
 			<height>1</height>
 			<color>50597B</color>
 			<left>0</left>
@@ -75,6 +75,8 @@
 			<height>father.height</height>
 			<color>50597B</color>
 			<left>0</left>
+			<!--设计给的图没这条线，先隐藏-->
+			<visible>0</visible>
 			<width>1</width>
 		</attr>
 	</obj>
@@ -82,7 +84,7 @@
 		<attr>
 			<height>father.height-34</height>
 			<top>34</top>
-			<left>1</left>
+			<left>0</left>
 			<width>124</width>
 		</attr>
 		<eventlist>
@@ -91,18 +93,18 @@
 	</obj>
 	<obj id="NormalPanel" class="Setting.NormalPanel">
 		<attr>
-			<height>father.height-35</height>
+			<height>father.height-34</height>
 			<top>34</top>
-			<left>125</left>
-			<width>father.width-125</width>
+			<left>124</left>
+			<width>father.width-124</width>
 		</attr>
 	</obj>
 	<obj id="FileAssoPanel" class="Setting.FileAssoPanel">
 		<attr>
-			<height>father.height-35</height>
+			<height>father.height-34</height>
 			<top>34</top>
-			<left>125</left>
-			<width>father.width-125</width>
+			<left>124</left>
+			<width>father.width-124</width>
 		</attr>
 	</obj>
 	<obj id="confirm" class="TipAddin.Button">

@@ -3,7 +3,7 @@
 	<resource>
 		<!--                图片id             -->
 		
-		<!--滚动条-->
+		<!--竖向滚动条-->
 		<imagelist id="imagelist.texture.scrollbarh.bottomarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.scrollbarh.bottomarrow.png"/>
 			<texture id="texture.scrollbarh.bottomarrow.normal"  imagelist="imagelist.texture.scrollbarh.bottomarrow" index="1" />
 			<texture id="texture.scrollbarh.bottomarrow.hover"   imagelist="imagelist.texture.scrollbarh.bottomarrow" index="2" />
@@ -23,7 +23,29 @@
 			<texture id="texture.scrollbarh.silder.disable" type="ThreeInOneV" imagelist="imagelist.texture.scrollbarh.silder" index="3" />
 		
 		<texture id="texture.scrollbarh.silderbkg" type="ThreeInOneV" image="bitmap\basecontrol\texture.scrollbarh.silderbkg.png" />
-		<!--滚动条-->
+		<!--竖向滚动条-->
+		
+		<!--横向滚动条-->
+		<imagelist id="imagelist.texture.scrollbarv.rightarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.scrollbarv.rightarrow.png"/>
+			<texture id="texture.scrollbarv.rightarrow.normal"  imagelist="imagelist.texture.scrollbarv.rightarrow" index="1" />
+			<texture id="texture.scrollbarv.rightarrow.hover"   imagelist="imagelist.texture.scrollbarv.rightarrow" index="2" />
+			<texture id="texture.scrollbarv.rightarrow.down"    imagelist="imagelist.texture.scrollbarv.rightarrow" index="3" />
+			<texture id="texture.scrollbarv.rightarrow.disable" imagelist="imagelist.texture.scrollbarv.rightarrow" index="3" />
+		
+		<imagelist id="imagelist.texture.scrollbarv.leftarrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.scrollbarv.leftarrow.png"/>
+			<texture id="texture.scrollbarv.leftarrow.normal"  imagelist="imagelist.texture.scrollbarv.leftarrow" index="1" />
+			<texture id="texture.scrollbarv.leftarrow.hover"   imagelist="imagelist.texture.scrollbarv.leftarrow" index="2" />
+			<texture id="texture.scrollbarv.leftarrow.down"    imagelist="imagelist.texture.scrollbarv.leftarrow" index="3" />
+			<texture id="texture.scrollbarv.leftarrow.disable" imagelist="imagelist.texture.scrollbarv.leftarrow" index="3" />
+		
+		<imagelist id="imagelist.texture.scrollbarv.silder" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.scrollbarv.silder.png"/>
+			<texture id="texture.scrollbarv.silder.normal"  type="ThreeInOneH" imagelist="imagelist.texture.scrollbarv.silder" index="1" />
+			<texture id="texture.scrollbarv.silder.hover"   type="ThreeInOneH" imagelist="imagelist.texture.scrollbarv.silder" index="2" />
+			<texture id="texture.scrollbarv.silder.down"    type="ThreeInOneH" imagelist="imagelist.texture.scrollbarv.silder" index="3" />
+			<texture id="texture.scrollbarv.silder.disable" type="ThreeInOneH" imagelist="imagelist.texture.scrollbarv.silder" index="3" />
+		
+		<texture id="texture.scrollbarv.silderbkg" type="ThreeInOneH" image="bitmap\basecontrol\texture.scrollbarv.silderbkg.png" />
+		<!--横向滚动条-->
 		
 		<!--地址栏-->
 		<imagelist id="imagelist.texture.uparrow" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.texture.uparrow.png"/>

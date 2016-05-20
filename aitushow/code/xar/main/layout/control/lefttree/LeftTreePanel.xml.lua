@@ -44,12 +44,16 @@ function Dir2TreeView(self, dir, left, params)
 	dir = Filter(dir)
 	local panelattr = self:GetAttribute()
 	panelattr.nodeindex = panelattr.nodeindex or 1
+	panelattr.saveleft = panelattr.saveleft or left
+	if panelattr.saveleft < left then
+		panelattr.saveleft = left
+	end
 	panelattr.opendirs = panelattr.opendirs or {}
 	params = params or {}
 	local dirlist = params.path or tipUtil:FindDirList(dir)
 	
 	local Item = objFactory:CreateUIObject("lefttreenode"..panelattr.nodeindex, "LeftTreeItem")
-	Item:SetObjPos2(left, 26*(panelattr.nodeindex-1), "father.width", 22)
+	Item:SetObjPos2(left, 26*(panelattr.nodeindex-1), 500, 22)
 	panelattr.nodeindex = panelattr.nodeindex + 1
 	
 	local attr = Item:GetAttribute()
@@ -100,9 +104,11 @@ function Dir2TreeView(self, dir, left, params)
 			BuildTree(self)
 		end)
 	local Container = self:GetControlObject("Container")
-	Container:SetObjPos(0, 0, "father.width", 26*(panelattr.nodeindex-1)+22)
+	--local conl, _, conr = self:GetControlObject("ContainerBox"):GetObjPos()
+	Container:SetObjPos(0, 0, "father.width+"..panelattr.saveleft , 26*(panelattr.nodeindex-1)+22)
 	Container:AddChild(Item)
-	ResetScrollBar(self)
+	ResetScrollBarV(self)
+	ResetScrollBarH(self)
 end
 
 --根据dir决定是否超过一定数量清除其它分支
@@ -119,6 +125,7 @@ function ClearTree(self, dir)
 		panelattr.opendirs[vpath] = true
 		openparent(panelattr, dir)
 	end
+	panelattr.saveleft = 0
 	panelattr.nodeindex = 1
 	panelattr.SelectItem = nil
 end
@@ -139,7 +146,31 @@ function LeftTreePanelOnInitControl(self)
 	BuildTree(self)
 end
 
-function ResetScrollBar(objRootCtrl)
+function AdjustScrolPos(self)
+	local VScroll = self:GetObject("listbox.vscroll")
+	local HScroll = self:GetObject("listbox.hscroll")
+	local ContainerBox = self:GetObject("ContainerBox")
+	local v_visible, h_visible = VScroll:GetVisible(), HScroll:GetVisible()
+	if not v_visible and h_visible then
+		ContainerBox:SetObjPos(0, 51, "father.width-1", "father.height")
+		return
+	end
+	local offsetX, offsetY = 0, 0
+	if v_visible then
+		offsetX = 9
+	end
+	if h_visible then
+		offsetY = 9
+	end
+	ContainerBox:SetObjPos(0, 51, "father.width-1-"..offsetX, "father.height-"..offsetY)
+	VScroll:SetObjPos("father.width - 9", 51, "father.width", "father.height-"..offsetY)
+	HScroll:SetObjPos(0, "father.height-9", "father.width-"..offsetX, "father.height")
+end
+
+-----------------------------------
+--竖向滚动条
+-----------------------------------
+function ResetScrollBarV(objRootCtrl)
 	if objRootCtrl == nil then
 		return false
 	end
@@ -179,15 +210,13 @@ function ResetScrollBar(objRootCtrl)
 		end
 		MoveItemListPanel(objRootCtrl, newdis)
 		objScrollBar:SetScrollPos(newdis, true)
-		--fatherctrl:SetObjPos(l, t, "father.width-8", "father.height-51")
 	else
 		objScrollBar:SetScrollPos(0, true)	
 		objScrollBar:SetVisible(false)
 		objScrollBar:SetChildrenVisible(false)
 		MoveItemListPanel(objRootCtrl, 0)
-		--fatherctrl:SetObjPos(l, t, "father.width", "father.height-51")
-		return true
 	end
+	AdjustScrolPos(objRootCtrl)
 	return true
 end
 
@@ -242,5 +271,110 @@ function OnVScroll(self, fun, _type, pos)
 
 	local nNewScrollPos = self:GetScrollPos()
 	MoveItemListPanel(objRootCtrl, nNewScrollPos)
+	return true
+end
+
+----------------------------------------------
+--以下是横向滚动条
+----------------------------------------------
+function ResetScrollBarH(objRootCtrl)
+	if objRootCtrl == nil then
+		return false
+	end
+	local objScrollBar = objRootCtrl:GetControlObject("listbox.hscroll")
+	local ContainerBox = 	objRootCtrl:GetControlObject("ContainerBox")
+	local Container = 	objRootCtrl:GetControlObject("Container")
+	local attr = objRootCtrl:GetAttribute()
+	local cl, _, cr = Container:GetObjPos()
+	local l, t, r, b = ContainerBox:GetObjPos()
+	local olddis = cr-r+l
+	if attr.SelectItem then
+		local maxlen = attr.SelectItem:GetObject("MainText"):GetTextExtent()
+		--靠右
+		olddis = sl+32+maxlen-r+l
+	end
+	
+	
+	if olddis > 0 then
+		objScrollBar:SetScrollRange( 0, olddis, true )
+		objScrollBar:SetPageSize(r-l, true)
+		objScrollBar:SetVisible(true)
+		objScrollBar:SetChildrenVisible(true)
+		objScrollBar:Show(true)
+		--OnScrollMousePosEvent(objScrollBar)
+		
+		--当ITEM的宽度大于外框的宽度时 让他靠左，否则靠右
+		local newdis = olddis
+		if attr.SelectItem then
+			local sl = attr.SelectItem:GetObjPos()
+			if newdis > sl then
+				--不完全贴住左侧
+				newdis = sl
+			end
+		end
+		
+		MoveItemListPanelH(objRootCtrl, newdis)
+		objScrollBar:SetScrollPos(newdis, true)
+	else
+		objScrollBar:SetScrollPos(0, true)	
+		objScrollBar:SetVisible(false)
+		objScrollBar:SetChildrenVisible(false)
+		MoveItemListPanelH(objRootCtrl, 0)
+	end
+	AdjustScrolPos(objRootCtrl)
+	return true
+end
+
+function MoveItemListPanelH(objRootCtrl, nScrollPos)
+	if not objRootCtrl then
+		return
+	end
+	
+	local objContainer = objRootCtrl:GetControlObject("Container")
+	if not objContainer then
+		return
+	end
+	
+	local nL, nT, nR, nB = objContainer:GetObjPos()
+	local nWidth = nR-nL
+	local nNewL = 0-nScrollPos
+	
+	objContainer:SetObjPos(nNewL, nT, nNewL+nWidth, nB)
+end
+
+function OnScrollBarMouseWheelH(self, name, x, y, distance)
+	local objRootCtrl = self:GetOwnerControl()
+	local nScrollPos = self:GetScrollPos()	
+    if distance > 0 then
+		self:SetScrollPos( nScrollPos - 44, true )
+    else		
+		self:SetScrollPos( nScrollPos + 44, true )
+    end
+
+	local nNewScrollPos = self:GetScrollPos()
+	MoveItemListPanelH(objRootCtrl, nNewScrollPos)
+	return true	
+end
+
+function OnScrollMousePosEventH(self)
+	local objRootCtrl = self:GetOwnerControl()
+	local nScrollPos = self:GetScrollPos()
+	
+	MoveItemListPanelH(objRootCtrl, nScrollPos)
+end
+
+function OnHScroll(self, fun, _type, pos)
+	local objRootCtrl = self:GetOwnerControl()
+	local nScrollPos = self:GetScrollPos()	
+	--点击向左按钮或上方空白
+    if _type ==1 then
+        self:SetScrollPos( nScrollPos - 44, true )
+	--点击向右按钮或下方空白
+    elseif _type==2 then
+		self:SetScrollPos( nScrollPos + 44, true )
+    end
+
+	local nNewScrollPos = self:GetScrollPos()
+	MoveItemListPanelH(objRootCtrl, nNewScrollPos)
 	return true
 end

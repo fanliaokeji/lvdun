@@ -40,7 +40,7 @@
 			<height>1</height>
 			<color>50597B</color>
 			<left>77</left>
-			<width>father.width-77</width>
+			<width>father.width-77-8</width>
 		</attr>
 	</obj>
 	<obj id="chebox3" class="CheckBox">
@@ -93,7 +93,7 @@
 			<height>1</height>
 			<color>50597B</color>
 			<left>128</left>
-			<width>father.width-128</width>
+			<width>father.width-128-8</width>
 		</attr>
 	</obj>
 	<obj id="radio7" class="CheckBox">
@@ -187,7 +187,7 @@
 			<height>1</height>
 			<color>50597B</color>
 			<left>101</left>
-			<width>father.width-101</width>
+			<width>father.width-101-8</width>
 		</attr>
 	</obj>
 	<obj id="radio13" class="CheckBox">

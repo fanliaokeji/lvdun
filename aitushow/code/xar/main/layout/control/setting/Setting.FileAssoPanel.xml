@@ -40,7 +40,7 @@
 			<height>1</height>
 			<color>50597B</color>
 			<left>77</left>
-			<width>father.width-77</width>
+			<width>father.width-77-8</width>
 		</attr>
 	</obj>
 	<obj id="chebox3" class="CheckBox">
@@ -325,14 +325,14 @@
 	</obj>
 	<obj id="titleline2" class="LineObject">
 		<attr>
-			<top>236</top>
+			<top>237</top>
 			<srcpt>0,0</srcpt>
 			<pen>pen.solid</pen>
 			<destpt>father.width, 0</destpt>
 			<height>1</height>
 			<color>50597B</color>
 			<left>26</left>
-			<width>father.width-26</width>
+			<width>father.width-26-8</width>
 		</attr>
 	</obj>
 	<obj id="chebox24" class="CheckBox">

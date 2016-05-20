@@ -55,9 +55,9 @@
 		<attr>
 			<color>1F253D</color>
 			<left>0</left>
-			<width>father.width</width>
+			<width>father.width-1</width>
 			<top>48</top>
-			<destpt>father.width-1, 0</destpt>
+			<destpt>father.width, 0</destpt>
 			<height>1</height>
 			<srcpt>0,0</srcpt>
 			<zorder>2</zorder>
@@ -83,7 +83,7 @@
 			<limitchild>1</limitchild>
 			<height>father.height-51</height>
 			<left>0</left>
-			<width>father.width</width>
+			<width>father.width-1</width>
 		</attr>
 		<children>
 		<obj id="Container" class="LayoutObject">
@@ -112,19 +112,48 @@
 			<ThumbRightMagrin>1</ThumbRightMagrin>
 			<ThumbBtnWidth>8</ThumbBtnWidth>
 			<ThumbBtnLength>100</ThumbBtnLength>
-			<SideBtnLength>0</SideBtnLength>
-			<left>father.width - 8</left>
+			<SideBtnLength>10</SideBtnLength>
+			<left>father.width - 9</left>
 			<top>51</top>
-			<width>8</width>
+			<width>9</width>
 			<height>father.height-51</height>
-			<zorder>99999</zorder>
+			<!--zorder>99999</zorder-->
 		</attr>
 		<eventlist>
 			<event name="OnScrollBarMouseWheel" file="LeftTreePanel.xml.lua" func="OnScrollBarMouseWheel"/>
 			<event name="OnMousePosEvent" file="LeftTreePanel.xml.lua" func="OnScrollMousePosEvent"/>
 			<event name="OnVScroll" file="LeftTreePanel.xml.lua" func="OnVScroll" />
 		</eventlist>
-	</obj>	
+	</obj>
+	<obj id="listbox.hscroll" class="ScrollBar">
+		<attr>
+			<Type>0</Type>
+			<ThumbBtn_normal>texture.scrollbarv.silder.normal</ThumbBtn_normal>
+			<ThumbBtn_hover>texture.scrollbarv.silder.hover</ThumbBtn_hover>
+			<ThumbBtn_down>texture.scrollbarv.silder.down</ThumbBtn_down>
+			<NormalBkn>texture.scrollbarv.silderbkg</NormalBkn>
+			<LeftBtn_normal>texture.scrollbarv.leftarrow.normal</LeftBtn_normal>
+			<LeftBtn_hover>texture.scrollbarv.leftarrow.hover</LeftBtn_hover>
+			<LeftBtn_down>texture.scrollbarv.leftarrow.down</LeftBtn_down>
+			<RightBtn_normal>texture.scrollbarv.rightarrow.normal</RightBtn_normal>
+			<RightBtn_hover>texture.scrollbarv.rightarrow.hover</RightBtn_hover>
+			<RightBtn_down>texture.scrollbarv.rightarrow.down</RightBtn_down>
+			<ThumbRightMagrin>1</ThumbRightMagrin>
+			<ThumbBtnWidth>8</ThumbBtnWidth>
+			<ThumbBtnLength>80</ThumbBtnLength>
+			<SideBtnLength>10</SideBtnLength>
+			<left>0</left>
+			<top>father.height-9</top>
+			<width>father.width</width>
+			<height>9</height>
+			<!--zorder>99999</zorder-->
+		</attr>
+		<eventlist>
+			<event name="OnScrollBarMouseWheel" file="LeftTreePanel.xml.lua" func="OnScrollBarMouseWheelH"/>
+			<event name="OnMousePosEvent" file="LeftTreePanel.xml.lua" func="OnScrollMousePosEventH"/>
+			<event name="OnHScroll" file="LeftTreePanel.xml.lua" func="OnHScroll" />
+		</eventlist>
+	</obj>
 	</children>
 </obj>
 </children>

@@ -81,10 +81,10 @@
 <obj id="MainText" class="TextObject">
 	<attr>
 		<textcolor>system.white</textcolor>
-		<wordellipsis>2</wordellipsis>
+		<wordellipsis>0</wordellipsis>
 		<valign>center</valign>
 		<left>32</left>
-		<width>200</width>
+		<width>father.width-32</width>
 		<top>(father.height-20)/2</top>
 		<font>default.font</font>
 		<height>22</height>
