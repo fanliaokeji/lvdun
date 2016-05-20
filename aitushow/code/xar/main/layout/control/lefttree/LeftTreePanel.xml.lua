@@ -289,6 +289,7 @@ function ResetScrollBarH(objRootCtrl)
 	local l, t, r, b = ContainerBox:GetObjPos()
 	local olddis = cr-r+l
 	if attr.SelectItem then
+		local sl = attr.SelectItem:GetObjPos()
 		local maxlen = attr.SelectItem:GetObject("MainText"):GetTextExtent()
 		--靠右
 		olddis = sl+32+maxlen-r+l
