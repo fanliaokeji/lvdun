@@ -82,10 +82,10 @@ BOOL CXLUEApplication::IniEnv()
 	param.textType = XLTEXT_TYPE_GDI;
 	XL_InitGraphicLib(&param);
 
-	//XLGraphicPlusParam plusparam;
-	//plusparam.bInitLua = TRUE;
-	//XLGP_PrepareGraphicPlusParam(&plusparam);
-	//XLGP_InitGraphicPlus(&plusparam);
+	XLGraphicPlusParam plusparam;
+	plusparam.bInitLua = TRUE;
+	XLGP_PrepareGraphicPlusParam(&plusparam);
+	XLGP_InitGraphicPlus(&plusparam);
 
 	//XL_SetFreeTypeEnabled(TRUE);
 	
