@@ -155,6 +155,9 @@
 	</children>
 </obj>
 </children>
+<eventlist>
+	<event name="OnInitControl" file="Setting.MainPanel.xml.lua" func="MainPanelOnInitControl" />
+</eventlist>
 </objtemplate>
 </control>
 </xlue>

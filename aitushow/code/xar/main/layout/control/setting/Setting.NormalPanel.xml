@@ -1,5 +1,9 @@
 <xlue>
 <control class="Setting.NormalPanel">
+<method_def>
+	<Update file="Setting.NormalPanel.xml.lua" func="Update"/>
+	<Apply file="Setting.NormalPanel.xml.lua" func="Apply"/>
+</method_def>
 <objtemplate>
 <children>
 <obj id="backgroud" class="FillObject">
@@ -56,6 +60,9 @@
 			<height>20</height>
 			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
 		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectBase" />
+		</eventlist>
 	</obj>
 	<obj id="chebox4" class="CheckBox">
 		<attr>
@@ -70,6 +77,9 @@
 			<height>20</height>
 			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
 		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.NormalPanel.xml.lua" func="OnSelectBase" />
+		</eventlist>
 	</obj>
 	<obj id="titlehead2" class="TextObject">
 		<attr>

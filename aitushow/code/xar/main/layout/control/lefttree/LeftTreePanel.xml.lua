@@ -107,8 +107,6 @@ function Dir2TreeView(self, dir, left, params)
 	--local conl, _, conr = self:GetControlObject("ContainerBox"):GetObjPos()
 	Container:SetObjPos(0, 0, "father.width+"..panelattr.saveleft , 26*(panelattr.nodeindex-1)+22)
 	Container:AddChild(Item)
-	ResetScrollBarV(self)
-	ResetScrollBarH(self)
 end
 
 --根据dir决定是否超过一定数量清除其它分支
@@ -116,7 +114,7 @@ function ClearTree(self, dir)
 	local Container = self:GetControlObject("Container")
 	Container:RemoveAllChild()
 	local panelattr = self:GetAttribute()
-	--节点太多会导致卡顿，so节点大于50时清除其它打开的分支
+	--节点太多会导致卡顿，so节点大于一定值时清除其它打开的分支
 	if dir and panelattr.opendirs[dir] and panelattr.nodeindex > 50 then
 		panelattr.opendirs = {}
 		collectgarbage("collect")
@@ -140,6 +138,8 @@ function BuildTree(self)
 	for _, v in ipairs(tPaths) do
 		Dir2TreeView(self, v[1], 0, v[2])
 	end
+	ResetScrollBarV(self)
+	ResetScrollBarH(self)
 end
 
 function LeftTreePanelOnInitControl(self)

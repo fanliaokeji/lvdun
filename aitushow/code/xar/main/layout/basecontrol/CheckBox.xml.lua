@@ -23,7 +23,7 @@ function SetCheck(self, bCheck, bNotFireEvent)
 	end
 	button:Updata()
 	if not bNotFireEvent then
-		self:FireExtEvent("OnSelect", bCheck)
+		self:FireExtEvent("OnSelect", attr.Select)
 	end
 end
 

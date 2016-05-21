@@ -5,10 +5,17 @@ function closeOnClick(self)
 end
 
 function applyOnClick(self)
-
+	local NormalPanel = self:GetObject("control:NormalPanel")
+	local FileAssoPanel = self:GetObject("control:FileAssoPanel")
+	NormalPanel:Apply()
+	FileAssoPanel:Apply()
 end
 
 function confirmOnClick(self)
+	local NormalPanel = self:GetObject("control:NormalPanel")
+	local FileAssoPanel = self:GetObject("control:FileAssoPanel")
+	NormalPanel:Apply()
+	FileAssoPanel:Apply()
 	closeOnClick(self)
 end
 
@@ -31,4 +38,11 @@ function LeftPanelOnSelect(self, evt, text)
 		FileAssoPanel:SetVisible(true)
 		FileAssoPanel:SetChildrenVisible(true)
 	end
+end
+
+function MainPanelOnInitControl(self)
+	local NormalPanel = self:GetObject("NormalPanel")
+	local FileAssoPanel = self:GetObject("FileAssoPanel")
+	NormalPanel:Update()
+	FileAssoPanel:Update()
 end

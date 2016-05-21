@@ -44,9 +44,9 @@
 	</obj>
 	<obj id="insideimg" class="ImageObject">
 		<attr>
-			<top>father.width/3</top>
+			<top>30</top>
 			<image></image>
-			<height>father.height/2</height>
+			<height>father.height-30</height>
 			<left>0</left>
 			<width>father.width</width>
 		</attr>

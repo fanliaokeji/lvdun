@@ -35,6 +35,7 @@ local File = {
 "luacode\\helper_tree.lua",
 "luacode\\helper_selector.lua",
 "luacode\\helper_messagebox.lua",
+"luacode\\helper_setting.lua",
 "luacode\\helper_tray.lua",
 "menu\\ImageRClickMenu.lua",
 }

@@ -16,7 +16,7 @@
 	<SetCheck file="CheckBox.xml.lua" func="SetCheck"/>
 </method_def>
 <event_def>
-	<OnSelect />
+	<OnSelect><param><bool/></param></OnSelect>
 </event_def>
 <objtemplate>
 <children>

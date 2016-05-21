@@ -19,11 +19,15 @@ function Update(self, xoffset, yoffset, size_rates)
 	local new_y = y + (h-new_h)/2
 	newnew_x = new_x - xoffset/attr.rates
 	newnew_y = new_y - yoffset/attr.rates
-	if CheckSelArea(self, newnew_x, newnew_y, newnew_x + new_w, newnew_y + new_h) then
-		selarea:SetObjPos2(newnew_x, newnew_y, new_w, new_h)
-	else
-		selarea:SetObjPos2(new_x, new_y, new_w, new_h)
+	local insideimg = self:GetObject("insideimg")
+	local _l, _t, _r, _b = insideimg:GetObjPos()
+	if newnew_x < _l or newnew_x+new_w > _r then
+		newnew_x = new_x
 	end
+	if newnew_y < _t or newnew_y+new_h > _b then
+		newnew_y = new_y
+	end
+	selarea:SetObjPos2(newnew_x, newnew_y, new_w, new_h)
 	SyncInOutBmp(self)
 	local title = self:GetObject("title")
 	title:SetText("缩放至"..math.floor(size_rates*100).."%")
@@ -83,31 +87,30 @@ function SyncInOutBmp(self)
 end
 
 --边界检查
-function CheckSelArea(self, l, t, r, b)
-	local insideimg = self:GetObject("insideimg")
+function GetSelMovePos(sel, dx, dy)
+	local l, t, r, b = sel:GetObjPos()
+	local insideimg = sel:GetObject("control:insideimg")
 	local _l, _t, _r, _b = insideimg:GetObjPos()
-	if l >= _l and t >= _t and r <=_r and b <= _b then
-		return true
-	else
-		return false
+	if l+dx >= _l and r+dx <= _r then 
+		l = l+dx 
+		r = r+dx
 	end
+	if t+dy >= _t and b+dy <= _b then 
+		t = t+dy 
+		b = b+dy
+	end
+	return l, t, r, b
 end
 
 function selareaOnMouseMove(self, x, y)
 	local ower = self:GetOwnerControl()
 	local attr = ower:GetAttribute()
 	if attr.press then
-		local parent = self:GetParent()
-		local pl, pt, pr, pb = parent:GetObjPos()
-		local w, h = pr-pl, pb-pt
 		local p = attr.press
 		local dx, dy = x-p.x, y-p.y
-		local l, t, r, b = self:GetObjPos()
-		l, t, r, b = l+dx, t+dy, r+dx, b+dy
-		if CheckSelArea(ower, l, t, r, b) then
-			self:SetObjPos(l, t, r, b)
-			SyncInOutBmp(ower)
-		end
+		local l, t, r, b = GetSelMovePos(self, dx, dy)
+		self:SetObjPos(l, t, r, b)
+		SyncInOutBmp(ower)
 	end
 end
 
@@ -121,6 +124,7 @@ function selareaOnLButtonUp(self, x, y)
 	local ower = self:GetOwnerControl()
 	local attr = ower:GetAttribute()
 	attr.press = nil
+	self:SetCaptureMouse(false)
 end
 
 function closeOnClick(self)
@@ -131,5 +135,6 @@ function selareaOnLButtonDown(self, x, y)
 	local attr = ower:GetAttribute()
 	local l, t, r, b = self:GetObjPos()
 	attr.press = {l=l, t=t, r=r, b=b, x=x, y=y}
+	self:SetCaptureMouse(true)
 end
 
