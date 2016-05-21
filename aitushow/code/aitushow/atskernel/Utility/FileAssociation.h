@@ -2,7 +2,7 @@
 1、判断是否关联
 FileAssociation* pfa = FileAssociation::Instance();
 UINT flag = pfa->Associated(L".jpg");
-if(flag&ProgID != 0){
+if(flag&ProgID != 0 && flag&RootKeyExist != 0){
 	cout<<"已经关联了"<<endl;
 }
 2、设置单个扩展名关联
@@ -38,13 +38,14 @@ class RegTool{
 };
 
 typedef enum tagAssociateType{
-	None = 							0X00000000,
-	ProgID = 						0X00000001,
-	Application = 					0X00000010,
-	ClassRoot = 					0X00000100,
-	ClassRootOpenWithList =  		0X00001000,
-	ClassRootOpenWithProgIds =  	0X00010000,
-	CurrentUserOpenWithProgIds =  	0X00100000
+	None								=	0X00000000,
+	ProgID								=	0X00000001,
+	Application							=	0X00000010,
+	ClassRoot							=	0X00000100,
+	ClassRootOpenWithList				=	0X00001000,
+	ClassRootOpenWithProgIds			=	0X00010000,
+	CurrentUserOpenWithProgIds			=	0X00100000,
+	RootKeyExist						=	0X01000000
 }AssociateType;
 
 class FileAssociation{
@@ -200,6 +201,8 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 	wchar_t szTemp1[MAX_PATH] = {0}, szTemp2[MAX_PATH] = {0}, szTemp3[MAX_PATH] = {0};
 	BOOL isVista = IsVistaOrHigher();
 	RegTool rt;
+	swprintf(szTemp1, L"kuaikan%s", strFileExt.c_str());
+	atype |= rt->Open(HKEY_CLASSES_ROOT, szTemp1) == ERROR_SUCCESS ? RootKeyExist : 0;
 	for(int i = 0; i < sizeof(szPaths)/sizeof(szPaths[0]); ++i){
 		hk = _tcsnicmp(szPaths[i][0], L"HKEY_CURRENT_USER", MAX_PATH) == 0 ? HKEY_CURRENT_USER : HKEY_CLASSES_ROOT;
 		regpath = i <= 1 ? (isVista ? (basepath + szPaths[i][1] + L"\\UserChoice") : (basepath + szPaths[i][1])) : szPaths[i][1];
@@ -302,7 +305,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 
 	}
 	else {
-		if (bHasAdmin){
+		if (bHasAdmin || (atype&RootKeyExist) == 0){
 			CreateImgKey(strFileExt);
 		}
 		if ((atype&ProgID) == 0){

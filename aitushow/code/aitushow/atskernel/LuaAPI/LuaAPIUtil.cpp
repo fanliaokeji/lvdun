@@ -4312,7 +4312,7 @@ int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
 		}
 		else{
 			UINT flag = FileAssociation::Instance()->Associated(pszDataW);
-			bRetlua = (int)(flag&AssociateType::ProgID != 0);
+			bRetlua = (int)((flag&AssociateType::ProgID) != 0 && (flag&AssociateType::RootKeyExist) != 0);
 		}
 		lua_pushboolean(pLuaState, (int )bRetlua);
 	}
