@@ -77,25 +77,25 @@ BOOL CXLUEApplication::IniEnv()
 	}
 	m_strXarPath = szXar;
 	// 1)初始化图形库
+	//XLFS_Init();
 	XLGraphicParam param;
 	XL_PrepareGraphicParam(&param);
 	param.textType = XLTEXT_TYPE_GDI;
 	XL_InitGraphicLib(&param);
-
-	XLGraphicPlusParam plusparam;
-	plusparam.bInitLua = TRUE;
-	XLGP_PrepareGraphicPlusParam(&plusparam);
-	XLGP_InitGraphicPlus(&plusparam);
-
-	//XL_SetFreeTypeEnabled(TRUE);
 	
+	//XL_SetFreeTypeEnabled(TRUE);
+	XLUE_InitLoader(NULL);
+	XLGraphicPlusParam plusParam;
+	XLGP_PrepareGraphicPlusParam(&plusParam);
+	XLGP_InitGraphicPlus(&plusParam);
+
 	//XLGraphicPlusParam plusParam;
 	//XLGP_PrepareGraphicPlusParam(&plusParam);
 	//XLGP_InitGraphicPlus(&plusParam);
 	// 2)初始化XLUE,这函数是一个符合初始化函数
 	// 完成了初始化Lua环境,标准对象,XLUELoader的工作
 	//XLFS_Init();
-	XLUE_InitLoader(NULL);
+	
 	XLLRT_ErrorHandle(CXLUEApplication::LuaErrorHandle);
 
 	if (!m_RegisterLuaAPI.Init())
@@ -104,6 +104,12 @@ BOOL CXLUEApplication::IniEnv()
 	}
 
 	InternalLoadXAR();
+
+	//XLGraphicPlusParam plusparam;
+	//plusparam.bInitLua = TRUE;
+	//XLGP_PrepareGraphicPlusParam(&plusparam);
+	//XLGP_InitGraphicPlus(&plusparam);
+
 	return TRUE;
 }
 
