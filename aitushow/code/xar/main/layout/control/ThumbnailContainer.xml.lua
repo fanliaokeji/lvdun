@@ -1,304 +1,420 @@
 local Helper = XLGetGlobal("Helper")
-local OnPosChangeCookie = nil
+local graphicUtil = XLGetObject("GRAPHIC.Util")
+local seedCount = 123 --使用os.time()做种子并不靠谱
+--说明：
+--内存中始终只有三屏缩略图控件(Thumbnail Object)。
+--假设当前窗口下，每屏显示20个缩略图，则Container会在最开始时创建60个缩略图控件
+--当窗口被拉大、或缩略图被缩小时，会继续创建
+--窗口被缩小、或缩略图被放大时，丢弃尾页部分控件，始终保持3屏控件
+--通过向Thumbnail Object填不同的数据来实现显示不同的图片，从而避免重复的创建、销毁
 
-function OnPosChange(self)
-	local imageObj = self:GetControlObject("Image")
-	local imageContainer = self:GetControlObject("ImageContainer")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
+local PageClass = {}
+function PageClass:New()
+	local pageObj = {}
+	setmetatable(pageObj, self)
+	self.__index = self
+	return pageObj
+end
+
+function PageClass:Init(ctrlSelf)
+	self.objList = {}
+	self.ctrlSelf = ctrlSelf
+	self.containerObj = ctrlSelf:GetControlObject("Container")
+	self.indexBegin = 0
+	self.indexEnd = 0
+end
+
+function PageClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
+	if not indexBegin or not indexEnd then
 		return
 	end
-	
-	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
-	local containerWidth = containerR - containerL
-	local containerHeigth = containerB - containerT
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
-	
-	local imageL, imageT, imageR, imageB, imageWidth, imageHeight = nil, nil, nil, nil, nil, nil
-	
-	if picWidth/picHeight > containerWidth/containerHeigth then
-		--宽扁型的图片，先满足宽度
-		if picWidth > containerWidth then
-			imageWidth = containerWidth
-			imageL = 0
-		else
-			imageWidth = picWidth
-			imageL = math.round((containerWidth - picWidth)/2)
+	if 0 == indexBegin and 0 == indexEnd then
+		return
+	end
+	LOG("ShowThumbnailByRange: indexBegin: ", indexBegin, " indexEnd: ", indexEnd)
+	local function CreateObj(count)--加到尾部
+		LOG("CreateObj, count: ", count, " curObjList count: ", #self.objList)
+		for i=1, count do
+			math.randomseed(os.time()+seedCount)
+			seedCount = seedCount + 1
+			local randomID = "thumbnail."..tostring(math.random(999999))
+			
+			LOG("randomID: ", randomID)
+			local obj = Helper.objectFactory:CreateUIObject(randomID, "Thumbnail")
+			self.containerObj:AddChild(obj)
+			table.insert(self.objList, obj)
 		end
-		
-		imageR = imageL + imageWidth
-		imageHeight = math.round(imageWidth * picHeight / picWidth)
-		Helper:Assert(imageHeight <= containerHeigth, "imageHeight must <= containerHeigth!!")
-		imageT = math.round((containerHeigth - imageHeight) / 2)
-		imageB = imageT + imageHeight
+	end
+	
+	local function RemoveObj(count)--从尾部删
+		LOG("RemoveObj, count: ", count, " curObjList count: ", #self.objList)
+		for i=#self.objList, #self.objList-count+1, -1 do
+			local obj = self.objList[i]
+			if obj then
+				self.containerObj:RemoveChild(obj)
+			end
+			table.remove(self.objList, i)
+		end
+	end
+	self.indexBegin = indexBegin
+	self.indexEnd = indexEnd
+	local count = indexEnd - indexBegin + 1
+	if count > #self.objList then
+		--控件不够用,就继续生产
+		CreateObj(count - #self.objList)
+	elseif count < #self.objList then
+		RemoveObj(#self.objList - count)
+	end
+	
+	local requiredFiles = {}
+	Helper:Assert(#self.objList == count, "#self.objList ~= count!!")
+	for i=indexBegin, indexEnd do
+		local obj = self.objList[i-indexBegin+1]
+		obj:SetIndex(i)
+		local bImageLoaded = obj:SetData(tPictures[i])
+		if not bImageLoaded then
+			table.insert(requiredFiles, tPictures[i].szPath)
+		end
+	end
+	--返回需要请求的图片
+	return requiredFiles
+end
+
+function PageClass:UpdateImgInfoByPath(tPictures, path, tImgInfo)
+	for i=1, #self.objList do
+		local data = self.objList[i]:GetData()
+		if data and data.szPath and data.szPath == path then
+			self.objList[i]:SetImage(tImgInfo.xlhBitmap)
+			tPictures[i+self.indexBegin-1].xlhBitmap = tImgInfo.xlhBitmap
+			tPictures[i+self.indexBegin-1].uWidth = tImgInfo.uWidth
+			tPictures[i+self.indexBegin-1].uHeight = tImgInfo.uHeight
+			tPictures[i+self.indexBegin-1].szType = tImgInfo.szType
+			return true
+		end
+	end
+	return false
+end
+
+function PageClass:ClearPageData()
+	--切换Page之前，先将本页的数据清理掉
+	self.beginIndex = nil
+	self.endIndex = nil
+	for i=1, #self.objList do
+		self.objList[i]:Clear()
+	end
+end
+
+--管理三个page
+local PageManager = {}
+PageManager.bInit = false
+function PageManager:New()
+	local containerObj = {}
+	setmetatable(containerObj, self)
+	self.__index = self
+	return containerObj
+end
+
+function PageManager:Init(ctrlSelf, tPictures)
+	if 0 == #tPictures then
+		return
+	end
+	if not self.bInit then--第一次初始化
+		self.bInit = true
+		self.pageList = {}
+		self.ctrlSelf = ctrlSelf
+		self.containerObj = ctrlSelf:GetControlObject("Container")
+		for i=1, 3 do
+			local page = PageClass:New()
+			page:Init(ctrlSelf)
+			table.insert(self.pageList, page)
+		end
+	end
+	
+	self.tPictures = tPictures
+	
+	local lineCount, columnCount, pageCount, picWidth, picHeight = ctrlSelf:GetPageLayout()
+	local ctrlSelfAttr = ctrlSelf:GetAttribute()
+	local containerHieght = math.ceil(#tPictures/columnCount) * (picHeight + ctrlSelfAttr.SpaceV) - ctrlSelfAttr.SpaceV
+	LOG("containerHieght: ", containerHieght)
+	self.containerObj:SetObjPos2(0, 0, "father.width - 10", containerHieght)
+	
+	local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
+	local fatherObj = self.ctrlSelf:GetControlObject("Background")
+	local _, fatherT, _, fatherB = fatherObj:GetObjPos()
+	local fatherHeight = fatherB - fatherT
+	if fatherHeight < containerHieght then
+		scrollBar:SetScrollRange(0, containerHieght - fatherHeight, true)
+		scrollBar:SetPageSize(fatherHeight)
+		scrollBar:SetVisible(true)
+		scrollBar:SetChildrenVisible(true)
+		scrollBar:Show(true)
 	else
-		--瘦长型的图片，先满足高度
-		if picHeight > containerHeigth then
-			imageHeight = containerHeigth
-			imageT = 0
-		else
-			imageHeight = picHeight
-			imageT = math.round((containerHeigth - picHeight) / 2)
+		scrollBar:SetVisible(false)
+		scrollBar:SetChildrenVisible(false)
+	end
+	
+	local beginIndex = 1
+	local endIndex = 1
+	
+	for i=1, 3 do
+		if beginIndex > #tPictures then
+			return
 		end
-		
-		imageB = imageT + imageHeight
-		imageWidth = math.round(imageHeight * picWidth / picHeight)
-		Helper:Assert(imageWidth <= containerWidth, "imageWidth must <= containerWidth!!")
-		imageL = math.round((containerWidth - imageWidth) / 2)
-		imageR = imageL + imageWidth
+		endIndex = pageCount * i
+		if #tPictures < endIndex then
+			endIndex = #tPictures
+		end
+		local requiredFiles = self.pageList[i]:ShowThumbnailByRange(tPictures, beginIndex, endIndex)
+		if "table" == type(requiredFiles) and #requiredFiles > 0 then
+			graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+		end
+		beginIndex = endIndex + 1
+	end
+end
+
+--请求的缩略图句柄，在这里异步返回
+function PageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) 
+	--干两件事：更新到界面、保存到tPictures。
+	LOG("OnGetMultiImgInfoCallBack key: ", key, " tImgInfo: ", tImgInfo)
+	for i=1, 3 do
+		if self.pageList[i]:UpdateImgInfoByPath(self.tPictures, tImgInfo.szPath, tImgInfo) then
+			break
+		else
+			LOG("OnGetMultiImgInfoCallBack not found! path: ", tImgInfo.szPath)
+		end
 	end
 	
-	imageObj:SetObjPos(imageL, imageT, imageR, imageB)
-	self:FireExtEvent("OnImageSizeChange", imageWidth, imageHeight, picWidth, picHeight)
+	--如果curPage,forwordPage,backwordPage三页里都没找到，说明当前返回的图片不在显示区域
+	--先暂时丢弃掉
 end
 
-function SetImagePath(self, path)
-	local imageObj = self:GetControlObject("Image")
-	local bitmap = Helper.graphicFactory:CreateBitmap(path, "RGB32")
-	
-	if not OnMainWndResizeCookie then
-		local imageContainer = self:GetControlObject("ImageContainer")
-		OnPosChangeCookie = imageContainer:AttachListener("OnPosChange", false, function() OnPosChange(self) end)
-		imageObj:SetDrawMode(1)
+function PageManager:GetCurShowPageIndex()
+	LOG("GetCurShowPageIndex")
+	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
+	local topPageIndex = 0
+	for i=1,3 do
+		if self.pageList[i].indexBegin == rangeBegin then
+			topPageIndex = i
+		end
 	end
 	
-	imageObj:SetBitmap(bitmap)
-	OnPosChange(self)
+	local bottomPageIndex = 0
+	for i=1,3 do
+		if self.pageList[i].indexEnd == rangeEnd then
+			bottomPageIndex = i
+		end
+	end
+	
+	local middlePageIndex = 0
+	for i=1,3 do
+		if self.pageList[i].indexBegin > rangeBegin and self.pageList[i].indexEnd < rangeEnd then
+			middlePageIndex = i
+		end
+	end
+	
+	--只有当tPictures数量大于3屏的时候，才有必要调该方法，此时三个Page一定都显示了图片
+	Helper:Assert(topPageIndex > 0 and middlePageIndex > 0 and bottomPageIndex > 0, "error page index")
+	LOG("GetCurShowPageIndex, topPageIndex: ", topPageIndex, " middlePageIndex: ", middlePageIndex, " bottomPageIndex: ", bottomPageIndex)
+	return topPageIndex, middlePageIndex, bottomPageIndex
 end
 
-function SetFolder(self, folder)
+function PageManager:GetCurShowIndexRange()
+	--page1,2,3的显示顺序不一定，有可能3在最上面，1在中间。。。
+	--最小的非0index就是rangeBegin
+	local rangeBegin = self.pageList[1].indexBegin
+	if rangeBegin > self.pageList[2].indexBegin and 0 ~= self.pageList[2].indexBegin then
+		rangeBegin = self.pageList[2].indexBegin
+	end
+	if rangeBegin > self.pageList[3].indexBegin and 0 ~= self.pageList[3].indexBegin then
+		rangeBegin = self.pageList[3].indexBegin
+	end
 	
+	--最大的index就是rangeEnd
+	local rangeEnd = self.pageList[1].indexEnd
+	if rangeEnd < self.pageList[2].indexEnd then
+		rangeEnd = self.pageList[2].indexEnd
+	end
+	if rangeEnd < self.pageList[3].indexEnd then
+		rangeEnd = self.pageList[3].indexEnd
+	end
+	LOG("GetCurShowIndexRange , rangeBegin: ", rangeBegin, " rangeEnd: ", rangeEnd)
+	return rangeBegin, rangeEnd
 end
 
---如果需要，可以在这里面向外发事件
-function OnDragImage(self, event, ...)
-	--图片显示不下的时候，才响应拖拽
-	local image = self:GetControlObject("Image")
-	local bitmap = image and image:GetBitmap()
-	if not bitmap then return end
-	
-	local imageContainer = self:GetControlObject("ImageContainer")
-	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
-	local containerWidth, containerHeigth = containerR - containerL, containerB - containerT
-	 
-	local imageL, imageT, imageR, imageB = image:GetObjPos()
-	local imageWidth, imageHeight = imageR - imageL, imageB - imageT
-	if imageWidth <= containerWidth and imageHeight <= containerHeigth then
-		Helper:LOG("image can show full")
+function PageManager:OnCtrlPosChange()
+	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
+	--!!!!!应该根据窗口尺寸，重新设定page1~3的显示范围、重设滚动条！！！
+	for i=1, 3 do
+		page = self.pageList[i]
+		local requiredFiles = page:ShowThumbnailByRange(self.tPictures, page.indexBegin, page.indexEnd)
+		if "table" == type(requiredFiles) and #requiredFiles > 0 then
+			graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+		end
+	end
+end
+
+--换页，响应滚动条滚动：向上滚动，则将backwordPage移到最上面去
+--distance大于0向下滚动；小于0向上滚动
+function PageManager:MovePages(scrollPos)
+	--不大于三屏的，不用考虑换页
+	local _,_, thumbnailCount = self.ctrlSelf:GetPageLayout()
+	local containerL, containerT, containerR, containerB = self.containerObj:GetObjPos()
+	local containerHeight = containerB-containerT
+	if thumbnailCount*3 >= #self.tPictures then
+		self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
 		return
 	end
 	
-	local dragState, cur_x, cur_y = ...
+	Helper:Assert(containerT <= 0, "containerObj top pos must Less than or equal to 0！ containerT: "..tostring(containerT))
+	
+	local topPageIndex, middlePageIndex, bottomPageIndex = self:GetCurShowPageIndex()
+	local topPage    = self.pageList[topPageIndex]
+	local middlePage = self.pageList[middlePageIndex]
+	local bottomPage = self.pageList[bottomPageIndex]
+	local _, _, _, _, picHeight = self.ctrlSelf:GetPageLayout()
+	local ctrlSelfAttr = self.ctrlSelf:GetAttribute()
+	local lineHeight = ctrlSelfAttr.SpaceV + picHeight
+	if -containerT < scrollPos then --画面向上滑动(滚动条向下滑动)
+		local lastMiddlePageObj = middlePage.objList[#middlePage.objList]
+		local _, _, _, lastMiddlePageObjB = lastMiddlePageObj:GetObjPos()
+		if lastMiddlePageObjB + containerT <= 15 and bottomPage.indexEnd < #self.tPictures then
+			--向上滑动画面时，只有当中间page快要完全滑到窗口上方时，才进行换页(将topPage挪到底部)
+			local indexBegin = bottomPage.indexEnd + 1
+			local indexEnd   = indexBegin + #middlePage.objList - 1 --这里一定要用中间page的孩子计数，上、下Page都有可能不全
+			if indexEnd > #self.tPictures then
+				indexEnd = #self.tPictures
+			end
+			--所谓的‘换页’，实际上就是重新设定page的显示的tPictures中的index的范围
+			local requiredFiles = topPage:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
+			if "table" == type(requiredFiles) and #requiredFiles > 0 then
+				graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+			end
+		end
+		
+		self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
+	elseif -containerT > scrollPos then--画面向下滑动(滚动条向上滑动)
+		local lastTopPageObj = topPage.objList[#topPage.objList]
+		local _, _, _, lastTopPageObjB = lastTopPageObj:GetObjPos()
+		if  (lastTopPageObjB + containerT) >= -15 and topPage.indexBegin > 1 then
+			--当中间page即将完全滑出窗口下方时，进行换页
+			local indexBegin = topPage.indexBegin - #middlePage.objList
+			if indexBegin < 1 then
+				indexBegin = 1
+			end
+			local indexEnd = topPage.indexBegin - 1
+			local requiredFiles = bottomPage:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
+			if "table" == type(requiredFiles) and #requiredFiles > 0 then
+				graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+			end
+		end		
+		self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
+	end
+end
+
+--计算每行应显示多少列、共能显示多少行
+function GetPageLayout(self)
+	local ownerTree = self:GetOwner()
+	local centerObj = ownerTree:GetUIObject("ThumbnailContainer.Center")
 	local attr = self:GetAttribute()
-		
-	if "draging" == dragState then
-		Helper:LOG("dragState draging")
-		if not attr.OnLButtonDownX or not attr.OnLButtonDownY then
-			Helper:Assert(false, "OnLButtonDownX is nil while draging!!")
-			return
-		end
-		
-		local x, y = Helper.tipUtil:GetCursorPos()
-		local offsetX, offsetY = x - attr.LastDragPosX, y - attr.LastDragPosY
-		attr.LastDragPosX, attr.LastDragPosY = x, y
-		
-		Helper:LOG("offsetX: "..offsetX.." offsetY: "..offsetY)
-		local posL, posT = imageL + offsetX, imageT + offsetY
-		
-		--防止拖动过界
-		if imageWidth >= containerWidth then
-			posL = posL<0 and posL or 0
-			posL = posL>containerWidth-imageWidth and posL or containerWidth-imageWidth
-		else
-			posL = imageL
-		end
-		
-		if imageHeight >= containerHeigth then
-			posT = posT<0 and posT or 0
-			posT = posT>containerHeigth-imageHeight and posT or containerHeigth-imageHeight
-		else
-			posT = imageT
-		end
-		
-		image:SetObjPos2(posL, posT, imageWidth, imageHeight)
-	elseif "start" == dragState then
-		Helper:LOG("dragState start")
-		if not attr.OnLButtonDownX or not attr.OnLButtonDownY then
-			Helper:Assert(false, "OnLButtonDownX is nil while drag start!!")
-			return
-		end
-		--拖拽开始时，记下上次鼠标在屏幕中的位置
-		attr.LastDragPosX, attr.LastDragPosY= Helper.tipUtil:GetCursorPos()
-	elseif "end" == dragState then--拖拽正常结束
-		Helper:LOG("dragState end")
-	elseif "cancel" == dragState then--拖拽取消
-		Helper:LOG("dragState cancel")
-	end
+	local L, T, R, B = centerObj:GetObjPos()
+	local width = R - L
+	local hieght = B - T
+	
+	local zoomPercent = attr.curZoomPercent or attr.defaultZoomPercent or 10
+	zoomPercent = zoomPercent / 100
+	local picWidth = math.round(attr.MinWidth + (attr.MaxWidth - attr.MinWidth)*zoomPercent)
+	local picHeight = math.round(attr.MinHeight + (attr.MaxHeight - attr.MinHeight)*zoomPercent)
+	
+	local columnCount = math.floor(width/(picWidth + attr.SpaceH))
+	local lineCount = math.ceil(hieght/(picHeight + attr.SpaceV))
+	
+	return lineCount, columnCount, lineCount * columnCount, picWidth, picHeight
 end
 
-function OnImageLButtonDown(self, x, y)
-Helper:LOG("OnImageLButtonDown X: "..x.." Y: ".. y)
-	local ownerCtrl = self:GetOwnerControl()
-	local attr = ownerCtrl:GetAttribute()
-	local image = ownerCtrl:GetControlObject("Image")
-	image:SetCaptureMouse(true)
-	attr.CaptrueMouse = true
-	
-	attr.OnLButtonDownX = x
-	attr.OnLButtonDownY = y
-end
 
-function OnImageLButtonUp(self, x, y)
-Helper:LOG("OnImageLButtonUp")
-	local ownerCtrl = self:GetOwnerControl()
-	local attr = ownerCtrl:GetAttribute()
-	local image = ownerCtrl:GetControlObject("Image")
-	
-	if attr.CaptrueMouse and attr.DragState then
-		attr.DragState = "end"
-		OnDragImage(ownerCtrl, "OnDragImage", attr.DragState, x, y)
-		attr.DragState = nil
-	end
-	
-	attr.CaptrueMouse = false
-	image:SetCaptureMouse(false)
-	
-	attr.OnLButtonDownX = nil
-	attr.OnLButtonDownY = nil
-end
 
-function OnImageMouseMove(self, x, y)
-	local ownerCtrl = self:GetOwnerControl()
-	local attr = ownerCtrl:GetAttribute()
+--tPictures格式:{
+-- {"szPath"=, "szExt"=, "utcLastWriteTime"=, "uFileSize"=, "uWidth"=, "uHeight"=, "szType"=, "xlhBitmap"=},
+-- {"szPath"=, "szExt"=, "utcLastWriteTime"=, "uFileSize"=, "uWidth"=, "uHeight"=, "szType"=, "xlhBitmap"=},
+-- ...
+-- }前四个属性在GetDirSupportImgPaths时就能同步获取到；后四个属性要通过GetMultiImgInfoByPaths异步获取，
+--OnGetMultiImgInfoCallBack事件里返回
+function SetFolder(self, sPath)
+	LOG("SetFolder sPath: ", sPath)
+	local attr = self:GetAttribute()
+	attr.sPath = sPath
 	
-	if not attr.CaptrueMouse then return end
-	if not attr.OnLButtonDownX or not attr.OnLButtonDownY then
-		return
-	end
+	--将上一个目录产生的xlhBitmap销毁
+	attr.tPictures = nil
 	
-	Helper:LOG("OnImageMouseMove")
-	if not attr.DragState then
-		if math.abs(attr.OnLButtonDownX - x) >= 3 or math.abs(attr.OnLButtonDownY - y) >= 3 then
-			attr.DragState = "start"
-			attr.OnLButtonDownX = x
-			attr.OnLButtonDownY = y
-		end
-	else
-		attr.DragState = "draging"
-	end
+	--获取目录中受支持的图片
+	attr.tPictures = graphicUtil:GetDirSupportImgPaths(sPath)
 	
-	if attr.DragState then
-		OnDragImage(ownerCtrl, "OnDragImage", attr.DragState, x, y)
-	end
-end
-
-function OnImageCaptureChange(self, capture)
-Helper:LOG("OnImageCaptureChange")
-	if capture then
-		return
-	end
-	local ownerCtrl = self:GetOwnerControl()
-	local attr = ownerCtrl:GetAttribute()
-	if not attr.CaptrueMouse then
-		return
-	end
+	attr.pageManager:Init(self, attr.tPictures)
 	
-	if attr.DragState then
-		attr.DragState = "cancel"
-		OnDragImage(ownerCtrl, "OnDragImage", attr.DragState, x, y)
-		attr.DragState = nil
-	end
-	attr.CaptrueMouse = false
-end
-
-function OnImageRButtonUp(self, x, y)
-	local curX, curY = Helper.tipUtil:GetCursorPos()
-	local tree = self:GetOwner()
-	local wnd = tree:GetBindHostWnd()
-	local GreenShieldMenu = XLGetGlobal("GreenShieldMenu")	
-	local menuTable = GreenShieldMenu.ImageRClickMenu.menuTable
-	local menuFunTable = GreenShieldMenu.ImageRClickMenu.menuFunTable
-	Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable)
-end
-
--- direction > 0 ：向上滚,放大 < 0：向下滚，缩小
-function OnImageMouseWheel(self, x, y, direction, distance)
-	local ownerCtrl = self:GetOwnerControl()
-	local bitmap = self:GetBitmap()
-	if not bitmap then
-		return
-	end
-	
-	if not distance or 0 == distance then
-		distance = 10
-	end
-	local curZoomPercent = GetZoomPercent(ownerCtrl)
-	if direction > 0 then
-		Zoom(ownerCtrl, curZoomPercent + distance)
-	else
-		curZoomPercent = curZoomPercent - distance
-		Zoom(ownerCtrl, curZoomPercent > 10 and curZoomPercent or 10)
-	end
-end
-
-function GetShowRect(self)
-	local imageObj = self:GetControlObject("Image")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return 0,0,0,0
-	end
+	--之后就是监听缩放、滚动，来调整Page
 end
 
 function Zoom(self, percent)
-	local imageObj = self:GetControlObject("Image")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return 0
-	end
-	local imageContainer = self:GetControlObject("ImageContainer")
-	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
-	local containerWidth, containerHeigth = containerR - containerL, containerB - containerT
-	
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
-	
-	local targetImageWidth, targetImageHeight = picWidth*percent/100, picHeight*percent/100
-	local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
-	local curImageWidth, curImageHeight = imageR - imageL, imageB - imageT
-	local offsetW, offsetH = targetImageWidth- curImageWidth, targetImageHeight - curImageHeight
-	-- local offsetL
-	if targetImageWidth <= containerWidth and targetImageHeight <= containerHeigth then
-		imageL = math.round((containerWidth - targetImageWidth)/2)
-		imageR = math.round(imageL + targetImageWidth)
-		imageT = math.round((containerHeigth - targetImageHeight) / 2)
-		imageB = math.round(imageT + targetImageHeight)
-	else
-		--支持偏心缩放，即:在缩放过程中，窗口中心处的内容应始终在窗口中心
-		-- local 
-		
-		imageL = imageL - math.round(offsetW/2)
-		imageR = imageL + targetImageWidth
-		imageT = imageT - math.round(offsetH/2)
-		imageB = imageT + targetImageHeight
-	end
-	imageObj:SetObjPos(imageL, imageT, imageR, imageB)
-	self:FireExtEvent("OnImageSizeChange", math.round(targetImageWidth), math.round(targetImageHeight), picWidth, picHeight)
+	local attr = self:GetAttribute()
+	attr.curZoomPercent = percent
 end
 
 function GetZoomPercent(self)
-	local imageObj = self:GetControlObject("Image")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return 0
-	end
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
-	local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
-	return math.round(100*(imageR - imageL)/picWidth)
+
 end
 
-function OnClickLeftArrow(self)
-	XLMessageBox("OnClickLeftArrow")
+--在SetFolder之前调用，可即时生效。在之后调用，需手动调一次Refresh
+function SetDefaultZoomPercent(self, percent)
+	local attr = self:GetAttribute()
+	attr.defaultZoomPercent = percent
 end
 
-function OnClickRightArrow(self)
-	XLMessageBox("OnClickRightArrow")
+function GetSelectedThumbnailCtrlID(self)
+
+end
+
+function Refresh(self)
+
+end
+
+function OnVScroll(self, fun, _type, pos)
+	local ownerCtrl = self:GetOwnerControl()
+	local scrollPos = self:GetScrollPos()	
+	--点击向上按钮或上方空白
+    if _type ==1 then
+        self:SetScrollPos( scrollPos - 44, true )
+	--点击向下按钮或下方空白
+    elseif _type==2 then
+		self:SetScrollPos( scrollPos + 44, true )
+    end
+
+	scrollPos = self:GetScrollPos()
+	
+	--大于0向下滚动；小于0向上滚动
+	local ownerCtrlAttr = ownerCtrl:GetAttribute()
+	LOG("Move Pages: scrollPos: ", scrollPos)
+	ownerCtrlAttr.pageManager:MovePages(scrollPos)
+	
+	return true
+end
+
+function OnScrollBarMouseWheel(self, name, x, y, distance)
+	
+end
+
+
+function OnInitControl(self)
+	local attr = self:GetAttribute()
+	attr.defaultZoomPercent = 10
+	attr.pageManager = PageManager:New()
+	
+	graphicUtil:AttachListener(function(key, tImgInfo) attr.pageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) end)
+	SetFolder(self, "E:\\imgTest2")
+	-- SetOnceTimer(function() SetFolder(self, "E:\\imgTest2") end, 5000)
+end
+
+function OnPosChange(self, oldLeft, oldTop, oldRight, oldBottom, newLeft, newTop, newRight, newBottom)
+	local attr = self:GetAttribute()
+	attr.pageManager:OnCtrlPosChange()
 end

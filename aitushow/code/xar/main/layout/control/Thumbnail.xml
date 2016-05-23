@@ -5,26 +5,32 @@
 		<method_def>
 			<!--设置缩略图信息，包括缩略图句柄、原图路径、原图格式、原图大小等-->
 			<SetData />
+			<GetData />
+			<GetIndex />
+			<SetIndex /><!--设置索引，Thumbnail根据此信息计算自己在Container中的位置-->
+			<Clear />
+			<SetImage />
 			<!--设置是否被选中-->
 			<Select />	
 		</method_def>
 		<event_def>
-			<OnPreSelect><!--点击缩略图控件时，发OnPreSelect，由缩略图Container决定是否Select(为了多选)-->
+			<OnTrySelect><!--点击缩略图控件时，发OnTrySelect，由缩略图Container决定是否Select(为了多选)-->
 				<param>
-					<int />
-					<int />
+					<bool /><!--当前的select状态！！！-->
 				</param>
-			</OnPreSelect>
+			</OnTrySelect>
 		</event_def>
 		<objtemplate>
 			<children>
 				<!-- 边框 -->
-				<obj id="Background" class="TextureObject">
+				<obj id="Background" class="FillObject">
 					<attr>
 						<left>0</left>
 						<top>0</top>
 						<width>father.width</width>
 						<height>father.height</height>
+						<srccolor>100,66,57,255</srccolor>
+						<destcolor>100,66,57,255</destcolor>
 					</attr>
 					<children>
 						<obj id="SourcePicExt" class="FillObject">
@@ -35,18 +41,20 @@
 								<height>15</height>
 								<srccolor>73,165,230,255</srccolor>
 								<destcolor>73,165,230,255</destcolor>
+								<zorder>9999</zorder>
 							</attr>
 							<children>
 								<obj id="ExtText" class="TextObject">
 									<attr>
 										<left>0</left>
-										<top>0</top>
+										<top>-1</top>
 										<width>father.width</width>
 										<height>father.height</height>
-										<font>basecontrol.defaultfont.8</font>
-										<color>basecontrol.white</color>
+										<font>basecontrol.defaultfont.12</font>
+										<textcolor>basecontrol.white</textcolor>
 										<halign>center</halign>
-										<valign>center</valign>	
+										<valign>center</valign>
+										<text>ext</text>
 									</attr>
 								</obj>
 							</children>
@@ -55,9 +63,16 @@
 							<attr>
 								<left>2</left>
 								<top>2</top>
+								<valign>center</valign>
+								<halign>center</halign>
+								<zorder>99</zorder>
 								<width>father.width - 4</width>
 								<height>father.height - 4 - 2 - 15</height>
+								<image>default_icon.png</image>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" />
+							</eventlist>
 						</obj>
 						<obj id="FileName" class="TextObject">
 							<attr>
@@ -65,17 +80,19 @@
 								<top>father.height - 15</top>
 								<width>father.width - 4</width>
 								<height>15</height>
+								<zorder>9999</zorder>
 								<font>basecontrol.defaultfont.12</font>
-								<color>basecontrol.white</color>
+								<textcolor>basecontrol.white</textcolor>
 								<halign>center</halign>
 								<valign>top</valign>
+								<text>filename</text>
 							</attr>
 						</obj>
 					</children>
 				</obj>
 			</children>
 			<eventlist>
-				<event name="OnLButtonUp" />
+				<event name="OnInitControl" />
 			</eventlist>
 		</objtemplate>
 	</control>
