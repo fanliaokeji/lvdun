@@ -174,5 +174,42 @@
 			<texture id="messagebox.renamesave.hover"   imagelist="messagebox.renamesave" index="2" />
 			<texture id="messagebox.renamesave.down"   imagelist="messagebox.renamesave" index="3" />
 
+		<!--默认图标-->
+		<bitmap id="default_icon.bmp" path="bitmap\default_icon\bmp.png" />
+		<bitmap id="default_icon.cut" path="bitmap\default_icon\cut.png" />
+		<bitmap id="default_icon.dds" path="bitmap\default_icon\dds.png" />
+		<bitmap id="default_icon.exr" path="bitmap\default_icon\exr.png" />
+		<bitmap id="default_icon.fax" path="bitmap\default_icon\fax.png" />
+		<bitmap id="default_icon.gif" path="bitmap\default_icon\gif.png" />
+		<bitmap id="default_icon.hdr" path="bitmap\default_icon\hdr.png" />
+		<bitmap id="default_icon.ico" path="bitmap\default_icon\ico.png" />
+		<bitmap id="default_icon.iff" path="bitmap\default_icon\iff.png" />
+		<bitmap id="default_icon.j2k" path="bitmap\default_icon\j2k.png" />
+		<bitmap id="default_icon.jng" path="bitmap\default_icon\jng.png" />
+		<bitmap id="default_icon.jp2" path="bitmap\default_icon\jp2.png" />
+		<bitmap id="default_icon.jpeg" path="bitmap\default_icon\jpeg.png" />
+		<bitmap id="default_icon.jpg" path="bitmap\default_icon\jpg.png" />
+		<bitmap id="default_icon.jxr" path="bitmap\default_icon\jxr.png" />
+		<bitmap id="default_icon.koala" path="bitmap\default_icon\koala.png" />
+		<bitmap id="default_icon.lbm" path="bitmap\default_icon\lbm.png" />
+		<bitmap id="default_icon.mng" path="bitmap\default_icon\mng.png" />
+		<bitmap id="default_icon.pbm" path="bitmap\default_icon\pbm.png" />
+		<bitmap id="default_icon.pcd" path="bitmap\default_icon\pcd.png" />
+		<bitmap id="default_icon.pcx" path="bitmap\default_icon\pcx.png" />
+		<bitmap id="default_icon.pfm" path="bitmap\default_icon\pfm.png" />
+		<bitmap id="default_icon.pgm" path="bitmap\default_icon\pgm.png" />
+		<bitmap id="default_icon.pict" path="bitmap\default_icon\pict.png" />
+		<bitmap id="default_icon.png" path="bitmap\default_icon\png.png" />
+		<bitmap id="default_icon.ppm" path="bitmap\default_icon\ppm.png" />
+		<bitmap id="default_icon.psd" path="bitmap\default_icon\psd.png" />
+		<bitmap id="default_icon.ras" path="bitmap\default_icon\ras.png" />
+		<bitmap id="default_icon.raw" path="bitmap\default_icon\raw.png" />
+		<bitmap id="default_icon.sgi" path="bitmap\default_icon\sgi.png" />
+		<bitmap id="default_icon.targa" path="bitmap\default_icon\targa.png" />
+		<bitmap id="default_icon.tiff" path="bitmap\default_icon\tiff.png" />
+		<bitmap id="default_icon.wbmp" path="bitmap\default_icon\wbmp.png" />
+		<bitmap id="default_icon.webp" path="bitmap\default_icon\webp.png" />
+		<bitmap id="default_icon.xbm" path="bitmap\default_icon\xbm.png" />
+		<bitmap id="default_icon.xpm" path="bitmap\default_icon\xpm.png" />
 	</resource>
 </XLUE>
