@@ -78,34 +78,78 @@
 						<limitchild>1</limitchild>
 					</attr>
 					<children>
-						<obj id="MainWnd.AddressEditCtrl" class="AddressEdit">
+						<obj id="ThumbnailContainer.Header" class="FillObject">
 							<attr>
 								<left>0</left>
 								<top>0</top>
 								<width>father.width</width>
-								<height>27</height>
+								<height>87</height>
+								<filltype>Monochrome</filltype>
+								<srccolor>87,54,45,255</srccolor>
+								<destcolor>87,54,45,255</destcolor>
 							</attr>
-							<eventlist>
-								<event name="OnPathChanged" file="MainWnd.xml.lua" func="AddressEditCtrlOnPathChanged"/>
-							</eventlist>
+							<children>
+								<obj id="MainWnd.AddressEditCtrl" class="AddressEdit">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>27</height>
+									</attr>
+									<eventlist>
+										<event name="OnPathChanged" file="MainWnd.xml.lua" func="AddressEditCtrlOnPathChanged"/>
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.SliderCtrl" class="Slider">
+									<attr>
+										<left>father.width - 160</left>
+										<top>50</top>
+										<width>76</width>
+										<height>14</height>
+										<BtnWidth>14</BtnWidth>
+										<BtnHeight>14</BtnHeight>
+										<BkgID>texture.slider.bkg</BkgID>			
+										<RightBkgID>texture.slider.bkg</RightBkgID>			
+										<LeftBkgID>texture.slider.leftbkg</LeftBkgID>			
+										<BtnNormalBkgID>texture.slider.btn</BtnNormalBkgID>
+										<BtnDownBkgID>texture.slider.btn</BtnDownBkgID>
+										<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
+										<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
+									</attr>
+								</obj>
+							</children>
 						</obj>
-						<obj id="MainWnd.SliderCtrl" class="Slider">
+						<obj id="ThumbnailContainer.Center" class="LayoutObject">
 							<attr>
-								<left>father.width - 160</left>
-								<top>50</top>
-								<width>76</width>
-								<height>14</height>
-								<BtnWidth>14</BtnWidth>
-								<BtnHeight>14</BtnHeight>
-								<BkgID>texture.slider.bkg</BkgID>			
-								<RightBkgID>texture.slider.bkg</RightBkgID>			
-								<LeftBkgID>texture.slider.leftbkg</LeftBkgID>			
-								<BtnNormalBkgID>texture.slider.btn</BtnNormalBkgID>
-								<BtnDownBkgID>texture.slider.btn</BtnDownBkgID>
-								<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
-								<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
+								<left>0</left>
+								<top>88</top>
+								<width>father.width</width>
+								<height>father.height - 88 - 47</height>
+								<limitchild>1</limitchild>
 							</attr>
+							<children>
+								<obj id="ThumbnailContainerObj" class="ThumbnailContainer">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<limitchild>1</limitchild>
+									</attr>
+								</obj>
+							</children>
 						</obj>
+						<obj id="ThumbnailContainer.Bottom" class="FillObject">
+							<attr>
+								<left>0</left>
+								<top>father.height - 47</top>
+								<width>father.width</width>
+								<height>47</height>
+								<filltype>Monochrome</filltype>
+								<srccolor>87,54,45,255</srccolor>
+								<destcolor>87,54,45,255</destcolor>
+							</attr>
+						</obj>	
 						<!--工具栏-->
 						<obj id="MainWnd.ToolBarContainer" class="LayoutObject">
 							<attr>
