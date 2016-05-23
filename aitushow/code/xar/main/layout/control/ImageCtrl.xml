@@ -4,7 +4,8 @@
 		</attr_def>
 		<method_def>
 			<SetImagePath file="ImageCtrl.xml.lua" func="SetImagePath"/>
-			<SetFolder file="ImageCtrl.xml.lua" func="SetFolder"/>
+			<SetImage />
+			<SetFolderData />
 			<!--使用百分比对图片进行缩放，精确到1%-->
 			<Zoom file="ImageCtrl.xml.lua" func="Zoom"/>
 			<!--获取图片当前相较于原始尺寸的缩放比例，精确到1%-->
@@ -45,6 +46,7 @@
 						<top>father.height/2 - 64</top>
 						<width>64</width>
 						<height>64</height>
+						<Visible>false</Visible>
 						<zorder>9999</zorder>
 						<NormalBkgID>imagelist.mainwnd.button.leftarrow.normal</NormalBkgID>
 						<DownBkgID>imagelist.mainwnd.button.leftarrow.down</DownBkgID>
@@ -90,13 +92,14 @@
 						<width>64</width>
 						<height>64</height>
 						<zorder>9999</zorder>
+						<Visible>false</Visible>
 						<NormalBkgID>imagelist.mainwnd.button.rightarrow.normal</NormalBkgID>
 						<DownBkgID>imagelist.mainwnd.button.rightarrow.down</DownBkgID>
 						<HoverBkgID>imagelist.mainwnd.button.rightarrow.hover</HoverBkgID>
 						<DisableBkgID>imagelist.mainwnd.button.rightarrow.disable</DisableBkgID>
 					</attr>
 					<eventlist>
-						
+						<event name="OnClick" file="ImageCtrl.xml.lua" func="OnClickRightArrow" />
 					</eventlist>
 				</obj>
 			</children>

@@ -12,12 +12,12 @@ function OnCreate(self)
 	local workHeigth = workbottom - worktop
 	self:Move( math.floor((workWidth - nLayoutWidth) / 2), math.floor((workHeigth - nLayoutHeight) / 2), nLayoutWidth, nLayoutHeight)
 
+	local userData = self:GetUserData()
 	local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
-	imageCtrl:SetImagePath("C:\\Users\\mjt\\Pictures\\Pictures\\test2.png")
+	imageCtrl:SetFolderData(userData)
+		
 	local titleCtrl = objtree:GetUIObject("FrameWnd.TitleCtrl")
-	titleCtrl:SetTitleTextContent("test2.png")
-	
-	local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
+	titleCtrl:SetTitleTextContent(userData and userData.filename or "")
 	imageCtrl:AttachListener("OnImageSizeChange", false, OnImageSizeChange)
 	
 	Helper:AddDropTarget(self)

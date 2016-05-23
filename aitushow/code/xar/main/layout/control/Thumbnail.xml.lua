@@ -36,6 +36,7 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	if data.szPath then
 		--提取filename
 		local fileName = string.match(data.szPath, ".+[\\/]([^?]+)")
+		attr.fileName = fileName
 		fileNameObj:SetText(fileName)
 	end
 	
@@ -167,6 +168,21 @@ function OnLButtonUp(self)
 	end
 	
 	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
+end
+
+function OnLButtonDbClick(self)
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	local tree = self:GetOwner()
+	local thumbnailContainer = tree:GetUIObject("ThumbnailContainerObj")
+	local thumbnailContainerAttr = thumbnailContainer:GetAttribute()
+	local userData = {}
+	userData.tPictures = thumbnailContainerAttr.tPictures
+	userData.sPath = thumbnailContainerAttr.sPath  --文件夹
+	userData.index = attr.index
+	userData.fileName = attr.fileName
+	
+	Helper:CreateModelessWnd("ImageWnd","ImageWndTree", nil, userData)
 end
 
 function OnInitControl(self)

@@ -1,4 +1,6 @@
 local Helper = XLGetGlobal("Helper")
+local Helper = XLGetGlobal("Helper")
+local graphicUtil = XLGetObject("GRAPHIC.Util")
 local OnPosChangeCookie = nil
 
 function OnPosChange(self)
@@ -64,6 +66,93 @@ function SetImagePath(self, path)
 	
 	imageObj:SetBitmap(bitmap)
 	OnPosChange(self)
+end
+
+function SetImage(self, xlhBitmap)
+
+end
+
+function SetImageByIndex(self, index)
+	local attr = self:GetAttribute()
+	if not attr.tPictures or not attr.tPictures[index] then
+		return false
+	end
+	
+	attr.index = index
+	local tImgInfo = attr.tPictures[index]
+	if not tImgInfo.xlhBitmap then
+		local requireFiles = {}
+		requireFiles[1] = tImgInfo.szPath
+		graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+	else
+		local imageObj = self:GetControlObject("Image")
+		imageObj:SetBitmap(tImgInfo.xlhBitmap)
+		
+		local imageContainer = self:GetControlObject("ImageContainer")
+		local imageL, imageT, imageR, imageB = imageContainer:GetObjPos()
+		local imageWidth = imageR - imageL
+		local imageHeight = imageB - imageT
+		if tImgInfo.uWidth/tImgInfo.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
+			local newHeight = math.round((imageWidth*tImgInfo.uHeight)/tImgInfo.uWidth)
+			--计算居中的高度
+			local newTop    = math.round((imageHeight - newHeight)/2)
+			
+			LOG("SetFolderData ", tImgInfo.szPath, " newHeight: ", newHeight, " newTop: ", newTop)
+			imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
+		elseif tImgInfo.uWidth/tImgInfo.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
+			local newWidth = math.round((imageHeight*tImgInfo.uWidth)/tImgInfo.uHeight)
+			local newLeft  = math.round((imageWidth - newWidth)/2)
+			imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
+			LOG("SetFolderData  ",  tImgInfo.szPath, " newWidth: ", newWidth, " newLeft: ", newLeft)
+		end
+	end
+	
+	local rightArrow = self:GetControlObject("RightArrow")
+	local leftArrow = self:GetControlObject("LeftArrow")
+		
+	if GetNextPic(self) then
+		rightArrow:Show(true)
+	else
+		rightArrow:Show(false)
+	end
+	if GetPrevPic(self) then
+		leftArrow:Show(true)
+	else
+		leftArrow:Show(false)
+	end
+	
+	return true
+end
+
+function GetNextPic(self)
+	local attr = self:GetAttribute()
+	local index = attr.index + 1
+	if index <= #attr.tPictures then
+		return attr.tPictures[index]
+	else
+		return nil
+	end
+end
+
+function GetPrevPic(self)
+	local attr = self:GetAttribute()
+	local index = attr.index - 1
+	
+	if index > 0 then
+		return attr.tPictures[index]
+	else
+		return nil
+	end
+end
+
+function SetFolderData(self, userData)
+	local attr = self:GetAttribute()
+	attr.tPictures = userData.tPictures
+	attr.index = userData.index
+	attr.sPath = userData.sPath
+	attr.fileName = userData.fileName
+	
+	SetImageByIndex(self, attr.index)
 end
 
 function SetFolder(self, folder)
@@ -296,9 +385,17 @@ function GetZoomPercent(self)
 end
 
 function OnClickLeftArrow(self)
-	XLMessageBox("OnClickLeftArrow")
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	local index = attr.index - 1
+	
+	SetImageByIndex(ownerCtrl, index)
 end
 
 function OnClickRightArrow(self)
-	XLMessageBox("OnClickRightArrow")
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	local index = attr.index + 1
+	
+	SetImageByIndex(ownerCtrl, index)
 end

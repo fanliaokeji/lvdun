@@ -77,6 +77,7 @@
 							</attr>
 							<eventlist>
 								<event name="OnLButtonUp" />
+								<event name="OnLButtonDbClick" />
 							</eventlist>
 						</obj>
 						<obj id="Image.gif" class="SeqImageObject">
@@ -94,6 +95,7 @@
 							</attr>
 							<eventlist>
 								<event name="OnLButtonUp" />
+								<event name="OnLButtonDbClick" />
 							</eventlist>
 						</obj>	
 						<obj id="FileName" class="TextObject">
@@ -113,6 +115,7 @@
 					</children>
 					<eventlist>
 						<event name="OnLButtonUp" />
+						<event name="OnLButtonDbClick" />
 					</eventlist>
 				</obj>
 			</children>
