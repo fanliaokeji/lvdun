@@ -42,6 +42,19 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	if data.xlhBitmap then
 		imageObj:SetDrawMode(1)
 		imageObj:SetBitmap(data.xlhBitmap)
+		--调整宽高比
+		if data.uWidth and data.uHeight then
+			local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
+			local imageWidth = imageR - imageL
+			local imageHeight = imageB - imageT
+			if data.uWidth/data.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
+				imageHeight = math.round((imageWidth*data.uHeight)/data.uWidth)
+				imageObj:SetObjPos2(imageL, imageT, imageWidth, imageHeight)
+			elseif data.uWidth/data.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
+				imageWidth = math.round((imageHeight*data.uWidth)/data.uHeight)
+				imageObj:SetObjPos2(imageL, imageT, imageWidth, imageHeight)
+			end
+		end
 		return true
 	else
 		if data.szExt and "" ~= data.szExt then
@@ -97,12 +110,37 @@ function Clear(self)
 	background:SetChildrenVisible(false)
 end
 
-function SetImage(self, xlhBitmap)
+function SetImage(self, tImgInfo)
 	local imageObj = self:GetControlObject("Image")
+	local backgroundObj = self:GetControlObject("Background")
 	local attr = self:GetAttribute()
-	attr.data.xlhBitmap = xlhBitmap
+	attr.data.xlhBitmap = tImgInfo.xlhBitmap
+	attr.data.uWidth = tImgInfo.uWidth
+	attr.data.uHeight = tImgInfo.uHeight
+	attr.data.szType = tImgInfo.szType
 	
-	imageObj:SetBitmap(xlhBitmap)
+	imageObj:SetDrawMode(1)
+	imageObj:SetBitmap(tImgInfo.xlhBitmap)
+	--调整宽高比
+	if tImgInfo.uWidth and tImgInfo.uHeight then
+		--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
+		local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
+		local imageWidth = imageR - imageL - 4
+		local imageHeight = imageB - imageT - 21
+		if tImgInfo.uWidth/tImgInfo.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
+			local newHeight = math.round((imageWidth*tImgInfo.uHeight)/tImgInfo.uWidth)
+			--计算居中的高度
+			local newTop    = math.round((imageHeight - newHeight)/2)
+			
+			LOG("SetImage ", attr.data.szPath, " newHeight: ", newHeight, " newTop: ", newTop)
+			imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
+		elseif tImgInfo.uWidth/tImgInfo.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
+			local newWidth = math.round((imageHeight*tImgInfo.uWidth)/tImgInfo.uHeight)
+			local newLeft  = math.round((imageWidth - newWidth)/2)
+			imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
+			LOG("SetImage  ",  attr.data.szPath, " newWidth: ", newWidth, " newLeft: ", newLeft)
+		end
+	end
 end
 
 function Select(self, bSelect)

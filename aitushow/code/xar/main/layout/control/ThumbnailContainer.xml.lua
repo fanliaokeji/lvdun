@@ -84,7 +84,7 @@ function PageClass:UpdateImgInfoByPath(tPictures, path, tImgInfo)
 	for i=1, #self.objList do
 		local data = self.objList[i]:GetData()
 		if data and data.szPath and data.szPath == path then
-			self.objList[i]:SetImage(tImgInfo.xlhBitmap)
+			self.objList[i]:SetImage(tImgInfo)
 			tPictures[i+self.indexBegin-1].xlhBitmap = tImgInfo.xlhBitmap
 			tPictures[i+self.indexBegin-1].uWidth = tImgInfo.uWidth
 			tPictures[i+self.indexBegin-1].uHeight = tImgInfo.uHeight
@@ -291,7 +291,9 @@ end
 
 function PageManager:OnCtrlPosChange()
 	LOG("OnCtrlPosChange")
-	
+	if not self.bInit then 
+		return
+	end
 	local containerHeight = self:CalaContainerNeedHeight()
 	local containerL, containerT, containerR, containerB = self.containerObj:GetObjPos() 
 	self.containerObj:SetObjPos2(containerL, containerT, "father.width - 10", containerHeight)
