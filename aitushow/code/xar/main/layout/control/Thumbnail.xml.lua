@@ -13,6 +13,7 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	-- attr.index = index
 	local background = self:GetControlObject("Background")
 	local imageObj = self:GetControlObject("Image")
+	local gifObj = self:GetControlObject("Image.gif")
 	local extTextObj = self:GetControlObject("ExtText")
 	local fileNameObj = self:GetControlObject("FileName")
 	
@@ -20,6 +21,18 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	background:SetChildrenVisible(true)
 	
 	extTextObj:SetText(data.szExt or "")
+	if "gif" == data.szExt then
+		gifObj:SetVisible(true)
+		imageObj:SetVisible(false)
+		local XGP_Factory = XLGetObject("Xunlei.XGP.Factory")
+		local gif = XGP_Factory:LoadGifFromFile(data.szPath)
+		gifObj:SetGif(gif)
+		gifObj:Play()
+		return true--gif不去申请了
+	else
+		gifObj:SetVisible(false)
+		imageObj:SetVisible(true)
+	end
 	if data.szPath then
 		--提取filename
 		local fileName = string.match(data.szPath, ".+[\\/]([^?]+)")

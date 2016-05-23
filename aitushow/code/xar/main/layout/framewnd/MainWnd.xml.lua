@@ -72,11 +72,6 @@ function OnSliderPosChange(self, event, pos)
 	thumbnailContainer:Zoom(pos)
 end
 
-function OnInitSlider(self)
-	self:SetRange(0, 100)
-	self:SetValue(10)
-end
-
 function OnShowWindow(self, bVisible)
 	
 end
@@ -89,7 +84,9 @@ function LeftPanelOnSelect(self, event, dir)
 	end
 	local owner = self:GetOwner()
 	local addressobj = owner:GetUIObject("MainWnd.AddressEditCtrl")
+	local thumbContainerObj = owner:GetUIObject("ThumbnailContainerObj")
 	addressobj:SetPath(realpath, true)
+	thumbContainerObj:SetFolder(realpath)
 end
 
 --地址栏变化事件

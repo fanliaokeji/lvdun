@@ -115,10 +115,12 @@
 										<BtnDownBkgID>texture.slider.btn</BtnDownBkgID>
 										<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
 										<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
+										<Min>0</Min>
+										<Max>100</Max>
+										<Value>10</Value>
 									</attr>
 									<eventlist>
 										<event name="OnSliderPosChange" file="MainWnd.xml.lua" func="OnSliderPosChange"/>
-										<event name="OnInitControl" file="MainWnd.xml.lua" func="OnInitSlider"/>
 									</eventlist>
 								</obj>
 							</children>

@@ -443,15 +443,28 @@ function OnVScroll(self, fun, _type, pos)
 	--大于0向下滚动；小于0向上滚动
 	local ownerCtrlAttr = ownerCtrl:GetAttribute()
 	LOG("Move Pages: scrollPos: ", scrollPos)
-	ownerCtrlAttr.pageManager:MovePages(scrollPos)
+	local pageManager = ownerCtrlAttr.pageManager
+	local rangeBegin, rangeEnd = pageManager:GetCurShowIndexRange()
+	local lineCount, columnCount, pageCount, picWidth, picHeight = pageManager.ctrlSelf:GetPageLayout()
+	local pageHeight = lineCount * (picHeight + ownerCtrlAttr.SpaceV)
+	local firstLineNum = math.ceil(rangeBegin/columnCount)
+	local lastLineNum = math.ceil(rangeEnd/columnCount)
+	local posT = firstLineNum * (picHeight + ownerCtrlAttr.SpaceV)
+	local posB = lastLineNum * (picHeight + ownerCtrlAttr.SpaceV)
+	if scrollPos < posT - pageHeight or  scrollPos > posB + pageHeight then
+		--如果滚动的太快(距离太大)，就没必要换页了
+		ownerCtrlAttr.pageManager:ShowPagesByScrollPos(scrollPos)
+	else
+		ownerCtrlAttr.pageManager:MovePages(scrollPos)
+	end
 	
 	return true
 end
 
 function OnScrollBarMouseWheel(self, name, x, y, distance)
-	
+	local ThumbPos = self:GetThumbPos()
+    self:SetThumbPos(ThumbPos - distance/10)
 end
-
 
 function OnInitControl(self)
 	local attr = self:GetAttribute()
@@ -459,8 +472,6 @@ function OnInitControl(self)
 	attr.pageManager = PageManager:New()
 	
 	graphicUtil:AttachListener(function(key, tImgInfo) attr.pageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) end)
-	SetFolder(self, "E:\\imgTest2")
-	-- SetOnceTimer(function() SetFolder(self, "E:\\imgTest2") end, 5000)
 end
 
 function OnPosChange(self, oldLeft, oldTop, oldRight, oldBottom, newLeft, newTop, newRight, newBottom)
