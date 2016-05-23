@@ -148,16 +148,25 @@ function Select(self, bSelect)
 	attr.bSelect = bSelect 
 	local bkg = self:GetControlObject("Background")
 	if bSelect then
-		bkg:SetSrcColor("RGBA(246,196,79,255)")
+		bkg:SetSrcColor("RGBA(79,196,246,255)")
 	else
-		bkg:SetSrcColor("RGBA(100,66,57,255)")
+		bkg:SetSrcColor("RGBA(57,66,100,255)")
 	end
 end
 
 function OnLButtonUp(self)
 	local ownerCtrl = self:GetOwnerControl()
+	local bkg = ownerCtrl:GetControlObject("Background")
 	local attr = ownerCtrl:GetAttribute()
-	ownerCtrl:FireExtEvent("OnTrySelect", attr.bSelect)
+	if attr.bSelect then
+		attr.bSelect = false
+		bkg:SetSrcColor("RGBA(57,66,100,255)")
+	else
+		attr.bSelect = true
+		bkg:SetSrcColor("RGBA(79,196,246,255)")
+	end
+	
+	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
 end
 
 function OnInitControl(self)

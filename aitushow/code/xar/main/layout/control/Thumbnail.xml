@@ -19,6 +19,11 @@
 					<bool /><!--当前的select状态！！！-->
 				</param>
 			</OnTrySelect>
+			<OnSelect><!--点击缩略图控件时，发OnTrySelect，由缩略图Container决定是否Select(为了多选)-->
+				<param>
+					<bool /><!--当前的select状态！！！-->
+				</param>
+			</OnSelect>
 		</event_def>
 		<objtemplate>
 			<children>
@@ -30,7 +35,6 @@
 						<width>father.width</width>
 						<height>father.height</height>
 						<srccolor>100,66,57,255</srccolor>
-						<destcolor>100,66,57,255</destcolor>
 					</attr>
 					<children>
 						<obj id="SourcePicExt" class="FillObject">
@@ -88,6 +92,9 @@
 								<reverse>0</reverse>
 								<antialias>2</antialias>
 							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" />
+							</eventlist>
 						</obj>	
 						<obj id="FileName" class="TextObject">
 							<attr>
@@ -104,6 +111,9 @@
 							</attr>
 						</obj>
 					</children>
+					<eventlist>
+						<event name="OnLButtonUp" />
+					</eventlist>
 				</obj>
 			</children>
 			<eventlist>

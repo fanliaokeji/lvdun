@@ -3,7 +3,6 @@ local graphicUtil = XLGetObject("GRAPHIC.Util")
 local seedCount = 123 --使用os.time()做种子并不靠谱
 --说明：
 --内存中始终只有三屏缩略图控件(Thumbnail Object)。
---假设当前窗口下，每屏显示20个缩略图，则Container会在最开始时创建60个缩略图控件
 --当窗口被拉大、或缩略图被缩小时，会继续创建
 --窗口被缩小、或缩略图被放大时，丢弃尾页部分控件，始终保持3屏控件
 --通过向Thumbnail Object填不同的数据来实现显示不同的图片，从而避免重复的创建、销毁
@@ -18,10 +17,33 @@ end
 
 function PageClass:Init(ctrlSelf)
 	self.objList = {}
+	self.selectedObjList = {}
 	self.ctrlSelf = ctrlSelf
 	self.containerObj = ctrlSelf:GetControlObject("Container")
 	self.indexBegin = 0
 	self.indexEnd = 0
+end
+
+--bSelect
+function PageClass:OnSelectThumbnail(obj, bSelect)
+	local id = obj:GetID()
+	if self.selectedObj then 
+		self.selectedObj:Select(false)
+	end
+	
+	if not bSelect then
+		-- self.selectedObjList[id] = nil
+		self.selectedObj = nil
+	else
+		--暂时只支持单选
+		-- for k,v in pairs(self.selectedObjList) do
+			-- v:Select(false)
+		-- end
+		-- self.selectedObjList[id] = obj
+		self.selectedObj = obj
+	-- else
+		-- XLMessageBox("bSelect: "..tostring(bSelect).." self.selectedObjList[id]: "..tostring(self.selectedObjList[id]))
+	end
 end
 
 function PageClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
@@ -42,6 +64,8 @@ function PageClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
 			LOG("randomID: ", randomID)
 			local obj = Helper.objectFactory:CreateUIObject(randomID, "Thumbnail")
 			self.containerObj:AddChild(obj)
+			obj:AttachListener("OnSelect", false, function(_,_,bSelect) self:OnSelectThumbnail(obj, bSelect) end)
+			
 			table.insert(self.objList, obj)
 		end
 	end
@@ -101,7 +125,9 @@ function PageClass:ClearPageData()
 	self.endIndex = nil
 	for i=1, #self.objList do
 		self.objList[i]:Clear()
+		LOG("ClearPageData i: ", i)
 	end
+	LOG("ClearPageData out")
 end
 
 --管理三个page
@@ -115,9 +141,6 @@ function PageManager:New()
 end
 
 function PageManager:Init(ctrlSelf, tPictures)
-	if 0 == #tPictures then
-		return
-	end
 	if not self.bInit then--第一次初始化
 		self.bInit = true
 		self.pageList = {}
@@ -129,7 +152,13 @@ function PageManager:Init(ctrlSelf, tPictures)
 			table.insert(self.pageList, page)
 		end
 	end
-	
+	if 0 == #tPictures then
+		for i=1, 3 do
+			self.pageList[i]:ClearPageData()
+		end
+		LOG("PageManager Init return")
+		return
+	end
 	self.tPictures = tPictures
 	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
 	local containerHeight = self:CalaContainerNeedHeight()
@@ -289,6 +318,30 @@ function PageManager:GetCurShowIndexRange()
 	return rangeBegin, rangeEnd
 end
 
+--暂时只支持单选
+function PageManager:GetCurSelectedThumbnails()
+	if not self.bInit then
+		return
+	end
+	for i=1,3 do
+		if self.pageList[i].selectedObj then
+			return self.pageList[i].selectedObj
+		end
+	end
+end
+
+function PageManager:DeleteThumbnailByPath(path)
+	for i=1, #self.tPictures do 
+		if string.upper(self.tPictures[i].szPath) == string.upper(path) then
+			table.remove(self.tPictures, i)
+			local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
+			local scrollPos = scrollBar:GetScrollPos()
+			self:ShowPagesByScrollPos(scrollPos)
+			return
+		end
+	end
+end
+
 function PageManager:OnCtrlPosChange()
 	LOG("OnCtrlPosChange")
 	if not self.bInit then 
@@ -390,7 +443,11 @@ end
 -- }前四个属性在GetDirSupportImgPaths时就能同步获取到；后四个属性要通过GetMultiImgInfoByPaths异步获取，
 --OnGetMultiImgInfoCallBack事件里返回
 function SetFolder(self, sPath)
+	if sPath == "C:" then
+		sPath = "C:\\"
+	end
 	LOG("SetFolder sPath: ", sPath)
+	
 	local attr = self:GetAttribute()
 	attr.sPath = sPath
 	
@@ -399,9 +456,9 @@ function SetFolder(self, sPath)
 	
 	--获取目录中受支持的图片
 	attr.tPictures = graphicUtil:GetDirSupportImgPaths(sPath)
-	
 	attr.pageManager:Init(self, attr.tPictures)
 	
+	LOG("SetFolder out")
 	--之后就是监听缩放、滚动，来调整Page
 end
 

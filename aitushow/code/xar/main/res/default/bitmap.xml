@@ -61,6 +61,23 @@
 			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
 			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
 		
+		<!--底部-->
+		<imagelist id="imaglist.bottomctrl.rotate.left" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.rotate.left.png"/>
+			<texture id="texture.bottomctrl.rotate.left.normal"  imagelist="imaglist.bottomctrl.rotate.left" index="1" />
+			<texture id="texture.bottomctrl.rotate.left.hover"   imagelist="imaglist.bottomctrl.rotate.left" index="2" />
+			<texture id="texture.bottomctrl.rotate.left.down"    imagelist="imaglist.bottomctrl.rotate.left" index="3" />
+			<texture id="texture.bottomctrl.rotate.left.disable" imagelist="imaglist.bottomctrl.rotate.left" index="4" />
+		<imagelist id="imaglist.bottomctrl.rotate.right" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.rotate.right.png"/>
+			<texture id="texture.bottomctrl.rotate.right.normal"  imagelist="imaglist.bottomctrl.rotate.right" index="1" />
+			<texture id="texture.bottomctrl.rotate.right.hover"   imagelist="imaglist.bottomctrl.rotate.right" index="2" />
+			<texture id="texture.bottomctrl.rotate.right.down"    imagelist="imaglist.bottomctrl.rotate.right" index="3" />
+			<texture id="texture.bottomctrl.rotate.right.disable" imagelist="imaglist.bottomctrl.rotate.right" index="4" />
+		<imagelist id="imaglist.bottomctrl.delete" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.delete.png"/>
+			<texture id="texture.bottomctrl.delete.normal"  imagelist="imaglist.bottomctrl.delete" index="1" />
+			<texture id="texture.bottomctrl.delete.hover"   imagelist="imaglist.bottomctrl.delete" index="2" />
+			<texture id="texture.bottomctrl.delete.down"    imagelist="imaglist.bottomctrl.delete" index="3" />
+			<texture id="texture.bottomctrl.delete.disable" imagelist="imaglist.bottomctrl.delete" index="4" />
+		
 		<!--左侧树-->
 		<imagelist id="MainIconFoderImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconFoderImgs.png" />
 			<bitmap id="MainIconFoder" imagelist="MainIconFoderImgs" index="1"/>
