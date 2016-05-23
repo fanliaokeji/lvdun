@@ -116,6 +116,10 @@
 										<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
 										<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
 									</attr>
+									<eventlist>
+										<event name="OnSliderPosChange" file="MainWnd.xml.lua" func="OnSliderPosChange"/>
+										<event name="OnInitControl" file="MainWnd.xml.lua" func="OnInitSlider"/>
+									</eventlist>
 								</obj>
 							</children>
 						</obj>

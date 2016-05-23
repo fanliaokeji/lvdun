@@ -66,6 +66,16 @@ function OnLButtonUp_ResizeLine(self, x, y)
 	isLButtonDown = false
 end
 
+function OnSliderPosChange(self, event, pos)
+	local ownerTree = self:GetOwner()
+	local thumbnailContainer = ownerTree:GetUIObject("ThumbnailContainerObj")
+	thumbnailContainer:Zoom(pos)
+end
+
+function OnInitSlider(self)
+	self:SetRange(0, 100)
+	self:SetValue(10)
+end
 
 function OnShowWindow(self, bVisible)
 	

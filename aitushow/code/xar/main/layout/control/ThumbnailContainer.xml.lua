@@ -131,27 +131,11 @@ function PageManager:Init(ctrlSelf, tPictures)
 	end
 	
 	self.tPictures = tPictures
+	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
+	local containerHeight = self:CalaContainerNeedHeight()
+	self.containerObj:SetObjPos2(0, 0, "father.width - 10", containerHeight)
 	
-	local lineCount, columnCount, pageCount, picWidth, picHeight = ctrlSelf:GetPageLayout()
-	local ctrlSelfAttr = ctrlSelf:GetAttribute()
-	local containerHieght = math.ceil(#tPictures/columnCount) * (picHeight + ctrlSelfAttr.SpaceV) - ctrlSelfAttr.SpaceV
-	LOG("containerHieght: ", containerHieght)
-	self.containerObj:SetObjPos2(0, 0, "father.width - 10", containerHieght)
-	
-	local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
-	local fatherObj = self.ctrlSelf:GetControlObject("Background")
-	local _, fatherT, _, fatherB = fatherObj:GetObjPos()
-	local fatherHeight = fatherB - fatherT
-	if fatherHeight < containerHieght then
-		scrollBar:SetScrollRange(0, containerHieght - fatherHeight, true)
-		scrollBar:SetPageSize(fatherHeight)
-		scrollBar:SetVisible(true)
-		scrollBar:SetChildrenVisible(true)
-		scrollBar:Show(true)
-	else
-		scrollBar:SetVisible(false)
-		scrollBar:SetChildrenVisible(false)
-	end
+	self:ResetScrollBar()
 	
 	local beginIndex = 1
 	local endIndex = 1
@@ -172,6 +156,62 @@ function PageManager:Init(ctrlSelf, tPictures)
 	end
 end
 
+function PageManager:CalaContainerNeedHeight()
+	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
+	local ctrlSelfAttr = self.ctrlSelf:GetAttribute()
+	local containerHeight = math.ceil(#self.tPictures/columnCount) * (picHeight + ctrlSelfAttr.SpaceV) - ctrlSelfAttr.SpaceV
+	
+	LOG("containerHeight: ", containerHeight)
+	return containerHeight
+end
+
+function PageManager:ResetScrollBar()
+	local _, containerT, _, containerB = self.containerObj:GetObjPos()
+	local containerHieght = containerB - containerT
+	LOG("ResetScrollBar, containerHieght: ", containerHieght)
+	
+	local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
+	local fatherObj = self.ctrlSelf:GetControlObject("Background")
+	local _, fatherT, _, fatherB = fatherObj:GetObjPos()
+	local fatherHeight = fatherB - fatherT
+	if fatherHeight < containerHieght then
+		LOG("ResetScrollBar, SetScrollRange, 0, ", containerHieght - fatherHeight)
+		scrollBar:SetScrollRange(0, containerHieght - fatherHeight, true)
+		scrollBar:SetPageSize(fatherHeight)
+		scrollBar:SetVisible(true)
+		scrollBar:SetChildrenVisible(true)
+		scrollBar:Show(true)
+	else
+		scrollBar:SetVisible(false)
+		scrollBar:SetChildrenVisible(false)
+	end
+end
+
+function PageManager:ShowPagesByScrollPos(scrollPos)
+	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
+	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
+	--计算当前scrollPos第一行图片是第几行
+	local ctrlSelfAttr = self.ctrlSelf:GetAttribute()
+	local lineNum = math.ceil(scrollPos/(picHeight + ctrlSelfAttr.SpaceV))
+	if lineNum < 1 then lineNum = 1 end
+	local indexBegin = (lineNum-1)*columnCount + 1
+	local indexEnd   = 0
+	for i=1, 3 do
+		indexEnd = indexBegin + pageCount
+		if indexEnd > #self.tPictures then
+			indexEnd = #self.tPictures
+		end
+		local requiredFiles = self.pageList[i]:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
+		if "table" == type(requiredFiles) and #requiredFiles > 0 then
+			graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+		end
+		indexBegin = indexEnd + 1
+		if indexBegin > #self.tPictures then
+			return
+		end
+	end
+end
+
 --请求的缩略图句柄，在这里异步返回
 function PageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) 
 	--干两件事：更新到界面、保存到tPictures。
@@ -185,7 +225,15 @@ function PageManager:OnGetMultiImgInfoCallBack(key, tImgInfo)
 	end
 	
 	--如果curPage,forwordPage,backwordPage三页里都没找到，说明当前返回的图片不在显示区域
-	--先暂时丢弃掉
+	--直接丢弃掉，下次显示时重新申请
+	tImgInfo = nil
+	LOG("OnGetMultiImgInfoCallBack can not find in 3 pages, ")
+	-- for i=1, #self.tPictures do
+		-- if self.tPictures[i].szPath == tImgInfo.szPath then
+			-- self.tPictures[i].xlhBitmap = tImgInfo.xlhBitmap
+			-- return
+		-- end
+	-- end
 end
 
 function PageManager:GetCurShowPageIndex()
@@ -242,15 +290,15 @@ function PageManager:GetCurShowIndexRange()
 end
 
 function PageManager:OnCtrlPosChange()
-	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
-	--!!!!!应该根据窗口尺寸，重新设定page1~3的显示范围、重设滚动条！！！
-	for i=1, 3 do
-		page = self.pageList[i]
-		local requiredFiles = page:ShowThumbnailByRange(self.tPictures, page.indexBegin, page.indexEnd)
-		if "table" == type(requiredFiles) and #requiredFiles > 0 then
-			graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
-		end
-	end
+	LOG("OnCtrlPosChange")
+	
+	local containerHeight = self:CalaContainerNeedHeight()
+	local containerL, containerT, containerR, containerB = self.containerObj:GetObjPos() 
+	self.containerObj:SetObjPos2(containerL, containerT, "father.width - 10", containerHeight)
+	self:ResetScrollBar()
+	local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
+	local scrollPos = scrollBar:GetScrollPos()
+	self:ShowPagesByScrollPos(scrollPos)
 end
 
 --换页，响应滚动条滚动：向上滚动，则将backwordPage移到最上面去
@@ -358,6 +406,7 @@ end
 function Zoom(self, percent)
 	local attr = self:GetAttribute()
 	attr.curZoomPercent = percent
+	attr.pageManager:Init(self, attr.tPictures)
 end
 
 function GetZoomPercent(self)
@@ -416,5 +465,5 @@ end
 
 function OnPosChange(self, oldLeft, oldTop, oldRight, oldBottom, newLeft, newTop, newRight, newBottom)
 	local attr = self:GetAttribute()
-	attr.pageManager:OnCtrlPosChange()
+	attr.pageManager:OnCtrlPosChange(oldLeft, oldTop, oldRight, oldBottom, newLeft, newTop, newRight, newBottom)
 end

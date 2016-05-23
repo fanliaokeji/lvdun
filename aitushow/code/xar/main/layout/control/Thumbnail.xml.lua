@@ -27,15 +27,14 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	end
 	
 	if data.xlhBitmap then
+		imageObj:SetDrawMode(1)
 		imageObj:SetBitmap(data.xlhBitmap)
 		return true
 	else
-		-- if "png" == data.szExt or "jpg" == data.szExt or "jpeg" == data.szExt or "bmp" == data.szExt then
-			-- local XGP_Factory = XLGetObject("Xunlei.XGP.Factory")
-			-- local xlhBitmap = XGP_Factory:CreateXLBitmap(data.szPath, "RGB32")
-			-- Helper:Assert(xlhBitmap, "xlhBitmap is nil")
-			-- return true
-		-- end
+		if data.szExt and "" ~= data.szExt then
+			imageObj:SetDrawMode(0)
+			imageObj:SetResID("default_icon."..data.szExt)
+		end
 	end
 	return false
 end
