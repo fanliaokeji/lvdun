@@ -109,8 +109,9 @@ function UpdateThumbPos(self)
     
     -- 没有区域显示thumb按钮了
     if trackLen <= thumbLen then
-        thumbBtn:SetVisible(false, true)
-        return
+        thumbLen = trackLen-2
+		--thumbBtn:SetVisible(false, true)
+        --return
     end
     
     thumbBtn:SetVisible(true)

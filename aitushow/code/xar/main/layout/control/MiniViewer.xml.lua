@@ -21,11 +21,15 @@ function Update(self, xoffset, yoffset, size_rates)
 	newnew_y = new_y - yoffset/attr.rates
 	local insideimg = self:GetObject("insideimg")
 	local _l, _t, _r, _b = insideimg:GetObjPos()
-	if newnew_x < _l or newnew_x+new_w > _r then
-		newnew_x = new_x
+	if newnew_x < _l then
+		newnew_x = _l + 1
+	elseif newnew_x + new_w > _r then
+		newnew_x = _r - 1
 	end
-	if newnew_y < _t or newnew_y+new_h > _b then
-		newnew_y = new_y
+	if newnew_y < _t then
+		newnew_y = _t + 1
+	elseif newnew_y + new_h > _b then
+		newnew_y = _b -1
 	end
 	selarea:SetObjPos2(newnew_x, newnew_y, new_w, new_h)
 	SyncInOutBmp(self)
@@ -88,16 +92,30 @@ end
 
 --边界检查
 function GetSelMovePos(sel, dx, dy)
+	dx = math.floor(dx)
+	dy = math.floor(dy)
 	local l, t, r, b = sel:GetObjPos()
 	local insideimg = sel:GetObject("control:insideimg")
 	local _l, _t, _r, _b = insideimg:GetObjPos()
 	if l+dx >= _l and r+dx <= _r then 
 		l = l+dx 
 		r = r+dx
+	elseif dx > 0 then
+		l = math.floor(l+_r-1-r) 
+		r = math.floor(_r-1)
+	elseif dx < 0 then
+		r = math.floor(r+ _l+1-l)
+		l = math.floor(_l+1)
 	end
 	if t+dy >= _t and b+dy <= _b then 
 		t = t+dy 
 		b = b+dy
+	elseif dy > 0 then
+		t = _b-1-b+t
+		b = _b-1
+	elseif dy < 0 then
+		b = _t+1-t+b
+		t = _t+1
 	end
 	return l, t, r, b
 end
@@ -118,6 +136,7 @@ function MiniViewerOnInitControl(self)
 	self:SetVisible(false)
 	self:SetChildrenVisible(false)
 	SyncInOutBmp(self)
+	self:SetCursorID("IDC_HAND")
 end
 
 function selareaOnLButtonUp(self, x, y)
@@ -128,6 +147,9 @@ function selareaOnLButtonUp(self, x, y)
 end
 
 function closeOnClick(self)
+	local owner = self:GetOwnerControl()
+	owner:SetVisible(false)
+	owner:SetChildrenVisible(false)
 end
 
 function selareaOnLButtonDown(self, x, y)

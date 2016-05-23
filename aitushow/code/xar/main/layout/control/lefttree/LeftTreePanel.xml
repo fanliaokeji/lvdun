@@ -162,6 +162,7 @@
 </children>
 <eventlist>
 	<event name="OnInitControl" file="LeftTreePanel.xml.lua" func="LeftTreePanelOnInitControl" />
+	<event name="OnPosChange" file="LeftTreePanel.xml.lua" func="LeftTreePanelOnPosChange" />
 </eventlist>
 </objtemplate>
 </control>

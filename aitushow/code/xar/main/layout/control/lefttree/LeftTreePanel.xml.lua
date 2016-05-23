@@ -160,6 +160,18 @@ function ContainerOnMouseWheel(self, x, y, distance)
 	end
 end
 
+function LeftTreePanelOnPosChange(self)
+	local VScroll = self:GetObject("listbox.vscroll")
+	local HScroll = self:GetObject("listbox.hscroll")
+	--local v_visible, h_visible = VScroll:GetVisible(), HScroll:GetVisible()
+	--if v_visible then
+	ResetScrollBarV(self)
+	--end
+	--if h_visible then
+	ResetScrollBarH(self)
+	--end
+end
+
 function AdjustScrolPos(self)
 	local VScroll = self:GetObject("listbox.vscroll")
 	local HScroll = self:GetObject("listbox.hscroll")
