@@ -175,7 +175,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"UpdateAiSvr", UpdateAiSvr},
 	{"LaunchAiSvr", LaunchAiSvr},
 
-	//{"ConverToXLBITMAPByPath", ConverToXLBITMAPByPath},
+	{"SetFileToClipboard", SetFileToClipboard},
 	{NULL, NULL}
 };
 
@@ -4349,4 +4349,91 @@ int LuaAPIUtil::FDelKeyboardHook(lua_State* pLuaState)
 {
 	LuaMsgWindow::Instance()->DelKeyboardHook();
 	return 0;
+}
+
+
+int LuaAPIUtil::SetFileToClipboard(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		const char* utf8FilePath = luaL_checkstring(pLuaState, 2);
+		if(utf8FilePath == NULL)
+		{
+			lua_pushboolean(pLuaState, 0);
+			return 1;
+		}
+		
+		CComBSTR bstrFilePath=L"";
+		if (utf8FilePath != NULL)
+		{
+			LuaStringToCComBSTR(utf8FilePath, bstrFilePath);
+		}
+
+		BOOL bCopy = lua_toboolean(pLuaState, 3); // 1:拷贝，0:剪切
+		        
+		UINT uFilePathLen = bstrFilePath.Length();
+
+		UINT uDropEffect = RegisterClipboardFormatA("Preferred DropEffect");    //注册新的文件类型
+		HGLOBAL hGblEffect = GlobalAlloc(GMEM_ZEROINIT|GMEM_MOVEABLE|GMEM_DDESHARE, sizeof(DWORD));
+		DWORD * dwDropEffect = (DWORD*)GlobalLock(hGblEffect);
+
+		//设置自定义剪切板的内容为复制或者剪切标识
+		if(bCopy)
+		{
+			*dwDropEffect = DROPEFFECT_COPY;
+		}
+		else
+		{
+			*dwDropEffect = DROPEFFECT_MOVE;
+		}
+		GlobalUnlock(hGblEffect);
+
+
+		DROPFILES dropFiles = {0};
+		UINT uDropFilesLen = sizeof(DROPFILES);
+		dropFiles.pFiles = uDropFilesLen;            
+		dropFiles.pt.x = 0;
+		dropFiles.pt.y = 0;
+		dropFiles.fNC =FALSE;
+		dropFiles.fWide =TRUE;                        
+
+		//uBufLen * 2表示的是宽字符大小， 加8表示文件末尾需要2个空指针结尾，每个指针占4个字节大小
+		UINT uGblLen = uDropFilesLen + uFilePathLen * 2 + 8;            
+		HGLOBAL hGblFiles = GlobalAlloc(GMEM_ZEROINIT | GMEM_MOVEABLE | GMEM_DDESHARE, uGblLen);
+		char * szData = (char * )GlobalLock(hGblFiles);
+
+		//把DROPFILES结构大小的内容放到szData剪切板空间的最开始
+		memcpy(szData, (LPVOID)(&dropFiles), uDropFilesLen);
+
+		//szFileList指向需要放入文件的那个空间，前面存放了DROPFILES结构大小的空间
+		char * szFileList = szData + uDropFilesLen;
+		memcpy((LPVOID)szFileList,(LPVOID)bstrFilePath.m_str,uFilePathLen*2);
+		GlobalUnlock(hGblFiles);
+
+		if( ::OpenClipboard(NULL) )
+		{
+			EmptyClipboard();
+
+			//可以设置剪切板内容为拖动文件
+			SetClipboardData(CF_HDROP, hGblFiles);
+
+			//可以设置剪切板内容为复制或者剪切标识
+			SetClipboardData(uDropEffect,hGblEffect);
+
+			//关闭剪切板
+			CloseClipboard();
+			lua_pushboolean(pLuaState, 1);
+		}
+		else  
+		{  
+			::GlobalFree(hGblEffect);  
+			::GlobalFree(hGblFiles);  
+			lua_pushboolean(pLuaState, 0);
+		} 
+		return 1;
+	}
+
+	lua_pushboolean(pLuaState, 0);
+	return 1;
 }
