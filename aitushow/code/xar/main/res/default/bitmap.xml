@@ -111,6 +111,7 @@
 			<texture id="setting_radio.normal"   imagelist="setting_radio" index="1" />
 			<texture id="setting_radio.hover"   imagelist="setting_radio" index="2" />
 		<imagelist id="setting_uncheck" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_uncheck.png" />
+			<bitmap id="setting_uncheck.icon"   imagelist="setting_uncheck" index="1" />
 			<texture id="setting_uncheck.normal"   imagelist="setting_uncheck" index="1" />
 			<texture id="setting_uncheck.hover"   imagelist="setting_uncheck" index="2" />
 			<texture id="setting_uncheck.down"   imagelist="setting_uncheck" index="3" />

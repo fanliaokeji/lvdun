@@ -3,14 +3,16 @@ local Helper = XLGetGlobal("Helper")
 local LOG = XLGetGlobal("LOG")
 local tipUtil = XLGetObject("API.Util")
 Helper.Tray = Tray
+local Setting = Helper.Setting
 
 local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 
 function Tray.Open()
-	local strState = Tray.HostWnd:GetWindowState()
-	if tostring(strState) == "min" then
+	--local strState = Tray.HostWnd:GetWindowState()
+	--XLMessageBox(tostring(strState))
+	--if tostring(strState) == "min" then
 		Tray.HostWnd:BringWindowToTop(true)
-	end
+	--end
 end
 
 function Tray.Setting()
@@ -19,6 +21,7 @@ end
 
 function Tray.Sysboot()
 	LOG("Tray.Sysboot:enter")
+	Setting.SetSysBoot(not Setting.IsSysBoot())
 end
 
 function Tray.Suggestion()
@@ -33,13 +36,18 @@ Tray.HostWndName = "KuaiKnaTrayMenu.MainFrame"
 Tray.MenuContent = {
 	{id="tray.open", text="打开快看", OnSelectFun = Tray.Open},
 	{id="tray.setting", text="软件设置...", OnSelectFun = Tray.Setting},
-	{id="tray.sysboot", text="开机启动", OnSelectFun = Tray.Sysboot},
-	{id="tray.suggestion", text="意见反馈", iconNormalID = "setting_check.icon", OnSelectFun = Tray.Suggestion},
+	{id="tray.sysboot", text="开机启动", iconNormalID = "setting_check.icon", OnSelectFun = Tray.Sysboot},
+	{id="tray.suggestion", text="意见反馈", OnSelectFun = Tray.Suggestion},
 	{id="tray.exit", text="退出", OnSelectFun = Tray.Exit},
 }
 
 function Tray.PopMenu(hostwnd)
 	local x, y = tipUtil:GetCursorPos()
+	if Setting.IsSysBoot() then
+		Tray.MenuContent[3]["iconNormalID"] = "setting_check.icon"
+	else
+		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
+	end
 	Helper:CreateMenu(x, y, hostwnd:GetWndHandle(), Tray.MenuContent)
 end
 

@@ -33,6 +33,11 @@ function Update(self, dir)
 	end
 	
 	local vpath  = PathHelper.GetVrPath(dir)
+	if vpath == "计算机" then
+		if string.find(dir, "^%a:\\USERS") or string.find(dir, "^%a:\\DOCUMENTS AND SETTINGS") then
+			return 
+		end
+	end
 	attr.opendirs[vpath] = true
 	openparent(attr, dir)
 	attr.selectdir = dir
