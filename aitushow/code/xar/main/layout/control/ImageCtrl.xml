@@ -82,7 +82,20 @@
 								<event name="OnRButtonUp" file="ImageCtrl.xml.lua" func="OnImageRButtonUp" />
 							</eventlist>
 						</obj>
-						
+						<obj id="SeqImageObject.gif" class="SeqImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<zorder>99</zorder>
+								<visible>false</visible>
+								<loop>1</loop>
+								<drawmode>1</drawmode>
+								<reverse>0</reverse>
+								<antialias>2</antialias>
+							</attr>
+						</obj>	
 					</children>
 				</obj>
 				<obj id="RightArrow" class="TipAddin.Button">
@@ -106,6 +119,7 @@
 		</obj>
 	</children>
 	<eventlist>
+		<event name="OnInitControl" />
 	</eventlist>
 	</objtemplate>
 	</control>

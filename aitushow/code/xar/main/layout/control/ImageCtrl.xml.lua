@@ -3,6 +3,26 @@ local Helper = XLGetGlobal("Helper")
 local graphicUtil = XLGetObject("GRAPHIC.Util")
 local OnPosChangeCookie = nil
 
+function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
+	--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
+	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
+	local imageWidth = imageR - imageL - 4
+	local imageHeight = imageB - imageT - 21
+	if uWidth/uHeight > imageWidth/imageHeight then--图片是矮、宽型的
+		local newHeight = math.round((imageWidth*uHeight)/uWidth)
+		--计算居中的高度
+		local newTop    = math.round((imageHeight - newHeight)/2)
+		
+		LOG("SetImage  newHeight: ", newHeight, " newTop: ", newTop)
+		imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
+	elseif uWidth/uHeight < imageWidth/imageHeight then--图片是高、瘦型的
+		local newWidth = math.round((imageHeight*uWidth)/uHeight)
+		local newLeft  = math.round((imageWidth - newWidth)/2)
+		imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
+		LOG("SetImage  newWidth: ", newWidth, " newLeft: ", newLeft)
+	end
+end
+
 function OnPosChange(self)
 	local imageObj = self:GetControlObject("Image")
 	local imageContainer = self:GetControlObject("ImageContainer")
@@ -75,36 +95,40 @@ end
 function SetImageByIndex(self, index)
 	local attr = self:GetAttribute()
 	if not attr.tPictures or not attr.tPictures[index] then
+		
 		return false
 	end
 	
 	attr.index = index
 	local tImgInfo = attr.tPictures[index]
+	local imageObj = self:GetControlObject("Image")
+	local imageContainer = self:GetControlObject("ImageContainer")
+	local seqImageObject = self:GetControlObject("SeqImageObject.gif")
+		
+	if tImgInfo.szExt == "gif" then
+		seqImageObject:SetVisible(true)
+		imageObj:SetVisible(false)
+		if not tImgInfo.xlhGif then
+			local XGP_Factory = XLGetObject("Xunlei.XGP.Factory")
+			local gif = XGP_Factory:LoadGifFromFile(tImgInfo.szPath)
+			tImgInfo.xlhGif = gif
+			tImgInfo.uWidth, tImgInfo.uHeight = gif:GetSize()
+		end
+		seqImageObject:SetGif(tImgInfo.xlhGif)
+		seqImageObject:Play()
+		AdjustImageBySize(imageContainer, seqImageObject, tImgInfo.uWidth, tImgInfo.uHeight)
+		return
+	end
+	
+	seqImageObject:SetVisible(false)
+	imageObj:SetVisible(true)
 	if not tImgInfo.xlhBitmap then
 		local requireFiles = {}
 		requireFiles[1] = tImgInfo.szPath
 		graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
 	else
-		local imageObj = self:GetControlObject("Image")
 		imageObj:SetBitmap(tImgInfo.xlhBitmap)
-		
-		local imageContainer = self:GetControlObject("ImageContainer")
-		local imageL, imageT, imageR, imageB = imageContainer:GetObjPos()
-		local imageWidth = imageR - imageL
-		local imageHeight = imageB - imageT
-		if tImgInfo.uWidth/tImgInfo.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
-			local newHeight = math.round((imageWidth*tImgInfo.uHeight)/tImgInfo.uWidth)
-			--计算居中的高度
-			local newTop    = math.round((imageHeight - newHeight)/2)
-			
-			LOG("SetFolderData ", tImgInfo.szPath, " newHeight: ", newHeight, " newTop: ", newTop)
-			imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
-		elseif tImgInfo.uWidth/tImgInfo.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
-			local newWidth = math.round((imageHeight*tImgInfo.uWidth)/tImgInfo.uHeight)
-			local newLeft  = math.round((imageWidth - newWidth)/2)
-			imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
-			LOG("SetFolderData  ",  tImgInfo.szPath, " newWidth: ", newWidth, " newLeft: ", newLeft)
-		end
+		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
 	end
 	
 	local rightArrow = self:GetControlObject("RightArrow")
@@ -398,4 +422,24 @@ function OnClickRightArrow(self)
 	local index = attr.index + 1
 	
 	SetImageByIndex(ownerCtrl, index)
+end
+
+function OnGetMultiImgInfoCallBack(self, key, tImgInfo)
+	--先看是不是当前显示的index
+	local attr = self:GetAttribute()
+	local tPicData = attr.tPictures and attr.tPictures[attr.index]
+	if tPicData and tPicData.szPath == tImgInfo.szPath then
+		tPicData.xlhBitmap = tImgInfo.xlhBitmap
+		tPicData.uWidth = tImgInfo.uWidth
+		tPicData.uHeight = tImgInfo.uHeight
+		
+		local imageObj = self:GetControlObject("Image")
+		local imageContainer = self:GetControlObject("ImageContainer")
+		imageObj:SetBitmap(tPicData.xlhBitmap)
+		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
+	end
+end
+
+function OnInitControl(self)
+	graphicUtil:AttachListener(function(key, tImgInfo) OnGetMultiImgInfoCallBack(self, key, tImgInfo) end)
 end

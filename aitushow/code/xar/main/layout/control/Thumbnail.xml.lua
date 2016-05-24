@@ -1,6 +1,6 @@
 local Helper = XLGetGlobal("Helper")
 
---data格式即为tPictures格式:{
+--data格式即为tPictures的item格式:{
 -- {"szPath"=, "szExt"=, "utcLastWriteTime"=, "uFileSize"=, "uWidth"=, "uHeight"=, "szType"=, "xlhBitmap"=},
 
 function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
@@ -48,8 +48,9 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 		local gif = XGP_Factory:LoadGifFromFile(data.szPath)
 		gifObj:SetGif(gif)
 		gifObj:Play()
-		local uWidth, uHeight = gif:GetSize()
-		AdjustImageBySize(background, gifObj, uWidth, uHeight)
+		attr.data.xlhGif = gif
+		attr.data.uWidth, attr.data.uHeight = gif:GetSize()
+		AdjustImageBySize(background, gifObj, attr.data.uWidth, attr.data.uHeight)
 		return true--gif不去申请了
 	else
 		gifObj:SetVisible(false)
