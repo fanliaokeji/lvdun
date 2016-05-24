@@ -575,6 +575,7 @@ bool IsVistaOrLatter()
 
 extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL bDo)
 {
+	TSERROR4CXX("SetAssociate, bDo = "<<bDo<<", szFileExts = "<<szFileExts);
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
 	FileAssociation::Instance()->AssociateAll(szFileExtsW, bDo, TRUE);
 	FileAssociation::Instance()->Update();
@@ -583,6 +584,7 @@ extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL 
 
 extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts)
 {
+	TSERROR4CXX("CreateImgKey, szFileExts = "<<szFileExts);
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
 	FileAssociation::Instance()->CreateImgKeyALL(szFileExtsW);
 	delete [] szFileExtsW;
