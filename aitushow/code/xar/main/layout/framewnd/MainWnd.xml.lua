@@ -99,17 +99,3 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
 end
-
---工具栏容器进入事件
-function ToolBarContainerOnMouseEnter(self, x, y)
-	local toolbar = self:GetObject("MainWnd.ToolBar")
-	toolbar:SetVisible(true)
-	toolbar:SetChildrenVisible(true)
-end
-
---工具栏容器离开事件
-function ToolBarContainerOnMouseLeave(self, x, y)
-	local toolbar = self:GetObject("MainWnd.ToolBar")
-	toolbar:SetVisible(false)
-	toolbar:SetChildrenVisible(false)
-end

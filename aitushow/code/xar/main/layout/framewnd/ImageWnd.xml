@@ -72,6 +72,29 @@
 						<limitchild>1</limitchild>
 					</attr>
 				</obj>
+				<!--工具栏-->
+				<obj id="ToolBarContainer" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>father.height-57</top>
+						<width>father.width</width>
+						<height>57</height>
+					</attr>
+					<children>
+						<obj id="ToolBar" class="ToolBar">
+							<attr>
+								<left>(father.width-507)/2</left>
+								<top>5</top>
+								<width>507</width>
+								<height>47</height>
+							</attr>
+						</obj>
+					</children>
+					<eventlist>
+						<event name="OnMouseEnter" file="ImageWnd.xml.lua" func="ToolBarContainerOnMouseEnter"/>
+						<event name="OnMouseLeave" file="ImageWnd.xml.lua" func="ToolBarContainerOnMouseLeave"/>
+					</eventlist>
+				</obj>
 			</children>
 		</obj>
 	</objtreetemplate>

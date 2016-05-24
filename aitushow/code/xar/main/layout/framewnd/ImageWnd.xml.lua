@@ -74,3 +74,17 @@ function OnClickCloseBtnWhileFullScreen(self)
 	local workHeigth = workbottom - worktop
 	objHostWnd:Move( math.floor((workWidth - 875) / 2), math.floor((workHeigth - 515) / 2), 875, 515)
 end
+
+--工具栏容器进入事件
+function ToolBarContainerOnMouseEnter(self, x, y)
+	local toolbar = self:GetObject("ToolBar")
+	toolbar:SetVisible(true)
+	toolbar:SetChildrenVisible(true)
+end
+
+--工具栏容器离开事件
+function ToolBarContainerOnMouseLeave(self, x, y)
+	local toolbar = self:GetObject("ToolBar")
+	toolbar:SetVisible(false)
+	toolbar:SetChildrenVisible(false)
+end

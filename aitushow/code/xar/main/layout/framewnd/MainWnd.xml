@@ -166,29 +166,7 @@
 								</obj>	
 							</children>
 						</obj>	
-						<!--工具栏-->
-						<obj id="MainWnd.ToolBarContainer" class="LayoutObject">
-							<attr>
-								<left>0</left>
-								<top>father.height-57</top>
-								<width>father.width</width>
-								<height>57</height>
-							</attr>
-							<children>
-								<obj id="MainWnd.ToolBar" class="ToolBar">
-									<attr>
-										<left>(father.width-507)/2</left>
-										<top>5</top>
-										<width>507</width>
-										<height>47</height>
-									</attr>
-								</obj>
-							</children>
-							<eventlist>
-								<event name="OnMouseEnter" file="MainWnd.xml.lua" func="ToolBarContainerOnMouseEnter"/>
-								<event name="OnMouseLeave" file="MainWnd.xml.lua" func="ToolBarContainerOnMouseLeave"/>
-							</eventlist>
-						</obj>
+						
 						<!--迷你视图-->
 						<obj id="MainWnd.MiniViewer" class="MiniViewer">
 							<attr>
