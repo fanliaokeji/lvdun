@@ -7,6 +7,7 @@
 			<SetImage />
 			<SetFolderData />
 			<SetImageByIndex />
+			<DelCurPic />
 			<GetNextPic />
 			<GetPrevPic />
 			<RotateLeft /><!--左旋90度-->

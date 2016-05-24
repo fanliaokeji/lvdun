@@ -169,6 +169,18 @@ function GetPrevPic(self)
 	end
 end
 
+function DelCurPic(self)
+	local attr = self:GetAttribute()
+	if attr.index and attr.tPictures and attr.tPictures[attr.index] then
+		local picInfo = attr.tPictures[attr.index]
+		table.remove(attr.tPictures, attr.index)
+		if attr.index > #attr.tPictures then
+			attr.index = #attr.tPictures
+		end
+		SetImageByIndex(self, attr.index)
+	end
+end
+
 local function Rotate(self, angle)
 	local attr = self:GetAttribute()
 	local index = attr.index

@@ -123,8 +123,7 @@ function OnToolBarCommand(self, _, cmd)
 	elseif "youxuanzhuan" == cmd then
 		imageCtrl:RotateRight()
 	elseif "shanchu" == cmd then
-	
+		imageCtrl:DelCurPic()
 	else
-		XLMessageBox("ghj")
 	end
 end
