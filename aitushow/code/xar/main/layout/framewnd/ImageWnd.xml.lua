@@ -88,3 +88,43 @@ function ToolBarContainerOnMouseLeave(self, x, y)
 	toolbar:SetVisible(false)
 	toolbar:SetChildrenVisible(false)
 end
+
+function OnToolBarCommand(self, _, cmd)	
+	if "string" ~= type(cmd) then	
+		return
+	end
+	local tree = self:GetOwner()
+	local imageCtrl = tree:GetUIObject("FrameWnd.ImageCtrl")
+	local curZoomPercent = imageCtrl:GetZoomPercent()
+	if     "fangda" == cmd then
+		imageCtrl:Zoom(curZoomPercent + 10)
+		-- XLMessageBox("OnToolBarCommand cmd: "..tostring(cmd))
+
+	elseif "suoxiao" == cmd then
+		curZoomPercent = curZoomPercent - 10
+		if curZoomPercent < 10 then
+			curZoomPercent = 10
+		end
+		imageCtrl:Zoom(curZoomPercent)
+	elseif "yibiyi" == cmd then
+		imageCtrl:Zoom(100)
+	elseif "shangyizhang" == cmd then
+		local picData, nextIndex = imageCtrl:GetNextPic()
+		if nextIndex then
+			imageCtrl:SetImageByIndex(nextIndex)
+		end
+	elseif "xiayizhang" == cmd then
+		local picData, prevIndex = imageCtrl:GetPrevPic()
+		if prevIndex then
+			imageCtrl:SetImageByIndex(prevIndex)
+		end
+	elseif "zuoxuanzhuan" == cmd then
+		imageCtrl:RotateLeft()
+	elseif "youxuanzhuan" == cmd then
+		imageCtrl:RotateRight()
+	elseif "shanchu" == cmd then
+	
+	else
+		XLMessageBox("ghj")
+	end
+end

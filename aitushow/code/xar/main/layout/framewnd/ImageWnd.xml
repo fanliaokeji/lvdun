@@ -79,6 +79,7 @@
 						<top>father.height-57</top>
 						<width>father.width</width>
 						<height>57</height>
+						<zorder>9999</zorder>
 					</attr>
 					<children>
 						<obj id="ToolBar" class="ToolBar">
@@ -88,11 +89,14 @@
 								<width>507</width>
 								<height>47</height>
 							</attr>
+							<eventlist>
+								<event name="OnToolBarCommand" />
+							</eventlist>
 						</obj>
 					</children>
 					<eventlist>
 						<event name="OnMouseEnter" file="ImageWnd.xml.lua" func="ToolBarContainerOnMouseEnter"/>
-						<event name="OnMouseLeave" file="ImageWnd.xml.lua" func="ToolBarContainerOnMouseLeave"/>
+						<event name="OnMouseLeave" file="ImageWnd.xml.lua" func="ToolBarContainerOnMouseLeave"/>	
 					</eventlist>
 				</obj>
 			</children>

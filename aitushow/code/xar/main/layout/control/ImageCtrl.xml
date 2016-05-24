@@ -6,6 +6,11 @@
 			<SetImagePath file="ImageCtrl.xml.lua" func="SetImagePath"/>
 			<SetImage />
 			<SetFolderData />
+			<SetImageByIndex />
+			<GetNextPic />
+			<GetPrevPic />
+			<RotateLeft /><!--左旋90度-->
+			<RotateRight />
 			<!--使用百分比对图片进行缩放，精确到1%-->
 			<Zoom file="ImageCtrl.xml.lua" func="Zoom"/>
 			<!--获取图片当前相较于原始尺寸的缩放比例，精确到1%-->

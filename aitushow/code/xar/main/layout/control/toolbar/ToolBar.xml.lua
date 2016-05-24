@@ -25,26 +25,28 @@ function ToolBarOnInitControl(self)
 	--除了3和8不需要计时器，其它都需要
 	attr.timerdo = {
 		["panelbutton1"] = StartTimer(function()
-			XLMessageBox("panelbutton1")
+			self:FireExtEvent("OnToolBarCommand", "fangda")
 		end), 
 		["panelbutton2"] = StartTimer(function()
-			XLMessageBox("panelbutton2")
+			self:FireExtEvent("OnToolBarCommand", "suoxiao")
 		end),
 		["panelbutton3"] = function()
+			
 		end,
 		["panelbutton4"] = StartTimer(function()
-			XLMessageBox("panelbutton4")
+			self:FireExtEvent("OnToolBarCommand", "shangyizhang")
 		end),
 		["panelbutton5"] = StartTimer(function()
-			XLMessageBox("panelbutton5")
+			self:FireExtEvent("OnToolBarCommand", "xiayizhang")
 		end),
 		["panelbutton6"] = StartTimer(function()
-			XLMessageBox("panelbutton6")
+			self:FireExtEvent("OnToolBarCommand", "zuoxuanzhuan")
 		end),
 		["panelbutton7"] = StartTimer(function()
-			XLMessageBox("panelbutton7")
+			self:FireExtEvent("OnToolBarCommand", "youxuanzhuan")
 		end),
 		["panelbutton8"] = function()
+			
 		end,
 	}
 	
@@ -53,14 +55,14 @@ function ToolBarOnInitControl(self)
 		["panelbutton1"] = StopTimer, 
 		["panelbutton2"] = StopTimer, 
 		["panelbutton3"] = function()
-			XLMessageBox("btnclick:panelbutton3")
+			self:FireExtEvent("OnToolBarCommand", "yibiyi")
 		end,
 		["panelbutton4"] = StopTimer, 
 		["panelbutton5"] = StopTimer, 
 		["panelbutton6"] = StopTimer, 
 		["panelbutton7"] = StopTimer, 
 		["panelbutton8"] = function()
-			XLMessageBox("btnclick:panelbutton8")
+			self:FireExtEvent("OnToolBarCommand", "shanchu")
 		end,
 	}
 end
@@ -84,6 +86,7 @@ function ToolPanelOnClick(self, x, y)
 	local attr = ower:GetAttribute()
 	local id = self:GetID()
 	if type(attr.btnclick) == "table" and id and attr.btnclick[id] then
+		-- XLMessageBox("OnToolBarCommand fangda")
 		attr.btnclick[id]()
 	end
 end

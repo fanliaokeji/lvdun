@@ -1,5 +1,12 @@
 <xlue>
 <control class="ToolBar">
+<event_def>
+	<OnToolBarCommand>
+		<param>
+			<string />
+		</param>
+	</OnToolBarCommand>
+</event_def>
 <objtemplate>
 <children>
 <obj id="panelbkg" class="TextureObject">

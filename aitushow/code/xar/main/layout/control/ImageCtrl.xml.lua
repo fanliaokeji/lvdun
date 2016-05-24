@@ -152,7 +152,7 @@ function GetNextPic(self)
 	local attr = self:GetAttribute()
 	local index = attr.index + 1
 	if index <= #attr.tPictures then
-		return attr.tPictures[index]
+		return attr.tPictures[index], index
 	else
 		return nil
 	end
@@ -163,10 +163,37 @@ function GetPrevPic(self)
 	local index = attr.index - 1
 	
 	if index > 0 then
-		return attr.tPictures[index]
+		return attr.tPictures[index], index
 	else
 		return nil
 	end
+end
+
+local function Rotate(self, angle)
+	local attr = self:GetAttribute()
+	local index = attr.index
+	if not index or not attr.tPictures or not attr.tPictures[index] then
+		return
+	end
+	local xlhBitmap = attr.tPictures[index].xlhBitmap
+	if not xlhBitmap then
+		return
+	end
+	
+	local newBitmap, newWidth, newHeight = graphicUtil:RotateImgByAngle(xlhBitmap, angle)
+	if newBitmap then
+		attr.tPictures[index].uHeight = newHeight
+		attr.tPictures[index].uWidth = newWidth
+		attr.tPictures[index].xlhBitmap = newBitmap
+		SetImageByIndex(self, index) 
+	end
+end
+function RotateLeft(self)
+	Rotate(self, 90)
+end
+
+function RotateRight(self)
+	Rotate(self, -90)
 end
 
 function SetFolderData(self, userData)
@@ -368,6 +395,7 @@ function Zoom(self, percent)
 	if not bitmap then
 		return 0
 	end
+	imageObj:SetDrawMode(1)
 	local imageContainer = self:GetControlObject("ImageContainer")
 	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
 	local containerWidth, containerHeigth = containerR - containerL, containerB - containerT
