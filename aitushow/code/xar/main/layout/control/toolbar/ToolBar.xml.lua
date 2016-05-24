@@ -3,7 +3,8 @@ local timerid = nil
 function StartTimer(fn)
 	return function()
 		StopTimer()
-		timerid = tm:SetTimer(fn, 300)
+		timerid = tm:SetTimer(fn, 800)
+		fn()
 	end
 end
 function StopTimer()
@@ -12,6 +13,7 @@ function StopTimer()
 		timerid = nil
 	end
 end
+
 function ToolPanelOnButtonMouseLeave(self, x, y)
 	--鼠标移开无条件停止计时器
 	StopTimer()
@@ -52,15 +54,15 @@ function ToolBarOnInitControl(self)
 	
 	--除了3和8需要处理点击事件，其它都只需停掉计时器
 	attr.btnclick = {
-		["panelbutton1"] = StopTimer, 
-		["panelbutton2"] = StopTimer, 
+		-- ["panelbutton1"] = StopTimer, 
+		-- ["panelbutton2"] = StopTimer, 
 		["panelbutton3"] = function()
 			self:FireExtEvent("OnToolBarCommand", "yibiyi")
 		end,
-		["panelbutton4"] = StopTimer, 
-		["panelbutton5"] = StopTimer, 
-		["panelbutton6"] = StopTimer, 
-		["panelbutton7"] = StopTimer, 
+		-- ["panelbutton4"] = StopTimer, 
+		-- ["panelbutton5"] = StopTimer, 
+		-- ["panelbutton6"] = StopTimer, 
+		-- ["panelbutton7"] = StopTimer, 
 		["panelbutton8"] = function()
 			self:FireExtEvent("OnToolBarCommand", "shanchu")
 		end,
@@ -85,10 +87,14 @@ function ToolPanelOnClick(self, x, y)
 	local ower = self:GetOwnerControl()
 	local attr = ower:GetAttribute()
 	local id = self:GetID()
+	--3、8响应OnClick事件，其他的响应OnLButtonDown、OnLButtonUp
 	if type(attr.btnclick) == "table" and id and attr.btnclick[id] then
-		-- XLMessageBox("OnToolBarCommand fangda")
 		attr.btnclick[id]()
 	end
+end
+
+function ToolPanelOnLButtonUp(self)
+	StopTimer()
 end
 
 function ToolBarOnControlMouseEnter(self, x, y, flags)

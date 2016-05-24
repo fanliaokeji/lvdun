@@ -31,7 +31,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -48,7 +49,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -66,6 +68,7 @@
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
 			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -82,7 +85,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -99,7 +103,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -116,7 +121,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
@@ -133,7 +139,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
 			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
