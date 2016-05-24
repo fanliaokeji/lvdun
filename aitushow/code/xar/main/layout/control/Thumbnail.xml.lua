@@ -3,6 +3,26 @@ local Helper = XLGetGlobal("Helper")
 --data格式即为tPictures格式:{
 -- {"szPath"=, "szExt"=, "utcLastWriteTime"=, "uFileSize"=, "uWidth"=, "uHeight"=, "szType"=, "xlhBitmap"=},
 
+function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
+	--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
+	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
+	local imageWidth = imageR - imageL - 4
+	local imageHeight = imageB - imageT - 21
+	if uWidth/uHeight > imageWidth/imageHeight then--图片是矮、宽型的
+		local newHeight = math.round((imageWidth*uHeight)/uWidth)
+		--计算居中的高度
+		local newTop    = math.round((imageHeight - newHeight)/2)
+		
+		LOG("SetImage  newHeight: ", newHeight, " newTop: ", newTop)
+		imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
+	elseif uWidth/uHeight < imageWidth/imageHeight then--图片是高、瘦型的
+		local newWidth = math.round((imageHeight*uWidth)/uHeight)
+		local newLeft  = math.round((imageWidth - newWidth)/2)
+		imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
+		LOG("SetImage  newWidth: ", newWidth, " newLeft: ", newLeft)
+	end
+end
+
 function SetData(self, data, index)--返回值为bool，代表是否成功设定 image，设定失败，则需要请求
 	local attr = self:GetAttribute()
 	if not attr or not "table" == type(data) then
@@ -28,6 +48,8 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 		local gif = XGP_Factory:LoadGifFromFile(data.szPath)
 		gifObj:SetGif(gif)
 		gifObj:Play()
+		local uWidth, uHeight = gif:GetSize()
+		AdjustImageBySize(background, gifObj, uWidth, uHeight)
 		return true--gif不去申请了
 	else
 		gifObj:SetVisible(false)
@@ -43,19 +65,7 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 	if data.xlhBitmap then
 		imageObj:SetDrawMode(1)
 		imageObj:SetBitmap(data.xlhBitmap)
-		--调整宽高比
-		if data.uWidth and data.uHeight then
-			local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
-			local imageWidth = imageR - imageL
-			local imageHeight = imageB - imageT
-			if data.uWidth/data.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
-				imageHeight = math.round((imageWidth*data.uHeight)/data.uWidth)
-				imageObj:SetObjPos2(imageL, imageT, imageWidth, imageHeight)
-			elseif data.uWidth/data.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
-				imageWidth = math.round((imageHeight*data.uWidth)/data.uHeight)
-				imageObj:SetObjPos2(imageL, imageT, imageWidth, imageHeight)
-			end
-		end
+		AdjustImageBySize(background, imageObj, data.uWidth, data.uHeight)
 		return true
 	else
 		if data.szExt and "" ~= data.szExt then
@@ -124,23 +134,7 @@ function SetImage(self, tImgInfo)
 	imageObj:SetBitmap(tImgInfo.xlhBitmap)
 	--调整宽高比
 	if tImgInfo.uWidth and tImgInfo.uHeight then
-		--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
-		local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
-		local imageWidth = imageR - imageL - 4
-		local imageHeight = imageB - imageT - 21
-		if tImgInfo.uWidth/tImgInfo.uHeight > imageWidth/imageHeight then--图片是矮、宽型的
-			local newHeight = math.round((imageWidth*tImgInfo.uHeight)/tImgInfo.uWidth)
-			--计算居中的高度
-			local newTop    = math.round((imageHeight - newHeight)/2)
-			
-			LOG("SetImage ", attr.data.szPath, " newHeight: ", newHeight, " newTop: ", newTop)
-			imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
-		elseif tImgInfo.uWidth/tImgInfo.uHeight < imageWidth/imageHeight then--图片是高、瘦型的
-			local newWidth = math.round((imageHeight*tImgInfo.uWidth)/tImgInfo.uHeight)
-			local newLeft  = math.round((imageWidth - newWidth)/2)
-			imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
-			LOG("SetImage  ",  attr.data.szPath, " newWidth: ", newWidth, " newLeft: ", newLeft)
-		end
+		AdjustImageBySize(backgroundObj, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
 	end
 end
 
