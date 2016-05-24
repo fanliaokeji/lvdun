@@ -38,6 +38,7 @@ local File = {
 "luacode\\helper_setting.lua",
 "luacode\\helper_tray.lua",
 "menu\\ImageRClickMenu.lua",
+"menu\\SortMenu.lua",
 }
 LoadLuaModule(File, __document)
 

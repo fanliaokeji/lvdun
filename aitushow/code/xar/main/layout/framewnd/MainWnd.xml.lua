@@ -99,3 +99,24 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
 end
+
+function OnClickSortButton(self)
+	local tree = self:GetOwner()
+	local wnd = tree:GetBindHostWnd()
+	local wndRectL, wndRectT, wndRectR, wndRectB = wnd:GetWindowRect()
+	local curX = wndRectR - 160
+	local curY = wndRectT + 100
+	local GreenShieldMenu = XLGetGlobal("GreenShieldMenu")	
+	local menuTable = GreenShieldMenu.SortMenu.menuTable
+	local menuFunTable = GreenShieldMenu.SortMenu.menuFunTable
+	
+	local userData = {}
+	userData.thumbContainerObj = tree:GetUIObject("ThumbnailContainerObj")
+	-- Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable)
+	-- if not userData.thumbContainerObj then XLMessageBox("Not thumbContainerObj") end
+	
+	local menuItemTemplID = "menu.common.item.template"
+	local menuItemContainerTemplID = "menu.combobox.container.template"
+    Helper:CreateMenuEx(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable, userData, menuItemTemplID, menuItemContainerTemplID)
+
+end

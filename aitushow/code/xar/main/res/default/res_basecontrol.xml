@@ -84,6 +84,7 @@
 		
 		<!--菜单-->
 		<texture id="texture.menu.container.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.container.bkg.png" />
+		<texture id="texture.menu.combobox.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.combobox.bkg.png" />
 		
 		<imagelist id="imagelist.menu.item.bkg" splitter="1" varyblock="1" image="bitmap\basecontrol\imagelist.menu.item.bkg.png"/>
 			<texture id="texture.menu.item.bkg" type="ThreeInOneH" imagelist="imagelist.menu.item.bkg" index="2" />

@@ -30,5 +30,15 @@
 		</attr>
 	</objtemplate>
 
-
+	<!--用菜单实现combobox-->
+	<objtemplate id="menu.combobox.container.template" class="MenuItemContainer" >
+		<attr>
+			<BkgTexture>texture.menu.combobox.bkg</BkgTexture>
+			<!--以下四个值要根据阴影图片的情况来设定-->
+			<LeftOffSet>0</LeftOffSet>
+			<RightOffSet>0	</RightOffSet>
+			<TopOffSet>0</TopOffSet>
+			<BottomOffSet>0</BottomOffSet>
+		</attr>
+	</objtemplate>
 </xlue>

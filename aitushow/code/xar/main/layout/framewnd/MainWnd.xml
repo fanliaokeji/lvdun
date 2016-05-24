@@ -134,6 +134,9 @@
 										<DownBkgID>sortbutton.down</DownBkgID>
 										<DisableBkgID>sortbutton.disable</DisableBkgID>
 									</attr>
+									<eventlist>
+										<event name="OnClick" file="MainWnd.xml.lua" func="OnClickSortButton"/>
+									</eventlist>
 								</obj>
 							</children>
 						</obj>
