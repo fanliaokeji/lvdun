@@ -60,6 +60,11 @@
 			<texture id="imagelist.mainwnd.button.rightarrow.hover"   imagelist="imagelist.mainwnd.button.rightarrow" index="2" />
 			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
 			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
+		<imagelist id="sortbutton" vertical="0" splitter="1" varyblock="1" image="bitmap\sortbutton.png" />
+			<texture id="sortbutton.normal" imagelist="sortbutton" index="1"/>
+			<texture id="sortbutton.hover" imagelist="sortbutton" index="2"/>
+			<texture id="sortbutton.down" imagelist="sortbutton" index="3"/>
+			<texture id="sortbutton.disable" imagelist="sortbutton" index="1"/>
 		
 		<!--底部-->
 		<imagelist id="imaglist.bottomctrl.rotate.left" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.rotate.left.png"/>

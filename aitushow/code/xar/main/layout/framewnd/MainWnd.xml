@@ -102,8 +102,8 @@
 								</obj>
 								<obj id="MainWnd.SliderCtrl" class="Slider">
 									<attr>
-										<left>father.width - 160</left>
-										<top>50</top>
+										<left>father.width-73-8-20-76</left>
+										<top>58-10</top>
 										<width>76</width>
 										<height>14</height>
 										<BtnWidth>14</BtnWidth>
@@ -122,6 +122,18 @@
 									<eventlist>
 										<event name="OnSliderPosChange" file="MainWnd.xml.lua" func="OnSliderPosChange"/>
 									</eventlist>
+								</obj>
+								<obj id="MainWnd.SortButton" class="TipAddin.Button">
+									<attr>
+										<left>father.width-73-8</left>
+										<top>50-10</top>
+										<width>73</width>
+										<height>29</height>
+										<NormalBkgID>sortbutton.normal</NormalBkgID>
+										<HoverBkgID>sortbutton.hover</HoverBkgID>
+										<DownBkgID>sortbutton.down</DownBkgID>
+										<DisableBkgID>sortbutton.disable</DisableBkgID>
+									</attr>
 								</obj>
 							</children>
 						</obj>

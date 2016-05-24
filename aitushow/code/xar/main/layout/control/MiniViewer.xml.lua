@@ -74,7 +74,7 @@ function Init(self, bitmap)
 	selarea:SetVisible(true)
 	selarea:SetChildrenVisible(true)
 	SyncInOutBmp(self)
-	self:GetObject("title"):SetText("1212")
+	self:GetObject("title"):SetText("")
 	self:SetVisible(true)
 	self:SetChildrenVisible(true)
 end

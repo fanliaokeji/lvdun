@@ -14,7 +14,7 @@ end
 
 function Filter(dir)
 	if not dir then return end
-	dir = string.gsub(dir, "[/\\]$", "")
+	dir = string.gsub(dir, "[/\\]*$", "")
 	return string.upper(dir)
 end
 
@@ -33,10 +33,9 @@ function Update(self, dir)
 	end
 	
 	local vpath  = PathHelper.GetVrPath(dir)
-	if vpath == "计算机" then
-		if string.find(dir, "^%a:\\USERS") or string.find(dir, "^%a:\\DOCUMENTS AND SETTINGS") then
-			return 
-		end
+	--左侧树没有的路径不做处理
+	if vpath == "计算机" and string.len(dir) > 2 and string.find(string.upper(tostring(tipUtil:GetSpecialFolderPathEx(0))), dir, 1, true) then
+		return 
 	end
 	attr.opendirs[vpath] = true
 	openparent(attr, dir)
