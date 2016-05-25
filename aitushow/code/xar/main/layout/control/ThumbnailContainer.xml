@@ -48,6 +48,7 @@
 								<width>10</width>
 								<height>father.height</height>
 								<Type>1</Type>
+								<visible>false</visible>
 								<ThumbBtn_normal>texture.scrollbarh.silder.normal</ThumbBtn_normal>
 								<ThumbBtn_hover>texture.scrollbarh.silder.hover</ThumbBtn_hover>
 								<ThumbBtn_down>texture.scrollbarh.silder.down</ThumbBtn_down>

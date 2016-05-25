@@ -530,7 +530,9 @@ function OnInitControl(self)
 	local attr = self:GetAttribute()
 	attr.defaultZoomPercent = 10
 	attr.pageManager = PageManager:New()
-	
+	local scrollBar = self:GetControlObject("Container.ScrollBar")
+	scrollBar:SetVisible(false)
+	scrollBar:SetChildrenVisible(false)
 	graphicUtil:AttachListener(function(key, tImgInfo) attr.pageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) end)
 end
 
