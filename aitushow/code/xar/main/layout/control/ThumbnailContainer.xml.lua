@@ -113,6 +113,7 @@ function PageClass:UpdateImgInfoByPath(tPictures, path, tImgInfo)
 			tPictures[i+self.indexBegin-1].uWidth = tImgInfo.uWidth
 			tPictures[i+self.indexBegin-1].uHeight = tImgInfo.uHeight
 			tPictures[i+self.indexBegin-1].szType = tImgInfo.szType
+			tPictures[i+self.indexBegin-1].fifType = tImgInfo.fifType
 			return true
 		end
 	end

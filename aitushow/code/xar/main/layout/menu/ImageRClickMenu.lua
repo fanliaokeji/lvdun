@@ -1,4 +1,6 @@
 local GreenShieldMenu = XLGetGlobal("GreenShieldMenu")
+local graphicUtil = XLGetObject("GRAPHIC.Util")
+
 if not GreenShieldMenu then
 	GreenShieldMenu = {}
 	XLSetGlobal("GreenShieldMenu", GreenShieldMenu)
@@ -52,13 +54,28 @@ function menuFunTable.OnSelect_Copy(self)
 	Helper.tipUtil:SetFileToClipboard(tImgInfo.szPath, true)
 end
 
-function menuFunTable.OnSelect_SaveAs(self)
+function menuFunTable.OnSelect_Save(self)
 	local  tImgInfo = GetCurImageInfo(self)
 	if not tImgInfo or not tImgInfo.szPath then
+		XLMessageBox("not tImgInfo h")
 		return
 	end
-	local fileName = Helper:GetFileNameByPath(tImgInfo.szPath)
-	Helper.tipUtil:FileDialog(true, "*.*", tImgInfo.szExt, fileName)
+	-- local fileName = Helper:GetFileNameByPath(tImgInfo.szPath)
+	-- Helper.tipUtil:FileDialog(false, "*.*", tImgInfo.szExt, fileName)
+	local angle = tImgInfo.angle
+	if not angle or 0 == angle then
+		XLMessageBox("gh")
+		return
+	end
+	if angle < 0 then
+		angle = angle + math.ceil(math.abs(angle)/360) * 360
+	else
+		angle = angle - math.floor(angle/360) * 360
+	end
+	graphicUtil:AsynSaveXLBitmapToFile(tImgInfo.szPath, tImgInfo.fifType, angle, true, function(nRet, path) 
+		-- XLMessageBox("tImgInfo.fifType: "..tostring(tImgInfo.fifType).." angle: "..tostring(angle).." nRet: "..tostring(nRet))
+	end)
+	
 end
 
 function menuFunTable.OnSelect_SetWallpaper(self)
@@ -98,7 +115,7 @@ local menuTable = {
 {id="Spliter2", bSplitter = true},
 {id="Copy", text = "复制"},
 {id="Spliter3", bSplitter = true},
-{id="SaveAs", text = "另存为..."},
+{id="Save", text = "保存"},
 {id="Spliter4", bSplitter = true},
 -- {id="SetWallpaper", text = "设为桌面壁纸"},
 -- {id="Spliter5", bSplitter = true},

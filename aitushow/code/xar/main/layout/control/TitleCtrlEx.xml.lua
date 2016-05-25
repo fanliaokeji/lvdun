@@ -99,4 +99,5 @@ function OnClickCloseBtn(self)
 	if not objHostWnd then
 		return
 	end
+	objHostWnd:Show(2)
 end

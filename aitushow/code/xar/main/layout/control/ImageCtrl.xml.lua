@@ -193,10 +193,13 @@ local function Rotate(self, angle)
 	end
 	
 	local newBitmap, newWidth, newHeight = graphicUtil:RotateImgByAngle(xlhBitmap, angle)
+	attr.tPictures[index].angle = attr.tPictures[index].angle and (attr.tPictures[index].angle + angle) or angle
 	if newBitmap then
 		attr.tPictures[index].uHeight = newHeight
 		attr.tPictures[index].uWidth = newWidth
 		attr.tPictures[index].xlhBitmap = newBitmap
+		attr.tPictures[index].angle = attr.tPictures[index].angle
+		
 		SetImageByIndex(self, index) 
 	end
 end
@@ -484,6 +487,7 @@ function OnGetMultiImgInfoCallBack(self, key, tImgInfo)
 		tPicData.xlhBitmap = tImgInfo.xlhBitmap
 		tPicData.uWidth = tImgInfo.uWidth
 		tPicData.uHeight = tImgInfo.uHeight
+		tPicData.fifType = tImgInfo.fifType
 		
 		local imageObj = self:GetControlObject("Image")
 		local imageContainer = self:GetControlObject("ImageContainer")

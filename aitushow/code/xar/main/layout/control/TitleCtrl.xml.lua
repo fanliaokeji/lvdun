@@ -75,4 +75,5 @@ function OnClickCloseBtn(self)
 	if not objHostWnd then
 		return
 	end
+	Helper:DestoryModelessWnd("ImageWnd")
 end

@@ -14,12 +14,15 @@ local function Rotate(self, angle)
 		end
 		
 		local newBitmap, newWidth, newHeight = graphicUtil:RotateImgByAngle(xlhBitmap, angle)
+		attr.data.angle = attr.data.angle and (attr.data.angle + angle) or angle
 		if newBitmap then
 			local tImgInfo = {}
 			tImgInfo.szPath = attr.data.szPath
+			tImgInfo.fifType = attr.data.fifType
 			tImgInfo.uHeight = newHeight
 			tImgInfo.uWidth = newWidth
 			tImgInfo.xlhBitmap = newBitmap
+			tImgInfo.angle = attr.data.angle
 			containerObjAttr.pageManager:OnGetMultiImgInfoCallBack("OnClickRotateLeft", tImgInfo) 
 		end
 	end
