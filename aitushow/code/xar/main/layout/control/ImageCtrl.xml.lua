@@ -95,7 +95,6 @@ end
 function SetImageByIndex(self, index)
 	local attr = self:GetAttribute()
 	if not attr.tPictures or not attr.tPictures[index] then
-		
 		return false
 	end
 	
@@ -104,7 +103,12 @@ function SetImageByIndex(self, index)
 	local imageObj = self:GetControlObject("Image")
 	local imageContainer = self:GetControlObject("ImageContainer")
 	local seqImageObject = self:GetControlObject("SeqImageObject.gif")
-		
+	local filename = Helper:GetFileNameByPath(tImgInfo.szPath)
+	local tree = self:GetOwner()
+	local titleCtrl = tree:GetUIObject("FrameWnd.TitleCtrl")
+	titleCtrl:SetTitleTextContent(filename)
+	
+	-- XLMessageBox("safdg: "..tostring(filename).." tImgInfo.szPath: "..tostring(tImgInfo.szPath))
 	if tImgInfo.szExt == "gif" then
 		seqImageObject:SetVisible(true)
 		imageObj:SetVisible(false)

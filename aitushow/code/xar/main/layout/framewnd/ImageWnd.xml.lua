@@ -45,8 +45,6 @@ function OnCreate(self)
 	local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
 	imageCtrl:SetFolderData(userData)
 		
-	local titleCtrl = objtree:GetUIObject("FrameWnd.TitleCtrl")
-	titleCtrl:SetTitleTextContent(userData and userData.filename or "")
 	imageCtrl:AttachListener("OnImageSizeChange", false, OnImageSizeChange)
 	
 	Helper:AddDropTarget(self)
