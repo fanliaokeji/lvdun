@@ -37,6 +37,15 @@
 						<srccolor>100,66,57,255</srccolor>
 					</attr>
 					<children>
+						<obj id="SelectFrame" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<zorder>999</zorder>
+							</attr>
+						</obj>
 						<obj id="SourcePicExt" class="FillObject">
 							<attr>
 								<left>father.width - 29</left>
@@ -65,15 +74,15 @@
 						</obj>
 						<obj id="Image" class="ImageObject">
 							<attr>
-								<left>2</left>
-								<top>2</top>
+								<left>3</left>
+								<top>3</top>
 								<valign>center</valign>
 								<halign>center</halign>
 								<zorder>99</zorder>
 								<drawmode>1</drawmode>
 								<antialias>2</antialias>
-								<width>father.width - 4</width>
-								<height>father.height - 4 - 2 - 15</height>
+								<width>father.width - 6</width>
+								<height>father.height - 6 - 15</height>
 							</attr>
 							<eventlist>
 								<event name="OnLButtonUp" />

@@ -6,8 +6,17 @@ local Helper = XLGetGlobal("Helper")
 function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
 	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
-	local imageWidth = imageR - imageL - 4
-	local imageHeight = imageB - imageT - 21
+	local imageWidth = imageR - imageL - 6
+	local imageHeight = imageB - imageT - 23
+	if uWidth < imageWidth and uHeight < imageHeight then
+		--直接1:1展示
+		local newTop    = math.round((imageHeight - uWidth)/2)
+		local newLeft  = math.round((imageWidth - uWidth)/2)
+		
+		LOG("SetImage 1:1 newHeight: ", newHeight, " newLeft: ", newLeft)
+		imageObj:SetObjPos2(newLeft, newTop, uWidth, uHeight)
+		return
+	end
 	if uWidth/uHeight > imageWidth/imageHeight then--图片是矮、宽型的
 		local newHeight = math.round((imageWidth*uHeight)/uWidth)
 		--计算居中的高度
@@ -142,24 +151,29 @@ end
 function Select(self, bSelect)
 	local attr = self:GetAttribute()
 	attr.bSelect = bSelect 
-	local bkg = self:GetControlObject("Background")
+	-- local bkg = self:GetControlObject("Background")
+	local bkg = self:GetControlObject("SelectFrame")
 	if bSelect then
-		bkg:SetSrcColor("RGBA(79,196,246,255)")
+		-- bkg:SetSrcColor("RGBA(79,196,246,255)")
+		bkg:SetResID("texture.thumbnail.select.bkg")
 	else
-		bkg:SetSrcColor("RGBA(57,66,100,255)")
+		-- bkg:SetSrcColor("RGBA(57,66,100,255)")
+		bkg:SetResID("")
 	end
 end
 
 function OnLButtonUp(self)
 	local ownerCtrl = self:GetOwnerControl()
-	local bkg = ownerCtrl:GetControlObject("Background")
+	local bkg = ownerCtrl:GetControlObject("SelectFrame")
 	local attr = ownerCtrl:GetAttribute()
 	if attr.bSelect then
 		attr.bSelect = false
-		bkg:SetSrcColor("RGBA(57,66,100,255)")
+		-- bkg:SetSrcColor("RGBA(57,66,100,255)")
+		bkg:SetResID("")
 	else
 		attr.bSelect = true
-		bkg:SetSrcColor("RGBA(79,196,246,255)")
+		-- bkg:SetSrcColor("RGBA(79,196,246,255)")
+		bkg:SetResID("texture.thumbnail.select.bkg")
 	end
 	
 	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
