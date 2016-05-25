@@ -108,6 +108,20 @@ function SetImageByIndex(self, index)
 	local titleCtrl = tree:GetUIObject("FrameWnd.TitleCtrl")
 	titleCtrl:SetTitleTextContent(filename)
 	
+	local rightArrow = self:GetControlObject("RightArrow")
+	local leftArrow = self:GetControlObject("LeftArrow")
+		
+	if GetNextPic(self) then
+		rightArrow:Show(true)
+	else
+		rightArrow:Show(false)
+	end
+	if GetPrevPic(self) then
+		leftArrow:Show(true)
+	else
+		leftArrow:Show(false)
+	end
+	
 	-- XLMessageBox("safdg: "..tostring(filename).." tImgInfo.szPath: "..tostring(tImgInfo.szPath))
 	if tImgInfo.szExt == "gif" then
 		seqImageObject:SetVisible(true)
@@ -133,20 +147,6 @@ function SetImageByIndex(self, index)
 	else
 		imageObj:SetBitmap(tImgInfo.xlhBitmap)
 		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
-	end
-	
-	local rightArrow = self:GetControlObject("RightArrow")
-	local leftArrow = self:GetControlObject("LeftArrow")
-		
-	if GetNextPic(self) then
-		rightArrow:Show(true)
-	else
-		rightArrow:Show(false)
-	end
-	if GetPrevPic(self) then
-		leftArrow:Show(true)
-	else
-		leftArrow:Show(false)
 	end
 	
 	return true
