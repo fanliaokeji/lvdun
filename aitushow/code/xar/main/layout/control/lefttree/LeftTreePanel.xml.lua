@@ -82,9 +82,11 @@ function Dir2TreeView(self, dir, left, params)
 	else
 		attr.Open = false
 	end
+	if panelattr.LastOpenDir == dir then
+		panelattr.SelectItem = Item
+	end
 	if panelattr.selectdir == dir then
 		attr.Select = true
-		panelattr.SelectItem = Item
 	else
 		attr.Select = false
 	end
@@ -93,10 +95,12 @@ function Dir2TreeView(self, dir, left, params)
 	Item:Update()
 	Item:AttachListener("OnStateChange", false, function(_self, event, bState)
 			panelattr.opendirs[dir] = bState
+			panelattr.LastOpenDir = dir
 			ClearTree(self, dir)
 			BuildTree(self)
 		end)
 	Item:AttachListener("OnSelect", false, function()
+			panelattr.LastOpenDir = dir
 			if attr.HasChild then
 				panelattr.opendirs[dir] = not panelattr.opendirs[dir]
 			end
@@ -165,15 +169,8 @@ function ContainerOnMouseWheel(self, x, y, distance)
 end
 
 function LeftTreePanelOnPosChange(self)
-	local VScroll = self:GetObject("listbox.vscroll")
-	local HScroll = self:GetObject("listbox.hscroll")
-	--local v_visible, h_visible = VScroll:GetVisible(), HScroll:GetVisible()
-	--if v_visible then
 	ResetScrollBarV(self)
-	--end
-	--if h_visible then
 	ResetScrollBarH(self)
-	--end
 end
 
 function AdjustScrolPos(self)
@@ -319,10 +316,13 @@ function ResetScrollBarH(objRootCtrl)
 	local l, t, r, b = ContainerBox:GetObjPos()
 	local olddis = cr-r+l
 	if attr.SelectItem then
-		local sl = attr.SelectItem:GetObjPos()
-		local maxlen = attr.SelectItem:GetObject("MainText"):GetTextExtent()
-		--靠右
-		olddis = sl+32+maxlen-r+l
+		local selectAttr = attr.SelectItem:GetAttribute()
+		if not selectAttr.Select then
+			local sl = attr.SelectItem:GetObjPos()
+			local maxlen = attr.SelectItem:GetObject("MainText"):GetTextExtent()
+			--靠右
+			olddis = sl+32+maxlen-r+l
+		end
 	end
 	
 	
