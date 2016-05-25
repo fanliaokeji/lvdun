@@ -7,6 +7,7 @@
 		<texture id="GreenWall.BtnClose.Disable" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
 		
 		<texture id="texture.titlebar.bkg" type="ThreeInOneH" image="bitmap\texture.titlebar.bkg.png" />
+		<texture id="texture.thumbnail.select.bkg" type="NineInOne" image="bitmap\texture.thumbnail.select.bkg.png" />
 		<bitmap id="image.logo"  path="bitmap\bitmap.logo.png" />
 		
 		<imagelist id="imagelist.bitmap.fullscreen.close" splitter="1" blocksize="46" image="bitmap\imagelist.bitmap.fullscreen.close.png"/>
