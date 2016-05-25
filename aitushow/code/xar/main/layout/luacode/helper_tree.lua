@@ -56,13 +56,14 @@ PathHelper.SpecialName = {
 }
 
 function PathHelper.GetRealPath(srcdir)
-	if tipUtil:QueryFileExists(srcdir) then
+	local strRealPath = string.match(tostring(srcdir), "@([^@]*)$") or srcdir
+	if tipUtil:QueryFileExists(strRealPath) then
 		return srcdir
-	elseif srcdir == "我的文档" then
+	elseif strRealPath == "我的文档" then
 		return tipUtil:GetSpecialFolderPathEx(5)
-	elseif srcdir == "我的图片" then
+	elseif strRealPath == "我的图片" then
 		return tipUtil:GetSpecialFolderPathEx(0x27)
-	elseif srcdir == "桌面" then
+	elseif strRealPath == "桌面" then
 		return tipUtil:GetSpecialFolderPathEx(0)
 	else
 		return nil
@@ -77,7 +78,11 @@ local VrPaths = {
 function PathHelper.GetVrPath(srcdir)
 	for path, vpath in pairs(VrPaths) do
 		if string.find(srcdir, string.upper(path), 1, true) or srcdir == vpath then
-			return vpath
+			local isfull = false
+			if string.upper(srcdir) == string.upper(path) then
+				isfull = true
+			end
+			return vpath, isfull
 		end
 	end
 	return "计算机"

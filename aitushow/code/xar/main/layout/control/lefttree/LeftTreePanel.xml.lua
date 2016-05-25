@@ -18,28 +18,43 @@ function Filter(dir)
 	return string.upper(dir)
 end
 
+--Update传进来的永远的真实路径，这里判断优先在已经打开的根节点里面选择
 function Update(self, dir)
 	dir = Filter(dir)
 	local attr = self:GetAttribute()
-	if attr.selectdir == dir then
+	if attr.selectdir == dir or string.match(tostring(attr.selectdir), "@([^@]*)$") == dir then
 		return
 	end
 	
-	--无条件关闭其它分支
-	attr.opendirs = {}
-	local dirlist = tipUtil:FindDirList(dir)
-	if #dirlist > 0 then
-		attr.opendirs[dir] = not attr.opendirs[dir]
+	local strRealPath = dir
+	local strVrPath, isroot  = PathHelper.GetVrPath(dir)
+	if attr.selectdir then
+		local vs = string.match(attr.selectdir, "^([^@]*)@") or attr.selectdir
+		if vs == "计算机" then
+			strVrPath = "计算机"
+			isroot = false
+		end
+	end
+	if strVrPath ~= "计算机" and not attr.opendirs[strVrPath] and attr.opendirs["计算机"] then
+		strVrPath = "计算机"
+		isroot = false
 	end
 	
-	local vpath  = PathHelper.GetVrPath(dir)
-	--左侧树没有的路径不做处理
-	if vpath == "计算机" and string.len(dir) > 2 and string.find(string.upper(tostring(tipUtil:GetSpecialFolderPathEx(0))), dir, 1, true) then
-		return 
+	local optdir = strVrPath.."@"..strRealPath
+	if isroot then
+		optdir = strVrPath
 	end
-	attr.opendirs[vpath] = true
-	openparent(attr, dir)
-	attr.selectdir = dir
+	--无条件关闭其它分支
+	attr.opendirs = {}
+	local dirlist = tipUtil:FindDirList(strRealPath)
+	if #dirlist > 0 then
+		attr.opendirs[optdir] = not attr.opendirs[optdir]
+	end
+	
+	attr.opendirs[strVrPath] = true
+	openparent(attr, optdir)
+	attr.selectdir = optdir
+	attr.LastOpenDir = optdir
 	ClearTree(self)
 	BuildTree(self)
 end
@@ -55,6 +70,7 @@ function Dir2TreeView(self, dir, left, params)
 	panelattr.opendirs = panelattr.opendirs or {}
 	params = params or {}
 	local dirlist = params.path or tipUtil:FindDirList(dir)
+	local vpath = params.vpath
 	
 	local Item = objFactory:CreateUIObject("lefttreenode"..panelattr.nodeindex, "LeftTreeItem")
 	Item:SetObjPos2(left, 26*(panelattr.nodeindex-1), 500, 22)
@@ -73,19 +89,20 @@ function Dir2TreeView(self, dir, left, params)
 		attr.MainIcon = "MainIconFoder"
 		attr.MainIconHover = "MainIconFoderHover"
 	end
-
-	if panelattr.opendirs[dir] then
+	
+	local optdir = (dir == vpath and vpath or vpath.."@"..dir)
+	if panelattr.opendirs[optdir] then
 		attr.Open = true
 		for _, v in ipairs(dirlist) do
-			Dir2TreeView(self, v, left+16, (type(params.params) == "table" and params.params or nil))
+			Dir2TreeView(self, v, left+16, (type(params.params) == "table" and params.params or {vpath=vpath}))
 		end
 	else
 		attr.Open = false
 	end
-	if panelattr.LastOpenDir == dir then
+	if panelattr.LastOpenDir == optdir then
 		panelattr.SelectItem = Item
 	end
-	if panelattr.selectdir == dir then
+	if panelattr.selectdir == optdir then
 		attr.Select = true
 	else
 		attr.Select = false
@@ -94,21 +111,21 @@ function Dir2TreeView(self, dir, left, params)
 	maintext:SetText(PathHelper.SpecialName[dir] or string.match(dir, "([^/\\]*)$") or "未知名称")
 	Item:Update()
 	Item:AttachListener("OnStateChange", false, function(_self, event, bState)
-			panelattr.opendirs[dir] = bState
-			panelattr.LastOpenDir = dir
-			ClearTree(self, dir)
+			panelattr.opendirs[optdir] = bState
+			panelattr.LastOpenDir = optdir
+			ClearTree(self, optdir)
 			BuildTree(self)
 		end)
 	Item:AttachListener("OnSelect", false, function()
-			panelattr.LastOpenDir = dir
+			panelattr.LastOpenDir = optdir
 			if attr.HasChild then
-				panelattr.opendirs[dir] = not panelattr.opendirs[dir]
+				panelattr.opendirs[optdir] = not panelattr.opendirs[optdir]
 			end
-			if panelattr.selectdir ~= dir then
-				panelattr.selectdir = dir
+			if panelattr.selectdir ~= optdir then
+				panelattr.selectdir = optdir
 				self:FireExtEvent("OnSelect", dir)
 			end
-			ClearTree(self, dir)
+			ClearTree(self, optdir)
 			BuildTree(self)
 		end)
 	local Container = self:GetControlObject("Container")
@@ -118,18 +135,18 @@ function Dir2TreeView(self, dir, left, params)
 end
 
 --根据dir决定是否超过一定数量清除其它分支
-function ClearTree(self, dir)
+function ClearTree(self, optdir)
 	local Container = self:GetControlObject("Container")
 	Container:RemoveAllChild()
 	local panelattr = self:GetAttribute()
 	--节点太多会导致卡顿，so节点大于一定值时清除其它打开的分支
-	if dir and panelattr.opendirs[dir] and panelattr.nodeindex > 50 then
+	if optdir and panelattr.opendirs[optdir] and panelattr.nodeindex > 50 then
 		panelattr.opendirs = {}
 		collectgarbage("collect")
-		panelattr.opendirs[dir] = true
-		local vpath  = PathHelper.GetVrPath(dir)
+		panelattr.opendirs[optdir] = true
+		local vpath  = string.match(optdir, "^(.*)@") or optdir
 		panelattr.opendirs[vpath] = true
-		openparent(panelattr, dir)
+		openparent(panelattr, optdir)
 	end
 	panelattr.saveleft = 0
 	panelattr.nodeindex = 1
@@ -138,10 +155,19 @@ end
 
 function BuildTree(self)
 	local tPaths = {
-		{"桌面", {MainIcon="MainIconDesk", MainIconHover="MainIconDeskHover", path=PathHelper.GetDeskTopPath()},},
-		{"我的文档", {MainIcon="MainIconDocument", MainIconHover="MainIconDocumentHover", path=PathHelper.GetDocumentPath()}},
-		{"我的图片", {MainIcon="MainIconPicture", MainIconHover="MainIconPictureHover", path=PathHelper.GetPicturePath()}},
-		{"计算机", {MainIcon="MainIconComputer", MainIconHover="MainIconComputerHover", path=PathHelper.GetDiskList(),params={MainIcon="MainIconDisk", MainIconHover="MainIconDiskHover"}},},
+		{"桌面", {MainIcon="MainIconDesk", MainIconHover="MainIconDeskHover", path=PathHelper.GetDeskTopPath(), vpath="桌面"}},
+		{"我的文档", {MainIcon="MainIconDocument", MainIconHover="MainIconDocumentHover", path=PathHelper.GetDocumentPath(), vpath="我的文档"}},
+		{"我的图片", {MainIcon="MainIconPicture", MainIconHover="MainIconPictureHover", path=PathHelper.GetPicturePath(), vpath="我的图片"}},
+		{
+			"计算机", 
+			{
+				MainIcon="MainIconComputer",
+				MainIconHover="MainIconComputerHover",
+				path=PathHelper.GetDiskList(), 
+				vpath="计算机", 
+				params = {MainIcon="MainIconDisk", MainIconHover="MainIconDiskHover", vpath="计算机",}
+			}
+		},
 	}
 	for _, v in ipairs(tPaths) do
 		Dir2TreeView(self, v[1], 0, v[2])
@@ -161,9 +187,9 @@ end
 function ContainerOnMouseWheel(self, x, y, distance)
 	local Vscroll = self:GetObject("control:listbox.vscroll")
 	local Hscroll = self:GetObject("control:listbox.hscroll")
-	if Vscroll:GetVisible() then
+	if Vscroll:GetChildrenVisible() then
 		OnScrollBarMouseWheel(Vscroll, "",  x, y, distance )
-	elseif Hscroll:GetVisible() then
+	elseif Hscroll:GetChildrenVisible() then
 		OnScrollBarMouseWheelH(Hscroll, "",  x, y, distance )
 	end
 end

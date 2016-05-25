@@ -22,7 +22,7 @@ function OnImageShowRectChange(self,ctrl, ...)
 		miniView:Init(image:GetBitmap())
 		local rectL, rectT = ...
 		local size_rates = ctrl:GetZoomPercent()
-		miniView:Update(rectL, rectT, 1/size_rates)
+		miniView:Update(rectL, rectT, size_rates/100)
 	else
 		miniView:SetVisible(false)
 		miniView:SetChildrenVisible(false)
