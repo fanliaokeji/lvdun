@@ -91,6 +91,23 @@ function OnClickMaxBtn(self)
 		return
 	end
 	objHostWnd:Show(3)
+	self:Show(false)
+	local ownerCtrl = self:GetOwnerControl()
+	local RestoreBtn = ownerCtrl:GetControlObject("FrameWnd.Title.RestoreBtn")
+	RestoreBtn:Show(true)
+end
+
+function OnClickRestoreBtn(self)
+	local objTree = self:GetOwner()
+	local objHostWnd = objTree:GetBindHostWnd()
+	if not objHostWnd then
+		return
+	end
+	objHostWnd:Show(9)
+	self:Show(false)
+	local ownerCtrl = self:GetOwnerControl()
+	local MaxBtn = ownerCtrl:GetControlObject("FrameWnd.Title.MaxBtn")
+	MaxBtn:Show(true)
 end
 
 function OnClickCloseBtn(self)
@@ -99,5 +116,7 @@ function OnClickCloseBtn(self)
 	if not objHostWnd then
 		return
 	end
-	objHostWnd:Show(2)
+	-- objHostWnd:Show(2)
+	--直接退出
+	Helper.tipUtil:Exit()
 end

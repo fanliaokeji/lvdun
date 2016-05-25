@@ -41,7 +41,8 @@
 						<top>5</top>
 						<width>father.width - 30 - 12*7</width>
 						<height>father.height - 5</height>
-						<text>12345.png(123*456像素 256KB)</text>
+						<textcolor>system.white</textcolor>
+						
 					</attr>	
 				</obj>
 				<obj id="FrameWnd.Title.Setting" class="TipAddin.Button">
@@ -102,6 +103,22 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickMaxBtn" />
+					</eventlist>	
+				</obj>	
+				<obj id="FrameWnd.Title.RestoreBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25 - 22</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.restore.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.restore.down</DownBkgID>
+						<HoverBkgID>bitmap.title.restore.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.restore.disable</DisableBkgID>
+						<Visible>false</Visible>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrl.xml.lua" func="OnClickRestoreBtn" />
 					</eventlist>	
 				</obj>	
 				<obj id="FrameWnd.Title.CloseBtn" class="TipAddin.Button">
