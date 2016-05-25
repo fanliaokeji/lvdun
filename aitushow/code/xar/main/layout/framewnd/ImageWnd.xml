@@ -72,6 +72,17 @@
 						<limitchild>1</limitchild>
 					</attr>
 				</obj>
+				<!--迷你视图-->
+				<obj id="FrameWnd.MiniViewer" class="MiniViewer">
+					<attr>
+						<left>father.width-130</left>
+						<top>father.height-220</top>
+						<width>130</width>
+						<height>150</height>
+						<visible>false</visible>
+						<zorder>9999</zorder>
+					</attr>
+				</obj>
 				<!--工具栏-->
 				<obj id="ToolBarContainer" class="LayoutObject">
 					<attr>

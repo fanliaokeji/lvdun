@@ -1,5 +1,34 @@
 local Helper = XLGetGlobal("Helper")
 
+
+function GetObjWH(obj)
+	local L, T, R, B = obj:GetObjPos()
+	
+	return R - L, B - T
+end
+
+function OnImageShowRectChange(self,ctrl, ...)
+	local objtree = self:GetBindUIObjectTree() 
+	local miniView = objtree:GetUIObject("FrameWnd.MiniViewer")
+	local image = ctrl:GetControlObject("Image")
+	local container = ctrl:GetControlObject("ImageContainer")
+	
+	local imageW,imageH = GetObjWH(image)
+	local containerW,containerH = GetObjWH(container)
+	if imageW > containerW or imageH > containerH then
+		miniView:SetVisible(true)
+		miniView:SetChildrenVisible(true)
+		
+		miniView:Init(image:GetBitmap())
+		local rectL, rectT = ...
+		local size_rates = ctrl:GetZoomPercent()
+		miniView:Update(rectL, rectT, 1/size_rates)
+	else
+		miniView:SetVisible(false)
+		miniView:SetChildrenVisible(false)
+	end
+end
+
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root")
@@ -25,6 +54,9 @@ function OnCreate(self)
 		imageCtrl:SetImagePath(file)
 	end
 	Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
+	
+	local miniView = objtree:GetUIObject("FrameWnd.MiniViewer")
+	imageCtrl:AttachListener("OnImageShowRectChange", false, function(ctrl,_, ...) OnImageShowRectChange(self,ctrl, ...) end)
 end
 
 function OnImageSizeChange(self, event, imageWith, imageHeight, picWidth, picHeight)

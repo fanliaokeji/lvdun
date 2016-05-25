@@ -181,16 +181,6 @@
 								</obj>	
 							</children>
 						</obj>	
-						
-						<!--迷你视图-->
-						<obj id="MainWnd.MiniViewer" class="MiniViewer">
-							<attr>
-								<left>father.width-130</left>
-								<top>(father.height-150)/2</top>
-								<width>130</width>
-								<height>150</height>
-							</attr>
-						</obj>
 					</children>
 				</obj>
 				<obj id="MainWnd.BottomCtrl" class="BottomCtrl">
