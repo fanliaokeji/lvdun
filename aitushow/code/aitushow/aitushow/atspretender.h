@@ -6,7 +6,7 @@
 class ATSPretender
 {
 public:
-	ATSPretender() : m_bInitOK(FALSE), m_hDDNPKernel(NULL)
+	ATSPretender() : m_bInitOK(FALSE), m_hAtsKernel(NULL)
 	{
 
 
@@ -38,8 +38,8 @@ public:
 		}
 
 
-		m_hDDNPKernel = LoadLibrary(_T("atskernel.dll"));
-		if (NULL == m_hDDNPKernel)
+		m_hAtsKernel = LoadLibrary(_T("atskernel.dll"));
+		if (NULL == m_hAtsKernel)
 		{
 			return;
 		}
@@ -48,10 +48,10 @@ public:
 
 	~ATSPretender()
 	{
-		if (m_hDDNPKernel)
+		if (m_hAtsKernel)
 		{
-			FreeLibrary(m_hDDNPKernel);
-			m_hDDNPKernel = NULL;
+			FreeLibrary(m_hAtsKernel);
+			m_hAtsKernel = NULL;
 		}
 
 		for (std::list< HMODULE >::reverse_iterator rit = m_modList.rbegin();
@@ -81,8 +81,24 @@ public:
 		BOOL bRet = FALSE;
 		if (m_bInitOK)
 		{
+			//1:先处理单例
+			typedef HRESULT (STDAPICALLTYPE * PHandleSingleton)();
+			PHandleSingleton pHandleSingleton = (PHandleSingleton)GetProcAddress(m_hAtsKernel,"HandleSingleton");
+			if(NULL == pHandleSingleton)
+			{
+				MessageBox(NULL, L"无法找到 'HandleSingleton', 请重新安装", L"错误", MB_OK);
+				TerminateProcess(GetCurrentProcess(), (UINT)-10);
+				return -10;
+			}
+			HRESULT hr = pHandleSingleton();
+			if(SUCCEEDED( hr))
+			{
+				//处理过了
+				return bRet;		
+			}
+
 			typedef BOOL (STDAPICALLTYPE * PInitXLUE)(wchar_t*);
-			PInitXLUE pInitXLUE = (PInitXLUE)GetProcAddress(m_hDDNPKernel, "InitXLUE");
+			PInitXLUE pInitXLUE = (PInitXLUE)GetProcAddress(m_hAtsKernel, "InitXLUE");
 			if (pInitXLUE)
 			{
 				bRet = pInitXLUE(lpCmdLine);
@@ -93,7 +109,7 @@ public:
 private:
 
 private:
-	HMODULE m_hDDNPKernel;
+	HMODULE m_hAtsKernel;
 	BOOL	m_bInitOK;
 	std::list< HMODULE > m_modList;
 };
