@@ -910,7 +910,7 @@ int LuaAPIUtil::FindFileList(lua_State* pLuaState)
 			hFind = FindFirstFile(szSearchPath, &fd);
 			while (INVALID_HANDLE_VALUE != hFind)
 			{
-				if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) && FILE_ATTRIBUTE_DIRECTORY != fd.dwFileAttributes)
+				if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) && !(FILE_ATTRIBUTE_DIRECTORY&fd.dwFileAttributes))
 				{
 					TCHAR szLnkFileTmp[MAX_PATH] = {0};
 					::PathCombine(szLnkFileTmp, bstrPath.m_str, fd.cFileName);
@@ -962,7 +962,7 @@ int LuaAPIUtil::FindDirList(lua_State* pLuaState)
 			hFind = FindFirstFile(szSearchPath, &fd);
 			while (INVALID_HANDLE_VALUE != hFind)
 			{
-				if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) && FILE_ATTRIBUTE_DIRECTORY == fd.dwFileAttributes)
+				if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) && (FILE_ATTRIBUTE_DIRECTORY&fd.dwFileAttributes))
 				{
 					TCHAR szLnkFileTmp[MAX_PATH] = {0};
 					::PathCombine(szLnkFileTmp, bstrPath.m_str, fd.cFileName);

@@ -266,7 +266,7 @@ int LuaGraphicUtil::GetDirSupportImgPaths(lua_State* pLuaState)
 	lua_newtable(pLuaState);
 	while (INVALID_HANDLE_VALUE != hFind)
 	{
-		if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) && FILE_ATTRIBUTE_DIRECTORY != fd.dwFileAttributes)
+		if (_tcsicmp(fd.cFileName, _T("..")) && _tcsicmp(fd.cFileName, _T(".")) &&!(FILE_ATTRIBUTE_DIRECTORY&fd.dwFileAttributes))
 		{
 			std::wstring wstrFileName = ultra::ToLower(fd.cFileName);
 			//std::wstring wstrExt = ::PathFindExtension(wstrFileName.c_str());
