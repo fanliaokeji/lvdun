@@ -7,6 +7,7 @@ local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosX"
 local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosY"
 local iWindowPosDXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDX"
 local iWindowPosDYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDY"
+local sLastPathReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\sLastPath"
 
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
@@ -51,6 +52,15 @@ function OnCreate(self)
 		-- imageCtrl:SetImagePath(file)
 	-- end
 	-- Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
+	local lastPath = Helper:QueryRegValue(sLastPathReg)
+	if lastPath then
+		local addressobj = objtree:GetUIObject("MainWnd.AddressEditCtrl")
+		local LeftPanel = objtree:GetUIObject("LeftPanel")
+		local thumbContainerObj = objtree:GetUIObject("ThumbnailContainerObj")
+		addressobj:SetPath(lastPath, true)
+		thumbContainerObj:SetFolder(lastPath)
+		LeftPanel:Update(lastPath)
+	end
 	Tray.Init(self)
 end
 
@@ -111,6 +121,8 @@ function LeftPanelOnSelect(self, event, dir)
 	local thumbContainerObj = owner:GetUIObject("ThumbnailContainerObj")
 	addressobj:SetPath(realpath, true)
 	thumbContainerObj:SetFolder(realpath)
+	
+	Helper:SetRegValue(sLastPathReg, realpath)
 end
 
 --地址栏变化事件
@@ -122,6 +134,10 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	local owner = self:GetOwner()
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
+	local thumbContainerObj = owner:GetUIObject("ThumbnailContainerObj")
+	thumbContainerObj:SetFolder(realpath)
+	
+	Helper:SetRegValue(sLastPathReg, realpath)
 end
 
 function OnClickSortButton(self)
