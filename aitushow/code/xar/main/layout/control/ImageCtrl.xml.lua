@@ -8,6 +8,16 @@ function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
 	local imageWidth = imageR - imageL - 4
 	local imageHeight = imageB - imageT - 21
+	
+	if uWidth < imageWidth and uHeight < imageHeight then
+		--直接1:1展示
+		local newTop    = math.round((imageHeight - uWidth)/2)
+		local newLeft  = math.round((imageWidth - uWidth)/2)
+		
+		LOG("SetImage 1:1 newHeight: ", newHeight, " newLeft: ", newLeft)
+		imageObj:SetObjPos2(newLeft, newTop, uWidth, uHeight)
+		return
+	end
 	if uWidth/uHeight > imageWidth/imageHeight then--图片是矮、宽型的
 		local newHeight = math.round((imageWidth*uHeight)/uWidth)
 		--计算居中的高度
@@ -122,7 +132,6 @@ function SetImageByIndex(self, index)
 		leftArrow:Show(false)
 	end
 	
-	-- XLMessageBox("safdg: "..tostring(filename).." tImgInfo.szPath: "..tostring(tImgInfo.szPath))
 	if tImgInfo.szExt == "gif" then
 		seqImageObject:SetVisible(true)
 		imageObj:SetVisible(false)
@@ -146,6 +155,7 @@ function SetImageByIndex(self, index)
 		graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
 	else
 		imageObj:SetBitmap(tImgInfo.xlhBitmap)
+		imageObj:SetDrawMode(1)
 		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
 	end
 	

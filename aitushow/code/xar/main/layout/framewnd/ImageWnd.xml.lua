@@ -138,12 +138,12 @@ function OnToolBarCommand(self, _, cmd)
 		imageCtrl:Zoom(curZoomPercent)
 	elseif "yibiyi" == cmd then
 		imageCtrl:Zoom(100)
-	elseif "shangyizhang" == cmd then
+	elseif "xiayizhang" == cmd then
 		local picData, nextIndex = imageCtrl:GetNextPic()
 		if nextIndex then
 			imageCtrl:SetImageByIndex(nextIndex)
 		end
-	elseif "xiayizhang" == cmd then
+	elseif "shangyizhang" == cmd then
 		local picData, prevIndex = imageCtrl:GetPrevPic()
 		if prevIndex then
 			imageCtrl:SetImageByIndex(prevIndex)
