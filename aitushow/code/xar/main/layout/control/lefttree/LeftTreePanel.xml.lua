@@ -4,7 +4,7 @@ local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
 
 function openparent(attr, dir)
-	dir = string.gsub(dir, "([/\\])$", "")
+	dir = string.gsub(dir, "[/\\]*$", "")
 	local parent = string.match(dir, "^(.*)[/\\][^/\\]+$")
 	if parent then
 		attr.opendirs[parent] = true

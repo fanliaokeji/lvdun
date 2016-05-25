@@ -52,7 +52,22 @@ function OnClickButtonListBtn(self, btnSelf)
 	self:FireExtEvent("OnPathChanged", attr.curPath)
 end
 
-function SetPath(self, sPath, bNoNotify)
+function RemoveInvalid(t, pos)
+	if type(t) ~= "table" or pos >= #t then
+		return 
+	end
+	for i = #t, 1, -1 do
+		if pos < i then
+			table.remove(t, i)
+		else
+			break
+		end
+	end
+end
+
+--bNoNotify:不发通知事件
+--isUndo是点击回退和向前按钮触发
+function SetPath(self, sPath, bNoNotify, isUndo)
 	if not Helper.tipUtil:QueryFileExists(sPath) then
 		return false
 	end
@@ -97,6 +112,33 @@ function SetPath(self, sPath, bNoNotify)
 		attr.pathHistoryQueue = Helper.FixedLengthQueue:New()
 	end
 	attr.pathHistoryQueue:Insert(sPath)
+	
+	local function ProcessArrow()
+		local uparrow = self:GetObject("UpArrow")
+		--有父目录
+		if string.match(sPath, "[^/\\]+[/\\][^/\\]+") then
+			uparrow:Enable(true)
+		else
+			uparrow:Enable(false)
+		end
+		if not isUndo then
+			attr.UndoStack = attr.UndoStack or {}
+			attr.UndoPos = attr.UndoPos or 0
+			RemoveInvalid(attr.UndoStack, attr.UndoPos)
+			table.insert(attr.UndoStack, sPath)
+			attr.UndoPos = #attr.UndoStack
+			local leftarrow = self:GetObject("LeftArrow")
+			local rightarrow = self:GetObject("RightArrow")
+			if #attr.UndoStack < 2 then
+				leftarrow:Enable(false)
+				rightarrow:Enable(false)
+			else
+				leftarrow:Enable(true)
+				rightarrow:Enable(false)
+			end
+		end
+	end
+	ProcessArrow()
 	if not bNoNotify then
 		self:FireExtEvent("OnPathChanged", attr.curPath)
 	end
@@ -108,15 +150,44 @@ end
 
 function OnClickLeftArrow(self)
 	local ownerCtrl = self:GetOwnerControl()
-	SetPath(ownerCtrl, "E:\\project\\gitHub\\COM_A\\trunk\\aitushow\\code")
+	local attr = ownerCtrl:GetAttribute()
+	if type(attr.UndoStack) == "table" and type(attr.UndoPos) == "number" and attr.UndoPos > 1 then
+		attr.UndoPos = attr.UndoPos - 1
+		local sPath = attr.UndoStack[attr.UndoPos]
+		ownerCtrl:SetPath(sPath, false, true)
+		if attr.UndoPos == 1 then
+			self:Enable(false)
+		end
+		if attr.UndoPos < #attr.UndoStack then
+			self:GetObject("control:RightArrow"):Enable(true)
+		end
+	end
 end
 
 function OnClickRightArrow(self)
-
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	if type(attr.UndoStack) == "table" and type(attr.UndoPos) == "number" and attr.UndoPos < #attr.UndoStack then
+		attr.UndoPos = attr.UndoPos + 1
+		local sPath = attr.UndoStack[attr.UndoPos]
+		ownerCtrl:SetPath(sPath, false, true)
+		if attr.UndoPos == #attr.UndoStack then
+			self:Enable(false)
+		end
+		if attr.UndoPos > 1 then
+			self:GetObject("control:LeftArrow"):Enable(true)
+		end
+	end
 end
 
 function OnClickUpArrow(self)
-
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	if not attr.curPath then return end
+	local dir = string.gsub(attr.curPath, "[/\\]*$", "")
+	local parent = string.match(dir, "^(.*)[/\\][^/\\]+$")
+	if not parent then return end
+	ownerCtrl:SetPath(parent, false)
 end
 
 function OnEditInputChar(self, charCode, counts, flag)

@@ -47,6 +47,7 @@
 						<top>0</top>
 						<width>28</width>
 						<height>27</height>
+						<Enable>false</Enable>
 						<Bkg4In1ID>texture.addressedit.leftarrow</Bkg4In1ID>
 					</attr>
 					<eventlist>
@@ -59,6 +60,7 @@
 						<top>0</top>
 						<width>28</width>
 						<height>27</height>
+						<Enable>false</Enable>
 						<Bkg4In1ID>texture.addressedit.rightarrow</Bkg4In1ID>
 					</attr>
 					<eventlist>
@@ -71,6 +73,7 @@
 						<top>0</top>
 						<width>28</width>
 						<height>27</height>
+						<Enable>false</Enable>
 						<Bkg4In1ID>texture.addressedit.uparrow</Bkg4In1ID>
 					</attr>
 					<eventlist>
