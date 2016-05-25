@@ -216,12 +216,8 @@
 		 <eventlist>
             <event name="OnCreate" file="MainWnd.xml.lua" func="OnCreate"/>
             <event name="OnShowWindow" file="MainWnd.xml.lua" func="OnShowWindow"/>
-			<event name="OnSize" >
-				local self,_type,width,height = ...
-				local objtree = self:GetBindUIObjectTree()
-				local root = objtree:GetRootObject()
-				root:SetObjPos(0,0,width,height)
-			</event>
+			<event name="OnSize" />
+			<event name="OnMove" />
         </eventlist>
     </hostwndtemplate>
 

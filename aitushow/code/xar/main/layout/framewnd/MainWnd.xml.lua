@@ -2,6 +2,12 @@ local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
 local Tray = Helper.Tray
 
+
+local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosX"
+local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosY"
+local iWindowPosDXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDX"
+local iWindowPosDYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDY"
+
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
 	local objRootLayout = objtree:GetUIObject("root")
@@ -9,10 +15,28 @@ function OnCreate(self)
 	local nLayoutWidth = nLayoutR - nLayoutL
 	local nLayoutHeight = nLayoutB - nLayoutT
 	
+	-- local workleft, worktop, workright, workbottom = Helper.tipUtil:GetWorkArea()
+	-- local workWidth = workright - workleft
+	-- local workHeigth = workbottom - worktop
+	
+	local iWindowPosX = Helper:QueryRegValue(iWindowPosXReg)
+	local iWindowPosY = Helper:QueryRegValue(iWindowPosYReg)
+	local iWindowPosDX = Helper:QueryRegValue(iWindowPosDXReg)
+	local iWindowPosDY = Helper:QueryRegValue(iWindowPosDYReg)
+	
 	local workleft, worktop, workright, workbottom = Helper.tipUtil:GetWorkArea()
-	local workWidth = workright - workleft
-	local workHeigth = workbottom - worktop
-	self:Move( math.floor((workWidth - nLayoutWidth) / 2), math.floor((workHeigth - nLayoutHeight) / 2), nLayoutWidth, nLayoutHeight)
+		
+	if tonumber(iWindowPosX) and tonumber(iWindowPosY) and tonumber(iWindowPosDX) and tonumber(iWindowPosDY) 
+		and iWindowPosX < workright and iWindowPosY < workbottom and iWindowPosDX > workleft and iWindowPosDY > worktop then
+		self:Move(iWindowPosX, iWindowPosY, iWindowPosDX-iWindowPosX, iWindowPosDY-iWindowPosY)
+	else
+		local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+		local nLayoutWidth = nLayoutR - nLayoutL
+		local nLayoutHeight = nLayoutB - nLayoutT
+		self:Move( math.floor((workright - nLayoutWidth)/2), math.floor((workbottom - nLayoutHeight)/2), nLayoutWidth, nLayoutHeight)
+	end
+	
+	-- self:Move( math.floor((workWidth - nLayoutWidth) / 2), math.floor((workHeigth - nLayoutHeight) / 2), nLayoutWidth, nLayoutHeight)
 
 	-- local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
 	-- imageCtrl:SetImagePath("C:\\Users\\mjt\\Pictures\\Pictures\\test2.png")
@@ -119,4 +143,36 @@ function OnClickSortButton(self)
 	local menuItemContainerTemplID = "menu.combobox.container.template"
     Helper:CreateMenuEx(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable, userData, menuItemTemplID, menuItemContainerTemplID)
 
+end
+
+function OnSize(self, _type, width, height)
+	local tree = self:GetBindUIObjectTree()
+	if not tree then
+		return
+	end
+	
+	local rootObject = tree:GetRootObject()
+	rootObject:SetObjPos(0, 0, width, height)
+	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+	Helper:SetRegValue(iWindowPosXReg, x)
+	Helper:SetRegValue(iWindowPosYReg, y)
+	Helper:SetRegValue(iWindowPosDXReg, x+width)
+	Helper:SetRegValue(iWindowPosDYReg, y+height)
+end
+
+function OnMove(self)
+	local state = self:GetWindowState()
+	if "max" == state or "min" == state then
+		return
+	end
+	local wndleft,wndtop,wndright,wndbottom = self:GetWindowRect()
+	local wndwidth = wndright - wndleft
+	local wndheight = wndbottom - wndtop
+		
+	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+	
+	Helper:SetRegValue(iWindowPosXReg, x)
+	Helper:SetRegValue(iWindowPosYReg, y)
+	Helper:SetRegValue(iWindowPosDXReg, x+wndwidth)
+	Helper:SetRegValue(iWindowPosDYReg, y+wndheight)
 end
