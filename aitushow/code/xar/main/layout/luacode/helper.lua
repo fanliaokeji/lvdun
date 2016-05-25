@@ -175,6 +175,10 @@ function Helper:UrlDecode(srcUrl)
     return string.gsub(srcUrl, "+", " ")
 end
 
+function Helper:GetFileNameByPath(path)
+	return string.match(path, ".+[\\/]([^?]+)")
+end
+
 function Helper:GetUserDataDir()
 	local strPublicEnv = "%PUBLIC%"
 	local strRet = tipUtil:ExpandEnvironmentStrings(strPublicEnv)
