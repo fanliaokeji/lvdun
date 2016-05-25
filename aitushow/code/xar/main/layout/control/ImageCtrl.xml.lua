@@ -222,10 +222,16 @@ function SetFolder(self, folder)
 	
 end
 
+function GetObjWH(obj)
+	local L, T, R, B = obj:GetObjPos()
+	
+	return R - L, B - T
+end
 --如果需要，可以在这里面向外发事件
 function OnDragImage(self, event, ...)
 	--图片显示不下的时候，才响应拖拽
 	local image = self:GetControlObject("Image")
+	local container = self:GetControlObject("ImageContainer")
 	local bitmap = image and image:GetBitmap()
 	if not bitmap then return end
 	
@@ -273,6 +279,10 @@ function OnDragImage(self, event, ...)
 		end
 		
 		image:SetObjPos2(posL, posT, imageWidth, imageHeight)
+		local containerW, containerH = GetObjWH(container)
+		local rectL = -posL
+		local rectT = -posT
+		self:FireExtEvent("OnImageShowRectChange", rectL, rectT, rectL + containerW, rectT + containerH)
 	elseif "start" == dragState then
 		Helper:LOG("dragState start")
 		if not attr.OnLButtonDownX or not attr.OnLButtonDownY then
@@ -370,7 +380,9 @@ function OnImageRButtonUp(self, x, y)
 	local GreenShieldMenu = XLGetGlobal("GreenShieldMenu")	
 	local menuTable = GreenShieldMenu.ImageRClickMenu.menuTable
 	local menuFunTable = GreenShieldMenu.ImageRClickMenu.menuFunTable
-	Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable)
+	local userData = {}
+	userData.imageCtrl = self:GetOwnerControl()
+	Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable, userData)
 end
 
 -- direction > 0 ：向上滚,放大 < 0：向下滚，缩小

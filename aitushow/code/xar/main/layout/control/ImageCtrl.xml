@@ -34,6 +34,14 @@
 					<int /><!--原图片高度-->
 				</param>
 			</OnImageSizeChange>
+			<OnImageShowRectChange>
+				<param>
+					<int /><!--当前显示X-->
+					<int /><!--当前显示Y-->
+					<int /><!--R-->
+					<int /><!--B-->
+				</param>
+			</OnImageShowRectChange>
 		</event_def>
     <objtemplate>
 	<children>
