@@ -21,6 +21,8 @@ function Update(self, xoffset, yoffset, size_rates)
 	newnew_y = new_y - yoffset/attr.rates
 	local insideimg = self:GetObject("insideimg")
 	local _l, _t, _r, _b = insideimg:GetObjPos()
+	_t = _t - 30
+	_b = _b - 30
 	if newnew_x < _l then
 		newnew_x = _l + 1
 	elseif newnew_x + new_w > _r then
@@ -97,6 +99,8 @@ function GetSelMovePos(sel, dx, dy)
 	local l, t, r, b = sel:GetObjPos()
 	local insideimg = sel:GetObject("control:insideimg")
 	local _l, _t, _r, _b = insideimg:GetObjPos()
+	_t=_t-30
+	_b=_b-30
 	if l+dx >= _l and r+dx <= _r then 
 		l = l+dx 
 		r = r+dx

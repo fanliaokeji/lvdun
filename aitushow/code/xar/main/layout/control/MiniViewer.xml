@@ -6,13 +6,16 @@
 </method_def>
 <objtemplate>
 <children>
-<obj id="captionbkg" class="CaptionObject">
+<obj id="mainbkg" class="FillObject">
 	<attr>
 		<top>0</top>
 		<height>father.height</height>
 		<left>0</left>
 		<zorder>1</zorder>
 		<width>father.width</width>
+		<srccolor>system.black</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>system.black</destcolor>
 	</attr>
 	<children>
 	<obj id="title" class="TextObject">
@@ -58,13 +61,11 @@
 		<srccolor>system.black</srccolor>
 		<blendtype>Source</blendtype>
 		<destcolor>system.black</destcolor>
-		<alpha>120</alpha>
+		<alpha>150</alpha>
 		<width>father.width</width>
-		<srcpt>0,0</srcpt>
 		<left>0</left>
-		<destpt>father.width,father.height</destpt>
-		<height>father.height</height>
-		<top>0</top>
+		<height>father.height-30</height>
+		<top>30</top>
 		<zorder>999</zorder>
 		<filltype>Monochrome</filltype>
 	</attr>
