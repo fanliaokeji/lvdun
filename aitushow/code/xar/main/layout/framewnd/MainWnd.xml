@@ -183,14 +183,7 @@
 						</obj>	
 					</children>
 				</obj>
-				<obj id="MainWnd.BottomCtrl" class="BottomCtrl">
-					<attr>
-						<left>0</left>
-						<top>father.height - 30</top>
-						<width>father.width</width>
-						<height>30</height>
-					</attr>
-				</obj>
+				
 			</children>
 		</obj>
 	</objtreetemplate>
