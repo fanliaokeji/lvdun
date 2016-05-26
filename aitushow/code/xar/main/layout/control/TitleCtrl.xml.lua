@@ -7,9 +7,8 @@ end
 function OnClickSetting(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
-	local imageCtrl = objTree:GetUIObject("FrameWnd.ImageCtrl")
-	local curZoomPercent = imageCtrl:GetZoomPercent()
-	imageCtrl:Zoom(curZoomPercent + 10)
+	Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
+	local MSG = Helper.MessageBox
 end
 
 --进入全屏模式，退出在FrameWnd里处理
