@@ -92,4 +92,8 @@ function OnClickCloseBtn(self)
 		return
 	end
 	Helper:DestoryModelessWnd("ImageWnd")
+	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+	if MainHostWnd then
+		MainHostWnd:BringWindowToTop(true)
+	end
 end

@@ -1,3 +1,4 @@
+local tipUtil = XLGetObject("API.Util")
 
 function LoadLuaModule(tFile, curDocPath)
 --tFile可以传lua文件绝对路径、相对路径
@@ -37,6 +38,7 @@ local File = {
 "luacode\\helper_messagebox.lua",
 "luacode\\helper_setting.lua",
 "luacode\\helper_tray.lua",
+"luacode\\helper_listener.lua",
 "menu\\ImageRClickMenu.lua",
 "menu\\SortMenu.lua",
 }
@@ -48,8 +50,25 @@ local Helper = XLGetGlobal("Helper")
 function OnLoadLuaFile()
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
-	Helper:CreateModelessWnd("MainWnd","MainWndTree")
-	-- Helper:CreateModelessWnd("ImageWnd","ImageWndTree")
+	local cmdString = tostring(tipUtil:GetCommandLine())
+	local HostWnd
+	--打开本地文件
+	if string.find(string.lower(cmdString), "/sstartfrom%s+localfile") then
+		HostWnd = Helper:CreateModelessWnd("ImageWnd","ImageWndTree")
+		local filepath = string.match(cmdString, "\"([^\"]+)\"[^\"]*$")
+		local imgctrl = Helper.Selector.select("", "FrameWnd.ImageCtrl", "ImageWnd.Instance")
+		if filepath and tipUtil:QueryFileExists(filepath) and imgctrl then
+			imgctrl:SetImagePath(filepath)
+		end
+	--打开主界面
+	else
+		HostWnd = Helper:CreateModelessWnd("MainWnd","MainWndTree")
+	end
+	if HostWnd and string.find(string.lower(tostring(cmdString)), "embedding") then
+		HostWnd:Show(0)
+	else
+		HostWnd:Show(5)
+	end
 end
 
 OnLoadLuaFile()

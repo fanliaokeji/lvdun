@@ -197,7 +197,9 @@
 			<texture id="messagebox.renamesave.normal"   imagelist="messagebox.renamesave" index="1" />
 			<texture id="messagebox.renamesave.hover"   imagelist="messagebox.renamesave" index="2" />
 			<texture id="messagebox.renamesave.down"   imagelist="messagebox.renamesave" index="3" />
-
+		<!--png默认背景-->
+		<texture id="texture.transparent.bkg" type="Tile" image="bitmap\bitmap.transparent.bkg.png" />
+		
 		<!--默认图标-->
 		<bitmap id="default_icon.bmp" path="bitmap\default_icon\bmp.png" />
 		<bitmap id="default_icon.cut" path="bitmap\default_icon\cut.png" />
