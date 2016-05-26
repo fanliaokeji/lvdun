@@ -111,6 +111,9 @@
 							</attr>
 						</obj>	
 					</children>
+					<eventlist>
+						<event name="OnPosChange" file="ImageCtrl.xml.lua" func="OnImagePosChange" />
+					</eventlist>
 				</obj>
 				<obj id="RightArrow" class="TipAddin.Button">
 					<attr>

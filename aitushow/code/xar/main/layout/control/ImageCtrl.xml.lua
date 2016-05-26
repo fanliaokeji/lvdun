@@ -6,12 +6,12 @@ local OnPosChangeCookie = nil
 function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
 	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
-	local imageWidth = imageR - imageL - 4
-	local imageHeight = imageB - imageT - 21
+	local imageWidth = imageR - imageL
+	local imageHeight = imageB - imageT
 	
 	if uWidth < imageWidth and uHeight < imageHeight then
 		--直接1:1展示
-		local newTop    = math.round((imageHeight - uWidth)/2)
+		local newTop    = math.round((imageHeight - uHeight)/2)
 		local newLeft  = math.round((imageWidth - uWidth)/2)
 		
 		LOG("SetImage 1:1 newHeight: ", newHeight, " newLeft: ", newLeft)
@@ -33,9 +33,10 @@ function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	end
 end
 
-function OnPosChange(self)
-	local imageObj = self:GetControlObject("Image")
-	local imageContainer = self:GetControlObject("ImageContainer")
+function OnImagePosChange(self)
+	local ctrl = self:GetOwnerControl()
+	local imageObj = ctrl:GetControlObject("Image")
+	local imageContainer = ctrl:GetControlObject("ImageContainer")
 	local bitmap = imageObj:GetBitmap()
 	if not bitmap then
 		return
@@ -48,54 +49,57 @@ function OnPosChange(self)
 	
 	local imageL, imageT, imageR, imageB, imageWidth, imageHeight = nil, nil, nil, nil, nil, nil
 	
-	if picWidth/picHeight > containerWidth/containerHeigth then
-		--宽扁型的图片，先满足宽度
-		if picWidth > containerWidth then
-			imageWidth = containerWidth
-			imageL = 0
-		else
-			imageWidth = picWidth
-			imageL = math.round((containerWidth - picWidth)/2)
-		end
+	-- if picWidth/picHeight > containerWidth/containerHeigth then
+		-- 宽扁型的图片，先满足宽度
+		-- if picWidth > containerWidth then
+			-- imageWidth = containerWidth
+			-- imageL = 0
+		-- else
+			-- imageWidth = picWidth
+			-- imageL = math.round((containerWidth - picWidth)/2)
+		-- end
 		
-		imageR = imageL + imageWidth
-		imageHeight = math.round(imageWidth * picHeight / picWidth)
-		Helper:Assert(imageHeight <= containerHeigth, "imageHeight must <= containerHeigth!!")
-		imageT = math.round((containerHeigth - imageHeight) / 2)
-		imageB = imageT + imageHeight
-	else
-		--瘦长型的图片，先满足高度
-		if picHeight > containerHeigth then
-			imageHeight = containerHeigth
-			imageT = 0
-		else
-			imageHeight = picHeight
-			imageT = math.round((containerHeigth - picHeight) / 2)
-		end
+		-- imageR = imageL + imageWidth
+		-- imageHeight = math.round(imageWidth * picHeight / picWidth)
+		-- Helper:Assert(imageHeight <= containerHeigth, "imageHeight must <= containerHeigth!!")
+		-- imageT = math.round((containerHeigth - imageHeight) / 2)
+		-- imageB = imageT + imageHeight
+	-- else
+		-- 瘦长型的图片，先满足高度
+		-- if picHeight > containerHeigth then
+			-- imageHeight = containerHeigth
+			-- imageT = 0
+		-- else
+			-- imageHeight = picHeight
+			-- imageT = math.round((containerHeigth - picHeight) / 2)
+		-- end
 		
-		imageB = imageT + imageHeight
-		imageWidth = math.round(imageHeight * picWidth / picHeight)
-		Helper:Assert(imageWidth <= containerWidth, "imageWidth must <= containerWidth!!")
-		imageL = math.round((containerWidth - imageWidth) / 2)
-		imageR = imageL + imageWidth
-	end
+		-- imageB = imageT + imageHeight
+		-- imageWidth = math.round(imageHeight * picWidth / picHeight)
+		-- Helper:Assert(imageWidth <= containerWidth, "imageWidth must <= containerWidth!!")
+		-- imageL = math.round((containerWidth - imageWidth) / 2)
+		-- imageR = imageL + imageWidth
+	-- end
 	
-	imageObj:SetObjPos(imageL, imageT, imageR, imageB)
-	self:FireExtEvent("OnImageSizeChange", imageWidth, imageHeight, picWidth, picHeight)
+	AdjustImageBySize(imageContainer, imageObj, picWidth, picHeight)
+	-- imageObj:SetObjPos(imageL, imageT, imageR, imageB)
+	imageObj:SetDrawMode(1)
+	-- XLMessageBox("ghjkl")
+	ctrl:FireExtEvent("OnImageSizeChange", imageWidth, imageHeight, picWidth, picHeight)
 end
 
 function SetImagePath(self, path)
 	local imageObj = self:GetControlObject("Image")
 	local bitmap = Helper.graphicFactory:CreateBitmap(path, "RGB32")
 	
-	if not OnMainWndResizeCookie then
-		local imageContainer = self:GetControlObject("ImageContainer")
-		OnPosChangeCookie = imageContainer:AttachListener("OnPosChange", false, function() OnPosChange(self) end)
-		imageObj:SetDrawMode(1)
-	end
+	-- if not OnMainWndResizeCookie then
+		-- local imageContainer = self:GetControlObject("ImageContainer")
+		-- OnPosChangeCookie = imageContainer:AttachListener("OnPosChange", false, function() OnPosChange(self) end)
+		-- imageObj:SetDrawMode(1)
+	-- end
 	
-	imageObj:SetBitmap(bitmap)
-	OnPosChange(self)
+	-- imageObj:SetBitmap(bitmap)
+	-- OnPosChange(self)
 end
 
 function SetImage(self, xlhBitmap)
@@ -152,7 +156,7 @@ function SetImageByIndex(self, index)
 	if not tImgInfo.xlhBitmap then
 		local requireFiles = {}
 		requireFiles[1] = tImgInfo.szPath
-		graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
+		graphicUtil:GetMultiImgInfoByPaths(requireFiles)
 	else
 		imageObj:SetBitmap(tImgInfo.xlhBitmap)
 		imageObj:SetDrawMode(1)
