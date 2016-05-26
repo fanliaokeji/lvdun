@@ -501,7 +501,7 @@ end
 function OnGetMultiImgInfoCallBack(self, key, tImgInfo)
 	--先看是不是当前显示的index
 	local attr = self:GetAttribute()
-	local tPicData = attr.tPictures and attr.tPictures[attr.index]
+	local tPicData = attr and attr.tPictures and attr.index and attr.tPictures[attr.index]
 	if tPicData and tPicData.szPath == tImgInfo.szPath then
 		tPicData.xlhBitmap = tImgInfo.xlhBitmap
 		tPicData.uWidth = tImgInfo.uWidth
