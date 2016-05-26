@@ -36,55 +36,28 @@ end
 function OnImagePosChange(self)
 	local ctrl = self:GetOwnerControl()
 	local imageObj = ctrl:GetControlObject("Image")
+	local gifObj = ctrl:GetControlObject("SeqImageObject.gif")
 	local imageContainer = ctrl:GetControlObject("ImageContainer")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return
+	
+	
+	local attr = ctrl:GetAttribute()
+	local curInfo = attr.tPictures and attr.index and attr.tPictures[attr.index]
+	local szExt = curInfo and curInfo.szExt 
+	
+	if attr.bGif then
+		local gif = gifObj:GetGif()
+		AdjustImageBySize(imageContainer, gifObj, gif:GetSize())
+		gifObj:SetDrawMode(1)
+	elseif szExt then
+		local bitmap = imageObj:GetBitmap()
+		if not bitmap then
+			return
+		end
+	
+		local _, picWidth, picHeight, _ = bitmap:GetInfo()
+		AdjustImageBySize(imageContainer, imageObj, picWidth, picHeight)
+		imageObj:SetDrawMode(1)
 	end
-	
-	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
-	local containerWidth = containerR - containerL
-	local containerHeigth = containerB - containerT
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
-	
-	local imageL, imageT, imageR, imageB, imageWidth, imageHeight = nil, nil, nil, nil, nil, nil
-	
-	-- if picWidth/picHeight > containerWidth/containerHeigth then
-		-- 宽扁型的图片，先满足宽度
-		-- if picWidth > containerWidth then
-			-- imageWidth = containerWidth
-			-- imageL = 0
-		-- else
-			-- imageWidth = picWidth
-			-- imageL = math.round((containerWidth - picWidth)/2)
-		-- end
-		
-		-- imageR = imageL + imageWidth
-		-- imageHeight = math.round(imageWidth * picHeight / picWidth)
-		-- Helper:Assert(imageHeight <= containerHeigth, "imageHeight must <= containerHeigth!!")
-		-- imageT = math.round((containerHeigth - imageHeight) / 2)
-		-- imageB = imageT + imageHeight
-	-- else
-		-- 瘦长型的图片，先满足高度
-		-- if picHeight > containerHeigth then
-			-- imageHeight = containerHeigth
-			-- imageT = 0
-		-- else
-			-- imageHeight = picHeight
-			-- imageT = math.round((containerHeigth - picHeight) / 2)
-		-- end
-		
-		-- imageB = imageT + imageHeight
-		-- imageWidth = math.round(imageHeight * picWidth / picHeight)
-		-- Helper:Assert(imageWidth <= containerWidth, "imageWidth must <= containerWidth!!")
-		-- imageL = math.round((containerWidth - imageWidth) / 2)
-		-- imageR = imageL + imageWidth
-	-- end
-	
-	AdjustImageBySize(imageContainer, imageObj, picWidth, picHeight)
-	-- imageObj:SetObjPos(imageL, imageT, imageR, imageB)
-	imageObj:SetDrawMode(1)
-	-- XLMessageBox("ghjkl")
 	ctrl:FireExtEvent("OnImageSizeChange", imageWidth, imageHeight, picWidth, picHeight)
 end
 
@@ -147,10 +120,13 @@ function SetImageByIndex(self, index)
 		end
 		seqImageObject:SetGif(tImgInfo.xlhGif)
 		seqImageObject:Play()
+		seqImageObject:SetDrawMode(1)
 		AdjustImageBySize(imageContainer, seqImageObject, tImgInfo.uWidth, tImgInfo.uHeight)
+		attr.bGif = true
 		return
 	end
 	
+	attr.bGif = false
 	seqImageObject:SetVisible(false)
 	imageObj:SetVisible(true)
 	if not tImgInfo.xlhBitmap then
@@ -409,10 +385,7 @@ end
 -- direction > 0 ：向上滚,放大 < 0：向下滚，缩小
 function OnImageMouseWheel(self, x, y, direction, distance)
 	local ownerCtrl = self:GetOwnerControl()
-	local bitmap = self:GetBitmap()
-	if not bitmap then
-		return
-	end
+	
 	
 	if not distance or 0 == distance then
 		distance = 10
@@ -435,18 +408,34 @@ function GetShowRect(self)
 end
 
 function Zoom(self, percent)
+	local attr = self:GetAttribute()
 	local imageObj = self:GetControlObject("Image")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return 0
+	local curInfo = attr.tPictures and attr.index and attr.tPictures[attr.index]
+	local szExt = curInfo and curInfo.szExt 
+	
+	local  picWidth, picHeight= 0,0
+	if "gif" == szExt then
+		imageObj = self:GetControlObject("SeqImageObject.gif")
+		local gif = imageObj:GetGif()
+		if gif then
+			picWidth, picHeight = gif:GetSize()
+		else
+			return
+		end
+	else
+		local bitmap = imageObj:GetBitmap()
+		if bitmap then
+			_, picWidth, picHeight,_ = bitmap:GetInfo()
+		else
+			return
+		end
 	end
+	
 	imageObj:SetDrawMode(1)
 	local imageContainer = self:GetControlObject("ImageContainer")
 	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()
 	local containerWidth, containerHeigth = containerR - containerL, containerB - containerT
-	
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
-	
+
 	local targetImageWidth, targetImageHeight = picWidth*percent/100, picHeight*percent/100
 	local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
 	local curImageWidth, curImageHeight = imageR - imageL, imageB - imageT
@@ -471,12 +460,24 @@ function Zoom(self, percent)
 end
 
 function GetZoomPercent(self)
+	local attr = self:GetAttribute()
 	local imageObj = self:GetControlObject("Image")
-	local bitmap = imageObj:GetBitmap()
-	if not bitmap then
-		return 0
+	local picWidth, picHeight = 0,0
+	if attr.bGif then
+		imageObj = self:GetControlObject("SeqImageObject.gif")
+		local gif = imageObj:GetGif()
+		if not gif then
+			return 0
+		end
+		picWidth, picHeight = gif:GetSize()
+	else
+		local bitmap = imageObj:GetBitmap()
+		if not bitmap then
+			return 0
+		end
+		 _, picWidth, picHeight, _ = bitmap:GetInfo()
 	end
-	local _, picWidth, picHeight, _ = bitmap:GetInfo()
+	
 	local imageL, imageT, imageR, imageB = imageObj:GetObjPos()
 	return math.round(100*(imageR - imageL)/picWidth)
 end

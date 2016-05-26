@@ -87,7 +87,6 @@
 								<height>father.height</height>
 							</attr>
 							<eventlist>
-							
 								<event name="OnLButtonDown" file="ImageCtrl.xml.lua" func="OnImageLButtonDown" />
 								<event name="OnLButtonUp"   file="ImageCtrl.xml.lua" func="OnImageLButtonUp" />
 								<event name="OnMouseMove" file="ImageCtrl.xml.lua" func="OnImageMouseMove" />
@@ -109,6 +108,9 @@
 								<reverse>0</reverse>
 								<antialias>2</antialias>
 							</attr>
+							<eventlist>
+								<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />
+							</eventlist>
 						</obj>	
 					</children>
 					<eventlist>
