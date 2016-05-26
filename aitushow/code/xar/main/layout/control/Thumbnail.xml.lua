@@ -10,7 +10,7 @@ function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	local imageHeight = imageB - imageT - 23
 	if uWidth < imageWidth and uHeight < imageHeight then
 		--直接1:1展示
-		local newTop    = math.round((imageHeight - uWidth)/2)
+		local newTop    = math.round((imageHeight - uHeight)/2)
 		local newLeft  = math.round((imageWidth - uWidth)/2)
 		
 		LOG("SetImage 1:1 newHeight: ", newHeight, " newLeft: ", newLeft)
