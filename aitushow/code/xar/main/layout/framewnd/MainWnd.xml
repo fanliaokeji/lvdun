@@ -183,7 +183,17 @@
 						</obj>	
 					</children>
 				</obj>
-				
+				<obj id="MainWnd.Info" class="TextObject">
+					<attr>
+						<left>5</left>
+						<top>father.height - 30</top>
+						<width>father.width</width>
+						<height>30</height>
+						<textcolor>basecontrol.white</textcolor>
+						<valign>center</valign>
+						<halign>left</halign>
+					</attr>
+				</obj>
 			</children>
 		</obj>
 	</objtreetemplate>

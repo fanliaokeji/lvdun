@@ -148,6 +148,35 @@ function SetImage(self, tImgInfo)
 	end
 end
 
+function FormatImageInfo(self)
+	local attr = self:GetAttribute()
+	if not attr.data then
+		return
+	end
+	
+	local fileName = Helper:GetFileNameByPath(attr.data.szPath)
+	local info = fileName
+	if attr.data.uWidth and attr.data.uHeight then
+		info = info.." - "..tostring(attr.data.uWidth).."*"..tostring(attr.data.uHeight)
+	end
+	if attr.data.uFileSize then
+		local sSize = ""
+		if attr.data.uFileSize <= 1024 then
+			sSize = tostring(attr.data.uFileSize).." B"
+		elseif attr.data.uFileSize <= 1024*1024 then
+			sSize = tostring(math.round(attr.data.uFileSize/1024)).." KB"
+		else
+			local size = attr.data.uFileSize/(1024*1024)
+			size = tostring(size)
+			size = string.sub(size,1,4)
+			sSize = size.." MB"
+		end
+		info = info.." - "..tostring(sSize)
+	end
+	
+	return info
+end
+
 function Select(self, bSelect)
 	local attr = self:GetAttribute()
 	attr.bSelect = bSelect 
@@ -156,6 +185,11 @@ function Select(self, bSelect)
 	if bSelect then
 		-- bkg:SetSrcColor("RGBA(79,196,246,255)")
 		bkg:SetResID("texture.thumbnail.select.bkg")
+		
+		--更新窗口底部的信息栏，稍后优化这里。
+		local tree = self:GetOwner()
+		local infoObj = tree:GetUIObject("MainWnd.Info")
+		infoObj:SetText(FormatImageInfo(self))
 	else
 		-- bkg:SetSrcColor("RGBA(57,66,100,255)")
 		bkg:SetResID("")
@@ -174,6 +208,12 @@ function OnLButtonUp(self)
 		attr.bSelect = true
 		-- bkg:SetSrcColor("RGBA(79,196,246,255)")
 		bkg:SetResID("texture.thumbnail.select.bkg")
+		--更新窗口底部的信息栏，稍后优化这里。
+		local tree = self:GetOwner()
+		local infoObj = tree:GetUIObject("MainWnd.Info")
+		local sInfo = FormatImageInfo(ownerCtrl)
+		-- XLMessageBox(sInfo)
+		infoObj:SetText(sInfo)
 	end
 	
 	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
