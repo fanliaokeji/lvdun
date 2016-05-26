@@ -3,7 +3,7 @@ local timerid = nil
 function StartTimer(fn)
 	return function()
 		StopTimer()
-		timerid = tm:SetTimer(fn, 800)
+		timerid = tm:SetTimer(fn, 100)
 		fn()
 	end
 end

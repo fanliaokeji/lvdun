@@ -8,7 +8,6 @@ function OnClickSetting(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
-	local MSG = Helper.MessageBox
 end
 
 --进入全屏模式，退出在FrameWnd里处理
@@ -90,6 +89,33 @@ function OnClickCloseBtn(self)
 	local objHostWnd = objTree:GetBindHostWnd()
 	if not objHostWnd then
 		return
+	end
+	local imgctrl = Helper.Selector.select("", "FrameWnd.ImageCtrl", "ImageWnd.Instance")
+	if imgctrl then
+		local attr = imgctrl:GetAttribute()
+		attr.index = attr.index or 0
+		attr.tPictures = attr.tPictures or {}
+		if attr.tPictures[attr.index] and attr.tPictures[attr.index].angle and attr.tPictures[attr.index].angle%360 ~= 0 then
+			local MSG = Helper.MessageBox
+			local Setting = Helper.Setting
+			local rtype = Setting.GetRotateType()
+			if rtype == "askme" then
+				local nRet, bCheck = MSG.MessageBoxEx(objHostWnd)
+				if MSG.ID_RENAMESAVE == nRet then
+					if bCheck then
+						Setting.SetRotateType("rensave")
+					end
+				elseif MSG.ID_COVEROLD == nRet then
+					if bCheck then
+						Setting.SetRotateType("coverold")
+					end
+				else
+					if bCheck then
+						Setting.SetRotateType("nosave")
+					end
+				end
+			end
+		end
 	end
 	Helper:DestoryModelessWnd("ImageWnd")
 	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")

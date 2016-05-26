@@ -1,5 +1,4 @@
 local Helper = XLGetGlobal("Helper")
-local Helper = XLGetGlobal("Helper")
 local graphicUtil = XLGetObject("GRAPHIC.Util")
 local OnPosChangeCookie = nil
 
@@ -167,11 +166,16 @@ function DelCurPic(self)
 	local attr = self:GetAttribute()
 	if attr.index and attr.tPictures and attr.tPictures[attr.index] then
 		local picInfo = attr.tPictures[attr.index]
-		table.remove(attr.tPictures, attr.index)
-		if attr.index > #attr.tPictures then
-			attr.index = #attr.tPictures
+		local MSG = Helper.MessageBox
+		local nRet = MSG.MessageBox("确定要删除 \""..Helper:GetFileNameByPath(picInfo.szPath).."\" 吗？", self:GetOwner():GetBindHostWnd())
+		if nRet == MSG.ID_YES then
+			Helper.tipUtil:DeletePathFile(picInfo.szPath)
+			table.remove(attr.tPictures, attr.index)
+			if attr.index > #attr.tPictures then
+				attr.index = #attr.tPictures
+			end
+			SetImageByIndex(self, attr.index)
 		end
-		SetImageByIndex(self, attr.index)
 	end
 end
 
