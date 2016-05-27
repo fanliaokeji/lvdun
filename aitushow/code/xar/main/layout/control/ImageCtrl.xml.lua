@@ -32,6 +32,13 @@ function AdjustImageBySize(backgroundObj, imageObj, uWidth, uHeight)
 	end
 end
 
+function OnImagePosChange4png(self, oldl, oldt, oldr, oldb, l, t, r, b)
+	local pngbkg = self:GetObject("control:PngBkg")
+	if pngbkg:GetVisible() then
+		pngbkg:SetObjPos(l, t, r, b)
+	end
+end
+
 function OnImagePosChange(self)
 	local ctrl = self:GetOwnerControl()
 	local imageObj = ctrl:GetControlObject("Image")
@@ -86,6 +93,12 @@ function SetImageByIndex(self, index)
 	
 	attr.index = index
 	local tImgInfo = attr.tPictures[index]
+	local pngbkg = self:GetObject("PngBkg")
+	if tImgInfo.szExt == "png" or tImgInfo.fifType == 13 then
+		pngbkg:SetVisible(true)
+	else
+		pngbkg:SetVisible(false)
+	end
 	local imageObj = self:GetControlObject("Image")
 	local imageContainer = self:GetControlObject("ImageContainer")
 	local seqImageObject = self:GetControlObject("SeqImageObject.gif")
@@ -514,7 +527,12 @@ function OnGetMultiImgInfoCallBack(self, key, tImgInfo)
 		tPicData.uWidth = tImgInfo.uWidth
 		tPicData.uHeight = tImgInfo.uHeight
 		tPicData.fifType = tImgInfo.fifType
-		
+		local pngbkg = self:GetObject("PngBkg")
+		if tImgInfo.szExt == "png" or tImgInfo.fifType == 13 then
+			pngbkg:SetVisible(true)
+		else
+			pngbkg:SetVisible(false)
+		end
 		local imageObj = self:GetControlObject("Image")
 		local imageContainer = self:GetControlObject("ImageContainer")
 		imageObj:SetBitmap(tPicData.xlhBitmap)

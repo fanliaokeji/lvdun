@@ -80,14 +80,27 @@
 						<height>father.height-2</height>
 					</attr>
 					<children>
+						<obj id="PngBkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<texture>texture.transparent.bkg</texture>
+								<visible>0</visible>
+								<zorder>999</zorder>
+							</attr>
+						</obj>
 						<obj id="Image" class="ImageObject">
 							<attr>
 								<left>0</left>
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
+								<zorder>1000</zorder>
 							</attr>
 							<eventlist>
+								<event name="OnPosChange" file="ImageCtrl.xml.lua" func="OnImagePosChange4png" />
 								<event name="OnLButtonDown" file="ImageCtrl.xml.lua" func="OnImageLButtonDown" />
 								<event name="OnLButtonUp"   file="ImageCtrl.xml.lua" func="OnImageLButtonUp" />
 								<event name="OnMouseMove" file="ImageCtrl.xml.lua" func="OnImageMouseMove" />
@@ -102,7 +115,7 @@
 								<top>0</top>
 								<width>father.width</width>
 								<height>father.height</height>
-								<zorder>99</zorder>
+								<zorder>1000</zorder>
 								<visible>false</visible>
 								<loop>1</loop>
 								<drawmode>1</drawmode>
