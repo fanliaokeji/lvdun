@@ -131,3 +131,26 @@ function OnClickCloseBtn(self)
 		end
 	end
 end
+
+function OnSize(self, stype)
+	local ownerTree = self:GetBindUIObjectTree()
+	local MaxBtn = ownerTree:GetUIObject("FrameWnd.TitleCtrl:FrameWnd.Title.MaxBtn")
+	local RestoreBtn = ownerTree:GetUIObject("FrameWnd.TitleCtrl:FrameWnd.Title.RestoreBtn")
+	
+	if "max" == stype then
+		RestoreBtn:Show(true)
+		MaxBtn:Show(false)
+	elseif "restored" == stype then
+		MaxBtn:Show(true)
+		RestoreBtn:Show(false)
+	end
+end
+
+function OnInitControl(self)
+	local ownerTree = self:GetOwner()
+	ownerTree:AttachListener("OnBindHostWnd", false, function(tree, hostwnd, isBind) 
+		if isBind then
+			hostwnd:AttachListener("OnSize", false, OnSize)
+		end
+	end)
+end

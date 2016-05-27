@@ -91,10 +91,6 @@ function OnClickMaxBtn(self)
 		return
 	end
 	objHostWnd:Show(3)
-	self:Show(false)
-	local ownerCtrl = self:GetOwnerControl()
-	local RestoreBtn = ownerCtrl:GetControlObject("FrameWnd.Title.RestoreBtn")
-	RestoreBtn:Show(true)
 end
 
 function OnClickRestoreBtn(self)
@@ -104,10 +100,20 @@ function OnClickRestoreBtn(self)
 		return
 	end
 	objHostWnd:Show(9)
-	self:Show(false)
-	local ownerCtrl = self:GetOwnerControl()
-	local MaxBtn = ownerCtrl:GetControlObject("FrameWnd.Title.MaxBtn")
-	MaxBtn:Show(true)
+end
+
+function OnSize(self, stype)
+	local ownerTree = self:GetBindUIObjectTree()
+	local MaxBtn = ownerTree:GetUIObject("MainWnd.TitleCtrl:FrameWnd.Title.MaxBtn")
+	local RestoreBtn = ownerTree:GetUIObject("MainWnd.TitleCtrl:FrameWnd.Title.RestoreBtn")
+	
+	if "max" == stype then
+		RestoreBtn:Show(true)
+		MaxBtn:Show(false)
+	elseif "restored" == stype then
+		MaxBtn:Show(true)
+		RestoreBtn:Show(false)
+	end
 end
 
 function OnClickCloseBtn(self)
@@ -123,4 +129,13 @@ function OnClickCloseBtn(self)
 	if not Helper.Setting.GetExitType() then
 		Helper.tipUtil:Exit()
 	end
+end
+
+function OnInitControl(self)
+	local ownerTree = self:GetOwner()
+	ownerTree:AttachListener("OnBindHostWnd", false, function(tree, hostwnd, isBind) 
+		if isBind then
+			hostwnd:AttachListener("OnSize", false, OnSize)
+		end
+	end)
 end
