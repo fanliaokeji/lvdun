@@ -228,16 +228,27 @@ function OnLButtonDbClick(self)
 	local tree = self:GetOwner()
 	local thumbnailContainer = tree:GetUIObject("ThumbnailContainerObj")
 	local thumbnailContainerAttr = thumbnailContainer:GetAttribute()
+	
+	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+	if MainHostWnd then--隐藏主窗口
+		MainHostWnd:Show(0)
+	end
+	
 	local userData = {}
 	userData.tPictures = thumbnailContainerAttr.tPictures
 	userData.sPath = thumbnailContainerAttr.sPath  --文件夹
 	userData.index = attr.index
 	userData.fileName = attr.fileName
-	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
-	if MainHostWnd then--隐藏主窗口
-		MainHostWnd:Show(0)
+	local wnd = Helper.hostWndManager:GetHostWnd("ImageWnd.Instance")
+	if wnd then
+		local wndTree = wnd:GetBindUIObjectTree()
+		local imageCtrl = wndTree:GetUIObject("FrameWnd.ImageCtrl")
+		imageCtrl:SetFolderData(userData)
+		wnd:Show(1)
+	else
+		
+		Helper:CreateModelessWnd("ImageWnd","ImageWndTree", nil, userData)
 	end
-	Helper:CreateModelessWnd("ImageWnd","ImageWndTree", nil, userData)
 end
 
 function OnInitControl(self)
