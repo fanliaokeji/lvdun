@@ -11,16 +11,19 @@ function closeOnClick(self)
 	local owner = self:GetOwner()
 	local hostwnd = owner:GetBindHostWnd()
 	local nRet = MessageBox.ID_CANCEL
+	hostwnd:EndDialog(nRet)
+end
+
+function nosaveOnClick(self)
+	local owner = self:GetOwner()
+	local hostwnd = owner:GetBindHostWnd()
+	local nRet = MessageBox.ID_NOSAVE
 	if GetCheckState(self) then
 		nRet = nRet + MessageBox.ID_CHECK
 	else
 		nRet = nRet + MessageBox.ID_UNCHECK
 	end
 	hostwnd:EndDialog(nRet)
-end
-
-function nosaveOnClick(self)
-	closeOnClick(self)
 end
 
 function renamesaveOnClick(self)

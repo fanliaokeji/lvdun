@@ -9,6 +9,7 @@ MessageBox.ID_CANCEL		= 0x01
 MessageBox.ID_YES 			= 0x02
 MessageBox.ID_RENAMESAVE 	= 0x03
 MessageBox.ID_COVEROLD 		= 0x04
+MessageBox.ID_NOSAVE 		= 0x05
 MessageBox.ID_CHECK			= 0x10
 MessageBox.ID_UNCHECK		= 0x20
 
