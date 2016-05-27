@@ -57,14 +57,12 @@ end
 function menuFunTable.OnSelect_Save(self)
 	local  tImgInfo = GetCurImageInfo(self)
 	if not tImgInfo or not tImgInfo.szPath then
-		XLMessageBox("not tImgInfo h")
 		return
 	end
 	-- local fileName = Helper:GetFileNameByPath(tImgInfo.szPath)
 	-- Helper.tipUtil:FileDialog(false, "*.*", tImgInfo.szExt, fileName)
 	local angle = tImgInfo.angle
 	if not angle or 0 == angle then
-		XLMessageBox("gh")
 		return
 	end
 	if angle < 0 then
