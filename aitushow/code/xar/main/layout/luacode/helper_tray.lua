@@ -50,16 +50,7 @@ function Tray.PopMenu()
 	else
 		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
 	end
-	
-	--创建1个topmost的隐藏窗口作为托盘菜单的父窗口， 可以保证菜单置顶以及正确消失
-	local hostMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
-	local hideWnd = hostMgr:GetHostWnd("TrayHideWnd.Instance")
-	if not hideWnd then
-		local tmpmgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
-		hideWnd = tmpmgr:GetTemplate("TrayHideWnd", "HostWndTemplate"):CreateInstance("TrayHideWnd.Instance")
-		hideWnd:Create()
-	end
-	Helper:CreateMenu(x, y, hideWnd:GetWndHandle(), Tray.MenuContent)
+	Helper:CreateMenu(x, y, Tray.HostWnd, Tray.MenuContent)
 end
 
 function Tray.Update(strText)
