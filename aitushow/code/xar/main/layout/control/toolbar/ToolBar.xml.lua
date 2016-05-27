@@ -4,14 +4,14 @@ local timerid = nil
 function Execute(fun)
 	return function()
 		fun()
-		SetOnceTimer(function() StartTimer(fun)() end, 1000)
+		SetOnceTimer(function() StartTimer(fun)() end, 500)
 	end
 end
 
 function StartTimer(fn)
 	return function()
 		StopTimer()
-		timerid = tm:SetTimer(fn, 500)
+		timerid = tm:SetTimer(fn, 100)
 	end
 end
 function StopTimer()
