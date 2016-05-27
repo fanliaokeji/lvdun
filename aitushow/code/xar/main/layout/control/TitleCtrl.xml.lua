@@ -127,6 +127,7 @@ function OnClickCloseBtn(self)
 		MainHostWnd:BringWindowToTop(true)
 	else
 		if not Setting.GetExitType() then
+			Helper.Tray.Hide()
 			Helper.tipUtil:Exit()
 		end
 	end

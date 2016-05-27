@@ -127,6 +127,7 @@ function OnClickCloseBtn(self)
 	--Helper.tipUtil:Exit()
 	objHostWnd:Show(0)
 	if not Helper.Setting.GetExitType() then
+		Helper.Tray.Hide()
 		Helper.tipUtil:Exit()
 	end
 end

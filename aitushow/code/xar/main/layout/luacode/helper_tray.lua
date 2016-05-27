@@ -17,6 +17,7 @@ end
 
 function Tray.Setting()
 	LOG("Tray.Setting:enter")
+	Helper:CreateModalWnd("SettingWnd","SettingWndTree", Tray.HostWnd)
 end
 
 function Tray.Sysboot()
@@ -29,7 +30,8 @@ function Tray.Suggestion()
 end
 
 function Tray.Exit()
-	LOG("Tray.Exit:enter")
+	Tray.Hide()
+	tipUtil:Exit()
 end
 
 Tray.HostWndName = "MenuHostWnd.Instance"
@@ -41,16 +43,23 @@ Tray.MenuContent = {
 	{id="tray.exit", text="退出", OnSelectFun = Tray.Exit},
 }
 
-function Tray.PopMenu(hostwnd)
+function Tray.PopMenu()
 	local x, y = tipUtil:GetCursorPos()
 	if Setting.IsSysBoot() then
 		Tray.MenuContent[3]["iconNormalID"] = "setting_check.icon"
 	else
 		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
 	end
-	--hostwnd:SetTopMost(true)
-	Helper:CreateMenu(x, y, hostwnd:GetWndHandle(), Tray.MenuContent)
-	--hostwnd:SetTopMost(false)
+	
+	--创建1个topmost的隐藏窗口作为托盘菜单的父窗口， 可以保证菜单置顶以及正确消失
+	local hostMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local hideWnd = hostMgr:GetHostWnd("TrayHideWnd.Instance")
+	if not hideWnd then
+		local tmpmgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
+		hideWnd = tmpmgr:GetTemplate("TrayHideWnd", "HostWndTemplate"):CreateInstance("TrayHideWnd.Instance")
+		hideWnd:Create()
+	end
+	Helper:CreateMenu(x, y, hideWnd:GetWndHandle(), Tray.MenuContent)
 end
 
 function Tray.Update(strText)
@@ -79,18 +88,18 @@ function Tray.Init(hostwnd)
 		if event3 == 517 then
 			local newWnd = hostwndManager:GetHostWnd(Tray.HostWndName)	
 			if not newWnd then
-        		Tray.PopMenu(Tray.HostWnd)
+        		Tray.PopMenu()
 			end
 		end
 		
 		--单击左键
 		if event3 == 0x0202 then
-			Tray.Open(Tray.HostWnd)	
+			Tray.Open()	
 		end
 		
 		--点击气泡
 		if event3 == 1029 then
-			Tray.Open(Tray.HostWnd)	
+			Tray.Open()	
 		end
 		--mousemove
 		if event3 == 512 then

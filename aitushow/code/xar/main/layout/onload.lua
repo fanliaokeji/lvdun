@@ -69,6 +69,10 @@ function OnLoadLuaFile()
 	else
 		HostWnd:Show(5)
 	end
+	--初始化托盘
+	if HostWnd then
+		Helper.Tray.Init(HostWnd)
+	end
 end
 
 OnLoadLuaFile()

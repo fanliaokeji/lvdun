@@ -80,7 +80,9 @@ function OnImageMouseWheel(self, x, y, direction, distance)
 end
 
 function OnShowWindow(self, bVisible)
-	
+	if bVisible then
+		Helper.Tray.HostWnd = self
+	end
 end
 
 --退出全屏模式，进入在TitleCtrl里处理

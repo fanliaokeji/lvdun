@@ -1,6 +1,5 @@
 local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
-local Tray = Helper.Tray
 
 
 local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosX"
@@ -61,7 +60,6 @@ function OnCreate(self)
 		thumbContainerObj:SetFolder(lastPath)
 		LeftPanel:Update(lastPath)
 	end
-	Tray.Init(self)
 end
 
 local isLButtonDown = false
@@ -107,7 +105,9 @@ function OnSliderPosChange(self, event, pos)
 end
 
 function OnShowWindow(self, bVisible)
-	
+	if bVisible then
+		Helper.Tray.HostWnd = self
+	end
 end
 
 --左侧树选择事件
