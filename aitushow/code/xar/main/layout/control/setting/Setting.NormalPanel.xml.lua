@@ -11,21 +11,21 @@ function Update(self)
 	local radio_closetray = self:GetObject("radio13")
 	local radio_mustclose = self:GetObject("radio14")
 	
-	ckbox_sysboot:SetCheck(SettingHelper.IsSysBoot())
-	ckbox_delremind:SetCheck(SettingHelper.IsDelRemind())
+	ckbox_sysboot:SetCheck(SettingHelper.IsSysBoot(), true)
+	ckbox_delremind:SetCheck(SettingHelper.IsDelRemind(), true)
 	local strRotate = SettingHelper.GetRotateType()
 	if strRotate == "rensave" then
-		radio_rensave:SetCheck(true)
+		radio_rensave:SetCheck(true, true)
 	elseif strRotate == "coverold" then
-		radio_covold:SetCheck(true)
+		radio_covold:SetCheck(true, true)
 	elseif strRotate == "nosave" then
-		radio_nosave:SetCheck(true)
+		radio_nosave:SetCheck(true, true)
 	else
 	end
 	if SettingHelper.GetExitType() then
-		radio_closetray:SetCheck(true)
+		radio_closetray:SetCheck(true, true)
 	else
-		radio_mustclose:SetCheck(true)
+		radio_mustclose:SetCheck(true, true)
 	end
 end
 

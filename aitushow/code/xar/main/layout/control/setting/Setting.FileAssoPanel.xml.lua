@@ -9,13 +9,21 @@ local SpecialExts = {
 
 function Update(self)
 	local ckboxobj
+	local bcheckall = true
 	for i = 3, 35 do
 		ckboxobj = self:GetObject("chebox"..i)
 		if tipUtil:IsAssociated("."..string.lower(ckboxobj:GetAttribute().Text)) then
-			ckboxobj:SetCheck(true)
+			ckboxobj:SetCheck(true, true)
 		else
-			ckboxobj:SetCheck(false)
+			bcheckall = false
+			ckboxobj:SetCheck(false, true)
 		end
+	end
+	local checkall = self:GetObject("chebox37")
+	if bcheckall then
+		checkall:SetCheck(true, true)
+	else
+		checkall:SetCheck(false, true)
 	end
 end
 
