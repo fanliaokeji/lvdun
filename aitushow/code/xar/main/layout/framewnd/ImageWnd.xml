@@ -89,9 +89,9 @@
 				<!--工具栏-->
 				<obj id="ToolBarContainer" class="LayoutObject">
 					<attr>
-						<left>0</left>
-						<top>father.height-57</top>
-						<width>father.width</width>
+						<left>3</left>
+						<top>father.height-60</top>
+						<width>father.width-6</width>
 						<height>57</height>
 						<zorder>9999</zorder>
 					</attr>
