@@ -35,10 +35,10 @@
 		<attr>
 			<BkgTexture>texture.menu.combobox.bkg</BkgTexture>
 			<!--以下四个值要根据阴影图片的情况来设定-->
-			<LeftOffSet>0</LeftOffSet>
-			<RightOffSet>0	</RightOffSet>
-			<TopOffSet>0</TopOffSet>
-			<BottomOffSet>0</BottomOffSet>
+			<LeftOffSet>2</LeftOffSet>
+			<RightOffSet>2	</RightOffSet>
+			<TopOffSet>1</TopOffSet>
+			<BottomOffSet>2</BottomOffSet>
 		</attr>
 	</objtemplate>
 </xlue>
