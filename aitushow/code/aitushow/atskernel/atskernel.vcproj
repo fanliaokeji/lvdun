@@ -457,6 +457,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="ImageLoder"
+			>
+			<File
+				RelativePath=".\ImageLoader\ImageLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageLoader\ImageLoader.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

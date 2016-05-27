@@ -37,7 +37,7 @@ static char *szImgExt[] = {
 	"xpm",
 	"dds",
 	"gif",
-	"hdr",
+	//"hdr",
 	"faxg3",
 	"sgi",
 	"exr",
@@ -45,7 +45,7 @@ static char *szImgExt[] = {
 	"jp2",
 	"pfm",
 	"pict",
-	"raw",
+	//"raw",
 	"webp",
 	"jxr"
 };
@@ -123,8 +123,8 @@ inline FREE_IMAGE_FORMAT ConverStrExtToFIF(const char *szExt)
 		return FIF_DDS;
 	if (strcmp(szExt,"gif") == 0)
 		return FIF_GIF;
-	if (strcmp(szExt,"hdr") == 0)
-		return FIF_HDR;
+	//if (strcmp(szExt,"hdr") == 0)
+	//	return FIF_HDR;
 	if (strcmp(szExt,"faxg3") == 0)
 		return FIF_FAXG3;
 	if (strcmp(szExt,"sgi") == 0)
@@ -139,8 +139,8 @@ inline FREE_IMAGE_FORMAT ConverStrExtToFIF(const char *szExt)
 		return FIF_PFM;
 	if (strcmp(szExt,"pict") == 0)
 		return FIF_PICT;
-	if (strcmp(szExt,"raw") == 0)
-		return FIF_RAW;
+	//if (strcmp(szExt,"raw") == 0)
+	//	return FIF_RAW;
 	if (strcmp(szExt,"webp") == 0)
 		return FIF_WEBP;
 	if (strcmp(szExt,"jxr") == 0)
@@ -206,8 +206,8 @@ inline std::string ConverFIFToStrExt(const FREE_IMAGE_FORMAT fif)
 		return  "dds";
 	if (fif == FIF_GIF)
 		return  "gif";
-	if (fif == FIF_HDR)
-		return  "hdr";
+	//if (fif == FIF_HDR)
+	//	return  "hdr";
 	if (fif == FIF_FAXG3)
 		return  "faxg3";
 	if (fif == FIF_SGI)
@@ -222,8 +222,8 @@ inline std::string ConverFIFToStrExt(const FREE_IMAGE_FORMAT fif)
 		return  "pfm";
 	if (fif == FIF_PICT)
 		return  "pict";
-	if (fif == FIF_RAW)
-		return  "raw";
+	//if (fif == FIF_RAW)
+	//	return  "raw";
 	if (fif == FIF_WEBP)
 		return  "webp";
 	if (fif == FIF_JXR)

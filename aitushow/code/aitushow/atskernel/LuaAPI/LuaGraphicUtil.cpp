@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <math.h>
 #include "LuaGraphicUtil.h"
-
+#include "..\ImageLoader\ImageLoader.h"
 #include <XLLuaRuntime.h>
 
 
@@ -531,7 +531,18 @@ void GetImgInfoByPath(const char *filepath)
 		//	DIB_RGB_COLORS);
 
 		//XL_BITMAP_HANDLE xlhBitmap = XLGP_ConvertDDBToXLBitmap(hdc, hBitmap, XLGRAPHIC_CT_ARGB32);
-		XL_BITMAP_HANDLE xlhBitmap =  ConvertFIBitmapToXLBitmap(dib);
+		XL_BITMAP_HANDLE xlhBitmap;
+		if (fif == FIF_PNG)
+		{
+			//std::wstring wstrFile = ultra::_A2T(filepath);
+			//xlhBitmap = XL_LoadPngFromFile(wstrFile.c_str());
+			//XL_ResetAlphaChannel(xlhBitmap,0);
+			xlhBitmap = ImageLoader::GetInstance()->LoadBitmapFromFile((char*)filepath,32,ImageType_png);
+		} 
+		else
+		{
+			xlhBitmap =  ConvertFIBitmapToXLBitmap(dib);
+		}
 		if (NULL != xlhBitmap)
 		{
 			KTImageInfo* lpImgeInfo = new KTImageInfo;
