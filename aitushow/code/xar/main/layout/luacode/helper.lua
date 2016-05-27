@@ -477,6 +477,7 @@ function Helper:AddItemToContainer(menuItemContainer, menuTable, menuFunTable)
 end
 
 function Helper:CreateMenuEx(x, y, parentWnd, menuTable, menuFunTable, userData, menuItemTemplID, menuItemContainerTemplID)
+	if _G["gMenu"] then return end
 	--这两个Template都是空架子
 	local menuWndTemplID = "MenuHostWnd"
 	local menuTreeTemplID = "MenuHostWndTree"
@@ -516,7 +517,7 @@ function Helper:CreateMenuEx(x, y, parentWnd, menuTable, menuFunTable, userData,
 	
 	local screenLeft, screenTop, screenRight, screenBottom = self.tipUtil:GetScreenRectFromPoint(x, y)
 	--菜单窗口大小是整个屏幕，以方便子菜单的显示
-	menuWnd:Move(screenLeft, screenTop, screenRight, screenBottom)
+	menuWnd:Move(screenLeft , screenTop, screenRight, screenBottom)
 	containerL, containerT, containerR, containerB = self:CalcMenuPopPosition(x, y, menuItemContainer)
 	--真正的菜单内容都在menuItemContainer里面
 	menuItemContainer:SetObjPos(containerL, containerT, containerR, containerB)

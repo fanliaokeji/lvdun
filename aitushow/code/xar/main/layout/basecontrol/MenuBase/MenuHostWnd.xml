@@ -24,6 +24,7 @@
 		<eventlist>
 			<event name="OnEndMenu" />
 			<event name="OnFocusChange" />
+			<event name="OnPopupMenu" />
 		</eventlist>
 	</hostwndtemplate>
 </xlue>
