@@ -179,6 +179,9 @@ end
 
 function Select(self, bSelect)
 	local attr = self:GetAttribute()
+	if not attr then
+		LOG("GetAttribute nil!!!!!!!!!")
+	end
 	attr.bSelect = bSelect 
 	-- local bkg = self:GetControlObject("Background")
 	local bkg = self:GetControlObject("SelectFrame")
