@@ -388,7 +388,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>HDR</Text>
+			<Text>IFF</Text>
 			<left>26</left>
 			<width>83</width>
 			<top>201</top>
@@ -402,7 +402,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>IFF</Text>
+			<Text>JXR</Text>
 			<left>129</left>
 			<width>83</width>
 			<top>201</top>
@@ -416,7 +416,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>JXR</Text>
+			<Text>LBM</Text>
 			<left>232</left>
 			<width>83</width>
 			<top>201</top>
@@ -430,7 +430,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>LBM</Text>
+			<Text>PBM</Text>
 			<left>335</left>
 			<width>83</width>
 			<top>201</top>
@@ -444,7 +444,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>PBM</Text>
+			<Text>PCD</Text>
 			<left>26</left>
 			<width>83</width>
 			<top>227</top>
@@ -458,7 +458,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>PCD</Text>
+			<Text>PICT</Text>
 			<left>129</left>
 			<width>83</width>
 			<top>227</top>
@@ -472,7 +472,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>PICT</Text>
+			<Text>WEB</Text>
 			<left>232</left>
 			<width>83</width>
 			<top>227</top>
@@ -486,7 +486,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>WEB</Text>
+			<Text>MNG</Text>
 			<left>335</left>
 			<width>83</width>
 			<top>227</top>
@@ -500,36 +500,8 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>MNG</Text>
-			<left>26</left>
-			<width>83</width>
-			<top>253</top>
-			<CheckNormal>setting_check.normal</CheckNormal>
-			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
-			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
-			<height>20</height>
-		</attr>
-	</obj>
-	<obj id="chebox36" class="CheckBox">
-		<attr>
-			<CheckHover>setting_check.hover</CheckHover>
-			<Select>true</Select>
 			<Text>PSD</Text>
-			<left>129</left>
-			<width>83</width>
-			<top>253</top>
-			<CheckNormal>setting_check.normal</CheckNormal>
-			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
-			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
-			<height>20</height>
-		</attr>
-	</obj>
-	<obj id="chebox37" class="CheckBox">
-		<attr>
-			<CheckHover>setting_check.hover</CheckHover>
-			<Select>true</Select>
-			<Text>RAW</Text>
-			<left>232</left>
+			<left>26</left>
 			<width>83</width>
 			<top>253</top>
 			<CheckNormal>setting_check.normal</CheckNormal>
@@ -550,7 +522,7 @@
 			<width>father.width-26-8</width>
 		</attr>
 	</obj>
-	<obj id="chebox39" class="CheckBox">
+	<obj id="chebox37" class="CheckBox">
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
@@ -564,7 +536,7 @@
 			<height>20</height>
 		</attr>
 		<eventlist>
-			<event name="OnSelect" file="Setting.FileAssoPanel.xml.lua" func="chebox39OnSelect" />
+			<event name="OnSelect" file="Setting.FileAssoPanel.xml.lua" func="chebox37OnSelect" />
 		</eventlist>
 	</obj>
 	</children>

@@ -91,13 +91,13 @@ function OnClickCloseBtn(self)
 		return
 	end
 	local imgctrl = Helper.Selector.select("", "FrameWnd.ImageCtrl", "ImageWnd.Instance")
+	local Setting = Helper.Setting
 	if imgctrl then
 		local attr = imgctrl:GetAttribute()
 		attr.index = attr.index or 0
 		attr.tPictures = attr.tPictures or {}
 		if attr.tPictures[attr.index] and attr.tPictures[attr.index].angle and attr.tPictures[attr.index].angle%360 ~= 0 then
 			local MSG = Helper.MessageBox
-			local Setting = Helper.Setting
 			local rtype = Setting.GetRotateType()
 			if rtype == "askme" then
 				local nRet, bCheck = MSG.MessageBoxEx(objHostWnd)
@@ -114,12 +114,20 @@ function OnClickCloseBtn(self)
 						Setting.SetRotateType("nosave")
 					end
 				end
+			elseif rtype == "rensave" then
+			elseif rtype == "coverold" then
+			else
 			end
 		end
 	end
-	Helper:DestoryModelessWnd("ImageWnd")
+	--Helper:DestoryModelessWnd("ImageWnd")
+	objHostWnd:Show(0)
 	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 	if MainHostWnd then
 		MainHostWnd:BringWindowToTop(true)
+	else
+		if not Setting.GetExitType() then
+			Helper.tipUtil:Exit()
+		end
 	end
 end

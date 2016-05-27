@@ -1,12 +1,20 @@
 local Helper = XLGetGlobal("Helper")
 local Selector = Helper.Selector
-function GetMainWndHost()
-	return Selector.select("", "", "MainWnd.Instance")
+function GetMainWndHost(parentHwnd)
+	local mainhost = Selector.select("", "", "MainWnd.Instance")
+	local imghost = Selector.select("", "", "ImageWnd.Instance")
+	if mainhost and mainhost:GetWndHandle() == parentHwnd then
+		return mainhost
+	end
+	if imghost and imghost:GetWndHandle() == parentHwnd then
+		return imghost
+	end
 end
 
 
+
 function OnCreate(self)
-	local HostWnd = GetMainWndHost()
+	local HostWnd = GetMainWndHost(self:GetOwner())
 	local l, t, r, b = HostWnd:GetWindowRect()
 	local w, h = r-l, b-t
 	local _l, _t, _r, _b = self:GetWindowRect()

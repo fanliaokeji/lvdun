@@ -14,7 +14,7 @@ function OnClickSetting(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
 	Helper:CreateModalWnd("SettingWnd","SettingWndTree", objHostWnd)
-	local MSG = Helper.MessageBox
+	--local MSG = Helper.MessageBox
 	--[[local nRet, bCheck = MSG.MessageBoxEx(objHostWnd)
 	if MSG.ID_RENAMESAVE == nRet then
 		XLMessageBox("ID_RENAMESAVE, bCheck = "..tostring(bCheck))
@@ -118,5 +118,9 @@ function OnClickCloseBtn(self)
 	end
 	-- objHostWnd:Show(2)
 	--直接退出
-	Helper.tipUtil:Exit()
+	--Helper.tipUtil:Exit()
+	objHostWnd:Show(0)
+	if not Helper.Setting.GetExitType() then
+		Helper.tipUtil:Exit()
+	end
 end

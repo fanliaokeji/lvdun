@@ -32,7 +32,7 @@ function Tray.Exit()
 	LOG("Tray.Exit:enter")
 end
 
-Tray.HostWndName = "KuaiKnaTrayMenu.MainFrame"
+Tray.HostWndName = "MenuHostWnd.Instance"
 Tray.MenuContent = {
 	{id="tray.open", text="打开快看", OnSelectFun = Tray.Open},
 	{id="tray.setting", text="软件设置...", OnSelectFun = Tray.Setting},
@@ -48,7 +48,9 @@ function Tray.PopMenu(hostwnd)
 	else
 		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
 	end
+	--hostwnd:SetTopMost(true)
 	Helper:CreateMenu(x, y, hostwnd:GetWndHandle(), Tray.MenuContent)
+	--hostwnd:SetTopMost(false)
 end
 
 function Tray.Update(strText)
