@@ -68,17 +68,19 @@ function OnImagePosChange(self)
 end
 
 function SetImagePath(self, path)
-	local imageObj = self:GetControlObject("Image")
-	local bitmap = Helper.graphicFactory:CreateBitmap(path, "RGB32")
+	local attr = self:GetAttribute()
+	local szFolder, filename = string.match(path, "(.+)[\\/]([^?]+)")
 	
-	-- if not OnMainWndResizeCookie then
-		-- local imageContainer = self:GetControlObject("ImageContainer")
-		-- OnPosChangeCookie = imageContainer:AttachListener("OnPosChange", false, function() OnPosChange(self) end)
-		-- imageObj:SetDrawMode(1)
-	-- end
+	attr.tPictures = graphicUtil:GetDirSupportImgPaths(szFolder)
+	attr.index = 1
 	
-	-- imageObj:SetBitmap(bitmap)
-	-- OnPosChange(self)
+	for i=1, #attr.tPictures do
+		if attr.tPictures[i].szPath == path then
+			attr.index = i
+			break
+		end
+	end
+	SetImageByIndex(self, attr.index)
 end
 
 function SetImage(self, xlhBitmap)
@@ -228,6 +230,7 @@ end
 function SetFolderData(self, userData)
 	local attr = self:GetAttribute()
 	attr.tPictures = userData.tPictures
+	
 	attr.index = userData.index
 	attr.sPath = userData.sPath
 	attr.fileName = userData.fileName
