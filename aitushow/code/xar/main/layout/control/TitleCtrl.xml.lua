@@ -114,6 +114,9 @@ function OnClickCloseBtn(self)
 						Setting.SetRotateType("nosave")
 					end
 				else --MSG.ID_CANCEL == nRet
+					if bCheck then
+						Setting.SetRotateType("nosave")
+					end
 					return
 				end
 			elseif rtype == "rensave" then

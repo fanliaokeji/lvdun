@@ -11,6 +11,11 @@ function closeOnClick(self)
 	local owner = self:GetOwner()
 	local hostwnd = owner:GetBindHostWnd()
 	local nRet = MessageBox.ID_CANCEL
+	if GetCheckState(self) then
+		nRet = nRet + MessageBox.ID_CHECK
+	else
+		nRet = nRet + MessageBox.ID_UNCHECK
+	end
 	hostwnd:EndDialog(nRet)
 end
 
