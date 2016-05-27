@@ -1,10 +1,17 @@
 local tm = XLGetObject("Xunlei.UIEngine.TimerManager")
 local timerid = nil
+
+function Execute(fun)
+	return function()
+		fun()
+		SetOnceTimer(function() StartTimer(fun)() end, 1000)
+	end
+end
+
 function StartTimer(fn)
 	return function()
 		StopTimer()
-		timerid = tm:SetTimer(fn, 100)
-		fn()
+		timerid = tm:SetTimer(fn, 500)
 	end
 end
 function StopTimer()
@@ -26,25 +33,25 @@ function ToolBarOnInitControl(self)
 	local attr = self:GetAttribute()
 	--除了3和8不需要计时器，其它都需要
 	attr.timerdo = {
-		["panelbutton1"] = StartTimer(function()
+		["panelbutton1"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "fangda")
 		end), 
-		["panelbutton2"] = StartTimer(function()
+		["panelbutton2"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "suoxiao")
 		end),
 		["panelbutton3"] = function()
 			
 		end,
-		["panelbutton4"] = StartTimer(function()
+		["panelbutton4"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "shangyizhang")
 		end),
-		["panelbutton5"] = StartTimer(function()
+		["panelbutton5"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "xiayizhang")
 		end),
-		["panelbutton6"] = StartTimer(function()
+		["panelbutton6"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "zuoxuanzhuan")
 		end),
-		["panelbutton7"] = StartTimer(function()
+		["panelbutton7"] = Execute(function()
 			self:FireExtEvent("OnToolBarCommand", "youxuanzhuan")
 		end),
 		["panelbutton8"] = function()
