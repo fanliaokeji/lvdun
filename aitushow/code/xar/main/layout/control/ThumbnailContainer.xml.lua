@@ -141,6 +141,15 @@ function PageManager:New()
 	return containerObj
 end
 
+function PageManager:ClearAll()
+	for i=1, 3 do
+		local page = self.pageList[i]
+		if page then
+			page:ClearPageData()
+		end
+	end
+end
+
 function PageManager:Init(ctrlSelf, tPictures)
 	if not self.bInit then--第一次初始化
 		self.bInit = true
@@ -153,6 +162,7 @@ function PageManager:Init(ctrlSelf, tPictures)
 			table.insert(self.pageList, page)
 		end
 	end
+	self:ClearAll()
 	if 0 == #tPictures then
 		for i=1, 3 do
 			self.pageList[i]:ClearPageData()
