@@ -8,11 +8,7 @@ local Setting = Helper.Setting
 local hostwndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 
 function Tray.Open()
-	--local strState = Tray.HostWnd:GetWindowState()
-	--XLMessageBox(tostring(strState))
-	--if tostring(strState) == "min" then
-		Tray.HostWnd:BringWindowToTop(true)
-	--end
+	Tray.HostWnd:BringWindowToTop(true)
 end
 
 function Tray.Setting()
@@ -44,13 +40,14 @@ Tray.MenuContent = {
 }
 
 function Tray.PopMenu()
-	local x, y = tipUtil:GetCursorPos()
+	--[[local x, y = tipUtil:GetCursorPos()
 	if Setting.IsSysBoot() then
 		Tray.MenuContent[3]["iconNormalID"] = "setting_check.icon"
 	else
 		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
 	end
-	Helper:CreateMenu(x, y, nil, Tray.MenuContent)
+	Helper:CreateMenu(x, y, Tray.HostWnd, Tray.MenuContent)]]--
+	CreateTrayTipWnd(Tray.HostWnd)
 end
 
 function Tray.Update(strText)
@@ -107,4 +104,75 @@ function Tray.Hide()
 	if TrayObject then
 		TrayObject:Hide()
 	end
+end
+
+
+function CreateTrayTipWnd(objHostWnd)
+	local uTempltMgr = XLGetObject("Xunlei.UIEngine.TemplateManager")
+	local uHostWndMgr = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local uObjTreeMgr = XLGetObject("Xunlei.UIEngine.TreeManager")
+
+	if uTempltMgr and uHostWndMgr and uObjTreeMgr then
+		local uHostWnd = nil
+		local strHostWndTempltName = "TipTrayWnd"
+		local strHostWndTempltClass = "HostWndTemplate"
+		local strHostWndName = "GSTrayMenuHostWnd.MainFrame"
+		local uHostWndTemplt = uTempltMgr:GetTemplate(strHostWndTempltName, strHostWndTempltClass)
+		if uHostWndTemplt then
+			uHostWnd = uHostWndTemplt:CreateInstance(strHostWndName)
+		end
+
+		local uObjTree = nil
+		local strObjTreeTempltName = "TrayMenuTree"
+		local strObjTreeTempltClass = "ObjectTreeTemplate"
+		local strObjTreeName = "GSTrayMenuWnd.MainObjectTree"
+		local uObjTreeTemplt = uTempltMgr:GetTemplate(strObjTreeTempltName, strObjTreeTempltClass)
+		if uObjTreeTemplt then
+			uObjTree = uObjTreeTemplt:CreateInstance(strObjTreeName)
+		end
+
+		if uHostWnd and uObjTree then
+			--函数会阻塞
+			local bSucc = ShowPopupMenu(uHostWnd, uObjTree)
+			
+			if bSucc and uHostWnd:GetMenuMode() == "manual" then
+				uObjTreeMgr:DestroyTree(strObjTreeName)
+				uHostWndMgr:RemoveHostWnd(strHostWndName)
+			end
+		end
+	end
+end
+
+
+function ShowPopupMenu(uHostWnd, uObjTree)
+	uHostWnd:BindUIObjectTree(uObjTree)
+					
+	local nPosCursorX, nPosCursorY = tipUtil:GetCursorPos()
+	if type(nPosCursorX) ~= "number" or type(nPosCursorY) ~= "number" then
+		return false
+	end
+	
+	local nScrnLeft, nScrnTop, nScrnRight, nScrnBottom = tipUtil:GetScreenArea()
+	
+	local objMainLayout = uObjTree:GetUIObject("TrayMenu.Main")
+	if not objMainLayout then
+	    return false
+	end	
+		
+	local nL, nT, nR, nB = objMainLayout:GetObjPos()				
+	local nMenuContainerWidth = nR - nL
+	local nMenuContainerHeight = nB - nT
+	local nMenuScreenLeft = nPosCursorX
+	local nMenuScreenTop = nPosCursorY - nMenuContainerHeight
+	
+	if nMenuScreenLeft+nMenuContainerWidth > nScrnRight - 10 then
+		nMenuScreenLeft = nPosCursorX - nMenuContainerWidth
+	end
+	
+	-- uHostWnd:SetFocus(false) --先失去焦点，否则存在菜单不会消失的bug
+	
+	--函数会阻塞
+	local bOk = uHostWnd:TrackPopupMenu(objHostWnd, nMenuScreenLeft, nMenuScreenTop, nMenuContainerWidth, nMenuContainerHeight)
+	
+	return bOk
 end
