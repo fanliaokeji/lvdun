@@ -31,9 +31,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton2" class="TipAddin.Button">
@@ -49,9 +48,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton3" class="TipAddin.Button">
@@ -68,8 +66,6 @@
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
 			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
-			
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton4" class="TipAddin.Button">
@@ -85,9 +81,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton5" class="TipAddin.Button">
@@ -103,9 +98,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton6" class="TipAddin.Button">
@@ -121,9 +115,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton7" class="TipAddin.Button">
@@ -139,9 +132,8 @@
 		</attr>
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
-			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
+			<event name="OnLButtonDown" file="ToolBar.xml.lua" func="ToolPanelOnLButtonDown" />
 			<event name="OnLButtonUp" file="ToolBar.xml.lua" func="ToolPanelOnLButtonUp" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	<obj id="panelbutton8" class="TipAddin.Button">
@@ -158,7 +150,6 @@
 		<eventlist>
 			<event name="OnButtonMouseLeave" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseLeave" />
 			<event name="OnClick" file="ToolBar.xml.lua" func="ToolPanelOnClick" />
-			<event name="OnButtonMouseDown" file="ToolBar.xml.lua" func="ToolPanelOnButtonMouseDown" />
 		</eventlist>
 	</obj>
 	</children>

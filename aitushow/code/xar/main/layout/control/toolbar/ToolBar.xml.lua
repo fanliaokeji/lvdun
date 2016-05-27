@@ -4,7 +4,8 @@ local timerid = nil
 function Execute(fun)
 	return function()
 		fun()
-		SetOnceTimer(function() StartTimer(fun)() end, 500)
+		StopTimer()
+		timerid = SetOnceTimer(function() StartTimer(fun)() end, 500)
 	end
 end
 
@@ -14,6 +15,7 @@ function StartTimer(fn)
 		timerid = tm:SetTimer(fn, 100)
 	end
 end
+
 function StopTimer()
 	if timerid then
 		tm:KillTimer(timerid)
@@ -76,18 +78,19 @@ function ToolBarOnInitControl(self)
 	}
 end
 
-function ToolPanelOnButtonMouseDown(self)
+function ToolBarOnControlMouseLeave(self, x, y, flags)
+	self:SetVisible(false)
+	self:SetChildrenVisible(false)
+	StopTimer()
+end
+
+function ToolPanelOnLButtonDown(self)
 	local ower = self:GetOwnerControl()
 	local attr = ower:GetAttribute()
 	local id = self:GetID()
 	if type(attr.timerdo) == "table" and id and attr.timerdo[id] then
 		attr.timerdo[id]()
 	end
-end
-
-function ToolBarOnControlMouseLeave(self, x, y, flags)
-	self:SetVisible(false)
-	self:SetChildrenVisible(false)
 end
 
 function ToolPanelOnClick(self, x, y)
