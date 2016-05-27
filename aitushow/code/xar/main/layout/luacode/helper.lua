@@ -522,6 +522,7 @@ function Helper:CreateMenuEx(x, y, parentWnd, menuTable, menuFunTable, userData,
 	menuItemContainer:SetObjPos(containerL, containerT, containerR, containerB)
 	
 	--展示菜单
+	menuWnd:SetTopMost(true)
 	menuWnd:TrackPopupMenu(parentWnd, screenLeft, screenTop, screenRight, screenBottom)
 end
 
