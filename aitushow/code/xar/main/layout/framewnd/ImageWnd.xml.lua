@@ -46,6 +46,7 @@ function OnCreate(self)
 	imageCtrl:SetFolderData(userData)
 		
 	imageCtrl:AttachListener("OnImageSizeChange", false, OnImageSizeChange)
+	imageCtrl:SetFocus(true)
 	
 	Helper:AddDropTarget(self)
 	local function OnDrop(file)
@@ -61,6 +62,19 @@ function OnImageSizeChange(self, event, imageWith, imageHeight, picWidth, picHei
 	local objTree = self:GetOwner()
 	local titleCtrl = objTree:GetUIObject("FrameWnd.TitleCtrl")
 	titleCtrl:SetTitleTextContent("缩放百分比为:"..tostring(math.round(100*imageWith/picWidth)).."%")
+end
+
+function OnImageMouseWheel(self, x, y, direction, distance)
+	if not distance or 0 == distance then
+		distance = 10
+	end
+	local curZoomPercent = self:GetZoomPercent()
+	if direction > 0 then
+		self:Zoom(curZoomPercent + distance)
+	else
+		curZoomPercent = curZoomPercent - distance
+		self:Zoom(curZoomPercent > 10 and curZoomPercent or 10)
+	end
 end
 
 function OnShowWindow(self, bVisible)

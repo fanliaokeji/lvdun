@@ -71,6 +71,9 @@
 						<height>father.height - 33</height>
 						<limitchild>1</limitchild>
 					</attr>
+					<eventlist>
+						<event name="OnMouseWheel" file="ImageWnd.xml.lua" func="OnImageMouseWheel" />				
+					</eventlist>
 				</obj>
 				<!--迷你视图-->
 				<obj id="FrameWnd.MiniViewer" class="MiniViewer">

@@ -69,6 +69,7 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ImageCtrl.xml.lua" func="OnClickLeftArrow" />
+						<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />				
 					</eventlist>
 				</obj>
 				<obj id="ImageContainer" class="LayoutObject">
@@ -115,6 +116,7 @@
 					</children>
 					<eventlist>
 						<event name="OnPosChange" file="ImageCtrl.xml.lua" func="OnImagePosChange" />
+						<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />				
 					</eventlist>
 				</obj>
 				<obj id="RightArrow" class="TipAddin.Button">
@@ -132,6 +134,7 @@
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="ImageCtrl.xml.lua" func="OnClickRightArrow" />
+						<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />				
 					</eventlist>
 				</obj>
 			</children>

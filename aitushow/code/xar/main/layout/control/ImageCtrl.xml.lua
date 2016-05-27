@@ -134,6 +134,9 @@ function SetImageByIndex(self, index)
 		graphicUtil:GetMultiImgInfoByPaths(requireFiles)
 	else
 		imageObj:SetBitmap(tImgInfo.xlhBitmap)
+		
+		-- local picObject = Helper.graphicFactory:CreateBitmap("C:\\Users\\mjt\\Desktop\\新建文件夹\\1.png", "RGB32")
+		-- SetOnceTimer(function() imageObj:SetBitmap(picObject) end, 3000)
 		imageObj:SetDrawMode(1)
 		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
 	end
