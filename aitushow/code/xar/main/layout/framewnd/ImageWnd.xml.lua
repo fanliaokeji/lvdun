@@ -43,7 +43,9 @@ function OnCreate(self)
 
 	local userData = self:GetUserData()
 	local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
-	imageCtrl:SetFolderData(userData)
+	if userData then
+		imageCtrl:SetFolderData(userData)
+	end
 		
 	imageCtrl:AttachListener("OnImageSizeChange", false, OnImageSizeChange)
 	imageCtrl:SetFocus(true)
