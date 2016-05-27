@@ -524,6 +524,7 @@ function Helper:CreateMenuEx(x, y, parentWnd, menuTable, menuFunTable, userData,
 	
 	--展示菜单
 	menuWnd:SetTopMost(true)
+	menuWnd:SetTrapMouse(true)
 	menuWnd:TrackPopupMenu(parentWnd, screenLeft, screenTop, screenRight, screenBottom)
 end
 
