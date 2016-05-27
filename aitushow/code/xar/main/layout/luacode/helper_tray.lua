@@ -50,7 +50,7 @@ function Tray.PopMenu()
 	else
 		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
 	end
-	Helper:CreateMenu(x, y, Tray.HostWnd, Tray.MenuContent)
+	Helper:CreateMenu(x, y, nil, Tray.MenuContent)
 end
 
 function Tray.Update(strText)
