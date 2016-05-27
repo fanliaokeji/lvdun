@@ -169,6 +169,10 @@ function OnSize(self, _type, width, height)
 	
 	local rootObject = tree:GetRootObject()
 	rootObject:SetObjPos(0, 0, width, height)
+	
+	if "max" == _type or "min" == _type or "restored" == _type then
+		return
+	end
 	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
 	Helper:SetRegValue(iWindowPosXReg, x)
 	Helper:SetRegValue(iWindowPosYReg, y)
