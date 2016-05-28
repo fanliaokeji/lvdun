@@ -56,6 +56,11 @@ function Listener.OnCommandLine(tParam)
 		imgctrl:SetImagePath(filepath)
 		--如果存在主窗口，隐藏主窗口
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+		if MainHostWnd and MainHostWnd:GetWindowState() ~= "hide" then
+			Listener.LastShowWnd = MainHostWnd
+		else
+			Listener.LastShowWnd = nil
+		end
 		if MainHostWnd then
 			MainHostWnd:Show(0)
 		end
@@ -68,6 +73,11 @@ function Listener.OnCommandLine(tParam)
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 		local ImgHostWnd = Helper.Selector.select("", "", "ImageWnd.Instance")
 		--其它命令行将主界面放到最前
+		if ImgHostWnd and ImgHostWnd:GetWindowState() ~= "hide" then
+			Listener.LastShowWnd = ImgHostWnd
+		else
+			Listener.LastShowWnd = nil
+		end
 		if ImgHostWnd then
 			ImgHostWnd:Show(0)
 		end

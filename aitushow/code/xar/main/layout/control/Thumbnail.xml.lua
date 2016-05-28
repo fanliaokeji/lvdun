@@ -230,6 +230,7 @@ function OnLButtonDbClick(self)
 	local thumbnailContainerAttr = thumbnailContainer:GetAttribute()
 	
 	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+	Helper.Listener.LastShowWnd = MainHostWnd
 	if MainHostWnd then--隐藏主窗口
 		MainHostWnd:Show(0)
 	end
