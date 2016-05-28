@@ -225,11 +225,11 @@ local function Rotate(self, angle)
 	end
 end
 function RotateLeft(self)
-	Rotate(self, 90)
+	Rotate(self, 270)
 end
 
 function RotateRight(self)
-	Rotate(self, 270)
+	Rotate(self, 90)
 end
 
 function SetFolderData(self, userData)
