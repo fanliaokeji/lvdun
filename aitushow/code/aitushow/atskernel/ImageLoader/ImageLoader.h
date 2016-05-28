@@ -36,7 +36,5 @@ public:
 	XL_BITMAP_HANDLE ConvertHBITMAPToXLBitmap( HBITMAP hBitmap );
 	XL_BITMAP_HANDLE ConvertImageToBitmap( Gdiplus::Image* lpImage );
 
-private:
 
-	ULONG_PTR m_token;
 };

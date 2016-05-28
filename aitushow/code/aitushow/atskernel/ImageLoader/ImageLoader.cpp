@@ -1,22 +1,17 @@
 #include "StdAfx.h"
 #include ".\imageloader.h"
-#include <GdiPlusInit.h>
-#pragma comment(lib,"gdiplus.lib")
+
 #ifndef assert
 #define assert ATLASSERT
 #endif
 ImageLoader::ImageLoader(void)
 {
-	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-	Gdiplus::Status ret = Gdiplus::GdiplusStartup(&m_token, &gdiplusStartupInput, NULL);
-	(ret);
-	assert(ret == Gdiplus::Ok);
+	
 }
 
 ImageLoader::~ImageLoader(void)
 {
-	Gdiplus::GdiplusShutdown(m_token);
-	m_token = 0;
+	
 }
 
 XL_BITMAP_HANDLE ImageLoader::LoadBitmapFromFile(char* pszPath, long colorType, ImageType imageType)
