@@ -49,7 +49,8 @@ function OnImagePosChange(self)
 	local attr = ctrl:GetAttribute()
 	local curInfo = attr.tPictures and attr.index and attr.tPictures[attr.index]
 	local szExt = curInfo and curInfo.szExt 
-	
+	local imageWidth, imageHeight = GetObjWH(imageObj)
+	local picWidth, picHeight = 0, 0
 	if attr.bGif then
 		local gif = gifObj:GetGif()
 		AdjustImageBySize(imageContainer, gifObj, gif:GetSize())
@@ -60,10 +61,12 @@ function OnImagePosChange(self)
 			return
 		end
 	
-		local _, picWidth, picHeight, _ = bitmap:GetInfo()
+		_, picWidth, picHeight, _ = bitmap:GetInfo()
 		AdjustImageBySize(imageContainer, imageObj, picWidth, picHeight)
 		imageObj:SetDrawMode(1)
 	end
+	
+	
 	ctrl:FireExtEvent("OnImageSizeChange", imageWidth, imageHeight, picWidth, picHeight)
 end
 
