@@ -12,10 +12,7 @@ function applyOnClick(self)
 end
 
 function confirmOnClick(self)
-	local NormalPanel = self:GetObject("control:NormalPanel")
-	local FileAssoPanel = self:GetObject("control:FileAssoPanel")
-	NormalPanel:Apply()
-	FileAssoPanel:Apply()
+	applyOnClick(self)
 	closeOnClick(self)
 end
 
@@ -41,8 +38,9 @@ function LeftPanelOnSelect(self, evt, text)
 end
 
 function MainPanelOnInitControl(self)
-	local NormalPanel = self:GetObject("NormalPanel")
-	local FileAssoPanel = self:GetObject("FileAssoPanel")
-	NormalPanel:Update()
-	FileAssoPanel:Update()
+	--local NormalPanel = self:GetObject("NormalPanel")
+	--local FileAssoPanel = self:GetObject("FileAssoPanel")
+	--NormalPanel:Update()
+	--Helper.LOG("FileAssoPanel.Update is "..type(FileAssoPanel.Update))
+	--FileAssoPanel:Update()
 end

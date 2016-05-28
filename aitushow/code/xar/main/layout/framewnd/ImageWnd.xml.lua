@@ -63,7 +63,9 @@ end
 function OnImageSizeChange(self, event, imageWith, imageHeight, picWidth, picHeight)
 	local objTree = self:GetOwner()
 	local titleCtrl = objTree:GetUIObject("FrameWnd.TitleCtrl")
-	titleCtrl:SetTitleTextContent("缩放百分比为:"..tostring(math.round(100*imageWith/picWidth)).."%")
+	local percent = math.round(100*imageWith/picWidth)
+	titleCtrl:SetTitleTextContent("缩放百分比为:"..tostring(percent).."%")
+	OnImageShowRectChange(objTree:GetBindHostWnd(), self, 0, 0)
 end
 
 function OnImageMouseWheel(self, x, y, direction, distance)

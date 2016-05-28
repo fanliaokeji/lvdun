@@ -84,5 +84,6 @@ function FileAssoPanelOnInitControl(self)
 				checkall:SetCheck(true, true)
 			end)
 	end
+	self:Update()
 end
 

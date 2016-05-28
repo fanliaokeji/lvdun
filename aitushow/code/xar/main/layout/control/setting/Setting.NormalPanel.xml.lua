@@ -15,18 +15,20 @@ function Update(self)
 	ckbox_delremind:SetCheck(SettingHelper.IsDelRemind(), true)
 	local strRotate = SettingHelper.GetRotateType()
 	if strRotate == "rensave" then
-		radio_rensave:SetCheck(true, true)
+		radio_rensave:SetCheck(true)
 	elseif strRotate == "coverold" then
-		radio_covold:SetCheck(true, true)
+		radio_covold:SetCheck(true)
 	elseif strRotate == "nosave" then
-		radio_nosave:SetCheck(true, true)
+		radio_nosave:SetCheck(true)
 	else
 	end
 	if SettingHelper.GetExitType() then
-		radio_closetray:SetCheck(true, true)
+		radio_closetray:SetCheck(true)
 	else
-		radio_mustclose:SetCheck(true, true)
+		radio_mustclose:SetCheck(true)
 	end
+	local attr = self:GetAttribute()
+	attr.AllowCallApply = false
 end
 
 function Apply(self)
@@ -82,4 +84,8 @@ function OnSelectBase(self, event, ischeck)
 	local ower = self:GetOwnerControl()
 	local attr = ower:GetAttribute()
 	attr.AllowCallApply  = true
+end
+
+function OnInitControl(self)
+	self:Update()
 end
