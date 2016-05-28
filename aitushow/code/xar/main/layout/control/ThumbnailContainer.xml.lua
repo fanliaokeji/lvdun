@@ -107,7 +107,7 @@ end
 function PageClass:UpdateImgInfoByPath(tPictures, path, tImgInfo)
 	for i=1, #self.objList do
 		local data = self.objList[i]:GetData()
-		if data and data.szPath and data.szPath == path then
+		if data and data.szPath and string.upper(data.szPath) == string.upper(path) then
 			self.objList[i]:SetImage(tImgInfo)
 			tPictures[i+self.indexBegin-1].xlhBitmap = tImgInfo.xlhBitmap
 			tPictures[i+self.indexBegin-1].uWidth = tImgInfo.uWidth
@@ -227,6 +227,17 @@ function PageManager:ResetScrollBar()
 	end
 end
 
+local function MergeTable(tSrc, tDst)
+	if type(tSrc) ~= "table" or type(tDst) ~= "table" then
+		return
+	end
+	
+	for i=1, #tSrc do
+		table.insert(tDst, tSrc[i])
+	end
+	return tDst
+end
+
 function PageManager:ShowPagesByScrollPos(scrollPos)
 	LOG("ShowPagesByScrollPos: ", scrollPos)
 	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
@@ -238,19 +249,23 @@ function PageManager:ShowPagesByScrollPos(scrollPos)
 	local indexBegin = (lineNum-1)*columnCount + 1
 	local indexEnd   = 0
 	LOG("ShowPagesByScrollPos: indexBegin: ", indexBegin)
+	local requiredFiles = {}
 	for i=1, 3 do
 		indexEnd = indexBegin + pageCount
 		if indexEnd > #self.tPictures then
 			indexEnd = #self.tPictures
 		end
-		local requiredFiles = self.pageList[i]:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
-		if "table" == type(requiredFiles) and #requiredFiles > 0 then
-			graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
-		end
+		local tmpFiles = self.pageList[i]:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
+		requiredFiles = MergeTable(tmpFiles, requiredFiles)
+		
 		indexBegin = indexEnd + 1
 		if indexBegin > #self.tPictures then
-			return
+			break
 		end
+	end
+	if "table" == type(requiredFiles) and #requiredFiles > 0 then
+		LOG("GetMultiImgInfoByPaths indexBegin: ", requiredFiles[1], " indexEnd: ", requiredFiles[#requiredFiles])
+		graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
 	end
 	local containerL, containerT, containerR, containerB = self.containerObj:GetObjPos()
 	local containerHeight = containerB-containerT
@@ -261,19 +276,21 @@ end
 --请求的缩略图句柄，在这里异步返回
 function PageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) 
 	--干两件事：更新到界面、保存到tPictures。
-	LOG("OnGetMultiImgInfoCallBack key: ", key, " tImgInfo: ", tImgInfo)
+	LOG("OnGetMultiImgInfoCallBack key: ", key, " tImgInfo.szPath: ", tImgInfo.szPath)
 	for i=1, 3 do
 		if self.pageList[i]:UpdateImgInfoByPath(self.tPictures, tImgInfo.szPath, tImgInfo) then
+			LOG("OnGetMultiImgInfoCallBack found in page: ", i, "!! path: ", tImgInfo.szPath)
 			break
 		else
-			LOG("OnGetMultiImgInfoCallBack not found! path: ", tImgInfo.szPath)
+			LOG("OnGetMultiImgInfoCallBack not foundin page: ", i, "! path: ", tImgInfo.szPath)
 		end
 	end
 	
 	--如果curPage,forwordPage,backwordPage三页里都没找到，说明当前返回的图片不在显示区域
 	--直接丢弃掉，下次显示时重新申请
+	LOG("OnGetMultiImgInfoCallBack can not find in 3 pages, tImgInfo.szPath: ", tImgInfo and tImgInfo.szPath)
 	tImgInfo = nil
-	LOG("OnGetMultiImgInfoCallBack can not find in 3 pages, ")
+	
 	-- for i=1, #self.tPictures do
 		-- if self.tPictures[i].szPath == tImgInfo.szPath then
 			-- self.tPictures[i].xlhBitmap = tImgInfo.xlhBitmap
