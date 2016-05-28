@@ -26,12 +26,12 @@ function Update(self, xoffset, yoffset, size_rates)
 	if newnew_x < _l then
 		newnew_x = _l + 1
 	elseif newnew_x + new_w > _r then
-		newnew_x = _r - 1
+		newnew_x = _r - new_w - 1
 	end
 	if newnew_y < _t then
 		newnew_y = _t + 1
 	elseif newnew_y + new_h > _b then
-		newnew_y = _b -1
+		newnew_y = _b - new_h -1
 	end
 	selarea:SetObjPos2(newnew_x, newnew_y, new_w, new_h)
 	SyncInOutBmp(self)

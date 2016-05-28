@@ -311,7 +311,7 @@ function OnDragImage(self, event, ...)
 		local containerW, containerH = GetObjWH(container)
 		local rectL = -posL
 		local rectT = -posT
-		self:FireExtEvent("OnImageShowRectChange", rectL, rectT, rectL + containerW, rectT + containerH)
+		self:FireExtEvent("OnImageShowRectChange", x-attr.OnLButtonDownX, y-attr.OnLButtonDownY, rectL + containerW, rectT + containerH)
 	elseif "start" == dragState then
 		Helper:LOG("dragState start")
 		if not attr.OnLButtonDownX or not attr.OnLButtonDownY then
