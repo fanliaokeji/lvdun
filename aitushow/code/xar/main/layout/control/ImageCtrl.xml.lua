@@ -71,14 +71,15 @@ function OnImagePosChange(self)
 end
 
 function SetImagePath(self, path)
+	LOG("SetImagePath path: ", path)
 	local attr = self:GetAttribute()
 	local szFolder, filename = string.match(path, "(.+)[\\/]([^?]+)")
-	
+	LOG("SetImagePath szFolder: ", szFolder, " filename: ", filename)
 	attr.tPictures = graphicUtil:GetDirSupportImgPaths(szFolder)
 	attr.index = 1
 	
 	for i=1, #attr.tPictures do
-		if attr.tPictures[i].szPath == path then
+		if string.upper(attr.tPictures[i].szPath) == string.upper(path) then
 			attr.index = i
 			break
 		end
@@ -544,6 +545,7 @@ function OnGetMultiImgInfoCallBack(self, key, tImgInfo)
 		local imageContainer = self:GetControlObject("ImageContainer")
 		imageObj:SetBitmap(tPicData.xlhBitmap)
 		AdjustImageBySize(imageContainer, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
+		imageObj:SetDrawMode(1)
 	end
 end
 
