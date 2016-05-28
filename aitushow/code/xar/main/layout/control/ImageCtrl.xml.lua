@@ -83,6 +83,7 @@ function SetImagePath(self, path)
 			break
 		end
 	end
+	LOG("SetImagePath: ", SetImagePath, " index: ", attr.index)
 	SetImageByIndex(self, attr.index)
 end
 
