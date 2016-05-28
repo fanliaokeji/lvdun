@@ -39,6 +39,7 @@ function Listener.OnCommandLine(tParam)
 	if string.find(string.lower(strCmd), "/sstartfrom%s+localfile") then
 		--打开本地文件
 		local filepath = string.match(strCmd, "\"([^\"]+)\"[^\"]*$")
+		LOG("Listener.OnCommandLine: filepath: ", filepath)
 		if not filepath or not tipUtil:QueryFileExists(filepath) then
 			return
 		end
@@ -48,8 +49,10 @@ function Listener.OnCommandLine(tParam)
 			imgctrl = Helper.Selector.select("", "FrameWnd.ImageCtrl", "ImageWnd.Instance")
 		end
 		if not imgctrl then
+			LOG("Listener.OnCommandLine: not imgctrl: ")
 			return
 		end
+		LOG("Listener.OnCommandLine: SetImagePath: ", filepath)
 		imgctrl:SetImagePath(filepath)
 		--如果存在主窗口，隐藏主窗口
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
