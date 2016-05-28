@@ -10,6 +10,9 @@ function Selector.select(objname, ctrlID, hostname)
 		return objMainWnd
 	end
 	local objTree = objMainWnd:GetBindUIObjectTree()
+	if not objTree then
+		return nil
+	end
 	local objRoot = objTree:GetUIObject(ctrlID)
 	if objname == "" or objname == nil then
 		return objRoot
