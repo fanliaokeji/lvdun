@@ -38,6 +38,15 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 		return
 	end
 	
+	-- if attr.data then --删掉旧数据
+		-- attr.data.xlhBitmap = nil
+		-- attr.data.uHeight = nil
+		-- attr.data.uWidth = nil
+		-- attr.data.fifType = nil
+		-- attr.data.szType = nil
+		-- attr.data = nil
+		-- collectgarbage("collect")
+	-- end
 	attr.data = data
 	-- attr.index = index
 	local background = self:GetControlObject("Background")
