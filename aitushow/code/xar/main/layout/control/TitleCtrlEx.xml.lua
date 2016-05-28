@@ -125,8 +125,17 @@ function OnClickCloseBtn(self)
 	-- objHostWnd:Show(2)
 	--直接退出
 	--Helper.tipUtil:Exit()
+	--根据命令行决定是否切换界面
 	objHostWnd:Show(0)
-	if not Helper.Setting.GetExitType() then
+	local bNeedExit = true
+	if string.find(string.lower(tostring(Helper.tipUtil:GetCommandLine())), "/sstartfrom%s+localfile") then
+		local ImgWnd = Helper.Selector.select("", "", "ImageWnd.Instance")
+		if ImgWnd then
+			ImgWnd:BringWindowToTop(true)
+			bNeedExit = false
+		end
+	end
+	if bNeedExit and not Helper.Setting.GetExitType() then
 		Helper.Tray.Hide()
 		Helper.tipUtil:Exit()
 	end

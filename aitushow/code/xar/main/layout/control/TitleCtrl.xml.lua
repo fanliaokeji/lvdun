@@ -127,14 +127,17 @@ function OnClickCloseBtn(self)
 	end
 	--Helper:DestoryModelessWnd("ImageWnd")
 	objHostWnd:Show(0)
-	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
-	if MainHostWnd then
-		MainHostWnd:BringWindowToTop(true)
-	else
-		if not Setting.GetExitType() then
-			Helper.Tray.Hide()
-			Helper.tipUtil:Exit()
+	local bNeedExit = true
+	if not string.find(string.lower(tostring(Helper.tipUtil:GetCommandLine())), "/sstartfrom%s+localfile") then
+		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+		if MainHostWnd then
+			MainHostWnd:BringWindowToTop(true)
+			bNeedExit = false
 		end
+	end
+	if bNeedExit and not Setting.GetExitType() then
+		Helper.Tray.Hide()
+		Helper.tipUtil:Exit()
 	end
 end
 

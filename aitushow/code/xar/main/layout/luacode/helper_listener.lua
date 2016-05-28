@@ -67,25 +67,18 @@ function Listener.OnCommandLine(tParam)
 	else
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 		local ImgHostWnd = Helper.Selector.select("", "", "ImageWnd.Instance")
-		if ImgHostWnd and not MainHostWnd then
-			ImgHostWnd:BringWindowToTop(true)
-		elseif MainHostWnd and not ImgHostWnd then
+		--其它命令行将主界面放到最前
+		if ImgHostWnd then
+			ImgHostWnd:Show(0)
+		end
+		if not MainHostWnd then
+			MainHostWnd = Helper:CreateModelessWnd("MainWnd","MainWndTree")
+		end
+		if MainHostWnd then
 			MainHostWnd:BringWindowToTop(true)
-		elseif MainHostWnd and ImgHostWnd then
-			local bmv, biv = MainHostWnd:GetVisible(), ImgHostWnd:GetVisible()
-			if bmv and not biv then
-				MainHostWnd:BringWindowToTop(true)
-			elseif biv and not bmv then
-				ImgHostWnd:BringWindowToTop(true)
-			elseif biv and bmv then
-				MainHostWnd:Show(0)
-				ImgHostWnd:BringWindowToTop(true)
-			else
-				MainHostWnd:BringWindowToTop(true)
-			end
 		end
 	end
-	if string.find(strCmd, "embedding") then
+	--[[if string.find(strCmd, "embedding") then
 		--需要隐藏到托盘
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 		if MainHostWnd then
@@ -95,7 +88,7 @@ function Listener.OnCommandLine(tParam)
 		if ImgHostWnd then
 			ImgHostWnd:Show(0)
 		end
-	end
+	end]]--
 end
 
 function Listener.OnKeyDown(tParam)

@@ -16,6 +16,7 @@
 		<srccolor>system.black</srccolor>
 		<blendtype>Source</blendtype>
 		<destcolor>system.black</destcolor>
+		<alpha>230</alpha>
 	</attr>
 	<children>
 	<obj id="title" class="TextObject">
@@ -61,7 +62,7 @@
 		<srccolor>system.black</srccolor>
 		<blendtype>Source</blendtype>
 		<destcolor>system.black</destcolor>
-		<alpha>150</alpha>
+		<alpha>180</alpha>
 		<width>father.width</width>
 		<left>0</left>
 		<height>father.height-30</height>
