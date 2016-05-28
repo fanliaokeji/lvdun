@@ -39,7 +39,7 @@ function Listener.OnCommandLine(tParam)
 	if string.find(string.lower(strCmd), "/sstartfrom%s+localfile") then
 		--打开本地文件
 		local filepath = string.match(strCmd, "\"([^\"]+)\"[^\"]*$")
-		if not filepath or not tipUtil:QueryFileExsits(filepath) then
+		if not filepath or not tipUtil:QueryFileExists(filepath) then
 			return
 		end
 		local imgctrl = Helper.Selector.select("", "FrameWnd.ImageCtrl", "ImageWnd.Instance")
@@ -51,10 +51,15 @@ function Listener.OnCommandLine(tParam)
 			return
 		end
 		imgctrl:SetImagePath(filepath)
-		--隐藏主窗口
+		--如果存在主窗口，隐藏主窗口
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 		if MainHostWnd then
 			MainHostWnd:Show(0)
+		end
+		--将图片窗口放到最前
+		local ImgHostWnd = Helper.Selector.select("", "", "ImageWnd.Instance")
+		if ImgHostWnd then
+			ImgHostWnd:BringWindowToTop(true)
 		end
 	else
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
