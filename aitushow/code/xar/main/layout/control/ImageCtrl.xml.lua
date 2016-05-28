@@ -255,10 +255,14 @@ end
 --如果需要，可以在这里面向外发事件
 function OnDragImage(self, event, ...)
 	--图片显示不下的时候，才响应拖拽
+	local attr = self:GetAttribute()
 	local image = self:GetControlObject("Image")
+	if attr.bGif then
+		image = self:GetControlObject("SeqImageObject.gif")
+	end
 	local container = self:GetControlObject("ImageContainer")
-	local bitmap = image and image:GetBitmap()
-	if not bitmap then return end
+	-- local bitmap = image and image:GetBitmap()
+	-- if not bitmap then return end
 	
 	local imageContainer = self:GetControlObject("ImageContainer")
 	local containerL, containerT, containerR, containerB = imageContainer:GetObjPos()

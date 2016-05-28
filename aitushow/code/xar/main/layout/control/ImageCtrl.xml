@@ -124,6 +124,10 @@
 							</attr>
 							<eventlist>
 								<event name="OnMouseWheel" file="ImageCtrl.xml.lua" func="OnImageMouseWheel" />
+								<event name="OnLButtonDown" file="ImageCtrl.xml.lua" func="OnImageLButtonDown" />
+								<event name="OnLButtonUp"   file="ImageCtrl.xml.lua" func="OnImageLButtonUp" />
+								<event name="OnMouseMove" file="ImageCtrl.xml.lua" func="OnImageMouseMove" />
+								<event name="OnCaptureChange" file="ImageCtrl.xml.lua" func="OnImageCaptureChange" />
 							</eventlist>
 						</obj>	
 					</children>
