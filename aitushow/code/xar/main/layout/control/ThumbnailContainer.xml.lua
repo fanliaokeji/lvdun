@@ -228,6 +228,7 @@ function PageManager:ResetScrollBar()
 end
 
 function PageManager:ShowPagesByScrollPos(scrollPos)
+	LOG("ShowPagesByScrollPos: ", scrollPos)
 	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
 	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
 	--计算当前scrollPos第一行图片是第几行
@@ -236,6 +237,7 @@ function PageManager:ShowPagesByScrollPos(scrollPos)
 	if lineNum < 1 then lineNum = 1 end
 	local indexBegin = (lineNum-1)*columnCount + 1
 	local indexEnd   = 0
+	LOG("ShowPagesByScrollPos: indexBegin: ", indexBegin)
 	for i=1, 3 do
 		indexEnd = indexBegin + pageCount
 		if indexEnd > #self.tPictures then
@@ -250,6 +252,10 @@ function PageManager:ShowPagesByScrollPos(scrollPos)
 			return
 		end
 	end
+	local containerL, containerT, containerR, containerB = self.containerObj:GetObjPos()
+	local containerHeight = containerB-containerT
+	self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
+	LOG("ShowPagesByScrollPos: indexEnd: ", indexEnd)
 end
 
 --请求的缩略图句柄，在这里异步返回
