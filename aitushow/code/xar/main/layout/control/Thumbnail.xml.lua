@@ -247,9 +247,9 @@ function OnLButtonDbClick(self)
 		imageCtrl:SetFolderData(userData)
 		wnd:Show(1)
 	else
-		
-		Helper:CreateModelessWnd("ImageWnd","ImageWndTree", nil, userData)
+		wnd = Helper:CreateModelessWnd("ImageWnd","ImageWndTree", nil, userData)
 	end
+	wnd:BringWindowToTop(true)
 end
 
 function OnInitControl(self)
