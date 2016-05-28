@@ -350,7 +350,7 @@ int LuaGraphicUtil::GetMultiImgInfoByPaths(lua_State* pLuaState)
 	{
 		return 0;
 	}
-	
+	sm_tp.clear();
 	lua_pushnil(pLuaState);
 	while (lua_next(pLuaState, 2)) 
 	{
@@ -359,7 +359,7 @@ int LuaGraphicUtil::GetMultiImgInfoByPaths(lua_State* pLuaState)
 		{
 			CComBSTR bstrFilePath;
 			LuaStringToCComBSTR(utf8FilePath,bstrFilePath);
-
+			//TSDEBUG4CXX(L"[GetMultiImgInfoByPaths] path = " << bstrFilePath.m_str);
 			std::string strAnsiPath = "";
 			WideStringToAnsiString(bstrFilePath.m_str,strAnsiPath);
 			
@@ -544,6 +544,7 @@ int LuaGraphicUtil::AsynSaveXLBitmapToFile(lua_State* pLuaState)
 void GetImgInfoByPath(const char *filepath)
 {
 	//TSAUTO();
+	//TSDEBUG4CXX(L"[GetImgInfoByPath] path = " << ultra::_A2T(filepath).c_str());
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 
 	fif = FreeImage_GetFileType(filepath, 0);
