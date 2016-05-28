@@ -429,6 +429,9 @@ function PageManager:MovePages(scrollPos)
 			if "table" == type(requiredFiles) and #requiredFiles > 0 then
 				graphicUtil:GetMultiImgInfoByPaths(requiredFiles)
 			end
+			LOG("Move Toppage to bottom, indexBegin: ", indexBegin, " indexEnd: ", indexEnd)
+		else
+			LOG("No need to move page")
 		end
 		
 		self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
@@ -545,12 +548,15 @@ function OnVScroll(self, fun, _type, pos)
 	local pageHeight = lineCount * (picHeight + ownerCtrlAttr.SpaceV)
 	local firstLineNum = math.ceil(rangeBegin/columnCount)
 	local lastLineNum = math.ceil(rangeEnd/columnCount)
-	local posT = firstLineNum * (picHeight + ownerCtrlAttr.SpaceV)
-	local posB = lastLineNum * (picHeight + ownerCtrlAttr.SpaceV)
-	if scrollPos < posT - pageHeight or  scrollPos > posB + pageHeight then
+	local posT = (firstLineNum - 1) * (picHeight + ownerCtrlAttr.SpaceV)
+	local posB = (lastLineNum) * (picHeight + ownerCtrlAttr.SpaceV)
+	
+	if scrollPos < posT - pageHeight or  scrollPos > posB - pageHeight then
 		--如果滚动的太快(距离太大)，就没必要换页了
+		LOG("scrollXX need ShowPagesByScrollPos")
 		ownerCtrlAttr.pageManager:ShowPagesByScrollPos(scrollPos)
 	else
+		LOG("scrollXX need move pages")
 		ownerCtrlAttr.pageManager:MovePages(scrollPos)
 	end
 	
