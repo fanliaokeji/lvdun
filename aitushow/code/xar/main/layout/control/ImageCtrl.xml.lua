@@ -229,7 +229,7 @@ function RotateLeft(self)
 end
 
 function RotateRight(self)
-	Rotate(self, -90)
+	Rotate(self, 270)
 end
 
 function SetFolderData(self, userData)
