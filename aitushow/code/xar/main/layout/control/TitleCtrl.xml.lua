@@ -1,3 +1,4 @@
+local graphicUtil = XLGetObject("GRAPHIC.Util")
 
 function SetTitleTextContent(self, text)
 	local titleText = self:GetControlObject("FrameWnd.Title.TitleText")
@@ -84,6 +85,30 @@ function OnClickRestoreBtn(self)
 	MaxBtn:Show(true)
 end
 
+local function RenameSave(tPictures, index)
+	local angle = tPictures[index].angle
+	local tImgInfo = tPictures[index]
+	if angle < 0 then
+		angle = angle + math.ceil(math.abs(angle)/360) * 360
+	else
+		angle = angle - math.floor(angle/360) * 360
+	end
+	graphicUtil:AsynSaveXLBitmapToFile(tImgInfo.szPath, tImgInfo.fifType, angle, false, function(nRet, path) 
+	end)
+end
+
+local function CoverOldSave(tPictures, index)
+	local angle = tPictures[index].angle
+	local tImgInfo = tPictures[index]
+	if angle < 0 then
+		angle = angle + math.ceil(math.abs(angle)/360) * 360
+	else
+		angle = angle - math.floor(angle/360) * 360
+	end
+	graphicUtil:AsynSaveXLBitmapToFile(tImgInfo.szPath, tImgInfo.fifType, angle, true, function(nRet, path) 
+	end)
+end
+
 function OnClickCloseBtn(self)
 	local objTree = self:GetOwner()
 	local objHostWnd = objTree:GetBindHostWnd()
@@ -105,10 +130,12 @@ function OnClickCloseBtn(self)
 					if bCheck then
 						Setting.SetRotateType("rensave")
 					end
+					RenameSave(attr.tPictures, attr.index)
 				elseif MSG.ID_COVEROLD == nRet then
 					if bCheck then
 						Setting.SetRotateType("coverold")
 					end
+					CoverOldSave(attr.tPictures, attr.index)
 				elseif MSG.ID_NOSAVE == nRet then
 					if bCheck then
 						Setting.SetRotateType("nosave")
@@ -120,7 +147,9 @@ function OnClickCloseBtn(self)
 					return
 				end
 			elseif rtype == "rensave" then
+				RenameSave(attr.tPictures, attr.index)
 			elseif rtype == "coverold" then
+				CoverOldSave(attr.tPictures, attr.index)
 			else
 			end
 		end
