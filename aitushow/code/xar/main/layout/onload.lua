@@ -51,6 +51,7 @@ function OnLoadLuaFile()
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
 	local cmdString = tostring(tipUtil:GetCommandLine())
+	LOG("OnLoadLuaFile cmdString: ", cmdString)
 	local HostWnd
 	--打开本地文件
 	if string.find(string.lower(cmdString), "/sstartfrom%s+localfile") then
