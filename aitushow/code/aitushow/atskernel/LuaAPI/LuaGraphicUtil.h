@@ -108,6 +108,10 @@ private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 	static std::vector<GrapCallbackNode> m_allCallBack;
 	static boost::threadpool::pool sm_tp;
+
+private:
+
+	ULONG_PTR m_token;
 };
 
 

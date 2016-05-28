@@ -3,7 +3,9 @@
 #include "LuaGraphicUtil.h"
 #include "..\ImageLoader\ImageLoader.h"
 #include <XLLuaRuntime.h>
-
+#include <GdiPlus.h>
+#pragma comment(lib,"gdiplus.lib")
+using namespace Gdiplus;
 
 LuaGraphicWindow g_GrapWnd;
 //
@@ -16,11 +18,15 @@ boost::threadpool::pool LuaGraphicUtil::sm_tp(MAX_THREAD_NUM);
 
 LuaGraphicUtil::LuaGraphicUtil(void)
 {
-
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+	Gdiplus::Status ret = Gdiplus::GdiplusStartup(&m_token, &gdiplusStartupInput, NULL);
+	(ret);
+	assert(ret == Gdiplus::Ok);
 }
 LuaGraphicUtil::~LuaGraphicUtil(void)
 {
-
+	Gdiplus::GdiplusShutdown(m_token);
+	m_token = 0;
 }
 
 XLLRTGlobalAPI LuaGraphicUtil::sm_LuaMemberFunctions[] =  
@@ -383,16 +389,40 @@ int LuaGraphicUtil::RotateImgByAngle(lua_State* pLuaState)
 	{
 		return 0;
 	}
-	XL_BITMAP_HANDLE xlhSrcBitmap;
+	XL_BITMAP_HANDLE hOldXLBitmap;
 
 	//XLGP_CheckBitmap ”√ÕÍ“™XLGP_CheckBitmap
-	if (!XLGP_CheckBitmap(pLuaState, 2,&xlhSrcBitmap))
+	if (!XLGP_CheckBitmap(pLuaState, 2,&hOldXLBitmap))
 	{
 		return 0;
 	}
 	int angle = (int)lua_tointeger(pLuaState, 3);
-	
-	FIBITMAP *dibSrc = ConvertXLBitmapToFIBitmap(xlhSrcBitmap);
+	RotateFlipType rfAngle = Rotate90FlipNone;
+	if (angle == 270)
+	{
+		rfAngle = Rotate270FlipNone;
+	}
+	XLBitmapInfo oldBitmapInfo;
+	XL_GetBitmapInfo(hOldXLBitmap, &oldBitmapInfo);
+	Bitmap oldBitmap(oldBitmapInfo.Width, oldBitmapInfo.Height, oldBitmapInfo.ScanLineLength, PixelFormat32bppARGB, XL_GetBitmapBuffer(hOldXLBitmap, 0, 0));
+
+	oldBitmap.RotateFlip(rfAngle);
+
+	XL_BITMAP_HANDLE hNewXLBitmap = XL_CreateBitmap(XLGRAPHIC_CT_ARGB32, oldBitmapInfo.Height, oldBitmapInfo.Width);
+	if (!hNewXLBitmap)
+	{
+		return NULL;
+	}
+
+	XLBitmapInfo newBitmapInfo;
+	XL_GetBitmapInfo(hNewXLBitmap, &newBitmapInfo);
+	Bitmap newBitmap(newBitmapInfo.Width, newBitmapInfo.Height, newBitmapInfo.ScanLineLength, PixelFormat32bppARGB, XL_GetBitmapBuffer(hNewXLBitmap, 0, 0));
+
+	Graphics graphics(&newBitmap);
+	graphics.DrawImage(&oldBitmap, 0, 0, newBitmapInfo.Width, newBitmapInfo.Height);
+	XL_ReleaseBitmap(hOldXLBitmap);
+	//XL_PreMultiplyBitmap(xlhSrcBitmap);
+	/*FIBITMAP *dibSrc = ConvertXLBitmapToFIBitmap(xlhSrcBitmap);
 	XL_ReleaseBitmap(xlhSrcBitmap);
 
 	FIBITMAP *dibRotate =  FreeImage_Rotate(dibSrc,angle);
@@ -403,6 +433,7 @@ int LuaGraphicUtil::RotateImgByAngle(lua_State* pLuaState)
 	}
 	FreeImage_Unload(dibSrc);
 	XL_BITMAP_HANDLE xlDstBitmap = ConvertFIBitmapToXLBitmap(dibRotate);
+	XL_PreMultiplyBitmap(xlDstBitmap);
 	if (NULL == xlDstBitmap)
 	{
 		FreeImage_Unload(dibRotate);
@@ -410,12 +441,12 @@ int LuaGraphicUtil::RotateImgByAngle(lua_State* pLuaState)
 	}
 	UINT dstWidth  = FreeImage_GetWidth(dibRotate);
 	UINT dstHeight = FreeImage_GetHeight(dibRotate);
-	FreeImage_Unload(dibRotate);
+	FreeImage_Unload(dibRotate);*/
 
-	XLUE_PushBitmap(pLuaState, xlDstBitmap);
-	XL_ReleaseBitmap(xlDstBitmap);
-	lua_pushnumber(pLuaState, dstWidth);
-	lua_pushnumber(pLuaState, dstHeight);
+	XLUE_PushBitmap(pLuaState, hNewXLBitmap);
+	XL_ReleaseBitmap(hNewXLBitmap);
+	lua_pushnumber(pLuaState, newBitmapInfo.Width);
+	lua_pushnumber(pLuaState, newBitmapInfo.Height);
 	return 3;
 }
 
@@ -613,7 +644,6 @@ XL_BITMAP_HANDLE ConvertFIBitmapToXLBitmap(FIBITMAP* dib)
 		FreeImage_GetInfo(dib),
 		DIB_RGB_COLORS);
 	XL_BITMAP_HANDLE xlhBitmap = XLGP_ConvertDDBToXLBitmap(hdc, hBitmap, XLGRAPHIC_CT_ARGB32);
-
 	// DeleteDC(hdc);
 	ReleaseDC(NULL,hdc);
 	::DeleteObject(hBitmap);
