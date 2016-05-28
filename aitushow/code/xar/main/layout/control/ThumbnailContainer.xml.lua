@@ -194,7 +194,7 @@ function PageManager:Init(ctrlSelf, tPictures)
 	local requiredFiles = {}
 	for i=1, 3 do
 		if beginIndex > #tPictures then
-			return
+			break
 		end
 		endIndex = pageCount * i
 		if #tPictures < endIndex then
@@ -560,6 +560,7 @@ function OnVScroll(self, fun, _type, pos)
 	local posT = (firstLineNum - 1) * (picHeight + ownerCtrlAttr.SpaceV)
 	local posB = (lastLineNum) * (picHeight + ownerCtrlAttr.SpaceV)
 	
+	if #pageManager.tPictures <= lineCount*columnCount then return end
 	if scrollPos < posT - pageHeight or  scrollPos > posB - pageHeight then
 		--如果滚动的太快(距离太大)，就没必要换页了
 		LOG("scrollXX need ShowPagesByScrollPos")
