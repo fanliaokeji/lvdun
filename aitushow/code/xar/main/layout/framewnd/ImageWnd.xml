@@ -137,6 +137,11 @@
         </attr>
 		 <eventlist>
             <event name="OnCreate" file="ImageWnd.xml.lua" func="OnCreate"/>
+			<event name="OnClose" >
+				local self = ...
+				self:Show(0)
+				return 0, true
+			</event>
             <event name="OnShowWindow" file="ImageWnd.xml.lua" func="OnShowWindow"/>
 			<event name="OnSize" >
 				local self,_type,width,height = ...

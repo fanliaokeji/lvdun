@@ -221,6 +221,11 @@
             <event name="OnShowWindow" file="MainWnd.xml.lua" func="OnShowWindow"/>
 			<event name="OnSize" />
 			<event name="OnMove" />
+			<event name="OnClose" >
+				local self = ...
+				self:Show(0)
+				return 0, true
+			</event>
         </eventlist>
     </hostwndtemplate>
 
