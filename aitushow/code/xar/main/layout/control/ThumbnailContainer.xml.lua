@@ -325,7 +325,16 @@ function PageManager:GetCurShowPageIndex()
 			middlePageIndex = i
 		end
 	end
-	
+	if 0 == middlePageIndex then
+		LOG("ERROR!!! pageCount: ", #self.pageList[bottomPageIndex], "rangeBegin: ", rangeBegin, " rangeEnd: ", rangeEnd)
+		if topPageIndex + bottomPageIndex == 5 then
+			middlePageIndex = 1
+		elseif topPageIndex + bottomPageIndex == 4 then
+			middlePageIndex = 2
+		elseif topPageIndex + bottomPageIndex == 3 then
+			middlePageIndex = 3
+		end
+	end
 	--只有当tPictures数量大于3屏的时候，才有必要调该方法，此时三个Page一定都显示了图片
 	Helper:Assert(topPageIndex > 0 and middlePageIndex > 0 and bottomPageIndex > 0, "error page index")
 	LOG("GetCurShowPageIndex, topPageIndex: ", topPageIndex, " middlePageIndex: ", middlePageIndex, " bottomPageIndex: ", bottomPageIndex)
@@ -417,7 +426,7 @@ function PageManager:MovePages(scrollPos)
 	if -containerT < scrollPos then --画面向上滑动(滚动条向下滑动)
 		local lastMiddlePageObj = middlePage.objList[#middlePage.objList]
 		local _, _, _, lastMiddlePageObjB = lastMiddlePageObj:GetObjPos()
-		if lastMiddlePageObjB + containerT <= 15 and bottomPage.indexEnd < #self.tPictures then
+		if lastMiddlePageObjB + containerT <= 35 and bottomPage.indexEnd < #self.tPictures then
 			--向上滑动画面时，只有当中间page快要完全滑到窗口上方时，才进行换页(将topPage挪到底部)
 			local indexBegin = bottomPage.indexEnd + 1
 			local indexEnd   = indexBegin + #middlePage.objList - 1 --这里一定要用中间page的孩子计数，上、下Page都有可能不全
@@ -438,7 +447,7 @@ function PageManager:MovePages(scrollPos)
 	elseif -containerT > scrollPos then--画面向下滑动(滚动条向上滑动)
 		local lastTopPageObj = topPage.objList[#topPage.objList]
 		local _, _, _, lastTopPageObjB = lastTopPageObj:GetObjPos()
-		if  (lastTopPageObjB + containerT) >= -15 and topPage.indexBegin > 1 then
+		if  (lastTopPageObjB + containerT) >= -35 and topPage.indexBegin > 1 then
 			--当中间page即将完全滑出窗口下方时，进行换页
 			local indexBegin = topPage.indexBegin - #middlePage.objList
 			if indexBegin < 1 then
