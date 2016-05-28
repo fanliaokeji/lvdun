@@ -536,11 +536,19 @@ function OnScrollBarMouseWheel(self, name, x, y, distance)
     self:SetThumbPos(ThumbPos - distance/10)
 end
 
+function OnBkgMouseWheel(self, x, y, distance)
+	local ctrl = self:GetOwnerControl()
+	local scrollBar = ctrl:GetControlObject("Container.ScrollBar")
+	local ThumbPos = scrollBar:GetThumbPos()
+    scrollBar:SetThumbPos(ThumbPos - distance/10)
+end
+
 function OnInitControl(self)
 	local attr = self:GetAttribute()
 	attr.defaultZoomPercent = 10
 	attr.pageManager = PageManager:New()
 	local scrollBar = self:GetControlObject("Container.ScrollBar")
+	
 	scrollBar:SetVisible(false)
 	scrollBar:SetChildrenVisible(false)
 	graphicUtil:AttachListener(function(key, tImgInfo) attr.pageManager:OnGetMultiImgInfoCallBack(key, tImgInfo) end)

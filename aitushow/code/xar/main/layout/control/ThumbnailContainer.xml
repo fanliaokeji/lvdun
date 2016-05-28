@@ -69,6 +69,9 @@
 							</eventlist>
 						</obj>
 					</children>
+					<eventlist>
+						<event name="OnMouseWheel" file="ThumbnailContainer.xml.lua" func="OnBkgMouseWheel" />
+					</eventlist>
 				</obj>
 			</children>
 			<eventlist>
