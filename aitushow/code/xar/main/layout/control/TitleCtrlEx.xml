@@ -60,21 +60,7 @@
 						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickSetting" />
 					</eventlist>	
 				</obj>
-				<obj id="FrameWnd.Title.FullScreen" class="TipAddin.Button">
-					<attr>
-						<left>father.width-25 - 22*3</left>
-						<top>0</top>
-						<width>22</width>
-						<height>22</height>
-						<NormalBkgID>bitmap.title.fullscreen.normal</NormalBkgID>
-						<DownBkgID>bitmap.title.fullscreen.down</DownBkgID>
-						<HoverBkgID>bitmap.title.fullscreen.hover</HoverBkgID>
-						<DisableBkgID>bitmap.title.fullscreen.disable</DisableBkgID>
-					</attr>
-					<eventlist>
-						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickFullScreen" />
-					</eventlist>	
-				</obj>
+				
 				<obj id="FrameWnd.Title.MinBtn" class="TipAddin.Button">
 					<attr>
 						<left>father.width-25 - 22*2</left>
