@@ -240,37 +240,6 @@ function PageManager:ResetScrollBar()
 	end
 end
 
---这
-function PageManager:ClearXLHBitmapBut(indexBegin, indexEnd)
-	local curUseMemInKB = collectgarbage("count")
-	LOG("current use memory count: ", curUseMemInKB, " KB")
-	local _begin = 1
-	local _end = indexBegin
-	if _end ~= _begin then
-		for i=_begin, _end do
-			self.tPictures[i].xlhBitmap = nil
-			self.tPictures[i].uWidth = nil
-			self.tPictures[i].uHeight = nil
-			self.tPictures[i].fifType = nil
-			self.tPictures[i].szType = nil
-		end
-	end
-	_begin = indexEnd + 1
-	_end = #self.tPictures
-	if _end ~= _begin then
-		for i=_begin, _end do
-			self.tPictures[i].xlhBitmap = nil
-			self.tPictures[i].uWidth = nil
-			self.tPictures[i].uHeight = nil
-			self.tPictures[i].fifType = nil
-			self.tPictures[i].szType = nil
-		end
-	end
-	collectgarbage("collect")
-	local newUseMemInKB = collectgarbage("count")
-	LOG("current use memory count: ", curUseMemInKB, " KB, free ", curUseMemInKB - newUseMemInKB, " KB total")
-end
-
 function PageManager:ShowPagesByScrollPos(scrollPos)
 	LOG("ShowPagesByScrollPos: ", scrollPos)
 	local rangeBegin, rangeEnd = self:GetCurShowIndexRange()
@@ -305,8 +274,6 @@ function PageManager:ShowPagesByScrollPos(scrollPos)
 	self.containerObj:SetObjPos2(containerL, -scrollPos, "father.width-10", containerHeight)
 	LOG("ShowPagesByScrollPos: indexEnd: ", indexEnd)
 	
-	--[indexBegin, indexEnd]除此之外的,xlhBitmap句柄通通置空、以便lua解释器回收内存
-	self:ClearXLHBitmapBut(indexBegin, indexEnd)
 end
 
 --请求的缩略图句柄，在这里异步返回
