@@ -130,8 +130,8 @@
             <enable>1</enable>
             <maxbox>1</maxbox>
             <minbox>1</minbox>
-            <minwidth>50</minwidth>
-            <minheight>50</minheight>
+            <minwidth>500</minwidth>
+            <minheight>300</minheight>
 			<sysmenu>1</sysmenu>
 			<appwindow>1</appwindow>
         </attr>
