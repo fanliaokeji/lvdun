@@ -547,11 +547,18 @@ function OnVScroll(self, fun, _type, pos)
     end
 
 	scrollPos = self:GetScrollPos()
+	local scrollRangeBegin, scrollRangeEnd = self:GetScrollRange()
 	
 	--大于0向下滚动；小于0向上滚动
 	local ownerCtrlAttr = ownerCtrl:GetAttribute()
 	LOG("Move Pages: scrollPos: ", scrollPos)
 	local pageManager = ownerCtrlAttr.pageManager
+	local L, T, R, B = pageManager.containerObj:GetObjPos()
+	if scrollPos >= scrollRangeEnd and -T >=  scrollPos then 
+		LOG("scrollPos >= scrollRangeEnd: ", scrollPos, " scrollRangeEnd: ", scrollRangeEnd)
+		return 
+	end
+	
 	local rangeBegin, rangeEnd = pageManager:GetCurShowIndexRange()
 	local lineCount, columnCount, pageCount, picWidth, picHeight = pageManager.ctrlSelf:GetPageLayout()
 	local pageHeight = lineCount * (picHeight + ownerCtrlAttr.SpaceV)
@@ -561,6 +568,7 @@ function OnVScroll(self, fun, _type, pos)
 	local posB = (lastLineNum) * (picHeight + ownerCtrlAttr.SpaceV)
 	
 	if #pageManager.tPictures <= lineCount*columnCount then return end
+	
 	if scrollPos < posT - pageHeight or  scrollPos > posB - pageHeight then
 		--如果滚动的太快(距离太大)，就没必要换页了
 		LOG("scrollXX need ShowPagesByScrollPos")

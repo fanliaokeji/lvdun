@@ -89,6 +89,19 @@
 								<event name="OnLButtonDbClick" />
 							</eventlist>
 						</obj>
+						<obj id="DefaultImage" class="ImageObject">
+							<attr>
+								<left>3</left>
+								<top>3</top>
+								<valign>center</valign>
+								<halign>center</halign>
+								<zorder>49</zorder>
+								<drawmode>1</drawmode>
+								<antialias>2</antialias>
+								<width>father.width - 6</width>
+								<height>father.height - 6 - 15</height>
+							</attr>
+						</obj>
 						<obj id="Image.gif" class="SeqImageObject">
 							<attr>
 								<left>2</left>

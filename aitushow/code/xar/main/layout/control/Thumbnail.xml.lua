@@ -87,9 +87,10 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 		AdjustImageBySize(background, imageObj, data.uWidth, data.uHeight)
 		return true
 	else
+		local defaultImage = self:GetControlObject("DefaultImage")
 		if data.szExt and "" ~= data.szExt then
-			imageObj:SetDrawMode(0)
-			imageObj:SetResID("default_icon."..data.szExt)
+			defaultImage:SetDrawMode(0)
+			defaultImage:SetResID("default_icon."..data.szExt)
 		end
 	end
 	return false
@@ -142,6 +143,7 @@ end
 
 function SetImage(self, tImgInfo)
 	local imageObj = self:GetControlObject("Image")
+	local defaultImage = self:GetControlObject("DefaultImage")
 	local backgroundObj = self:GetControlObject("Background")
 	local attr = self:GetAttribute()
 	attr.data.xlhBitmap = tImgInfo.xlhBitmap
@@ -150,7 +152,9 @@ function SetImage(self, tImgInfo)
 	attr.data.szType = tImgInfo.szType
 	
 	imageObj:SetDrawMode(1)
+	imageObj:SetResID("")
 	imageObj:SetBitmap(tImgInfo.xlhBitmap)
+	defaultImage:SetResID("")
 	--调整宽高比
 	if tImgInfo.uWidth and tImgInfo.uHeight then
 		AdjustImageBySize(backgroundObj, imageObj, tImgInfo.uWidth, tImgInfo.uHeight)
