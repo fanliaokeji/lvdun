@@ -94,6 +94,8 @@ local function RenameSave(tPictures, index)
 		angle = angle - math.floor(angle/360) * 360
 	end
 	graphicUtil:AsynSaveXLBitmapToFile(tImgInfo.szPath, tImgInfo.fifType, angle, false, function(nRet, path) 
+		--保存之后，将angle置空
+		tPictures[index].angle = nil
 	end)
 end
 
@@ -106,6 +108,8 @@ local function CoverOldSave(tPictures, index)
 		angle = angle - math.floor(angle/360) * 360
 	end
 	graphicUtil:AsynSaveXLBitmapToFile(tImgInfo.szPath, tImgInfo.fifType, angle, true, function(nRet, path) 
+		--保存之后，将angle置空
+		tPictures[index].angle = nil
 	end)
 end
 
