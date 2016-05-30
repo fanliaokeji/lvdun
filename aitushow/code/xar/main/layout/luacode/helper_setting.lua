@@ -53,7 +53,7 @@ function Setting.SetSysBoot(isDo)
 		return
 	end
 	local strExePath = tipUtil:QueryRegValue("HKEY_LOCAL_MACHINE", "Software\\kuaikan", "Path")
-	if not IsRealString(strExePath) or tipUtil:QueryFileExists(strExePath) then
+	if not IsRealString(strExePath) or not tipUtil:QueryFileExists(strExePath) then
 		return
 	end
 	tipUtil:SetRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikan", "\""..strExePath.."\" /sstartfrom sysboot /embedding")
