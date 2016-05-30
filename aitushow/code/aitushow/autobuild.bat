@@ -6,8 +6,8 @@ if not exist %vc% (
   goto done
 )
 set basedir="%~dp0"
-copy /y nul %basedir%\log.txt
-echo vc_version = vc9>>%basedir%\log.txt
+copy /y nul %basedir%log.txt
+echo vc_version = vc9>>%basedir%log.txt
 
 set sln="%basedir:~1,-1%aitushow.sln"
 echo ÕıÔÚ±àÒë %sln%...
@@ -16,7 +16,7 @@ if not %errorlevel%==0 (
 	echo rebuild %sln% failed
 	goto done
 )
-cd /d "%basedir:~1,-1%\Release"
+cd /d "%basedir:~1,-1%Release"
 call :printversion "%cd%\kuaikan.exe" kuaikan.exe
 for /r %%i in (*.dll) do (
    call :printversion "%%i" %%~nxi
@@ -57,13 +57,14 @@ set build_date=%date:~0,10%
 set build_date=%build_date:/=-%
 set build_time=%time:~0,8%
 set build_time=%build_time::=-%
+set build_time=%build_time: =%
 set bin_path=%1
 set bin_path=%bin_path:\=\\%
 set bin_path=%bin_path:~1,-1%
 echo printversion bin_path=%bin_path%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') do (
 	if "%bin_path:~-11%" == "kuaikan.exe" (
-		set pdbdir=%basedir:~1,-1%\%%i\pdb__!build_date!__!build_time!__!random!\
+		set pdbdir=%basedir:~1,-2%\%%i\pdb__!build_date!__!build_time!__!random!\
 		echo begin make pdbdir= !pdbdir!
 		md !pdbdir!
 		if errorlevel 0 ( echo made pdbdir success,pdbdir=!pdbdir!)

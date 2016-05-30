@@ -4306,6 +4306,7 @@ int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
 	{
 		const char* pszData = lua_tostring(pLuaState, 2);
 		WCHAR* pszDataW = _bstr_t(pszData);
+		TSDEBUG4CXX("IsAssociated, pszDataW = "<<pszDataW<<", pszData = "<<pszData);
 		int bRetlua; 
 		if(_tcsicmp(pszDataW, L"") == 0){
 			bRetlua = 0;
@@ -4313,10 +4314,11 @@ int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
 		else{
 			UINT flag = FileAssociation::Instance()->Associated(pszDataW);
 			bRetlua = (int)((flag&AssociateType::ProgID) != 0 && (flag&AssociateType::RootKeyExist) != 0);
+			TSDEBUG4CXX("IsAssociated, flag = "<<flag<<", bRetlua = "<<bRetlua);
 		}
 		lua_pushboolean(pLuaState, (int )bRetlua);
 	}
-	return 0;
+	return 1;
 }
 
 int LuaAPIUtil::SetAssociate(lua_State* pLuaState)

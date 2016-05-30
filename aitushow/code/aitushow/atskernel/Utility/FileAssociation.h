@@ -202,7 +202,7 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 	BOOL isVista = IsVistaOrHigher();
 	RegTool rt;
 	swprintf(szTemp1, L"kuaikan%s", strFileExt.c_str());
-	atype |= rt->Open(HKEY_CLASSES_ROOT, szTemp1) == ERROR_SUCCESS ? RootKeyExist : 0;
+	atype |= rt->Open(HKEY_CLASSES_ROOT, szTemp1, KEY_READ) == ERROR_SUCCESS ? RootKeyExist : 0;
 	for(int i = 0; i < sizeof(szPaths)/sizeof(szPaths[0]); ++i){
 		hk = _tcsnicmp(szPaths[i][0], L"HKEY_CURRENT_USER", MAX_PATH) == 0 ? HKEY_CURRENT_USER : HKEY_CLASSES_ROOT;
 		regpath = i <= 1 ? (isVista ? (basepath + szPaths[i][1] + L"\\UserChoice") : (basepath + szPaths[i][1])) : szPaths[i][1];
@@ -214,7 +214,7 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 		swprintf(szTemp3, szPaths[i][3], strFileExt.c_str());
 		if(i>=3){
 			if(i == 3){
-				atype |=  rt->Open(hk, szTemp1) == ERROR_SUCCESS ? ClassRootOpenWithList : 0;
+				atype |=  rt->Open(hk, szTemp1, KEY_READ) == ERROR_SUCCESS ? ClassRootOpenWithList : 0;
 			}
 			else if(i == 4){
 				DWORD dwRet = -1;
@@ -257,7 +257,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 	BOOL isVista = IsVistaOrHigher();
 	std::wstring regpath = isVista ? (basepath+strFileExt+L"\\UserChoice") : (basepath+strFileExt);
 	RegTool rt;
-	if (isVista && rt->Open(HKEY_CURRENT_USER, regpath.c_str()) == ERROR_ACCESS_DENIED){
+	if (isVista && rt->Open(HKEY_CURRENT_USER, regpath.c_str(), KEY_READ) == ERROR_ACCESS_DENIED){
 		regpath = basepath+strFileExt;
 		rt.DeleteRegKey(HKEY_CURRENT_USER, regpath.c_str(), L"UserChoice");
 		regpath = basepath+strFileExt +L"\\UserChoice";
@@ -328,10 +328,11 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 			strApp = L"kuaikan.exe";
 			rt.SetRegValue(HKEY_CURRENT_USER, regpath.c_str(), L"Application", strApp.c_str());
 		}*/
-		if (rt->Open(HKEY_CURRENT_USER, regpath.c_str()) == ERROR_SUCCESS){
+		if (rt->Open(HKEY_CURRENT_USER, regpath.c_str(), KEY_READ) == ERROR_SUCCESS){
 			rt->DeleteValue(L"Application");
 		}
-		if (bHasAdmin && (atype&AssociateType::ClassRoot) == 0){
+		//不做root下面， 不然没权限取消不了关联
+		/*if (bHasAdmin && (atype&AssociateType::ClassRoot) == 0){
 			std::wstring strProgid = L"";
 			rt.QueryRegValue(HKEY_CLASSES_ROOT, strFileExt.c_str(), L"", &strProgid);
 			if(strProgid.length() > 0 && strProgid.substr(0, 3) != L"kuaikan"){
@@ -341,7 +342,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 			strProgid += strFileExt;
 			rt.SetRegValue(HKEY_CLASSES_ROOT, strFileExt.c_str(), L"", strProgid.c_str());
 
-		}
+		}*/
 		if ((atype&AssociateType::CurrentUserOpenWithProgIds) == 0){
 			regpath = basepath+strFileExt+L"\\OpenWithProgids";
 			std::wstring strkey = L"kuaikan";
@@ -405,7 +406,8 @@ std::wstring FileAssociation::GetIconPath(const std::wstring& strFileExt){
 		return L"";
 	}
 	std::wstring strIcoDir = L"res\\";
-	strIcoDir += strFileExt;
+	strIcoDir += strFileExt.substr(1, strFileExt.length()-1);
+	strIcoDir += L".ico";
 	WCHAR szIcoPath[MAX_PATH] = {0};
 	PathCombine(szIcoPath, strInstDir.c_str(), strIcoDir.c_str());
 	return szIcoPath;
@@ -414,5 +416,7 @@ std::wstring FileAssociation::GetCommandOpenPath(){
 	RegTool rt;
 	std::wstring strExePath = L"";
 	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"Path", &strExePath);
-	return strExePath;
+	WCHAR strCmd[MAX_PATH] = {0};
+	swprintf(strCmd, L"\"%s\" \"%%1\" /sstartfrom LocalFile", strExePath.c_str());
+	return strCmd;
 }
