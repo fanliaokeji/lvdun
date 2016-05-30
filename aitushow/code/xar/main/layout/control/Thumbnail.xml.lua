@@ -48,6 +48,8 @@ function SetData(self, data, index)--返回值为bool，代表是否成功设定
 		collectgarbage("collect")
 	end
 	attr.data = data
+	Select(self, attr.data.bSelect)
+	
 	-- attr.index = index
 	local background = self:GetControlObject("Background")
 	local imageObj = self:GetControlObject("Image")
@@ -192,10 +194,10 @@ end
 
 function Select(self, bSelect)
 	local attr = self:GetAttribute()
-	if not attr then
+	if not attr or not attr.data then
 		LOG("GetAttribute nil!!!!!!!!!")
 	end
-	attr.bSelect = bSelect 
+	attr.data.bSelect = bSelect 
 	-- local bkg = self:GetControlObject("Background")
 	local bkg = self:GetControlObject("SelectFrame")
 	if bSelect then
