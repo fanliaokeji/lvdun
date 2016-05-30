@@ -49,7 +49,7 @@ end
 
 function Setting.SetSysBoot(isDo)
 	if not isDo then
-		tipUtil:DeleteRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikan")
+		tipUtil:DeleteRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\kuaikan")
 		return
 	end
 	local strExePath = tipUtil:QueryRegValue("HKEY_LOCAL_MACHINE", "Software\\kuaikan", "Path")
