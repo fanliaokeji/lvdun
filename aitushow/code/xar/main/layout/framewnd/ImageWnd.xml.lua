@@ -8,6 +8,7 @@ function GetObjWH(obj)
 end
 
 function OnImageShowRectChange(self,ctrl, ...)
+	if true then return end--先将miniview注释掉
 	local objtree = self:GetBindUIObjectTree() 
 	local miniView = objtree:GetUIObject("FrameWnd.MiniViewer")
 	local image = ctrl:GetControlObject("Image")
