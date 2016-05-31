@@ -139,7 +139,9 @@
             <event name="OnCreate" file="ImageWnd.xml.lua" func="OnCreate"/>
 			<event name="OnClose" >
 				local self = ...
-				self:Show(0)
+				local objtree = self:GetBindUIObjectTree()
+				local btnclose = objtree:GetUIObject("FrameWnd.TitleCtrl"):GetObject("FrameWnd.Title.CloseBtn")
+				btnclose:FireExtEvent("OnClick", 0, 0)
 				return 0, true
 			</event>
             <event name="OnShowWindow" file="ImageWnd.xml.lua" func="OnShowWindow"/>
