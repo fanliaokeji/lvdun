@@ -48,7 +48,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 !macro _InitMutex
 	Push $0
-	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "GLOBAL\kuaikansetup_{B7D80E56-6A48-40ad-A455-2E21537ECF79}") i .r1 ?e'
+	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "Global\kuaikansetup_{B7D80E56-6A48-40ad-A455-2E21537ECF79}") i .r1 ?e'
 	Pop $0
 	StrCmp $0 0 +2
 	Abort
@@ -154,7 +154,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 	Push $0
 	Push $1
 	Push $2
-	ReadRegStr $0 HKCU "Software\mycalendar" "statpeerid"
+	ReadRegStr $0 HKCU "Software\kuaikan" "statpeerid"
 	ReadRegStr $1 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
 	${If} $1 != ""
 	${OrIf} $1 != 0
@@ -167,7 +167,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		StrCpy $2 $1 1 11
 		${WordReplace} $0 $2 "X" +1 $1
 		${If} $0 != $1
-			System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::SendAnyHttpStat(t "${strp1}", t "${strp2}", t "${strp3}", i ${np4}) '
+			System::Call '$TEMP\${PRODUCT_NAME}\kuaikansetup::SendAnyHttpStat(t "${strp1}", t "${strp2}", t "${strp3}", i ${np4}) '
 		${EndIf}
 	${EndIf}
 	Pop $2
@@ -183,29 +183,29 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		push $2
 		push $3
 		;干掉老的开机启动
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "mycalendar"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "kuaikan"
 		;判断lpath是否存在
 		StrCpy $1 "true"
 		ClearErrors
-		ReadRegStr $0 HKCU "Software\mycalendar" "lpath"
+		ReadRegStr $0 HKCU "Software\kuaikan" "lpath"
 		IfErrors 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot error')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot error')"
 		StrCpy $1 "false"
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
 		${If} $1 != "false"
 			${If} $0 != ""
 			${AndIf} $0 != 0
 				IfFileExists "$0" +3 0
-				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
 				StrCpy $1 "false"
 			${Else}
 				StrCpy $1 "false"
 			${EndIf}
 		${EndIf}
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
 		;设置/取消开机启动
 		${If} $Bool_Sysstup == 1
-			WriteRegDWORD HKCU "Software\mycalendar" "setboot" 1
+			WriteRegDWORD HKCU "Software\kuaikan" "setboot" 1
 			${If} $1 != "false"
 				;文件存在
 				push $0
@@ -213,20 +213,20 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				Call ${strCallFlag}GetLastPart
 				pop $2
 				StrCpy $1 $2 -4
-				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
 				;在RUN下面找，有则不做
 				ClearErrors
 				ReadRegStr $3 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				IfErrors 0 hasfind
 					${StrFilter} $0 "-" "" "" $0
-					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
 					StrCpy $2 "$INSTDIR\program\myfixar.exe"
 					${StrFilter} $2 "-" "" "" $2
-					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
 					${If} $0 != $2
 					${AndIf} $0 != "$2"
 					${AndIf} $0 != ""
-						System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
+						System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
 						push $0
 						Call ${strCallFlag}GetParent
 						pop $0
@@ -234,10 +234,10 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 						${If} "$1" == "$2"
 							RMDir /r "$0"
 						${Else}
-							System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
+							System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
 						${EndIf}
 					${EndIf}
-					WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
+					WriteRegStr HKCU "Software\kuaikan" "lpath" "$INSTDIR\program\myfixar.exe"
 					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
 					Goto realend
 				hasfind:
@@ -249,15 +249,15 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				realend:
 			${Else}
 				;文件不存在
-				WriteRegStr HKCU "Software\mycalendar" "lpath" "$INSTDIR\program\myfixar.exe"
+				WriteRegStr HKCU "Software\kuaikan" "lpath" "$INSTDIR\program\myfixar.exe"
 				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
 			${EndIf}
 		${Else}
 			${If} "${strCallFlag}" == "un."
-				DeleteRegKey HKCU "Software\mycalendar"
+				DeleteRegKey HKCU "Software\kuaikan"
 			${Else}
-				DeleteRegValue HKCU "Software\mycalendar" "lpath"
-				DeleteRegValue HKCU "Software\mycalendar" "setboot"
+				DeleteRegValue HKCU "Software\kuaikan" "lpath"
+				DeleteRegValue HKCU "Software\kuaikan" "setboot"
 			${EndIf}
 			${If} $1 != "false"
 				;lpath存在
@@ -268,16 +268,16 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				StrCpy $1 $2 -4
 				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				
-				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
 				${StrFilter} $0 "-" "" "" $0
-				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
 				StrCpy $2 "$INSTDIR\program\myfixar.exe"
 				${StrFilter} $2 "-" "" "" $2
-				System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
 				${If} $0 != $2
 				${AndIf} $0 != "$2"
 				${AndIf} $0 != ""
-					System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
 					push $0
 					Call ${strCallFlag}GetParent
 					pop $0
@@ -285,7 +285,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 					${If} "$1" == "$2"
 						RMDir /r "$0"
 					${Else}
-						System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
+						System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
 					${EndIf}
 				${EndIf}
 			${Else}
@@ -302,8 +302,15 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 !insertmacro _SetSysBoot "un."
 !insertmacro _SetSysBoot ""
 
-!define UnSetSysBoot 'Call un.InstSetSysBoot'
-!define SetSysBoot 'Call InstSetSysBoot'
+;是否使用修复的方式设置开机启动
+;!define SYSBOOTUSERFIXAR 1
+!ifdef SYSBOOTUSERFIXAR
+	!define UnSetSysBoot 'Call un.InstSetSysBoot'
+	!define SetSysBoot 'Call InstSetSysBoot'
+!else
+	!define SetSysBoot "WriteRegStr HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan '$\"$INSTDIR\program\kuaikan.exe$\" /sstartfrom sysboot /embedding'"
+	!define UnSetSysBoot "DeleteRegValue HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan"
+!endif
 
 !macro _GetParent strCallFlag
 	Function ${strCallFlag}GetParent

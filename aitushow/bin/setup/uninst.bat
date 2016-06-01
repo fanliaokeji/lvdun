@@ -11,7 +11,7 @@ exit
 :start
 set nsisexepath="C:\Program Files (x86)\NSIS\makensis.exe"
 set nsispath="%~dp0nsis\uninst.nsi"
-set exepath="%~dp0input_main\program\mycalendar.exe"
+set exepath="%~dp0input_main\program\kuaikan.exe"
 set exepath=%exepath:\=\\%
 echo %exepath%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%exepath:~1,-1%'" get Version') do (

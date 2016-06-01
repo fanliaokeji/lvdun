@@ -90,8 +90,7 @@ Function Random
 FunctionEnd
 
 Function CloseExe
-	${FKillProc} "mycalendar"
-	${FKillProc} "myfixar"
+	${FKillProc} "kuaikan"
 FunctionEnd
 
 Var Bool_IsUpdate
@@ -100,7 +99,7 @@ Function DoInstall
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	StrCpy $1 ${NSIS_MAX_STRLEN}
 	StrCpy $0 ""
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetProfileFolder(t) i(.r0).r2' 
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetProfileFolder(t) i(.r0).r2' 
 	${If} $0 == ""
 		HideWindow
 		MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装"
@@ -151,14 +150,14 @@ Function DoInstall
 
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
 	${If} $0 == ""
-		System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetPeerID(t) i(.r0).r1'
+		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetPeerID(t) i(.r0).r1'
 		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
 	${EndIf}
 	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
 	${If} $Bool_IsUpdate == 0
 		${SendStat} "install" "$R1" "$str_ChannelID" 1
 		${SendStat} "installmethod" "$R1" "$R3" 1
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '1', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::Send2KKAnyHttpStat(t '1', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	${Else}
 		${SendStat} "update" "$R1" "$str_ChannelID" 1
 		${SendStat} "updatemethod" "$R1" "$R3" 1
@@ -166,18 +165,11 @@ Function DoInstall
 	;写入自用的注册表信息
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallSource" $str_ChannelID
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetTime(*l) i(.r0).r1'
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
 	;注册表增加版本信息
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Ver" ${PRODUCT_VERSION}
-	;写入安装包名字
-	System::Call "kernel32::GetModuleFileName(i 0, t R2R2, i 256)"
-	Push $R2
-	Push "\"
-	Call GetLastPart
-	Pop $R1
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PackageName" "$R1"
 
 	;写入通用的注册表信息
 	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
@@ -245,8 +237,8 @@ Function CmdSilentInstall
 	${if} $2 == 2
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
-		System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
 		Call GetPinPath
 		${If} $0 != "" 
@@ -264,11 +256,14 @@ Function CmdSilentInstall
 	;静默安装根据命令行开机启动
 	Call GetCmdLine
 	Pop $R4
+	StrCpy $Bool_Sysstup 0
 	ClearErrors
 	${GetOptions} $R4 "/setboot"  $R0
-	IfErrors +3 0
+	IfErrors +2 0
 	StrCpy $Bool_Sysstup 1
-	${SetSysBoot}
+	${If} $Bool_Sysstup == 1
+		${SetSysBoot}
+	${EndIf}
 	Call GetCmdLine
 	Pop $R4
 	ClearErrors
@@ -282,10 +277,14 @@ Function CmdSilentInstall
 		StrCpy $R1 "update"
 	${Else}
 		StrCpy $R1 "noupdate"
+		;初次安装自动关联
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
 	${EndIf}
 	
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "myfixar.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
+	ExecShell open "kuaikan.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
 	ExitInstal:
 	Call OnClickQuitOK
 	FunctionReturn:
@@ -331,7 +330,7 @@ Function .onInit
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
-	File "..\bin\mycalendarsetup.dll"
+	File "..\bin\kksetuphelper.dll"
 	File "..\input_main\program\Microsoft.VC90.CRT.manifest"
 	File "..\input_main\program\msvcp90.dll"
 	File "..\input_main\program\msvcr90.dll"
@@ -487,10 +486,7 @@ Function GsMessageBox
 FunctionEnd
 
 Function ClickSure2
-	;ShowWindow $Hwnd_MsgBox ${SW_HIDE}
-	;ShowWindow $HWNDPARENT ${SW_HIDE}
-	${FKillProc} "mycalendar"
-	${FKillProc} "myfixar"
+	${FKillProc} "kuaikan"
 	Call ClickSure3
 FunctionEnd
 
@@ -499,10 +495,7 @@ Function ClickSure1
 	;ShowWindow $HWNDPARENT ${SW_HIDE}
 	Sleep 100
 	;发退出消息
-	FindProcDLL::FindProc "mycalendar.exe"
-	${If} $R0 == 0
-		FindProcDLL::FindProc "myfixar.exe"
-	${EndIf}
+	FindProcDLL::FindProc "kuaikan.exe"
 	${If} $R0 != 0
 		StrCpy $R6 "检测到${SHORTCUT_NAME}正在运行，是否强制结束？"
 		StrCpy $R8 ""
@@ -537,8 +530,8 @@ Function CheckMessageBox
 	${ElseIf} $2 == "0" ;版本相同
 	${OrIf} $2 == "1"	;已安装的版本高于该版本
 		 ${If} $R0 == "false"
-			StrCpy $R6 "检测到已安装${SHORTCUT_NAME}$1，是否覆盖安装？"
-			StrCpy $R8 ""
+			StrCpy $R6 "检测到已安装${SHORTCUT_NAME}$1，"
+			StrCpy $R8 "是否覆盖安装？"
 			GetFunctionAddress $R7 ClickSure1
 			Call GsMessageBox
 		${Else}
@@ -643,7 +636,7 @@ Function OnClick_BrowseButton
 	Pop $R1 ; last part "ProgramName"
 	${If} $R1 == 0
 	${Orif} $R1 == ""
-		StrCpy $R1 "mycalendar"
+		StrCpy $R1 "kuaikan"
 	${EndIf}
 
 	nsDialogs::SelectFolderDialog "请选择 $R0 安装的文件夹:" "$R0"
@@ -802,10 +795,10 @@ FunctionEnd
 
 Function OnClickQuitOK
 	HideWindow
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::WaitForStat()"
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::WaitForStat()"
 	RMDir /r /REBOOTOK $PLUGINSDIR
 	RMDir /r /REBOOTOK "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::SetUpExit()"
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetUpExit()"
 FunctionEnd
 
 Function OnClickQuitCancel
@@ -962,8 +955,8 @@ Function NSD_TimerFun
 		StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 		Call RefreshIcon
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
-		System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
 		Call GetPinPath
 		${If} $0 != "" 
@@ -977,7 +970,6 @@ Function NSD_TimerFun
 			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
 		${EndIf}
 	${Endif}
-	${SetSysBoot}
 	
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
@@ -1028,14 +1020,46 @@ Function InstallationMainFun
 	Sleep 1000
 FunctionEnd
 
+Function onLastClose
+	${If} $Bool_Sysstup == 1
+		${SetSysBoot}
+	${Else}
+		${UnSetSysBoot}
+	${EndIf}
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	${If} $Bool_assoc == 1
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
+	${Else}
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;')"
+	${EndIf}
+	Call OnClickQuitOK
+FunctionEnd
+
 Function OnClick_FreeUse
+	${If} $Bool_Sysstup == 1
+		${SetSysBoot}
+	${Else}
+		${UnSetSysBoot}
+	${EndIf}
+	SetOutPath "$TEMP\${PRODUCT_NAME}"
+	${If} $Bool_assoc == 1
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
+	${Else}
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;')"
+	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	${If} $Bool_IsUpdate == 1 
 		StrCpy $R1 "update"
 	${Else}
 		StrCpy $R1 "noupdate"
 	${EndIf}
-	ExecShell open "myfixar.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
+	ExecShell open "kuaikan.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
 	Call OnClickQuitOK
 FunctionEnd
 
@@ -1096,7 +1120,7 @@ Function LoadingPage
 	;最小化
 	${CreateButton} 488 3 22 22 "btn_min.bmp" onClickZuixiaohua $Btn_Zuixiaohua
 	;关闭
-	${CreateButton} 520 3 22 22 "btn_close.bmp" onClickGuanbi $Btn_Guanbi
+	${CreateButton} 520 3 22 22 "btn_close.bmp" onLastClose $Btn_Guanbi
 	EnableWindow $Btn_Guanbi 0
 	
 	GetFunctionAddress $0 onGUICallback  
@@ -1124,10 +1148,10 @@ FunctionEnd
 
 Function RefreshIcon
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::RefleshIcon(t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::RefleshIcon(t "$R0")'
 FunctionEnd
 
 Function GetPinPath
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetUserPinPath(t) i(.r0)'
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetUserPinPath(t) i(.r0)'
 FunctionEnd

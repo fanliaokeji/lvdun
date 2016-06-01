@@ -44,7 +44,7 @@ UninstPage custom un.MyUnstall
 Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 
 
-InstallDir "$PROGRAMFILES\mycalendar"
+InstallDir "$PROGRAMFILES\kuaikan"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 Section MainSetup
@@ -96,7 +96,7 @@ Function un.onInit
 	
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	SetOverwrite on
-	File "..\bin\mycalendarsetup.dll"
+	File "..\bin\kksetuphelper.dll"
 	
 	StrCpy $Int_FontOffset 4
 	CreateFont $Handle_Font "宋体" 10 0
@@ -183,11 +183,6 @@ Function un.DoUninstall
 	RMDir /r "$INSTDIR\program"
 	RMDir /r "$INSTDIR\res"
 	
-	 ;文件被占用则改一下名字
-	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar64.dll"
-	${RenameDeleteFile} "$INSTDIR\program\myrlcalendar.dll"
-	
-	
 	StrCpy "$R0" "$INSTDIR"
 	System::Call 'Shlwapi::PathIsDirectoryEmpty(t R0)i.s'
 	Pop $R1
@@ -207,20 +202,19 @@ Function un.UNSD_TimerFun
     nsDialogs::KillTimer $0
 	;先干掉快捷方式
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
+	IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
 	${SendStat} "uninstall" "$R1" $str_ChannelID 1
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::Send2DidaAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
-	${FKillProc} "mycalendar"
-	${FKillProc} "myfixar"
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::Send2KKAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
+	${FKillProc} "kuaikan"
 	
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
 		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
 		Call un.GetPinPath
 		${If} $0 != "" 
@@ -241,6 +235,9 @@ Function un.UNSD_TimerFun
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		StrCpy $Bool_Sysstup 0
 		${UnSetSysBoot}
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
@@ -265,21 +262,21 @@ FunctionEnd
 
 Function un.RefreshIcon
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::RefleshIcon(t "$R0")'
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::RefleshIcon(t "$R0")'
 FunctionEnd
 
 Function un.GetPinPath
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
-	System::Call '$TEMP\${PRODUCT_NAME}\mycalendarsetup::GetUserPinPath(t) i(.r0)'
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetUserPinPath(t) i(.r0)'
 FunctionEnd
 
 Function un.OnClick_FinishUnstall
 	HideWindow
-	IfFileExists "$TEMP\${PRODUCT_NAME}\mycalendarsetup.dll" 0 +3
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::WaitForStat()"
+	IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::WaitForStat()"
 	RMDir /r /REBOOTOK $PLUGINSDIR
 	RMDir /r /REBOOTOK "$TEMP\${PRODUCT_NAME}"
-	System::Call "$TEMP\${PRODUCT_NAME}\mycalendarsetup::SetUpExit()"
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetUpExit()"
 	System::Call 'kernel32::GetModuleFileName(i 0, t R2R2, i 256)'
 	Push $R2
 	Push "\"
@@ -374,7 +371,6 @@ Function un.GsMessageBox
 	Pop $0
     SetCtlColors $0 "FFFFFF" transparent ;背景设成透明
 	SendMessage $0 ${WM_SETFONT} $Handle_Font 0
-	
 	;关闭
 	${CreateButton} 279 5 22 22 "btn_close.bmp" un.OnClick_FinishUnstall $0
 	
@@ -383,7 +379,6 @@ Function un.GsMessageBox
 	StrCpy $1 $btn_MsgBoxSure
 	SkinBtn::Set /IMGID=$PLUGINSDIR\btn_yes.bmp $1
 	SkinBtn::onClick $1 $R7
-
 	${NSD_CreateButton} 223 114 73 25 ''
 	Pop $btn_MsgBoxCancel
 	StrCpy $1 $btn_MsgBoxCancel
@@ -400,24 +395,27 @@ Function un.GsMessageBox
 	Pop $lab_MsgBoxText
     SetCtlColors $lab_MsgBoxText "FFFFFF" transparent ;背景设成透明
 	SendMessage $lab_MsgBoxText ${WM_SETFONT} $Handle_Font 0
-	
 	StrCpy $3 75
 	IntOp $3 $3 + $Int_FontOffset
 	${NSD_CreateLabel} 66 $3 250 20 $R8
 	Pop $lab_MsgBoxText2
     SetCtlColors $lab_MsgBoxText2 "FFFFFF" transparent ;背景设成透明
 	SendMessage $lab_MsgBoxText2 ${WM_SETFONT} $Handle_Font 0
-	
+
 	GetFunctionAddress $0 un.onGUICallback
+
     ;贴背景大图
     ${NSD_CreateBitmap} 0 0 100% 100% ""
     Pop $BGImage
     ${NSD_SetImage} $BGImage $PLUGINSDIR\quit.bmp $ImageHandle
-	
+
 	WndProc::onCallback $BGImage $0 ;处理无边框窗体移动
-	
+
 	GetFunctionAddress $0 un.onMsgBoxCloseCallback
+
 	WndProc::onCallback $HWNDPARENT $0 ;处理关闭消息
+
+	ShowWindow $HWNDPARENT ${SW_SHOW}
 	nsDialogs::Show
 	${NSD_FreeImage} $ImageHandle
 	Create_End:
@@ -434,22 +432,18 @@ Function un.GsMessageBox
 FunctionEnd
 
 Function un.ClickSure
-	${FKillProc} "mycalendar"
-	${FKillProc} "myfixar"
+	${FKillProc} "kuaikan"
 	Call un.ClickSure2
 FunctionEnd
 
 Function un.ClickSure2
 	StrCpy $9 "userchoice"
-	SendMessage $HWNDPARENT 0x408 1 0
+	SendMessage $HWNDPARENT "0x408" "1" ""
 FunctionEnd
 
 Function un.MyUnstallMsgBox
 	;发退出消息
-	FindProcDLL::FindProc "mycalendar.exe"
-	${If} $R0 == 0
-		FindProcDLL::FindProc "myfixar.exe"
-	${EndIf}
+	FindProcDLL::FindProc "kuaikan.exe"
 	${If} $R0 != 0
 		StrCpy $R6 "检测到${SHORTCUT_NAME}正在运行，是否强制结束？"
 		StrCpy $R8 ""
