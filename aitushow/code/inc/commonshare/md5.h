@@ -2,7 +2,7 @@
 #include <string>
 #include <Windows.h>
 #include <Wincrypt.h>
-BOOL GetMd5(std::wstring file,WCHAR * pszFileMd5)  
+inline BOOL GetMd5(std::wstring file,WCHAR * pszFileMd5)  
 {  
 	HANDLE hFile=CreateFile(file.c_str(),GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,NULL,NULL);
 	if (hFile==INVALID_HANDLE_VALUE) 
@@ -71,7 +71,7 @@ BOOL GetMd5(std::wstring file,WCHAR * pszFileMd5)
 
 
 
-BOOL GetStringMd5(std::string str,WCHAR * pszStrMd5)  
+inline BOOL GetStringMd5(std::string str,WCHAR * pszStrMd5)  
 {  
 	HCRYPTPROV hProv=NULL;
 	if(CryptAcquireContext(&hProv,NULL,NULL,PROV_RSA_FULL,CRYPT_VERIFYCONTEXT)==FALSE)       //获得CSP中一个密钥容器的句柄
