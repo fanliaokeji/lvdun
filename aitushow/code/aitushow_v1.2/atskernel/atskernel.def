@@ -1,0 +1,6 @@
+LIBRARY	"atskernel"
+
+EXPORTS
+InitXLUE
+UnInitXLUE
+HandleSingleton

@@ -1,0 +1,1 @@
+int get_thumbnail_length( const unsigned char* data_ptr, unsigned data_len );
