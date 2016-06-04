@@ -512,10 +512,10 @@ XL_BITMAP_HANDLE CImageProcessor::DrawThumbnailViewLayer(int nTotalWidth, int nT
 
 
 	graphics.SetClip(rect);
-	Pen pen(Color(255, 255, 255, 255));
-	Pen pen1(Color(255, 255, 255, 255));
+	Pen pen(Color(255,255, 215, 00));
+	Pen pen1(Color(255,255, 215, 00));
 	pen.SetAlignment(PenAlignmentInset);
-	pen1.SetDashStyle(DashStyleDash );
+	pen1.SetDashStyle(DashStyleSolid );
 	// »­4ÌõÏß
 	graphics.DrawLine(&pen1, nLeftPos, nTopPos, nLeftPos, nTopPos+nRectHeight-1);
 	graphics.DrawLine(&pen1, nLeftPos, nTopPos, nLeftPos+nRectWidth-1, nTopPos);
