@@ -209,6 +209,7 @@ public:
 	static int GetProfilesDir(lua_State* luaState);
 	static int ForceUpdateWndShow(lua_State* luaState);
 	static int GetFiles(lua_State* luaState);
+	static int GetFileInfoByPath(lua_State* luaState);
 	static int GetFolders(lua_State* luaState);
 	static int StrColl(lua_State* luaState);
 	static int GetScreenRatio(lua_State* luaState);		// 获取屏幕分辨率

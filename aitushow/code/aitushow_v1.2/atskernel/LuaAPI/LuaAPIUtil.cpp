@@ -189,6 +189,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"GetProfilesDir", GetProfilesDir},			// 获取Profiles路径
 	{"ForceUpdateWndShow", ForceUpdateWndShow},
 	{"GetFiles", GetFiles},
+	{"GetFileInfoByPath", GetFileInfoByPath},
 	{"GetFolders", GetFolders},
 	{"StrColl", StrColl},
 	{"GetScreenRatio",  GetScreenRatio},
@@ -4728,6 +4729,75 @@ int LuaAPIUtil::GetFiles(lua_State* luaState)
 	return 1;
 }
 
+int LuaAPIUtil::GetFileInfoByPath(lua_State* luaState)
+{
+	const char* utf8FilePath = luaL_checkstring(luaState, 2);
+	wstring strFilePath = ultra::_UTF2T(utf8FilePath);
+	//文件名
+	wstring strFileName = L"";
+	std::wstring::size_type nPos = strFilePath.find_last_of(L"\\");
+	if( nPos != std::wstring::npos )
+	{
+		strFileName = strFilePath.substr(nPos+1);
+	}
+	//文件大小与修改时间
+	wstring wstrLastWriteTime = L"";
+	__int64 nFileSize = 0;
+	HANDLE hFile = CreateFile(strFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
+	if (hFile != INVALID_HANDLE_VALUE)
+	{
+		LARGE_INTEGER li;
+		BOOL bRet = GetFileSizeEx(hFile,&li);
+
+
+		FILETIME ftLastWriteTime;
+		if (0 != GetFileTime(hFile, NULL, NULL, &ftLastWriteTime))
+		{
+			_SYSTEMTIME stSysTime;
+			if (FileTimeToSystemTime(&(ftLastWriteTime), &stSysTime))
+			{
+				TCHAR* szTSysTime = new TCHAR[1000];
+				swprintf(szTSysTime, L"%d-%02d-%02d %02d:%02d:%02d", stSysTime.wYear, stSysTime.wMonth, stSysTime.wDay, stSysTime.wHour, stSysTime.wMinute, stSysTime.wSecond);
+				wstrLastWriteTime = szTSysTime;
+				delete[] szTSysTime;
+			}
+		}
+		CloseHandle( hFile );
+		nFileSize = li.QuadPart;
+	}
+	char szFileSize[20] = {0};
+	sprintf(szFileSize, "%d", nFileSize);
+
+	//后缀名
+	std::wstring wsExt = PathFindExtensionW(strFilePath.c_str());
+	if (wsExt.length() == 0)
+	{
+		wsExt = L"*";
+	}
+	lua_newtable(luaState);
+	lua_pushstring(luaState, "FilePath");
+	lua_pushstring(luaState, utf8FilePath);
+	lua_settable(luaState, -3);
+
+	lua_pushstring(luaState, "FileName");
+	lua_pushstring(luaState, ultra::_T2UTF(strFileName).c_str());
+	lua_settable(luaState, -3);
+
+	lua_pushstring(luaState, "LastWriteTime");
+	lua_pushstring(luaState, ultra::_T2UTF(wstrLastWriteTime).c_str());
+	lua_settable(luaState, -3);
+
+	lua_pushstring(luaState, "ExtName");
+	lua_pushstring(luaState, ultra::_T2UTF(wsExt).c_str());
+	lua_settable(luaState, -3);
+
+	lua_pushstring(luaState, "FileSize");
+	lua_pushstring(luaState, szFileSize);
+	lua_settable(luaState, -3);
+
+	return 1;
+}
+
 int LuaAPIUtil::StrColl(lua_State* luaState)
 {
 	const char* pszstr1_utf8 = luaL_checkstring(luaState, 2);
@@ -5160,7 +5230,6 @@ int LuaAPIUtil::KKFolderDialog(lua_State* luaState)
 									hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
 									if (SUCCEEDED(hr))
 									{
-										//xl::text::transcode::Unicode_to_UTF8(pszFilePath, lstrlen(pszFilePath), strPath );
 										strPath = ultra::_T2UTF(pszFilePath);
 									}
 									psiResult->Release();
