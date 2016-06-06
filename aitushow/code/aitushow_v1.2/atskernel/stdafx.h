@@ -19,6 +19,7 @@
 
 
 #include <shellapi.h>
+#include <Wininet.h>
 #include <Shlobj.h>
 #include <wininet.h>
 #include <mapidbg.h>
