@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #pragma warning(disable: 4995)
 #include <TlHelp32.h>
+
 #include <Shlobj.h>
 #include <atlsync.h>
 #include <atltime.h>
@@ -236,6 +237,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"Execute",Execute},
 	{"IsValidFileName", IsValidFileName},
 	{"ShellOpen", ShellOpen},
+	{"SetDesktopWallpaper", SetDesktopWallpaper},
 	{"FolderDialog", FolderDialog},
 	{"FileDialog", FileDialog},
 	{NULL, NULL}
@@ -5683,6 +5685,47 @@ int LuaAPIUtil::ShellOpen(lua_State* luaState)
 	}
 	return 0;
 }
+
+int LuaAPIUtil::SetDesktopWallpaper(lua_State* luaState)
+{
+	const char* utf8Text = luaL_checkstring(luaState, 2);
+
+	if (utf8Text == NULL)
+	{
+		return E_FAIL;
+	}
+	HRESULT hr = S_OK;
+	CComPtr<IActiveDesktop> spActiveDesktop;
+	hr = CoCreateInstance(CLSID_ActiveDesktop, NULL, CLSCTX_INPROC_SERVER, IID_IActiveDesktop, (void**)&spActiveDesktop);
+	if (hr == S_OK)
+	{
+		COMPONENTSOPT comp;
+		comp.dwSize = sizeof(comp);
+		comp.fEnableComponents = TRUE;
+		comp.fActiveDesktop = TRUE;
+		hr = spActiveDesktop->SetDesktopItemOptions(&comp, 0);
+		if (hr != S_OK)
+		{
+			//win7下该函数没有实现
+			//return hr;
+		}
+		std::wstring strFileName = ultra::_UTF2T(utf8Text);
+		hr = spActiveDesktop->SetWallpaper(strFileName.c_str(), 0);
+		WALLPAPEROPT wpo;
+		wpo.dwSize = sizeof(wpo);
+		wpo.dwStyle = WPSTYLE_STRETCH;
+		hr = spActiveDesktop->SetWallpaperOptions(&wpo, 0);
+		if (hr != S_OK)
+		{
+			return hr;
+		}
+		hr = spActiveDesktop->ApplyChanges(AD_APPLY_ALL);
+	}
+	lua_pushinteger(luaState, hr);
+	return 1;
+}
+
+
 
 int LuaAPIUtil::FolderDialog(lua_State* luaState)
 {

@@ -254,6 +254,7 @@ public:
 
 	static int IsValidFileName(lua_State* luaState);
 	static int ShellOpen(lua_State* luaState);
+	static int SetDesktopWallpaper(lua_State* luaState);
 	static int FolderDialog(lua_State* luaState);
 	static int FileDialog(lua_State* luaState);
 
