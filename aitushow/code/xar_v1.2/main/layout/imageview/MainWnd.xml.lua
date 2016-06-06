@@ -47,7 +47,7 @@ function Wnd_OnSize(self, _type, width, height)
 	local mainClient = tree:GetUIObject( "mainwnd.client")
 	local captionObj = mainClient:GetCaption()
 	local systemBtn = captionObj:GetSystemBtn()
-	XLMessageBox(tostring(_type))
+	--XLMessageBox(tostring(_type))
 	if _type == "min" then
 		return
 	elseif _type == "max" then
