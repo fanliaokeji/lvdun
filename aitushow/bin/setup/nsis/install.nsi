@@ -280,7 +280,7 @@ Function CmdSilentInstall
 		;初次安装自动关联
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
 	${EndIf}
 	
 	SetOutPath "$INSTDIR\program"
@@ -1029,11 +1029,11 @@ Function onLastClose
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
 	${EndIf}
 	Call OnClickQuitOK
 FunctionEnd
@@ -1047,11 +1047,11 @@ Function OnClick_FreeUse
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	${If} $Bool_IsUpdate == 1 

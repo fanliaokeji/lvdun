@@ -237,7 +237,7 @@ Function un.UNSD_TimerFun
 		${UnSetSysBoot}
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.bmp;.cut;.dds;.exr;.fax;.gif;.ico;.iff;.j2k;.jng;.jp2;.jpeg;.jpg;.jxr;.koala;.lbm;.mng;.pbm;.pcd;.pcx;.pfm;.pgm;.pict;.png;.ppm;.ppmraw;.psd;.ras;.sgi;.tga;.tiff;.wbm;.web;.xbm;.xpm;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
