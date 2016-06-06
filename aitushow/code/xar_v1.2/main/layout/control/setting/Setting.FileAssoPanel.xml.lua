@@ -3,14 +3,14 @@ local SettingHelper = Helper.Setting
 local tipUtil = XLGetObject("API.Util")
 
 local SpecialExts = {
-	["JPG"] = ".jpeg;.jpg;",
-	["PPM"] = ".ppm;.ppmraw;"
+	["JPG"] = ".jpeg;.jpg;.jpe;",
+	["TIFF"] = ".tiff;.tif;"
 }
 
 function Update(self)
 	local ckboxobj
 	local bcheckall = true
-	for i = 3, 35 do
+	for i = 3, 15 do
 		ckboxobj = self:GetObject("chebox"..i)
 		if tipUtil:IsAssociated("."..string.lower(ckboxobj:GetAttribute().Text)) then
 			ckboxobj:SetCheck(true, true)
@@ -19,7 +19,7 @@ function Update(self)
 			ckboxobj:SetCheck(false, true)
 		end
 	end
-	local checkall = self:GetObject("chebox37")
+	local checkall = self:GetObject("chebox17")
 	if bcheckall then
 		checkall:SetCheck(true, true)
 	else
@@ -35,7 +35,7 @@ function Apply(self)
 	attr.AllowCallApply = false
 	local ckboxattr
 	local strExtsDo, strExtsUnDo = "", ""
-	for i = 3, 35 do
+	for i = 3, 15 do
 		ckboxattr = self:GetObject("chebox"..i):GetAttribute()
 		if ckboxattr.Select then
 			strExtsDo = strExtsDo..(SpecialExts[ckboxattr.Text] or "."..string.lower(ckboxattr.Text)..";")
@@ -47,12 +47,12 @@ function Apply(self)
 	tipUtil:SetAssociate(strExtsDo, true)
 end
 
-function chebox37OnSelect(self, event, ischeck)
+function chebox17OnSelect(self, event, ischeck)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	attr.AllowCallApply = true
 	local objcheckbox
-	for i = 3, 35 do
+	for i = 3, 15 do
 		objcheckbox = owner:GetControlObject("chebox"..i)
 		if objcheckbox then
 			objcheckbox:SetCheck(ischeck, true)
@@ -61,10 +61,10 @@ function chebox37OnSelect(self, event, ischeck)
 end
 
 function FileAssoPanelOnInitControl(self)
-	local checkall = self:GetObject("chebox37")
+	local checkall = self:GetObject("chebox17")
 	local attr = self:GetAttribute()
 	local objcheckbox
-	for i = 3, 35 do
+	for i = 3, 15 do
 		objcheckbox = self:GetObject("chebox"..i)
 		objcheckbox:AttachListener("OnSelect", 
 			false, 
@@ -75,7 +75,7 @@ function FileAssoPanelOnInitControl(self)
 					return
 				end
 				local ckbox_attr
-				for j = 3, 35 do
+				for j = 3, 15 do
 					ckbox_attr = self:GetObject("chebox"..j):GetAttribute()
 					if not ckbox_attr.Select then
 						return
