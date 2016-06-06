@@ -1,0 +1,283 @@
+<xlue>	
+	<control class="Kuaikan.MainWnd.Client.SuspendToolbar">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<ShowContent file="MainClient.SuspendToolbar.xml.lua" func="ShowContent" />
+			<EnableToolbarItem file="MainClient.SuspendToolbar.xml.lua" func="EnableToolbarItem" />
+			<GetToolbarItem file="MainClient.SuspendToolbar.xml.lua" func="GetToolbarItem" />
+		</method_def>
+		<event_def>
+			<OnBtnClick>
+				<param>
+					<string/>
+				</param>
+			</OnBtnClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.layout" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>0</limitchild>
+					</attr>
+					<children>
+						<obj id="client.bkg" class="TextureObject">
+							<attr>
+								<left>(father.width-507)/2</left>
+								<top>5</top>
+								<width>507</width>
+								<height>47</height>
+								<texture>toolbar.bkg</texture>
+							</attr>
+							<children>
+								<obj id="btn.max" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>放大(+)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.fangda.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.fangda.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.fangda.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.fangda.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								<obj id="btn.min" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>缩小(-)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.suoxiao.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.suoxiao.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.suoxiao.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.suoxiao.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								
+								<obj id="btn.src" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*2</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.yibiyi.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.yibiyi.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.yibiyi.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.yibiyi.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								<obj id="btn.preFile" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*3</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>上一张</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.shangyizhang.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.shangyizhang.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.shangyizhang.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.shangyizhang.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								
+								<obj id="btn.nextFile" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*4</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>下一张(空格)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.xiayizhang.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.xiayizhang.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.xiayizhang.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.xiayizhang.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								<obj id="btn.leftrotate" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*5</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>左旋(Ctrl+L)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.zuoxuanzhuan.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.zuoxuanzhuan.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.zuoxuanzhuan.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.zuoxuanzhuan.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								
+								<obj id="btn.rightrotate" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*6</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>右旋(Ctrl+R)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.youxuanzhuan.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.youxuanzhuan.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.youxuanzhuan.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.youxuanzhuan.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								
+								<obj id="btn.del" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*7</left>
+										<top>7</top>
+										<width>37</width>
+										<height>30</height>
+										<TipText>删除(Delete)</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.shanchu.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.shanchu.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.shanchu.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.shanchu.normal</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="MainClient.SuspendToolbar.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

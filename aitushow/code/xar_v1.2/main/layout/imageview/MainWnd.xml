@@ -1,0 +1,178 @@
+<xlue>
+	<objtreetemplate id="Kuaikan.MainObjTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>-200</left>
+			<top>-200</top>
+			<width>2000</width>
+			<height>2000</height>
+			<mousewheelstrategy>over</mousewheelstrategy>
+		</attr>
+		<obj id="mainwnd.layout" class="LayoutObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>800</width>
+				<height>600</height>
+			</attr>
+			<children>
+				<obj id="mainwnd.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<texture>toolbar.bkg</texture>
+					</attr>
+					<children>
+						<obj id="mainwnd.client.layout" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+							<children>
+								<obj id="mainwnd.resize.bottom" class="ResizeObject">
+									<attr>
+										<top>father.height-4</top>
+										<width>father.width</width>
+										<height>4</height>
+										<type>bottom</type>
+										<zorder>1000000</zorder>
+									</attr>
+								</obj>
+
+								<obj id="mainwnd.resize.top" class="ResizeObject">
+									<attr>
+										<top>0</top>
+										<width>father.width</width>
+										<height>4</height>
+										<type>top</type>
+										<zorder>1000000</zorder>
+									</attr>
+								</obj>
+
+								<obj id="mainwnd.resize.left" class="ResizeObject">
+									<attr>
+										<left>0</left>
+										<width>4</width>
+										<height>father.height</height>
+										<type>left</type>
+										<zorder>1000000</zorder>
+									</attr>
+								</obj>
+								
+								<obj id="mainwnd.resize.right" class="ResizeObject">
+									<attr>
+										<left>father.width-4</left>
+										<width>4</width>
+										<height>father.height</height>
+										<type>right</type>
+										<zorder>1000000</zorder>
+									</attr>
+								</obj>
+								<obj id="mainwnd.resize.topleft" class="ResizeObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>4</width>
+										<height>4</height>
+										<type>topleft</type>
+										<zorder>10000000</zorder>
+									</attr>
+								</obj>
+
+								<obj id="mainwnd.resize.bottomleft" class="ResizeObject">
+									<attr>
+										<left>0</left>
+										<top>father.height</top>
+										<width>4</width>
+										<height>4</height>
+										<type>bottomleft</type>
+										<zorder>10000000</zorder>
+									</attr>
+								</obj>
+
+								<obj id="mainwnd.resize.topright" class="ResizeObject">
+									<attr>
+										<left>father.width</left>
+										<top>0</top>
+										<width>4</width>
+										<height>4</height>
+										<type>topright</type>
+										<zorder>10000000</zorder>
+									</attr>
+								</obj>
+
+								<obj id="mainwnd.resize.bottomright" class="ResizeObject">
+									<attr>
+										<left>father.width-8</left>
+										<top>father.height-8</top>
+										<width>8</width>
+										<height>8</height>
+										<type>bottomright</type>
+										<zorder>10000000</zorder>
+									</attr>
+								</obj>
+								<obj id="mainwnd.client" class="Kuaikan.MainWnd.Client">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<enabledrop>1</enabledrop>
+									</attr>
+									<eventlist>
+										<event name="OnDragEnter" file="MainWnd.xml.lua" func="OnDragEnter" />
+										<event name="OnDragQuery" file="MainWnd.xml.lua" func="OnDragQuery" />
+										<event name="OnDragOver" file="MainWnd.xml.lua" func="OnDragOver" />
+										<event name="OnDragLeave" file="MainWnd.xml.lua" func="OnDragLeave" />
+										<event name="OnDrop" file="MainWnd.xml.lua" func="OnDrop" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>	
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="MainWnd.xml.lua" func="OnInitControl" />
+				<event name="OnLButtonDown" file="MainWnd.xml.lua" func="OnLButtonDown" />
+				<event name="OnDestroy" file="MainWnd.xml.lua" func="OnDestroy" />
+			</eventlist>
+		</obj>
+	</objtreetemplate>
+
+	<hostwndtemplate id="Kuaikan.MainWnd" class="FrameHostWnd">
+		<attr> 
+			<title>快看</title>
+			<enable>1</enable>
+			<left>200</left> 
+			<top>100</top>
+			<width>800</width>
+			<height>600</height>
+			<layered>1</layered>
+			<topmost>0</topmost>
+			<visible>1</visible>
+			<fps>30</fps>
+			<treeorigin>0,0</treeorigin>
+			<ellipse>3,3</ellipse>
+			<minwidth>400</minwidth>
+			<minheight>300</minheight>
+			<appwindow>1</appwindow> 
+			<border>0,0,0,0</border>
+			<minbox>1</minbox>
+			<maxbox>1</maxbox>
+			<sysmenu>1</sysmenu>
+			<tabstop>1</tabstop>
+			<enabledrop>1</enabledrop>
+		</attr>
+		<eventlist>
+			<event name="OnCreate" file="MainWnd.xml.lua" func="Wnd_OnCreate" />
+			<event name="OnDestroy" file="MainWnd.xml.lua" func="Wnd_OnDestroy" />
+			<event name="OnSize" file="MainWnd.xml.lua" func="Wnd_OnSize"/>
+			<event name="OnClose" file="MainWnd.xml.lua" func="Wnd_OnClose"/>
+			<event name="OnShowWindow" />
+		</eventlist>
+	</hostwndtemplate>	
+</xlue>

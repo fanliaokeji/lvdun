@@ -1,0 +1,133 @@
+<xlue>
+	<control class="TitleCtrlEx">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetTitleTextContent file="TitleCtrlEx.xml.lua" func="SetTitleTextContent"/>
+		</method_def>
+		<event_def>
+			<OnClick>
+				<param>
+					<int />
+					<int />
+				</param>
+			</OnClick>
+		</event_def>
+    <objtemplate>
+	<children>
+		<obj id="FrameWnd.Title.Bkg" class="FillObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+				<filltype>Monochrome</filltype>
+				<srccolor>61,37,31,255</srccolor>
+				<destcolor>61,37,31,255</destcolor>
+			</attr>	
+			<children>
+				<obj id="FrameWnd.Title.Logo" class="ImageObject">
+					<attr>
+						<left>12</left>
+						<top>5</top>
+						<width>18</width>
+						<height>20</height>
+						<image>image.logo</image>
+					</attr>	
+				</obj>
+				<obj id="FrameWnd.Title.TitleText" class="TextObject">
+					<attr>
+						<left>34</left>
+						<top>5</top>
+						<width>father.width - 30 - 12*7</width>
+						<height>father.height - 5</height>
+						<textcolor>system.white</textcolor>
+						<text>快看1.0</text>
+					</attr>	
+				</obj>
+				<obj id="FrameWnd.Title.Setting" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25 - 22*3</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.setting.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.setting.down</DownBkgID>
+						<HoverBkgID>bitmap.title.setting.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.setting.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickSetting" />
+					</eventlist>	
+				</obj>
+				
+				<obj id="FrameWnd.Title.MinBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25 - 22*2</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.min.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.min.down</DownBkgID>
+						<HoverBkgID>bitmap.title.min.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.min.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickMinBtn" />
+					</eventlist>	
+				</obj>	
+				<obj id="FrameWnd.Title.MaxBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25 - 22</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.max.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.max.down</DownBkgID>
+						<HoverBkgID>bitmap.title.max.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.max.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickMaxBtn" />
+					</eventlist>	
+				</obj>	
+				<obj id="FrameWnd.Title.RestoreBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25 - 22</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.restore.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.restore.down</DownBkgID>
+						<HoverBkgID>bitmap.title.restore.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.restore.disable</DisableBkgID>
+						<Visible>false</Visible>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickRestoreBtn" />
+					</eventlist>	
+				</obj>	
+				<obj id="FrameWnd.Title.CloseBtn" class="TipAddin.Button">
+					<attr>
+						<left>father.width-25</left>
+						<top>0</top>
+						<width>22</width>
+						<height>22</height>
+						<NormalBkgID>bitmap.title.close.normal</NormalBkgID>
+						<DownBkgID>bitmap.title.close.down</DownBkgID>
+						<HoverBkgID>bitmap.title.close.hover</HoverBkgID>
+						<DisableBkgID>bitmap.title.close.disable</DisableBkgID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickCloseBtn" />
+					</eventlist>	
+				</obj>
+			</children>
+		</obj>
+	</children>
+	<eventlist>
+		<event name="OnInitControl" />	
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>

@@ -1,0 +1,234 @@
+<xlue>
+	<objtreetemplate id="MainWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>875</width>
+			<height>515</height>
+		</attr>
+		<obj id="root" class="FillObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>875</width>
+				<height>515</height>
+				<filltype>Monochrome</filltype>
+				<srccolor>61,37,31,255</srccolor>
+				<destcolor>61,37,31,255</destcolor>
+			</attr>	
+			<children>
+				<obj id="MainWnd.ResizeFrameWndCtrl" class="ResizeFrameWndCtrl">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+				<!--全屏模式的按钮位于TitleCtrl，故进入全屏在TitleCtrl里处理-->
+				<obj id="MainWnd.TitleCtrl" class="TitleCtrlEx">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>30</height>
+					</attr>
+				</obj>
+				<obj id="MainWnd.LeftTreeContainer" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>30</top>
+						<width>195</width>
+						<height>father.height - 30 - 30</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="LeftPanel" class="LeftTreePanel">
+							 <attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+							<eventlist>
+								<event name="OnSelect" file="MainWnd.xml.lua" func="LeftPanelOnSelect"/>
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+				<obj id="MainWnd.ResizeLine" class="LayoutObject">
+					<attr>
+						<left>196</left>
+						<top>30</top>
+						<width>2</width>
+						<height>father.height - 30 - 30</height>
+					</attr>
+					<eventlist>
+						<event name="OnLButtonDown" file="MainWnd.xml.lua" func="OnLButtonDown_ResizeLine"/>
+						<event name="OnMouseMove" file="MainWnd.xml.lua" func="OnMouseMove_ResizeLine"/>
+						<event name="OnLButtonUp" file="MainWnd.xml.lua" func="OnLButtonUp_ResizeLine"/>
+					</eventlist>
+				</obj>
+				<obj id="MainWnd.ThumbnailContainer" class="LayoutObject">
+					<attr>
+						<left>195</left>
+						<top>30</top>
+						<width>father.width - 195</width>
+						<height>father.height - 30 - 30</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="ThumbnailContainer.Header" class="FillObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>87</height>
+								<filltype>Monochrome</filltype>
+								<srccolor>87,54,45,255</srccolor>
+								<destcolor>87,54,45,255</destcolor>
+							</attr>
+							<children>
+								<obj id="MainWnd.AddressEditCtrl" class="AddressEdit">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>27</height>
+									</attr>
+									<eventlist>
+										<event name="OnPathChanged" file="MainWnd.xml.lua" func="AddressEditCtrlOnPathChanged"/>
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.SliderCtrl" class="Slider">
+									<attr>
+										<left>father.width-73-8-20-76</left>
+										<top>58-10</top>
+										<width>76</width>
+										<height>14</height>
+										<BtnWidth>14</BtnWidth>
+										<BtnHeight>14</BtnHeight>
+										<BkgID>texture.slider.bkg</BkgID>			
+										<RightBkgID>texture.slider.bkg</RightBkgID>			
+										<LeftBkgID>texture.slider.leftbkg</LeftBkgID>			
+										<BtnNormalBkgID>texture.slider.btn</BtnNormalBkgID>
+										<BtnDownBkgID>texture.slider.btn</BtnDownBkgID>
+										<BtnDisableBkgID>texture.slider.btn</BtnDisableBkgID>
+										<BtnHoverBkgID>texture.slider.btn</BtnHoverBkgID>
+										<Min>0</Min>
+										<Max>100</Max>
+										<Value>10</Value>
+									</attr>
+									<eventlist>
+										<event name="OnSliderPosChange" file="MainWnd.xml.lua" func="OnSliderPosChange"/>
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.SortButton" class="TipAddin.Button">
+									<attr>
+										<left>father.width-73-8</left>
+										<top>50-10</top>
+										<width>73</width>
+										<height>29</height>
+										<NormalBkgID>sortbutton.normal</NormalBkgID>
+										<HoverBkgID>sortbutton.hover</HoverBkgID>
+										<DownBkgID>sortbutton.down</DownBkgID>
+										<DisableBkgID>sortbutton.disable</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="MainWnd.xml.lua" func="OnClickSortButton"/>
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+						<obj id="ThumbnailContainer.Center" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>88</top>
+								<width>father.width</width>
+								<height>father.height - 88 - 47</height>
+								<limitchild>1</limitchild>
+							</attr>
+							<children>
+								<obj id="ThumbnailContainerObj" class="ThumbnailContainer">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<limitchild>1</limitchild>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						<obj id="ThumbnailContainer.Bottom" class="FillObject">
+							<attr>
+								<left>0</left>
+								<top>father.height - 47</top>
+								<width>father.width</width>
+								<height>47</height>
+								<filltype>Monochrome</filltype>
+								<srccolor>87,54,45,255</srccolor>
+								<destcolor>87,54,45,255</destcolor>
+							</attr>
+							<children>
+								<obj id="BottomObj" class="BottomCtrl">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+								</obj>	
+							</children>
+						</obj>	
+					</children>
+				</obj>
+				<obj id="MainWnd.Info" class="TextObject">
+					<attr>
+						<left>5</left>
+						<top>father.height - 30</top>
+						<width>father.width</width>
+						<height>30</height>
+						<textcolor>basecontrol.white</textcolor>
+						<valign>center</valign>
+						<halign>left</halign>
+					</attr>
+				</obj>
+			</children>
+		</obj>
+	</objtreetemplate>
+
+    <hostwndtemplate id="MainWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>875</width>
+            <height>515</height>
+            
+            <topmost>0</topmost>
+            <visible>1</visible>
+            <enable>1</enable>
+            <maxbox>1</maxbox>
+            <minbox>1</minbox>
+            <minwidth>500</minwidth>
+            <minheight>300</minheight>
+			<sysmenu>1</sysmenu>
+			<appwindow>1</appwindow>
+        </attr>
+		 <eventlist>
+            <event name="OnCreate" file="MainWnd.xml.lua" func="OnCreate"/>
+            <event name="OnShowWindow" file="MainWnd.xml.lua" func="OnShowWindow"/>
+			<event name="OnSize" />
+			<event name="OnMove" />
+			<event name="OnClose" >
+				local self = ...
+				local objtree = self:GetBindUIObjectTree()
+				local btnclose = objtree:GetUIObject("MainWnd.TitleCtrl"):GetObject("FrameWnd.Title.CloseBtn")
+				btnclose:FireExtEvent("OnClick", 0, 0)
+				return 0, true
+			</event>
+        </eventlist>
+    </hostwndtemplate>
+
+</xlue>

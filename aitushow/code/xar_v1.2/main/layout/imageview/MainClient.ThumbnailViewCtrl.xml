@@ -1,0 +1,139 @@
+<xlue>
+	<control class="Kuaikan.MainWnd.Client.ThumbnailViewCtrl">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<SetImage file="MainClient.ThumbnailViewCtrl.xml.lua" func="SetImage"/>
+			<UpdateLayer file="MainClient.ThumbnailViewCtrl.xml.lua" func="UpdateLayer"/>
+			<UpdateTitle file="MainClient.ThumbnailViewCtrl.xml.lua" func="UpdateTitle"/>
+		</method_def>
+		<event_def>
+			<OnViewRectChanged>
+				<param>
+					<int />	
+					<int />
+				</param>
+			</OnViewRectChanged>
+			<OnViewRectMouseWheel>
+				<param>
+					<int />
+				</param>
+			</OnViewRectMouseWheel>
+			<OnViewRectLButtonDown>
+				<param>
+					<double />
+					<double />
+				</param>
+			</OnViewRectLButtonDown>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<alpha>180</alpha>
+						<texture>toolbar.bkg</texture>
+					</attr>
+					<children>
+						<obj id="client.layout" class="LayoutObject">
+							<attr>
+								<left>3</left>
+								<top>3</top>
+								<width>father.width-6</width>
+								<height>father.height-6</height>
+							</attr>
+							<children>
+								<obj id="client.caption" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>25</height>
+									</attr>
+									<children>
+										<obj id="client.caption.title" class="TextObject">
+											<attr>
+												<left>10</left>
+												<top>0</top>
+												<width>father.width-20</width>
+												<height>father.height</height>
+												<valign>center</valign>
+												<textcolor>system.white</textcolor>
+											</attr>
+										</obj>
+										<obj id="client.caption.close" class="Kuaikan.Button">
+											<attr>
+												<left>father.width-22-1</left>
+												<top>1</top>
+												<width>22</width>
+												<height>22</height>
+												<NormalBkgID>texture.title.close.normal</NormalBkgID>
+												<HoverBkgID>texture.title.close.down</HoverBkgID>
+												<DownBkgID>texture.title.close.hover</DownBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnCloseBtnClick" />
+											</eventlist>
+										</obj>
+									</children>
+									<eventlist>
+										<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonDown" />
+										<event name="OnLButtonUp" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonUp" />
+										<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnMouseMove" />
+									</eventlist>
+								</obj>
+								
+								<obj id="client.view.layout" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>25</top>
+										<width>father.width</width>
+										<height>father.height-25</height>
+									</attr>
+									<children>
+										<obj id="client.view" class="ImageObject">
+											<attr>
+												<left>0</left>
+												<top>0</top>
+												<width>father.width</width>
+												<height>father.height</height>
+											</attr>
+											<children>
+												<obj id="client.view.Layer" class="ImageObject">
+													<attr>
+														<left>0</left>
+														<top>0</top>
+														<width>father.width</width>
+														<height>father.height</height>
+													</attr>
+													<eventlist>
+														<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonDown" />
+														<event name="OnLButtonUp" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonUp" />
+														<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseMove" />
+														<event name="OnMouseWheel" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel1" />
+													</eventlist>
+												</obj>
+											</children>
+										</obj>
+									</children>
+									<eventlist>
+										<event name="OnMouseWheel" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel" />
+									</eventlist>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnLButtonDown" />
+				<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnMouseMove" />
+				<event name="OnInitControl" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnInitControl" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

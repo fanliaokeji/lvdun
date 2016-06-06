@@ -1,0 +1,110 @@
+<xlue>
+	<!-- 半透明蒙层（mask）-->
+	<objtreetemplate id="TransparentMaskWndTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+		<obj id="root" class="FillObject">
+		    <attr>
+			    <left>0</left>
+				<top>0</top>
+				<width>2000</width>
+				<height>2000</height>
+				<zorder>100000</zorder>
+				<filltype>Monochrome</filltype>
+				<blendtype>Source</blendtype>
+			</attr>		
+		</obj>
+	</objtreetemplate>
+	
+	<hostwndtemplate id="TransparentMaskWnd" class="FrameHostWnd">
+        <attr>
+            <layered>1</layered>
+            <left>0</left>
+            <top>0</top>
+            <width>690</width>
+            <height>422</height>
+            
+            <enable>0</enable>
+            <maxbox>0</maxbox>
+            <minbox>0</minbox>
+            <minwidth>50</minwidth>
+            <minheight>50</minheight>
+			<sysmenu>0</sysmenu>
+			<appwindow>0</appwindow>>
+        </attr>
+    </hostwndtemplate>
+	
+	<!-- 通用Tip-->
+	<objtemplate id="tmpl.tip.text" class="TextObject">
+		<attr>
+			<left>5</left>
+			<top>2</top>
+			<width>father.width-6</width>
+			<height>father.height</height>
+			<halign>left</halign>
+			<valign>center</valign>
+			<zorder>6000</zorder>
+			<textcolor>system.black</textcolor>
+			<font>font.text12</font>
+			<multiline>0</multiline>
+			<endellipsis>1</endellipsis>
+		</attr>
+	</objtemplate>
+	
+	<objtreetemplate id="GeneralTipTree" class="ObjectTreeTemplate">
+		<attr>
+			<left>0</left>
+			<top>0</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+			<obj id="root" class="LayoutObject">
+				<attr>
+					<left>0</left>
+					<top>0</top>
+					<width>2000</width>
+					<height>2000</height>
+				</attr>
+				<children>
+					<obj id="tip.bkg" class="TextureObject">
+						<attr>
+							<left>0</left>
+							<top>0</top>
+							<width>father.width</width>
+							<height>father.height</height>
+							<texture>texture.general.tip.bkg</texture>
+							<zorder>50</zorder>
+							<visible>false</visible>
+						</attr>
+						<children>
+						</children>
+					</obj>
+				</children>
+			</obj>
+	</objtreetemplate>
+
+	<hostwndtemplate id="GeneralTipWnd" class="FrameHostWnd" >
+		<attr> 
+			<layered>1</layered>
+			<left>200</left> 
+			<top>100</top>
+			<width>4000</width>
+			<height>1000</height>
+			<visible>0</visible>
+			<fps>30</fps>
+			<title>TipWnd</title>
+		</attr>
+		<eventlist>
+			<event name="OnSize" >
+				local self,_type,width,height = ...
+				local objtree = self:GetBindUIObjectTree()
+				local root = objtree:GetRootObject()
+				root:SetObjPos(0,0,width,height)
+			</event>
+		</eventlist>
+	</hostwndtemplate>
+</xlue>

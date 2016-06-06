@@ -1,0 +1,30 @@
+<xlue>
+	<objtreetemplate id="MenuHostWndTree">
+		<attr>
+			<left>-1000</left>
+			<top>-1000</top>
+			<width>2000</width>
+			<height>2000</height>
+		</attr>
+		<!--root容纳所有的MenuItemContainer对象，子菜单与父菜单在root里是兄弟关系-->
+		<obj id="root" class="LayoutObject">
+			<attr>
+				<width>180</width>
+				<height>1380</height>
+			</attr>
+		</obj>
+	</objtreetemplate>
+	
+	<hostwndtemplate id="MenuHostWnd" class="MenuHostWnd">
+		<attr> 
+			<mode>auto</mode>
+			<topmost>0</topmost>
+			<layered>1</layered>
+		</attr>
+		<eventlist>
+			<event name="OnEndMenu" />
+			<event name="OnFocusChange" />
+			<event name="OnPopupMenu" />
+		</eventlist>
+	</hostwndtemplate>
+</xlue>

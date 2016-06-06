@@ -1,0 +1,27 @@
+<XLUE>
+	<resource>
+		<font id="default.font" height="12" facename="defaultfont" /> 
+		<font id="font.text8" height="8" facename="defaultfont" /> 
+		<font id="font.text9" height="9" facename="defaultfont" /> 
+		<font id="font.text10" height="10" facename="defaultfont" /> 
+		<font id="font.text11" height="11" facename="defaultfont" /> 
+		<font id="font.text12" height="12" facename="defaultfont" /> 
+		<font id="font.text12.bold" height="12" facename="defaultfont" weight="bold" />
+		<font id="font.text13" height="13" facename="defaultfont" /> 
+		<font id="font.text13.bold" height="13" facename="defaultfont" weight="bold"/> 
+		<font id="font.text13.xp" height="13" facename="宋体" />
+		<font id="font.text14" height="14" facename="defaultfont" /> 
+		<font id="font.text15" height="15" facename="defaultfont" />
+		<font id="font.text15.arial.bold" height="15" facename="Arial" weight="bold" /> 		
+		<font id="font.text16" height="16" facename="defaultfont" /> 
+		<font id="font.text16.Arial" height="16" facename="Arial" /> 
+		<font id="font.text18" height="18" facename="defaultfont" /> 
+		<font id="微软雅黑.18" height="18" facename="defaultfont" /> 
+		<font id="font.number18" height="18" facename="Arial" /> 
+		<font id="font.number19" height="19" facename="Arial" /> 
+		<font id="font.number21" height="21" facename="Arial" /> 
+		<font id="font.number22" height="22" facename="Arial" /> 
+		<font id="font.text23" height="23" facename="defaultfont" /> 
+		<font id="font.text22.bold" height="18" facename="defaultfont" weight="bold"/> 
+	</resource>
+</XLUE>

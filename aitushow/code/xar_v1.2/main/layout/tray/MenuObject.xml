@@ -1,0 +1,87 @@
+<xlue>
+	<control class="MenuObject">
+		<attr_def>
+			<attr name="BknID" type="string" />
+			<attr name="ShadingID" type="string" />
+			<attr name="ItemLeft" type="int" desc="菜单条左边空白">
+				<default>0</default>
+			</attr>
+			<attr name="ItemTop" type="int" desc="菜单条顶层空白">
+				<default>0</default>
+			</attr>
+			<attr name="ItemRight" type="int" desc="菜单条右边空白">
+				<default>0</default>
+			</attr>
+			<attr name="ItemBottom" type="int" desc="菜单条底边空白">
+				<default>0</default>
+			</attr>
+		</attr_def>
+
+		<method_def>
+			<GetMaxWidth file="MenuObject.xml.lua" func="GetMaxWidth"/>
+			<EndMenu file="MenuObject.xml.lua" func="EndMenu"/>
+			<SetHoverItem file="MenuObject.xml.lua" func="SetHoverItem"/>
+			<GetHoverItem file="MenuObject.xml.lua" func="GetHoverItem" />
+			<SetBknID file="MenuObject.xml.lua" func="SetBknID"/>
+			<SetShadingID file="MenuObject.xml.lua" func="SetShadingID"/>
+			<InsertItem file="MenuObject.xml.lua" func="InsertItem" />
+			<AddItem file="MenuObject.xml.lua" func="AddItem" />
+			<GetItemCount file="MenuObject.xml.lua" func="GetItemCount" />
+			<GetItem file="MenuObject.xml.lua" func="GetItem" />
+			<GetItembyID file="MenuObject.xml.lua" func="GetItembyID" />
+			<RemoveItem file="MenuObject.xml.lua" func="RemoveItem" />
+			<MoveToNextItem file="MenuObject.xml.lua" func="MoveToNextItem" />
+			<MoveToPrevItem file="MenuObject.xml.lua" func="MoveToPrevItem" />
+			<GetKeyItem file="MenuObject.xml.lua" func="GetKeyItem" />
+			<GetParentItem file="MenuObject.xml.lua" func="GetParentItem" />
+			<AdjustItemPos file="MenuObject.xml.lua" func="AdjustItemPos" />
+		</method_def>
+		
+		<event_def>
+		</event_def>
+		
+		<objtemplate>
+			<children>
+				<obj id="menu.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<alpha>250</alpha>
+					</attr>							
+					<children>
+						<obj id="menu.shading" class="ImageObject">
+							<attr>
+								<left>(father.width - 161) / 2</left>
+								<top>father.bottom - 31</top>
+								<width>161</width>
+								<height>28</height>
+								<zorder>-10</zorder>
+								<alpha>127</alpha>
+								<visible>false</visible>
+							</attr>
+						</obj>
+					</children>
+				</obj>
+				<obj id="ItemBkn" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>19</height>
+						<alpha>255</alpha>
+						<visible>false</visible>
+						<texture>texture.menu.item.bkg</texture>
+					</attr>
+				</obj>
+			</children>
+			
+			<eventlist>
+				<event name="OnInitControl"/>
+				<event name="OnDestroy" />
+				<event name="OnKeyDown" file="MenuObject.xml.lua" func="OnKeyDown" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

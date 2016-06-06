@@ -1,0 +1,135 @@
+<xlue>
+<control class="MessageBox">
+<objtemplate>
+<children>
+<obj id="PanelCaption" class="CaptionObject">
+	<attr>
+		<height>father.height</height>
+		<top>0</top>
+		<left>0</left>
+		<width>father.width</width>
+	</attr>
+	<children>
+	<obj id="TitleBar" class="FillObject">
+		<attr>
+			<srccolor>1F253D</srccolor>
+			<blendtype>Source</blendtype>
+			<destcolor>1F253D</destcolor>
+			<left>0</left>
+			<width>father.width</width>
+			<top>0</top>
+			<destpt>father.width,28</destpt>
+			<height>28</height>
+			<srcpt>0,0</srcpt>
+			<filltype>Monochrome</filltype>
+		</attr>
+		<children>
+		<obj id="close" class="TipAddin.Button">
+			<attr>
+				<top>5</top>
+				<HoverBkgID>texture.title.close.hover</HoverBkgID>
+				<NormalBkgID>texture.title.close.normal</NormalBkgID>
+				<DisableBkgID>texture.title.close.normal</DisableBkgID>
+				<DownBkgID>texture.title.close.down</DownBkgID>
+				<height>22</height>
+				<left>father.width-30</left>
+				<width>22</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBox.xml.lua" func="closeOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="titlehead" class="TextObject">
+			<attr>
+				<textcolor>system.white</textcolor>
+				<text>提示</text>
+				<left>12</left>
+				<halign>left</halign>
+				<top>0</top>
+				<font>font.text13.bold</font>
+				<height>father.height</height>
+				<width>90</width>
+				<valign>center</valign>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	<obj id="MainPanel" class="FillObject">
+		<attr>
+			<srccolor>2D3657</srccolor>
+			<blendtype>Source</blendtype>
+			<destcolor>2D3657</destcolor>
+			<left>0</left>
+			<width>father.width</width>
+			<top>28</top>
+			<destpt>father.width,father.height-28</destpt>
+			<height>father.height-28</height>
+			<srcpt>0,28</srcpt>
+			<filltype>Monochrome</filltype>
+		</attr>
+		<children>
+		<obj id="MainText" class="TextObject">
+			<attr>
+				<textcolor>system.white</textcolor>
+				<wordellipsis>1</wordellipsis>
+				<valign>left</valign>
+				<left>56</left>
+				<multiline>1</multiline>
+				<top>36</top>
+				<font>font.text12</font>
+				<height>father.height-36</height>
+				<text>确定要删除文件</text>
+				<halign>left</halign>
+				<width>father.width-56</width>
+			</attr>
+		</obj>
+		<obj id="yes" class="TipAddin.Button">
+			<attr>
+				<top>father.height-37</top>
+				<HoverBkgID>messagebox.yes.hover</HoverBkgID>
+				<NormalBkgID>messagebox.yes.normal</NormalBkgID>
+				<DisableBkgID>messagebox.yes.normal</DisableBkgID>
+				<DownBkgID>messagebox.yes.down</DownBkgID>
+				<height>25</height>
+				<left>father.width-170</left>
+				<width>73</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBox.xml.lua" func="yesOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="no" class="TipAddin.Button">
+			<attr>
+				<top>father.height-37</top>
+				<HoverBkgID>messagebox.no.hover</HoverBkgID>
+				<NormalBkgID>messagebox.no.normal</NormalBkgID>
+				<DisableBkgID>messagebox.no.normal</DisableBkgID>
+				<DownBkgID>messagebox.no.down</DownBkgID>
+				<height>25</height>
+				<left>father.width-87</left>
+				<width>73</width>
+			</attr>
+			<eventlist>
+				<event name="OnClick" file="MessageBox.xml.lua" func="noOnClick" />
+			</eventlist>
+		</obj>
+		<obj id="MainIcon" class="ImageObject">
+			<attr>
+				<top>28</top>
+				<image>messagebox.icon</image>
+				<height>28</height>
+				<left>20</left>
+				<width>28</width>
+			</attr>
+		</obj>
+		</children>
+	</obj>
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="MessageBox.xml.lua" func="MessageBoxOnInitControl" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

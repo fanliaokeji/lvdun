@@ -1,0 +1,83 @@
+<xlue><!--缩略图控件-->
+	<control class="ThumbnailContainer">
+		<attr_def>
+			<attr name="MinWidth" type="int"> <default>85</default> </attr>
+			<attr name="MaxWidth" type="int"> <default>320</default> </attr>
+			<attr name="MinHeight" type="int"> <default>78</default> </attr>
+			<attr name="MaxHeight" type="int"> <default>240</default> </attr>
+			<attr name="SpaceH" type="int" desc="水平间隔"> <default>10</default> </attr>
+			<attr name="SpaceV" type="int" desc="竖直间隔"> <default>15</default> </attr>
+		</attr_def>
+		<method_def>
+			<SetFolder />
+			<!--使用百分比对缩略图进行缩放，精确到1%-->
+			<Zoom />
+			<!--获取缩略图当前的缩放比例，最大缩略图264*320，精确到1%-->
+			<GetZoomPercent />
+			<SetDefaultZoomPercent />
+			<!--获取缩略图当前选中的缩略图ID，应支持多选-->
+			<GetSelectedThumbnailCtrlID />
+			<!--刷新当前目录的显示，以便响应该目录的增、删-->
+			<Refresh />
+			<GetPageLayout />
+		</method_def>
+		<objtemplate>
+			<children>
+				<!-- 边框 -->
+				<obj id="Background" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="Container" class="LayoutObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width - 10</width>
+								<height>father.height</height>	<!-- Container的初始高度为1 -->
+							</attr>
+						</obj>
+						<obj id="Container.ScrollBar" class="ScrollBar">
+							<attr>
+								<left>father.width - 10</left>
+								<top>0</top>
+								<visible>false</visible>
+								<width>10</width>
+								<height>father.height</height>
+								<Type>1</Type>
+								<visible>false</visible>
+								<ThumbBtn_normal>texture.scrollbarh.silder.normal</ThumbBtn_normal>
+								<ThumbBtn_hover>texture.scrollbarh.silder.hover</ThumbBtn_hover>
+								<ThumbBtn_down>texture.scrollbarh.silder.down</ThumbBtn_down>
+								<NormalBkn>texture.scrollbarh.silderbkg</NormalBkn>
+								<LeftBtn_normal>texture.scrollbarh.toparrow.normal</LeftBtn_normal>
+								<LeftBtn_hover>texture.scrollbarh.toparrow.hover</LeftBtn_hover>
+								<LeftBtn_down>texture.scrollbarh.toparrow.down</LeftBtn_down>
+								<RightBtn_normal>texture.scrollbarh.bottomarrow.normal</RightBtn_normal>
+								<RightBtn_hover>texture.scrollbarh.bottomarrow.hover</RightBtn_hover>
+								<RightBtn_down>texture.scrollbarh.bottomarrow.down</RightBtn_down>
+								<ThumbRightMagrin>1</ThumbRightMagrin>
+								<ThumbBtnWidth>8</ThumbBtnWidth>
+								<SideBtnLength>0</SideBtnLength>
+							</attr>
+							<eventlist>
+								<event name="OnScrollBarMouseWheel"/>
+								<event name="OnVScroll" />
+							</eventlist>
+						</obj>
+					</children>
+					<eventlist>
+						<event name="OnMouseWheel" file="ThumbnailContainer.xml.lua" func="OnBkgMouseWheel" />
+					</eventlist>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" />
+				<event name="OnPosChange" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

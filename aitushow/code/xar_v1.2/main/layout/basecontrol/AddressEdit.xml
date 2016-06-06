@@ -1,0 +1,140 @@
+<xlue>
+	<objtemplate id="AddressEdit.ButtonList.Button.template" class="TipAddin.Button" >
+		<attr>
+			<Bkg4In1ID>texture.addressedit.buttonbkg</Bkg4In1ID>
+			<TextFont>basecontrol.defaultfont.13</TextFont>
+			<TextColor>system.white</TextColor>
+		</attr>
+	</objtemplate>
+	<objtemplate id="AddressEdit.ButtonList.Arrow.template" class="TipAddin.Button" >
+		<attr>
+			<NormalBkgID>texture.addressedit.arrow</NormalBkgID>
+			<DownBkgID>texture.addressedit.arrow</DownBkgID>
+			<HoverBkgID>texture.addressedit.arrow</HoverBkgID>
+			<DisableBkgID>texture.addressedit.arrow</DisableBkgID>
+		</attr>
+	</objtemplate>
+	
+	<control class="AddressEdit">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<SetPath />
+			<GetPath />
+		</method_def>
+		<event_def>
+			<OnPathChanged>
+				<param>
+					<string />
+					<string />
+				</param>
+			</OnPathChanged>
+		</event_def>
+    <objtemplate>
+	<children>
+		<!-- 边框 -->
+		<obj id="Background" class="TextureObject">
+			<attr>
+				<left>0</left>
+				<top>0</top>
+				<width>father.width</width>
+				<height>father.height</height>
+			</attr>
+			<children>
+				<obj id="LeftArrow" class="TipAddin.Button">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>28</width>
+						<height>27</height>
+						<Enable>false</Enable>
+						<Bkg4In1ID>texture.addressedit.leftarrow</Bkg4In1ID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="AddressEdit.xml.lua" func="OnClickLeftArrow" />
+					</eventlist>
+				</obj>
+				<obj id="RightArrow" class="TipAddin.Button">
+					<attr>
+						<left>28</left>
+						<top>0</top>
+						<width>28</width>
+						<height>27</height>
+						<Enable>false</Enable>
+						<Bkg4In1ID>texture.addressedit.rightarrow</Bkg4In1ID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="AddressEdit.xml.lua" func="OnClickRightArrow" />
+					</eventlist>
+				</obj>
+				<obj id="UpArrow" class="TipAddin.Button">
+					<attr>
+						<left>56</left>
+						<top>0</top>
+						<width>28</width>
+						<height>27</height>
+						<Enable>false</Enable>
+						<Bkg4In1ID>texture.addressedit.uparrow</Bkg4In1ID>
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="AddressEdit.xml.lua" func="OnClickUpArrow" />
+					</eventlist>
+				</obj>
+				<obj id="EditBkg" class="TextureObject">
+					<attr>
+						<left>84</left>
+						<top>0</top>
+						<width>father.width-84</width>
+						<height>27</height>
+						<texture>texture.addressedit.bkg</texture>
+					</attr>
+					<children>
+						<obj id="IconObj" class="ImageObject">
+							<attr>
+								<left>9</left>
+								<top>5</top>
+								<width>16</width>
+								<height>16</height>
+								<image>bitmap.addressedit.icon.normal</image>
+							</attr>
+						</obj>
+						<obj id="EditObj" class="EditObject">
+							<attr>
+								<left>24</left>
+								<top>4</top>
+								<width>father.width - 24</width>
+								<height>father.height - 4</height>
+								<multiline>0</multiline>
+								<font>basecontrol.defaultfont.13</font>
+								<textcolor>system.white</textcolor>
+								<readonly>0</readonly>
+								<transparent>1</transparent>
+							</attr>
+							<eventlist>
+								<event name="OnFocusChange" file="AddressEdit.xml.lua" func="OnEditFocusChange" />
+								<event name="OnLButtonUp" file="AddressEdit.xml.lua" func="OnEditLButtonUp" />
+								<event name="OnChar" file="AddressEdit.xml.lua" func="OnEditInputChar"/>
+							</eventlist>
+						</obj>
+						<obj id="ButtonListContainer" class="LayoutObject">
+							<attr>
+								<left>32</left>
+								<top>0</top>
+								<width>father.width - 32</width>
+								<height>father.height</height>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonUp" file="AddressEdit.xml.lua" func="OnButtonListContainerLButtonUp" />
+							</eventlist>
+						</obj>
+					</children>
+					
+				</obj>
+			</children>
+		</obj>
+	</children>
+	<eventlist>
+	</eventlist>
+	</objtemplate>
+	</control>
+</xlue>

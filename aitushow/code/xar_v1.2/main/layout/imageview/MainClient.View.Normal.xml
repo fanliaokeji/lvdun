@@ -1,0 +1,238 @@
+<xlue>
+	<control class="Kuaikan.MainWnd.Client.View.LeftWard">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<ShowBtn file="MainClient.View.Normal.xml.lua" func="LeftWard_ShowBtn" />
+		</method_def>
+		<event_def>
+			<OnBtnClick>
+				<param>
+					<bool/>
+				</param>
+			</OnBtnClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.btn" class="Kuaikan.Button">
+					<attr>
+						<left>father.width-64</left>
+						<top>father.height/2-32</top>
+						<width>64</width>
+						<height>64</height>
+						<Visible>false</Visible>
+						<NormalBkgID>imagelist.mainwnd.button.leftarrow.normal</NormalBkgID>
+						<HoverBkgID>imagelist.mainwnd.button.leftarrow.hover</HoverBkgID>
+						<DownBkgID>imagelist.mainwnd.button.leftarrow.down</DownBkgID>
+						<DisableBkgID>imagelist.mainwnd.button.leftarrow.disable</DisableBkgID>
+						<!--DefaultAnimTexture>texture.Kuaikan.view.ward.big.left.normal</DefaultAnimTexture-->
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="MainClient.View.Normal.xml.lua" func="Ward_OnBtnClick" />
+					</eventlist>
+				</obj>
+			</children>
+		</objtemplate>
+	</control>
+	<control class="Kuaikan.MainWnd.Client.View.RightWard">
+		<attr_def>
+		</attr_def>
+		<method_def>
+			<ShowBtn file="MainClient.View.Normal.xml.lua" func="RightWard_ShowBtn" />
+		</method_def>
+		<event_def>
+			<OnBtnClick>
+				<param>
+					<bool/>
+				</param>
+			</OnBtnClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.btn" class="Kuaikan.Button">
+					<attr>
+						<left>0</left>
+						<top>father.height/2-32</top>
+						<width>64</width>
+						<height>64</height>
+						<Visible>false</Visible>
+						<NormalBkgID>imagelist.mainwnd.button.rightarrow.normal</NormalBkgID>
+						<HoverBkgID>imagelist.mainwnd.button.rightarrow.hover</HoverBkgID>
+						<DownBkgID>imagelist.mainwnd.button.rightarrow.down</DownBkgID>
+						<DisableBkgID>imagelist.mainwnd.button.rightarrow.disable</DisableBkgID>
+						<!--DefaultAnimTexture>texture.Kuaikan.view.ward.big.right.normal</DefaultAnimTexture-->
+					</attr>
+					<eventlist>
+						<event name="OnClick" file="MainClient.View.Normal.xml.lua" func="Ward_OnBtnClick" />
+					</eventlist>
+				</obj>
+			</children>
+		</objtemplate>
+	</control>
+
+	<control class="Kuaikan.MainWnd.Client.View.Normal">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<UpdateView file="MainClient.View.Normal.xml.lua" func="View_UpdateView"/>
+			<ResetDoc file="MainClient.View.Normal.xml.lua" func="View_ResetDoc"/>
+			<GetScaleRatio file="MainClient.View.Normal.xml.lua" func="View_GetScaleRatio"/>
+			<SetScaleRatio file="MainClient.View.Normal.xml.lua" func="View_SetScaleRatio"/>
+			<SetBitmap file="MainClient.View.Normal.xml.lua" func="View_SetBitmap"/>
+			<AsynHandleScale file="MainClient.View.Normal.xml.lua" func="View_AsynHandleScale"/>
+			<GetViewType file="MainClient.View.Normal.xml.lua" func="View_GetViewType"/>
+			<ResetInfo file="MainClient.View.Normal.xml.lua" func="View_ResetInfo"/>
+			<GetAdaptedScreenRatio file="MainClient.View.Normal.xml.lua" func="View_GetAdaptedScreenRatio"/>
+			<LeftRotate file="MainClient.View.Normal.xml.lua" func="View_LeftRotate"/>
+			<RightRotate file="MainClient.View.Normal.xml.lua" func="View_RightRotate"/>
+			<IsParamValid file="MainClient.View.Normal.xml.lua" func="View_IsParamValid"/>
+			<ShowScaleInfo file="MainClient.View.Normal.xml.lua" func="View_ShowScaleInfo"/>
+			<HandleUpDownWard file="MainClient.View.Normal.xml.lua" func="View_HandleUpDownWard"/>
+			<ResetThumbnail file="MainClient.View.Normal.xml.lua" func="View_ResetThumbnail"/>
+			<HandleThumbnailViewChange file="MainClient.View.Normal.xml.lua" func="View_HandleThumbnailViewChange"/>
+			<HandleThumbnailViewMouseWheel file="MainClient.View.Normal.xml.lua" func="View_HandleThumbnailViewMouseWheel"/>
+			<HandleThumbnailViewLButtonDown file="MainClient.View.Normal.xml.lua" func="View_HandleThumbnailViewLButtonDown"/>
+		</method_def>
+		<event_def>
+			<OnScaleRatioChanged>
+				<param>
+				</param>
+			</OnScaleRatioChanged>
+			<OnPreFileClick>
+				<param>
+				</param>
+			</OnPreFileClick>
+			<OnNextFileClick>
+				<param>
+				</param>
+			</OnNextFileClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.view.layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top></top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="client.leftward" class="Kuaikan.MainWnd.Client.View.LeftWard">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>82</width>
+								<height>father.height</height>
+								<zorder>10000</zorder>
+								<!--texture>texture.superbatch.output.mask.bkg</texture-->
+								<alpha>1</alpha>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnLButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonUp" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnLButtonUp" redirect="control:client.view"/>
+								<event name="OnMouseMove" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnMouseMove" redirect="control:client.view"/>
+								<event name="OnMouseWheel" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnMouseWheel" redirect="control:client.view"/>
+								<event name="OnRButtonDown" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnRButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonDbClick" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnLButtonDbClick" redirect="control:client.view"/>
+								<event name="OnControlMouseEnter" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnControlMouseEnter" />
+								<event name="OnControlMouseLeave" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnControlMouseLeave" />
+								<event name="OnBtnClick" file="MainClient.View.Normal.xml.lua" func="LeftWard_OnBtnClick" />
+							</eventlist>
+						</obj>
+						
+						<obj id="client.view.bkg" class="TextureObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>0</width>
+								<height>0</height>
+								<texture>texture.transparent.bkg</texture>
+								<zorder>-100</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="MainClient.View.Normal.xml.lua" redirect="control:client.view" />
+								<event name="OnLButtonUp" file="MainClient.View.Normal.xml.lua" redirect="control:client.view"/>
+								<event name="OnMouseMove" file="MainClient.View.Normal.xml.lua" redirect="control:client.view"/>
+								<event name="OnMouseWheel" file="MainClient.View.Normal.xml.lua" redirect="control:client.view"/>
+								<event name="OnLButtonDbClick" file="MainClient.View.Normal.xml.lua" redirect="control:client.view"/>
+								<event name="OnRButtonDown" file="MainClient.View.Normal.xml.lua" redirect="control:client.view"/>
+							</eventlist>
+						</obj>
+								
+						<obj id="client.view" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="MainClient.View.Normal.xml.lua" func="View_OnLButtonDown" />
+								<event name="OnLButtonUp" file="MainClient.View.Normal.xml.lua" func="View_OnLButtonUp" />
+								<event name="OnMouseMove" file="MainClient.View.Normal.xml.lua" func="View_OnMouseMove" />
+								<event name="OnMouseWheel" file="MainClient.View.Normal.xml.lua" func="View_OnMouseWheel1" />
+								<event name="OnLButtonDbClick" file="MainClient.View.Normal.xml.lua" func="View_OnLButtonDbClick" />
+								<event name="OnRButtonDown" file="MainClient.View.Normal.xml.lua" func="View_OnRButtonDown" />
+							</eventlist>
+						</obj>
+						<obj id="client.rightward" class="Kuaikan.MainWnd.Client.View.RightWard">
+							<attr>
+								<left>father.width-82</left>
+								<top>0</top>
+								<width>82</width>
+								<height>father.height</height>
+								<zorder>10000</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="MainClient.View.Normal.xml.lua" func="RightWard_OnLButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonUp" file="MainClient.View.Normal.xml.lua" func="RightWard_OnLButtonUp" redirect="control:client.view"/>
+								<event name="OnMouseMove" file="MainClient.View.Normal.xml.lua" func="RightWard_OnMouseMove" redirect="control:client.view"/>
+								<event name="OnMouseWheel" file="MainClient.View.Normal.xml.lua" func="RightWard_OnMouseWheel" redirect="control:client.view"/>
+								<event name="OnRButtonDown" file="MainClient.View.Normal.xml.lua" func="RightWard_OnRButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonDbClick" file="MainClient.View.Normal.xml.lua" func="RightWard_OnLButtonDbClick" redirect="control:client.view"/>
+								<event name="OnControlMouseEnter" file="MainClient.View.Normal.xml.lua" func="RightWard_OnControlMouseEnter" />
+								<event name="OnControlMouseLeave" file="MainClient.View.Normal.xml.lua" func="RightWard_OnControlMouseLeave" />
+								<event name="OnBtnClick" file="MainClient.View.Normal.xml.lua" func="RightWard_OnBtnClick" />
+							</eventlist>
+						</obj>
+						<obj id="client.scaleShow" class="TextureObject">
+							<attr>
+								<left>(father.width-70)/2</left>
+								<top>(father.height-40)/2</top>
+								<width>70</width>
+								<height>40</height>
+								<zorder>1001</zorder>
+								<alpha>180</alpha>
+								<texture>toolbar.bkg</texture>
+							</attr>
+							<children>
+								<obj id="client.scaleShow.text" class="TextObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<zorder>1001</zorder>
+										<valign>center</valign>
+										<halign>center</halign>
+										<textcolor>system.white</textcolor>
+									</attr>
+								</obj>
+							</children>
+						</obj>
+						
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnPosChange" file="MainClient.View.Normal.xml.lua" func="View_OnPosChange" />
+				<event name="OnInitControl" file="MainClient.View.Normal.xml.lua" func="View_OnInitControl" />
+				<event name="OnMouseWheel" file="MainClient.View.Normal.xml.lua" func="View_OnMouseWheel" />
+				<event name="OnDestroy" file="MainClient.View.Normal.xml.lua" func="View_OnDestroy" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

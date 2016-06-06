@@ -1,0 +1,85 @@
+<xlue>
+<control class="Setting.LeftListItem">
+<attr_def>
+	<attr name="Text" type="string" />
+	<attr name="Select" type="bool" ><default>false</default></attr>
+</attr_def>
+<method_def>
+	<Update file="Setting.LeftListItem.xml.lua" func="Update"/>
+</method_def>
+<event_def>
+	<OnSelect />
+</event_def>
+<objtemplate>
+<children>
+<obj id="SelectBkg" class="FillObject">
+	<attr>
+		<srccolor>35AADC</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>35AADC</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<top>0</top>
+		<srcpt>0,0</srcpt>
+		<visible>0</visible>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<alpha>255</alpha>
+		<zorder>1</zorder>
+		<filltype>Monochrome</filltype>
+	</attr>
+</obj>
+<obj id="HoverBkg" class="FillObject">
+	<attr>
+		<srccolor>50597B</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>50597B</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<top>0</top>
+		<srcpt>0,0</srcpt>
+		<visible>0</visible>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<alpha>150</alpha>
+		<zorder>1</zorder>
+		<filltype>Monochrome</filltype>
+	</attr>
+</obj>
+<obj id="MainText" class="TextObject">
+	<attr>
+		<textcolor>system.white</textcolor>
+		<wordellipsis>1</wordellipsis>
+		<valign>center</valign>
+		<left>0</left>
+		<width>father.width</width>
+		<top>0</top>
+		<font>default.font</font>
+		<height>father.height</height>
+		<text>默认文字</text>
+		<zorder>2</zorder>
+		<halign>center</halign>
+	</attr>
+	<children>
+	<obj id="MarkIcon" class="ImageObject">
+		<attr>
+			<visible>0</visible>
+			<image>MarkIconNormal2</image>
+			<height>9</height>
+			<top>(father.height-9)/2</top>
+			<left>father.width-19</left>
+			<width>9</width>
+		</attr>
+	</obj>
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="Setting.LeftListItem.xml.lua" func="SettingLeftListItemOnInitControl" />
+	<event name="OnLButtonDown" file="Setting.LeftListItem.xml.lua" func="SettingLeftListItemOnLButtonDown" />
+	<event name="OnMouseLeave" file="Setting.LeftListItem.xml.lua" func="SettingLeftListItemOnMouseLeave" />
+	<event name="OnMouseEnter" file="Setting.LeftListItem.xml.lua" func="SettingLeftListItemOnMouseEnter" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

@@ -1,0 +1,166 @@
+<xlue>
+	<control class="Kuaikan.MainWnd.Client.Caption">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<ShowContent file="MainClient.Caption.xml.lua" func="ShowContent"/>
+			<GetSystemBtn file="MainClient.Caption.xml.lua" func="GetSystemBtn"/>
+			<SetFilePath file="MainClient.Caption.xml.lua" func="SetFilePath"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="client.bkg" class="FillObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<filltype>Monochrome</filltype>
+								<srccolor>61,37,31,255</srccolor>
+								<destcolor>61,37,31,255</destcolor>
+							</attr>	
+							<children>
+								<obj id="client.caption" class="CaptionObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+										<zorder>0</zorder>
+									</attr>
+									<children>
+										<obj id="" class="ImageObject">
+											<attr>
+												<left>10</left>
+												<top>(father.height-20)/2</top>
+												<width>20</width>
+												<height>20</height>
+												<image>image.logo</image>
+												<drawmode>1</drawmode>
+											</attr>
+										</obj>
+										<obj id="client.caption.title.text" class="TextObject">
+											<attr>
+												<left>35</left>
+												<top>0</top>
+												<width>70</width>
+												<height>father.height</height>
+												<text>快看</text>
+												<wordellipsis>1</wordellipsis>
+												<texttype>gdi</texttype>
+												<textcolor>system.white</textcolor>
+												<valign>center</valign>
+												<font>font.text12</font>
+											</attr>
+										</obj>
+										<obj id="client.caption.title.path" class="TextObject">
+											<attr>
+												<left>75</left>
+												<top>0</top>
+												<width>father.width-288</width>
+												<height>father.height</height>
+												<wordellipsis>1</wordellipsis>
+												<textcolor>system.white</textcolor>
+												<valign>center</valign>
+												<font>font.text12.bold</font>
+											</attr>
+										</obj>
+										<obj id="client.caption.title.path.bak" class="TextObject">
+											<attr>
+												<left>0</left>
+												<top>0</top>
+												<width>father.width-323</width>
+												<height>father.height</height>
+												<visible>false</visible>
+												<font>font.text12.bold</font>
+											</attr>
+										</obj>
+										
+										
+										<obj id="client.caption.setting" class="Kuaikan.Button">
+											<attr>
+												<left>father.width-69-44-5</left>
+												<top>5</top>
+												<width>22</width>
+												<height>22</height>
+												<NormalBkgID>bitmap.title.setting.normal</NormalBkgID>
+												<HoverBkgID>bitmap.title.setting.hover</HoverBkgID>
+												<DownBkgID>bitmap.title.setting.down</DownBkgID>
+												<DisableBkgID>bitmap.title.setting.disable</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="MainClient.Caption.xml.lua" func="OnSettingBtnClick" />
+											</eventlist>
+										</obj>
+										
+										<obj id="client.caption.fullscreen" class="Kuaikan.System.ItemEx">
+											<attr>
+												<left>father.width-69-22-5</left>
+												<top>5</top>
+												<width>22</width>
+												<height>22</height>
+												<BkgNormalImageID>bitmap.title.fullscreen.normal</BkgNormalImageID>
+												<BkgHoverImageID>bitmap.title.fullscreen.hover</BkgHoverImageID>
+												<BkgDownImageID>bitmap.title.fullscreen.down</BkgDownImageID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="MainClient.Caption.xml.lua" func="OnFullScreenBtnClick" />
+											</eventlist>
+										</obj>
+										<obj id="client.caption.sysbtn" class="Kuaikan.System.ButtonEx.Ctrl" >
+											<attr>
+												<left>father.width - 69-5</left>
+												<top>5</top>
+												<width>66</width>
+												<height>22</height>	
+												<ItemWidthIsSame>true</ItemWidthIsSame>
+												<MiniWidth>22</MiniWidth>
+												<MaxWidth>22</MaxWidth>
+												<CloseWidth>22</CloseWidth>
+												<Mini_NormalImageID>bitmap.title.min.normal</Mini_NormalImageID>
+												<Mini_HoverImageID>bitmap.title.min.hover</Mini_HoverImageID>
+												<Mini_DownImageID>bitmap.title.min.down</Mini_DownImageID>
+												<Max_NormalImageID>bitmap.title.max.normal</Max_NormalImageID>
+												<Max_HoverImageID>bitmap.title.max.hover</Max_HoverImageID>
+												<Max_DownImageID>bitmap.title.max.down</Max_DownImageID>
+												<Restore_NormalImageID>bitmap.title.restore.normal</Restore_NormalImageID>
+												<Restore_HoverImageID>bitmap.title.restore.hover</Restore_HoverImageID>
+												<Restore_DownImageID>bitmap.title.restore.down</Restore_DownImageID>
+												<Close_NormalImageID>bitmap.title.close.normal</Close_NormalImageID>
+												<Close_HoverImageID>bitmap.title.close.hover</Close_HoverImageID>
+												<Close_DownImageID>bitmap.title.close.down</Close_DownImageID>
+											</attr>
+											<eventlist>
+												<event name="OnInitControl" file="MainClient.Caption.xml.lua" func="OnSysBtnInitControl" />
+												<event name="OnMinisize" file="MainClient.Caption.xml.lua" func="OnMinisizeBtnClick" />
+												<event name="OnMaxSize" file="MainClient.Caption.xml.lua" func="OnMaxBtnClick" />
+												<event name="OnReStore" file="MainClient.Caption.xml.lua" func="OnMaxBtnClick" />
+												<event name="OnClose" file="MainClient.Caption.xml.lua" func="OnCloseBtnClick" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+							</children>
+						</obj>
+					</children>
+				</obj>
+				
+			</children>
+		</objtemplate>
+	</control>
+</xlue>
+
+

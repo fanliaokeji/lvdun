@@ -1,0 +1,92 @@
+<xlue>	
+	<control class="MenuItem">
+		<attr_def>
+			<attr name="Type" type="int" desc="该条目的类型0表示一般菜单类型，1表示分隔符" >
+				<default>0</default>
+			</attr>
+			<attr name="SplitterBkgID"   type="string" desc="分割线资源"/>
+			<attr name="SplitterWidth"   type="int"    desc="分割线的宽度"/>
+			<attr name="SplitterHeight"  type="int"    desc="分割线的宽度"/>
+			<attr name="Width"  type="int"    desc="该条目的宽度"/>
+			<attr name="Height" type="int"    desc="该条目的高度"/>
+			<attr name="TextFont"    type="string" desc="该条目的字体，Hover/Normal都用同一种字体"/>
+			<attr name="NormalTextColor"  type="string" />
+			<attr name="DisableTextColor" type="string" />
+			
+			<attr name="Bkg4In1ID" type="string" desc="四态合一的背景ID，每个状态都是一个九宫格"/>
+			<attr name="NormalBkgID" type="string" />
+			<attr name="DownBkgID" type="string" />
+			<attr name="DisableBkgID" type="string" />
+			<attr name="HoverBkgID" type="string" />
+			<attr name="SubMenuArrowNormalBkgID" type="string" />
+			<attr name="SubMenuArrowDisableBkgID" type="string" />
+			<attr name="IconNormalBkgID" type="string" />
+			<attr name="IconDisableBkgID" type="string" />
+		</attr_def>
+
+		<method_def>
+			<SetEnable/>
+			<SetText/>
+			<PreSelect/>
+			<IsPreSelect/>
+			<CancelSelect/>
+			<SetItemData/>
+			<GetItemData/>
+		</method_def>
+
+		<event_def>
+			<OnInit/>
+			<OnSelect/>
+		</event_def>
+
+		<objtemplate>
+			<children>
+				<obj id="menu.item.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="menu.item.icon" class="ImageObject">
+							<attr>
+								<left>9</left>
+								<top>(father.height - 14)/2</top>
+								<width>14</width>
+								<height>14</height>
+							</attr>
+						</obj>
+						<obj id="menu.item.text" class="TextObject">
+							<attr>
+								<left>32</left>
+								<top>0</top>
+								<width>father.width - 16 - 20</width>
+								<height>father.height</height>
+								<!--以下两属性，也可以放到Template中，但极少需要改变，所以干脆写死在这里-->
+								<valign>center</valign>
+								<halign>left</halign>
+							</attr>
+						</obj>
+						<obj id="menu.item.arrow" class="ImageObject">
+							<attr>
+								<left>father.width - 20</left>
+								<top>(father.height - 16)/2</top>
+								<width>16</width>
+								<height>16</height>
+							</attr>
+						</obj>
+					</children>
+				</obj>
+			</children>
+
+			<eventlist>
+				<event name="OnInitControl"/>
+				<event name="OnLButtonUp"/>
+				<event name="OnMouseMove"/>
+				<event name="OnMouseLeave"/>
+			</eventlist>
+		</objtemplate>
+	</control>
+
+</xlue>

@@ -1,0 +1,252 @@
+<XLUE>
+	<resource>
+		<!--图片加载失败默认图-->
+		<bitmap id="bitmap.loadfile.error.icon" image="bitmap\bitmap.loadfile.error.png"/>
+		<texture id="MainWnd.bkg" image="bitmap\texture.framewnd.bkg.png" />
+		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
+		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
+		<texture id="GreenWall.BtnClose.Down"   image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />
+		<texture id="GreenWall.BtnClose.Disable" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
+		
+		<texture id="texture.titlebar.bkg" type="ThreeInOneH" image="bitmap\texture.titlebar.bkg.png" />
+		<texture id="texture.thumbnail.select.bkg" type="NineInOne" image="bitmap\texture.thumbnail.select.bkg.png" />
+		<bitmap id="image.logo"  path="bitmap\bitmap.logo.png" />
+		
+		<imagelist id="imagelist.bitmap.fullscreen.close" splitter="1" blocksize="46" image="bitmap\imagelist.bitmap.fullscreen.close.png"/>
+			<texture id="bitmap.fullscreen.close.normal" imagelist="imagelist.bitmap.fullscreen.close" index="1" />
+			<texture id="bitmap.fullscreen.close.hover"  imagelist="imagelist.bitmap.fullscreen.close" index="2" />
+			
+		<imagelist id="imagelist.bitmap.title.close" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.close.png"/>
+			<bitmap id="bitmap.title.close.normal"   imagelist="imagelist.bitmap.title.close" index="1" />
+			<bitmap id="bitmap.title.close.hover"  imagelist="imagelist.bitmap.title.close" index="2" />
+			<bitmap id="bitmap.title.close.down"  imagelist="imagelist.bitmap.title.close" index="3" />
+			<bitmap id="bitmap.title.close.disable"  imagelist="imagelist.bitmap.title.close" index="3" />
+			<texture id="texture.title.close.normal"   imagelist="imagelist.bitmap.title.close" index="1" />
+			<texture id="texture.title.close.hover"  imagelist="imagelist.bitmap.title.close" index="2" />
+			<texture id="texture.title.close.down"  imagelist="imagelist.bitmap.title.close" index="3" />
+			<texture id="texture.title.close.disable"  imagelist="imagelist.bitmap.title.close" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.max" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.max.png"/>
+			<bitmap id="bitmap.title.max.normal"   imagelist="imagelist.bitmap.title.max" index="1" />
+			<bitmap id="bitmap.title.max.hover"    imagelist="imagelist.bitmap.title.max" index="2" />
+			<bitmap id="bitmap.title.max.down"     imagelist="imagelist.bitmap.title.max" index="3" />
+			<bitmap id="bitmap.title.max.disable"  imagelist="imagelist.bitmap.title.max" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.min" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.min.png"/>
+			<bitmap id="bitmap.title.min.normal"   imagelist="imagelist.bitmap.title.min" index="1" />
+			<bitmap id="bitmap.title.min.hover"    imagelist="imagelist.bitmap.title.min" index="2" />
+			<bitmap id="bitmap.title.min.down"     imagelist="imagelist.bitmap.title.min" index="3" />
+			<bitmap id="bitmap.title.min.disable"  imagelist="imagelist.bitmap.title.min" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.restore" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.restore.png"/>
+			<bitmap id="bitmap.title.restore.normal"   imagelist="imagelist.bitmap.title.restore" index="1" />
+			<bitmap id="bitmap.title.restore.hover"    imagelist="imagelist.bitmap.title.restore" index="2" />
+			<bitmap id="bitmap.title.restore.down"     imagelist="imagelist.bitmap.title.restore" index="3" />
+			<bitmap id="bitmap.title.restore.disable"  imagelist="imagelist.bitmap.title.restore" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.setting" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.setting.png"/>
+			<texture id="bitmap.title.setting.normal"   imagelist="imagelist.bitmap.title.setting" index="1" />
+			<texture id="bitmap.title.setting.hover"    imagelist="imagelist.bitmap.title.setting" index="2" />
+			<texture id="bitmap.title.setting.down"     imagelist="imagelist.bitmap.title.setting" index="3" />
+			<texture id="bitmap.title.setting.disable"  imagelist="imagelist.bitmap.title.setting" index="3" />
+		
+		<imagelist id="imagelist.bitmap.title.fullscreen" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.fullscreen.png"/>
+			<bitmap id="bitmap.title.fullscreen.normal"   imagelist="imagelist.bitmap.title.fullscreen" index="1" />
+			<bitmap id="bitmap.title.fullscreen.hover"    imagelist="imagelist.bitmap.title.fullscreen" index="2" />
+			<bitmap id="bitmap.title.fullscreen.down"     imagelist="imagelist.bitmap.title.fullscreen" index="3" />
+			<bitmap id="bitmap.title.fullscreen.disable"  imagelist="imagelist.bitmap.title.fullscreen" index="3" />
+			
+		<imagelist id="imagelist.mainwnd.button.leftarrow" blocksize="64" splitter="1" image="bitmap\texture.left.arrow.png"/>
+			<texture id="imagelist.mainwnd.button.leftarrow.normal"  imagelist="imagelist.mainwnd.button.leftarrow" index="1" />
+			<texture id="imagelist.mainwnd.button.leftarrow.hover"   imagelist="imagelist.mainwnd.button.leftarrow" index="2" />
+			<texture id="imagelist.mainwnd.button.leftarrow.down"    imagelist="imagelist.mainwnd.button.leftarrow" index="3" />
+			<texture id="imagelist.mainwnd.button.leftarrow.disable" imagelist="imagelist.mainwnd.button.leftarrow" index="4" />
+		                           
+		<imagelist id="imagelist.mainwnd.button.rightarrow" blocksize="64" splitter="1" image="bitmap\texture.right.arrow.png"/>
+			<texture id="imagelist.mainwnd.button.rightarrow.normal"  imagelist="imagelist.mainwnd.button.rightarrow" index="1" />
+			<texture id="imagelist.mainwnd.button.rightarrow.hover"   imagelist="imagelist.mainwnd.button.rightarrow" index="2" />
+			<texture id="imagelist.mainwnd.button.rightarrow.down"    imagelist="imagelist.mainwnd.button.rightarrow" index="3" />
+			<texture id="imagelist.mainwnd.button.rightarrow.disable" imagelist="imagelist.mainwnd.button.rightarrow" index="4" />
+		<imagelist id="sortbutton" vertical="0" splitter="1" varyblock="1" image="bitmap\sortbutton.png" />
+			<texture id="sortbutton.normal" imagelist="sortbutton" index="1"/>
+			<texture id="sortbutton.hover" imagelist="sortbutton" index="2"/>
+			<texture id="sortbutton.down" imagelist="sortbutton" index="3"/>
+			<texture id="sortbutton.disable" imagelist="sortbutton" index="1"/>
+		
+		<!--底部-->
+		<imagelist id="imaglist.bottomctrl.rotate.left" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.rotate.left.png"/>
+			<texture id="texture.bottomctrl.rotate.left.normal"  imagelist="imaglist.bottomctrl.rotate.left" index="1" />
+			<texture id="texture.bottomctrl.rotate.left.hover"   imagelist="imaglist.bottomctrl.rotate.left" index="2" />
+			<texture id="texture.bottomctrl.rotate.left.down"    imagelist="imaglist.bottomctrl.rotate.left" index="3" />
+			<texture id="texture.bottomctrl.rotate.left.disable" imagelist="imaglist.bottomctrl.rotate.left" index="4" />
+		<imagelist id="imaglist.bottomctrl.rotate.right" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.rotate.right.png"/>
+			<texture id="texture.bottomctrl.rotate.right.normal"  imagelist="imaglist.bottomctrl.rotate.right" index="1" />
+			<texture id="texture.bottomctrl.rotate.right.hover"   imagelist="imaglist.bottomctrl.rotate.right" index="2" />
+			<texture id="texture.bottomctrl.rotate.right.down"    imagelist="imaglist.bottomctrl.rotate.right" index="3" />
+			<texture id="texture.bottomctrl.rotate.right.disable" imagelist="imaglist.bottomctrl.rotate.right" index="4" />
+		<imagelist id="imaglist.bottomctrl.delete" blocksize="26" splitter="1" image="bitmap\imaglist.bottomctrl.delete.png"/>
+			<texture id="texture.bottomctrl.delete.normal"  imagelist="imaglist.bottomctrl.delete" index="1" />
+			<texture id="texture.bottomctrl.delete.hover"   imagelist="imaglist.bottomctrl.delete" index="2" />
+			<texture id="texture.bottomctrl.delete.down"    imagelist="imaglist.bottomctrl.delete" index="3" />
+			<texture id="texture.bottomctrl.delete.disable" imagelist="imaglist.bottomctrl.delete" index="4" />
+		
+		<!--左侧树-->
+		<imagelist id="MainIconFoderImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconFoderImgs.png" />
+			<bitmap id="MainIconFoder" imagelist="MainIconFoderImgs" index="1"/>
+			<bitmap id="MainIconFoderHover" imagelist="MainIconFoderImgs" index="2"/>
+		<imagelist id="MainIconComputerImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconComputerImgs.png" />
+			<bitmap id="MainIconComputer" imagelist="MainIconComputerImgs" index="1"/>
+			<bitmap id="MainIconComputerHover" imagelist="MainIconComputerImgs" index="2"/>
+		<imagelist id="MainIconDeskImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDeskImgs.png" />
+			<bitmap id="MainIconDesk" imagelist="MainIconDeskImgs" index="1"/>
+			<bitmap id="MainIconDeskHover" imagelist="MainIconDeskImgs" index="2"/>
+		<imagelist id="MainIconDiskImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDiskImgs.png" />
+			<bitmap id="MainIconDisk" imagelist="MainIconDiskImgs" index="1"/>
+			<bitmap id="MainIconDiskHover" imagelist="MainIconDiskImgs" index="2"/>
+		<imagelist id="MainIconDocumentImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconDocumentImgs.png" />
+			<bitmap id="MainIconDocument" imagelist="MainIconDocumentImgs" index="1"/>
+			<bitmap id="MainIconDocumentHover" imagelist="MainIconDocumentImgs" index="2"/>
+		<imagelist id="MainIconPictureImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MainIconPictureImgs.png" />
+			<bitmap id="MainIconPicture" imagelist="MainIconPictureImgs" index="1"/>
+			<bitmap id="MainIconPictureHover" imagelist="MainIconPictureImgs" index="2"/>
+			
+		<imagelist id="MarkIconNormalImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MarkIconNormalImgs.png" />
+			<bitmap id="MarkIconNormal" imagelist="MarkIconNormalImgs" index="1"/>
+			<bitmap id="MarkIconNormal2" imagelist="MarkIconNormalImgs" index="2"/>
+		<imagelist id="MarkIconOpenImgs" vertical="0" splitter="1" varyblock="1" image="bitmap\tree\MarkIconOpenImgs.png" />
+			<bitmap id="MarkIconOpen" imagelist="MarkIconOpenImgs" index="1"/>
+			<bitmap id="MarkIconOpen2" imagelist="MarkIconOpenImgs" index="2"/>
+		<bitmap id="MyComputerIcon" path="bitmap\tree\MyComputerIcon.png" />
+		
+		<!--设置-->
+		<imagelist id="setting_apply" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_apply.png" />
+			<texture id="setting_apply.normal"   imagelist="setting_apply" index="1" />
+			<texture id="setting_apply.hover"   imagelist="setting_apply" index="2" />
+			<texture id="setting_apply.down"   imagelist="setting_apply" index="3" />
+		<imagelist id="setting_cancel" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_cancel.png" />
+			<texture id="setting_cancel.normal"   imagelist="setting_cancel" index="1" />
+			<texture id="setting_cancel.hover"   imagelist="setting_cancel" index="2" />
+			<texture id="setting_cancel.down"   imagelist="setting_cancel" index="3" />
+		<imagelist id="setting_check" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_check.png" />
+			<bitmap id="setting_check.icon"   imagelist="setting_check" index="1" />
+			<texture id="setting_check.normal"   imagelist="setting_check" index="1" />
+			<texture id="setting_check.hover"   imagelist="setting_check" index="2" />
+			<texture id="setting_check.down"   imagelist="setting_check" index="3" />
+		<imagelist id="setting_confirm" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_confirm.png" />
+			<texture id="setting_confirm.normal"   imagelist="setting_confirm" index="1" />
+			<texture id="setting_confirm.hover"   imagelist="setting_confirm" index="2" />
+			<texture id="setting_confirm.down"   imagelist="setting_confirm" index="3" />
+		<imagelist id="setting_radio" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_radio.png" />
+			<texture id="setting_radio.normal"   imagelist="setting_radio" index="1" />
+			<texture id="setting_radio.hover"   imagelist="setting_radio" index="2" />
+			<bitmap id="setting_radio.icon"   imagelist="setting_radio" index="2" />
+		<imagelist id="setting_uncheck" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_uncheck.png" />
+			<bitmap id="setting_uncheck.icon"   imagelist="setting_uncheck" index="1" />
+			<texture id="setting_uncheck.normal"   imagelist="setting_uncheck" index="1" />
+			<texture id="setting_uncheck.hover"   imagelist="setting_uncheck" index="2" />
+			<texture id="setting_uncheck.down"   imagelist="setting_uncheck" index="3" />
+		
+		
+		<!--工具栏-->
+		<texture id="toolbar.bkg" type="NineInOne" image="bitmap\toolbar\bkg.png" />
+		<imagelist id="toolbar.fangda" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\fangda.png" />
+			<bitmap id="toolbar.fangda.normal"   imagelist="toolbar.fangda" index="1" />
+			<bitmap id="toolbar.fangda.hover"   imagelist="toolbar.fangda" index="2" />
+			<bitmap id="toolbar.fangda.down"   imagelist="toolbar.fangda" index="3" />
+		<imagelist id="toolbar.shanchu" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shanchu.png" />
+			<bitmap id="toolbar.shanchu.normal"   imagelist="toolbar.shanchu" index="1" />
+			<bitmap id="toolbar.shanchu.hover"   imagelist="toolbar.shanchu" index="2" />
+			<bitmap id="toolbar.shanchu.down"   imagelist="toolbar.shanchu" index="3" />
+		<imagelist id="toolbar.shangyizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shangyizhang.png" />
+			<bitmap id="toolbar.shangyizhang.normal"   imagelist="toolbar.shangyizhang" index="1" />
+			<bitmap id="toolbar.shangyizhang.hover"   imagelist="toolbar.shangyizhang" index="2" />
+			<bitmap id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="3" />
+		<imagelist id="toolbar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
+			<bitmap id="toolbar.suoxiao.normal"   imagelist="toolbar.suoxiao" index="1" />
+			<bitmap id="toolbar.suoxiao.hover"   imagelist="toolbar.suoxiao" index="2" />
+			<bitmap id="toolbar.suoxiao.down"   imagelist="toolbar.suoxiao" index="3" />
+		<imagelist id="toolbar.xiayizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\xiayizhang.png" />
+			<bitmap id="toolbar.xiayizhang.normal"   imagelist="toolbar.xiayizhang" index="1" />
+			<bitmap id="toolbar.xiayizhang.hover"   imagelist="toolbar.xiayizhang" index="2" />
+			<bitmap id="toolbar.xiayizhang.down"   imagelist="toolbar.xiayizhang" index="3" />
+		<imagelist id="toolbar.yibiyi" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\yibiyi.png" />
+			<bitmap id="toolbar.yibiyi.normal"   imagelist="toolbar.yibiyi" index="1" />
+			<bitmap id="toolbar.yibiyi.hover"   imagelist="toolbar.yibiyi" index="2" />
+			<bitmap id="toolbar.yibiyi.down"   imagelist="toolbar.yibiyi" index="3" />
+		<imagelist id="toolbar.youxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\youxuanzhuan.png" />
+			<bitmap id="toolbar.youxuanzhuan.normal"   imagelist="toolbar.youxuanzhuan" index="1" />
+			<bitmap id="toolbar.youxuanzhuan.hover"   imagelist="toolbar.youxuanzhuan" index="2" />
+			<bitmap id="toolbar.youxuanzhuan.down"   imagelist="toolbar.youxuanzhuan" index="3" />
+		<imagelist id="toolbar.zuoxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\zuoxuanzhuan.png" />
+			<bitmap id="toolbar.zuoxuanzhuan.normal"   imagelist="toolbar.zuoxuanzhuan" index="1" />
+			<bitmap id="toolbar.zuoxuanzhuan.hover"   imagelist="toolbar.zuoxuanzhuan" index="2" />
+			<bitmap id="toolbar.zuoxuanzhuan.down"   imagelist="toolbar.zuoxuanzhuan" index="3" />
+		<imagelist id="toolbar.shiping" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shiping.png" />
+			<bitmap id="toolbar.shiping.normal"   imagelist="toolbar.shiping" index="1" />
+			<bitmap id="toolbar.shiping.hover"   imagelist="toolbar.shiping" index="2" />
+			<bitmap id="toolbar.shiping.down"   imagelist="toolbar.shiping" index="3" />
+			
+		<!--对话框-->
+		<bitmap id="messagebox.icon"  path="bitmap\messagebox\icon.png" />
+		<imagelist id="messagebox.yes" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\yes.png" />
+			<texture id="messagebox.yes.normal"   imagelist="messagebox.yes" index="1" />
+			<texture id="messagebox.yes.hover"   imagelist="messagebox.yes" index="2" />
+			<texture id="messagebox.yes.down"   imagelist="messagebox.yes" index="3" />
+		<imagelist id="messagebox.no" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\no.png" />
+			<texture id="messagebox.no.normal"   imagelist="messagebox.no" index="1" />
+			<texture id="messagebox.no.hover"   imagelist="messagebox.no" index="2" />
+			<texture id="messagebox.no.down"   imagelist="messagebox.no" index="3" />
+		<imagelist id="messagebox.nosave" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\nosave.png" />
+			<texture id="messagebox.nosave.normal"   imagelist="messagebox.nosave" index="1" />
+			<texture id="messagebox.nosave.hover"   imagelist="messagebox.nosave" index="2" />
+			<texture id="messagebox.nosave.down"   imagelist="messagebox.nosave" index="3" />
+		<imagelist id="messagebox.coverold" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\coverold.png" />
+			<texture id="messagebox.coverold.normal"   imagelist="messagebox.coverold" index="1" />
+			<texture id="messagebox.coverold.hover"   imagelist="messagebox.coverold" index="2" />
+			<texture id="messagebox.coverold.down"   imagelist="messagebox.coverold" index="3" />
+		<imagelist id="messagebox.renamesave" vertical="0" splitter="1" varyblock="1" image="bitmap\messagebox\renamesave.png" />
+			<texture id="messagebox.renamesave.normal"   imagelist="messagebox.renamesave" index="1" />
+			<texture id="messagebox.renamesave.hover"   imagelist="messagebox.renamesave" index="2" />
+			<texture id="messagebox.renamesave.down"   imagelist="messagebox.renamesave" index="3" />
+		<!--png默认背景-->
+		<texture id="texture.transparent.bkg" type="Tile" image="bitmap\bitmap.transparent.bkg.png" />
+		
+		<!--默认图标-->
+		<bitmap id="default_icon.bmp" path="bitmap\default_icon\bmp.png" />
+		<bitmap id="default_icon.cut" path="bitmap\default_icon\cut.png" />
+		<bitmap id="default_icon.dds" path="bitmap\default_icon\dds.png" />
+		<bitmap id="default_icon.exr" path="bitmap\default_icon\exr.png" />
+		<bitmap id="default_icon.fax" path="bitmap\default_icon\fax.png" />
+		<bitmap id="default_icon.gif" path="bitmap\default_icon\gif.png" />
+		<bitmap id="default_icon.hdr" path="bitmap\default_icon\hdr.png" />
+		<bitmap id="default_icon.ico" path="bitmap\default_icon\ico.png" />
+		<bitmap id="default_icon.iff" path="bitmap\default_icon\iff.png" />
+		<bitmap id="default_icon.j2k" path="bitmap\default_icon\j2k.png" />
+		<bitmap id="default_icon.jng" path="bitmap\default_icon\jng.png" />
+		<bitmap id="default_icon.jp2" path="bitmap\default_icon\jp2.png" />
+		<bitmap id="default_icon.jpeg" path="bitmap\default_icon\jpeg.png" />
+		<bitmap id="default_icon.jpg" path="bitmap\default_icon\jpg.png" />
+		<bitmap id="default_icon.jxr" path="bitmap\default_icon\jxr.png" />
+		<bitmap id="default_icon.koala" path="bitmap\default_icon\koala.png" />
+		<bitmap id="default_icon.lbm" path="bitmap\default_icon\lbm.png" />
+		<bitmap id="default_icon.mng" path="bitmap\default_icon\mng.png" />
+		<bitmap id="default_icon.pbm" path="bitmap\default_icon\pbm.png" />
+		<bitmap id="default_icon.pcd" path="bitmap\default_icon\pcd.png" />
+		<bitmap id="default_icon.pcx" path="bitmap\default_icon\pcx.png" />
+		<bitmap id="default_icon.pfm" path="bitmap\default_icon\pfm.png" />
+		<bitmap id="default_icon.pgm" path="bitmap\default_icon\pgm.png" />
+		<bitmap id="default_icon.pict" path="bitmap\default_icon\pict.png" />
+		<bitmap id="default_icon.png" path="bitmap\default_icon\png.png" />
+		<bitmap id="default_icon.ppm" path="bitmap\default_icon\ppm.png" />
+		<bitmap id="default_icon.psd" path="bitmap\default_icon\psd.png" />
+		<bitmap id="default_icon.ras" path="bitmap\default_icon\ras.png" />
+		<bitmap id="default_icon.raw" path="bitmap\default_icon\raw.png" />
+		<bitmap id="default_icon.sgi" path="bitmap\default_icon\sgi.png" />
+		<bitmap id="default_icon.targa" path="bitmap\default_icon\targa.png" />
+		<bitmap id="default_icon.tiff" path="bitmap\default_icon\tiff.png" />
+		<bitmap id="default_icon.wbmp" path="bitmap\default_icon\wbmp.png" />
+		<bitmap id="default_icon.webp" path="bitmap\default_icon\webp.png" />
+		<bitmap id="default_icon.xbm" path="bitmap\default_icon\xbm.png" />
+		<bitmap id="default_icon.xpm" path="bitmap\default_icon\xpm.png" />
+	</resource>
+</XLUE>

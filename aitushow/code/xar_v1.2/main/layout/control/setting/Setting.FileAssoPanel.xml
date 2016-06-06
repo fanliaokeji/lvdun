@@ -1,0 +1,550 @@
+<xlue>
+<control class="Setting.FileAssoPanel">
+<method_def>
+	<Update file="Setting.FileAssoPanel.xml.lua" func="Update"/>
+	<Apply file="Setting.FileAssoPanel.xml.lua" func="Apply"/>
+</method_def>
+<objtemplate>
+<children>
+<obj id="backgroud" class="FillObject">
+	<attr>
+		<srccolor>394264</srccolor>
+		<blendtype>Source</blendtype>
+		<destcolor>394264</destcolor>
+		<left>0</left>
+		<width>father.width</width>
+		<srcpt>0,0</srcpt>
+		<limitchild>1</limitchild>
+		<destpt>father.width,father.height</destpt>
+		<height>father.height</height>
+		<alpha>255</alpha>
+		<top>0</top>
+		<filltype>Monochrome</filltype>
+	</attr>
+	<children>
+	<obj id="titlehead1" class="TextObject">
+		<attr>
+			<textcolor>system.white</textcolor>
+			<text>基本选项</text>
+			<left>18</left>
+			<width>70</width>
+			<top>19</top>
+			<font>font.text13.bold</font>
+			<height>20</height>
+			<halign>left</halign>
+			<valign>center</valign>
+		</attr>
+	</obj>
+	<obj id="titleline1" class="LineObject">
+		<attr>
+			<top>29</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>77</left>
+			<width>father.width-77-8</width>
+		</attr>
+	</obj>
+	<obj id="chebox3" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>BMP</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>45</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox4" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>JPG</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>45</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox5" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>GIF</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>45</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox6" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PNG</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>45</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox7" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>ICO</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>71</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox8" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>TIFF</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>71</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox9" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>TGA</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>71</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox10" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PCX</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>71</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox11" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>WBM</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>97</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox12" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PPM</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>97</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox13" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>JP2</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>97</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox14" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>J2K</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>97</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox15" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PGM</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>123</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox16" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>RAS</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>123</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox17" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PFM</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>123</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+
+	</obj>
+	<obj id="chebox18" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>JNG</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>123</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox19" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>XBM</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>149</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox20" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>XPM</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>149</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox21" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>KOALA</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>149</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox22" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>SGI</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>149</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox23" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>CUT</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>175</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox24" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>DDS</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>175</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox25" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>EXR</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>175</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox26" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>FAX</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>175</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox27" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>IFF</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>201</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox28" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>JXR</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>201</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox29" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>LBM</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>201</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox30" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PBM</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>201</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox31" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PCD</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>227</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox32" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PICT</Text>
+			<left>129</left>
+			<width>83</width>
+			<top>227</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox33" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>WEB</Text>
+			<left>232</left>
+			<width>83</width>
+			<top>227</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox34" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>MNG</Text>
+			<left>335</left>
+			<width>83</width>
+			<top>227</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="chebox35" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>PSD</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>253</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+	</obj>
+	<obj id="titleline2" class="LineObject">
+		<attr>
+			<top>288</top>
+			<srcpt>0,0</srcpt>
+			<pen>pen.solid</pen>
+			<destpt>father.width, 0</destpt>
+			<height>1</height>
+			<color>50597B</color>
+			<left>26</left>
+			<width>father.width-26-8</width>
+		</attr>
+	</obj>
+	<obj id="chebox37" class="CheckBox">
+		<attr>
+			<CheckHover>setting_check.hover</CheckHover>
+			<Select>true</Select>
+			<Text>全选</Text>
+			<left>26</left>
+			<width>83</width>
+			<top>294</top>
+			<CheckNormal>setting_check.normal</CheckNormal>
+			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
+			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
+			<height>20</height>
+		</attr>
+		<eventlist>
+			<event name="OnSelect" file="Setting.FileAssoPanel.xml.lua" func="chebox37OnSelect" />
+		</eventlist>
+	</obj>
+	</children>
+</obj>
+</children>
+<eventlist>
+	<event name="OnInitControl" file="Setting.FileAssoPanel.xml.lua" func="FileAssoPanelOnInitControl" />
+</eventlist>
+</objtemplate>
+</control>
+</xlue>

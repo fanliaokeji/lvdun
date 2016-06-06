@@ -1,0 +1,150 @@
+<xlue>	
+	<!--			带有文字和一个图标的按钮		-->
+	<control class="Kuaikan.ButtonEx">
+		<attr_def>
+			<attr name="BkgTextureID_Normal" type="string"><default></default></attr>
+			<attr name="BkgTextureID_Hover" type="string"><default></default></attr>
+			<attr name="BkgTextureID_Down" type="string"><default></default></attr>
+			<attr name="BkgTextureID_Disable" type="string"><default></default></attr>
+			<attr name="BkgTextureID_FocusNormal" type="string"><default></default></attr>
+			<attr name="BkgTextureID_FocusHover" type="string"><default></default></attr>
+			<attr name="BkgTextureID_FocusDown" type="string"><default></default></attr>
+
+			<attr name="IconBitmapID" type="string"><default></default></attr>
+			<attr name="IconBitmapID_Hover" type="string"><default></default></attr>
+			<attr name="IconBitmapID_Down" type="string"><default></default></attr>
+			<attr name="IconBitmapID_Disable" type="string"><default></default></attr>
+			<attr name="Visible" type="bool"><default>true</default></attr>
+			<attr name="Text" type="string"><default></default></attr>
+			<attr name="Status" type="int"><default>1</default></attr>
+			<attr name="IconLeftPos" type="string"><default>0</default></attr>
+			<attr name="IconTopPos" type="string"><default>0</default></attr>
+			<attr name="TextLeftPos" type="int"><default>0</default></attr>
+			<attr name="TextTopPos" type="int"><default>0</default></attr>
+
+			<attr name="IconWidth" type="string"><default>30</default></attr>
+			<attr name="IconHeight" type="string"><default>30</default></attr>
+
+			<attr name="TextFontID" type="string"><default>default.font</default></attr>
+			<attr name="TextColorID" type="string"><default>system.white</default></attr>
+			<attr name="TextColorID_Hover" type="string" />
+			<attr name="DisableTextColor" type="string" ><default>999999</default></attr>
+			<!--		是否拼接字体和颜色ID		true的话会根据状态在后面 加上响应的后缀.  如.normal  .hover  .down-->
+			<attr name="SpliceTextInfoID" type="bool"><default>false</default></attr>
+			<attr name="EffectColorResID" type="string" />
+						<!--是否默认按钮-->
+			<attr name="IsDefaultButton" type="bool">
+				<default>false</default>
+			</attr>
+			<attr name="TipText" type="string"/>
+			<attr name="Enable" type="bool"><default>true</default></attr>
+			<attr name="HAlign" type="string"><default>center</default></attr>
+			<attr name="VAlign" type="string"><default>top</default></attr>
+			<!--是否默认按钮-->
+			<attr name="IsDefaultButton" type="bool">
+				<default>false</default>
+			</attr>
+			<attr name="DefaultAnimTexture" type="string">
+				<default>texture.btn.default.ani</default>
+			</attr>
+			<attr name="DefaultBkgNormal" type="string">
+				<default>texture.btn.default.normal</default>
+			</attr>
+			<attr name="FrameTime" type="int">
+				<default>3000</default>
+			</attr>
+			
+			<attr name="CursorID" type="string" />
+			<attr name="TipPosIsTopMid" type="bool" >
+				<default>texture.btn.default.normal</default>
+			</attr>
+		</attr_def>
+		<method_def>
+			<SetEnable file="ButtonEx.xml.lua" func="SetEnable" />
+			<GetEnable file="ButtonEx.xml.lua" func="GetEnable" />
+			<SetText file="ButtonEx.xml.lua" func="SetText" />
+			<SetBkgTexture file="ButtonEx.xml.lua" func="SetBkgTexture" />
+			<SetBkgTextureEx file="ButtonEx.xml.lua" func="SetBkgTextureEx" />
+			<SetNormalBkgTexture file="ButtonEx.xml.lua" func="SetNormalBkgTexture" />
+			<SetHoverBkgTexture file="ButtonEx.xml.lua" func="SetHoverBkgTexture" />
+			<SetDownBkgTexture file="ButtonEx.xml.lua" func="SetDownBkgTexture" />		
+			<SetDisableBkgTexture file="ButtonEx.xml.lua" func="SetDisableBkgTexture" />
+			<SetFocusBkgTexture file="ButtonEx.xml.lua" func="SetFocusBkgTexture" />
+			<SetFocusNormalBkgTexture file="ButtonEx.xml.lua" func="SetFocusNormalBkgTexture" />
+			<SetFocusHoverBkgTexture file="ButtonEx.xml.lua" func="SetFocusHoverBkgTexture" />
+			<SetFocusDownBkgTexture file="ButtonEx.xml.lua" func="SetFocusDownBkgTexture" />	
+			<SetIconImage file="ButtonEx.xml.lua" func="SetIconImage" />
+			<SetIconBitmap file="ButtonEx.xml.lua" func="SetIconBitmap" />
+			<SetTextFontID file="ButtonEx.xml.lua" func="SetTextFontID" />
+			<SetTextColorID file="ButtonEx.xml.lua" func="SetTextColorID" />
+			<SetIconPos file="ButtonEx.xml.lua" func="SetIconPos" />
+			<SetTextPos file="ButtonEx.xml.lua" func="SetTextPos" />
+			<GetTextExtent file="ButtonEx.xml.lua" func="GetTextExtent" />
+			<GetText file="ButtonEx.xml.lua" func="GetText" />
+			<SetValign file="ButtonEx.xml.lua" func="SetValign" />
+			<Show file="ButtonEx.xml.lua" func="Show" />
+			<AddTipText file="ButtonEx.xml.lua" func="AddTipText" />
+			<GetTipText file="ButtonEx.xml.lua" func="GetTipText" />
+			<SetDefaultButton file="ButtonEx.xml.lua" func="SetDefaultButton" />
+		</method_def>
+		<event_def>
+			<OnButtonClick>
+			</OnButtonClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="button.bkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+					<children>
+						<obj id="button.icon" class="ImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>30</width>
+								<height>30</height>
+							</attr>
+						</obj>
+						<obj id="button.text" class="TextObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<halign>center</halign>
+								<zorder>10</zorder>
+								<font>default.font</font>
+								<texttype>gdi</texttype>
+							</attr>
+						</obj>
+					</children>
+				</obj>
+				<obj id="button.oldbkg" class="TextureObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+					</attr>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnBind" file="ButtonEx.xml.lua" func="OnBind" />
+				<event name="OnPosChange" file="ButtonEx.xml.lua" func="OnPosChange" />
+				<event name="OnLButtonDown" file="ButtonEx.xml.lua" func="OnLButtonDown" />
+				<event name="OnLButtonUp" file="ButtonEx.xml.lua" func="OnLButtonUp" />
+				<event name="OnMouseMove" file="ButtonEx.xml.lua" func="OnMouseMove" />
+				<event name="OnControlMouseLeave" file="ButtonEx.xml.lua" func="OnControlMouseLeave" />
+				<event name="OnInitControl" file="ButtonEx.xml.lua" func="OnInitControl" />
+				<event name="OnControlMouseEnter" file="ButtonEx.xml.lua" func="OnControlMouseEnter" />
+				<event name="OnFocusChange" file="ButtonEx.xml.lua" func="OnFocusChange"/>
+				<event name="OnKeyDown" file="ButtonEx.xml.lua" func="OnKeyDown"/>
+				<event name="OnMouseWheel" file="ButtonEx.xml.lua" func="OnMouseWheel" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>	
