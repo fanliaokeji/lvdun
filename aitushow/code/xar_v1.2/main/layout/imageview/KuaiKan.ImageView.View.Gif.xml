@@ -1,0 +1,119 @@
+<xlue>
+	<control class="Kuaikan.ImageView.View.Gif">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<UpdateView file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_UpdateView"/>
+			<GetViewType file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_GetViewType"/>
+			<ResetDoc file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_ResetDoc"/>
+			<GetScaleRatio file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_GetScaleRatio"/>
+			<SetScaleRatio file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_SetScaleRatio"/>
+			<ResetInfo file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_ResetInfo"/>
+			<GetAdaptedScreenRatio file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_GetAdaptedScreenRatio"/>
+			<IsParamValid file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_IsParamValid"/>
+			<LeftRotate file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_LeftRotate"/>
+			<RightRotate file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_RightRotate"/>
+			<HandleUpDownWard file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_HandleUpDownWard"/>
+			<HandleThumbnailViewChange file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_HandleThumbnailViewChange"/>
+			<HandleThumbnailViewMouseWheel file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_HandleThumbnailViewMouseWheel"/>
+		</method_def>
+		<event_def>
+			<OnScaleRatioChanged>
+				<param>
+				</param>
+			</OnScaleRatioChanged>
+			<OnPreFileClick>
+				<param>
+				</param>
+			</OnPreFileClick>
+			<OnNextFileClick>
+				<param>
+				</param>
+			</OnNextFileClick>
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.view.layout" class="LayoutObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<limitchild>1</limitchild>
+					</attr>
+					<children>
+						<obj id="client.leftward" class="Kuaikan.ImageView.View.LeftWard">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>82</width>
+								<height>father.height</height>
+								<zorder>1000</zorder>
+								<!--texture>texture.superbatch.output.mask.bkg</texture-->
+								<alpha>1</alpha>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnLButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonUp" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnLButtonUp" redirect="control:client.view"/>
+								<event name="OnMouseMove" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnMouseMove" redirect="control:client.view"/>
+								<event name="OnMouseWheel" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnMouseWheel" redirect="control:client.view"/>
+								<event name="OnRButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnRButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonDbClick" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnLButtonDbClick" redirect="control:client.view"/>
+								<event name="OnControlMouseEnter" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnControlMouseEnter" />
+								<event name="OnControlMouseLeave" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnControlMouseLeave" />
+								<event name="OnBtnClick" file="KuaiKan.ImageView.View.Gif.xml.lua" func="LeftWard_OnBtnClick" />
+							</eventlist>
+						</obj>
+						<obj id="client.view" class="SeqImageObject">
+							<attr>
+								<left>0</left>
+								<top>0</top>
+								<width>father.width</width>
+								<height>father.height</height>
+								<drawmode>1</drawmode>
+								<antialias>2</antialias>
+							</attr>
+							<eventlist>
+								<event name="OnLButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnLButtonDown" />
+								<event name="OnLButtonUp" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnLButtonUp" />
+								<event name="OnMouseMove" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnMouseMove" />
+								<event name="OnMouseWheel" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnMouseWheel1" />
+								<event name="OnLButtonDbClick" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnLButtonDbClick" />
+								<event name="OnRButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnRButtonDown" />
+							</eventlist>
+						</obj>
+						<obj id="client.rightward" class="Kuaikan.ImageView.View.RightWard">
+							<attr>
+								<left>father.width-82</left>
+								<top>0</top>
+								<width>82</width>
+								<height>father.height</height>
+								<zorder>1000</zorder>
+							</attr>
+							<children>
+								
+							</children>
+							<eventlist>
+								<event name="OnLButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnLButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonUp" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnLButtonUp" redirect="control:client.view"/>
+								<event name="OnMouseMove" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnMouseMove" redirect="control:client.view"/>
+								<event name="OnMouseWheel" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnMouseWheel" redirect="control:client.view"/>
+								<event name="OnRButtonDown" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnRButtonDown" redirect="control:client.view"/>
+								<event name="OnLButtonDbClick" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnLButtonDbClick" redirect="control:client.view"/>
+								<event name="OnControlMouseEnter" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnControlMouseEnter" />
+								<event name="OnControlMouseLeave" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnControlMouseLeave" />
+								<event name="OnBtnClick" file="KuaiKan.ImageView.View.Gif.xml.lua" func="RightWard_OnBtnClick" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnPosChange" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnPosChange" />
+				<event name="OnInitControl" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnInitControl" />
+				<event name="OnMouseWheel" file="KuaiKan.ImageView.View.Gif.xml.lua" func="View_OnMouseWheel" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

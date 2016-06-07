@@ -1,12 +1,12 @@
 <xlue>	
-	<control class="Kuaikan.MainWnd.Client.SuspendToolbar">
+	<control class="Kuaikan.Toolbar">
 		<attr_def>
 			
 		</attr_def>
 		<method_def>
-			<ShowContent file="MainClient.SuspendToolbar.xml.lua" func="ShowContent" />
-			<EnableToolbarItem file="MainClient.SuspendToolbar.xml.lua" func="EnableToolbarItem" />
-			<GetToolbarItem file="MainClient.SuspendToolbar.xml.lua" func="GetToolbarItem" />
+			<ShowContent file="KuaiKan.ImageView.Toolbar.xml.lua" func="ShowContent" />
+			<EnableToolbarItem file="KuaiKan.ImageView.Toolbar.xml.lua" func="EnableToolbarItem" />
+			<GetToolbarItem file="KuaiKan.ImageView.Toolbar.xml.lua" func="GetToolbarItem" />
 		</method_def>
 		<event_def>
 			<OnBtnClick>
@@ -61,7 +61,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								<obj id="btn.min" class="Kuaikan.ButtonEx">
@@ -90,7 +90,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								
@@ -119,7 +119,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								<obj id="btn.preFile" class="Kuaikan.ButtonEx">
@@ -148,7 +148,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								
@@ -178,7 +178,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								<obj id="btn.leftrotate" class="Kuaikan.ButtonEx">
@@ -207,7 +207,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								
@@ -237,7 +237,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 								
@@ -267,7 +267,7 @@
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
-										<event name="OnButtonClick" file="MainClient.SuspendToolbar.xml.lua" func="OnBtnClick" />
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
 									</eventlist>
 								</obj>
 							</children>
@@ -276,7 +276,7 @@
 				</obj>
 			</children>
 			<eventlist>
-				<event name="OnInitControl" file="MainClient.SuspendToolbar.xml.lua" func="OnInitControl" />
+				<event name="OnInitControl" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnInitControl" />
 			</eventlist>
 		</objtemplate>
 	</control>

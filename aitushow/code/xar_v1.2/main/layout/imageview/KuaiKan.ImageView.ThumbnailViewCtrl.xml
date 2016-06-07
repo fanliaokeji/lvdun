@@ -1,12 +1,12 @@
 <xlue>
-	<control class="Kuaikan.MainWnd.Client.ThumbnailViewCtrl">
+	<control class="Kuaikan.ImageView.ThumbnailViewCtrl">
 		<attr_def>
 			
 		</attr_def>
 		<method_def>
-			<SetImage file="MainClient.ThumbnailViewCtrl.xml.lua" func="SetImage"/>
-			<UpdateLayer file="MainClient.ThumbnailViewCtrl.xml.lua" func="UpdateLayer"/>
-			<UpdateTitle file="MainClient.ThumbnailViewCtrl.xml.lua" func="UpdateTitle"/>
+			<SetImage file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="SetImage"/>
+			<UpdateLayer file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="UpdateLayer"/>
+			<UpdateTitle file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="UpdateTitle"/>
 		</method_def>
 		<event_def>
 			<OnViewRectChanged>
@@ -76,14 +76,14 @@
 												<DownBkgID>texture.title.close.hover</DownBkgID>
 											</attr>
 											<eventlist>
-												<event name="OnClick" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnCloseBtnClick" />
+												<event name="OnClick" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Cation_OnCloseBtnClick" />
 											</eventlist>
 										</obj>
 									</children>
 									<eventlist>
-										<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonDown" />
-										<event name="OnLButtonUp" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonUp" />
-										<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Cation_OnMouseMove" />
+										<event name="OnLButtonDown" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonDown" />
+										<event name="OnLButtonUp" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Cation_OnLButtonUp" />
+										<event name="OnMouseMove" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Cation_OnMouseMove" />
 									</eventlist>
 								</obj>
 								
@@ -111,17 +111,17 @@
 														<height>father.height</height>
 													</attr>
 													<eventlist>
-														<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonDown" />
-														<event name="OnLButtonUp" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonUp" />
-														<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseMove" />
-														<event name="OnMouseWheel" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel1" />
+														<event name="OnLButtonDown" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonDown" />
+														<event name="OnLButtonUp" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Layer_OnLButtonUp" />
+														<event name="OnMouseMove" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseMove" />
+														<event name="OnMouseWheel" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel1" />
 													</eventlist>
 												</obj>
 											</children>
 										</obj>
 									</children>
 									<eventlist>
-										<event name="OnMouseWheel" file="MainClient.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel" />
+										<event name="OnMouseWheel" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="Layer_OnMouseWheel" />
 									</eventlist>
 								</obj>
 							</children>
@@ -130,9 +130,9 @@
 				</obj>
 			</children>
 			<eventlist>
-				<event name="OnLButtonDown" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnLButtonDown" />
-				<event name="OnMouseMove" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnMouseMove" />
-				<event name="OnInitControl" file="MainClient.ThumbnailViewCtrl.xml.lua" func="OnInitControl" />
+				<event name="OnLButtonDown" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="OnLButtonDown" />
+				<event name="OnMouseMove" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="OnMouseMove" />
+				<event name="OnInitControl" file="KuaiKan.ImageView.ThumbnailViewCtrl.xml.lua" func="OnInitControl" />
 			</eventlist>
 		</objtemplate>
 	</control>

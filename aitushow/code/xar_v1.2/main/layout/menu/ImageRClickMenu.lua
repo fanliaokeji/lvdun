@@ -8,7 +8,7 @@ end
 
 local menuFunTable = {}
 function menuFunTable.OnSelect_Open(self)
-	local fileFilter = "图片格式(*.bmp;*.cut;*.dds;*.exr;*.fax;*.gif;*.ico;*.iff;*.j2k;*.jng;*.jp2;*.jpeg;*.jpg;*.jxr;*.koala;*.lbm;*.mng;*.pbm;*.pcd;*.pcx;*.pfm;*.pgm;*.pict;*.png;*.ppm;*.ppmraw;*.psd;*.ras;*.sgi;*.tga;*.tiff;*.wbm;*.web;*.xbm;*.xpm)|*.bmp;*.cut;*.dds;*.exr;*.fax;*.gif;*.ico;*.iff;*.j2k;*.jng;*.jp2;*.jpeg;*.jpg;*.jxr;*.koala;*.lbm;*.mng;*.pbm;*.pcd;*.pcx;*.pfm;*.pgm;*.pict;*.png;*.ppm;*.ppmraw;*.psd;*.ras;*.sgi;*.tga;*.tiff;*.wbm;*.web;*.xbm;*.xpm|All Files(*.*)|*.*||"
+	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
 	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", "")
 	if strLocalFiles == nil or #strLocalFiles == 0 then
 		return
@@ -34,7 +34,7 @@ function menuFunTable.OnSelect_Save(self)
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	local curDocItem = clientobj:GetCurDocItem()	
 	local filename = Helper.APIproxy.GetFileNameFromPath(curDocItem.FilePath)
-	local fileFilter = "图片格式(*.bmp;*.cut;*.dds;*.exr;*.fax;*.gif;*.ico;*.iff;*.j2k;*.jng;*.jp2;*.jpeg;*.jpg;*.jxr;*.koala;*.lbm;*.mng;*.pbm;*.pcd;*.pcx;*.pfm;*.pgm;*.pict;*.png;*.ppm;*.ppmraw;*.psd;*.ras;*.sgi;*.tga;*.tiff;*.wbm;*.web;*.xbm;*.xpm)|*.bmp;*.cut;*.dds;*.exr;*.fax;*.gif;*.ico;*.iff;*.j2k;*.jng;*.jp2;*.jpeg;*.jpg;*.jxr;*.koala;*.lbm;*.mng;*.pbm;*.pcd;*.pcx;*.pfm;*.pgm;*.pict;*.png;*.ppm;*.ppmraw;*.psd;*.ras;*.sgi;*.tga;*.tiff;*.wbm;*.web;*.xbm;*.xpm|All Files(*.*)|*.*||"
+	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
 	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", filename)
 	local MSGBOX = Helper.MessageBox
 	
@@ -60,6 +60,18 @@ function SortBy(bywhat)
 	clientobj:UpdateFileList()
 end
 
+function InitSortIcon(self)
+	local attr = self:GetAttribute()
+	local icon = self:GetControlObject("menu.item.icon")
+	icon:SetObjPos2(9, "(father.height - 6)/2", 6, 6)
+end
+
+function Set2DeskBKG(ntype)
+	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+	local attr = clientobj:GetAttribute()
+	tipUtil:SetDesktopWallpaper(attr.CurDocItem.FilePath, ntype)
+end
+
 local menuTable = {
 {id="Open", text = "打开"},
 {id="Spliter2", bSplitter = true},
@@ -72,10 +84,10 @@ local menuTable = {
 	text = "排序方式", 
 	OnSelectFun = function(self) end,
 	SubMenuTable = {
-		{id="SortByName", text = "名称", OnSelectFun = function(self) SortBy("name") end},
-		{id="SortBySize", text = "大小", OnSelectFun = function(self) SortBy("size") end},
-		{id="SortByType", text = "类型", OnSelectFun = function(self) SortBy("type") end},
-		{id="SortByTime", text = "时间", OnSelectFun = function(self) SortBy("time") end},
+		{id="SortByName", text = "名称", OnSelectFun = function(self) SortBy("name") end, OnInitFun = InitSortIcon},
+		{id="SortBySize", text = "大小", OnSelectFun = function(self) SortBy("size") end, OnInitFun = InitSortIcon},
+		{id="SortByType", text = "类型", OnSelectFun = function(self) SortBy("type") end, OnInitFun = InitSortIcon},
+		{id="SortByTime", text = "时间", OnSelectFun = function(self) SortBy("time") end, OnInitFun = InitSortIcon},
 	},
 	OnInitFun = function(self)
 		local attr = self:GetAttribute()
@@ -83,7 +95,7 @@ local menuTable = {
 		local function CheckOne(idx)
 			for i, v in ipairs(attr.itemData["SubMenuTable"]) do
 				if i == idx then
-					v.iconNormalID = "setting_radio.icon"
+					v.iconNormalID = "bitmap.sort.select"
 				else
 					v.iconNormalID = nil
 				end
@@ -101,8 +113,29 @@ local menuTable = {
 	end,
 },
 {id="Spliter5", bSplitter = true},
-{id="Delete", text = "删除", iconNormalID = "bitmap.menu.icon.del.normal", iconDisableID = "bitmap.menu.icon.del.disable"},
+{
+	id="deskbkg", 
+	text = "设为桌面", 
+	OnSelectFun = function(self) end,
+	SubMenuTable = {
+		{id="deskbkg_center", text = "居中", OnSelectFun = function(self) Set2DeskBKG(1) end},
+		{id="deskbkg_pingpu", text = "平铺", OnSelectFun = function(self) Set2DeskBKG(2) end},
+		{id="deskbkg_lasheng", text = "拉伸", OnSelectFun = function(self) Set2DeskBKG(3) end},
+	},
+	OnInitFun = function(self)
+		local attr = self:GetAttribute()
+		attr.DisableTextColor = "999999"
+		attr.SubMenuArrowDisableBkgID = ""
+		local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+		local clientattr = clientobj:GetAttribute()
+		if not tipUtil:IsCanSetToWallPaperFile(clientattr.CurDocItem.FilePath) then
+			self:SetEnable(false)
+		end
+	end,
+},
 {id="Spliter6", bSplitter = true},
+{id="Delete", text = "删除", iconNormalID = "bitmap.menu.icon.del.normal", iconDisableID = "bitmap.menu.icon.del.disable"},
+{id="Spliter7", bSplitter = true},
 }
 
 GreenShieldMenu.ImageRClickMenu = {}

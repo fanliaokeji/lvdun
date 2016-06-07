@@ -43,8 +43,9 @@ APIproxy.FolderMonitorManager = {
 			end
 		end,
 }
+
 function OnFolderMonitorEvent(oldFilePath, newFilePath, eventType)
-	LOG("NeoImageLog " .. oldFilePath .. "  " .. newFilePath .. "  " .. eventType)
+	LOG("KuaikanLog " .. oldFilePath .. "  " .. newFilePath .. "  " .. eventType)
 	if oldFilePath == g_LastFilePath and g_LastEventType == eventType then
 		return
 	end
@@ -54,11 +55,11 @@ function OnFolderMonitorEvent(oldFilePath, newFilePath, eventType)
 		value(oldFilePath, newFilePath, eventType)
 	end
 end
+
 function AttachFolderMonitorEvent()
-	local appObj = tipUtil
-	local ret = appObj:InitFolderMonitor()
+	local ret = tipUtil:InitFolderMonitor()
 	if ret then	-- 绑定事件
-		appObj:AttachDirChangeEvent(OnFolderMonitorEvent)
+		tipUtil:AttachDirChangeEvent(OnFolderMonitorEvent)
 	end
 end
 AttachFolderMonitorEvent()

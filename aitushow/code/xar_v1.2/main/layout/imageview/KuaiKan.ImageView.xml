@@ -1,0 +1,180 @@
+<xlue>
+	<control class="Kuaikan.MainWnd.Client">
+		<attr_def>
+			
+		</attr_def>
+		<method_def>
+			<LoadImageFile file="KuaiKan.ImageView.xml.lua" func="LoadImageFile"/>
+			<LoadImageFileImpl file="KuaiKan.ImageView.xml.lua" func="LoadImageFileImpl"/>
+			<SaveImageFile file="KuaiKan.ImageView.xml.lua" func="SaveImageFile"/>
+			<ScaleImage file="KuaiKan.ImageView.xml.lua" func="ScaleImage"/>
+			<PreFile file="KuaiKan.ImageView.xml.lua" func="PreFile"/>
+			<NextFile file="KuaiKan.ImageView.xml.lua" func="NextFile"/>
+			<FirstFile file="KuaiKan.ImageView.xml.lua" func="FirstFile"/>
+			<LastFile file="KuaiKan.ImageView.xml.lua" func="LastFile"/>
+			<DeleteFile file="KuaiKan.ImageView.xml.lua" func="DeleteFile"/>
+			<AdapterOrSrcScreen file="KuaiKan.ImageView.xml.lua" func="AdapterOrSrcScreen"/>
+			<FullScreenSwitch file="KuaiKan.ImageView.xml.lua" func="FullScreenSwitch"/>
+			<OpenFile file="KuaiKan.ImageView.xml.lua" func="OpenFile"/>
+			<LeftRotate file="KuaiKan.ImageView.xml.lua" func="LeftRotate"/>
+			<RightRotate file="KuaiKan.ImageView.xml.lua" func="RightRotate"/>
+			<HandleRotateExit file="KuaiKan.ImageView.xml.lua" func="HandleRotateExit"/>
+			<PrintImage file="KuaiKan.ImageView.xml.lua" func="PrintImage"/>
+			<IsBusying file="KuaiKan.ImageView.xml.lua" func="IsBusying"/>
+			
+			<SetStatus file="KuaiKan.ImageView.xml.lua" func="SetStatus"/>
+			<UpdateView file="KuaiKan.ImageView.xml.lua" func="UpdateView"/>
+			<OnLoadComplete file="KuaiKan.ImageView.xml.lua" func="OnLoadComplete"/>
+			<GetPreFilePath file="KuaiKan.ImageView.xml.lua" func="GetPreFilePath"/>
+			<GetNextFilePath file="KuaiKan.ImageView.xml.lua" func="GetNextFilePath"/>
+			<IsFullScreen file="KuaiKan.ImageView.xml.lua" func="IsFullScreen"/>
+			<SetScaleCallBackParam file="KuaiKan.ImageView.xml.lua" func="SetScaleCallBackParam"/>
+			<LoadCacheImageFile file="KuaiKan.ImageView.xml.lua" func="LoadCacheImageFile"/>
+			<LoadTotalImageFile file="KuaiKan.ImageView.xml.lua" func="LoadTotalImageFile"/>
+			<UpdateFileList file="KuaiKan.ImageView.xml.lua" func="UpdateFileList"/>
+			<ResetViewObj file="KuaiKan.ImageView.xml.lua" func="ResetViewObj"/>
+			
+			<ShowWaitingPanel file="KuaiKan.ImageView.xml.lua" func="ShowWaitingPanel"/>
+			<SetWaitingPanelText file="KuaiKan.ImageView.xml.lua" func="SetWaitingPanelText"/>
+			<SetWaitingPanelProcessText file="KuaiKan.ImageView.xml.lua" func="SetWaitingPanelProcessText"/>
+			
+			<GetCaption file="KuaiKan.ImageView.xml.lua" func="GetCaption"/>
+			<GetViewObj file="KuaiKan.ImageView.xml.lua" func="GetViewObj"/>
+			<GetThumbnailView file="KuaiKan.ImageView.xml.lua" func="GetThumbnailView"/>
+			<Reset file="KuaiKan.ImageView.xml.lua" func="Reset"/>
+			<GetCurDocItem file="KuaiKan.ImageView.xml.lua" func="GetCurDocItem"/>
+			<UpdateTitle file="KuaiKan.ImageView.xml.lua" func="UpdateTitle"/>
+			<ShowErrorIcon file="KuaiKan.ImageView.xml.lua" func="ShowErrorIcon"/>
+			<IsAutoRotate file="KuaiKan.ImageView.xml.lua" func="IsAutoRotate"/>
+			<ShowFullScreenQutiTip file="KuaiKan.ImageView.xml.lua" func="ShowFullScreenQutiTip"/>
+			<GetCurFilePos file="KuaiKan.ImageView.xml.lua" func="GetCurFilePos"/>
+		</method_def>
+		<event_def>
+			
+		</event_def>
+		<objtemplate>
+			<children>
+				<obj id="client.bkg" class="FillObject">
+					<attr>
+						<left>0</left>
+						<top>0</top>
+						<width>father.width</width>
+						<height>father.height</height>
+						<filltype>Monochrome</filltype>
+						<srccolor>255,255,255,255</srccolor>
+						<destcolor>255,255,255,255</destcolor>
+					</attr>	
+					<children>
+						<obj id="client.caption" class="Kuaikan.ImageView.Caption">
+							<attr>
+								<left>1</left>
+								<top>1</top>
+								<width>father.width-2</width>
+								<height>35</height>
+								<zorder>10000</zorder>
+							</attr>
+						</obj>
+						<obj id="client.view.bkg" class="TextureObject">
+							<attr>
+								<left>1</left>
+								<top>36</top>
+								<width>father.width-2</width>
+								<height>father.height-36</height>
+							</attr>
+							<children>
+								<obj id="client.view.layout" class="LayoutObject">
+									<attr>
+										<left>0</left>
+										<top>0</top>
+										<width>father.width</width>
+										<height>father.height</height>
+									</attr>
+									<children>
+										<obj id="client.fullscreen.quit" class="Kuaikan.Button">
+											<attr>
+												<left>father.width-46</left>
+												<top>0</top>
+												<width>46</width>
+												<height>46</height>
+												<Visible>0</Visible>
+												<zorder>999999</zorder>
+												<NormalBkgID>bitmap.fullscreen.close.normal</NormalBkgID>
+												<DownBkgID>bitmap.fullscreen.close.hover</DownBkgID>
+												<HoverBkgID>bitmap.fullscreen.close.hover</HoverBkgID>
+												<DisableBkgID>bitmap.fullscreen.close.normal</DisableBkgID>
+											</attr>
+											<eventlist>
+												<event name="OnClick" file="KuaiKan.ImageView.xml.lua" func="OnClickCloseBtnWhileFullScreen" />
+											</eventlist>	
+										</obj>
+										<obj id="client.view.loaderror.icon" class="ImageObject">
+											<attr>
+												<left>(father.width-113)/2</left>
+												<top>(father.height-131)/2</top>
+												<width>113</width>
+												<height>131</height>
+												<image>bitmap.loadfile.error.icon</image>
+											</attr>
+										</obj>
+										<obj id="client.filelistview" class="Kuaikan.ListViewCtrl">
+											<attr>
+												<left>0</left>
+												<top>father.height-43</top>
+												<width>father.width</width>
+												<height>43</height>
+												<ItemWidth>48</ItemWidth>
+												<ItemHeight>36</ItemHeight>
+												<XInternal>0</XInternal>
+												<zorder>100000</zorder>
+											</attr>
+											<eventlist>
+												<event name="OnControlMouseEnter" file="KuaiKan.ImageView.xml.lua" func="ListView_OnControlMouseEnter" />
+												<event name="OnControlMouseLeave" file="KuaiKan.ImageView.xml.lua" func="ListView_OnControlMouseLeave" />
+												<event name="OnItemClick" file="KuaiKan.ImageView.xml.lua" func="ListView_OnItemClick" />
+												<event name="OnPreOrNextFile" file="KuaiKan.ImageView.xml.lua" func="ListView_OnPreOrNextFile" />
+											</eventlist>
+										</obj>
+										
+										<obj id="client.thumbnailview" class="Kuaikan.ImageView.ThumbnailViewCtrl">
+											<attr>
+												<left>father.width-131</left>
+												<top>father.height-156-70</top>
+												<width>131</width>
+												<height>156</height>
+												<zorder>10000</zorder>
+											</attr>
+											<eventlist>
+												<event name="OnViewRectChanged" file="KuaiKan.ImageView.xml.lua" func="ThumbnailView_OnViewRectChanged" />
+												<event name="OnViewRectMouseWheel" file="KuaiKan.ImageView.xml.lua" func="ThumbnailView_OnViewRectMouseWheel" />
+												<event name="OnViewRectLButtonDown" file="KuaiKan.ImageView.xml.lua" func="ThumbnailView_OnViewRectLButtonDown" />
+											</eventlist>
+										</obj>
+									</children>
+								</obj>
+							</children>
+						</obj>
+						
+						<obj id="client.toolbarnew" class="Kuaikan.Toolbar">
+							<attr>
+								<left>0</left>
+								<top>father.height-47-43</top>
+								<width>father.width</width>
+								<height>47</height>
+								<zorder>100001</zorder>
+							</attr>
+							<eventlist>
+								<event name="OnBtnClick" file="KuaiKan.ImageView.xml.lua" func="NormalToolbar_OnBtnClick" />
+								<event name="OnControlMouseEnter" file="KuaiKan.ImageView.xml.lua" func="SuspendToolbar_MouseEnter" />
+								<event name="OnControlMouseLeave" file="KuaiKan.ImageView.xml.lua" func="SuspendToolbar_MouseLeave" />
+							</eventlist>
+						</obj>
+					</children>
+				</obj>
+			</children>
+			<eventlist>
+				<event name="OnInitControl" file="KuaiKan.ImageView.xml.lua" func="OnInitControl" />
+				<event name="OnPosChange" file="KuaiKan.ImageView.xml.lua" func="OnPosChange" />
+			</eventlist>
+		</objtemplate>
+	</control>
+</xlue>

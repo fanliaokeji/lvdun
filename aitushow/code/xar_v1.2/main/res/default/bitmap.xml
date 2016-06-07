@@ -2,6 +2,8 @@
 	<resource>
 		<!--图片加载失败默认图-->
 		<bitmap id="bitmap.loadfile.error.icon" image="bitmap\bitmap.loadfile.error.png"/>
+		<!--排序选中-->
+		<bitmap id="bitmap.sort.select" image="bitmap\sort.select.png"/>
 		<texture id="MainWnd.bkg" image="bitmap\texture.framewnd.bkg.png" />
 		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
 		<texture id="GreenWall.BtnClose.Hover"  image="bitmap\GreenWall.Caption.BtnClose.Hover.png" />

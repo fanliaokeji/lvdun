@@ -1,12 +1,12 @@
 <xlue>
-	<control class="Kuaikan.MainWnd.Client.Caption">
+	<control class="Kuaikan.ImageView.Caption">
 		<attr_def>
 			
 		</attr_def>
 		<method_def>
-			<ShowContent file="MainClient.Caption.xml.lua" func="ShowContent"/>
-			<GetSystemBtn file="MainClient.Caption.xml.lua" func="GetSystemBtn"/>
-			<SetFilePath file="MainClient.Caption.xml.lua" func="SetFilePath"/>
+			<ShowContent file="KuaiKan.ImageView.Caption.xml.lua" func="ShowContent"/>
+			<GetSystemBtn file="KuaiKan.ImageView.Caption.xml.lua" func="GetSystemBtn"/>
+			<SetFilePath file="KuaiKan.ImageView.Caption.xml.lua" func="SetFilePath"/>
 		</method_def>
 		<event_def>
 			
@@ -102,7 +102,7 @@
 												<DisableBkgID>bitmap.title.setting.disable</DisableBkgID>
 											</attr>
 											<eventlist>
-												<event name="OnClick" file="MainClient.Caption.xml.lua" func="OnSettingBtnClick" />
+												<event name="OnClick" file="KuaiKan.ImageView.Caption.xml.lua" func="OnSettingBtnClick" />
 											</eventlist>
 										</obj>
 										
@@ -117,7 +117,7 @@
 												<BkgDownImageID>bitmap.title.fullscreen.down</BkgDownImageID>
 											</attr>
 											<eventlist>
-												<event name="OnClick" file="MainClient.Caption.xml.lua" func="OnFullScreenBtnClick" />
+												<event name="OnClick" file="KuaiKan.ImageView.Caption.xml.lua" func="OnFullScreenBtnClick" />
 											</eventlist>
 										</obj>
 										<obj id="client.caption.sysbtn" class="Kuaikan.System.ButtonEx.Ctrl" >
@@ -144,11 +144,11 @@
 												<Close_DownImageID>bitmap.title.close.down</Close_DownImageID>
 											</attr>
 											<eventlist>
-												<event name="OnInitControl" file="MainClient.Caption.xml.lua" func="OnSysBtnInitControl" />
-												<event name="OnMinisize" file="MainClient.Caption.xml.lua" func="OnMinisizeBtnClick" />
-												<event name="OnMaxSize" file="MainClient.Caption.xml.lua" func="OnMaxBtnClick" />
-												<event name="OnReStore" file="MainClient.Caption.xml.lua" func="OnMaxBtnClick" />
-												<event name="OnClose" file="MainClient.Caption.xml.lua" func="OnCloseBtnClick" />
+												<event name="OnInitControl" file="KuaiKan.ImageView.Caption.xml.lua" func="OnSysBtnInitControl" />
+												<event name="OnMinisize" file="KuaiKan.ImageView.Caption.xml.lua" func="OnMinisizeBtnClick" />
+												<event name="OnMaxSize" file="KuaiKan.ImageView.Caption.xml.lua" func="OnMaxBtnClick" />
+												<event name="OnReStore" file="KuaiKan.ImageView.Caption.xml.lua" func="OnMaxBtnClick" />
+												<event name="OnClose" file="KuaiKan.ImageView.Caption.xml.lua" func="OnCloseBtnClick" />
 											</eventlist>
 										</obj>
 									</children>

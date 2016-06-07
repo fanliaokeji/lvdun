@@ -939,10 +939,10 @@ function ResetViewObj(self)
 		
 		local objFactory = XLGetObject("Xunlei.UIEngine.ObjectFactory")
 		if attr.CurDocItem.DocObj:GetDocType() ~= 2 then 
-			viewObj = objFactory:CreateUIObject("client.view", "Kuaikan.MainWnd.Client.View.Normal")
+			viewObj = objFactory:CreateUIObject("client.view", "Kuaikan.ImageView.View.Normal")
 			normalToolbar:EnableToolbarItem({"leftrotate", "rightrotate"}, true)
 		else 
-			viewObj = objFactory:CreateUIObject("client.view", "Kuaikan.MainWnd.Client.View.Gif")
+			viewObj = objFactory:CreateUIObject("client.view", "Kuaikan.ImageView.View.Gif")
 			
 			normalToolbar:EnableToolbarItem({"leftrotate", "rightrotate"}, false)
 		end
@@ -1401,9 +1401,9 @@ function ListView_OnControlMouseLeave(self)
 end
 
 function OpenFile(self)
-	local shell = Helper.APIproxy.OSUtil
-	local fileFilter = "所有支持的图片格式|*.gif; *.tiff; *.jpg;*.png;*.bmp;*.ico;*.cr2;*.psd;*.crw;*.tif;*.dng;*.nef;*.arw;*.srf;*.raf;*.orf;*.pef;*.dcr;*.kdc|jpeg文件(*.jpg; *.jpeg; *.jpe)|*.jpg; *.jpeg; *.jpe|png文件(*.png)|*.png|bmp文件(*.bmp)|*.bmp|gif文件(*.gif)|*.gif|tiff文件(*.tiff; *.tif)|*.tiff; *.tif|Canon RAWs(*.cr2;*.crw)|*.cr2;*.crw|Nikon RAWs(*.nef)|*.nef|All Files(*.*)|*.*||"
-	local tbLocalFiles = shell:FileDialog(true, true, fileFilter, "", "", "")
+	local tipUtil = Helper.APIproxy.OSUtil
+	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
+	local tbLocalFiles = tipUtil:FileDialog(true, true, fileFilter, "", "", "")
 	if #tbLocalFiles == 0 then
 		return
 	end

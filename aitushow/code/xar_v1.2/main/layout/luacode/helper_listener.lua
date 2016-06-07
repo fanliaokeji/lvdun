@@ -14,6 +14,7 @@ local VK_UP 	= 	0x26
 local VK_RIGHT 	= 	0x27
 local VK_DOWN 	= 	0x28
 local VK_ESC	=	0x1B
+local VK_DELETE	=	0x2E
 
 function Listener.Init()
 	tipUtil:SetKeyboardHook()
@@ -119,6 +120,8 @@ function Listener.OnKeyDown(tParam)
 			local sysbtn = imageCtrl:GetObject("client.caption:client.caption.sysbtn")
 			sysbtn:FireExtEvent("OnClose")
 		end
+	elseif tParam[2] == VK_DELETE then
+		imageCtrl:DeleteFile()
 	end
 end
 
