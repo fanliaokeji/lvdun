@@ -66,11 +66,13 @@ function Item_UpdateThumnails(self, bMustReGetThumnail)
 	end
 end
 
-function Item_SetDefaultThumbnail(self)
+function Item_SetDefaultThumbnail(self, extName)
 	local attr = self:GetAttribute()
 	local thumbnailObj = self:GetControlObject("client.thumbnail")
-	thumbnailObj:SetObjPos(0, 0, "father.width", "father.height")
-	--thumbnailObj:SetResID("bitmap.filelistview.item.unload.bkg")
+	thumbnailObj:SetObjPos2("(father.width-32)/2", "(father.height-32)/2", 32, 32)
+	if extName then
+		thumbnailObj:SetResID("default_icon"..extName)
+	end
 end
 
 function Item_SetThumbnail(self, bitmap, bitmapWidth, bitmapHeight)
@@ -466,7 +468,7 @@ function LoadThumbnails(self, ItemId, width, height, bShowDefaultThumbnail)
 	local thumbnailsFilename = imgCachePath .. md5Str .. extName
 	local osUtil = Helper.APIproxy.OSUtil
 	if not osUtil:QueryFileExists(thumbnailsFilename) and bShowDefaultThumbnail then	
-		Item.Obj:SetDefaultThumbnail()
+		Item.Obj:SetDefaultThumbnail(extName)
 	end
 	if attr.ThumbnailsLoader then
 		attr.ThumbnailsLoader:LoadThumbnails(filePath, thumbnailsFilename, width, height)
