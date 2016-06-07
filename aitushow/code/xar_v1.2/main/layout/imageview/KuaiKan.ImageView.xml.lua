@@ -9,7 +9,6 @@ local bCheckFileRelation = false
 local g_ShowFolderTipDocIndex
 local g_DeleteFileFromPoolIndex = 0
 local g_AddFileToPoolIndex = 0
-local g_FolderWizardIndex = 0
 
 function SetObjVisible(obj, bVisible)
 	if not obj then return end
@@ -267,8 +266,6 @@ function HandleRotateExit(self, CallBack)
 end
 
 function LoadImageFile(self, filePath, fref, fnPreCallBack, fnAfterCalBack)
-	g_FolderWizardIndex = g_FolderWizardIndex + 1 
-	
 	if not Helper.APIproxy.GetTipUtil():IsCanHandleFileCheckByExt(filePath) then
 		local HostWndHelper = Helper.MessageBox
 		HostWndHelper.MessageBox("不支持的文件格式，无法打开", self:GetOwner():GetBindHostWnd(), true)

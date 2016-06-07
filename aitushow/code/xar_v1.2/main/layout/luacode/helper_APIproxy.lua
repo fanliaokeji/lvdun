@@ -2,9 +2,13 @@ Helper.APIproxy = {}
 local APIproxy = Helper.APIproxy
 local tipUtil = XLGetObject("API.Util")
 --绑定缩略图获取事件
+local gThumbLoader = nil
 function APIproxy.CreateLoader()
-	local obj = XLGetObject("KKImage.ThumbnailLoader.Factory")
-	return obj:CreateLoader()
+	if not gThumbLoader then
+		local obj = XLGetObject("KKImage.ThumbnailLoader.Factory")
+		gThumbLoader = obj:CreateLoader()
+	end
+	return gThumbLoader
 end
 
 
