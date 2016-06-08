@@ -2,7 +2,6 @@
 #pragma warning(disable: 4995)
 #include <TlHelp32.h>
 
-#include <Shlobj.h>
 #include <atlsync.h>
 #include <atltime.h>
 #include <WTL/atldlgs.h>
