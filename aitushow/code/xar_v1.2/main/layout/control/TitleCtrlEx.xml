@@ -67,10 +67,10 @@
 						<top>0</top>
 						<width>22</width>
 						<height>22</height>
-						<NormalBkgID>bitmap.title.min.normal</NormalBkgID>
-						<DownBkgID>bitmap.title.min.down</DownBkgID>
-						<HoverBkgID>bitmap.title.min.hover</HoverBkgID>
-						<DisableBkgID>bitmap.title.min.disable</DisableBkgID>
+						<NormalBkgID>texture.title.min.normal</NormalBkgID>
+						<DownBkgID>texture.title.min.down</DownBkgID>
+						<HoverBkgID>texture.title.min.hover</HoverBkgID>
+						<DisableBkgID>texture.title.min.disable</DisableBkgID>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickMinBtn" />
@@ -82,10 +82,10 @@
 						<top>0</top>
 						<width>22</width>
 						<height>22</height>
-						<NormalBkgID>bitmap.title.max.normal</NormalBkgID>
-						<DownBkgID>bitmap.title.max.down</DownBkgID>
-						<HoverBkgID>bitmap.title.max.hover</HoverBkgID>
-						<DisableBkgID>bitmap.title.max.disable</DisableBkgID>
+						<NormalBkgID>texture.title.max.normal</NormalBkgID>
+						<DownBkgID>texture.title.max.down</DownBkgID>
+						<HoverBkgID>texture.title.max.hover</HoverBkgID>
+						<DisableBkgID>texture.title.max.disable</DisableBkgID>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickMaxBtn" />
@@ -97,10 +97,10 @@
 						<top>0</top>
 						<width>22</width>
 						<height>22</height>
-						<NormalBkgID>bitmap.title.restore.normal</NormalBkgID>
-						<DownBkgID>bitmap.title.restore.down</DownBkgID>
-						<HoverBkgID>bitmap.title.restore.hover</HoverBkgID>
-						<DisableBkgID>bitmap.title.restore.disable</DisableBkgID>
+						<NormalBkgID>texture.title.restore.normal</NormalBkgID>
+						<DownBkgID>texture.title.restore.down</DownBkgID>
+						<HoverBkgID>texture.title.restore.hover</HoverBkgID>
+						<DisableBkgID>texture.title.restore.disable</DisableBkgID>
 						<Visible>false</Visible>
 					</attr>
 					<eventlist>
@@ -113,10 +113,10 @@
 						<top>0</top>
 						<width>22</width>
 						<height>22</height>
-						<NormalBkgID>bitmap.title.close.normal</NormalBkgID>
-						<DownBkgID>bitmap.title.close.down</DownBkgID>
-						<HoverBkgID>bitmap.title.close.hover</HoverBkgID>
-						<DisableBkgID>bitmap.title.close.disable</DisableBkgID>
+						<NormalBkgID>texture.title.close.normal</NormalBkgID>
+						<DownBkgID>texture.title.close.down</DownBkgID>
+						<HoverBkgID>texture.title.close.hover</HoverBkgID>
+						<DisableBkgID>texture.title.close.disable</DisableBkgID>
 					</attr>
 					<eventlist>
 						<event name="OnClick" file="TitleCtrlEx.xml.lua" func="OnClickCloseBtn" />

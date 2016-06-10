@@ -32,18 +32,30 @@
 			<bitmap id="bitmap.title.max.hover"    imagelist="imagelist.bitmap.title.max" index="2" />
 			<bitmap id="bitmap.title.max.down"     imagelist="imagelist.bitmap.title.max" index="3" />
 			<bitmap id="bitmap.title.max.disable"  imagelist="imagelist.bitmap.title.max" index="3" />
+			<texture id="texture.title.max.normal"   imagelist="imagelist.bitmap.title.max" index="1" />
+			<texture id="texture.title.max.hover"    imagelist="imagelist.bitmap.title.max" index="2" />
+			<texture id="texture.title.max.down"     imagelist="imagelist.bitmap.title.max" index="3" />
+			<texture id="texture.title.max.disable"  imagelist="imagelist.bitmap.title.max" index="3" />
 		
 		<imagelist id="imagelist.bitmap.title.min" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.min.png"/>
 			<bitmap id="bitmap.title.min.normal"   imagelist="imagelist.bitmap.title.min" index="1" />
 			<bitmap id="bitmap.title.min.hover"    imagelist="imagelist.bitmap.title.min" index="2" />
 			<bitmap id="bitmap.title.min.down"     imagelist="imagelist.bitmap.title.min" index="3" />
 			<bitmap id="bitmap.title.min.disable"  imagelist="imagelist.bitmap.title.min" index="3" />
+			<texture id="texture.title.min.normal"   imagelist="imagelist.bitmap.title.min" index="1" />
+			<texture id="texture.title.min.hover"    imagelist="imagelist.bitmap.title.min" index="2" />
+			<texture id="texture.title.min.down"     imagelist="imagelist.bitmap.title.min" index="3" />
+			<texture id="texture.title.min.disable"  imagelist="imagelist.bitmap.title.min" index="3" />
 		
 		<imagelist id="imagelist.bitmap.title.restore" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.restore.png"/>
 			<bitmap id="bitmap.title.restore.normal"   imagelist="imagelist.bitmap.title.restore" index="1" />
 			<bitmap id="bitmap.title.restore.hover"    imagelist="imagelist.bitmap.title.restore" index="2" />
 			<bitmap id="bitmap.title.restore.down"     imagelist="imagelist.bitmap.title.restore" index="3" />
 			<bitmap id="bitmap.title.restore.disable"  imagelist="imagelist.bitmap.title.restore" index="3" />
+			<texture id="texture.title.restore.normal"   imagelist="imagelist.bitmap.title.restore" index="1" />
+			<texture id="texture.title.restore.hover"    imagelist="imagelist.bitmap.title.restore" index="2" />
+			<texture id="texture.title.restore.down"     imagelist="imagelist.bitmap.title.restore" index="3" />
+			<texture id="texture.title.restore.disable"  imagelist="imagelist.bitmap.title.restore" index="3" />
 		
 		<imagelist id="imagelist.bitmap.title.setting" splitter="1" blocksize="22" image="bitmap\imagelist.bitmap.title.setting.png"/>
 			<texture id="bitmap.title.setting.normal"   imagelist="imagelist.bitmap.title.setting" index="1" />
