@@ -139,8 +139,7 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	local owner = self:GetOwner()
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
-	local thumbContainerObj = owner:GetUIObject("ThumbnailContainerObj")
-	thumbContainerObj:SetFolder(realpath)
+	magePool:SetFolder(realpath)
 	
 	Helper:SetRegValue(sLastPathReg, realpath)
 end
