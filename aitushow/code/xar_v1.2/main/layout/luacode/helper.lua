@@ -70,7 +70,7 @@ function Helper:IsRealString(str)
 end
 
 function Helper:LoadLuaTable(sFilePath)
-	if type(str) ~= "string" or str == "" then
+	if type(sFilePath) ~= "string" or sFilePath == "" then
 		return nil
 	end
 	
