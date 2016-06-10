@@ -180,6 +180,9 @@ function ImagePool:QueryThumbByIndexTable(tIndex)
 end
 
 function ImagePool:IsInCurFolder(sPath)
+	if not self.curFolder then
+		return
+	end
 	local b, e = string.find(sPath, self.curFolder)
 	
 	if e then
