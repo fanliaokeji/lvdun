@@ -9,17 +9,8 @@
 			<attr name="SpaceV" type="int" desc="竖直间隔"> <default>15</default> </attr>
 		</attr_def>
 		<method_def>
-			<SetFolder />
-			<!--使用百分比对缩略图进行缩放，精确到1%-->
-			<Zoom />
-			<!--获取缩略图当前的缩放比例，最大缩略图264*320，精确到1%-->
-			<GetZoomPercent />
-			<SetDefaultZoomPercent />
-			<!--获取缩略图当前选中的缩略图ID，应支持多选-->
-			<GetSelectedThumbnailCtrlID />
-			<!--刷新当前目录的显示，以便响应该目录的增、删-->
-			<Refresh />
 			<GetPageLayout />
+			<Zoom />
 		</method_def>
 		<objtemplate>
 			<children>
