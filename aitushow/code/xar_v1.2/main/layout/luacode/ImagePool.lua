@@ -109,6 +109,9 @@ end
 --bReverse:是否倒序列，默认正序，也就是小的在前面
 --notFireEvent 是否发事件，默认发
 function ImagePool:Sort(key, bReverse, notFireEvent)
+	if not self.curFolder then
+		return
+	end
 	if key == self.sortKey and bReverse == self.bReverse then
 		LOG("Sort key == self.sortKey, do not need sort")
 		return
