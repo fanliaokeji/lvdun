@@ -23,11 +23,11 @@ function AdjustImageBySize(backgroundObj, imageObj, ThumbWidth, ThumbHeight)
 		local newTop    = math.round((imageHeight - newHeight)/2)
 		
 		-- LOG("SetImage  newHeight: ", newHeight, " newTop: ", newTop)
-		imageObj:SetObjPos2(imageL, newTop, imageWidth, newHeight)
+		imageObj:SetObjPos2(3, newTop, imageWidth, newHeight)
 	elseif ThumbWidth/ThumbHeight < imageWidth/imageHeight then--图片是高、瘦型的
 		local newWidth = math.round((imageHeight*ThumbWidth)/ThumbHeight)
 		local newLeft  = math.round((imageWidth - newWidth)/2)
-		imageObj:SetObjPos2(newLeft, imageT, newWidth, imageHeight)
+		imageObj:SetObjPos2(newLeft, 3, newWidth, imageHeight)
 		-- LOG("SetImage  newWidth: ", newWidth, " newLeft: ", newLeft)
 	end
 end
