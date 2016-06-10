@@ -87,6 +87,7 @@
 							<eventlist>
 								<event name="OnLButtonUp" />
 								<event name="OnLButtonDbClick" />
+								<event name="OnMouseWheel" redirect="control:control" />
 							</eventlist>
 						</obj>
 						<obj id="DefaultImage" class="ImageObject">
