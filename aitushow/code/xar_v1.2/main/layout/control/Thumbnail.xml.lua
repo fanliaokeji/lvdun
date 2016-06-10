@@ -225,6 +225,18 @@ function OnLButtonDbClick(self)
 	local ownerCtrl = self:GetOwnerControl()
 	local attr = ownerCtrl:GetAttribute()
 	imgctrl:LoadImageFile(attr.data.FilePath, nil, nil, function() imgctrl:UpdateFileList() end)
+	
+	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+	if MainHostWnd and MainHostWnd:GetWindowState() ~= "hide" then
+		Helper.Listener.LastShowWnd = MainHostWnd
+		MainHostWnd:Show(0)
+	else
+		Helper.Listener.LastShowWnd = nil
+	end
+	local ImgHostWnd = Helper.Selector.select("", "", "Kuaikan.MainWnd.Instance")
+	if ImgHostWnd then
+		ImgHostWnd:BringWindowToTop(true)
+	end
 end
 
 function OnInitControl(self)
