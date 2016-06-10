@@ -10,6 +10,12 @@ local ThumbnailsLoaderFactory = XLGetObject("KKImage.ThumbnailLoader.Factory")
 ImagePool.tPictures  = nil
 ImagePool.curFolder  = nil
 ImagePool.sortKey    = nil 
+ImagePool.sortSettingToSortKey = {
+			["name"]="FileName", 
+			["type"]="ExtName", 
+			["time"]="LastWriteTime", 
+			["size"]="FileSize",
+}
 ImagePool.bReverse   = nil
 ImagePool.thumbnailMaxWidth  = 185
 ImagePool.thumbnailMaxHeight = 185
@@ -41,9 +47,10 @@ function ImagePool:SetFolder(sPath)
 	self.sortKey = "FileName"
 	
 	--按照上次的设置排序(GetFiles返回的文件默认是按文件名排序)
-	local sortKey = UserConfig:Get("sortKey", "FileName")
-	if sortKey ~= self.sortKey then
-		self:Sort(sortKey, false, true)
+	local curSortBy = Helper.Setting.GetSortConfig()
+	if self.sortKey ~= self.sortSettingToSortKey[curSortBy] then
+		self.sortKey = self.sortSettingToSortKey[curSortBy]
+		self:Sort(self.sortKey, false, true)
 	end
 	
 	self:DispatchEvent("OnSetPath", sPath)
