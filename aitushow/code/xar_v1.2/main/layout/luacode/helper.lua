@@ -58,6 +58,13 @@ function Helper:Assert(condition, errmsg)
 	end
 end
 
+function Helper:GetObjWH(obj)
+	if obj then
+		local L, T, R, B = obj:GetObjPos()
+		return R-L, B-T
+	end
+end
+
 function Helper:IsRealString(str)
 	return "string" == type(str) and str ~= ""
 end
@@ -188,7 +195,30 @@ function Helper:GetUserDataDir()
 	end
 	return strRet
 end
+  
+function Helper:QuickSort(array,left,right,compFun) 
+	local function partion(array,left,right,compFun)  
+		local key = array[left] -- 哨兵  一趟排序的比较基准  
+		local index = left  
+		array[index],array[right] = array[right],array[index] -- 与最后一个元素交换  
+		local i = left  
+		while i< right do  
+			if compFun(key,array[i]) > 0 then  
+				array[index],array[i] = array[i],array[index]-- 发现不符合规则 进行交换  
+				index = index + 1  
+			end  
+			i = i + 1  
+		end  
+		array[right],array[index] = array[index],array[right] -- 把哨兵放回  
+		return index;  
+	end  
 
+    if(left < right ) then  
+        local index = partion(array,left,right,compFun)  
+        self:QuickSort(array,left,index-1,compFun)  
+        self:QuickSort(array,index+1,right,compFun)  
+    end  
+end  
 
 Helper.timerManager = XLGetObject("Xunlei.UIEngine.TimerManager")
 Helper.treeManager = XLGetObject("Xunlei.UIEngine.TreeManager")
