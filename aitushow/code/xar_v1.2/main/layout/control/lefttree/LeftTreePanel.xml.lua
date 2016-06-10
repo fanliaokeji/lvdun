@@ -129,8 +129,9 @@ function Dir2TreeView(self, dir, left, params)
 			BuildTree(self)
 		end)
 	local Container = self:GetControlObject("Container")
-	--local conl, _, conr = self:GetControlObject("ContainerBox"):GetObjPos()
-	Container:SetObjPos(0, 0, "father.width+"..panelattr.saveleft , 26*(panelattr.nodeindex-1)+22)
+	--横向保持原位
+	local oldl = Container:GetObjPos()
+	Container:SetObjPos(oldl, 0, "father.width+"..panelattr.saveleft+oldl , 26*(panelattr.nodeindex-1)+22)
 	Container:AddChild(Item)
 end
 
@@ -340,14 +341,14 @@ function ResetScrollBarH(objRootCtrl)
 	local attr = objRootCtrl:GetAttribute()
 	local cl, _, cr = Container:GetObjPos()
 	local l, t, r, b = ContainerBox:GetObjPos()
-	local olddis = cr-r+l
+	local olddis = cr-cl-r+l
 	if attr.SelectItem then
 		local selectAttr = attr.SelectItem:GetAttribute()
 		if not selectAttr.Select then
 			local sl = attr.SelectItem:GetObjPos()
 			local maxlen = attr.SelectItem:GetObject("MainText"):GetTextExtent()
 			--靠右
-			olddis = sl+32+maxlen-r+l
+			olddis = sl+32+maxlen-cl-r+l
 		end
 	end
 	
@@ -358,7 +359,6 @@ function ResetScrollBarH(objRootCtrl)
 		objScrollBar:SetVisible(true)
 		objScrollBar:SetChildrenVisible(true)
 		objScrollBar:Show(true)
-		--OnScrollMousePosEvent(objScrollBar)
 		
 		--当ITEM的宽度大于外框的宽度时 让他靠左，否则靠右
 		local newdis = olddis
@@ -369,10 +369,9 @@ function ResetScrollBarH(objRootCtrl)
 				newdis = sl
 			end
 		end
-		--永远靠左
-		newdis = 0
-		MoveItemListPanelH(objRootCtrl, newdis)
-		objScrollBar:SetScrollPos(newdis, true)
+		--保持原位不移动
+		--MoveItemListPanelH(objRootCtrl, cr-r+l)
+		--objScrollBar:SetScrollPos(newdis, true)
 	else
 		objScrollBar:SetScrollPos(0, true)	
 		objScrollBar:SetVisible(false)
@@ -418,7 +417,8 @@ function OnScrollMousePosEventH(self)
 	local objRootCtrl = self:GetOwnerControl()
 	local nScrollPos = self:GetScrollPos()
 	
-	MoveItemListPanelH(objRootCtrl, nScrollPos)
+	--鼠标提留不更新
+	--MoveItemListPanelH(objRootCtrl, nScrollPos)
 end
 
 function OnHScroll(self, fun, _type, pos)
