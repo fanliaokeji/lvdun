@@ -213,7 +213,18 @@ function OnLButtonUp(self)
 end
 
 function OnLButtonDbClick(self)
-	
+	local imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+	if not imgctrl then
+		Helper:CreateModelessWnd("Kuaikan.MainWnd","Kuaikan.MainObjTree")
+		imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+	end
+	if not imgctrl then
+		LOG("OnLButtonDbClick: not imgctrl: ")
+		return
+	end
+	local ownerCtrl = self:GetOwnerControl()
+	local attr = ownerCtrl:GetAttribute()
+	imgctrl:LoadImageFile(attr.data.FilePath, nil, nil, function() imgctrl:UpdateFileList() end)
 end
 
 function OnInitControl(self)
