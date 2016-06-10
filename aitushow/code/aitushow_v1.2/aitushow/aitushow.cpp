@@ -65,6 +65,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	int nRet = Run(lpstrCmdLine, nCmdShow);
 
 	_Module.Term();
+	::OleUninitialize();
 	::CoUninitialize();
 	return nRet;
 }
