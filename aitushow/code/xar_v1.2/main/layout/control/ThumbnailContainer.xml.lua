@@ -321,7 +321,7 @@ function OnVScroll(self, fun, _type, pos)
 	local L, T, R, B = pageManager.containerObj:GetObjPos()
 	
 	local lineCount, columnCount, pageCount, picWidth, picHeight = pageManager.ctrlSelf:GetPageLayout()
-	if #pageManager.tPictures <= pageCount then return end --无需滚动
+	-- if #pageManager.tPictures <= pageCount then return end --无需滚动
 	
 	local scrollDistance = math.abs(scrollPos + T)
 	if scrollDistance >= picHeight then
@@ -404,10 +404,13 @@ local function UpdateUIByIndex(self, index)
 	local indexEnd = attr.pageManager.lineList[#attr.pageManager.lineList].indexEnd
 	LOG("UpdateUIByIndex: index: ", " indexEnd: ", indexEnd)
 	
+	local containerHeight = attr.pageManager:CalaContainerNeedHeight()
+	attr.pageManager.containerObj:SetObjPos2(0, 0, "father.width - 10", containerHeight)
+	attr.pageManager:ResetScrollBar()
 	local scrollPos = self:GetControlObject("Container.ScrollBar"):GetScrollPos()
-	if index < indexEnd then
+	-- if index < indexEnd then
 		attr.pageManager:ShowThumbnailByScrollPos(scrollPos)
-	end
+	-- end
 end
 
 function OnInitControl(self)

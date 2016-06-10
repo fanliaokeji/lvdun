@@ -71,7 +71,7 @@
 				</obj>
 				<obj id="MainWnd.ThumbnailContainer" class="LayoutObject">
 					<attr>
-						<left>195</left>
+						<left>197</left>
 						<top>30</top>
 						<width>father.width - 195</width>
 						<height>father.height - 30 - 30</height>
