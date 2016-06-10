@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,0,0,8
+ PRODUCTVERSION 1,0,0,8
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,12 +70,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "atskernel Module"
-            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "FileVersion", "1, 0, 0, 8"
             VALUE "InternalName", "atskernel"
             VALUE "LegalCopyright", "Copyright (C) 2016"
             VALUE "OriginalFilename", "atskernel.dll"
             VALUE "ProductName", "¿ì¿´"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "ProductVersion", "1, 0, 0, 8"
         END
     END
     BLOCK "VarFileInfo"
