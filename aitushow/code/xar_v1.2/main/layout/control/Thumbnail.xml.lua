@@ -147,14 +147,14 @@ function FormatImageInfo(self)
 		info = info.." - "..tostring(attr.data.ThumbWidth).."*"..tostring(attr.data.ThumbHeight)
 	end
 	if attr.data.FileSize then
-		attr.data.FileSize = tonumber(attr.data.FileSize)
+		local FileSize = tonumber(attr.data.FileSize)
 		local sSize = ""
-		if attr.data.FileSize <= 1024 then
-			sSize = tostring(attr.data.FileSize).." B"
-		elseif attr.data.FileSize <= 1024*1024 then
-			sSize = tostring(math.round(attr.data.FileSize/1024)).." KB"
+		if FileSize <= 1024 then
+			sSize = tostring(FileSize).." B"
+		elseif FileSize <= 1024*1024 then
+			sSize = tostring(math.round(FileSize/1024)).." KB"
 		else
-			local size = attr.data.FileSize/(1024*1024)
+			local size = FileSize/(1024*1024)
 			size = tostring(size)
 			size = string.sub(size,1,4)
 			sSize = size.." MB"
