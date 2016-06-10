@@ -55,11 +55,16 @@ function OnCreate(self)
 	if lastPath then
 		local addressobj = objtree:GetUIObject("MainWnd.AddressEditCtrl")
 		local LeftPanel = objtree:GetUIObject("LeftPanel")
-		local thumbContainerObj = objtree:GetUIObject("ThumbnailContainerObj")
 		addressobj:SetPath(lastPath, true)
-		thumbContainerObj:SetFolder(lastPath)
+		ImagePool:SetFolder(lastPath)
 		LeftPanel:Update(lastPath)
 	end
+	local SliderCtrl = objtree:GetUIObject("MainWnd.SliderCtrl")
+	local lastZoomPercent = UserConfig:Get("ThumbnailZoom", 10)
+	SliderCtrl:SetValue(lastZoomPercent)
+	
+	local thumbnailContainer = objtree:GetUIObject("ThumbnailContainerObj")
+	thumbnailContainer:Zoom(lastZoomPercent)
 end
 
 local isLButtonDown = false
@@ -102,6 +107,7 @@ function OnSliderPosChange(self, event, pos)
 	local ownerTree = self:GetOwner()
 	local thumbnailContainer = ownerTree:GetUIObject("ThumbnailContainerObj")
 	thumbnailContainer:Zoom(pos)
+	UserConfig:Set("ThumbnailZoom", pos)
 end
 
 function OnShowWindow(self, bVisible)
@@ -118,9 +124,8 @@ function LeftPanelOnSelect(self, event, dir)
 	end
 	local owner = self:GetOwner()
 	local addressobj = owner:GetUIObject("MainWnd.AddressEditCtrl")
-	local thumbContainerObj = owner:GetUIObject("ThumbnailContainerObj")
 	addressobj:SetPath(realpath, true)
-	thumbContainerObj:SetFolder(realpath)
+	ImagePool:SetFolder(realpath)
 	
 	Helper:SetRegValue(sLastPathReg, realpath)
 end
