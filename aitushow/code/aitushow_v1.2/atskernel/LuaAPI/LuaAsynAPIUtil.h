@@ -16,7 +16,7 @@
 
 #define WM_HTTPFILEGOTPROGRESS		WM_USER + 2023
 #define WM_KILLPROCESS					WM_USER + 2024
-
+#define WM_GETFOLDERS					WM_USER + 2025
 
 enum AjaxTaskFlag
 {
@@ -65,6 +65,7 @@ public:
 
 	static int NewAsynGetHttpFileWithProgress(lua_State* pLuaState);
 	static int AsynKillProcess(lua_State* pLuaState);
+	static int AsynGetFolders(lua_State* pLuaState);
 
 private:
 	static XLLRTGlobalAPI  s_functionlist[];
@@ -566,6 +567,26 @@ struct KillProcessData
 	void Work();
 };
 
+struct GetFoldersData
+{
+	LuaCallInfo m_callInfo;
+	std::wstring m_strDir;
+	std::map<std::string,bool> m_mapDirInfo;
+	GetFoldersData(lua_State* pLuaState, const wchar_t* pszDir) : 
+		m_strDir(pszDir),
+		m_callInfo(pLuaState,luaL_ref(pLuaState,LUA_REGISTRYINDEX))
+	{
+		TSTRACEAUTO();
+	}
+
+	~GetFoldersData()
+	{
+		TSTRACEAUTO();
+	}
+
+	void Notify(int nErrCode);
+	void Work();
+};
 
 class CAsynMsgWindow : public CMsgWindow
 {
@@ -620,6 +641,7 @@ public:
 		MESSAGE_HANDLER(WM_CREATEPROCESSFINISH, OnCreateProcessFinish)
 		MESSAGE_HANDLER(WM_HTTPFILEGOTPROGRESS, OnHttpFileGotProgress)
 		MESSAGE_HANDLER(WM_KILLPROCESS, OnKillProcessFinish)
+		MESSAGE_HANDLER(WM_GETFOLDERS, OnGetFoldersFinish)
 		CHAIN_MSG_MAP(CMsgWindow)
 	END_MSG_MAP()
 
@@ -714,6 +736,13 @@ protected:
 	LRESULT OnKillProcessFinish(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 	{
 		KillProcessData* pData = (KillProcessData*)lParam;
+		pData->Notify((int)wParam);
+		delete pData;
+		return 0;
+	}
+	LRESULT OnGetFoldersFinish(UINT uiMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+	{
+		GetFoldersData* pData = (GetFoldersData*)lParam;
 		pData->Notify((int)wParam);
 		delete pData;
 		return 0;

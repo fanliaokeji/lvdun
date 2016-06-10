@@ -35,6 +35,8 @@ XLLRTGlobalAPI  LuaAsynUtil::s_functionlist[] =
 	{"AsynCreateProcess", AsynCreateProcess},
 	{"AsynKillProcess", AsynKillProcess},
 
+	{"AsynGetFolders", AsynGetFolders},
+
 	{NULL, NULL}
 };
 
@@ -738,6 +740,136 @@ void KillProcessData::Work()
 
 	g_wndMsg.PostMessage(WM_KILLPROCESS, nErrCode, (LPARAM)this);
 }
+
+
+UINT WINAPI GetFoldersProc(PVOID pArg)
+{
+	GetFoldersData *pData = (GetFoldersData *)pArg;
+	pData->Work();
+	return 0;
+}
+
+void GetFoldersData::Work()
+{
+
+	TSTRACEAUTO();
+	int nErrCode = -1;
+	if(m_strDir[m_strDir.size()-1] != L'\\' && m_strDir[m_strDir.size()-1] != L'/')
+	{
+		m_strDir.append(L"\\");
+	}
+	wstring wstrSearchFolderName = m_strDir + L"*.*";
+
+
+	WIN32_FIND_DATA FindFileData;
+	HANDLE handle = FindFirstFile(wstrSearchFolderName.c_str(), &FindFileData);
+
+	if(INVALID_HANDLE_VALUE != handle)
+	{
+		do 
+		{
+			if (FILE_ATTRIBUTE_DIRECTORY & FindFileData.dwFileAttributes) // 是文件夹
+			{
+				// 过滤掉隐藏的和系统属性的目录
+				if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN || FindFileData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM)
+				{
+					continue;
+				}
+				if ( (wcscmp(FindFileData.cFileName, L".") != 0) && (wcscmp(FindFileData.cFileName, L"..") != 0))
+				{
+					wstring wstrTempPath = m_strDir + FindFileData.cFileName;
+					//判断是否含有子文件夹
+					bool bHaveSubFolder = false;
+					wstring wstrSearchSubFolder = wstrTempPath + L"\\*.*";
+					WIN32_FIND_DATA FindSubFolderData;
+					HANDLE hSubFolder = FindFirstFile(wstrSearchSubFolder.c_str(), &FindSubFolderData);
+					if(INVALID_HANDLE_VALUE != hSubFolder)
+					{
+						do 
+						{
+							if ((FILE_ATTRIBUTE_DIRECTORY & FindSubFolderData.dwFileAttributes) 
+								&& !(FindSubFolderData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) 
+								&& !(FindSubFolderData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM)
+								&& wcscmp(FindSubFolderData.cFileName, L".") != 0
+								&& wcscmp(FindSubFolderData.cFileName, L"..") != 0 ) // 是文件夹
+							{
+								bHaveSubFolder = true;
+								break;
+							}
+						} while(FindNextFile(hSubFolder , &FindSubFolderData));
+						CloseHandle(hSubFolder);
+					}
+					WCHAR szFilePath[MAX_PATH] = {0};
+					wcsncpy(szFilePath,wstrTempPath.c_str(),wstrTempPath.size());
+
+					std::string utf8Path;
+					BSTRToLuaString(szFilePath,utf8Path);
+					m_mapDirInfo.insert(std::make_pair(utf8Path,bHaveSubFolder));
+				}
+			}
+		} while(FindNextFile(handle , &FindFileData));
+
+		CloseHandle(handle);
+		nErrCode = 0;
+	}
+	g_wndMsg.PostMessage(WM_GETFOLDERS, nErrCode, (LPARAM)this);
+}
+
+void GetFoldersData::Notify(int iErrCode)
+{
+	TSTRACEAUTO();
+	lua_State* pLuaState = m_callInfo.GetLuaState();
+	lua_rawgeti(pLuaState, LUA_REGISTRYINDEX, m_callInfo.GetRefFn());
+
+	int iRetCount = 0;
+	lua_pushinteger(pLuaState, iErrCode);
+	++iRetCount;
+
+	
+	int i = 0;
+	std::map<std::string,bool>::const_iterator c_iter =  m_mapDirInfo.begin();
+	TSDEBUG(_T("count is %d."),m_mapDirInfo.size());
+	lua_newtable(pLuaState);
+	for (;c_iter != m_mapDirInfo.end();++c_iter)
+	{
+
+
+		lua_newtable(pLuaState);
+		lua_pushstring(pLuaState, "strFilePath");
+		lua_pushstring(pLuaState, (c_iter->first).c_str());
+		lua_settable(pLuaState, -3);
+
+		lua_pushstring(pLuaState, "bHaveSubFolder");
+		lua_pushboolean(pLuaState, c_iter->second);
+		lua_settable(pLuaState, -3);
+
+		lua_rawseti(pLuaState, -2, i + 1);
+		i++;
+	} 
+
+	TSDEBUG(_T("table pusher ok"));
+	++iRetCount;
+
+	XLLRT_LuaCall(pLuaState, iRetCount, 0, L"GetFoldersData Callback");
+}
+
+int LuaAsynUtil::AsynGetFolders( lua_State* pLuaState )
+{
+	LuaAsynUtil** ppAsynUtil = (LuaAsynUtil **)luaL_checkudata(pLuaState, 1, XMPTIPWND_ASYNCUTIL_CLASS);
+	if (ppAsynUtil != NULL)
+	{
+		const char* pszDir = lua_tostring(pLuaState, 2);
+		if (pszDir != NULL && lua_isfunction(pLuaState, 3))
+		{
+			CComBSTR bstrDir;
+			LuaStringToCComBSTR(pszDir,bstrDir);
+			GetFoldersData *pData = new GetFoldersData(pLuaState, bstrDir.m_str);
+			_beginthreadex(NULL, 0, GetFoldersProc, pData, 0, NULL);
+		}
+	}
+	return 0;
+}
+
 
 void* __stdcall LuaAsynUtil::GetInstance( void* )
 {
