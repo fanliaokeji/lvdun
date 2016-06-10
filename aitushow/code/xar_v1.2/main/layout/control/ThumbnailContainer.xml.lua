@@ -363,8 +363,6 @@ function OnImagePoolSetPath(self, sPath)
 	local attr = self:GetAttribute()
 	attr.pageManager = attr.pageManager or PageManager:New()
 	attr.pageManager:Init(self, ImagePool.tPictures)
-	
-	SetOnceTimer(function() self:Zoom(50) end, 6000)
 end
 
 function OnImagePoolPicUpdate(self, info, index)
