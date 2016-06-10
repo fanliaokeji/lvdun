@@ -15,7 +15,7 @@ function menuFunTable.OnSelect_Open(self)
 	end
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	local function FnCallBack()
-		clientobj:UpdateFileList()
+		clientobj:UpdateFileList(true)
 		local attr = clientobj:GetAttribute()
 		local listViewObj = clientobj:GetControlObject("client.filelistview")
 		listViewObj:SelectItem(attr.CurDocItem.FilePath)
@@ -57,7 +57,7 @@ end
 function SortBy(bywhat)
 	Helper.Setting.SaveSortConfig(bywhat)
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
-	clientobj:UpdateFileList()
+	clientobj:UpdateFileList(true)
 end
 
 function InitSortIcon(self)
@@ -86,10 +86,10 @@ local menuTable = {
 	text = "排序方式", 
 	OnSelectFun = function(self) end,
 	SubMenuTable = {
-		{id="SortByName", text = "名称", OnSelectFun = function(self) SortBy("name") end, OnInitFun = InitSortIcon},
+		{id="SortByName", text = "文件名", OnSelectFun = function(self) SortBy("name") end, OnInitFun = InitSortIcon},
 		{id="SortBySize", text = "大小", OnSelectFun = function(self) SortBy("size") end, OnInitFun = InitSortIcon},
+		{id="SortByTime", text = "修改日期", OnSelectFun = function(self) SortBy("time") end, OnInitFun = InitSortIcon},
 		{id="SortByType", text = "类型", OnSelectFun = function(self) SortBy("type") end, OnInitFun = InitSortIcon},
-		{id="SortByTime", text = "时间", OnSelectFun = function(self) SortBy("time") end, OnInitFun = InitSortIcon},
 	},
 	OnInitFun = function(self)
 		local attr = self:GetAttribute()
@@ -108,9 +108,9 @@ local menuTable = {
 		elseif sortby == "size" then
 			CheckOne(2)
 		elseif sortby == "time" then
-			CheckOne(4)
-		elseif sortby == "type" then
 			CheckOne(3)
+		elseif sortby == "type" then
+			CheckOne(4)
 		end
 	end,
 },
