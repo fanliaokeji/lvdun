@@ -1,5 +1,5 @@
-#ifndef __NEOFOLDERDIALOG_H___
-#define __NEOFOLDERDIALOG_H___
+#ifndef __KKFOLDERDIALOG_H___
+#define __KKFOLDERDIALOG_H___
 
 #include <atldlgs.h>
 #include <Dlgs.h>

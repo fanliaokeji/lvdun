@@ -1,9 +1,7 @@
 #include "StdAfx.h"
 #include ".\filesystemmonitor.h"
-//#include <xl_lib\filesystem\path_utility.h>
 
 using namespace std;
-//using namespace xl::filesystem;
 using namespace KKT::IDE;
 
 #define OVERLAP_BUFFER_LEN (MAX_PATH*sizeof(wchar_t) + sizeof(FILE_NOTIFY_INFORMATION) + 16)

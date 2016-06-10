@@ -66,11 +66,9 @@ int CLuaThumbnailLoader::LoadThumbnails(lua_State* luaState)
 	{
 		const char* utf8Text = luaL_checkstring(luaState, 2);
 		wstring wstrFilePath;
-		//xl::text::transcode::UTF8_to_Unicode(utf8Text, strlen(utf8Text), wstrFilePath);
 		wstrFilePath = ultra::_UTF2T(utf8Text);
 		utf8Text = luaL_checkstring(luaState, 3);
 		wstring wstrCacheFilePath;
-		//xl::text::transcode::UTF8_to_Unicode(utf8Text, strlen(utf8Text), wstrCacheFilePath);
 		wstrCacheFilePath = ultra::_UTF2T(utf8Text);
 
 		int nWidth = luaL_checkint(luaState, 4);

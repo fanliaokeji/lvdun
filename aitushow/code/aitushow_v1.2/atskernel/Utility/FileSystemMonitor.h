@@ -69,7 +69,7 @@ protected:
     HANDLE      m_openedHandle;
     long        m_refCount;
    
-    //xl::win32::multithread::critical_section m_CS;//保护下面3个变量
+    //保护下面3个变量
 	XMLib::CriticalSection m_CS;
     std::vector<FileSystemEventNode> m_subDirEventNodes;
     OVERLAPPED  m_overlapped;

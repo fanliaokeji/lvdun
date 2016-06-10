@@ -563,8 +563,6 @@ BOOL CKKImageEXIF::GetLens(std::string& strLens)
 	TSAUTO();
 
 	std::wstring wstrLens = m_szLensModel;
-
-	//xl::text::transcode::Unicode_to_UTF8(wstrLens.c_str(), wstrLens.size(), strLens);
 	
 	strLens = ultra::_T2UTF(wstrLens);
 	TSINFO4CXX("strLens:"<<strLens);
@@ -595,7 +593,6 @@ BOOL CKKImageEXIF::GetFlash(std::string& strFlash)
 		wstrFlash = _T("关");
 	}
 
-	//xl::text::transcode::Unicode_to_UTF8(wstrFlash.c_str(), wstrFlash.size(), strFlash);
 	strFlash = ultra::_T2UTF(wstrFlash);
 	return TRUE;
 }
@@ -630,7 +627,6 @@ BOOL CKKImageEXIF::GetWhiteBalance(std::string& strWhiteBalance)
 		wstrWhiteBalance = _T("");
 	}
 
-	//xl::text::transcode::Unicode_to_UTF8(wstrWhiteBalance.c_str(), wstrWhiteBalance.size(), strWhiteBalance);
 	strWhiteBalance = ultra::_T2UTF(wstrWhiteBalance);
 	return TRUE;
 }
@@ -714,7 +710,6 @@ BOOL CKKImageEXIF::GetExposureProgram(std::string& strExposureProgram)
 		wstrExposureProgram = _T("");
 	}
 
-	//xl::text::transcode::Unicode_to_UTF8(wstrExposureProgram.c_str(), wstrExposureProgram.size(), strExposureProgram);
 	strExposureProgram = ultra::_T2UTF(wstrExposureProgram);
 	return TRUE;
 }
@@ -783,7 +778,6 @@ BOOL CKKImageEXIF::GetMeteringMode(std::string& strMeteringMode)
 		wstrMeteringMode = _T("");
 	}
 
-	//xl::text::transcode::Unicode_to_UTF8(wstrMeteringMode.c_str(), wstrMeteringMode.size(), strMeteringMode);
 	strMeteringMode = ultra::_T2UTF(wstrMeteringMode);
 	return TRUE;
 }
@@ -793,9 +787,7 @@ BOOL CKKImageEXIF::GetShutterCount(std::string& strShutterCount)
 	TSAUTO();
 
 	std::wstring wstrShutterCount = m_szShutterCount;
-
-//	xl::text::transcode::Unicode_to_UTF8(wstrShutterCount.c_str(), wstrShutterCount.size(), strShutterCount);
-strShutterCount = ultra::_T2UTF(wstrShutterCount);
+	strShutterCount = ultra::_T2UTF(wstrShutterCount);
 	TSINFO4CXX("wstrShutterCount:"<<wstrShutterCount<<" strShutterCount:"<<strShutterCount);
 
 	return TRUE;
@@ -853,7 +845,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strMake = "";
 	}
 	std::wstring wstrMake;
-	//xl::text::transcode::UTF8_to_Unicode(strMake.c_str(), strMake.size(), wstrMake);
 	wstrMake = ultra::_UTF2T(strMake);
 
 	replace_all_distinct(wstrRealText, L"<Exif:相机厂商>", wstrMake);
@@ -865,7 +856,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strModel = "";
 	}
 	std::wstring wstrModel;
-	//xl::text::transcode::UTF8_to_Unicode(strModel.c_str(), strModel.size(), wstrModel);
 	wstrModel = ultra::_UTF2T(strModel);
 	replace_all_distinct(wstrRealText, L"<Exif:相机型号>", wstrModel);
 
@@ -876,7 +866,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strDateDay = "";
 	}
 	std::wstring wstrDateDay;
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（YYYY-MM-DD）>", wstrDateDay);
@@ -885,7 +874,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（YY-MM-DD）>", wstrDateDay);
 
@@ -893,7 +881,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（MM/DD/YYYY）>", wstrDateDay);
 
@@ -901,7 +888,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（MMM.DD.YY）>", wstrDateDay);
 
@@ -909,7 +895,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（YYYY）>", wstrDateDay);
 
@@ -917,7 +902,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（YY）>", wstrDateDay);
 
@@ -925,7 +909,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（M）>", wstrDateDay);
 
@@ -933,7 +916,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（MM）>", wstrDateDay);
 
@@ -941,7 +923,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（MMM）>", wstrDateDay);
 
@@ -949,7 +930,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（D）>", wstrDateDay);
 
@@ -957,7 +937,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateDay = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateDay.c_str(), strDateDay.size(), wstrDateDay);
 	wstrDateDay = ultra::_UTF2T(strDateDay);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄日期（DD）>", wstrDateDay);
 
@@ -1002,7 +981,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateTime = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateTime.c_str(), strDateTime.size(), wstrDateTime);
 	wstrDateTime = ultra::_UTF2T(strDateTime);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄时间（HH:MM AM/PM）>", wstrDateTime);
 
@@ -1010,7 +988,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateTime = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateTime.c_str(), strDateTime.size(), wstrDateTime);
 	wstrDateTime = ultra::_UTF2T(strDateTime);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄时间（HH:MM:SS）>", wstrDateTime);
 
@@ -1018,7 +995,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateTime = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateTime.c_str(), strDateTime.size(), wstrDateTime);
 	wstrDateTime = ultra::_UTF2T(strDateTime);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄时间（HH）>", wstrDateTime);
 
@@ -1026,7 +1002,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateTime = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateTime.c_str(), strDateTime.size(), wstrDateTime);
 	wstrDateTime = ultra::_UTF2T(strDateTime);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄时间（MM）>", wstrDateTime);
 
@@ -1034,7 +1009,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 	{
 		strDateTime = "";
 	}
-	//xl::text::transcode::UTF8_to_Unicode(strDateTime.c_str(), strDateTime.size(), wstrDateTime);
 	wstrDateTime = ultra::_UTF2T(strDateTime);
 	replace_all_distinct(wstrRealText, L"<Exif:拍摄时间（SS）>", wstrDateTime);
 
@@ -1045,7 +1019,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strFNumber = "";
 	}
 	std::wstring wstrFNumber;
-	//xl::text::transcode::UTF8_to_Unicode(strFNumber.c_str(), strFNumber.size(), wstrFNumber);
 	wstrFNumber = ultra::_UTF2T(strFNumber);
 	replace_all_distinct(wstrRealText, L"<Exif:光圈>", wstrFNumber);
 
@@ -1056,7 +1029,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strExposureTime = "";
 	}
 	std::wstring wstrExposureTime;
-	//xl::text::transcode::UTF8_to_Unicode(strExposureTime.c_str(), strExposureTime.size(), wstrExposureTime);
 	wstrExposureTime = ultra::_UTF2T(strExposureTime);
 	replace_all_distinct(wstrRealText, L"<Exif:快门>", wstrExposureTime);
 
@@ -1067,7 +1039,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strISO = "";
 	}
 	std::wstring wstrISO;
-	//xl::text::transcode::UTF8_to_Unicode(strISO.c_str(), strISO.size(), wstrISO);
 	wstrISO = ultra::_UTF2T(strISO);
 	replace_all_distinct(wstrRealText, L"<Exif:ISO>", wstrISO);
 
@@ -1078,7 +1049,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strExposureBiasValue = "";
 	}
 	std::wstring wstrExposureBiasValue;
-	//xl::text::transcode::UTF8_to_Unicode(strExposureBiasValue.c_str(), strExposureBiasValue.size(), wstrExposureBiasValue);
 	wstrExposureBiasValue = ultra::_UTF2T(strExposureBiasValue);
 	replace_all_distinct(wstrRealText, L"<Exif:曝光补偿>", wstrExposureBiasValue);
 
@@ -1089,7 +1059,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strFocalLength = "";
 	}
 	std::wstring wstrFocalLength;
-	//xl::text::transcode::UTF8_to_Unicode(strFocalLength.c_str(), strFocalLength.size(), wstrFocalLength);
 	wstrFocalLength = ultra::_UTF2T(strFocalLength);
 	replace_all_distinct(wstrRealText, L"<Exif:焦距>", wstrFocalLength);
 
@@ -1100,7 +1069,6 @@ std::wstring CKKImageEXIF::ApplyExif(std::wstring wstrText, BOOL bIsReplaceSpeci
 		strLens = "";
 	}
 	std::wstring wstrLens;
-	//xl::text::transcode::UTF8_to_Unicode(strLens.c_str(), strLens.size(), wstrLens);
 	wstrLens = ultra::_UTF2T(strLens);
 	replace_all_distinct(wstrRealText, L"<Exif:镜头>", wstrLens);
 

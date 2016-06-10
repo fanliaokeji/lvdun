@@ -384,7 +384,6 @@ void CThumbnailLoader::FireLoadCompleteEvent(const wstring wstrFilePath, XL_BITM
 			lua_pushnumber(luaState, 0);
 			lua_pushnumber(luaState, 0);
 			string utf8FilePath;
-			//xl::text::transcode::Unicode_to_UTF8(wstrFilePath.c_str(), wstrFilePath.length(), utf8FilePath);
 			utf8FilePath = ultra::_T2UTF(wstrFilePath);
 			lua_pushstring(luaState, utf8FilePath.c_str());
 			pEvent->Call(4, 0);

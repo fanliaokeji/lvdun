@@ -27,7 +27,6 @@ bool CSaveDocFileOP::SetParam(lua_State* luaState)
 	const char* utf8 = lua_tostring(luaState, 3);
 	if (utf8 != NULL)
 	{
-		//xl::text::transcode::UTF8_to_Unicode(utf8, strlen(utf8), m_wstrNewPathFile);
 		m_wstrNewPathFile = ultra::_UTF2T(utf8);
 	}
 	m_bAutoRotate = lua_toboolean(luaState, 4);

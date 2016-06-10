@@ -43,7 +43,10 @@ XL_BITMAP_HANDLE CImageProcessor::RescaleImage(XL_BITMAP_HANDLE hXLBitmap, int n
 {
 	TSAUTO();
 
-	TSDEBUG4CXX("nWidth:"<<nWidth<<" nHeight:"<<nHeight);
+	TSDEBUG4CXX("Befor Max nWidth:"<<nWidth<<" nHeight:"<<nHeight);
+	nWidth = std::max<int>(nWidth,1);
+	nHeight = std::max<int>(nHeight,1);
+	TSDEBUG4CXX("After Max nWidth:"<<nWidth<<" nHeight:"<<nHeight);
 	assert(nWidth > 0 && nHeight > 0);
 
 	DWORD time1 = ::GetTickCount();

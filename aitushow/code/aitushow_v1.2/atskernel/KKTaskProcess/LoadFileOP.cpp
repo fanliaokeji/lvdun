@@ -25,7 +25,6 @@ CLoadFileOP::~CLoadFileOP(void)
 bool CLoadFileOP::SetParam(lua_State* luaState)
 {
 	const char* utf8Text = luaL_checkstring(luaState, 2);
-	//xl::text::transcode::UTF8_to_Unicode(utf8Text, strlen(utf8Text), m_wstrFilePath);
 	m_wstrFilePath = ultra::_UTF2T(utf8Text);
 	m_bScale = lua_toboolean(luaState, 3);
 	m_nWidth = luaL_checkint(luaState, 4);
@@ -84,7 +83,6 @@ bool CLoadFileOP::OnOperationComplete(int m_nStatus, int m_nErrorCode)
 			pEvent->PushFunction();
 
 			string utf8FilePath;
-			//xl::text::transcode::Unicode_to_UTF8(m_wstrFilePath.c_str(), m_wstrFilePath.size(), utf8FilePath);
 			utf8FilePath = ultra::_T2UTF(m_wstrFilePath);
 			if (KKIMG_TASKSTATUS_SUCCESS != m_nStatus)	// »ŒŒÒ÷¥–– ß∞‹
 			{
