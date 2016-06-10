@@ -42,7 +42,7 @@
 						<width>father.width - 30 - 12*7</width>
 						<height>father.height - 5</height>
 						<textcolor>system.white</textcolor>
-						<text>快看1.0</text>
+						<text>快看</text>
 					</attr>	
 				</obj>
 				<obj id="FrameWnd.Title.Setting" class="TipAddin.Button">

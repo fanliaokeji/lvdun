@@ -197,7 +197,16 @@ function PageManager:Init(ctrlSelf, tPictures, scrollPos)
 		end
 	end
 	
-	scrollPos = scrollPos or 0
+	local scrollBar = self.ctrlSelf:GetControlObject("Container.ScrollBar")
+		
+	if scrollPos then
+		scrollPos = math.max(0, scrollPos)
+		local RangeBegin, RangeEnd = scrollBar:GetScrollRange()
+		scrollPos = math.min(RangeEnd, scrollPos)
+	else
+		scrollPos = 0
+		scrollBar:SetScrollPos(0, true)
+	end
 	self:ShowThumbnailByScrollPos(scrollPos)
 end
 
