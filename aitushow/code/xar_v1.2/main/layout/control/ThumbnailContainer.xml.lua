@@ -409,7 +409,8 @@ local function UpdateUIByIndex(self, index)
 	attr.pageManager:ResetScrollBar()
 	local scrollPos = self:GetControlObject("Container.ScrollBar"):GetScrollPos()
 	-- if index < indexEnd then
-		attr.pageManager:ShowThumbnailByScrollPos(scrollPos)
+		-- attr.pageManager:ShowThumbnailByScrollPos(scrollPos)
+		attr.pageManager:Init(self, ImagePool.tPictures, scrollPos)
 	-- end
 end
 
@@ -421,6 +422,9 @@ function OnInitControl(self)
 	--以下三个事件触发的概率较小，处理起来可以不用太抠门
 	--UpdateUIByChangedIndex会对整个页面进行重新显示
 	ImagePool:AddListener("OnAddFile", function(_,_, index, endIndex)  UpdateUIByIndex(self, index) end)
-	ImagePool:AddListener("OnDeleteFile", function(_,_, info, index) UpdateUIByIndex(self, index) end)
+	ImagePool:AddListener("OnDeleteFile", function(_,_, info, index) 	
+		LOG("OnDeleteFile index: ", index)
+		UpdateUIByIndex(self, index) 
+	end)
 	ImagePool:AddListener("OnRenameFile", function(_,_, info, index, sOldPath, sNewPath) UpdateUIByIndex(self, index) end)
 end

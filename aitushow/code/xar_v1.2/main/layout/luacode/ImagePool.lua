@@ -275,6 +275,7 @@ function ImagePool:OnDirChange(oldFilePath, newFilePath, eventType)
 			self:AddFileInfo(oldFilePath)
 		end
 	elseif eventType == 2 then -- 删除
+		LOG("OnDirChange DeleteFileInfo oldFilePath: ", oldFilePath)
 		self:DeleteFileInfo(oldFilePath)
 	end
 end
