@@ -40,6 +40,8 @@ local File = {
 "luacode\\helper_tray.lua",
 "luacode\\helper_listener.lua",
 "luacode\\helper_APIproxy.lua",
+"luacode\\UserConfig.lua",
+"luacode\\ImagePool.lua",
 "menu\\ImageRClickMenu.lua",
 "menu\\SortMenu.lua",
 }
