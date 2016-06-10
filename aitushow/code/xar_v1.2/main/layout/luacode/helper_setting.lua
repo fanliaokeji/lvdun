@@ -35,7 +35,7 @@ end
 function Setting.IsDelRemind()
 	local tRead = UserConfig:Get("setting") or {}
 	local bRet = false
-	if tRead == "table" and tonumber(tRead["delremind"]) ~= 0 then
+	if type(tRead) == "table" and tonumber(tRead["delremind"]) ~= 0 then
 		bRet = true
 	end
 	return bRet

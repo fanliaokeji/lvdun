@@ -575,10 +575,14 @@ function DeleteFile(self)
 	end
 	local tipUtil = Helper.APIproxy.GetTipUtil()
 	if attr.CurDocItem and attr.CurDocItem.FilePath then
-		local HostWndHelper = Helper.MessageBox
-		local showText = "确认要删除文件\"" .. Helper.APIproxy.GetFileNameFromPath(attr.CurDocItem.FilePath) .. "\"吗"
-		local nRet = HostWndHelper.MessageBox(showText, self:GetOwner():GetBindHostWnd())
-		if nRet == HostWndHelper.ID_YES then
+		if Helper.Setting.IsDelRemind() then
+			local HostWndHelper = Helper.MessageBox
+			local showText = "确认要删除文件\"" .. Helper.APIproxy.GetFileNameFromPath(attr.CurDocItem.FilePath) .. "\"吗"
+			local nRet = HostWndHelper.MessageBox(showText, self:GetOwner():GetBindHostWnd())
+			if nRet == HostWndHelper.ID_YES then
+				tipUtil:DelPathFile2RecycleBin(attr.CurDocItem.FilePath)
+			end
+		else
 			tipUtil:DelPathFile2RecycleBin(attr.CurDocItem.FilePath)
 		end
 	end

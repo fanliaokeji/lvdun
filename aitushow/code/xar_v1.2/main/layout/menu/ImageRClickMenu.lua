@@ -69,7 +69,9 @@ end
 function Set2DeskBKG(ntype)
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	local attr = clientobj:GetAttribute()
-	tipUtil:SetDesktopWallpaper(attr.CurDocItem.FilePath, ntype)
+	if tipUtil:IsCanSetToWallPaperFile(attr.CurDocItem.FilePath) then
+		tipUtil:SetDesktopWallpaper(attr.CurDocItem.FilePath, ntype)
+	end
 end
 
 local menuTable = {

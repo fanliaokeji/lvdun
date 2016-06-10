@@ -126,9 +126,24 @@ function APIproxy.GetFileNameFromPath(path)
 	return string.sub(path, pos+1, #path)
 end
 
+function GetTwoLenStr(str)
+	str = tostring(str)
+	if string.len(str) == 1 then
+		str = "0"..str
+	end
+	return str
+end
+
 function APIproxy.GetRenameFilePath(path)
 	if not path  or type(path) ~= "string" or not tipUtil:QueryFileExists(path) then
 		return
+	end
+	local LYear, LMonth, LDay, LHour, LMinute, LSecond = tipUtil:FormatCrtTime(tipUtil:GetCurrentUTCTime() or 0)
+	if LYear and LMonth and LDay and LHour and LMinute and LSecond then
+		local datapath = string.gsub(path, "%.[^%.]*$", "重命名("..LYear..GetTwoLenStr(LMonth)..GetTwoLenStr(LDay)..GetTwoLenStr(LHour)..GetTwoLenStr(LMinute)..GetTwoLenStr(LSecond)..")%1")
+		if datapath and not tipUtil:QueryFileExists(datapath) then
+			return datapath
+		end
 	end
 	local i, newpath = 1, ""
 	while true do
