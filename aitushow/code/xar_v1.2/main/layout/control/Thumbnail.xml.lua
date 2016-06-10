@@ -93,7 +93,9 @@ function SetIndex(self, index)
 	attr.lineCount = lineCount
 	attr.columnCount = columnCount
 	
-	local left = ((index-1)%columnCount) * (containerAttr.SpaceH + picWidth)
+	local containerW, containerH = Helper:GetObjWH(container)
+	local newSpaceH = math.round((containerW - columnCount*picWidth)/columnCount)
+	local left = ((index-1)%columnCount) * (newSpaceH + picWidth)
 	local top  = (math.floor((index-1)/columnCount)) * (containerAttr.SpaceV + picHeight)
 	
 	self:SetObjPos2(left, top, picWidth, picHeight)

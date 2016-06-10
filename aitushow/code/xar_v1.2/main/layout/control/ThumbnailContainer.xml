@@ -69,7 +69,6 @@
 				<event name="OnInitControl" />
 				<event name="OnPosChange" />
 				<event name="OnMouseWheel" />
-				<event name="OnMouseLeave" />
 			</eventlist>
 		</objtemplate>
 	</control>

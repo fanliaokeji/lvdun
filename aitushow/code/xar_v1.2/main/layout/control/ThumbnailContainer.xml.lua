@@ -350,18 +350,15 @@ function OnBkgMouseWheel(self, x, y, distance)
 	local ctrl = self:GetOwnerControl()
 	local scrollBar = ctrl:GetControlObject("Container.ScrollBar")
 	local ThumbPos = scrollBar:GetThumbPos()
-	ctrl:SetCaptureMouse(true)
+	-- ctrl:SetCaptureMouse(true)
     scrollBar:SetThumbPos(ThumbPos - distance/10)
 end
 
 function OnMouseWheel(self, x, y, distance)
 	local scrollBar = self:GetControlObject("Container.ScrollBar")
 	local ThumbPos = scrollBar:GetThumbPos()
-	self:SetCaptureMouse(true)
+	-- self:SetCaptureMouse(true)
     scrollBar:SetThumbPos(ThumbPos - distance/10)
-end
-function OnMouseLeave(self)
-	self:SetCaptureMouse(false)
 end
 
 function OnSelectThumbnail(self, obj, bSelect)
