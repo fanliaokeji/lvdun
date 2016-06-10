@@ -369,7 +369,8 @@ function ResetScrollBarH(objRootCtrl)
 				newdis = sl
 			end
 		end
-		
+		--永远靠左
+		newdis = 0
 		MoveItemListPanelH(objRootCtrl, newdis)
 		objScrollBar:SetScrollPos(newdis, true)
 	else
