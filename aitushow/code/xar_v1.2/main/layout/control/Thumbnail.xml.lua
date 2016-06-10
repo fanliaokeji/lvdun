@@ -64,7 +64,7 @@ function SetData(self, data)--返回值为bool，代表是否成功设定 image�
 		imageObj:SetVisible(false)
 		if data.ExtName and "" ~= data.ExtName then
 			defaultImage:SetDrawMode(0)
-			defaultImage:SetResID("default_icon"..data.ExtName)
+			defaultImage:SetResID("default_icon"..string.lower(data.ExtName))
 		end
 	end
 	return false
