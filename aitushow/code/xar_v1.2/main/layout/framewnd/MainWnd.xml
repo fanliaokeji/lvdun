@@ -171,6 +171,7 @@
 								<destcolor>87,54,45,255</destcolor>
 							</attr>
 							<children>
+							<!--
 								<obj id="BottomObj" class="BottomCtrl">
 									<attr>
 										<left>0</left>
@@ -178,7 +179,8 @@
 										<width>father.width</width>
 										<height>father.height</height>
 									</attr>
-								</obj>	
+								</obj>
+							-->								
 							</children>
 						</obj>	
 					</children>
