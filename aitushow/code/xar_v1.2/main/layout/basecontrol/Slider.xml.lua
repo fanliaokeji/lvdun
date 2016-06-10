@@ -547,7 +547,7 @@ function Slider_OnLButtonDown(self, x, y, flag)
 		SetBtnPos(self, y, true)
 	end
 	
-	self:FireExtEvent("OnSliderLButtonDown", true, x, y, flags)
+	self:FireExtEvent("OnSliderLButtonDown", true, x, y, flag)
 end
 
 function Slider_OnMouseMove(self, x, y)
