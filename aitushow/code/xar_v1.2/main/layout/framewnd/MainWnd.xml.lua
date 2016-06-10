@@ -139,7 +139,7 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	local owner = self:GetOwner()
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
-	magePool:SetFolder(realpath)
+	ImagePool:SetFolder(realpath)
 	
 	Helper:SetRegValue(sLastPathReg, realpath)
 end
