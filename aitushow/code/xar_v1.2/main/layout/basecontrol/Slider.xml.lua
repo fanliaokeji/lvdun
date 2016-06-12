@@ -50,23 +50,13 @@ function UpdateBkg(ctrl, bAni)
 	local nBufferWidth = width * attr.BufferValue / (attr.Max - attr.Min)
 	local father = ctrl:GetControlObject("SliderLayout")
 	local father_left, father_top, father_right, father_bottom = father:GetObjPos()
-	--XLMessageBox(height)
+	
 	local ownerTree = ctrl:GetOwner()
 	local leftPart = ctrl:GetControlObject("LeftPart")
-	if not bAni then
-		leftPart:SetObjPos(0, 0-father_top, nLeftWidth, height-father_top)
-	else
-		local lpLeft, lpTop, lpRight, lpBottom = leftPart:GetObjPos()
-		-- __Animation.RunPosAni_Control(leftPart, lpLeft, lpTop, lpRight, lpBottom, 0, 0-father_top, nLeftWidth, height-father_top, nil, 200)
-	end
+	leftPart:SetObjPos(0, 0-father_top, nLeftWidth, height-father_top)
 	
 	local rightPart = ctrl:GetControlObject("RightPart")
-	if not bAni then
-		rightPart:SetObjPos(nLeftWidth, 0-father_top, width, height-father_top)
-	else
-		local rpLeft, rpTop, rpRight, rpBottom = rightPart:GetObjPos()
-		-- __Animation.RunPosAni_Control(rightPart, rpLeft, rpTop, rpRight, rpBottom, nLeftWidth, 0-father_top, width, height-father_top, nil, 200)
-	end
+	rightPart:SetObjPos(nLeftWidth, 0-father_top, width, height-father_top)
 	
 	local bufferPart = ctrl:GetControlObject("BufferPart")
 	bufferPart:SetObjPos(nLeftWidth, 0-father_top, nBufferWidth, height-father_top)
@@ -162,29 +152,20 @@ function SetBtnPos(ctrl, newPos, bAni)
     local btn = ctrl:GetControlObject("SliderButton")
 	local left, top, right, bottom = btn:GetObjPos()
     if attr.Type == 0 then
-        --btn:SetObjPos(newPos - (attr.BtnWidth / 2), 0 - (attr.BtnHeight - height) / 2, newPos + (attr.BtnWidth / 2), (attr.BtnHeight + height) / 2)
+        btn:SetObjPos(newPos - (attr.BtnWidth / 2), 0 - (attr.BtnHeight - height) / 2, newPos + (attr.BtnWidth / 2), (attr.BtnHeight + height) / 2)
 		if attr.Grid then
 			if newValue == attr.Value then
 				return
 			end
 			newValue = math.floor(newPos * (attr.Max - attr.Min) / (width * attr.Step)) * attr.Step + attr.Min
 			newPos = math.floor((newValue - attr.Min) * width / (attr.Max - attr.Min) + 0.5)
-			--btn:SetObjPos(centerPos - (attr.BtnWidth / 2), math.floor((height - attr.BtnHeight) / 2 - father_top), centerPos + (attr.BtnWidth / 2), math.floor((attr.BtnHeight + height) / 2 - father_top))
-			local newLeft, newTop, newRight, newBottom = newPos - (attr.BtnWidth / 2), top, newPos + attr.BtnWidth / 2, bottom
-			
-			--XMP.LOG("btn left:", newLeft, ", top:", newTop, ", right:", newRight, ", bottom:", newBottom)
-			-- __Animation.RunPosAni_Control(btn, left, top, right, bottom, newLeft, newTop, newRight, newBottom)
+			btn:SetObjPos(centerPos - (attr.BtnWidth / 2), math.floor((height - attr.BtnHeight) / 2 - father_top), centerPos + (attr.BtnWidth / 2), math.floor((attr.BtnHeight + height) / 2 - father_top))
+			local newLeft, newTop, newRight, newBottom = newPos - (attr.BtnWidth / 2), top, newPos + attr.BtnWidth / 2, bottom	
 		else
-			if not bAni then
-				--btn:SetObjPos(newPos - (attr.BtnWidth / 2), top, newPos + attr.BtnWidth / 2, bottom)
-				btn:SetObjPos2(newPos - (attr.BtnWidth / 2), top,attr.BtnWidth, attr.BtnHeight)
-			else
-				local btnLeft, btnTop, btnRight, btnBottom = btn:GetObjPos()
-				-- __Animation.RunPosAni_Control(btn, btnLeft, btnTop, btnRight, btnBottom, newPos - (attr.BtnWidth / 2), top, newPos + attr.BtnWidth / 2, bottom, nil, 200)
-			end
+			btn:SetObjPos(newPos - (attr.BtnWidth / 2), top, newPos + attr.BtnWidth / 2, bottom)
 		end
     else
-        --btn:SetObjPos(0 - (attr.BtnWidth - width) / 2, newPos - (attr.BtnHeight / 2), (attr.BtnWidth + width) / 2, newPos + (attr.BtnHeight / 2))
+        btn:SetObjPos(0 - (attr.BtnWidth - width) / 2, newPos - (attr.BtnHeight / 2), (attr.BtnWidth + width) / 2, newPos + (attr.BtnHeight / 2))
 		if attr.Grid then
 			btn:SetObjPos(left, newPos - (attr.BtnHeight / 2), right, newPos + attr.BtnHeight / 2)
 		else
@@ -542,9 +523,9 @@ function Slider_OnLButtonDown(self, x, y, flag)
 	btn:SetCaptureMouse(true)
 	attr.TrackMouse = true
 	if attr.Type == 0 then
-		SetBtnPos(self, x, true)
+		SetBtnPos(self, x)
 	else
-		SetBtnPos(self, y, true)
+		SetBtnPos(self, y)
 	end
 	
 	self:FireExtEvent("OnSliderLButtonDown", true, x, y, flag)
