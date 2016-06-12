@@ -113,7 +113,7 @@
 												<top>(father.height-131)/2</top>
 												<width>113</width>
 												<height>131</height>
-												<image>bitmap.loadfile.error.icon</image>
+												<image>bitmap.imagefile.loaderror.icon</image>
 											</attr>
 										</obj>
 										<obj id="client.filelistview" class="Kuaikan.ListViewCtrl">

@@ -1175,6 +1175,18 @@ function View_OnLButtonDown(self)
 	end
 end
 
+local hasSend = false
+function SendShowUI()
+	if hasSend then return end
+	hasSend = true
+	--启动上报
+	StatUtil.SendStat({
+		strEC = "showui",
+		strEA = StatUtil.GetMainVer(),
+		strEL = "fullsrceen",
+		strEV = 1,
+	}) 
+end
 
 function FullScreenSwitch(self)
 	local attr = self:GetAttribute()
@@ -1183,7 +1195,7 @@ function FullScreenSwitch(self)
 	local hostWnd = objTree:GetBindHostWnd()
 	if not attr.bFullScreen then	
 		attr.bFullScreen = true
-		
+		SendShowUI()
 		local l,t,r,b = hostWnd:GetWindowRect()
 		attr.oldWndL,attr.oldWndT,attr.oldWndWidth,attr.oldWndHeight = l,t,r-l,b-t
 		

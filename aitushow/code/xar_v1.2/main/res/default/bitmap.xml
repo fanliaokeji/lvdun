@@ -1,7 +1,10 @@
 <XLUE>
 	<resource>
+		<!--光标-->
+		<cursor id="cur_hand_normal" file="bitmap/cur_hand_normal.cur" width="32" height="32" />
+		<cursor id="cur_hand_grab" file="bitmap/cur_hand_grab.cur" width="32" height="32" />
 		<!--图片加载失败默认图-->
-		<bitmap id="bitmap.loadfile.error.icon" image="bitmap\bitmap.loadfile.error.png"/>
+		<bitmap id="bitmap.imagefile.loaderror.icon" image="bitmap\bitmap.imagefile.loaderror.png"/>
 		<!--排序选中-->
 		<bitmap id="bitmap.sort.select" image="bitmap\sort.select.png"/>
 		<texture id="GreenWall.BtnClose.Normal" image="bitmap\GreenWall.Caption.BtnClose.Normal.png" />
@@ -222,7 +225,7 @@
 			<texture id="messagebox.renamesave.hover"   imagelist="messagebox.renamesave" index="2" />
 			<texture id="messagebox.renamesave.down"   imagelist="messagebox.renamesave" index="3" />
 		<!--png默认背景-->
-		<texture id="texture.transparent.bkg" type="Tile" image="bitmap\bitmap.transparent.bkg.png" />
+		<texture id="texture.pngdefault.bkg" type="Tile" image="bitmap\bitmap.pngdefault.bkg.png" />
 		
 		<!--默认图标-->
 		<bitmap id="default_icon.bmp" path="bitmap\default_icon\bmp.png" />

@@ -39,6 +39,7 @@ local File = {
 "luacode\\helper_messagebox.lua",
 "luacode\\helper_setting.lua",
 "luacode\\helper_tray.lua",
+"luacode\\helper_stat.lua",
 "luacode\\helper_listener.lua",
 "luacode\\helper_APIproxy.lua",
 "luacode\\ImagePool.lua",
@@ -51,6 +52,16 @@ LoadLuaModule(File, __document)
 local Helper = XLGetGlobal("Helper")
 
 function OnLoadLuaFile()
+	--记录启动时间
+	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
+	--启动上报
+	StatUtil.SendStat({
+		strEC = "startup",
+		strEA = StatUtil.GetMainVer(),
+		strEL = StatUtil.GetInstallSrc(),
+		strEV = 1,
+	}) 
+	
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
 	local cmdString = tostring(tipUtil:GetCommandLine())

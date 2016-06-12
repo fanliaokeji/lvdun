@@ -99,7 +99,7 @@ function Layer_OnLButtonDown(self, x, y)
 		owner_attr.StartY = y
 		owner_attr.IsMouseDown = true
 		self:SetCaptureMouse(true)
-		self:SetCursorID("hand_cursor")
+		self:SetCursorID("cur_hand_grab")
 	else
 		local l,t,r,b = self:GetObjPos()
 		owner:FireExtEvent("OnViewRectLButtonDown", x/(r-l), y/(b-t))
@@ -108,7 +108,7 @@ function Layer_OnLButtonDown(self, x, y)
 		owner_attr.StartY = y
 		owner_attr.IsMouseDown = true
 		self:SetCaptureMouse(true)
-		self:SetCursorID("hand_cursor")
+		self:SetCursorID("cur_hand_grab")
 	end
 end
 

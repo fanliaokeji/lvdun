@@ -36,8 +36,22 @@ function Wnd_OnClose(self)
 	return 0, true
 end
 
+local hasSend = false
+function SendShowUI()
+	if hasSend then return end
+	hasSend = true
+	--启动上报
+	StatUtil.SendStat({
+		strEC = "showui",
+		strEA = StatUtil.GetMainVer(),
+		strEL = "viewclient",
+		strEV = 1,
+	}) 
+end
+
 function OnShowWindow(self, bShow)
 	if bShow then
+		SendShowUI()
 		Helper.Tray.HostWnd = self
 	end
 end

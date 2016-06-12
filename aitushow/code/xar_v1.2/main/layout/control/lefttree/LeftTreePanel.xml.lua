@@ -21,8 +21,16 @@ end
 --Update传进来的永远的真实路径，这里判断优先在已经打开的根节点里面选择
 function Update(self, dir)
 	if not PathHelper.CanReBuild() then
+		PathHelper.fncallbak = --替换回调函数
+			function()
+				Update(self, dir)
+			end
 		return
 	end
+	PathHelper.fncallbak = --恢复回调函数
+		function()
+			BuildTree(self)
+		end
 	dir = Filter(dir)
 	local attr = self:GetAttribute()
 	if attr.selectdir == dir or string.match(tostring(attr.selectdir), "@([^@]*)$") == dir then
@@ -39,7 +47,7 @@ function Update(self, dir)
 		end
 	end
 	attr.opendirs = attr.opendirs or {}
-	if strVrPath ~= "计算机" and not attr.opendirs[strVrPath] then-- and attr.opendirs["计算机"]
+	if strVrPath ~= "计算机" and not attr.opendirs[strVrPath] and attr.opendirs["计算机"] then
 		strVrPath = "计算机"
 		isroot = false
 	end
@@ -64,18 +72,16 @@ end
 --保证在callback里面所有需要用到的路径都已经请求到
 function AsynGetFoderList(self)
 	local attr = self:GetAttribute()
-	if type(attr.opendirs) ~= "table" then 
-		PathHelper.fncallbak()
-		return 
-	end
 	PathHelper.CanCallBack = true--保证异步只回调一次
 	local bRet = false--是否经过异步处理
-	for k, v in pairs(attr.opendirs) do
-		LOG("AsynGetFoderList, k = "..tostring(k)..", v = "..tostring(v))
-		if v then
-			local rp = PathHelper.GetRealPath(k)
-			if rp then
-				bRet = PathHelper.RequestDirList(rp) or bRet
+	if type(attr.opendirs) == "table" then 
+		for k, v in pairs(attr.opendirs) do
+			LOG("AsynGetFoderList, k = "..tostring(k)..", v = "..tostring(v))
+			if v then
+				local rp = PathHelper.GetRealPath(k)
+				if rp then
+					bRet = PathHelper.RequestDirList(rp) or bRet
+				end
 			end
 		end
 	end
@@ -115,6 +121,7 @@ function Dir2TreeView(self, dir, left, params)
 	else
 		attr.HasChild = false
 	end
+	LOG("Dir2TreeView:attr.HasChild = "..tostring(attr.HasChild))
 	if params["MainIcon"] and params["MainIconHover"] then
 		attr.MainIcon = params["MainIcon"]
 		attr.MainIconHover = params["MainIconHover"]

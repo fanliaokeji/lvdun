@@ -46,8 +46,15 @@ function OnCloseBtnClick(self)
 			lastwnd:BringWindowToTop(true)
 		else
 			if not Helper.Setting.GetExitType() then
-				Helper.Tray.Hide()
-				Helper.tipUtil:Exit()
+				--退出上报
+				StatUtil.SendStat({
+					strEC = "exit",
+					strEA = Helper.Setting.IsSysBoot() and "1" or "0",
+					strEL = "0",
+					strEV = StatUtil.GetUsedTime(),
+				}) 
+				--退出
+				StatUtil.Exit()
 			end
 		end
 	end

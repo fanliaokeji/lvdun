@@ -110,8 +110,22 @@ function OnSliderPosChange(self, event, pos)
 	UserConfig:Set("ThumbnailZoom", pos)
 end
 
+local hasSend = false
+function SendShowUI()
+	if hasSend then return end
+	hasSend = true
+	--启动上报
+	StatUtil.SendStat({
+		strEC = "showui",
+		strEA = StatUtil.GetMainVer(),
+		strEL = "mainclient",
+		strEV = 1,
+	}) 
+end
+
 function OnShowWindow(self, bVisible)
 	if bVisible then
+		SendShowUI()
 		Helper.Tray.HostWnd = self
 	end
 end

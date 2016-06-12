@@ -140,7 +140,7 @@ function View_SetScaleRatio(self, ScaleRatio)
 		
 		local viewObj = self:GetControlObject("client.view")
 		if attr.ScaleRatio > attr.AdaptedScreenRatio then
-			viewObj:SetCursorID("hand_cursor")
+			viewObj:SetCursorID("cur_hand_normal")
 		else
 			viewObj:SetCursorID("IDC_ARROW")
 		end
@@ -658,7 +658,7 @@ function View_OnLButtonDown(self, x, y, flags)
 	owner_attr.XBegin = l+x
 	owner_attr.yBegin = t+y
 	self:SetCaptureMouse(true)
-	self:SetCursorID("hand_cursor")
+	self:SetCursorID("cur_hand_grab")
 end
 
 function View_OnLButtonUp(self)

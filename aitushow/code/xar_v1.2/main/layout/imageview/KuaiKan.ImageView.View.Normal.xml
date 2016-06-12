@@ -149,7 +149,7 @@
 								<top>0</top>
 								<width>0</width>
 								<height>0</height>
-								<texture>texture.transparent.bkg</texture>
+								<texture>texture.pngdefault.bkg</texture>
 								<zorder>-100</zorder>
 							</attr>
 							<eventlist>

@@ -110,13 +110,14 @@ end
 function PathHelper.GetDiskList()
 	if DirListMap["计算机"] then return end
 	local tAll = tipUtil:GetLogicalDrive()
+	LOG("PathHelper.GetDiskList type(tAll) = "..type(tAll))
 	local tDisk = {}
 	for _, v in ipairs(tAll) do
+		LOG("PathHelper.GetDiskList v = "..tostring(v))
 		v = string.gsub(tostring(v), "[/\\]*$", "")
+		LOG("PathHelper.GetDiskList v2 = "..tostring(v))
 		if tipUtil:QueryFileExists(v) then
 			tDisk[#tDisk+1] = {strFilePath=v, bHaveSubFolder=true}
-		else
-			break
 		end
 	end
 	DirListMap["计算机"] = tDisk
