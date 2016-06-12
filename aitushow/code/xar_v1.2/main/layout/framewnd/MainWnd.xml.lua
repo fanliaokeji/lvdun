@@ -93,8 +93,8 @@ function OnMouseMove_ResizeLine(self, x, y)
 	local thumbnailContainer = owner:GetUIObject("MainWnd.ThumbnailContainer")
 	
 	leftTreeContainer:SetObjPos2("0", "30", x - 1, "father.height - 30 - 30")
-	self:SetObjPos2(x, "30", "2", "father.height - 30 - 30")
-	thumbnailContainer:SetObjPos2(x + 1, "30", "father.width - "..x, "father.height - 30 - 30")
+	self:SetObjPos2(x, "30", "4", "father.height - 30 - 30")
+	thumbnailContainer:SetObjPos2(x + 4, "30", "father.width - "..x.."-4", "father.height - 30 - 30")
 end
 
 function OnLButtonUp_ResizeLine(self, x, y)

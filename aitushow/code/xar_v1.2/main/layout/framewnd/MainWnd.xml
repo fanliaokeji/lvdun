@@ -60,7 +60,7 @@
 					<attr>
 						<left>196</left>
 						<top>30</top>
-						<width>2</width>
+						<width>4</width>
 						<height>father.height - 30 - 30</height>
 					</attr>
 					<eventlist>
@@ -71,9 +71,9 @@
 				</obj>
 				<obj id="MainWnd.ThumbnailContainer" class="LayoutObject">
 					<attr>
-						<left>197</left>
+						<left>201</left>
 						<top>30</top>
-						<width>father.width - 195</width>
+						<width>father.width - 201</width>
 						<height>father.height - 30 - 30</height>
 						<limitchild>1</limitchild>
 					</attr>
