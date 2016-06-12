@@ -110,6 +110,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//读写UTF8文件
 	{"ReadFileToString", ReadFileToString},
 	{"WriteStringToFile", WriteStringToFile},
+	{"GetLogicalDrive", GetLogicalDrive},
 
 	//注册表操作
 	{"QueryRegValue", QueryRegValue},
@@ -2656,6 +2657,35 @@ int LuaAPIUtil::WriteStringToFile(lua_State* pLuaState)
 	lua_pushboolean(pLuaState,ret);
 	return 1;
 }
+
+int LuaAPIUtil::GetLogicalDrive(lua_State* pLuaState)
+{
+	bool ret = false;
+
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		wchar_t szDrive[1024] = {0};
+		wchar_t* pszDrive = NULL;
+		ZeroMemory(szDrive,1024);
+		GetLogicalDriveStrings(1024-1,szDrive);
+		pszDrive = szDrive;
+		int index = 1;
+		lua_newtable(pLuaState);
+		do 
+		{
+			std::string strDriveName;
+			BSTRToLuaString(pszDrive,strDriveName);
+			lua_pushstring(pLuaState, strDriveName.c_str());
+			lua_rawseti(pLuaState, -2, index);
+			pszDrive += (lstrlen(pszDrive)+1);
+			index++;
+		} while (*pszDrive !='\x00');
+		return 1;
+	}
+	return 0;
+}
+
 
 int LuaAPIUtil::FormatCrtTime(lua_State* pLuaState)
 {
