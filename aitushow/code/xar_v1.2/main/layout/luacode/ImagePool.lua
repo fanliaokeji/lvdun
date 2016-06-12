@@ -310,10 +310,11 @@ function ImagePool:OnThumbComplete(filePath, bitmap, width, height)
 end
 
 function ImagePool:Init()
-	Helper.tipUtil:AttachDirChangeEvent(function(oldFilePath, newFilePath, eventType)
+	Helper.APIproxy.FolderMonitorManager.AttachListener(
+		function(oldFilePath, newFilePath, eventType)
 		self:OnDirChange(oldFilePath, newFilePath, eventType)
 	end)
-	
+		
 	self.thumbnailsLoader:AttatchLoadCompleteEvent(function(bitmap, width, height, filePath)
 		self:OnThumbComplete(filePath, bitmap, width, height)
 	end)
