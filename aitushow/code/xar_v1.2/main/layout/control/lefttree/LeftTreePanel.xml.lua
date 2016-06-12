@@ -20,6 +20,9 @@ end
 
 --Update传进来的永远的真实路径，这里判断优先在已经打开的根节点里面选择
 function Update(self, dir)
+	if not PathHelper.CanReBuild() then
+		return
+	end
 	dir = Filter(dir)
 	local attr = self:GetAttribute()
 	if attr.selectdir == dir or string.match(tostring(attr.selectdir), "@([^@]*)$") == dir then
@@ -35,7 +38,8 @@ function Update(self, dir)
 			isroot = false
 		end
 	end
-	if strVrPath ~= "计算机" and not attr.opendirs[strVrPath] and attr.opendirs["计算机"] then
+	attr.opendirs = attr.opendirs or {}
+	if strVrPath ~= "计算机" and not attr.opendirs[strVrPath] then-- and attr.opendirs["计算机"]
 		strVrPath = "计算机"
 		isroot = false
 	end
@@ -46,17 +50,43 @@ function Update(self, dir)
 	end
 	--无条件关闭其它分支
 	attr.opendirs = {}
-	local dirlist = tipUtil:FindDirList(strRealPath)
-	if #dirlist > 0 then
-		attr.opendirs[optdir] = not attr.opendirs[optdir]
-	end
-	
+	attr.opendirs[optdir] = true
 	attr.opendirs[strVrPath] = true
 	openparent(attr, optdir)
 	attr.selectdir = optdir
 	attr.LastOpenDir = optdir
 	ClearTree(self)
-	BuildTree(self)
+	LOG("Update begin entry AsynGetFoderList")
+	AsynGetFoderList(self)
+end
+
+--获取所有打开了分支的子目录列表
+--保证在callback里面所有需要用到的路径都已经请求到
+function AsynGetFoderList(self)
+	local attr = self:GetAttribute()
+	if type(attr.opendirs) ~= "table" then 
+		PathHelper.fncallbak()
+		return 
+	end
+	PathHelper.CanCallBack = true--保证异步只回调一次
+	local bRet = false--是否经过异步处理
+	for k, v in pairs(attr.opendirs) do
+		LOG("AsynGetFoderList, k = "..tostring(k)..", v = "..tostring(v))
+		if v then
+			local rp = PathHelper.GetRealPath(k)
+			if rp then
+				bRet = PathHelper.RequestDirList(rp) or bRet
+			end
+		end
+	end
+	--检查虚拟路径对应的真实路径是否取到了
+	bRet = PathHelper.GetDeskTopPath() or bRet
+	bRet = PathHelper.GetDocumentPath() or bRet
+	bRet = PathHelper.GetPicturePath() or bRet
+	bRet = PathHelper.GetDiskList() or bRet
+	if not bRet then
+		PathHelper.fncallbak()
+	end
 end
 
 function Dir2TreeView(self, dir, left, params)
@@ -69,7 +99,7 @@ function Dir2TreeView(self, dir, left, params)
 	end
 	panelattr.opendirs = panelattr.opendirs or {}
 	params = params or {}
-	local dirlist = params.path or tipUtil:FindDirList(dir)
+	local dirlist = PathHelper.GetDirList(dir)
 	local vpath = params.vpath
 	
 	local Item = objFactory:CreateUIObject("lefttreenode"..panelattr.nodeindex, "LeftTreeItem")
@@ -77,10 +107,13 @@ function Dir2TreeView(self, dir, left, params)
 	panelattr.nodeindex = panelattr.nodeindex + 1
 	
 	local attr = Item:GetAttribute()
-	if #dirlist == 0 then
-		attr.HasChild = false
-	else
+	LOG("type(params.haschild) = "..type(params.haschild))
+	if type(params.haschild) == "boolean" then
+		attr.HasChild = params.haschild
+	elseif #dirlist > 0 then
 		attr.HasChild = true
+	else
+		attr.HasChild = false
 	end
 	if params["MainIcon"] and params["MainIconHover"] then
 		attr.MainIcon = params["MainIcon"]
@@ -94,7 +127,13 @@ function Dir2TreeView(self, dir, left, params)
 	if panelattr.opendirs[optdir] then
 		attr.Open = true
 		for _, v in ipairs(dirlist) do
-			Dir2TreeView(self, v, left+16, (type(params.params) == "table" and params.params or {vpath=vpath}))
+			if type(v) == "string" then
+				LOG("Dir2TreeView stringv = "..tostring(v))
+				Dir2TreeView(self, v, left+16, (type(params.params) == "table" and params.params or {vpath=vpath}))
+			else
+				LOG("Dir2TreeView v[strFilePath] = "..v["strFilePath"]..", v[bHaveSubFolder] = "..tostring(v["bHaveSubFolder"]))
+				Dir2TreeView(self, v["strFilePath"], left+16, (type(params.params) == "table" and params.params or {vpath=vpath, haschild=v["bHaveSubFolder"]}))
+			end
 		end
 	else
 		attr.Open = false
@@ -111,12 +150,15 @@ function Dir2TreeView(self, dir, left, params)
 	maintext:SetText(PathHelper.SpecialName[dir] or string.match(dir, "([^/\\]*)$") or "未知名称")
 	Item:Update()
 	Item:AttachListener("OnStateChange", false, function(_self, event, bState)
+			if not PathHelper.CanReBuild() then return end
 			panelattr.opendirs[optdir] = bState
 			panelattr.LastOpenDir = optdir
 			ClearTree(self, optdir)
-			BuildTree(self)
+			LOG("OnStateChange begin entry AsynGetFoderList")
+			AsynGetFoderList(self)
 		end)
 	Item:AttachListener("OnSelect", false, function()
+			if not PathHelper.CanReBuild() then return end
 			panelattr.LastOpenDir = optdir
 			if attr.HasChild then
 				panelattr.opendirs[optdir] = not panelattr.opendirs[optdir]
@@ -126,7 +168,8 @@ function Dir2TreeView(self, dir, left, params)
 				self:FireExtEvent("OnSelect", dir)
 			end
 			ClearTree(self, optdir)
-			BuildTree(self)
+			LOG("OnSelect begin entry AsynGetFoderList, optdir = "..optdir..", panelattr.opendirs[optdir] = "..tostring(panelattr.opendirs[optdir])..", attr.HasChild = "..tostring(attr.HasChild))
+			AsynGetFoderList(self)
 		end)
 	local Container = self:GetControlObject("Container")
 	--横向保持原位
@@ -138,7 +181,6 @@ end
 --根据dir决定是否超过一定数量清除其它分支
 function ClearTree(self, optdir)
 	local Container = self:GetControlObject("Container")
-	Container:RemoveAllChild()
 	local panelattr = self:GetAttribute()
 	--节点太多会导致卡顿，so节点大于一定值时清除其它打开的分支
 	if optdir and panelattr.opendirs[optdir] and panelattr.nodeindex > 50 then
@@ -155,18 +197,19 @@ function ClearTree(self, optdir)
 end
 
 function BuildTree(self)
+	local Container = self:GetControlObject("Container")
+	Container:RemoveAllChild()
 	local tPaths = {
-		{"桌面", {MainIcon="MainIconDesk", MainIconHover="MainIconDeskHover", path=PathHelper.GetDeskTopPath(), vpath="桌面"}},
-		{"我的文档", {MainIcon="MainIconDocument", MainIconHover="MainIconDocumentHover", path=PathHelper.GetDocumentPath(), vpath="我的文档"}},
-		{"我的图片", {MainIcon="MainIconPicture", MainIconHover="MainIconPictureHover", path=PathHelper.GetPicturePath(), vpath="我的图片"}},
+		{"桌面", {MainIcon="MainIconDesk", MainIconHover="MainIconDeskHover", vpath="桌面"}},
+		{"我的文档", {MainIcon="MainIconDocument", MainIconHover="MainIconDocumentHover", vpath="我的文档"}},
+		{"我的图片", {MainIcon="MainIconPicture", MainIconHover="MainIconPictureHover", vpath="我的图片"}},
 		{
 			"计算机", 
 			{
 				MainIcon="MainIconComputer",
 				MainIconHover="MainIconComputerHover",
-				path=PathHelper.GetDiskList(), 
 				vpath="计算机", 
-				params = {MainIcon="MainIconDisk", MainIconHover="MainIconDiskHover", vpath="计算机",}
+				params = {MainIcon="MainIconDisk", MainIconHover="MainIconDiskHover", vpath="计算机", haschild=true}
 			}
 		},
 	}
@@ -178,7 +221,11 @@ function BuildTree(self)
 end
 
 function LeftTreePanelOnInitControl(self)
-	BuildTree(self)
+	PathHelper.fncallbak = 
+		function()
+			BuildTree(self)
+		end
+	AsynGetFoderList(self)
 end
 
 function RouteToFather(self)
