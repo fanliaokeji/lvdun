@@ -186,6 +186,10 @@ function Helper:GetFileNameByPath(path)
 	return string.match(path, ".+[\\/]([^?]+)")
 end
 
+function Helper:GetFileNameByUrl(url)
+	return string.match(url, ".+[/]([^?]+)")
+end
+
 function Helper:GetUserDataDir()
 	local strPublicEnv = "%PUBLIC%"
 	local strRet = tipUtil:ExpandEnvironmentStrings(strPublicEnv)
@@ -636,12 +640,23 @@ function Helper:SetRegValue(sPath, value)
 	return false
 end
 
-function Helper:GetHttpFile(url, savePath, token)
+function Helper:GetHttpFile(url, savePath, token, expectedMD5)
 	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
 	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
 										if 0 == nRet then
-											LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
-											self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+											if self:IsRealString(expectedMD5) then
+												local strMD5 = tipUtil:GetMD5Value(strTargetFilePath)
+												if self:IsRealString(strMD5) and string.lower(strMD5) == string.lower(expectedMD5) then
+													LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
+													self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+												else
+													LOG("DispatchEvent: OnDownloadFailed token: ", token, " savePath: ", savePath)
+													self:DispatchEvent("OnDownloadFailed", token, nRet, url, strHeaders)
+												end
+											else--无需校验的话，直接发成功事件
+												LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
+												self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+											end
 										else
 											--此时nRet即为errorcode
 											LOG("DispatchEvent: OnDownloadFailed token: ", token, " nRet: ", nRet)
