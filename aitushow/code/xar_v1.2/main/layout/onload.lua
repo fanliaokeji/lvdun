@@ -34,6 +34,7 @@ local File = {
 "luacode\\helper_token.lua",
 "luacode\\helper_data.lua",
 "luacode\\UserConfig.lua",
+"luacode\\ServerConfig.lua",
 "luacode\\helper_tree.lua",
 "luacode\\helper_selector.lua",
 "luacode\\helper_messagebox.lua",
@@ -92,3 +93,30 @@ function OnLoadLuaFile()
 end
 
 OnLoadLuaFile()
+
+function OnConfigLoaded(_, event, tConfig)
+	-- XLMessageBox("event: "..tostring(event))
+	-- ServerConfig:DownloadExtraCode()
+	-- ServerConfig:TryManualUpdate()
+	-- ServerConfig.IsUpdating = nil
+	-- ServerConfig:TryForceUpdate()
+end
+
+function OnExtraCodeReady(_, event, savePath)
+	-- XLMessageBox("OnExtraCodeReady")
+	--执行lua代码
+end
+
+function OnManualUpdateReady(_, event, savePath)
+	-- XLMessageBox("OnManualUpdateReady")
+	-- 命令行拉起exe
+end
+function OnForceUpdateReady(_, event, savePath)
+	-- XLMessageBox("OnForceUpdateReady")
+	-- 命令行拉起exe
+end
+
+ServerConfig:AddListener("OnConfigLoaded", OnConfigLoaded)
+ServerConfig:AddListener("OnExtraCodeReady", OnExtraCodeReady)
+ServerConfig:AddListener("OnManualUpdateReady", OnManualUpdateReady)
+ServerConfig:AddListener("OnForceUpdateReady", OnForceUpdateReady)
