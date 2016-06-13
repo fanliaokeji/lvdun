@@ -672,6 +672,8 @@ function View_OnLButtonUp(self)
 	
 	if owner_attr.ScaleRatio <= owner_attr.AdaptedScreenRatio then
 		self:SetCursorID("IDC_ARROW")
+	else
+		self:SetCursorID("cur_hand_normal")
 	end
 end
 

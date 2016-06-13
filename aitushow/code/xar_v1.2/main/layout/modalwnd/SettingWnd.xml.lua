@@ -30,6 +30,17 @@ function OnCreate(self)
 	local new_r = new_l + sw
 	local new_b = new_t + sh
 	self:Move(new_l, new_t, new_r, new_b)
+	local userdata = self:GetUserData()
+	if type(userdata) == "string" then
+		local objtree = self:GetBindUIObjectTree()
+		local item2 = objtree:GetUIObject("root"):GetObject("LeftPanel:ListItem2")
+		if item2 then
+			local attr = item2:GetAttribute()
+			attr.Select = true
+			item2:Update()
+			item2:FireExtEvent("OnSelect", userdata)
+		end
+	end
 end
 
 function OnShowWindow(self, bVisible)

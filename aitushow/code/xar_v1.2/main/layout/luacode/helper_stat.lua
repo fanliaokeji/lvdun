@@ -128,6 +128,22 @@ function StatUtil.SendStat(tStat)
 	end)
 end
 
+function StatUtil.HideAllWindow()
+	local hostWndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
+	local str = ""
+	local hostWnd
+	if hostWndManager:BeginEnumHostWnd() then
+		hostWnd = hostWndManager:GetNextHostWnd()
+		while hostWnd do
+			LOG("StatUtil.HideAllWindow hostWnd:GetID() = "..tostring(hostWnd:GetID()))
+			if type(hostWnd.Show) == "function" then
+				hostWnd:Show(0)
+			end
+			hostWnd = hostWndManager:GetNextHostWnd()
+		end
+	end
+end
+
 function StatUtil.Exit(bForce)
 	local function ExitProcess()
 		--保存配置
@@ -135,6 +151,10 @@ function StatUtil.Exit(bForce)
 		LOG("************ Exit ************")
 		tipUtil:Exit("Exit")
 	end
+	--设置退出标记
+	StatUtil.ExitFlag = true
+	--隐藏所有窗口
+	StatUtil.HideAllWindow()
 	--先把托盘干掉
 	Helper.Tray.Hide()
 	if bForce then

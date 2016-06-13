@@ -86,6 +86,20 @@ function Setting.SetExitType(nValue)
 	UserConfig:Set("setting", tRead)
 end
 
+--这里只记录用户的选择，界面的状态由实际关联注册表项控制
+function Setting.SetAssociateConfig(strValue)
+	strValue = tostring(strValue)
+	local tRead = UserConfig:Get("setting") or {}
+	tRead["associate"] = strValue
+	UserConfig:Set("setting", tRead)
+end
+
+function Setting.GetAssociateConfig()
+	strValue = tostring(strValue)
+	local tRead = UserConfig:Get("setting") or {}
+	return tRead["associate"] or ""
+end
+
 function Setting.GetSortConfig()
 	local tRead = UserConfig:Get("setting") or {}
 	local tSort = tRead["sort"] or {}

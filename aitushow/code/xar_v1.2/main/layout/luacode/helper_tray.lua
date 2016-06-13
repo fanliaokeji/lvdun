@@ -48,22 +48,8 @@ function Tray.Exit()
 end
 
 Tray.HostWndName = "MenuHostWnd.Instance"
-Tray.MenuContent = {
-	{id="tray.open", text="打开快看", OnSelectFun = Tray.Open},
-	{id="tray.setting", text="软件设置...", OnSelectFun = Tray.Setting},
-	{id="tray.sysboot", text="开机启动", iconNormalID = "setting_check.icon", OnSelectFun = Tray.Sysboot},
-	{id="tray.suggestion", text="意见反馈", OnSelectFun = Tray.Suggestion},
-	{id="tray.exit", text="退出", OnSelectFun = Tray.Exit},
-}
 
 function Tray.PopMenu()
-	--[[local x, y = tipUtil:GetCursorPos()
-	if Setting.IsSysBoot() then
-		Tray.MenuContent[3]["iconNormalID"] = "setting_check.icon"
-	else
-		Tray.MenuContent[3]["iconNormalID"] = "setting_uncheck.icon"
-	end
-	Helper:CreateMenu(x, y, Tray.HostWnd, Tray.MenuContent)]]--
 	CreateTrayTipWnd(Tray.HostWnd)
 end
 
@@ -104,7 +90,8 @@ function Tray.Init(hostwnd)
 		
 		--点击气泡
 		if event3 == 1029 then
-			Tray.Open()	
+			Tray.Open()
+			Helper:CreateModalWnd("SettingWnd","SettingWndTree", Tray.HostWnd, "文件关联")
 		end
 		--mousemove
 		if event3 == 512 then
@@ -114,6 +101,9 @@ function Tray.Init(hostwnd)
 	Tray.TrayObject:Attach(OnTrayEvent)
 	Tray.Update()
 	Tray.TrayObject:Show()
+	if type(Tray.fnEventInit) == "function" then
+		Tray.fnEventInit()
+	end
 end
 
 function Tray.Hide()

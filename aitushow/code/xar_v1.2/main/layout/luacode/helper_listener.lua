@@ -37,6 +37,12 @@ end
 Listener.Init()
 
 function Listener.OnCommandLine(tParam)
+	--如果设置了退出标记则不处理, 并强制退出
+	if StatUtil.ExitFlag then
+		StatUtil.Exit(true)
+		LOG("Listener.OnCommandLine, StatUtil.ExitFlag = "..tostring(StatUtil.ExitFlag))
+		return
+	end
 	local strCmd = tostring(tParam[1])
 	if string.find(string.lower(strCmd), "/sstartfrom%s+localfile") then
 		--打开本地文件
@@ -104,6 +110,11 @@ function Listener.OnCommandLine(tParam)
 end
 
 function Listener.OnKeyDown(tParam)
+	--如果设置了退出标记则不处理
+	if StatUtil.ExitFlag then
+		LOG("Listener.OnCommandLine, StatUtil.ExitFlag = "..tostring(StatUtil.ExitFlag))
+		return
+	end
 	local imageCtrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	if not imageCtrl or not imageCtrl:GetVisible() then
 		LOG("Listener.OnKeyDown failed")

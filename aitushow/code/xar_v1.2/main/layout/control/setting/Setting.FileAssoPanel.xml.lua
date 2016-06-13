@@ -43,8 +43,10 @@ function Apply(self)
 			strExtsUnDo = strExtsUnDo..(SpecialExts[ckboxattr.Text] or "."..string.lower(ckboxattr.Text)..";")
 		end
 	end
+	--第三个参数为true则不刷新， 保证只刷新1次
 	tipUtil:SetAssociate(strExtsUnDo, false, strExtsDo ~= "")
 	tipUtil:SetAssociate(strExtsDo, true)
+	Helper.Setting.SetAssociateConfig(strExtsDo)
 end
 
 function chebox17OnSelect(self, event, ischeck)
