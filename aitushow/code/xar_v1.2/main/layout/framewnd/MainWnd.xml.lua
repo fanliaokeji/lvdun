@@ -19,10 +19,10 @@ function OnCreate(self)
 	-- local workWidth = workright - workleft
 	-- local workHeigth = workbottom - worktop
 	
-	local iWindowPosX = Helper:QueryRegValue(iWindowPosXReg)
-	local iWindowPosY = Helper:QueryRegValue(iWindowPosYReg)
-	local iWindowPosDX = Helper:QueryRegValue(iWindowPosDXReg)
-	local iWindowPosDY = Helper:QueryRegValue(iWindowPosDYReg)
+	local iWindowPosX = UserConfig:Get("iMainWindowPosX")
+	local iWindowPosY = UserConfig:Get("iMainWindowPosY")
+	local iWindowPosDX = UserConfig:Get("iMainWindowPosDX")
+	local iWindowPosDY = UserConfig:Get("iMainWindowPosDY")
 	
 	local workleft, worktop, workright, workbottom = Helper.tipUtil:GetWorkArea()
 		
@@ -180,22 +180,26 @@ function OnClickSortButton(self)
 end
 
 function OnSize(self, _type, width, height)
+
 	local tree = self:GetBindUIObjectTree()
 	if not tree then
+		LOG("OnSizeOnSize  not tree ")
 		return
 	end
 	
 	local rootObject = tree:GetRootObject()
 	rootObject:SetObjPos(0, 0, width, height)
 	
-	if "max" == _type or "min" == _type or "restored" == _type then
+	if "max" == _type or "min" == _type then
+		LOG("OnSizeOnSize  _type:  ", _type) -- or "restored" == _type 
 		return
 	end
 	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
-	Helper:SetRegValue(iWindowPosXReg, x)
-	Helper:SetRegValue(iWindowPosYReg, y)
-	Helper:SetRegValue(iWindowPosDXReg, x+width)
-	Helper:SetRegValue(iWindowPosDYReg, y+height)
+	
+	UserConfig:Set("iMainWindowPosX", x)
+	UserConfig:Set("iMainWindowPosY", y)
+	UserConfig:Set("iMainWindowPosDX", x+width)
+	UserConfig:Set("iMainWindowPosDY", y+height)
 end
 
 function OnMove(self)
