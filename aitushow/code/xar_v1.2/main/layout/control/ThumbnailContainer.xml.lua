@@ -265,6 +265,7 @@ function PageManager:ShowThumbnailByScrollPos(scrollPos)
 			break
 		end
 		indexEnd = math.min(indexBegin + columnCount - 1, #self.tPictures)
+		self.selectedObj = nil--add by wangwei
 		local tmpFiles = self.lineList[i]:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 		MergeTable(tmpFiles, requiredFiles)
 		indexBegin = indexEnd + 1
@@ -292,6 +293,7 @@ function PageManager:SwapLineByScrollPos(scrollPos)
 			local tmpLine = self.lineList[1]
 			table.remove(self.lineList, 1)
 			local indexEnd = math.min(indexBegin+columnCount-1, #self.tPictures)
+			self.selectedObj = nil--add by wangwei
 			requiredFiles = tmpLine:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 			table.insert(self.lineList, tmpLine)
 		end
@@ -311,6 +313,7 @@ function PageManager:SwapLineByScrollPos(scrollPos)
 			local tmpLine = self.lineList[#self.lineList]
 			table.remove(self.lineList, #self.lineList)
 			local indexEnd = math.min(indexBegin+columnCount-1, #self.tPictures)
+			self.selectedObj = nil--add by wangwei
 			requiredFiles = tmpLine:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 			table.insert(self.lineList, 1, tmpLine)
 		end
