@@ -109,10 +109,10 @@
 										</obj>
 										<obj id="client.view.loaderror.icon" class="ImageObject">
 											<attr>
-												<left>(father.width-113)/2</left>
-												<top>(father.height-131)/2</top>
-												<width>113</width>
-												<height>131</height>
+												<left>(father.width-120)/2</left>
+												<top>(father.height-145)/2</top>
+												<width>120</width>
+												<height>145</height>
 												<image>bitmap.imagefile.loaderror.icon</image>
 											</attr>
 										</obj>
