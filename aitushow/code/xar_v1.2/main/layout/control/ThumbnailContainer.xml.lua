@@ -84,6 +84,15 @@ function LineClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
 			self.containerObj:AddChild(obj)
 			--先不处理选中
 			obj:AttachListener("OnSelect", false, function(_,_,bSelect) OnSelectThumbnail(self.ctrlSelf, obj, bSelect) end)
+			--滚轮事件(要搞几层路由，还不如直接调用)
+			obj:AttachListener("OnControlMouseWheel", false, 
+				function(_self, x, y, d, f)
+					--self:RouteToFather()
+					local ScrollBar = _self:GetObject("control:Container.ScrollBar")
+					if ScrollBar then
+						ScrollBar:FireExtEvent("OnScrollBarMouseWheel", x, y, d)
+					end
+				end)
 			
 			table.insert(self.objList, obj)
 		end
@@ -175,7 +184,7 @@ function PageManager:Init(ctrlSelf, tPictures, scrollPos)
 		self.containerObj = ctrlSelf:GetControlObject("Container")
 	end
 	self:ClearAllData()
-	
+	self.selectedObj = nil--add by wangwei
 	self.tPictures = tPictures
 	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
 	local containerHeight = self:CalaContainerNeedHeight()

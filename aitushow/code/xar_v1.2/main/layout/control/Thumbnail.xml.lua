@@ -173,6 +173,7 @@ function Select(self, bSelect)
 		LOG("GetAttribute nil!!!!!!!!!")
 	end
 	attr.data.bSelect = bSelect 
+	attr.bSelect = bSelect--add by wangwei
 	-- local bkg = self:GetControlObject("Background")
 	local bkg = self:GetControlObject("SelectFrame")
 	if bSelect then
