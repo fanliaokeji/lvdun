@@ -5818,6 +5818,12 @@ int LuaAPIUtil::FileDialog(lua_State* luaState)
 		pszFileName = luaL_checkstring(luaState, 5);
 	}
 
+	const char* pszInitDir = NULL;
+	if (lua_type(luaState, 6) == LUA_TSTRING)
+	{
+		pszInitDir = luaL_checkstring(luaState, 6);
+	}
+	
 	wstring strDefExt = L"";
 
 	if (pszDefExt != NULL)
@@ -5830,12 +5836,23 @@ int LuaAPIUtil::FileDialog(lua_State* luaState)
 	{
 		strFileName = ultra::_UTF2T(pszFileName);
 	}
+	
+	wstring strInitDir = L"";
+	if (pszInitDir != NULL)
+	{
+		strInitDir = ultra::_UTF2T(pszInitDir);
+	}
 
 	wstring strFilter = ultra::_UTF2T(pszFilter);
 	std::replace(strFilter.begin(), strFilter.end(), L'|', L'\0');
 
 	std::string strPath;
 	WTL::CFileDialog dlg(bOpenFileDialog, strDefExt.c_str(), strFileName.c_str(), OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT, strFilter.c_str());
+	if (!strInitDir.empty())
+	{
+		TSDEBUG4CXX(_T("strInitDir = ") << strInitDir.c_str());
+		dlg.m_ofn.lpstrInitialDir = strInitDir.c_str();
+	}
 	if (IDOK == dlg.DoModal())
 	{
 		strPath = ultra::_T2UTF(dlg.m_szFileName);
