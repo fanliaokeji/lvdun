@@ -28,7 +28,7 @@ public:
 
 	int AttachListener(DWORD userData1,DWORD userData2,funResultCallBack pfn, const void* pfun);
 	int DetachListener(DWORD userData1, const void* pfun);
-
+	void CloseSingletonMutex();
 	bool HandleSingleton();
 
 	DECLARE_WND_CLASS(LUA_MSG_WND_CALSS)

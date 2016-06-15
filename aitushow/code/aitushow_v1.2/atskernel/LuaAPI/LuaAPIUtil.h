@@ -204,6 +204,8 @@ public:
 	//¼ôÇÐ°å
 	static int SetFileToClipboard(lua_State* pLuaState);
 	
+	static int CloseSingletonMutex(lua_State* pLuaState);
+
 	//ÐÂÔö
 	static int GetTempDir(lua_State* luaState);
 	static int GetProfilesDir(lua_State* luaState);

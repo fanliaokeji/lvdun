@@ -186,3 +186,13 @@ LRESULT CALLBACK LuaMsgWindow::KeyboardProc(int code, WPARAM wParam, LPARAM lPar
 
 	return CallNextHookEx (LuaMsgWindow::Instance()->m_hKeyboardHook, code, wParam, lParam);
 }
+
+void LuaMsgWindow::CloseSingletonMutex()
+{	
+	if (m_hMutex)
+	{
+		ReleaseMutex(m_hMutex);
+		CloseHandle(m_hMutex);
+		m_hMutex = NULL;
+	}
+}

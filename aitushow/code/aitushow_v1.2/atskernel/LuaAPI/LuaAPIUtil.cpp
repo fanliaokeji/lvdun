@@ -176,7 +176,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//文件关联
 	{"IsAssociated", IsAssociated},
 	{"SetAssociate", SetAssociate},
-
+	
+	{"CloseSingletonMutex", CloseSingletonMutex},
 
 	{"UpdateAiSvr", UpdateAiSvr},
 	{"LaunchAiSvr", LaunchAiSvr},
@@ -4449,6 +4450,12 @@ int LuaAPIUtil::FSetKeyboardHook(lua_State* pLuaState)
 int LuaAPIUtil::FDelKeyboardHook(lua_State* pLuaState)
 {
 	LuaMsgWindow::Instance()->DelKeyboardHook();
+	return 0;
+}
+
+int LuaAPIUtil::CloseSingletonMutex(lua_State* pLuaState)
+{
+	LuaMsgWindow::Instance()->CloseSingletonMutex();
 	return 0;
 }
 
