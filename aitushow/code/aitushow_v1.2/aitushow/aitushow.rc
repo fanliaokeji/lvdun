@@ -69,7 +69,7 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "FileDescription", "kuaikan Application"
+            VALUE "FileDescription", "¿ì¿´"
             VALUE "FileVersion", "1, 0, 0, 8"
             VALUE "InternalName", "kuaikan"
             VALUE "LegalCopyright", "Copyright (C) 2016"

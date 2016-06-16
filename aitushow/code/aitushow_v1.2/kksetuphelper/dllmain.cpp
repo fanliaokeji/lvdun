@@ -144,7 +144,7 @@ extern "C" __declspec(dllexport) void SendAnyHttpStat(CHAR *ec,CHAR *ea, CHAR *e
 		sprintf(szev, "&ev=%ld",ev);
 		str += szev;
 	}
-	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-58424540-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
+	sprintf(szURL, "http://www.google-analytics.com/collect?v=1&tid=UA-77713162-1&cid=%s&t=event&ec=%s&ea=%s%s",szPid,ec,ea,str.c_str());
 	
 	ResetUserHandle();
 	DWORD dwThreadId = 0;
@@ -199,7 +199,7 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\mycalendar";
+	LPCSTR data_Set= "Software\\kuaikan";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
 		char szValue[256] = {0};
@@ -221,7 +221,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "mycalendar", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "kuaikan", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}

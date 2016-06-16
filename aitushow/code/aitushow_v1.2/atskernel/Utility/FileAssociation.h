@@ -28,6 +28,7 @@ class RegTool{
 	void QueryRegValue(HKEY root,const wchar_t* szRegPath,const wchar_t* szKey, std::wstring* pRet, REGSAM flag =  KEY_READ);
 	void QueryRegValue(HKEY root,const wchar_t* szRegPath,const wchar_t* szKey, DWORD* pRet, REGSAM flag =  KEY_READ);
 	BOOL DeleteRegKey(HKEY root, const wchar_t* szRegPath, const wchar_t* szKey, REGSAM flag = KEY_ALL_ACCESS);
+	BOOL DeleteRegValue(HKEY root, const wchar_t* szRegPath, const wchar_t* szValue, REGSAM flag = KEY_ALL_ACCESS);
 	void SetRegValue(HKEY hk, const wchar_t* szRegPath, const wchar_t* szKey, const wchar_t* value, BOOL bWow64 = FALSE);
 	void SetRegValue(HKEY hk, const wchar_t* szRegPath, const wchar_t* szKey, const DWORD value, BOOL bWow64 = FALSE);
 	ATL::CRegKey * operator->(){
@@ -105,6 +106,14 @@ BOOL RegTool::DeleteRegKey(HKEY root, const wchar_t* szRegPath, const wchar_t* s
 	BOOL bRet = FALSE;
 	if (m_key.Open(root, szRegPath, flag) == ERROR_SUCCESS) {
 		bRet = m_key.RecurseDeleteKey(szKey) != ERROR_SUCCESS ? m_key.DeleteSubKey(szKey) == ERROR_SUCCESS : TRUE;
+	}
+	return bRet;
+}
+
+BOOL RegTool::DeleteRegValue(HKEY root, const wchar_t* szRegPath, const wchar_t* szValue, REGSAM flag){
+	BOOL bRet = FALSE;
+	if (m_key.Open(root, szRegPath, flag) == ERROR_SUCCESS) {
+		bRet = m_key.DeleteValue(szValue) == ERROR_SUCCESS;
 	}
 	return bRet;
 }
@@ -257,7 +266,8 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 	BOOL isVista = IsVistaOrHigher();
 	std::wstring regpath = isVista ? (basepath+strFileExt+L"\\UserChoice") : (basepath+strFileExt);
 	RegTool rt;
-	if (isVista && rt->Open(HKEY_CURRENT_USER, regpath.c_str(), KEY_READ) == ERROR_ACCESS_DENIED){
+	HRESULT hr = rt->Open(HKEY_CURRENT_USER, regpath.c_str());
+	if (isVista && hr == ERROR_ACCESS_DENIED){
 		regpath = basepath+strFileExt;
 		rt.DeleteRegKey(HKEY_CURRENT_USER, regpath.c_str(), L"UserChoice");
 		regpath = basepath+strFileExt +L"\\UserChoice";
@@ -277,7 +287,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 			}
 			else{
 				std::wstring strDeletePath = basepath + strFileExt;
-				isVista ? rt.DeleteRegKey(HKEY_CURRENT_USER, strDeletePath.c_str(), L"UserChoice") : rt->DeleteValue(L"Progid");
+				isVista ? rt.DeleteRegKey(HKEY_CURRENT_USER, strDeletePath.c_str(), L"UserChoice") : rt.DeleteRegValue(HKEY_CURRENT_USER, strDeletePath.c_str(), L"Progid");
 			}
 		}
 		if((atype&AssociateType::Application) != 0 && !isVista){
@@ -288,7 +298,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 				rt->DeleteValue(L"kuaikanappbak");
 			}
 			else{
-				rt->DeleteValue(L"Application");
+				rt.DeleteRegValue(HKEY_CURRENT_USER, regpath.c_str(), L"Application");
 			}
 		}
 		if (bHasAdmin && (atype&AssociateType::ClassRoot) != 0){
