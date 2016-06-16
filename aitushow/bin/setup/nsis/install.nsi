@@ -132,8 +132,10 @@ Function DoInstall
 
 	StrCpy $Bool_IsUpdate 0 
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path"
+	${NSISLOG} "DoInstall r0 = $0"
 	IfFileExists $0 0 +2
 	StrCpy $Bool_IsUpdate 1 
+	${NSISLOG} "DoInstall Bool_IsUpdate = $Bool_IsUpdate"
 
 	;上报统计
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -276,6 +278,7 @@ Function CmdSilentInstall
 		${SetSysBoot}
 	${EndIf}
 	;处理文件关联
+	${NSISLOG} "CmdSilentInstall Bool_IsUpdate = $Bool_IsUpdate"
 	${If} $Bool_IsUpdate == 1 
 		StrCpy $R1 "update"
 	${Else}
@@ -284,13 +287,15 @@ Function CmdSilentInstall
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
+		;修改设置项,不修改关联配置,只在初次安装的时候做
+		StrCpy $Bool_assoc 1
+		${NSISLOG} "CmdSilentInstall Bool_Sysstup = $Bool_Sysstup, Bool_assoc = $Bool_assoc"
+		${If} $Bool_assoc != 1
+		${OrIf} $Bool_Sysstup != 1
+			Call NSISModifyCfgFile
+		${EndIf}
 	${EndIf}
-	;修改设置项
-	StrCpy $Bool_assoc 1;不修改关联配置
-	${If} $Bool_assoc != 1
-	${OrIf} $Bool_Sysstup != 1
-		Call NSISModifyCfgFile
-	${EndIf}
+	${NSISLOG} "CmdSilentInstall R1 = $R1"
 	;处理/run
 	Call GetCmdLine
 	Pop $R4
@@ -1073,6 +1078,7 @@ Function NSISModifyCfgFile
 		done:
 	${EndIf}
 	${If} $3 != ""
+		${NSISLOG} "NSISModifyCfgFile Bool_Sysstup = $Bool_Sysstup, Bool_assoc = $Bool_assoc"
 		${If} $Bool_Sysstup != 1
 			${WordReplace} $3 "$\"sysboot$\"" "$\"sysboot_del$\"" "+*" $3
 		${EndIf}

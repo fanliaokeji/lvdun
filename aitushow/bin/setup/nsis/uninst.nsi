@@ -234,9 +234,12 @@ Function un.UNSD_TimerFun
     BgWorker::CallAndWait
 	
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
+	${NSISLOG} "un.UNSD_TimerFun r0 = $0, INSTDIR = $INSTDIR" 
 	${If} $0 == "$INSTDIR"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+		;删除自用的注册表信息
+		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}"
 		StrCpy $Bool_Sysstup 0
 		${UnSetSysBoot}
 		SetOutPath "$TEMP\${PRODUCT_NAME}"

@@ -46,6 +46,11 @@ Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 InstallDir "$PROGRAMFILES\kuaikan"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
+!macro _NSISLOG strParam
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t "${strParam}")'
+!macroend
+!define NSISLOG `!insertmacro _NSISLOG`
+
 !macro _InitMutex
 	Push $0
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "Global\kuaikansetup_{B7D80E56-6A48-40ad-A455-2E21537ECF79}") i .r1 ?e'
