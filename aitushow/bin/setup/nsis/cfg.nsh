@@ -160,7 +160,8 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 	${OrIf} $1 != 0
 		${If} $0 == ""
 		${OrIf} $0 == 0
-			StrCpy $0 "0123"
+			;现在默认是全发
+			StrCpy $0 "0123456789ABCDEF"
 		${EndIf}
 		${StrFilter} $0 "-" "" "" $0
 		${StrFilter} $1 "-" "" "" $1

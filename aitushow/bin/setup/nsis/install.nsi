@@ -228,6 +228,7 @@ Function CmdSilentInstall
 	;将安装方式写入注册表
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
 	SetOutPath "$INSTDIR\program"
+	;开始菜单程序
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
@@ -235,6 +236,7 @@ Function CmdSilentInstall
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
@@ -243,6 +245,13 @@ Function CmdSilentInstall
 		Call GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 500
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+		
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
@@ -252,7 +261,9 @@ Function CmdSilentInstall
 			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
 		${EndIf}
 	${Endif}
-	
+	;桌面
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+	${RefreshShellIcons}
 	;静默安装根据命令行开机启动
 	Call GetCmdLine
 	Pop $R4
@@ -264,15 +275,7 @@ Function CmdSilentInstall
 	${If} $Bool_Sysstup == 1
 		${SetSysBoot}
 	${EndIf}
-	Call GetCmdLine
-	Pop $R4
-	ClearErrors
-	${GetOptions} $R4 "/run"  $R0
-	IfErrors ExitInstal 0
-	${If} $R0 == ""
-	${OrIf} $R0 == 0
-		StrCpy $R0 "/embedding"
-	${EndIf}
+	;处理文件关联
 	${If} $Bool_IsUpdate == 1 
 		StrCpy $R1 "update"
 	${Else}
@@ -282,7 +285,22 @@ Function CmdSilentInstall
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
 	${EndIf}
-	
+	;修改设置项
+	StrCpy $Bool_assoc 1;不修改关联配置
+	${If} $Bool_assoc != 1
+	${OrIf} $Bool_Sysstup != 1
+		Call NSISModifyCfgFile
+	${EndIf}
+	;处理/run
+	Call GetCmdLine
+	Pop $R4
+	ClearErrors
+	${GetOptions} $R4 "/run"  $R0
+	IfErrors ExitInstal 0
+	${If} $R0 == ""
+	${OrIf} $R0 == 0
+		StrCpy $R0 "/embedding"
+	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	ExecShell open "kuaikan.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
 	ExitInstal:
@@ -951,6 +969,7 @@ Function NSD_TimerFun
 	SetOutPath "$INSTDIR\program"
 	;快速启动栏
 	${if} $2 == 2
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 		Call RefreshIcon
@@ -961,6 +980,13 @@ Function NSD_TimerFun
 		Call GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0	
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call RefreshIcon
+			Sleep 500
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+		
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
 			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
@@ -971,11 +997,15 @@ Function NSD_TimerFun
 		${EndIf}
 	${Endif}
 	
+	;开始菜单程序
 	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
 	SetOutPath "$INSTDIR\program"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
-
+	;桌面
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+	${RefreshShellIcons}
+	
 	;最后才显示安装完成界面
 	;HideWindow
 	ShowWindow $Handle_Loading ${SW_HIDE}
@@ -1020,6 +1050,48 @@ Function InstallationMainFun
 	Sleep 1000
 FunctionEnd
 
+Function NSISModifyCfgFile
+	push $0
+	push $1
+	push $2
+	push $3
+	StrCpy $1 ${NSIS_MAX_STRLEN}
+	StrCpy $0 ""
+	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetProfileFolder(t) i(.r0).r2' 
+	StrCpy $3 ""
+	${If} $0 != ""
+		ClearErrors
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.lua" r
+		IfErrors done
+		FileRead $1 $2
+		${While} $2 != ''
+			StrCpy $3 "$3$2"
+			FileSeek $1 0 CUR
+			FileRead $1 $2
+		${EndWhile}
+		FileClose $1
+		done:
+	${EndIf}
+	${If} $3 != ""
+		${If} $Bool_Sysstup != 1
+			${WordReplace} $3 "$\"sysboot$\"" "$\"sysboot_del$\"" "+*" $3
+		${EndIf}
+		${If} $Bool_assoc != 1
+			${WordReplace} $3 "$\"associate$\"" "$\"associate_del$\"" "+*" $3
+		${EndIf}
+		ClearErrors
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.lua" w
+		IfErrors done2
+		FileWrite $1 $3
+		FileClose $1
+		done2:
+	${EndIf}
+	pop $3
+	pop $2
+	pop $1
+	pop $0
+FunctionEnd
+
 Function onLastClose
 	${If} $Bool_Sysstup == 1
 		${SetSysBoot}
@@ -1034,6 +1106,11 @@ Function onLastClose
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
+	${EndIf}
+	;修改设置项
+	${If} $Bool_assoc != 1
+	${OrIf} $Bool_Sysstup != 1
+		Call NSISModifyCfgFile
 	${EndIf}
 	Call OnClickQuitOK
 FunctionEnd
@@ -1052,6 +1129,11 @@ Function OnClick_FreeUse
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
+	${EndIf}
+	;修改设置项
+	${If} $Bool_assoc != 1
+	${OrIf} $Bool_Sysstup != 1
+		Call NSISModifyCfgFile
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
 	${If} $Bool_IsUpdate == 1 

@@ -219,6 +219,10 @@ Function un.UNSD_TimerFun
 		Call un.GetPinPath
 		${If} $0 != "" 
 		${AndIf} $0 != 0
+			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+			Call un.RefreshIcon
+			Sleep 200
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Call un.RefreshIcon
