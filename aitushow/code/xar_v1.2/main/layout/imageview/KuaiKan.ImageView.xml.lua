@@ -275,6 +275,12 @@ function LoadImageFile(self, filePath, fref, fnPreCallBack, fnAfterCalBack)
 	if attr.CurDocItem and attr.CurDocItem.FilePath == filePath then	
 		return
 	end
+	--切换图片时删除末页提示
+	local tipobj = self:GetObject("firstorlasttip")
+	if tipobj and tipobj:GetVisible() then
+		tipobj:SetVisible(false)
+		tipobj:SetChildrenVisible(false)
+	end
 	local function CallBack()
 		if fnPreCallBack then
 			fnPreCallBack()
