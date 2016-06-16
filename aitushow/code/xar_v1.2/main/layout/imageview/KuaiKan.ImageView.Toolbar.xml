@@ -41,7 +41,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>放大(+)</TipText>
+										<TipText>放大</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>
@@ -70,7 +70,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>缩小(-)</TipText>
+										<TipText>缩小</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>
@@ -158,7 +158,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>下一张(空格)</TipText>
+										<TipText>下一张</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>
@@ -187,7 +187,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>左旋(Ctrl+L)</TipText>
+										<TipText>向左旋转</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>
@@ -217,7 +217,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>右旋(Ctrl+R)</TipText>
+										<TipText>向右旋转</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>
@@ -247,7 +247,7 @@
 										<top>7</top>
 										<width>37</width>
 										<height>30</height>
-										<TipText>删除(Delete)</TipText>
+										<TipText>删除</TipText>
 										<TipPosIsTopMid>true</TipPosIsTopMid>
 										<Enable>false</Enable>
 										<BkgTextureID_Normal></BkgTextureID_Normal>

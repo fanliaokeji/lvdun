@@ -54,15 +54,15 @@ function AddTip(self, x, y)
 	local xarManager = XLGetObject("Xunlei.UIEngine.XARManager")
 	local xarFactory = xarManager:GetXARFactory()
 	
-    --local tipObj = xarFactory:CreateUIObject("tip","Kuaikan.NewTask.Tip")
+    local tipObj = xarFactory:CreateUIObject("tip","Kuaikan.Toolbar.Tip")
 	if not tipObj then
 		return
 	end
 	
 	local tipAttr = tipObj:GetAttribute()
-	tipAttr.BkgTexture = "texture.tip.normal.bkg"
+	tipAttr.BkgTexture = "toolbar.bkg"
 	tipAttr.TextBeginH = 0
-	tipAttr.TextBeginV = 4
+	tipAttr.TextBeginV = 1
 
 	tipObj:SetText(attr.TipText)
 	tipObj:SetZorder(10000)

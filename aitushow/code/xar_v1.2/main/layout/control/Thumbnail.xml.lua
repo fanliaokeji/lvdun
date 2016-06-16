@@ -7,7 +7,7 @@ function AdjustImageBySize(backgroundObj, imageObj, ThumbWidth, ThumbHeight)
 	--这里不能用imageObj:GetObjPos,可能imageObj的pos曾经被下面的代码改过
 	local imageL, imageT, imageR, imageB = backgroundObj:GetObjPos()
 	local imageWidth = imageR - imageL - 6
-	local imageHeight = imageB - imageT - 23
+	local imageHeight = imageB - imageT - 23-10
 	if ThumbWidth < imageWidth and ThumbHeight < imageHeight then
 		--直接1:1展示
 		local newTop    = math.round((imageHeight - ThumbHeight)/2)

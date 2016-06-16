@@ -524,6 +524,19 @@ function PreFile(self)
 	local filePath, bLastFile = self:GetPreFilePath()
 	
 	if filePath then
+		local tipobj = self:GetObject("firstorlasttip")
+		if bLastFile then
+			if tipobj and tipobj:GetVisible() then
+				tipobj:SetVisible(false)
+				tipobj:SetChildrenVisible(false)
+			else
+				local tiptextobj = tipobj:GetObject("firstorlasttip.text")
+				tiptextobj:SetText("当前已是第一张，继续浏览将会返回最后一张")
+				tipobj:SetVisible(true)
+				tipobj:SetChildrenVisible(true)
+				return
+			end
+		end
 		local function FnCallBack()
 			listView:PreFile()
 		end
@@ -561,6 +574,20 @@ function NextFile(self, bMust)
 	local filePath, bLastFile = self:GetNextFilePath()
 	
 	if filePath then
+		local tipobj = self:GetObject("firstorlasttip")
+		if bLastFile then
+			if tipobj and tipobj:GetVisible() then
+				tipobj:SetVisible(false)
+				tipobj:SetChildrenVisible(false)
+			else
+				local tiptextobj = tipobj:GetObject("firstorlasttip.text")
+				tiptextobj:SetText("当前已是最后一张，继续浏览将会返回第一张")
+				tipobj:SetVisible(true)
+				tipobj:SetChildrenVisible(true)
+				return
+			end
+		end
+		
 		local function FnCallBack()
 			listView:NextFile()
 		end
@@ -633,7 +660,7 @@ function AdapterOrSrcScreen(self, bSrc, bAdapter)
 	local bMustShowAdapter = true
 	if math.abs(curRatio - 1.0) < 0.000001 then
 		if math.abs(newRatio - 1.0) < 0.000001 then
-			if tipsText == "适应窗口（/）" then
+			if tipsText == "适应窗口" then
 				bMustShowAdapter = false
 			else
 				bMustShowAdapter = true
@@ -649,11 +676,11 @@ function AdapterOrSrcScreen(self, bSrc, bAdapter)
 		end 
 	end
 	if bMustShowAdapter then
-		toolbarItem:AddTipText("适应窗口（/）")
+		toolbarItem:AddTipText("适应窗口")
 		toolbarItem:SetIconImage("toolbar.shiping.normal", "toolbar.shiping.hover",
 								 "toolbar.shiping.down", "toolbar.shiping.normal")
 	else
-		toolbarItem:AddTipText("实际大小（/）")
+		toolbarItem:AddTipText("实际尺寸")
 		toolbarItem:SetIconImage("toolbar.yibiyi.normal", "toolbar.yibiyi.hover",
 								 "toolbar.yibiyi.down", "toolbar.yibiyi.normal")
 	end
@@ -1110,12 +1137,12 @@ function View_OnScaleRatioChanged(self)
 	end
 	if bMustShowAdapter then
 		local toolbarItem = normalToolbar:GetToolbarItem("src")
-		toolbarItem:AddTipText("适应窗口（/）")
+		toolbarItem:AddTipText("适应窗口")
 		toolbarItem:SetIconImage("toolbar.shiping.normal", "toolbar.shiping.hover",
 								 "toolbar.shiping.down", "toolbar.shiping.normal")
 	else
 		local toolbarItem = normalToolbar:GetToolbarItem("src")
-		toolbarItem:AddTipText("实际大小（/）")
+		toolbarItem:AddTipText("实际尺寸")
 		toolbarItem:SetIconImage("toolbar.yibiyi.normal", "toolbar.yibiyi.hover",
 								 "toolbar.yibiyi.down", "toolbar.yibiyi.normal")
 	end

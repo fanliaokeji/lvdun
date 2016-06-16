@@ -31,15 +31,15 @@
 						<left>0</left>
 						<top>0</top>
 						<width>father.width</width>
-						<height>30</height>
+						<height>33</height>
 					</attr>
 				</obj>
 				<obj id="MainWnd.LeftTreeContainer" class="LayoutObject">
 					<attr>
-						<left>0</left>
-						<top>30</top>
+						<left>4</left>
+						<top>33</top>
 						<width>195</width>
-						<height>father.height - 30 - 30</height>
+						<height>father.height - 30 - 33</height>
 						<limitchild>1</limitchild>
 					</attr>
 					<children>
@@ -58,10 +58,10 @@
 				</obj>
 				<obj id="MainWnd.ResizeLine" class="LayoutObject">
 					<attr>
-						<left>196</left>
-						<top>30</top>
+						<left>199</left>
+						<top>33</top>
 						<width>4</width>
-						<height>father.height - 30 - 30</height>
+						<height>father.height - 30 - 33</height>
 					</attr>
 					<eventlist>
 						<event name="OnLButtonDown" file="MainWnd.xml.lua" func="OnLButtonDown_ResizeLine"/>
@@ -71,10 +71,10 @@
 				</obj>
 				<obj id="MainWnd.ThumbnailContainer" class="LayoutObject">
 					<attr>
-						<left>201</left>
-						<top>30</top>
-						<width>father.width - 201</width>
-						<height>father.height - 30 - 30</height>
+						<left>203</left>
+						<top>33</top>
+						<width>father.width - 203-4</width>
+						<height>father.height - 30 - 33</height>
 						<limitchild>1</limitchild>
 					</attr>
 					<children>
@@ -102,7 +102,7 @@
 								</obj>
 								<obj id="MainWnd.SliderCtrl" class="Slider">
 									<attr>
-										<left>father.width-73-8-20-76</left>
+										<left>father.width-73-20-76</left>
 										<top>58-10</top>
 										<width>76</width>
 										<height>14</height>
@@ -125,7 +125,7 @@
 								</obj>
 								<obj id="MainWnd.SortButton" class="TipAddin.Button">
 									<attr>
-										<left>father.width-73-8</left>
+										<left>father.width-73</left>
 										<top>50-10</top>
 										<width>73</width>
 										<height>29</height>

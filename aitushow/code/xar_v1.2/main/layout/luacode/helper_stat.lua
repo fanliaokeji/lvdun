@@ -151,6 +151,8 @@ function StatUtil.Exit(bForce)
 		LOG("************ Exit ************")
 		tipUtil:Exit("Exit")
 	end
+	--关闭单例互斥量
+	tipUtil:CloseSingletonMutex()
 	--设置退出标记
 	StatUtil.ExitFlag = true
 	--隐藏所有窗口

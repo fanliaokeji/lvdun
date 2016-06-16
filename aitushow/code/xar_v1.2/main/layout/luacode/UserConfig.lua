@@ -33,7 +33,8 @@ end
 
 function UserConfig:Set(key, value)
 	self.configData[key] = value
-	self:SaveToFile()
+	--不必每次set就保存，退出时保存即可
+	--self:SaveToFile()
 end
 
 function UserConfig:Get(key, defaultValue)

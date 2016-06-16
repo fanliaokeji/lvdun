@@ -29,7 +29,7 @@
 				<obj id="FrameWnd.Title.Logo" class="ImageObject">
 					<attr>
 						<left>12</left>
-						<top>5</top>
+						<top>7</top>
 						<width>18</width>
 						<height>20</height>
 						<image>image.logo</image>
@@ -38,17 +38,17 @@
 				<obj id="FrameWnd.Title.TitleText" class="TextObject">
 					<attr>
 						<left>34</left>
-						<top>5</top>
+						<top>8</top>
 						<width>father.width - 30 - 12*7</width>
-						<height>father.height - 5</height>
+						<height>father.height - 8</height>
 						<textcolor>system.white</textcolor>
 						<text>快看</text>
 					</attr>	
 				</obj>
 				<obj id="FrameWnd.Title.Setting" class="TipAddin.Button">
 					<attr>
-						<left>father.width-25 - 22*3</left>
-						<top>0</top>
+						<left>father.width-30 - 22*3</left>
+						<top>(father.height-22)/2+1</top>
 						<width>22</width>
 						<height>22</height>
 						<NormalBkgID>bitmap.title.setting.normal</NormalBkgID>
@@ -63,8 +63,8 @@
 				
 				<obj id="FrameWnd.Title.MinBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-25 - 22*2</left>
-						<top>0</top>
+						<left>father.width-30 - 22*2</left>
+						<top>(father.height-22)/2+1</top>
 						<width>22</width>
 						<height>22</height>
 						<NormalBkgID>texture.title.min.normal</NormalBkgID>
@@ -78,8 +78,8 @@
 				</obj>	
 				<obj id="FrameWnd.Title.MaxBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-25 - 22</left>
-						<top>0</top>
+						<left>father.width-30 - 22</left>
+						<top>(father.height-22)/2+1</top>
 						<width>22</width>
 						<height>22</height>
 						<NormalBkgID>texture.title.max.normal</NormalBkgID>
@@ -93,8 +93,8 @@
 				</obj>	
 				<obj id="FrameWnd.Title.RestoreBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-25 - 22</left>
-						<top>0</top>
+						<left>father.width-30 - 22</left>
+						<top>(father.height-22)/2+1</top>
 						<width>22</width>
 						<height>22</height>
 						<NormalBkgID>texture.title.restore.normal</NormalBkgID>
@@ -109,8 +109,8 @@
 				</obj>	
 				<obj id="FrameWnd.Title.CloseBtn" class="TipAddin.Button">
 					<attr>
-						<left>father.width-25</left>
-						<top>0</top>
+						<left>father.width-30</left>
+						<top>(father.height-22)/2+1</top>
 						<width>22</width>
 						<height>22</height>
 						<NormalBkgID>texture.title.close.normal</NormalBkgID>

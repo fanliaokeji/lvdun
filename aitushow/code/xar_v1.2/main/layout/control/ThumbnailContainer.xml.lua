@@ -88,6 +88,7 @@ function LineClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
 			obj:AttachListener("OnControlMouseWheel", false, 
 				function(_self, x, y, d, f)
 					--self:RouteToFather()
+					d = d > 0 and 120 or -120
 					local ScrollBar = _self:GetObject("control:Container.ScrollBar")
 					if ScrollBar then
 						ScrollBar:FireExtEvent("OnScrollBarMouseWheel", x, y, d)
@@ -265,7 +266,7 @@ function PageManager:ShowThumbnailByScrollPos(scrollPos)
 			break
 		end
 		indexEnd = math.min(indexBegin + columnCount - 1, #self.tPictures)
-		self.selectedObj = nil--add by wangwei
+		--self.selectedObj = nil--add by wangwei
 		local tmpFiles = self.lineList[i]:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 		MergeTable(tmpFiles, requiredFiles)
 		indexBegin = indexEnd + 1

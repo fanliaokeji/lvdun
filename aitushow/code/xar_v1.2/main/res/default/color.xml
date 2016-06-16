@@ -1,4 +1,4 @@
-<XLUE>
+﻿<XLUE>
 	<resource>
 		<color id="system.black" red="0" green="0" blue="0" alpha="255" />
 		<color id="system.gray" red="204" green="211" blue="214" alpha="255"/>
@@ -29,5 +29,6 @@
 		<color id="394264" value="#394264" />
 		<color id="B8C2E1" value="#B8C2E1" />
 		<color id="4FC4F6" value="#4FC4F6" />
+		<color id="F5F5F5" value="#F5F5F5" />
 	</resource>
 </XLUE>

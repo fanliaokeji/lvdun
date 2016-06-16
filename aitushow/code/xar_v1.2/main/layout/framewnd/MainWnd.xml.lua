@@ -30,10 +30,11 @@ function OnCreate(self)
 		and iWindowPosX < workright and iWindowPosY < workbottom and iWindowPosDX > workleft and iWindowPosDY > worktop then
 		self:Move(iWindowPosX, iWindowPosY, iWindowPosDX-iWindowPosX, iWindowPosDY-iWindowPosY)
 	else
-		local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
+		--[[local nLayoutL, nLayoutT, nLayoutR, nLayoutB = objRootLayout:GetObjPos()
 		local nLayoutWidth = nLayoutR - nLayoutL
 		local nLayoutHeight = nLayoutB - nLayoutT
-		self:Move( math.floor((workright - nLayoutWidth)/2), math.floor((workbottom - nLayoutHeight)/2), nLayoutWidth, nLayoutHeight)
+		self:Move( math.floor((workright - nLayoutWidth)/2), math.floor((workbottom - nLayoutHeight)/2), nLayoutWidth, nLayoutHeight)]]--
+		self:Max()--第一次最大化展示
 	end
 	
 	-- self:Move( math.floor((workWidth - nLayoutWidth) / 2), math.floor((workHeigth - nLayoutHeight) / 2), nLayoutWidth, nLayoutHeight)
@@ -92,9 +93,9 @@ function OnMouseMove_ResizeLine(self, x, y)
 	local leftTreeContainer = owner:GetUIObject("MainWnd.LeftTreeContainer")
 	local thumbnailContainer = owner:GetUIObject("MainWnd.ThumbnailContainer")
 	
-	leftTreeContainer:SetObjPos2("0", "30", x - 1, "father.height - 30 - 30")
-	self:SetObjPos2(x, "30", "4", "father.height - 30 - 30")
-	thumbnailContainer:SetObjPos2(x + 4, "30", "father.width - "..x.."-4", "father.height - 30 - 30")
+	leftTreeContainer:SetObjPos2("4", "33", x - 1, "father.height - 30 - 33")
+	self:SetObjPos2(x+3, "33", "4", "father.height - 30 - 33")
+	thumbnailContainer:SetObjPos2(x + 7, "33", "father.width - "..x.."-7-4", "father.height - 30 - 33")
 end
 
 function OnLButtonUp_ResizeLine(self, x, y)

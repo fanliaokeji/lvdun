@@ -1,0 +1,53 @@
+<xlue>
+    <control class="Kuaikan.Toolbar.Tip">
+		<attr_def>
+			<attr name="BkgTexture" type="string"><default>toolbar.bkg</default></attr>
+			<attr name="TextBeginH" type="int"><default>2</default></attr>
+			<attr name="TextBeginV" type="int"><default>4</default></attr>
+			<attr name="Zorder" type="int"><default>500000</default></attr>
+		</attr_def>
+        <method_def>
+            <SetText file="KuaiKan.Toolbar.Tip.xml.lua" func="SetText"/>
+            <GetSize file="KuaiKan.Toolbar.Tip.xml.lua" func="GetSize"/>
+            <SetType file="KuaiKan.Toolbar.Tip.xml.lua" func="SetType"/>
+            <SetMultilineParam file="KuaiKan.Toolbar.Tip.xml.lua" func="SetMultilineParam"/>
+			<SetHAlign file="KuaiKan.Toolbar.Tip.xml.lua" func="SetHAlign"/>
+        </method_def>
+        <objtemplate>
+            <children>
+                <obj id="tip.bkg" class="TextureObject">
+                    <attr>
+                        <left>0</left>
+                        <top>0</top>
+                        <width>father.width</width>
+                        <height>father.height</height>
+                        <texture>toolbar.bkg</texture>
+						<alpha>180</alpha>
+                        <zorder>500000</zorder>
+                    </attr>
+                    <children>
+                        <obj id="tip.text" class="TextObject">
+                            <attr>
+                                <left>5</left>
+                                <top>1</top>
+                                <width>father.width-5</width>
+                                <height>father.height</height>
+                                <texttype>gdi</texttype>
+                                <halign>center</halign>
+                                <valign>top</valign>
+                                <zorder>500001</zorder>
+                                <textcolor>system.white</textcolor>
+                                <font>default.font</font>
+                                <multiline>0</multiline>
+                            </attr>
+                        </obj>
+                    </children>
+                </obj>
+            </children>
+            <eventlist>
+                <event name="OnInitControl" file="KuaiKan.Toolbar.Tip.xml.lua" func="OnInitControl"/>
+                <event name="OnPosChange" file="KuaiKan.Toolbar.Tip.xml.lua" func="OnPosChange"/>
+            </eventlist>
+        </objtemplate>
+    </control>
+</xlue>

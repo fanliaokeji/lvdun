@@ -8,8 +8,11 @@ end
 
 local menuFunTable = {}
 function menuFunTable.OnSelect_Open(self)
+	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+	local curDocItem = clientobj:GetCurDocItem()
+	local parentPath = Helper.APIproxy.GetParentPath(curDocItem.FilePath)
 	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
-	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", "")
+	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", "", parentPath)
 	if strLocalFiles == nil or #strLocalFiles == 0 then
 		return
 	end
@@ -35,7 +38,7 @@ function menuFunTable.OnSelect_Save(self)
 	local curDocItem = clientobj:GetCurDocItem()	
 	local filename = Helper.APIproxy.GetFileNameFromPath(curDocItem.FilePath)
 	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
-	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", filename)
+	local strLocalFiles = tipUtil:FileDialog(false, fileFilter, "", filename)
 	local MSGBOX = Helper.MessageBox
 	
 	if strLocalFiles and strLocalFiles ~= "" then
