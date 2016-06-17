@@ -84,6 +84,7 @@ function StatUtil.GetUsedTime()
 	return nNow - StatUtil.StartTime
 end
 
+--谷歌上报
 function StatUtil.SendStat(tStat)
 	--由于谷歌统计超标,只取四分之一peerid上报
 	if not IsCurPeerIDStatAllowed() then 
@@ -128,6 +129,29 @@ function StatUtil.SendStat(tStat)
 	end)
 end
 
+--上报到快看
+function StatUtil.SendKKStat(nOPeration)
+	local strCID = GetPeerID()
+	local strChannelID = StatUtil.GetInstallSrc()
+	local strVer = StatUtil.GetMainVer()
+	local strRandom = tipUtil:GetCurrentUTCTime()
+	
+	local strPort = "8082"
+	if nOPeration == 10 then   --心跳上报的端口为8083
+		strPort = "8083"
+	end
+	
+	local strUrl = "http://stat.feitwo.com:"..tostring(strPort).."/c?appid=1001&peerid=".. tostring(strCID)
+					.."&proid=15&op="..tostring(nOPeration).."&cid="..(strChannelID)
+					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
+	
+	LOG("SendKKStat: " .. tostring(strUrl))
+	gStatCount = gStatCount + 1
+	tipAsynUtil:AsynSendHttpStat(strUrl, function()
+				gStatCount = gStatCount - 1 
+		end)
+end
+
 function StatUtil.HideAllWindow()
 	local hostWndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local str = ""
@@ -151,6 +175,8 @@ function StatUtil.Exit(bForce)
 		LOG("************ Exit ************")
 		tipUtil:Exit("Exit")
 	end
+	--退出时上报1条心跳
+	StatUtil.SendKKStat(10)
 	--关闭单例互斥量
 	tipUtil:CloseSingletonMutex()
 	--设置退出标记

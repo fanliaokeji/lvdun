@@ -44,13 +44,16 @@ function Listener.OnCommandLine(tParam)
 		return
 	end
 	local strCmd = tostring(tParam[1])
-	if string.find(string.lower(strCmd), "/sstartfrom%s+localfile") then
-		--打开本地文件
-		local filepath = string.match(strCmd, "\"([^\"]+)\"[^\"]*$")
-		LOG("Listener.OnCommandLine: filepath: ", filepath)
-		if not filepath or not tipUtil:QueryFileExists(filepath) then
-			return
-		end
+	--打开本地文件
+	strCmd = string.gsub(string.lower(strCmd), "^[\"\']?[^%.]+%.exe[\"\']?", "")
+	strCmd = tostring(strCmd)
+	LOG("tostring(tParam[1]) = "..tostring(tParam[1])..", strCmd = "..tostring(strCmd))
+	local filepath = string.match(strCmd, "\"([^\"]+)\"[^\"]*$")
+	LOG("Listener.OnCommandLine: filepath: ", filepath)
+	if not filepath or not tipUtil:QueryFileExists(filepath) then
+		filepath = strCmd
+	end
+	if filepath and tipUtil:QueryFileExists(filepath) then
 		local imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 		if not imgctrl then
 			Helper:CreateModelessWnd("Kuaikan.MainWnd","Kuaikan.MainObjTree")

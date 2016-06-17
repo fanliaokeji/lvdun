@@ -63,18 +63,26 @@ function OnLoadLuaFile()
 		strEL = StatUtil.GetInstallSrc(),
 		strEV = 1,
 	}) 
-	
+	--快看心跳上报
+	SetTimer(function(item, id)
+		StatUtil.SendKKStat(10)
+	end, 2*60*1000)
+	--快看启动上报
+	StatUtil.SendKKStat(2)
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
 	local cmdString = tostring(tipUtil:GetCommandLine())
 	LOG("OnLoadLuaFile cmdString: ", cmdString)
 	local HostWnd
 	--打开本地文件
-	if string.find(string.lower(cmdString), "/sstartfrom%s+localfile") then
+	local filepath = string.match(cmdString, "\"([^\"]+)\"[^\"]*$")
+	if not filepath or not tipUtil:QueryFileExists(filepath) then
+		filepath = cmdString
+	end
+	if filepath and tipUtil:QueryFileExists(filepath) then
 		HostWnd = Helper:CreateModelessWnd("Kuaikan.MainWnd","Kuaikan.MainObjTree")
-		local filepath = string.match(cmdString, "\"([^\"]+)\"[^\"]*$")
 		local imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
-		if filepath and tipUtil:QueryFileExists(filepath) and imgctrl then
+		if imgctrl then
 			imgctrl:LoadImageFile(filepath, nil, nil, function() imgctrl:UpdateFileList() end)
 		end
 	--打开主界面
