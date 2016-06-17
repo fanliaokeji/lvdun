@@ -39,14 +39,15 @@ class RegTool{
 };
 
 typedef enum tagAssociateType{
-	None								=	0X00000000,
-	ProgID								=	0X00000001,
-	Application							=	0X00000010,
-	ClassRoot							=	0X00000100,
-	ClassRootOpenWithList				=	0X00001000,
-	ClassRootOpenWithProgIds			=	0X00010000,
-	CurrentUserOpenWithProgIds			=	0X00100000,
-	RootKeyExist						=	0X01000000
+	None								=	0X0000000000,
+	ProgID								=	0X0000000001,
+	Application							=	0X0000000010,
+	ClassRoot							=	0X0000000100,
+	ClassRootOpenWithList				=	0X0000001000,
+	ClassRootOpenWithProgIds			=	0X0000010000,
+	CurrentUserOpenWithProgIds			=	0X0000100000,
+	RootKeyExist						=	0X0001000000,
+	ContextMenuExist					=	0X0010000000,
 }AssociateType;
 
 class FileAssociation{
@@ -162,8 +163,9 @@ void FileAssociation::CreateImgKey(const std::wstring& strFileExt){
 		{L"kuaikan%s", L"", L"图像文件(%s)"},
 		{L"kuaikan%s\\DefaultIcon", L"", L"iconpath"},
 		{L"kuaikan%s\\Shell", L"", L"open"},
-		{L"kuaikan%s\\Shell\\open", L"", L"使用快看打开(&P)"},
+		{L"kuaikan%s\\Shell\\open", L"", L"使用快看打开"},
 		{L"kuaikan%s\\Shell\\open\\command", L"", L"openpath"},
+		{L"*\\Shell\\使用快看打开图片\\command", L"", L"openpath"},
 	};
 	wchar_t szTemp1[MAX_PATH] = {0}, szTemp2[MAX_PATH] = {0}; 
 	RegTool rt;
@@ -202,6 +204,7 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 		{L"HKEY_CLASSES_ROOT", L"%s", L"", L"kuaikan%s"},
 		{L"HKEY_CLASSES_ROOT", L"%s\\OpenWithList\\kuaikan.exe", L"", L""},
 		{L"HKEY_CLASSES_ROOT", L"%s\\OpenWithProgids", L"kuaikan%s", L""},
+		{L"HKEY_CLASSES_ROOT", L"*\\Shell\\使用快看打开图片", L"", L""},
 	};
 	std::wstring basepath = L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\";
 	UINT atype = None;
@@ -222,13 +225,20 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 		memset(szTemp3, 0, MAX_PATH);
 		swprintf(szTemp3, szPaths[i][3], strFileExt.c_str());
 		if(i>=3){
-			if(i == 3){
-				atype |=  rt->Open(hk, szTemp1, KEY_READ) == ERROR_SUCCESS ? ClassRootOpenWithList : 0;
-			}
-			else if(i == 4){
-				DWORD dwRet = -1;
-				rt.QueryRegValue(hk, szTemp1, szTemp2, &dwRet);
-				atype |= dwRet==0 ? ClassRootOpenWithProgIds : 0;
+			switch(i){
+				case 3:
+					atype |=  rt->Open(hk, szTemp1, KEY_READ) == ERROR_SUCCESS ? ClassRootOpenWithList : 0;
+					break;
+				case 4:
+					{
+						DWORD dwRet = -1;
+						rt.QueryRegValue(hk, szTemp1, szTemp2, &dwRet);
+						atype |= dwRet==0 ? ClassRootOpenWithProgIds : 0;
+					}
+					break;
+				case 5:
+					atype |=  rt->Open(hk, szTemp1, KEY_READ) == ERROR_SUCCESS ? ContextMenuExist : 0;
+					break;
 			}
 		}
 		else{
@@ -311,6 +321,10 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 			else{
 				rt.SetRegValue(HKEY_CLASSES_ROOT, strFileExt.c_str(), L"", L"");
 			}
+		}
+		//右键菜单
+		if (bHasAdmin && (atype&AssociateType::ContextMenuExist) != 0){
+			rt.DeleteRegKey(HKEY_CLASSES_ROOT, L"*\\Shell", L"使用快看打开图片");
 		}
 
 	}
