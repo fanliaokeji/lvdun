@@ -195,4 +195,9 @@ void LuaMsgWindow::CloseSingletonMutex()
 		CloseHandle(m_hMutex);
 		m_hMutex = NULL;
 	}
+	if (m_hWnd != NULL)
+	{
+		DestroyWindow();
+		m_hWnd = NULL;
+	}
 }
