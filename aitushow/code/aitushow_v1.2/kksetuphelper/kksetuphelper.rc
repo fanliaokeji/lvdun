@@ -69,10 +69,11 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
+            VALUE "CompanyName", "深圳市立升行塑胶有限公司"
             VALUE "FileDescription", "kksetuphelper Module"
             VALUE "FileVersion", "1, 0, 0, 1"
             VALUE "InternalName", "kksetuphelper"
-            VALUE "LegalCopyright", "Copyright (C) 2016"
+            VALUE "LegalCopyright", "Copyright (c) 2016-2018 深圳市立升行塑胶有限公司"
             VALUE "OriginalFilename", "kksetuphelper.dll"
             VALUE "ProductName", "快看"
             VALUE "ProductVersion", "1, 0, 0, 1"

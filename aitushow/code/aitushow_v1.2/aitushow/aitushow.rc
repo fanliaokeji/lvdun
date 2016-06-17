@@ -69,10 +69,11 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
+            VALUE "CompanyName", "深圳市立升行塑胶有限公司"
             VALUE "FileDescription", "快看"
             VALUE "FileVersion", "1, 0, 0, 8"
             VALUE "InternalName", "kuaikan"
-            VALUE "LegalCopyright", "Copyright (C) 2016"
+            VALUE "LegalCopyright", "Copyright (c) 2016-2018 深圳市立升行塑胶有限公司"
             VALUE "OriginalFilename", "kuaikan.exe"
             VALUE "ProductName", "快看"
             VALUE "ProductVersion", "1, 0, 0, 8"
