@@ -123,7 +123,7 @@
 						<obj id="FileName" class="TextObject">
 							<attr>
 								<left>4</left>
-								<top>father.height - 20-8</top>
+								<top>father.height - 20</top>
 								<width>father.width - 8</width>
 								<height>20</height>
 								<endellipsis>1</endellipsis>
