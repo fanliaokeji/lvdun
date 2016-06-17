@@ -173,7 +173,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		StrCpy $2 $1 1 11
 		${WordReplace} $0 $2 "X" +1 $1
 		${If} $0 != $1
-			System::Call '$TEMP\${PRODUCT_NAME}\kuaikansetup::SendAnyHttpStat(t "${strp1}", t "${strp2}", t "${strp3}", i ${np4}) '
+			System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::SendAnyHttpStat(t "${strp1}", t "${strp2}", t "${strp3}", i ${np4}) '
 		${EndIf}
 	${EndIf}
 	Pop $2
@@ -195,20 +195,20 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		ClearErrors
 		ReadRegStr $0 HKCU "Software\kuaikan" "lpath"
 		IfErrors 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot error')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot error')"
 		StrCpy $1 "false"
-		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 0 = $0')"
 		${If} $1 != "false"
 			${If} $0 != ""
 			${AndIf} $0 != 0
 				IfFileExists "$0" +3 0
-				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot IfFileExists return true')"
 				StrCpy $1 "false"
 			${Else}
 				StrCpy $1 "false"
 			${EndIf}
 		${EndIf}
-		System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
 		;设置/取消开机启动
 		${If} $Bool_Sysstup == 1
 			WriteRegDWORD HKCU "Software\kuaikan" "setboot" 1
@@ -219,20 +219,20 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				Call ${strCallFlag}GetLastPart
 				pop $2
 				StrCpy $1 $2 -4
-				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 2 = $1')"
 				;在RUN下面找，有则不做
 				ClearErrors
 				ReadRegStr $3 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				IfErrors 0 hasfind
 					${StrFilter} $0 "-" "" "" $0
-					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 3 = $0')"
 					StrCpy $2 "$INSTDIR\program\myfixar.exe"
 					${StrFilter} $2 "-" "" "" $2
-					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 4 = $2')"
 					${If} $0 != $2
 					${AndIf} $0 != "$2"
 					${AndIf} $0 != ""
-						System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
+						System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot will rmdir $0')"
 						push $0
 						Call ${strCallFlag}GetParent
 						pop $0
@@ -240,7 +240,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 						${If} "$1" == "$2"
 							RMDir /r "$0"
 						${Else}
-							System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
+							System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
 						${EndIf}
 					${EndIf}
 					WriteRegStr HKCU "Software\kuaikan" "lpath" "$INSTDIR\program\myfixar.exe"
@@ -274,16 +274,16 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				StrCpy $1 $2 -4
 				DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" $1
 				
-				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 5 = $1')"
 				${StrFilter} $0 "-" "" "" $0
-				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 6 = $0')"
 				StrCpy $2 "$INSTDIR\program\myfixar.exe"
 				${StrFilter} $2 "-" "" "" $2
-				System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
+				System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 7 = $2')"
 				${If} $0 != $2
 				${AndIf} $0 != "$2"
 				${AndIf} $0 != ""
-					System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
+					System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot will2 rmdir $0')"
 					push $0
 					Call ${strCallFlag}GetParent
 					pop $0
@@ -291,7 +291,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 					${If} "$1" == "$2"
 						RMDir /r "$0"
 					${Else}
-						System::Call "$TEMP\${PRODUCT_NAME}\kuaikansetup::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
+						System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot can not2 rmdir because is instdir ')"
 					${EndIf}
 				${EndIf}
 			${Else}
