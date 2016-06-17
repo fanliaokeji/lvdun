@@ -123,9 +123,9 @@
 						<obj id="FileName" class="TextObject">
 							<attr>
 								<left>4</left>
-								<top>father.height - 15-8</top>
+								<top>father.height - 20-8</top>
 								<width>father.width - 8</width>
-								<height>15</height>
+								<height>20</height>
 								<endellipsis>1</endellipsis>
 								<zorder>9999</zorder>
 								<font>basecontrol.defaultfont.12</font>

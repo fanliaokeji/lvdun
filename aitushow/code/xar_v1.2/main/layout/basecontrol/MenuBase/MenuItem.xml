@@ -71,9 +71,9 @@
 						<obj id="menu.item.arrow" class="ImageObject">
 							<attr>
 								<left>father.width - 20</left>
-								<top>(father.height - 16)/2</top>
-								<width>16</width>
-								<height>16</height>
+								<top>(father.height - 8)/2</top>
+								<width>5</width>
+								<height>8</height>
 							</attr>
 						</obj>
 					</children>
