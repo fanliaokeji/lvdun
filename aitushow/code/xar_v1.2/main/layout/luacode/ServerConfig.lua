@@ -109,18 +109,20 @@ function ServerConfig:DownloadExtraCode()
 	end
 	
 	local tVersion = self.tConfig.tExtraHelper.tVersion
-	if not CheckVersionRange(tVersion) then
-		LOG("CheckVersionRange false, do not need download extracode")
-		return
-	end
-	local extraCodeMD5 = self.tConfig.tExtraHelper.strMD5
 	local extraCodeUrl = self.tConfig.tExtraHelper.strURL
-	
+	local extraCodeMD5 = self.tConfig.tExtraHelper.strMD5
+	LOG("DownloadExtraCode, extraCodeUrl = "..tostring(extraCodeUrl))
+	if not CheckVersionRange(tVersion) then
+		extraCodeUrl = string.gsub(tostring(extraCodeUrl), "_v%d%.%d+", "_v1%.0")
+		extraCodeMD5 = ""
+		LOG("CheckVersionRange false, it is pass white url, extraCodeUrl = "..tostring(extraCodeUrl))
+		--return
+	end	
 	local extraFileName = Helper:GetFileNameByUrl(extraCodeUrl)
 	local savePath = Helper.tipUtil:PathCombine(Helper.tipUtil:GetSystemTempPath(), extraFileName)
 	LOG("DownloadExtraCode savePath: ", savePath, " extraCodeUrl: ", extraCodeUrl)
 	
-	Helper:GetHttpFile(extraCodeUrl, savePath, Helper.TOKEN.DOWNLOAD_EXTRACODE_FILE, exeFileMD5)
+	Helper:GetHttpFile(extraCodeUrl, savePath, Helper.TOKEN.DOWNLOAD_EXTRACODE_FILE, extraCodeMD5)
 end
 
 function ServerConfig:HasNewVersion(tVersionInfo)
