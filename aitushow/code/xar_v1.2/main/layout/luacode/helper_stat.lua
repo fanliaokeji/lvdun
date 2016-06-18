@@ -84,6 +84,23 @@ function StatUtil.GetUsedTime()
 	return nNow - StatUtil.StartTime
 end
 
+function StatUtil.AsynSend(strUrl)
+	gStatCount = gStatCount + 1
+	local bHasCallBack = false
+	local function fn_callbak()
+		if bHasCallBack then return end
+		bHasCallBack = true
+		gStatCount = gStatCount - 1
+		if gStatCount <= 0 and StatUtil.ExitFlag then
+			StatUtil.ExitProcess()
+		end
+	end
+	tipAsynUtil:AsynSendHttpStat(strUrl, fn_callbak)
+	if StatUtil.ExitFlag then
+		SetOnceTimer(fn_callbak, 15000)--设定15秒超时
+	end
+end
+
 --谷歌上报
 function StatUtil.SendStat(tStat)
 	--由于谷歌统计超标,只取四分之一peerid上报
@@ -123,10 +140,7 @@ function StatUtil.SendStat(tStat)
 	
 	LOG("SendStat: " .. tostring(strUrl))
 	
-	gStatCount = gStatCount + 1
-	tipAsynUtil:AsynSendHttpStat(strUrl, function()
-		gStatCount = gStatCount - 1
-	end)
+	StatUtil.AsynSend(strUrl)
 end
 
 --上报到快看
@@ -146,10 +160,7 @@ function StatUtil.SendKKStat(nOPeration)
 					.."&ver="..tostring(strVer).."&rd="..tostring(strRandom)
 	
 	LOG("SendKKStat: " .. tostring(strUrl))
-	gStatCount = gStatCount + 1
-	tipAsynUtil:AsynSendHttpStat(strUrl, function()
-				gStatCount = gStatCount - 1 
-		end)
+	StatUtil.AsynSend(strUrl)
 end
 
 --获取当前时间距离第二天0点的秒数
@@ -209,13 +220,22 @@ function StatUtil.HideAllWindow()
 	end
 end
 
+function StatUtil.ExitProcess()
+	--保存配置
+	UserConfig:SaveToFile()
+	LOG("************ Exit ************")
+	tipUtil:Exit("Exit")
+end
+
 function StatUtil.Exit(bForce)
-	local function ExitProcess()
-		--保存配置
-		UserConfig:SaveToFile()
-		LOG("************ Exit ************")
-		tipUtil:Exit("Exit")
-	end
+	--隐藏所有窗口
+	StatUtil.HideAllWindow()
+	--先把托盘干掉
+	Helper.Tray.Hide()
+	--关闭单例互斥量
+	tipUtil:CloseSingletonMutex()
+	--设置退出标记
+	StatUtil.ExitFlag = true
 	--退出上报
 	StatUtil.SendStat({
 		strEC = "exit",
@@ -225,23 +245,7 @@ function StatUtil.Exit(bForce)
 	}) 
 	--退出时上报1条心跳
 	StatUtil.SendKKStat(10)
-	--关闭单例互斥量
-	tipUtil:CloseSingletonMutex()
-	--设置退出标记
-	StatUtil.ExitFlag = true
-	--隐藏所有窗口
-	StatUtil.HideAllWindow()
-	--先把托盘干掉
-	Helper.Tray.Hide()
 	if bForce then
-		ExitProcess()
-		return
-	end
-	if gStatCount <= 0 then
-		ExitProcess()
-	elseif gStatCount > 0 then	--开启定时退出定时器
-		SetOnceTimer(function()
-			ExitProcess()
-		end, 15000 * gStatCount)
+		StatUtil.ExitProcess()
 	end
 end
