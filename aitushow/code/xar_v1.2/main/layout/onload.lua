@@ -31,6 +31,7 @@ end
 local File = {
 "luacode\\objectbase.lua",
 "luacode\\helper.lua",
+"luacode\\JSON.lua",
 "luacode\\helper_token.lua",
 "luacode\\helper_data.lua",
 "luacode\\UserConfig.lua",
@@ -91,24 +92,30 @@ OnLoadLuaFile()
 
 function OnConfigLoaded(_, event, tConfig)
 	-- XLMessageBox("event: "..tostring(event))
-	-- ServerConfig:DownloadExtraCode()
-	-- ServerConfig:TryManualUpdate()
-	-- ServerConfig.IsUpdating = nil
-	-- ServerConfig:TryForceUpdate()
+	ServerConfig:DownloadExtraCode()
+	-- ServerConfig:TryManualUpdate() --手动升级先不加
+	
+	ServerConfig:TryForceUpdate()
 end
 
 function OnExtraCodeReady(_, event, savePath)
-	-- XLMessageBox("OnExtraCodeReady")
-	--执行lua代码
+	LOG("OnExtraCodeReady: savePath: ", savePath)
+	XLLoadModule(savePath)
 end
 
 function OnManualUpdateReady(_, event, savePath)
-	-- XLMessageBox("OnManualUpdateReady")
-	-- 命令行拉起exe
+	LOG("OnManualUpdateReady: savePath: ", savePath)
+	--手动升级先不加
 end
-function OnForceUpdateReady(_, event, savePath)
-	-- XLMessageBox("OnForceUpdateReady")
-	-- 命令行拉起exe
+
+function OnForceUpdateReady(_, event, savePath, cmd)
+	LOG("OnForceUpdateReady: savePath: ", savePath, " cmd: ", cmd)
+	local strCmd = " /write /silent /run"
+	if Helper:IsRealString(cmd) then
+		strCmd = strCmd.." "..cmd
+	end
+	tipUtil:ShellExecute(0, "open", savePath, strCmd, 0, "SW_HIDE")
+	UserConfig:Set("nLastCommonUpdateUTC", os.time())
 end
 
 ServerConfig:AddListener("OnConfigLoaded", OnConfigLoaded)
