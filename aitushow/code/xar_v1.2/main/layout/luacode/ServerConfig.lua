@@ -118,7 +118,7 @@ function ServerConfig:DownloadExtraCode()
 	
 	local extraFileName = Helper:GetFileNameByUrl(extraCodeUrl)
 	local savePath = Helper.tipUtil:PathCombine(Helper.tipUtil:GetSystemTempPath(), extraFileName)
-	LOG("DownloadExtraCode savePath: ", savePath)
+	LOG("DownloadExtraCode savePath: ", savePath, " extraCodeUrl: ", extraCodeUrl)
 	
 	Helper:GetHttpFile(extraCodeUrl, savePath, Helper.TOKEN.DOWNLOAD_EXTRACODE_FILE, exeFileMD5)
 end
@@ -129,15 +129,20 @@ function ServerConfig:HasNewVersion(tVersionInfo)
 		return false
 	end
 	local strNewVer = tVersionInfo.strVersion
-	LOG("IsNewVersion strNewVer: ", strNewVer)
 	local strEXEPath = Helper.tipUtil:GetModuleExeName()
 	local strCurVer = Helper.tipUtil:GetFileVersionString(strEXEPath)
+	LOG("IsNewVersion strNewVer: ", strNewVer, " strCurVer: ", strCurVer)
 	
 	if not Helper:IsRealString(strNewVer) or not Helper:IsRealString(strCurVer) then
 		return false
 	end
-
-	return strNewVer > strCurVer
+	
+	local iNewVer = string.match(strNewVer, "%d+%.%d+%.%d+%.(%d+)")
+	local iCurVer = string.match(strCurVer, "%d+%.%d+%.%d+%.(%d+)")
+	iNewVer = tonumber(iNewVer)
+	iCurVer = tonumber(iCurVer)
+	LOG("iNewVer: ", iNewVer, " iCurVer: ", iCurVer)
+	return iNewVer and iCurVer and iNewVer > iCurVer
 end
 
 --手动更新，使用tNewVersionInfo表里的内容
@@ -155,6 +160,7 @@ function ServerConfig:TryManualUpdate()
 	self.IsUpdating = true
 	local strPacketURL = self.tConfig.tNewVersionInfo.strPacketURL
 	local exeFileMD5 = self.tConfig.tNewVersionInfo.strMD5
+	self.manualUpdateCmd = self.tConfig.tNewVersionInfo.strCmd
 	local exeFileName = Helper:GetFileNameByUrl(strPacketURL)
 	local savePath = Helper.tipUtil:PathCombine(Helper.tipUtil:GetSystemTempPath(), exeFileName)
 	LOG("ManualUpdate strPacketURL: ", strPacketURL, " savePath: ", savePath)
@@ -191,7 +197,9 @@ function ServerConfig:TryForceUpdate()
 	local tForceUpdate = self.tConfig.tNewVersionInfo.tForceUpdate
 	--检测进程条件
 	local passedInfo = CheckProcessCondition(tForceUpdate) 
-	if not self:HasNewVersion(passedInfo) or self.IsUpdating then
+	local bHasNew = self:HasNewVersion(passedInfo)
+	LOG("bHasNew: ", bHasNew)
+	if not bHasNew or self.IsUpdating then
 		LOG("ForceUpdate do not has new version, or self.IsUpdating: ", self.IsUpdating)
 		return
 	end
@@ -204,6 +212,7 @@ function ServerConfig:TryForceUpdate()
 	self.IsUpdating = true
 	local strPacketURL = passedInfo.strPacketURL
 	local exeFileMD5 = passedInfo.strMD5
+	self.forceUpdateCmd = passedInfo.strCmd
 	local exeFileName = Helper:GetFileNameByUrl(strPacketURL)
 	
 	local savePath = Helper.tipUtil:PathCombine(Helper.tipUtil:GetSystemTempPath(), exeFileName)
@@ -223,10 +232,10 @@ function ServerConfig:OnDownloadSucc(event, token, savePath, url, strHeaders)
 		self:DispatchEvent("OnExtraCodeReady", savePath)
 	elseif token == Helper.TOKEN.DOWNLOAD_MANUALUPDATE_FILE then
 		--下载手动升级用的exe安装包完毕
-		self:DispatchEvent("OnManualUpdateReady", savePath)
+		self:DispatchEvent("OnManualUpdateReady", savePath, self.manualUpdateCmd)
 	elseif token == Helper.TOKEN.DOWNLOAD_FORECUPDATE_FILE then
 		--下载自动升级用的exe安装包完毕
-		self:DispatchEvent("OnForceUpdateReady", savePath)
+		self:DispatchEvent("OnForceUpdateReady", savePath, self.forceUpdateCmd)
 	else
 		LOG("OnDownloadSucc not my bussness, token: ", token, " url: ", url)
 	end

@@ -69,6 +69,27 @@ function Helper:IsRealString(str)
 	return "string" == type(str) and str ~= ""
 end
 
+function Helper:GetCommandStrValue(strKey)
+	local bRet, strValue = false, nil
+	local cmdString = tipUtil:GetCommandLine()
+	
+	if string.find(cmdString, strKey .. " ") then
+		local cmdList = tipUtil:CommandLineToList(cmdString)
+		if cmdList ~= nil then	
+			for i = 1, #cmdList, 1 do
+				local strTmp = tostring(cmdList[i])
+				if strTmp == strKey 
+					and not string.find(tostring(cmdList[i + 1]), "^/") then		
+					bRet = true
+					strValue = tostring(cmdList[i + 1])
+					break
+				end
+			end
+		end
+	end
+	return bRet, strValue
+end
+
 function Helper:LoadLuaTable(sFilePath)
 	if type(sFilePath) ~= "string" or sFilePath == "" then
 		return nil
@@ -642,20 +663,22 @@ end
 
 function Helper:GetHttpFile(url, savePath, token, expectedMD5)
 	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
+	LOG("GetHttpFile: url: ", url, " savePath: ", savePath)
+	url = url.."?ostime="..os.time()
 	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
 										if 0 == nRet then
 											if self:IsRealString(expectedMD5) then
 												local strMD5 = tipUtil:GetMD5Value(strTargetFilePath)
 												if self:IsRealString(strMD5) and string.lower(strMD5) == string.lower(expectedMD5) then
-													LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
-													self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+													LOG("DispatchEvent: OnDownloadSucc token: ", token, " strTargetFilePath: ", strTargetFilePath)
+													self:DispatchEvent("OnDownloadSucc", token, strTargetFilePath, url, strHeaders)
 												else
 													LOG("DispatchEvent: OnDownloadFailed token: ", token, " savePath: ", savePath)
 													self:DispatchEvent("OnDownloadFailed", token, nRet, url, strHeaders)
 												end
 											else--无需校验的话，直接发成功事件
-												LOG("DispatchEvent: OnDownloadSucc token: ", token, " savePath: ", savePath)
-												self:DispatchEvent("OnDownloadSucc", token, savePath, url, strHeaders)
+												LOG("DispatchEvent: OnDownloadSucc token: ", token, " strTargetFilePath: ", strTargetFilePath)
+												self:DispatchEvent("OnDownloadSucc", token, strTargetFilePath, url, strHeaders)
 											end
 										else
 											--此时nRet即为errorcode
