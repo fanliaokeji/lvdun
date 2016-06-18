@@ -664,7 +664,7 @@ end
 function Helper:GetHttpFile(url, savePath, token, expectedMD5)
 	savePath = tipUtil:ExpandEnvironmentStrings(savePath)
 	LOG("GetHttpFile: url: ", url, " savePath: ", savePath)
-	url = url.."?ostime="..os.time()
+	url = url.."?rd="..os.time()
 	tipAsynUtil:AsynGetHttpFile(url, savePath, false, function(nRet, strTargetFilePath, strHeaders)
 										if 0 == nRet then
 											if self:IsRealString(expectedMD5) then
