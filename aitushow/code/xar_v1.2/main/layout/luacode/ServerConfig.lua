@@ -196,6 +196,11 @@ function ServerConfig:TryForceUpdate()
 		LOG("ForceUpdate table error")
 		return
 	end
+	local bPassCheck = CheckUpdateTimeSpan(1)
+	if not bPassCheck then
+		LOG("[TryForceUpdate] CheckUpdateTimeSpan failed")
+		return		
+	end
 	local tForceUpdate = self.tConfig.tNewVersionInfo.tForceUpdate
 	--检测进程条件
 	local passedInfo = CheckProcessCondition(tForceUpdate) 
