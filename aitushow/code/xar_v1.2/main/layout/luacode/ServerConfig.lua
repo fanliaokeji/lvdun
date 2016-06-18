@@ -208,6 +208,7 @@ function ServerConfig:TryForceUpdate()
 	
 	if not CheckVersionRange(passedInfo.tVersion) then
 		LOG("ForceUpdate CheckVersionRange false")
+		return
 	end
 	
 	--至此，所有的条件(版本号、版本范围、进程条件等)均已满足，可以下安装包了
