@@ -54,21 +54,6 @@ LoadLuaModule(File, __document)
 local Helper = XLGetGlobal("Helper")
 
 function OnLoadLuaFile()
-	--记录启动时间
-	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
-	--启动上报
-	StatUtil.SendStat({
-		strEC = "startup",
-		strEA = StatUtil.GetMainVer(),
-		strEL = StatUtil.GetInstallSrc(),
-		strEV = 1,
-	}) 
-	--快看心跳上报
-	SetTimer(function(item, id)
-		StatUtil.SendKKStat(10)
-	end, 2*60*1000)
-	--快看启动上报
-	StatUtil.SendKKStat(2)
 	--一般是带任务拉起
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
 	local cmdString = tostring(tipUtil:GetCommandLine())
@@ -98,6 +83,8 @@ function OnLoadLuaFile()
 	if HostWnd then
 		Helper.Tray.Init(HostWnd)
 	end
+	--上报
+	StatUtil.SendStartupStat()
 end
 
 OnLoadLuaFile()

@@ -152,6 +152,47 @@ function StatUtil.SendKKStat(nOPeration)
 		end)
 end
 
+--获取当前时间距离第二天0点的秒数
+function StatUtil.Get2DayNeedTime()
+	local nCur = tonumber(os.time())
+	if type(nCur) == "number" then
+		local tDate = os.date("*t", nCur)
+		local nDay2 = os.time({year=tonumber(tDate.year), month=tonumber(tDate.month), day=tonumber(tDate.day), hour=23, min=59, sec=59})
+		nDay2 = tonumber(nDay2)
+		if type(nDay2) == "number" and nDay2 > nCur then
+			return nDay2 - nCur + 1
+		end
+	end
+end
+
+--启动上报
+function StatUtil.SendStartupStat()
+	--记录启动时间
+	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
+	--快看心跳上报
+	SetTimer(function(item, id)
+		StatUtil.SendKKStat(10)
+	end, 2*60*1000)
+	local function fn_report()
+		--启动上报
+		StatUtil.SendStat({
+			strEC = "startup",
+			strEA = StatUtil.GetMainVer(),
+			strEL = StatUtil.GetInstallSrc(),
+			strEV = 1,
+		}) 
+		--快看启动上报
+		StatUtil.SendKKStat(2)
+		local needUTC = StatUtil.Get2DayNeedTime()
+		LOG("SendStartupStat, needUTC = "..tostring(needUTC))
+		if type(needUTC) == "number" then
+			LOG("SendStartupStat, will run timer")
+			SetOnceTimer(fn_report, needUTC*1000)
+		end
+	end
+	fn_report()
+end
+
 function StatUtil.HideAllWindow()
 	local hostWndManager = XLGetObject("Xunlei.UIEngine.HostWndManager")
 	local str = ""
