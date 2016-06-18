@@ -28,13 +28,6 @@ end
 function Tray.Exit()
 	local function realexit()
 		Tray.HostWnd:Show(0)
-		--退出上报
-		StatUtil.SendStat({
-			strEC = "exit",
-			strEA = Helper.Setting.IsSysBoot() and "1" or "0",
-			strEL = Helper.Setting.GetExitType() and "1" or "0",
-			strEV = StatUtil.GetUsedTime(),
-		}) 
 		--退出
 		StatUtil.Exit()
 	end

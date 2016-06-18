@@ -216,6 +216,13 @@ function StatUtil.Exit(bForce)
 		LOG("************ Exit ************")
 		tipUtil:Exit("Exit")
 	end
+	--退出上报
+	StatUtil.SendStat({
+		strEC = "exit",
+		strEA = Helper.Setting.IsSysBoot() and "1" or "0",
+		strEL = Helper.Setting.GetExitType() and "1" or "0",
+		strEV = StatUtil.GetUsedTime(),
+	}) 
 	--退出时上报1条心跳
 	StatUtil.SendKKStat(10)
 	--关闭单例互斥量
