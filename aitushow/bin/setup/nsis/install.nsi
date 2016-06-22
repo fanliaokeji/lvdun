@@ -689,7 +689,7 @@ Function OnChange_DirRequest
 		EnableWindow $Btn_Return 0
 	${Else}
 		StrCpy $8 ""
-		${DriveSpace} $7 "/D=F /S=K" $8
+		${DriveSpace} $7 "/D=F /S=M" $8
 		${If} $8 == ""
 			EnableWindow $Btn_Install 0
 			EnableWindow $Btn_Return 0
@@ -700,7 +700,7 @@ Function OnChange_DirRequest
 		EnableWindow $Btn_Return 1
 		Goto EndFunction
 		ErrorChunk:
-			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}KB"
+			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}M"
 			EnableWindow $Btn_Install 0
 			EnableWindow $Btn_Return 0
 		EndFunction:
