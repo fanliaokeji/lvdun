@@ -200,9 +200,9 @@ void FileAssociation::StringReplace(std::wstring& src,const std::wstring& oldstr
 UINT FileAssociation::Associated(const std::wstring strFileExt){
 	wchar_t* szPaths[][4] = {
 		{L"HKEY_CURRENT_USER", L"%s", L"Progid", L"kuaikan%s"},
-		{L"HKEY_CURRENT_USER", L"%s", L"Application", L"kuaikan.exe"},
+		{L"HKEY_CURRENT_USER", L"%s", L"Application", L"kuaikantu.exe"},
 		{L"HKEY_CLASSES_ROOT", L"%s", L"", L"kuaikan%s"},
-		{L"HKEY_CLASSES_ROOT", L"%s\\OpenWithList\\kuaikan.exe", L"", L""},
+		{L"HKEY_CLASSES_ROOT", L"%s\\OpenWithList\\kuaikantu.exe", L"", L""},
 		{L"HKEY_CLASSES_ROOT", L"%s\\OpenWithProgids", L"kuaikan%s", L""},
 		{L"HKEY_CLASSES_ROOT", L"*\\Shell\\使用快看打开图片", L"", L""},
 	};
@@ -349,7 +349,7 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 			if(strApp.length() > 0 && strApp.substr(0, 3) != L"kuaikan"){
 				rt.SetRegValue(HKEY_CURRENT_USER, regpath.c_str(), L"kuaikanappbak", strApp.c_str());
 			}
-			strApp = L"kuaikan.exe";
+			strApp = L"kuaikantu.exe";
 			rt.SetRegValue(HKEY_CURRENT_USER, regpath.c_str(), L"Application", strApp.c_str());
 		}*/
 		if (rt->Open(HKEY_CURRENT_USER, regpath.c_str(), KEY_READ) == ERROR_SUCCESS){

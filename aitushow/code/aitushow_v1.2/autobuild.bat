@@ -17,7 +17,7 @@ if not %errorlevel%==0 (
 	goto done
 )
 cd /d "%basedir:~1,-1%Release"
-call :printversion "%cd%\kuaikan.exe" kuaikan.exe
+call :printversion "%cd%\kuaikantu.exe" kuaikantu.exe
 for /r %%i in (*.dll) do (
    call :printversion "%%i" %%~nxi
 )
@@ -63,7 +63,7 @@ set bin_path=%bin_path:\=\\%
 set bin_path=%bin_path:~1,-1%
 echo printversion bin_path=%bin_path%
 for /f "skip=1" %%i in ('wmic datafile where "Name='%bin_path%'" get Version') do (
-	if "%bin_path:~-11%" == "kuaikan.exe" (
+	if "%bin_path:~-13%" == "kuaikantu.exe" (
 		set pdbdir=%basedir:~1,-2%\%%i\pdb__!build_date!__!build_time!__!random!\
 		echo begin make pdbdir= !pdbdir!
 		md !pdbdir!
