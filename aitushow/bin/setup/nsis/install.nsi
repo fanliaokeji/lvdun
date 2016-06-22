@@ -851,7 +851,7 @@ Function OnClick_Install
 		Goto EndFunction
 	${Else}
 		StrCpy $8 ""
-		${DriveSpace} $7 "/D=F /S=K" $8
+		${DriveSpace} $7 "/D=F /S=M" $8
 		${If} $8 == ""
 			MessageBox MB_OK|MB_ICONSTOP "路径不合法"
 			Goto EndFunction
@@ -861,7 +861,7 @@ Function OnClick_Install
 		Call RelGotoPage
 		Goto EndFunction
 		ErrorChunk:
-			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}KB"
+			MessageBox MB_OK|MB_ICONSTOP "磁盘剩余空间不足，需要至少${NeedSpace}M"
 	${EndIf}
 	EndFunction:
 FunctionEnd
