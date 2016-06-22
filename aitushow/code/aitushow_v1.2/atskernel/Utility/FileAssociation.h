@@ -184,6 +184,12 @@ void FileAssociation::CreateImgKey(const std::wstring& strFileExt){
 		}
 		rt.SetRegValue(HKEY_CLASSES_ROOT, szTemp1, szPaths[i][1], szTemp2);
 	}
+	//在classroot下写入OpenWithProgIds
+	memset(szTemp1, 0, MAX_PATH);
+	swprintf(szTemp1, L"%s\\OpenWithProgids", strFileExt.c_str());
+	memset(szTemp2, 0, MAX_PATH);
+	swprintf(szTemp2, L"kuaikan%s", strFileExt.c_str());
+	rt.SetRegValue(HKEY_CLASSES_ROOT, szTemp1, szTemp2, L"");
 }
 
 void FileAssociation::StringReplace(std::wstring& src,const std::wstring& oldstr, const std::wstring& newstr){
@@ -231,9 +237,9 @@ UINT FileAssociation::Associated(const std::wstring strFileExt){
 					break;
 				case 4:
 					{
-						DWORD dwRet = -1;
-						rt.QueryRegValue(hk, szTemp1, szTemp2, &dwRet);
-						atype |= dwRet==0 ? ClassRootOpenWithProgIds : 0;
+						std::wstring strRetW = L"-1";
+						rt.QueryRegValue(hk, szTemp1, szTemp2, &strRetW);
+						atype |= strRetW != L"-1" ? ClassRootOpenWithProgIds : 0;
 					}
 					break;
 				case 5:
@@ -326,7 +332,14 @@ void FileAssociation::SetAssociate(const std::wstring strFileExt, BOOL bAssociat
 		if (bHasAdmin && (atype&AssociateType::ContextMenuExist) != 0){
 			rt.DeleteRegKey(HKEY_CLASSES_ROOT, L"*\\Shell", L"使用快看打开图片");
 		}
-
+		//右键打开方式列表
+		if (bHasAdmin && (atype&AssociateType::ClassRootOpenWithProgIds) != 0){
+			std::wstring rootpath = strFileExt + L"\\OpenWithProgids";
+			std::wstring valuename = L"kuaikan";
+			valuename += strFileExt;
+			rt.DeleteRegValue(HKEY_CLASSES_ROOT, rootpath.c_str(), valuename.c_str());
+		}
+		
 	}
 	else {
 		if (bHasAdmin || (atype&RootKeyExist) == 0){
