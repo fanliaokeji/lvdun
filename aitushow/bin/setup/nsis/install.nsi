@@ -90,7 +90,7 @@ Function Random
 FunctionEnd
 
 Function CloseExe
-	${FKillProc} "kuaikan"
+	${FKillProc} ${EXE_NAME}
 FunctionEnd
 
 Var Bool_IsUpdate
@@ -169,15 +169,15 @@ Function DoInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
 	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${EXE_NAME}.exe"
 	;注册表增加版本信息
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Ver" ${PRODUCT_VERSION}
 
 	;写入通用的注册表信息
-	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\program\${EXE_NAME}.exe"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\program\${PRODUCT_NAME}.exe"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\program\${EXE_NAME}.exe"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
@@ -231,15 +231,15 @@ Function CmdSilentInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallMethod" "silent"
 	SetOutPath "$INSTDIR\program"
 	;开始菜单程序
-	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
+	CreateDirectory "$SMPROGRAMS\快看图"
+	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;锁定到任务栏
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
-		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
@@ -251,12 +251,12 @@ Function CmdSilentInstall
 			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			Call RefreshIcon
 			Sleep 500
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 		
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			Sleep 200
@@ -264,7 +264,7 @@ Function CmdSilentInstall
 		${EndIf}
 	${Endif}
 	;桌面
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
 	${RefreshShellIcons}
 	;静默安装根据命令行开机启动
 	Call GetCmdLine
@@ -307,7 +307,7 @@ Function CmdSilentInstall
 		StrCpy $R0 "/embedding"
 	${EndIf}
 	SetOutPath "$INSTDIR\program"
-	ExecShell open "kuaikan.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
+	ExecShell open "${EXE_NAME}.exe" "/sstartfrom installfinish /installmethod silent /installtype $R1 $R0" SW_SHOWNORMAL
 	ExitInstal:
 	Call OnClickQuitOK
 	FunctionReturn:
@@ -509,7 +509,7 @@ Function GsMessageBox
 FunctionEnd
 
 Function ClickSure2
-	${FKillProc} "kuaikan"
+	${FKillProc} ${EXE_NAME}
 	Call ClickSure3
 FunctionEnd
 
@@ -518,7 +518,7 @@ Function ClickSure1
 	;ShowWindow $HWNDPARENT ${SW_HIDE}
 	Sleep 100
 	;发退出消息
-	FindProcDLL::FindProc "kuaikan.exe"
+	FindProcDLL::FindProc "${EXE_NAME}.exe"
 	${If} $R0 != 0
 		StrCpy $R6 "检测到${SHORTCUT_NAME}正在运行，是否强制结束？"
 		StrCpy $R8 ""
@@ -974,8 +974,8 @@ Function NSD_TimerFun
 	SetOutPath "$INSTDIR\program"
 	;快速启动栏
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
-		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 		Call RefreshIcon
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
@@ -989,12 +989,12 @@ Function NSD_TimerFun
 			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 			Call RefreshIcon
 			Sleep 500
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom toolbar"
+			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
 			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 		
 			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 			Call RefreshIcon
 			Sleep 200
@@ -1003,12 +1003,12 @@ Function NSD_TimerFun
 	${Endif}
 	
 	;开始菜单程序
-	CreateDirectory "$SMPROGRAMS\${SHORTCUT_NAME}"
+	CreateDirectory "$SMPROGRAMS\快看图"
 	SetOutPath "$INSTDIR\program"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
+	CreateShortCut "$SMPROGRAMS\快看图\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
+	CreateShortCut "$SMPROGRAMS\快看图\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;桌面
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${PRODUCT_NAME}.exe" "/sstartfrom desktop"
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
 	${RefreshShellIcons}
 	
 	;最后才显示安装完成界面
@@ -1147,7 +1147,7 @@ Function OnClick_FreeUse
 	${Else}
 		StrCpy $R1 "noupdate"
 	${EndIf}
-	ExecShell open "kuaikan.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
+	ExecShell open "${EXE_NAME}.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
 	Call OnClickQuitOK
 FunctionEnd
 

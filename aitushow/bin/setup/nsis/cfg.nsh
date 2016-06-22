@@ -4,6 +4,7 @@
 
 !define INSTALL_CHANNELID "0001"
 !define PRODUCT_NAME "kuaikan"
+!define EXE_NAME "kuaikantu"
 !define SHORTCUT_NAME "¿ì¿´"
 !define PRODUCT_VERSION "1.0.0.${BuildNum}"
 !define NeedSpace 13312
@@ -13,7 +14,7 @@
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "kuaikan"
 !define PRODUCT_WEB_SITE ""
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${EXE_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_MAININFO_FORSELF "Software\kuaikan"
@@ -314,7 +315,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 	!define UnSetSysBoot 'Call un.InstSetSysBoot'
 	!define SetSysBoot 'Call InstSetSysBoot'
 !else
-	!define SetSysBoot "WriteRegStr HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan '$\"$INSTDIR\program\kuaikan.exe$\" /sstartfrom sysboot /embedding'"
+	!define SetSysBoot "WriteRegStr HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan '$\"$INSTDIR\program\${EXE_NAME}.exe$\" /sstartfrom sysboot /embedding'"
 	!define UnSetSysBoot "DeleteRegValue HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan"
 !endif
 

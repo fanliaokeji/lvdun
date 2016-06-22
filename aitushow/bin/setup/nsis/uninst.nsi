@@ -206,7 +206,7 @@ Function un.UNSD_TimerFun
 	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
 	${SendStat} "uninstall" "$R1" $str_ChannelID 1
 	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::Send2KKAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
-	${FKillProc} "kuaikan"
+	${FKillProc} ${EXE_NAME}
 	
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
@@ -251,7 +251,7 @@ Function un.UNSD_TimerFun
 		Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
 	IfFileExists "$STARTMENU\${SHORTCUT_NAME}.lnk" 0 +2
 		Delete "$STARTMENU\${SHORTCUT_NAME}.lnk"
-	RMDir /r "$SMPROGRAMS\${SHORTCUT_NAME}"
+	RMDir /r "$SMPROGRAMS\快看图"
 	
 	;HideWindow
 	ShowWindow $Bmp_StartUnstall ${SW_HIDE}
@@ -439,7 +439,7 @@ Function un.GsMessageBox
 FunctionEnd
 
 Function un.ClickSure
-	${FKillProc} "kuaikan"
+	${FKillProc} ${EXE_NAME}
 	Call un.ClickSure2
 FunctionEnd
 
@@ -450,7 +450,7 @@ FunctionEnd
 
 Function un.MyUnstallMsgBox
 	;发退出消息
-	FindProcDLL::FindProc "kuaikan.exe"
+	FindProcDLL::FindProc "${EXE_NAME}.exe"
 	${If} $R0 != 0
 		StrCpy $R6 "检测到${SHORTCUT_NAME}正在运行，是否强制结束？"
 		StrCpy $R8 ""
