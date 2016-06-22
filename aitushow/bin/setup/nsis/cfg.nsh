@@ -9,7 +9,7 @@
 !define PRODUCT_VERSION "1.0.0.${BuildNum}"
 !define NeedSpace 15
 ;!define TEXTCOLOR "4D4D4D"
-!define EM_OUTFILE_NAME "kuaikansetupv${BuildNum}_${INSTALL_CHANNELID}.exe"
+!define EM_OUTFILE_NAME "kuaikantusetupv${BuildNum}_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "kuaikan"
