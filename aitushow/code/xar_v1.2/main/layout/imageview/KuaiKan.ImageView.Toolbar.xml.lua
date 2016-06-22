@@ -14,9 +14,9 @@ end
 
 function OnInitControl(self)
 	local preFileBtn = self:GetControlObject("btn.preFile")
-	preFileBtn:AddTipText("上一张( <- )")
+	preFileBtn:AddTipText("上一张")
 	local nextFileBtn = self:GetControlObject("btn.nextFile")
-	nextFileBtn:AddTipText("下一张( -> 或空格)")
+	nextFileBtn:AddTipText("下一张")
 end
 
 function OnBtnClick(self)
