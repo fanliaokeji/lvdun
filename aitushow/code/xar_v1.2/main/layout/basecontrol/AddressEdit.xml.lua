@@ -205,7 +205,8 @@ end
 
 function OnEditInputChar(self, charCode, counts, flag)
 	if 0x0D == charCode then
-		self:SetFocus(false)
+		--self:SetFocus(false)
+		self:GetOwnerControl():FocusChange()
 	end
 end
 
@@ -227,10 +228,9 @@ function FocusChange(self, bFocus)
 end
 
 function OnEditFocusChange(self, bFocus)
-	if true then
-		return
-	end
-	self:GetOwnerControl():FocusChange()
+	--if bFocus then
+	--	return
+	--end
 end
 
 function OnEditLButtonUp(self)
