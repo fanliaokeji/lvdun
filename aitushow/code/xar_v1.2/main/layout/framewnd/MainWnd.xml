@@ -197,6 +197,9 @@
 					</attr>
 				</obj>
 			</children>
+			<eventlist>
+				<event name="OnLButtonDown" file="MainWnd.xml.lua" func="HeadOnLButtonDown"/>
+			</eventlist>
 		</obj>
 	</objtreetemplate>
 

@@ -68,10 +68,14 @@ end
 --bNoNotify:不发通知事件
 --isUndo是点击回退和向前按钮触发
 function SetPath(self, sPath, bNoNotify, isUndo)
+	local attr = self:GetAttribute()
 	if not Helper.tipUtil:QueryFileExists(sPath) then
+		sPath = attr.curPath
+	end
+	if not sPath or not Helper.tipUtil:QueryFileExists(sPath) then
 		return false
 	end
-	local attr = self:GetAttribute()
+	
 	attr.pathTable = GetPathTable(sPath)
 	if #attr.pathTable <= 0 then
 		return false
@@ -80,8 +84,13 @@ function SetPath(self, sPath, bNoNotify, isUndo)
 	editObj:SetEnable(false)
 	editObj:SetVisible(false)
 	editObj:SetChildrenVisible(false)
+	editObj:SetText("")
+	editObj:SetZorder(0)
 	local buttonListContainer = self:GetControlObject("ButtonListContainer")
 	buttonListContainer:RemoveAllChild()
+	buttonListContainer:SetZorder(9999)
+	buttonListContainer:SetVisible(true)
+	buttonListContainer:SetChildrenVisible(true)
 	local tmpText = Helper.objectFactory:CreateUIObject("tmpText", "TextObject")
 	tmpText:SetTextFontResID("basecontrol.defaultfont.13")
 	local curButtonListLength = 0
@@ -106,7 +115,11 @@ function SetPath(self, sPath, bNoNotify, isUndo)
 			curButtonListLength = curButtonListLength + textLength
 		end
 	end
-	
+	local NeedUndo = true
+	if attr.curPath == sPath then
+		bNoNotify = true
+		NeedUndo = false
+	end
 	attr.curPath = sPath
 	if not attr.pathHistoryQueue then
 		attr.pathHistoryQueue = Helper.FixedLengthQueue:New()
@@ -121,7 +134,7 @@ function SetPath(self, sPath, bNoNotify, isUndo)
 		else
 			uparrow:Enable(false)
 		end
-		if not isUndo then
+		if not isUndo and NeedUndo then
 			attr.UndoStack = attr.UndoStack or {}
 			attr.UndoPos = attr.UndoPos or 0
 			RemoveInvalid(attr.UndoStack, attr.UndoPos)
@@ -196,31 +209,56 @@ function OnEditInputChar(self, charCode, counts, flag)
 	end
 end
 
-function OnEditFocusChange(self, bFocus)
-	if bFocus then
-		return
-	end
-	local ownerCtrl = self:GetOwnerControl()
-	local text = self:GetText()
-	self:SetEnable(false)
-	self:SetVisible(false)
-	self:SetZorder(0)
-	self:SetText("")
+function FocusChange(self, bFocus)
+	local edit = self:GetObject("EditObj")
+	local text = edit:GetText()
+	edit:SetEnable(false)
+	edit:SetVisible(false)
+	edit:SetZorder(0)
+	edit:SetText("")
 	
 	
-	local buttonListContainer = ownerCtrl:GetControlObject("ButtonListContainer")
+	local buttonListContainer = self:GetControlObject("ButtonListContainer")
 	buttonListContainer:SetVisible(true)
 	buttonListContainer:SetChildrenVisible(true)
 	buttonListContainer:SetZorder(9999)
 	
-	SetPath(ownerCtrl, text)
+	SetPath(self, text)
+end
+
+function OnEditFocusChange(self, bFocus)
+	if true then
+		return
+	end
+	self:GetOwnerControl():FocusChange()
 end
 
 function OnEditLButtonUp(self)
 
 end
 
-function OnButtonListContainerLButtonUp(self)
+function OnEditOnRButtonUp(self, x, y)
+	if self:GetVisible() and self:GetEnable() then
+		local curX, curY = Helper.tipUtil:GetCursorPos()
+		local tree = self:GetOwner()
+		local wnd = tree:GetBindHostWnd()
+		local menuTable = GreenShieldMenu.AddressEditMenu.menuTable
+		local menuFunTable = GreenShieldMenu.AddressEditMenu.menuFunTable
+		local userData = {}
+		userData.EditObj = self
+		local Begin, End= self:GetSel()
+		userData.OnPopupMenu = 
+			function()
+				if Begin ~= End then
+					self:SetFocus(true)
+					self:SetSel(Begin, End)
+				end
+			end
+		Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable, userData)
+	end
+end
+
+function OnButtonListContainerLButtonDown(self)
 	self:RemoveAllChild()
 	self:SetVisible(false)
 	self:SetChildrenVisible(false)
@@ -229,9 +267,9 @@ function OnButtonListContainerLButtonUp(self)
 	local editObj = ownerCtrl:GetControlObject("EditObj")
 	editObj:SetEnable(true)
 	editObj:SetZorder(9999)
-	editObj:SetFocus(true)
 	editObj:SetVisible(true)
 	editObj:SetChildrenVisible(true)
+	editObj:SetFocus(true)
 	
 	local attr = ownerCtrl:GetAttribute()
 	editObj:SetText(attr.curPath)

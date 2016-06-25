@@ -140,7 +140,6 @@ local menuTable = {
 },
 {id="Spliter6", bSplitter = true},
 {id="Delete", text = "删除", iconNormalID = "bitmap.menu.icon.del.normal", iconDisableID = "bitmap.menu.icon.del.disable"},
-{id="Spliter7", bSplitter = true},
 }
 
 GreenShieldMenu.ImageRClickMenu = {}

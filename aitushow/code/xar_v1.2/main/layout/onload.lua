@@ -48,6 +48,7 @@ local File = {
 "luacode\\ImagePool.lua",
 "menu\\ImageRClickMenu.lua",
 "menu\\SortMenu.lua",
+"menu\\AddressEditMenu.lua",
 }
 LoadLuaModule(File, __document)
 

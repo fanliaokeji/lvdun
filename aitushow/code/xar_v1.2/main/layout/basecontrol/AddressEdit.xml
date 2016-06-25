@@ -21,6 +21,7 @@
 		<method_def>
 			<SetPath />
 			<GetPath />
+			<FocusChange />
 		</method_def>
 		<event_def>
 			<OnPathChanged>
@@ -114,6 +115,7 @@
 								<event name="OnFocusChange" file="AddressEdit.xml.lua" func="OnEditFocusChange" />
 								<event name="OnLButtonUp" file="AddressEdit.xml.lua" func="OnEditLButtonUp" />
 								<event name="OnChar" file="AddressEdit.xml.lua" func="OnEditInputChar"/>
+								<event name="OnRButtonUp" file="AddressEdit.xml.lua" func="OnEditOnRButtonUp" />
 							</eventlist>
 						</obj>
 						<obj id="ButtonListContainer" class="LayoutObject">
@@ -124,7 +126,7 @@
 								<height>father.height</height>
 							</attr>
 							<eventlist>
-								<event name="OnLButtonUp" file="AddressEdit.xml.lua" func="OnButtonListContainerLButtonUp" />
+								<event name="OnLButtonDown" file="AddressEdit.xml.lua" func="OnButtonListContainerLButtonDown" />
 							</eventlist>
 						</obj>
 					</children>

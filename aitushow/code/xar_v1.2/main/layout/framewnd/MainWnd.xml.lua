@@ -159,6 +159,15 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	Helper:SetRegValue(sLastPathReg, realpath)
 end
 
+function HeadOnLButtonDown(self, x, y)
+	local addressobj = self:GetObject("MainWnd.ThumbnailContainer:ThumbnailContainer.Header:MainWnd.AddressEditCtrl")
+	local edit = addressobj:GetObject("EditObj")
+	local l, t, r, b = edit:GetAbsPos()
+	if x < l or x > r or y < t or y > b then
+		addressobj:FocusChange(false)
+	end
+end
+
 function OnClickSortButton(self)
 	local tree = self:GetOwner()
 	local wnd = tree:GetBindHostWnd()
