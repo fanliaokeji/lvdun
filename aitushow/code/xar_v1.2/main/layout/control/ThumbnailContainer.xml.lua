@@ -343,7 +343,7 @@ function OnVScroll(self, fun, _type, pos)
 	local L, T, R, B = pageManager.containerObj:GetObjPos()
 	
 	local lineCount, columnCount, pageCount, picWidth, picHeight = pageManager.ctrlSelf:GetPageLayout()
-	-- if #pageManager.tPictures <= pageCount then return end --无需滚动
+	if #pageManager.tPictures <= pageCount then return end --无需滚动
 	
 	local scrollDistance = math.abs(scrollPos + T)
 	if scrollDistance >= picHeight then
