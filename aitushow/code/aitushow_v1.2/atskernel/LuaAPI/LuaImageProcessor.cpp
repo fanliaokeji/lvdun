@@ -17,6 +17,8 @@ static XLLRTGlobalAPI CLuaImageProcessorMemberFunctions[] =
 	{"PreMultiplyBitmap", CLuaImageProcessor::PreMultiplyBitmap},
 	{"DrawThumbnailViewLayer", CLuaImageProcessor::DrawThumbnailViewLayer},
 	{"GetImageByARGB", CLuaImageProcessor::GetImageByARGB},
+	{"ImageLeftRotate", CLuaImageProcessor::ImageLeftRotate},
+	{"ImageRightRotate", CLuaImageProcessor::ImageRightRotate},
 	{"NULL", NULL}
 };
 long CLuaImageProcessor::RegisterSelf(XL_LRT_RUNTIME_HANDLE hEnv)
@@ -172,4 +174,36 @@ int CLuaImageProcessor::GetImageByARGB(lua_State* luaState)
 		return 3;
 	}
 	return 0;
+}
+
+int CLuaImageProcessor::ImageLeftRotate(lua_State* luaState)
+{
+	XL_BITMAP_HANDLE hBitmap = NULL;
+	if(XLGP_CheckBitmap(luaState, 2, &hBitmap)){
+		XL_BITMAP_HANDLE hNewBitmap = CImageProcessor::ImageLeftRotate(hBitmap);
+		if (hNewBitmap){
+			XL_ReleaseBitmap(hBitmap);
+		}
+		XLGP_PushBitmap(luaState, hNewBitmap);
+	}
+	else {
+		lua_pushnil(luaState);
+	}
+	return 1;
+}
+
+int CLuaImageProcessor::ImageRightRotate(lua_State* luaState)
+{
+	XL_BITMAP_HANDLE hBitmap = NULL;
+	if(XLGP_CheckBitmap(luaState, 2, &hBitmap)){
+		XL_BITMAP_HANDLE hNewBitmap = CImageProcessor::ImageRightRotate(hBitmap);
+		if (hNewBitmap){
+			XL_ReleaseBitmap(hBitmap);
+		}
+		XLGP_PushBitmap(luaState, hNewBitmap);
+	}
+	else {
+		lua_pushnil(luaState);
+	}
+	return 1;
 }

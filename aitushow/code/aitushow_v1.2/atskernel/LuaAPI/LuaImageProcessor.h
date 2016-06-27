@@ -19,6 +19,8 @@ public:
 	static int PreMultiplyBitmap(lua_State* luaState);
 	static int DrawThumbnailViewLayer(lua_State* luaState);
 	static int GetImageByARGB(lua_State* luaState);
+	static int ImageLeftRotate(lua_State* luaState);
+	static int ImageRightRotate(lua_State* luaState);
 
 private:	
 	//
