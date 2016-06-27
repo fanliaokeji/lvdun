@@ -259,6 +259,8 @@ public:
 	static int SetDesktopWallpaper(lua_State* luaState);
 	static int FolderDialog(lua_State* luaState);
 	static int FileDialog(lua_State* luaState);
+	static int ImageLeftRotate(lua_State* luaState);
+	static int ImageRightRotate(lua_State* luaState);
 
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];

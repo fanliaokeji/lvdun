@@ -241,6 +241,9 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"SetDesktopWallpaper", SetDesktopWallpaper},
 	{"FolderDialog", FolderDialog},
 	{"FileDialog", FileDialog},
+	{"ImageLeftRotate", ImageLeftRotate},
+	{"ImageRightRotate", ImageRightRotate},
+
 	{NULL, NULL}
 };
 
@@ -5865,5 +5868,39 @@ int LuaAPIUtil::FileDialog(lua_State* luaState)
 		strPath = ultra::_T2UTF(dlg.m_szFileName);
 	}
 	lua_pushstring(luaState, strPath.c_str());
+	return 1;
+}
+
+int LuaAPIUtil::ImageLeftRotate(lua_State* luaState)
+{
+	XL_BITMAP_HANDLE hBitmap = NULL;
+	if(XLGP_CheckBitmap(luaState, 2, &hBitmap))
+	{
+		XL_BITMAP_HANDLE hNewBitmap = CImageProcessor::ImageLeftRotate(hBitmap);
+		if (hNewBitmap){
+			XL_ReleaseBitmap(hBitmap);
+		}
+		XLGP_PushBitmap(luaState, hNewBitmap);
+	}
+	else {
+		lua_pushnil(luaState);
+	}
+	return 1;
+}
+
+int LuaAPIUtil::ImageRightRotate(lua_State* luaState)
+{
+	XL_BITMAP_HANDLE hBitmap = NULL;
+	if(XLGP_CheckBitmap(luaState, 2, &hBitmap))
+	{
+		XL_BITMAP_HANDLE hNewBitmap = CImageProcessor::ImageRightRotate(hBitmap);
+		if (hNewBitmap){
+			XL_ReleaseBitmap(hBitmap);
+		}
+		XLGP_PushBitmap(luaState, hNewBitmap);
+	}
+	else {
+		lua_pushnil(luaState);
+	}
 	return 1;
 }
