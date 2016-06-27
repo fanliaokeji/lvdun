@@ -137,6 +137,32 @@ function SetImage(self, tImgInfo)
 	end
 end
 
+function Rotate(self, isleft)
+	local imageObj = self:GetControlObject("Image")
+	if imageObj then
+		local bitmap = imageObj:GetBitmap()
+		if bitmap then
+			local newbitmap
+			local attr = self:GetAttribute()
+			attr.angle = attr.angle or 0
+			if isleft then
+				newbitmap = Helper.tipUtil:ImageLeftRotate(bitmap)
+				attr.angle = attr.angle - 90
+			else
+				newbitmap = Helper.tipUtil:ImageRightRotate(bitmap)
+				attr.angle = attr.angle + 90
+			end
+			if newbitmap then
+				local backgroundObj = self:GetControlObject("Background")
+				local w , h = attr.data.ThumbHeight, attr.data.ThumbWidth--每旋转1次反1次
+				attr.data.ThumbHeight, attr.data.ThumbWidth = h, w
+				imageObj:SetBitmap(newbitmap)
+				AdjustImageBySize(backgroundObj, imageObj, w, h)
+			end
+		end
+	end
+end
+
 function FormatImageInfo(self)
 	local attr = self:GetAttribute()
 	if not attr.data then

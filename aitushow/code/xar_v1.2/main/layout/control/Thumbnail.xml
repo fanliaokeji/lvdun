@@ -12,6 +12,7 @@
 			<SetImage />
 			<!--设置是否被选中-->
 			<Select />	
+			<Rotate />
 		</method_def>
 		<event_def>
 			<OnTrySelect><!--点击缩略图控件时，发OnTrySelect，由缩略图Container决定是否Select(为了多选)-->

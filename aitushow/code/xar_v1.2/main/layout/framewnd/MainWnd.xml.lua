@@ -228,3 +228,32 @@ function OnMove(self)
 	Helper:SetRegValue(iWindowPosDXReg, x+wndwidth)
 	Helper:SetRegValue(iWindowPosDYReg, y+wndheight)
 end
+
+function OnClickLeftRotateButton(self)
+	local ThumbnailContainerObj = self:GetOwner():GetUIObject("ThumbnailContainerObj")
+	local attr = ThumbnailContainerObj:GetAttribute()
+	if attr and attr.pageManager and attr.pageManager.selectedObj then
+		attr.pageManager.selectedObj:Rotate(true)
+	end
+end
+
+function OnClickRightRotateButton(self)
+	local ThumbnailContainerObj = self:GetOwner():GetUIObject("ThumbnailContainerObj")
+	local attr = ThumbnailContainerObj:GetAttribute()
+	if attr and attr.pageManager and attr.pageManager.selectedObj then
+		attr.pageManager.selectedObj:Rotate(false)
+	end
+end
+
+function OnClickDeleteButton(self)
+	local ThumbnailContainerObj = self:GetOwner():GetUIObject("ThumbnailContainerObj")
+	local attr = ThumbnailContainerObj:GetAttribute()
+	if attr and attr.pageManager and attr.pageManager.selectedObj then
+		local obj = attr.pageManager.selectedObj
+		local objattr = obj:GetAttribute()
+		local filepath  = objattr.data.FilePath
+		if filepath and Helper.tipUtil:QueryFileExists(filepath) then
+			Helper.tipUtil:DeletePathFile(filepath)
+		end
+	end
+end

@@ -180,7 +180,52 @@
 										<height>father.height</height>
 									</attr>
 								</obj>
-							-->								
+							-->	
+								<obj id="MainWnd.LeftRotateButton" class="TipAddin.Button">
+									<attr>
+										<left>20</left>
+										<top>11</top>
+										<width>26</width>
+										<height>26</height>
+										<NormalBkgID>texture.bottomctrl.rotate.left.normal</NormalBkgID>
+										<HoverBkgID>texture.bottomctrl.rotate.left.hover</HoverBkgID>
+										<DownBkgID>texture.bottomctrl.rotate.left.down</DownBkgID>
+										<DisableBkgID>texture.bottomctrl.rotate.left.disable</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="MainWnd.xml.lua" func="OnClickLeftRotateButton"/>
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.RightRotateButton" class="TipAddin.Button">
+									<attr>
+										<left>20*2+26</left>
+										<top>11</top>
+										<width>26</width>
+										<height>26</height>
+										<NormalBkgID>texture.bottomctrl.rotate.right.normal</NormalBkgID>
+										<HoverBkgID>texture.bottomctrl.rotate.right.hover</HoverBkgID>
+										<DownBkgID>texture.bottomctrl.rotate.right.down</DownBkgID>
+										<DisableBkgID>texture.bottomctrl.rotate.right.disable</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="MainWnd.xml.lua" func="OnClickRightRotateButton"/>
+									</eventlist>
+								</obj>
+								<obj id="MainWnd.DeleteButton" class="TipAddin.Button">
+									<attr>
+										<left>20*3+26*2</left>
+										<top>11</top>
+										<width>26</width>
+										<height>26</height>
+										<NormalBkgID>texture.bottomctrl.delete.normal</NormalBkgID>
+										<HoverBkgID>texture.bottomctrl.delete.hover</HoverBkgID>
+										<DownBkgID>texture.bottomctrl.delete.down</DownBkgID>
+										<DisableBkgID>texture.bottomctrl.delete.disable</DisableBkgID>
+									</attr>
+									<eventlist>
+										<event name="OnClick" file="MainWnd.xml.lua" func="OnClickDeleteButton"/>
+									</eventlist>
+								</obj>
 							</children>
 						</obj>	
 					</children>
