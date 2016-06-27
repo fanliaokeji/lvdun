@@ -119,23 +119,28 @@ function Listener.OnKeyDown(tParam)
 		return
 	end
 	local imageCtrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
-	if not imageCtrl or not imageCtrl:GetVisible() then
-		LOG("Listener.OnKeyDown failed")
-		return
-	end
-	if tParam[2] == VK_LEFT then
-		imageCtrl:PreFile()
-	elseif tParam[2] == VK_RIGHT then
-		imageCtrl:NextFile()
-	elseif tParam[2] == VK_ESC then
-		if imageCtrl:IsFullScreen() then
-			imageCtrl:FullScreenSwitch()
-		else
-			local sysbtn = imageCtrl:GetObject("client.caption:client.caption.sysbtn")
-			sysbtn:FireExtEvent("OnClose")
+	if imageCtrl and imageCtrl:GetVisible() then
+		LOG("imageCtrl and imageCtrl:GetVisible()")
+		if tParam[2] == VK_LEFT then
+			imageCtrl:PreFile()
+		elseif tParam[2] == VK_RIGHT then
+			imageCtrl:NextFile()
+		elseif tParam[2] == VK_ESC then
+			if imageCtrl:IsFullScreen() then
+				imageCtrl:FullScreenSwitch()
+			else
+				local sysbtn = imageCtrl:GetObject("client.caption:client.caption.sysbtn")
+				sysbtn:FireExtEvent("OnClose")
+			end
+		elseif tParam[2] == VK_DELETE then
+			imageCtrl:DeleteFile()
 		end
-	elseif tParam[2] == VK_DELETE then
-		imageCtrl:DeleteFile()
+	else
+		local DeleteButton = Helper.Selector.select("", "MainWnd.DeleteButton", "MainWnd.Instance")
+		if DeleteButton then
+			DeleteButton:FireExtEvent("OnClick", 0, 0)
+		end
 	end
+	
 end
 
