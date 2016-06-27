@@ -242,6 +242,18 @@ function OnLButtonUp(self)
 	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
 end
 
+function ResetAngle(self)
+	local attr = self:GetAttribute()
+	if type(attr.angle) == "number" then
+		local count = math.abs(attr.angle/90)
+		if count%2 ~= 0 then
+			attr.data.ThumbHeight, attr.data.ThumbWidth = attr.data.ThumbWidth, attr.data.ThumbHeight
+		end
+		attr.angle = 0--重置为0
+		SetImage(self, attr.data)
+	end
+end
+
 function OnLButtonDbClick(self)
 	local imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	if not imgctrl then
@@ -261,7 +273,7 @@ function OnLButtonDbClick(self)
 	local function HnadleRotate()
 		local count = 0
 		if type(attr.angle) == "number" then
-			local angle = attr.angle%360
+			local angle = math.abs(attr.angle)%360
 			if angle == 0 then
 				count = 4
 			else
@@ -270,6 +282,7 @@ function OnLButtonDbClick(self)
 		end
 		if count == 0 then
 			ImgHostWnd:BringWindowToTop(true)
+			ResetAngle(ownerCtrl)
 		else
 			SetOnceTimer(
 				function()
@@ -281,6 +294,7 @@ function OnLButtonDbClick(self)
 						end
 					end
 					ImgHostWnd:BringWindowToTop(true)
+					ResetAngle(ownerCtrl)
 				end, 
 			200)
 		end
