@@ -253,7 +253,16 @@ function OnClickDeleteButton(self)
 		local objattr = obj:GetAttribute()
 		local filepath  = objattr.data.FilePath
 		if filepath and Helper.tipUtil:QueryFileExists(filepath) then
-			Helper.tipUtil:DeletePathFile(filepath)
+			if Helper.Setting.IsDelRemind() then
+				local HostWndHelper = Helper.MessageBox
+				local showText = "确认要删除文件\"" .. Helper.APIproxy.GetFileNameFromPath(filepath) .. "\"吗"
+				local nRet = HostWndHelper.MessageBox(showText, self:GetOwner():GetBindHostWnd())
+				if nRet == HostWndHelper.ID_YES then
+					Helper.tipUtil:DelPathFile2RecycleBin(filepath)
+				end
+			else
+				Helper.tipUtil:DelPathFile2RecycleBin(filepath)
+			end
 		end
 	end
 end

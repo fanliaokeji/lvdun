@@ -68,7 +68,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>删除图标时弹出提示窗口</Text>
+			<Text>删除图片时弹出提示窗口</Text>
 			<left>26</left>
 			<width>150</width>
 			<top>71</top>
