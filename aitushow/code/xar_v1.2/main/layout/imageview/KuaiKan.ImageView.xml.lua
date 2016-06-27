@@ -273,7 +273,7 @@ function LoadImageFile(self, filePath, fref, fnPreCallBack, fnAfterCalBack)
 	end
 	local attr = self:GetAttribute()
 	if attr.CurDocItem and attr.CurDocItem.FilePath == filePath then	
-		return
+		return false
 	end
 	--切换图片时删除末页提示
 	local tipobj = self:GetObject("firstorlasttip")
@@ -292,6 +292,7 @@ function LoadImageFile(self, filePath, fref, fnPreCallBack, fnAfterCalBack)
 		end
 	end	
 	self:HandleRotateExit(CallBack)
+	return true
 end
 
 

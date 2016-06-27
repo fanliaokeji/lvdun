@@ -145,11 +145,12 @@ function Rotate(self, isleft)
 			local newbitmap
 			local attr = self:GetAttribute()
 			attr.angle = attr.angle or 0
+			local LuaImageProcessor = XLGetObject("KKImage.LuaImageProcessor")
 			if isleft then
-				newbitmap = Helper.tipUtil:ImageLeftRotate(bitmap)
+				newbitmap = LuaImageProcessor:ImageLeftRotate(bitmap)
 				attr.angle = attr.angle - 90
 			else
-				newbitmap = Helper.tipUtil:ImageRightRotate(bitmap)
+				newbitmap = LuaImageProcessor:ImageRightRotate(bitmap)
 				attr.angle = attr.angle + 90
 			end
 			if newbitmap then
@@ -251,9 +252,47 @@ function OnLButtonDbClick(self)
 		LOG("OnLButtonDbClick: not imgctrl: ")
 		return
 	end
+	local ImgHostWnd = Helper.Selector.select("", "", "Kuaikan.MainWnd.Instance")
+	if ImgHostWnd then
+		ImgHostWnd:Show(0)
+	end
 	local ownerCtrl = self:GetOwnerControl()
 	local attr = ownerCtrl:GetAttribute()
-	imgctrl:LoadImageFile(attr.data.FilePath, nil, nil, function() imgctrl:UpdateFileList() end)
+	local function HnadleRotate()
+		local count = 0
+		if type(attr.angle) == "number" then
+			local angle = attr.angle%360
+			if angle == 0 then
+				count = 4
+			else
+				count = math.abs(angle/90)
+			end
+		end
+		if count == 0 then
+			ImgHostWnd:BringWindowToTop(true)
+		else
+			SetOnceTimer(
+				function()
+					for i = 1, count do
+						if attr.angle > 0 then
+							imgctrl:RightRotate()
+						else
+							imgctrl:LeftRotate()
+						end
+					end
+					ImgHostWnd:BringWindowToTop(true)
+				end, 
+			200)
+		end
+	end
+	local bRet = imgctrl:LoadImageFile(attr.data.FilePath, nil, nil, 
+		function() 
+			imgctrl:UpdateFileList()
+			HnadleRotate()
+		end)
+	if bRet == false then
+		HnadleRotate()
+	end
 	
 	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 	if MainHostWnd and MainHostWnd:GetWindowState() ~= "hide" then
@@ -261,10 +300,6 @@ function OnLButtonDbClick(self)
 		MainHostWnd:Show(0)
 	else
 		Helper.Listener.LastShowWnd = nil
-	end
-	local ImgHostWnd = Helper.Selector.select("", "", "Kuaikan.MainWnd.Instance")
-	if ImgHostWnd then
-		ImgHostWnd:BringWindowToTop(true)
 	end
 end
 
