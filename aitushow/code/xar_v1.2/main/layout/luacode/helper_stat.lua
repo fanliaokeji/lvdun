@@ -227,6 +227,11 @@ function StatUtil.ExitProcess()
 	tipUtil:Exit("Exit")
 end
 
+function GetSStartFrom()
+	local cmdString = tostring(tipUtil:GetCommandLine())
+	return string.match(string.lower(cmdString), "/sstartfrom%s*(%S+)") or ""
+end
+
 function StatUtil.Exit(bForce)
 	--隐藏所有窗口
 	StatUtil.HideAllWindow()
@@ -239,7 +244,7 @@ function StatUtil.Exit(bForce)
 	--退出上报
 	StatUtil.SendStat({
 		strEC = "exit",
-		strEA = Helper.Setting.IsSysBoot() and "1" or "0",
+		strEA = (Helper.Setting.IsSysBoot() and "1_" or "0_")..tostring(GetSStartFrom()),
 		strEL = Helper.Setting.GetExitType() and "1" or "0",
 		strEV = StatUtil.GetUsedTime(),
 	}) 
