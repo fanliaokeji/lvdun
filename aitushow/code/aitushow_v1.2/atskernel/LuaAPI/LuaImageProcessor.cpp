@@ -185,6 +185,7 @@ int CLuaImageProcessor::ImageLeftRotate(lua_State* luaState)
 			XL_ReleaseBitmap(hBitmap);
 		}
 		XLGP_PushBitmap(luaState, hNewBitmap);
+		XL_ReleaseBitmap(hNewBitmap);
 	}
 	else {
 		lua_pushnil(luaState);
@@ -201,6 +202,7 @@ int CLuaImageProcessor::ImageRightRotate(lua_State* luaState)
 			XL_ReleaseBitmap(hBitmap);
 		}
 		XLGP_PushBitmap(luaState, hNewBitmap);
+		XL_ReleaseBitmap(hNewBitmap);
 	}
 	else {
 		lua_pushnil(luaState);
