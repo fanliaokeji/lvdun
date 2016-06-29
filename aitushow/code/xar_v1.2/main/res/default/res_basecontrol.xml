@@ -83,6 +83,7 @@
 		<!--地址栏-->
 		
 		<!--菜单-->
+		<texture id="MenuBar.Select.Bkg" image="bitmap\basecontrol\MenuBar.Select.Bkg.png" />
 		<texture id="texture.menu.container.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.container.bkg.png" />
 		<texture id="texture.menu.combobox.bkg" type="NineInOne" image="bitmap\basecontrol\texture.menu.combobox.bkg.png" />
 		
@@ -125,6 +126,6 @@
 		<!--颜色id-->
 		<color id="basecontrol.black" red="0" green="0" blue="0" alpha="255" />
 		<color id="basecontrol.white" red="255" green="255" blue="255" alpha="255" />
-		<color id="basecontrol.gray"  red="204" green="211" blue="214" alpha="255"/>
+		<color id="basecontrol.gray"  red="150" green="150" blue="150" alpha="255"/>
 	</resource>
 </XLUE>

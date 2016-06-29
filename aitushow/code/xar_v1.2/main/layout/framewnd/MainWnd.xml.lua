@@ -172,7 +172,7 @@ function OnClickSortButton(self)
 	local tree = self:GetOwner()
 	local wnd = tree:GetBindHostWnd()
 	local wndRectL, wndRectT, wndRectR, wndRectB = wnd:GetWindowRect()
-	local curX = wndRectR - 160
+	local curX = wndRectR - 115-4
 	local curY = wndRectT + 100
 	local GreenShieldMenu = XLGetGlobal("GreenShieldMenu")	
 	local menuTable = GreenShieldMenu.SortMenu.menuTable
