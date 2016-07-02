@@ -66,6 +66,23 @@ function LineClass:RemoveLineObj()
 	end
 end
 
+function SetBottomBtnStat(self, btnname, flag)
+	LOG("SetBottomBtnStat entry, btnname = "..tostring(btnname)..", flag = "..tostring(flag))
+	local owner = self:GetOwner()
+	local leftbtn, rightbtn, closebtn = owner:GetUIObject("MainWnd.LeftRotateButton"), owner:GetUIObject("MainWnd.RightRotateButton"), owner:GetUIObject("MainWnd.DeleteButton")
+	LOG("SetBottomBtnStat type(leftbtn) = "..type(leftbtn)..", type(rightbtn) = "..type(rightbtn)..", type(closebtn) == "..type(closebtn))
+	if btnname == "left" then
+		leftbtn:Enable(flag or false)
+	elseif btnname == "right" then
+		rightbtn:Enable(flag or false)
+	elseif btnname == "delete" then
+		closebtn:Enable(flag or false)
+	else
+		LOG("SetBottomBtnStat, error, btnname = "..tostring(btnname))
+	end
+	LOG("SetBottomBtnStat leave")
+end
+
 function LineClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
 	if not indexBegin or not indexEnd then
 		return
@@ -127,6 +144,12 @@ function LineClass:ShowThumbnailByRange(tPictures, indexBegin, indexEnd)
 		obj:SetIndex(i)
 		self.indexMapObj[i] = obj --做个映射，缩略图更新的时候用
 		local bImageLoaded = obj:SetData(tPictures[i])
+		local attr = self.ctrlSelf:GetAttribute()
+		local pageManager = attr.pageManager
+		--默认选中第1个
+		if i == 1 and pageManager.selectedObj == nil then
+			OnSelectThumbnail(self.ctrlSelf, obj, true)
+		end
 		if not bImageLoaded then
 			table.insert(requiredFilesIndex, i)
 		end
@@ -388,7 +411,7 @@ function OnSelectThumbnail(self, obj, bSelect)
 	local attr = self:GetAttribute()
 	local pageManager = attr.pageManager
 	local id = obj:GetID()
-	if pageManager.selectedObj then 
+	if pageManager.selectedObj and obj ~= pageManager.selectedObj then 
 		--取消上一个的选中态
 		pageManager.selectedObj:Select(false)
 	end
@@ -398,6 +421,18 @@ function OnSelectThumbnail(self, obj, bSelect)
 	else
 		pageManager.selectedObj = obj
 	end
+	local objattr = obj:GetAttribute()
+	LOG("OnSelectThumbnail, type(objattr) == "..type(objattr))
+	obj:Select(true)
+	SetBottomBtnStat(self, "delete", true)
+	if type(objattr) == "table" and type(objattr.data) == "table" and string.lower(objattr.data.ExtName) ~= ".gif" then
+		SetBottomBtnStat(self, "left", true)
+		SetBottomBtnStat(self, "right", true)
+	else
+		SetBottomBtnStat(self, "left", false)
+		SetBottomBtnStat(self, "right", false)
+	end
+	LOG("OnSelectThumbnail, leave")
 end
 
 function OnHotKeyDown(self, tParam)

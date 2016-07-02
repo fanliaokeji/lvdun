@@ -222,9 +222,10 @@ function OnLButtonUp(self)
 	local bkg = ownerCtrl:GetControlObject("SelectFrame")
 	local attr = ownerCtrl:GetAttribute()
 	if attr.bSelect then
-		attr.bSelect = false
+		--不取消选中
+		--attr.bSelect = false
 		-- bkg:SetSrcColor("RGBA(57,66,100,255)")
-		bkg:SetResID("")
+		--bkg:SetResID("")
 	else
 		attr.bSelect = true
 		-- bkg:SetSrcColor("RGBA(79,196,246,255)")
@@ -237,9 +238,9 @@ function OnLButtonUp(self)
 		if infoObj then
 			infoObj:SetText(sInfo)
 		end
+		--选中时才发事件
+		ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
 	end
-	
-	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
 end
 
 function FakeClick(self)

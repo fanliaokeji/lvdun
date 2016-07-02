@@ -131,12 +131,22 @@ function OnShowWindow(self, bVisible)
 	end
 end
 
+--初始化底部按钮不可用
+function InitBottomButton(self)
+	local owner = self:GetOwner()
+	local leftbtn, rightbtn, closebtn = owner:GetUIObject("MainWnd.LeftRotateButton"), owner:GetUIObject("MainWnd.RightRotateButton"), owner:GetUIObject("MainWnd.DeleteButton")
+	leftbtn:Enable(false)
+	rightbtn:Enable(false)
+	closebtn:Enable(false)
+end
+
 --左侧树选择事件
 function LeftPanelOnSelect(self, event, dir)
 	local realpath = PathHelper.GetRealPath(dir)
 	if not realpath then
 		return
 	end
+	InitBottomButton(self)
 	local owner = self:GetOwner()
 	local addressobj = owner:GetUIObject("MainWnd.AddressEditCtrl")
 	addressobj:SetPath(realpath, true)
@@ -151,12 +161,14 @@ function AddressEditCtrlOnPathChanged(self, event, dir)
 	if not realpath then
 		return
 	end
+	InitBottomButton(self)
 	local owner = self:GetOwner()
 	local LeftPanel = owner:GetUIObject("LeftPanel")
 	LeftPanel:Update(realpath)
 	ImagePool:SetFolder(realpath)
 	
 	Helper:SetRegValue(sLastPathReg, realpath)
+	InitBottomButton(self)
 end
 
 function HeadOnLButtonDown(self, x, y)

@@ -137,10 +137,13 @@ function Listener.OnKeyDown(tParam)
 			imageCtrl:DeleteFile()
 		end
 	else
-		-- local DeleteButton = Helper.Selector.select("", "MainWnd.DeleteButton", "MainWnd.Instance")
-		-- if DeleteButton then
-			-- DeleteButton:FireExtEvent("OnClick", 0, 0)
-		-- end
+		local DeleteButton = Helper.Selector.select("", "MainWnd.DeleteButton", "MainWnd.Instance")
+		if tParam[2] == VK_DELETE and DeleteButton then
+			local delattr = DeleteButton:GetAttribute()
+			if delattr.Enable then
+				DeleteButton:FireExtEvent("OnClick", 0, 0)
+			end
+		end
 	end
 	
 end
