@@ -21,8 +21,10 @@ end
 --Update传进来的永远的真实路径，这里判断优先在已经打开的根节点里面选择
 function Update(self, dir)
 	if not PathHelper.CanReBuild() then
+		local oldfn = PathHelper.fncallbak
 		PathHelper.fncallbak = --替换回调函数
 			function()
+				oldfn()
 				Update(self, dir)
 			end
 		return
