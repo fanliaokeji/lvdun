@@ -119,6 +119,7 @@ function Listener.OnKeyDown(tParam)
 		return
 	end
 	local imageCtrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
+	Helper:DispatchEvent("OnHotKeyDown", tParam)
 	if imageCtrl and imageCtrl:GetVisible() then
 		LOG("imageCtrl and imageCtrl:GetVisible()")
 		if tParam[2] == VK_LEFT then
@@ -136,10 +137,10 @@ function Listener.OnKeyDown(tParam)
 			imageCtrl:DeleteFile()
 		end
 	else
-		local DeleteButton = Helper.Selector.select("", "MainWnd.DeleteButton", "MainWnd.Instance")
-		if DeleteButton then
-			DeleteButton:FireExtEvent("OnClick", 0, 0)
-		end
+		-- local DeleteButton = Helper.Selector.select("", "MainWnd.DeleteButton", "MainWnd.Instance")
+		-- if DeleteButton then
+			-- DeleteButton:FireExtEvent("OnClick", 0, 0)
+		-- end
 	end
 	
 end
