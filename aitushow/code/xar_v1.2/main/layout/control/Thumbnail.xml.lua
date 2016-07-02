@@ -122,9 +122,11 @@ function SetImage(self, tImgInfo)
 	local defaultImage = self:GetControlObject("DefaultImage")
 	local backgroundObj = self:GetControlObject("Background")
 	local attr = self:GetAttribute()
-	attr.data.xlhThumb = tImgInfo.xlhThumb
-	attr.data.ThumbWidth = tImgInfo.ThumbWidth
-	attr.data.ThumbHeight = tImgInfo.ThumbHeight
+	if type(attr.data) == "table" then
+		attr.data.xlhThumb = tImgInfo.xlhThumb
+		attr.data.ThumbWidth = tImgInfo.ThumbWidth
+		attr.data.ThumbHeight = tImgInfo.ThumbHeight
+	end
 	
 	imageObj:SetVisible(true)
 	imageObj:SetDrawMode(1)
@@ -199,7 +201,7 @@ function Select(self, bSelect)
 	if not attr or not attr.data then
 		LOG("GetAttribute nil!!!!!!!!!")
 	end
-	attr.data.bSelect = bSelect 
+	--attr.data.bSelect = bSelect --del by wangwei
 	attr.bSelect = bSelect--add by wangwei
 	-- local bkg = self:GetControlObject("Background")
 	local bkg = self:GetControlObject("SelectFrame")

@@ -208,7 +208,10 @@ function PageManager:Init(ctrlSelf, tPictures, scrollPos)
 		self.containerObj = ctrlSelf:GetControlObject("Container")
 	end
 	self:ClearAllData()
-	self.selectedObj = nil--add by wangwei
+	if self.selectedObj then
+		self.selectedObj:Select(false)
+		self.selectedObj = nil--add by wangwei
+	end
 	self.tPictures = tPictures
 	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
 	local containerHeight = self:CalaContainerNeedHeight()
@@ -327,7 +330,10 @@ function PageManager:SwapLineByScrollPos(scrollPos)
 			local tmpLine = self.lineList[1]
 			table.remove(self.lineList, 1)
 			local indexEnd = math.min(indexBegin+columnCount-1, #self.tPictures)
-			self.selectedObj = nil--add by wangwei
+			if self.selectedObj then
+				self.selectedObj:Select(false)
+				self.selectedObj = nil--add by wangwei
+			end
 			requiredFiles = tmpLine:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 			table.insert(self.lineList, tmpLine)
 		end
@@ -347,7 +353,10 @@ function PageManager:SwapLineByScrollPos(scrollPos)
 			local tmpLine = self.lineList[#self.lineList]
 			table.remove(self.lineList, #self.lineList)
 			local indexEnd = math.min(indexBegin+columnCount-1, #self.tPictures)
-			self.selectedObj = nil--add by wangwei
+			if self.selectedObj then
+				self.selectedObj:Select(false)
+				self.selectedObj = nil--add by wangwei
+			end
 			requiredFiles = tmpLine:ShowThumbnailByRange(self.tPictures, indexBegin, indexEnd)
 			table.insert(self.lineList, 1, tmpLine)
 		end
@@ -411,7 +420,7 @@ function OnSelectThumbnail(self, obj, bSelect)
 	local attr = self:GetAttribute()
 	local pageManager = attr.pageManager
 	local id = obj:GetID()
-	if pageManager.selectedObj and obj ~= pageManager.selectedObj then 
+	if pageManager.selectedObj then 
 		--取消上一个的选中态
 		pageManager.selectedObj:Select(false)
 	end
