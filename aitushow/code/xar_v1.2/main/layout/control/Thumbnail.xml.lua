@@ -242,6 +242,12 @@ function OnLButtonUp(self)
 	ownerCtrl:FireExtEvent("OnSelect", attr.bSelect)
 end
 
+function FakeClick(self)
+	--用于快捷键左右切换时的选中
+	local bkg = self:GetControlObject("Background")
+	OnLButtonUp(bkg)
+end
+
 function ResetAngle(self)
 	local attr = self:GetAttribute()
 	if type(attr.angle) == "number" then

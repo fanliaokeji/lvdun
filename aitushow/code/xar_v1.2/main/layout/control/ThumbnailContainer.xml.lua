@@ -248,6 +248,16 @@ function PageManager:ResetScrollBar()
 	end
 end
 
+function PageManager:GetThumbObjByIndex(index)
+	for i=1, #self.lineList do
+		if self.lineList[i].indexMapObj[index] then
+			return self.lineList[i].indexMapObj[index]
+		end
+	end
+	
+	return nil
+end
+
 --以下是处理滚动的两个主要的方法
 function PageManager:ShowThumbnailByScrollPos(scrollPos)
 	LOG("ShowThumbnailByScrollPos: ", scrollPos)
@@ -379,6 +389,7 @@ function OnSelectThumbnail(self, obj, bSelect)
 	local pageManager = attr.pageManager
 	local id = obj:GetID()
 	if pageManager.selectedObj then 
+		--取消上一个的选中态
 		pageManager.selectedObj:Select(false)
 	end
 	
@@ -386,6 +397,36 @@ function OnSelectThumbnail(self, obj, bSelect)
 		pageManager.selectedObj = nil
 	else
 		pageManager.selectedObj = obj
+	end
+end
+
+function OnHotKeyDown(self, tParam)
+	if not self:GetVisible() then return end
+	
+	local attr = self:GetAttribute()
+	local pageManager = attr.pageManager
+	local selectedIndex = 1
+	if pageManager.selectedObj then
+		local thumbAttr = pageManager.selectedObj:GetAttribute()
+		selectedIndex = thumbAttr.index
+	end
+	local _, columnCount = GetPageLayout(self)
+	if tParam[2] == 0x25 then--VK_LEFT
+		selectedIndex = selectedIndex - 1
+	elseif tParam[2] == 0x27 then--VK_RIGHT
+		selectedIndex = selectedIndex + 1
+	elseif tParam[2] == 0x26 then--VK_UP
+		selectedIndex = selectedIndex - columnCount
+	elseif tParam[2] == 0x28 then--VK_DOWN
+		selectedIndex = selectedIndex + columnCount
+	end
+	
+	selectedIndex = math.max(selectedIndex, 1)
+	selectedIndex = math.min(selectedIndex, #pageManager.tPictures)
+	
+	local thumbObj = pageManager:GetThumbObjByIndex(selectedIndex)
+	if thumbObj then
+		thumbObj:FakeClick()
 	end
 end
 
@@ -398,11 +439,9 @@ end
 function OnImagePoolPicUpdate(self, info, index)
 	--这里面进来的会比较频繁，所以尽量少打日志、优化处理时间
 	local attr = self:GetAttribute()
-	for i=1, #attr.pageManager.lineList do
-		if attr.pageManager.lineList[i].indexMapObj[index] then
-			attr.pageManager.lineList[i].indexMapObj[index]:SetImage(info)
-			return
-		end
+	local thumbObj = attr.pageManager:GetThumbObjByIndex(index)
+	if thumbObj then
+		thumbObj:SetImage(info)
 	end
 end
 
@@ -457,4 +496,6 @@ function OnInitControl(self)
 		UpdateUIByIndex(self, index) 
 	end)
 	ImagePool:AddListener("OnRenameFile", function(_,_, info, index, sOldPath, sNewPath) UpdateUIByIndex(self, index) end)
+
+	Helper:AddListener("OnHotKeyDown", function(_, _, tParam) OnHotKeyDown(self, tParam) end)
 end

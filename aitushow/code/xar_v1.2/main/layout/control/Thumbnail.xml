@@ -12,6 +12,7 @@
 			<SetImage />
 			<!--设置是否被选中-->
 			<Select />	
+			<FakeClick /><!--用于快捷键左右切换时的选中-->
 			<Rotate />
 		</method_def>
 		<event_def>
