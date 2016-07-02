@@ -47,11 +47,13 @@ function OnCreate(self)
 	-- local imageCtrl = objtree:GetUIObject("FrameWnd.ImageCtrl")
 	-- imageCtrl:AttachListener("OnImageSizeChange", false, OnImageSizeChange)
 	
-	-- Helper:AddDropTarget(self)
-	-- local function OnDrop(file)
+	Helper:AddDropTarget(self)
+	local function OnDrop(file)
 		-- imageCtrl:SetImagePath(file)
-	-- end
-	-- Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
+		XLMessageBox("file: "..file)
+	end
+	Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
+	
 	local lastPath = Helper:QueryRegValue(sLastPathReg)
 	if lastPath then
 		local addressobj = objtree:GetUIObject("MainWnd.AddressEditCtrl")

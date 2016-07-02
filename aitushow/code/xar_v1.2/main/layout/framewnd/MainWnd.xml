@@ -261,6 +261,7 @@
             <enable>1</enable>
             <maxbox>1</maxbox>
             <minbox>1</minbox>
+            <enabledrop>1</enabledrop>
             <minwidth>500</minwidth>
             <minheight>300</minheight>
 			<sysmenu>1</sysmenu>
