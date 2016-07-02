@@ -11,7 +11,7 @@ function AdjustImageBySize(backgroundObj, imageObj, ThumbWidth, ThumbHeight)
 	if ThumbWidth < imageWidth and ThumbHeight < imageHeight then
 		--直接1:1展示
 		local newTop    = math.round((imageHeight - ThumbHeight)/2)
-		local newLeft  = math.round((imageWidth - ThumbWidth)/2)
+		local newLeft  = math.round((imageWidth - ThumbWidth)/2)+3
 		
 		LOG("SetImage 1:1 newHeight: ", newHeight, " newLeft: ", newLeft)
 		imageObj:SetObjPos2(newLeft, newTop, ThumbWidth, ThumbHeight)
@@ -26,7 +26,7 @@ function AdjustImageBySize(backgroundObj, imageObj, ThumbWidth, ThumbHeight)
 		imageObj:SetObjPos2(3, newTop, imageWidth, newHeight)
 	elseif ThumbWidth/ThumbHeight < imageWidth/imageHeight then--图片是高、瘦型的
 		local newWidth = math.round((imageHeight*ThumbWidth)/ThumbHeight)
-		local newLeft  = math.round((imageWidth - newWidth)/2)
+		local newLeft  = math.round((imageWidth - newWidth)/2)+3
 		imageObj:SetObjPos2(newLeft, 3, newWidth, imageHeight)
 		-- LOG("SetImage  newWidth: ", newWidth, " newLeft: ", newLeft)
 	end
