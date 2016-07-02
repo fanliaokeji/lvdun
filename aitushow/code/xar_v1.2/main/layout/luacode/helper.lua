@@ -457,22 +457,18 @@ end
 -- 可用 RealObject 或 hostwnd, enabledrop属性应该打开
 function Helper:AddDropTarget(xlueObj)
 	if not xlueObj then return end
-	
-	if not Helper.hostWndManager:GetHostWnd(xlueObj:GetID()) then  
-		return 
-	end
+	if not Helper.hostWndManager:GetHostWnd(xlueObj:GetID()) then  return end
 		
 	local function InputFilter(self, msg, wpram, lparam)  
 		if msg == 0x0233 then --WM_DROPFILES
 			local file = Helper.tipUtil:DragQueryFile(wpram)
 			Helper:DispatchEvent("OnDrop", file)
 		end
-		return false
 	end
 	
 	local hwnd = xlueObj:GetWndHandle()
-	-- XLMessageBox("hwndB: "..tostring(hwnd))
-	tipUtil:DragAcceptFiles(hwnd, true)
+	-- XLMessageBox("hwnd: "..tostring(hwnd).." "..tonumber(hwnd))
+	tipUtil:DragAcceptFiles(hwnd)
 	cookie = xlueObj:AddInputFilter(false,InputFilter)
 end
 --menuTable格式：
