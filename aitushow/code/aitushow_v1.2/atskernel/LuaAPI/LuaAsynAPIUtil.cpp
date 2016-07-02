@@ -797,7 +797,7 @@ void GetFoldersData::Work()
 								break;
 							}
 						} while(FindNextFile(hSubFolder , &FindSubFolderData));
-						CloseHandle(hSubFolder);
+						FindClose(hSubFolder);
 					}
 					WCHAR szFilePath[MAX_PATH] = {0};
 					wcsncpy(szFilePath,wstrTempPath.c_str(),wstrTempPath.size());
@@ -809,7 +809,7 @@ void GetFoldersData::Work()
 			}
 		} while(FindNextFile(handle , &FindFileData));
 
-		CloseHandle(handle);
+		FindClose(handle);
 		nErrCode = 0;
 	}
 	g_wndMsg.PostMessage(WM_GETFOLDERS, nErrCode, (LPARAM)this);

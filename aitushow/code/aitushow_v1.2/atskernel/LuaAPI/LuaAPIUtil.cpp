@@ -4647,7 +4647,7 @@ int LuaAPIUtil::GetFolders(lua_State* luaState)
 			}
 		} while(FindNextFile(handle , &FindFileData));
 
-		CloseHandle(handle);
+		FindClose(handle);
 	}
 	return 1;
 }
