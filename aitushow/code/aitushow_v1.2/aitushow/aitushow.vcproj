@@ -215,6 +215,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImagePreReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>

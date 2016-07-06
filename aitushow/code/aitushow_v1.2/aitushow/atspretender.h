@@ -2,7 +2,7 @@
 
 #include <shlobj.h>
 #include <list>
-
+#include "ImagePreReader.h"
 class ATSPretender
 {
 public:
@@ -10,34 +10,49 @@ public:
 	{
 
 
-		const TCHAR *rgszFileName[] = {
-			//_T("zlib1.dll"), 
-			//_T("minizip.dll"),  
-			//_T("xlfsio.dll"), 
-			//_T("xlluaruntime.dll"), 
-			//_T("libexpat.dll"), 
-			//_T("libpng13.dll"), 
-			//_T("xlgraphic.dll"), 
-			//_T("xlgraphicplus.dll"),
-			_T("xlue.dll")
+		//const TCHAR *rgszFileName[] = {
+		//	_T("zlib1.dll"), 
+		//	//_T("minizip.dll"),  
+		//	_T("xlfsio.dll"), 
+		//	_T("xlluaruntime.dll"), 
+		//	_T("libexpat.dll"), 
+		//	_T("libpng13.dll"), 
+		//	_T("xlgraphic.dll"), 
+		//	_T("xlgraphicplus.dll"),
+		//	_T("xlue.dll")
+		//};
+		//HMODULE rghmodDeps[_countof(rgszFileName)] = {NULL};
+		//PreLoadDll(rgszFileName, _countof(rgszFileName), rghmodDeps);
+		//BOOL bAllOk = TRUE;
+		//for (int i = 0; i < _countof(rghmodDeps); ++i)
+		//{
+		//	if (NULL == rghmodDeps[i])
+		//	{
+		//		bAllOk = FALSE;
+		//	}
+		//}
+		//if (!bAllOk) return;
+		//for (int i = 0; i < _countof(rghmodDeps); ++i)
+		//{
+		//	m_modList.push_back(rghmodDeps[i]);
+		//}
+		
+		CHAR szExePath[MAX_PATH] = {0};
+		GetModuleFileNameA(NULL, szExePath, MAX_PATH);
+		PathRemoveFileSpecA(szExePath);
+
+		const CHAR *dllFileName[] = {
+			("zlib1.dll"),   
+			("xlfsio.dll"), 
+			("xlluaruntime.dll"), 
+			("libexpat.dll"), 
+			("libpng13.dll"), 
+			("xlgraphic.dll"), 
+			("xlgraphicplus.dll"),
+			("xlue.dll"),
+			("atskernel.dll")
 		};
-		HMODULE rghmodDeps[_countof(rgszFileName)] = {NULL};
-		PreLoadDll(rgszFileName, _countof(rgszFileName), rghmodDeps);
-		BOOL bAllOk = TRUE;
-		for (int i = 0; i < _countof(rghmodDeps); ++i)
-		{
-			if (NULL == rghmodDeps[i])
-			{
-				bAllOk = FALSE;
-			}
-		}
-		if (!bAllOk) return;
-		for (int i = 0; i < _countof(rghmodDeps); ++i)
-		{
-			m_modList.push_back(rghmodDeps[i]);
-		}
-
-
+		PreReadDll(dllFileName, _countof(dllFileName),szExePath);
 		m_hAtsKernel = LoadLibrary(_T("atskernel.dll"));
 		if (NULL == m_hAtsKernel)
 		{
@@ -73,6 +88,17 @@ public:
 			pResult[i] = ::LoadLibrary(rgszFileName[i]);
 			DWORD dwLastError = ::GetLastError();
 			//TSDEBUG(_T("LoadLibrary(%s) return 0x%p, dwLastError = %lu"), rgszFileName[i], pResult[i], dwLastError);
+		}
+	}
+	
+	static void PreReadDll(const CHAR **rgszFileName, ULONG nFileCount, const CHAR * szDir)
+	{
+		for (unsigned int i = 0; i < nFileCount; ++i)
+		{
+			const size_t kStepSize = 1024 * 1024;
+			CHAR szTmp[MAX_PATH] = {0}; 
+			PathCombineA(szTmp,szDir,rgszFileName[i]);
+			CImagePreReader::PreReadImage(szTmp, 0, kStepSize);
 		}
 	}
 
