@@ -49,6 +49,8 @@ public:
 			("libpng13.dll"), 
 			("xlgraphic.dll"), 
 			("xlgraphicplus.dll"),
+			("FreeImage.dll"),
+			("FreeImagePlus.dll"),
 			("xlue.dll"),
 			("atskernel.dll")
 		};
