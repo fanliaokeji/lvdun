@@ -93,6 +93,36 @@ Function CloseExe
 	${FKillProc} ${EXE_NAME}
 FunctionEnd
 
+Function GetJPString
+	Push $0
+	Push $1
+	Push $2
+	Push $3
+	StrCpy $1 "meitu"
+	ClearErrors
+	ReadRegStr $0 HKCU "Software\Meitu\KanKan" "AppPath"
+	IfErrors 0 +2
+	StrCpy $1 "null"
+	
+	StrCpy $2 "2345"
+	ClearErrors
+	ReadRegStr $0 HKLM "SOFTWARE\2345Pic" "Path"
+	IfErrors 0 +2
+	StrCpy $2 "null"
+	
+	StrCpy $3 "isee"
+	ClearErrors
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\iSee图片专家" "UninstallString"
+	IfErrors 0 +2
+	StrCpy $3 "null"
+	
+	StrCpy $0 "$1_$2_$3"
+	Pop $3
+	Pop $2
+	Pop $1
+	Exch $0
+FunctionEnd
+
 Var Bool_IsUpdate
 Function DoInstall
 	;获取public目录
@@ -156,6 +186,9 @@ Function DoInstall
 		WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId" "$0"
 	${EndIf}
 	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
+	;获取竞品信息
+	Call GetJPString
+	Pop $R3
 	${If} $Bool_IsUpdate == 0
 		${SendStat} "install" "$R1" "$str_ChannelID" 1
 		${SendStat} "installmethod" "$R1" "$R3" 1
@@ -169,6 +202,7 @@ Function DoInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir" "$INSTDIR"
 	System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::GetTime(*l) i(.r0).r1'
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallTimes" "$0"
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstallType" "$Bool_IsUpdate"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Path" "$INSTDIR\program\${EXE_NAME}.exe"
 	;注册表增加版本信息
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "Ver" ${PRODUCT_VERSION}
@@ -286,7 +320,7 @@ Function CmdSilentInstall
 		;初次安装自动关联
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 		;修改设置项,不修改关联配置,只在初次安装的时候做
 		StrCpy $Bool_assoc 1
 		${NSISLOG} "CmdSilentInstall Bool_Sysstup = $Bool_Sysstup, Bool_assoc = $Bool_assoc"
@@ -1066,7 +1100,8 @@ Function NSISModifyCfgFile
 	StrCpy $3 ""
 	${If} $0 != ""
 		ClearErrors
-		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.lua" r
+		;注意这次修改的是UserConfig2.lua， 在xar里面会合并到UserConfig.lua
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig2.lua" r
 		IfErrors done
 		FileRead $1 $2
 		${While} $2 != ''
@@ -1086,7 +1121,7 @@ Function NSISModifyCfgFile
 			${WordReplace} $3 "$\"associate$\"" "$\"associate_del$\"" "+*" $3
 		${EndIf}
 		ClearErrors
-		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig.lua" w
+		FileOpen $1 "$0\${PRODUCT_NAME}\UserConfig2.lua" w
 		IfErrors done2
 		FileWrite $1 $3
 		FileClose $1
@@ -1107,11 +1142,11 @@ Function onLastClose
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1
@@ -1130,11 +1165,11 @@ Function OnClick_FreeUse
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1

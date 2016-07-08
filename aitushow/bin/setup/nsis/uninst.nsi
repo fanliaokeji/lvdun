@@ -203,7 +203,12 @@ Function un.UNSD_TimerFun
 	;先干掉快捷方式
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-	${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
+	;${WordFind} "${PRODUCT_VERSION}" "." -1 $R1
+	StrCpy $R1 "use"
+	ClearErrors
+	ReadRegDWORD $R2 HKCU ${PRODUCT_MAININFO_FORSELF} "use"
+	IfErrors 0 +2
+	StrCpy $R1 "nouse"
 	${SendStat} "uninstall" "$R1" $str_ChannelID 1
 	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::Send2KKAnyHttpStat(t '3', t '$str_ChannelID', t '${PRODUCT_VERSION}')"
 	${FKillProc} ${EXE_NAME}
@@ -236,6 +241,7 @@ Function un.UNSD_TimerFun
 	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "InstDir"
 	${NSISLOG} "un.UNSD_TimerFun r0 = $0, INSTDIR = $INSTDIR" 
 	${If} $0 == "$INSTDIR"
+		DeleteRegValue HKCU ${PRODUCT_MAININFO_FORSELF} "use"
 		DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
 		DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 		;删除自用的注册表信息
@@ -244,7 +250,7 @@ Function un.UNSD_TimerFun
 		${UnSetSysBoot}
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2
