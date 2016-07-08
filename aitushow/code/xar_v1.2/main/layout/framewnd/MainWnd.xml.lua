@@ -240,10 +240,10 @@ function OnMove(self)
 		
 	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
 	
-	Helper:SetRegValue(iWindowPosXReg, x)
-	Helper:SetRegValue(iWindowPosYReg, y)
-	Helper:SetRegValue(iWindowPosDXReg, x+wndwidth)
-	Helper:SetRegValue(iWindowPosDYReg, y+wndheight)
+	UserConfig:Set("iMainWindowPosX", x)
+	UserConfig:Set("iMainWindowPosY", y)
+	UserConfig:Set("iMainWindowPosDX", x+wndwidth)
+	UserConfig:Set("iMainWindowPosDY", y+wndheight)
 end
 
 function OnClickLeftRotateButton(self)
