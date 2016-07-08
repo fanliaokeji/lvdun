@@ -33,12 +33,12 @@ ImagePool.thumbnailsLoader = ThumbnailsLoaderFactory:CreateLoader()
 --]]
 
 --向外提供的方法：
-function ImagePool:SetFolder(sPath)
+function ImagePool:SetFolder(sPath, bMust)
 	if not sPath or not Helper.tipUtil:QueryFileExists(sPath) then
 		return
 	end
 	
-	if self.curFolder and self.curFolder == sPath then
+	if self.curFolder and self.curFolder == sPath and not bMust then
 		return
 	end
 	

@@ -207,9 +207,17 @@ function HandleRotateExit(self, CallBack)
 		if extName == ".bmp" or extName == ".png" or extName == ".jpe" or extName == ".jpg" or extName == ".jpeg" then
 			bCoverCopy = true
 		end
+		local fnCoverCallBack = 
+			function()
+				CallBack()
+				self:UpdateFileList(true)
+				--通知主界面
+				local parentDir = Helper.APIproxy.GetParentPath(attr.CurDocItem.FilePath)
+				ImagePool:SetFolder(parentDir, true)
+			end
 		if RotateSaveAlert == "coverold" then 
 			if bCoverCopy then 
-				self:SaveImageFile(CallBack)
+				self:SaveImageFile(fnCoverCallBack)
 				return
 			else
 				local HostWndHelper = Helper.MessageBox
@@ -229,7 +237,7 @@ function HandleRotateExit(self, CallBack)
 						return
 					end	
 				else --coverold
-					self:SaveImageFile(CallBack)
+					self:SaveImageFile(fnCoverCallBack)
 					if bCheck then
 						Helper.Setting.SetRotateType("coverold")
 					end
@@ -245,7 +253,7 @@ function HandleRotateExit(self, CallBack)
 					Helper.Setting.SetRotateType("nosave")
 				end
 			elseif nRet == HostWndHelper.ID_COVEROLD then	
-				self:SaveImageFile(CallBack)
+				self:SaveImageFile(fnCoverCallBack)
 				if bCheck then
 					Helper.Setting.SetRotateType("coverold")
 				end
