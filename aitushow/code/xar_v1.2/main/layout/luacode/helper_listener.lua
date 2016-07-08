@@ -64,7 +64,7 @@ function Listener.OnCommandLine(tParam)
 			return
 		end
 		LOG("Listener.OnCommandLine: SetImagePath: ", filepath)
-		imgctrl:LoadImageFile(filepath, nil, nil, function() imgctrl:UpdateFileList() end)
+		imgctrl:LoadImageFile(filepath, nil, nil, function() imgctrl:UpdateFileList(true) end)
 		--如果存在主窗口，隐藏主窗口
 		local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
 		if MainHostWnd and MainHostWnd:GetWindowState() ~= "hide" then

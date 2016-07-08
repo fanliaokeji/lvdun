@@ -162,45 +162,54 @@
 			<texture id="setting_uncheck.hover"   imagelist="setting_uncheck" index="2" />
 			<texture id="setting_uncheck.down"   imagelist="setting_uncheck" index="3" />
 		
-		
+		<texture id="mainwnddefaultshow" image="bitmap\mainwnddefaultshow.png" />
 		<!--工具栏-->
 		<texture id="toolbar.bkg" type="NineInOne" image="bitmap\toolbar\bkg.png" />
 		<imagelist id="toolbar.fangda" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\fangda.png" />
 			<bitmap id="toolbar.fangda.normal"   imagelist="toolbar.fangda" index="1" />
 			<bitmap id="toolbar.fangda.hover"   imagelist="toolbar.fangda" index="2" />
 			<bitmap id="toolbar.fangda.down"   imagelist="toolbar.fangda" index="3" />
+			<bitmap id="toolbar.fangda.disable"   imagelist="toolbar.fangda" index="4" />
 		<imagelist id="toolbar.shanchu" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shanchu.png" />
 			<bitmap id="toolbar.shanchu.normal"   imagelist="toolbar.shanchu" index="1" />
 			<bitmap id="toolbar.shanchu.hover"   imagelist="toolbar.shanchu" index="2" />
 			<bitmap id="toolbar.shanchu.down"   imagelist="toolbar.shanchu" index="3" />
+			<bitmap id="toolbar.shanchu.disable"   imagelist="toolbar.shanchu" index="4" />
 		<imagelist id="toolbar.shangyizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shangyizhang.png" />
 			<bitmap id="toolbar.shangyizhang.normal"   imagelist="toolbar.shangyizhang" index="1" />
 			<bitmap id="toolbar.shangyizhang.hover"   imagelist="toolbar.shangyizhang" index="2" />
 			<bitmap id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="3" />
+			<bitmap id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="4" />
 		<imagelist id="toolbar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
 			<bitmap id="toolbar.suoxiao.normal"   imagelist="toolbar.suoxiao" index="1" />
 			<bitmap id="toolbar.suoxiao.hover"   imagelist="toolbar.suoxiao" index="2" />
 			<bitmap id="toolbar.suoxiao.down"   imagelist="toolbar.suoxiao" index="3" />
+			<bitmap id="toolbar.suoxiao.disable"   imagelist="toolbar.suoxiao" index="4" />
 		<imagelist id="toolbar.xiayizhang" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\xiayizhang.png" />
 			<bitmap id="toolbar.xiayizhang.normal"   imagelist="toolbar.xiayizhang" index="1" />
 			<bitmap id="toolbar.xiayizhang.hover"   imagelist="toolbar.xiayizhang" index="2" />
 			<bitmap id="toolbar.xiayizhang.down"   imagelist="toolbar.xiayizhang" index="3" />
+			<bitmap id="toolbar.xiayizhang.disable"   imagelist="toolbar.xiayizhang" index="4" />
 		<imagelist id="toolbar.yibiyi" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\yibiyi.png" />
 			<bitmap id="toolbar.yibiyi.normal"   imagelist="toolbar.yibiyi" index="1" />
 			<bitmap id="toolbar.yibiyi.hover"   imagelist="toolbar.yibiyi" index="2" />
 			<bitmap id="toolbar.yibiyi.down"   imagelist="toolbar.yibiyi" index="3" />
+			<bitmap id="toolbar.yibiyi.disable"   imagelist="toolbar.yibiyi" index="4" />
 		<imagelist id="toolbar.youxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\youxuanzhuan.png" />
 			<bitmap id="toolbar.youxuanzhuan.normal"   imagelist="toolbar.youxuanzhuan" index="1" />
 			<bitmap id="toolbar.youxuanzhuan.hover"   imagelist="toolbar.youxuanzhuan" index="2" />
 			<bitmap id="toolbar.youxuanzhuan.down"   imagelist="toolbar.youxuanzhuan" index="3" />
+			<bitmap id="toolbar.youxuanzhuan.disable"   imagelist="toolbar.youxuanzhuan" index="4" />
 		<imagelist id="toolbar.zuoxuanzhuan" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\zuoxuanzhuan.png" />
 			<bitmap id="toolbar.zuoxuanzhuan.normal"   imagelist="toolbar.zuoxuanzhuan" index="1" />
 			<bitmap id="toolbar.zuoxuanzhuan.hover"   imagelist="toolbar.zuoxuanzhuan" index="2" />
 			<bitmap id="toolbar.zuoxuanzhuan.down"   imagelist="toolbar.zuoxuanzhuan" index="3" />
+			<bitmap id="toolbar.zuoxuanzhuan.disable"   imagelist="toolbar.zuoxuanzhuan" index="4" />
 		<imagelist id="toolbar.shiping" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\shiping.png" />
 			<bitmap id="toolbar.shiping.normal"   imagelist="toolbar.shiping" index="1" />
 			<bitmap id="toolbar.shiping.hover"   imagelist="toolbar.shiping" index="2" />
 			<bitmap id="toolbar.shiping.down"   imagelist="toolbar.shiping" index="3" />
+			<bitmap id="toolbar.shiping.disable"   imagelist="toolbar.shiping" index="4" />
 			
 		<!--对话框-->
 		<bitmap id="messagebox.icon"  path="bitmap\messagebox\icon.png" />
@@ -265,5 +274,13 @@
 		<bitmap id="default_icon.webp" path="bitmap\default_icon\webp.png" />
 		<bitmap id="default_icon.xbm" path="bitmap\default_icon\xbm.png" />
 		<bitmap id="default_icon.xpm" path="bitmap\default_icon\xpm.png" />
+		
+		<bitmap id="default_icon.cr2" path="bitmap\default_icon\cr2.png" />
+		<bitmap id="default_icon.nef" path="bitmap\default_icon\nef.png" />
+		<bitmap id="default_icon.arw" path="bitmap\default_icon\arw.png" />
+		<bitmap id="default_icon.dng" path="bitmap\default_icon\dng.png" />
+		<bitmap id="default_icon.srf" path="bitmap\default_icon\srf.png" />
+		<bitmap id="default_icon.raf" path="bitmap\default_icon\raf.png" />
+		<bitmap id="default_icon.wmf" path="bitmap\default_icon\wmf.png" />
 	</resource>
 </XLUE>

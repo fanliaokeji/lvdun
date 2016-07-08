@@ -32,6 +32,17 @@ function AdjustImageBySize(backgroundObj, imageObj, ThumbWidth, ThumbHeight)
 	end
 end
 
+function OnImageRButtonUp(self)
+	local curX, curY = Helper.tipUtil:GetCursorPos()
+	local tree = self:GetOwner()
+	local wnd = tree:GetBindHostWnd()
+	local menuTable = GreenShieldMenu.MainWndImgMenu.menuTable
+	local menuFunTable = GreenShieldMenu.MainWndImgMenu.menuFunTable
+	local userData = {}
+	userData.SelectObj = self:GetOwnerControl()
+	Helper:CreateMenu(curX, curY, wnd:GetWndHandle(), menuTable, menuFunTable, userData)
+end
+
 function SetData(self, data)--返回值为bool，代表是否成功设定 image，设定失败，则需要请求
 	local attr = self:GetAttribute()
 	if not attr or not "table" == type(data) then
@@ -277,7 +288,12 @@ function OnLButtonDbClick(self)
 	if ImgHostWnd then
 		ImgHostWnd:Show(0)
 	end
-	local ownerCtrl = self:GetOwnerControl()
+	local ownerCtrl
+	if self:GetClass() == "Thumbnail" then
+		ownerCtrl = self
+	else
+		ownerCtrl = self:GetOwnerControl()
+	end
 	local attr = ownerCtrl:GetAttribute()
 	local function HnadleRotate()
 		local count = 0
@@ -310,7 +326,7 @@ function OnLButtonDbClick(self)
 	end
 	local bRet = imgctrl:LoadImageFile(attr.data.FilePath, nil, nil, 
 		function() 
-			imgctrl:UpdateFileList()
+			imgctrl:UpdateFileList(true)
 			HnadleRotate()
 		end)
 	if bRet == false then

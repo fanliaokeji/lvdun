@@ -54,7 +54,7 @@
 										<IconBitmapID>toolbar.fangda.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.fangda.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.fangda.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.fangda.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.fangda.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -83,7 +83,7 @@
 										<IconBitmapID>toolbar.suoxiao.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.suoxiao.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.suoxiao.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.suoxiao.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.suoxiao.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -112,7 +112,7 @@
 										<IconBitmapID>toolbar.yibiyi.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.yibiyi.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.yibiyi.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.yibiyi.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.yibiyi.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -141,7 +141,7 @@
 										<IconBitmapID>toolbar.shangyizhang.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.shangyizhang.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.shangyizhang.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.shangyizhang.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.shangyizhang.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -171,7 +171,7 @@
 										<IconBitmapID>toolbar.xiayizhang.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.xiayizhang.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.xiayizhang.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.xiayizhang.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.xiayizhang.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -200,7 +200,7 @@
 										<IconBitmapID>toolbar.zuoxuanzhuan.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.zuoxuanzhuan.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.zuoxuanzhuan.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.zuoxuanzhuan.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.zuoxuanzhuan.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -230,7 +230,7 @@
 										<IconBitmapID>toolbar.youxuanzhuan.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.youxuanzhuan.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.youxuanzhuan.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.youxuanzhuan.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.youxuanzhuan.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
@@ -260,7 +260,7 @@
 										<IconBitmapID>toolbar.shanchu.normal</IconBitmapID>
 										<IconBitmapID_Hover>toolbar.shanchu.hover</IconBitmapID_Hover>
 										<IconBitmapID_Down>toolbar.shanchu.down</IconBitmapID_Down>
-										<IconBitmapID_Disable>toolbar.shanchu.normal</IconBitmapID_Disable>
+										<IconBitmapID_Disable>toolbar.shanchu.disable</IconBitmapID_Disable>
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>

@@ -685,11 +685,11 @@ function AdapterOrSrcScreen(self, bSrc, bAdapter)
 	if bMustShowAdapter then
 		toolbarItem:AddTipText("适应窗口")
 		toolbarItem:SetIconImage("toolbar.shiping.normal", "toolbar.shiping.hover",
-								 "toolbar.shiping.down", "toolbar.shiping.normal")
+								 "toolbar.shiping.down", "toolbar.shiping.disable")
 	else
 		toolbarItem:AddTipText("实际尺寸")
 		toolbarItem:SetIconImage("toolbar.yibiyi.normal", "toolbar.yibiyi.hover",
-								 "toolbar.yibiyi.down", "toolbar.yibiyi.normal")
+								 "toolbar.yibiyi.down", "toolbar.yibiyi.disable")
 	end
 end
 
@@ -1146,12 +1146,12 @@ function View_OnScaleRatioChanged(self)
 		local toolbarItem = normalToolbar:GetToolbarItem("src")
 		toolbarItem:AddTipText("适应窗口")
 		toolbarItem:SetIconImage("toolbar.shiping.normal", "toolbar.shiping.hover",
-								 "toolbar.shiping.down", "toolbar.shiping.normal")
+								 "toolbar.shiping.down", "toolbar.shiping.disable")
 	else
 		local toolbarItem = normalToolbar:GetToolbarItem("src")
 		toolbarItem:AddTipText("实际尺寸")
 		toolbarItem:SetIconImage("toolbar.yibiyi.normal", "toolbar.yibiyi.hover",
-								 "toolbar.yibiyi.down", "toolbar.yibiyi.normal")
+								 "toolbar.yibiyi.down", "toolbar.yibiyi.disable")
 	end
 	
 	
@@ -1449,7 +1449,7 @@ end
 
 function OpenFile(self)
 	local tipUtil = Helper.APIproxy.OSUtil
-	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
+	local fileFilter = "所有支持的图片格式(jpeg文件;bmp文件;png文件;gif文件;tiff文件;raw文件;其它)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr;*.cr2;*.nef;*.arw;*.dng;*.srf;*.raf;*.wmf|jpeg文件(*.jpg; *.jpeg; *.jpe)|*.jpg; *.jpeg; *.jpe|bmp文件(*.bmp)|*.bmp|png文件(*.png)|*.png|gif文件(*.gif)|*.gif|tiff文件(*.tiff; *.tif)|*.tiff; *.tif|raw文件(*.cr2;*.crw;*.nef)|*.cr2;*.crw;*.nef|All Files(*.*)|*.*||"
 	local tbLocalFiles = tipUtil:FileDialog(true, true, fileFilter, "", "", "")
 	if #tbLocalFiles == 0 then
 		return

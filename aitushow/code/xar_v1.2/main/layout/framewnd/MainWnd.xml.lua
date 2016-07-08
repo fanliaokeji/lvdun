@@ -49,11 +49,13 @@ function OnCreate(self)
 	
 	-- Helper:AddDropTarget(self)
 	-- local function OnDrop(file)
-		-- XLMessageBox("file: "..file)
+		-- imageCtrl:SetImagePath(file)
 	-- end
 	-- Helper:AddListener("OnDrop", function(_, _, file) OnDrop(file) end)
-	
 	local lastPath = Helper:QueryRegValue(sLastPathReg)
+	if not Helper:IsRealString(lastPath) or not Helper.tipUtil:QueryFileExists(lastPath) then
+		lastPath = PathHelper.GetRealPath("我的图片")--默认为“我的图片”的文件夹
+	end
 	if lastPath then
 		local addressobj = objtree:GetUIObject("MainWnd.AddressEditCtrl")
 		local LeftPanel = objtree:GetUIObject("LeftPanel")
@@ -129,6 +131,8 @@ function OnShowWindow(self, bVisible)
 	if bVisible then
 		SendShowUI()
 		Helper.Tray.HostWnd = self
+		Helper.Tray.Show()
+		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\use", Helper.tipUtil:GetCurrentUTCTime())
 	end
 end
 
@@ -240,40 +244,6 @@ function OnMove(self)
 	Helper:SetRegValue(iWindowPosYReg, y)
 	Helper:SetRegValue(iWindowPosDXReg, x+wndwidth)
 	Helper:SetRegValue(iWindowPosDYReg, y+wndheight)
-end
-
-local dragUtil = Helper.APIproxy.LuaDragDropProcessor
-function OnDragEnter(self, IDataObject, keyState, x, y)	
-	return dragUtil.OnDragEnter( IDataObject, keyState, x, y )
-end
-
-function OnDragQuery(self, IDataObject, keyState, x, y)	
-	return dragUtil.OnDragQuery( IDataObject, keyState, x, y );
-end
-
-function OnDragOver(self, IDataObject, keyState, x, y)
-	return dragUtil.OnDragOver( IDataObject, keyState, x, y );
-end
-
-function OnDragLeave(self)
-	return dragUtil.OnDragLeave();
-end
-
-function OnDrop(self, IDataObject, keyState, x, y)
-	local dropAccept,disposed, send_to_next, tfilenames = dragUtil.OnDrop( IDataObject, keyState, x, y );
-	if #tfilenames <= 0 then
-		return
-	end
-	local filePath = tfilenames[1]
-	if not Helper.tipUtil:IsCanHandleFileCheckByExt(filePath) then
-		return
-	end
-	if not ImagePool.curFolder then
-		return
-	end
-	Helper.tipUtil:CopyFileTo(filePath, ImagePool.curFolder)
-	-- ImagePool:OnDirChange(filePath, _, 1)
-	return dropAccept,disposed, send_to_next
 end
 
 function OnClickLeftRotateButton(self)

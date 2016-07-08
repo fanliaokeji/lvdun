@@ -14,6 +14,7 @@
 			<Select />	
 			<FakeClick /><!--用于快捷键左右切换时的选中-->
 			<Rotate />
+			<LButtonDbClick file="Thumbnail.xml.lua" func="OnLButtonDbClick"/>
 		</method_def>
 		<event_def>
 			<OnTrySelect><!--点击缩略图控件时，发OnTrySelect，由缩略图Container决定是否Select(为了多选)-->
@@ -89,6 +90,7 @@
 							<eventlist>
 								<event name="OnLButtonUp" />
 								<event name="OnLButtonDbClick" />
+								<event name="OnRButtonUp" file="Thumbnail.xml.lua" func="OnImageRButtonUp" />
 							</eventlist>
 						</obj>
 						<obj id="DefaultImage" class="ImageObject">
@@ -120,6 +122,7 @@
 							<eventlist>
 								<event name="OnLButtonUp" />
 								<event name="OnLButtonDbClick" />
+								<event name="OnRButtonUp" file="Thumbnail.xml.lua" func="OnImageRButtonUp" />
 							</eventlist>
 						</obj>	
 						<obj id="FileName" class="TextObject">
@@ -141,6 +144,7 @@
 					<eventlist>
 						<event name="OnLButtonUp" />
 						<event name="OnLButtonDbClick" />
+						<event name="OnRButtonUp" file="Thumbnail.xml.lua" func="OnImageRButtonUp" />
 					</eventlist>
 				</obj>
 			</children>

@@ -7,10 +7,15 @@ local SpecialExts = {
 	["TIFF"] = ".tiff;.tif;"
 }
 
+local SpecialExtsCount = {
+	["JPG"] = 3,
+	["TIFF"] = 2,
+}
+
 function Update(self)
 	local ckboxobj
 	local bcheckall = true
-	for i = 3, 15 do
+	for i = 3, 22 do
 		ckboxobj = self:GetObject("chebox"..i)
 		if tipUtil:IsAssociated("."..string.lower(ckboxobj:GetAttribute().Text)) then
 			ckboxobj:SetCheck(true, true)
@@ -19,7 +24,7 @@ function Update(self)
 			ckboxobj:SetCheck(false, true)
 		end
 	end
-	local checkall = self:GetObject("chebox17")
+	local checkall = self:GetObject("chebox24")
 	if bcheckall then
 		checkall:SetCheck(true, true)
 	else
@@ -34,10 +39,14 @@ function Apply(self)
 	end
 	attr.AllowCallApply = false
 	local ckboxattr
-	local strExtsDo, strExtsUnDo = "", ""
-	for i = 3, 15 do
+	local strExtsDo, strExtsUnDo, NeedReport, count = "", "", false, 0
+	for i = 3, 22 do
 		ckboxattr = self:GetObject("chebox"..i):GetAttribute()
 		if ckboxattr.Select then
+			if not NeedReport and not tipUtil:IsAssociated("."..string.lower(ckboxattr.Text)) then
+				NeedReport = true--只要有新增的就上报
+			end
+			count = count + (SpecialExtsCount[ckboxattr.Text] or 1)
 			strExtsDo = strExtsDo..(SpecialExts[ckboxattr.Text] or "."..string.lower(ckboxattr.Text)..";")
 		else
 			strExtsUnDo = strExtsUnDo..(SpecialExts[ckboxattr.Text] or "."..string.lower(ckboxattr.Text)..";")
@@ -47,14 +56,23 @@ function Apply(self)
 	tipUtil:SetAssociate(strExtsUnDo, false, strExtsDo ~= "")
 	tipUtil:SetAssociate(strExtsDo, true)
 	Helper.Setting.SetAssociateConfig(strExtsDo)
+	if NeedReport then
+		--抢关联上报
+		StatUtil.SendStat({
+			strEC = "associate",
+			strEA = "manual",
+			strEL = tostring(count),
+			strEV = 1,
+		}) 
+	end
 end
 
-function chebox17OnSelect(self, event, ischeck)
+function chebox24OnSelect(self, event, ischeck)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	attr.AllowCallApply = true
 	local objcheckbox
-	for i = 3, 15 do
+	for i = 3, 22 do
 		objcheckbox = owner:GetControlObject("chebox"..i)
 		if objcheckbox then
 			objcheckbox:SetCheck(ischeck, true)
@@ -63,10 +81,10 @@ function chebox17OnSelect(self, event, ischeck)
 end
 
 function FileAssoPanelOnInitControl(self)
-	local checkall = self:GetObject("chebox17")
+	local checkall = self:GetObject("chebox24")
 	local attr = self:GetAttribute()
 	local objcheckbox
-	for i = 3, 15 do
+	for i = 3, 22 do
 		objcheckbox = self:GetObject("chebox"..i)
 		objcheckbox:AttachListener("OnSelect", 
 			false, 
@@ -77,7 +95,7 @@ function FileAssoPanelOnInitControl(self)
 					return
 				end
 				local ckbox_attr
-				for j = 3, 15 do
+				for j = 3, 22 do
 					ckbox_attr = self:GetObject("chebox"..j):GetAttribute()
 					if not ckbox_attr.Select then
 						return

@@ -49,6 +49,7 @@ local File = {
 "menu\\ImageRClickMenu.lua",
 "menu\\SortMenu.lua",
 "menu\\AddressEditMenu.lua",
+"menu\\MainWndImgMenu.lua",
 }
 LoadLuaModule(File, __document)
 
@@ -60,7 +61,7 @@ function OnLoadLuaFile()
 	Helper:LOG("OnLoadLuaFileOnLoadLuaFileOnLoadLuaFile")
 	local cmdString = tostring(tipUtil:GetCommandLine())
 	LOG("OnLoadLuaFile cmdString: ", cmdString)
-	local HostWnd
+	local HostWnd, needshowtray = nil, false--图片视图不显示托盘
 	--打开本地文件
 	local filepath = string.match(cmdString, "\"([^\"]+)\"[^\"]*$")
 	if not filepath or not tipUtil:QueryFileExists(filepath) then
@@ -75,15 +76,17 @@ function OnLoadLuaFile()
 	--打开主界面
 	else
 		HostWnd = Helper:CreateModelessWnd("MainWnd","MainWndTree")
+		needshowtray = true
 	end
 	if HostWnd and string.find(string.lower(tostring(cmdString)), "embedding") then
 		HostWnd:Show(0)
+		needshowtray = true
 	else
 		HostWnd:Show(5)
 	end
 	--初始化托盘
 	if HostWnd then
-		Helper.Tray.Init(HostWnd)
+		Helper.Tray.Init(HostWnd, needshowtray)
 	end
 	--上报
 	StatUtil.SendStartupStat()

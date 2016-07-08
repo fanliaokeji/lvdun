@@ -11,7 +11,7 @@ function menuFunTable.OnSelect_Open(self)
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	local curDocItem = clientobj:GetCurDocItem()
 	local parentPath = Helper.APIproxy.GetParentPath(curDocItem.FilePath)
-	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
+	local fileFilter = "所有支持的图片格式(jpeg文件;bmp文件;png文件;gif文件;tiff文件;raw文件;其它)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr;*.cr2;*.nef;*.arw;*.dng;*.srf;*.raf;*.wmf|jpeg文件(*.jpg; *.jpeg; *.jpe)|*.jpg; *.jpeg; *.jpe|bmp文件(*.bmp)|*.bmp|png文件(*.png)|*.png|gif文件(*.gif)|*.gif|tiff文件(*.tiff; *.tif)|*.tiff; *.tif|raw文件(*.cr2;*.crw;*.nef)|*.cr2;*.crw;*.nef|All Files(*.*)|*.*||"
 	local strLocalFiles = tipUtil:FileDialog(true, fileFilter, "", "", parentPath)
 	if strLocalFiles == nil or #strLocalFiles == 0 then
 		return
@@ -37,7 +37,7 @@ function menuFunTable.OnSelect_Save(self)
 	local clientobj = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	local curDocItem = clientobj:GetCurDocItem()	
 	local filename = Helper.APIproxy.GetFileNameFromPath(curDocItem.FilePath)
-	local fileFilter = "图片格式(*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr)|*.jpg;*.jpeg;*.jpe;*.bmp;*.png;*.gif;*.tiff;*.tif;*.psd;*.ico;*.pcx;*.tga;*.wbm;*.ras;*.mng;*.hdr|All Files(*.*)|*.*||"
+	local fileFilter = "jpeg文件(*.jpg; *.jpeg; *.jpe)|*.jpg; *.jpeg; *.jpe|bmp文件(*.bmp)|*.bmp|png文件(*.png)|*.png|gif文件(*.gif)|*.gif|tiff文件(*.tiff; *.tif)|*.tiff; *.tif||"
 	local strLocalFiles = tipUtil:FileDialog(false, fileFilter, "", filename)
 	local MSGBOX = Helper.MessageBox
 	
@@ -48,7 +48,8 @@ function menuFunTable.OnSelect_Save(self)
 		if tipUtil:QueryFileExists(strLocalFiles) and MSGBOX.ID_YES ~= MSGBOX.MessageBox(strLocalFiles.."已经存在， 确定要替换它吗？", clientobj:GetOwner():GetBindHostWnd()) then
 			return
 		end
-		tipUtil:CopyFileTo(curDocItem.FilePath, strLocalFiles)
+		local CallBack = function() end
+		clientobj:SaveImageFile(CallBack, strLocalFiles)
 	end
 end
 

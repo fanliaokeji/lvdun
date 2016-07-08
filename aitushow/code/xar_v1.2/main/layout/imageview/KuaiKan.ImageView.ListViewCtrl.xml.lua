@@ -460,6 +460,7 @@ function LoadThumbnails(self, ItemId, width, height, bShowDefaultThumbnail)
 	local imgCachePath = tempDir .. "\\KuaiKan_{1E27A1DA-16F4-4436-AB6F-A83FCC6DD850}\\KKThumb\\"
 	local extName = Helper.APIproxy.GetFileExt(filePath)
 	extName = string.lower(extName)
+	local extNameOrigi = extName
 	if extName ~= ".png" or extName ~= ".ico" or extName ~= ".gif" then
 		extName = ".jpg"
 	end
@@ -468,7 +469,7 @@ function LoadThumbnails(self, ItemId, width, height, bShowDefaultThumbnail)
 	local thumbnailsFilename = imgCachePath .. md5Str .. extName
 	local osUtil = Helper.APIproxy.OSUtil
 	if not osUtil:QueryFileExists(thumbnailsFilename) and bShowDefaultThumbnail then	
-		Item.Obj:SetDefaultThumbnail(extName)
+		Item.Obj:SetDefaultThumbnail(extNameOrigi)
 	end
 	if attr.ThumbnailsLoader then
 		attr.ThumbnailsLoader:LoadThumbnails(filePath, thumbnailsFilename, width, height)

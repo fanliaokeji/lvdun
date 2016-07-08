@@ -200,6 +200,17 @@ function PageManager:PushTask(requiredFiles)
 	end, 500)
 end
 
+function ShowDefaultTexture(self, bShow)
+	local DefaultNoImgShow = self:GetControlObject("DefaultNoImgShow")
+	if bShow then
+		DefaultNoImgShow:SetZorder(100)
+		DefaultNoImgShow:SetVisible(true)
+	else
+		DefaultNoImgShow:SetZorder(-100)
+		DefaultNoImgShow:SetVisible(false)
+	end
+end
+
 function PageManager:Init(ctrlSelf, tPictures, scrollPos)
 	if not self.bInit then--以下属性只需初始化一次
 		self.bInit = true
@@ -213,6 +224,11 @@ function PageManager:Init(ctrlSelf, tPictures, scrollPos)
 		self.selectedObj = nil--add by wangwei
 	end
 	self.tPictures = tPictures
+	if type(self.tPictures) == "table" and #self.tPictures == 0 then
+		ShowDefaultTexture(ctrlSelf, true)
+	else
+		ShowDefaultTexture(ctrlSelf, false)
+	end
 	local lineCount, columnCount, pageCount, picWidth, picHeight = self.ctrlSelf:GetPageLayout()
 	local containerHeight = self:CalaContainerNeedHeight()
 	self.containerObj:SetObjPos2(0, 0, "father.width - 10", containerHeight)

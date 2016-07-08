@@ -3,6 +3,7 @@
 local UserConfig = ObjectBase:New()
 XLSetGlobal("UserConfig", UserConfig)
 UserConfig.path = Helper:GetUserDataDir().."\\kuaikan\\UserConfig.lua"
+local tipUtil = XLGetObject("API.Util")
 
 function delinvalid(tcfg)
 	local keylist = {}
@@ -19,11 +20,30 @@ function delinvalid(tcfg)
 	end
 end
 
+function MergeUserConfig()
+	local strConfigPath2 = Helper:GetUserDataDir().."\\kuaikan\\UserConfig2.lua"
+	if not Helper:IsRealString(strConfigPath2) or not tipUtil:QueryFileExists(strConfigPath2) then
+		return
+	end
+	local tConfig2 =  Helper:LoadLuaTable(strConfigPath2) or {}
+	tipUtil:DeletePathFile(strConfigPath2)
+	local nInstallType = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\kuaikan\\InstallType")
+	local InstallMethod = Helper:QueryRegValue("HKEY_LOCAL_MACHINE\\Software\\kuaikan\\InstallMethod")
+	if nInstallType == 0 or InstallMethod == "nosilent" then--是非静默，或初次安装 才合并
+		local tRead = UserConfig:Get("setting") or {}
+		tRead["sysboot"] =  tConfig2["setting"]["sysboot"]
+		tRead["associate"] = tConfig2["setting"]["associate"]
+		UserConfig:Set("setting", tRead)
+	end
+end
+
 function UserConfig:Load()
 	--从配置文件里读取上次的配置
 	self.configData = Helper:LoadLuaTable(self.path) or {}
 	--删除失效的配置项
 	delinvalid(self.configData)
+	--合并配置
+	MergeUserConfig()
 end
 
 --带#的设置项只对当前进程有效

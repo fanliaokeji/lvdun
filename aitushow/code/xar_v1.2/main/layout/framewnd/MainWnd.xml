@@ -156,15 +156,7 @@
 										<width>father.width</width>
 										<height>father.height</height>
 										<limitchild>1</limitchild>
-										<enabledrop>1</enabledrop>
 									</attr>
-									<eventlist>
-										<event name="OnDragEnter" file="MainWnd.xml.lua" func="OnDragEnter" />
-										<event name="OnDragQuery" file="MainWnd.xml.lua" func="OnDragQuery" />
-										<event name="OnDragOver"  file="MainWnd.xml.lua" func="OnDragOver" />
-										<event name="OnDragLeave" file="MainWnd.xml.lua" func="OnDragLeave" />
-										<event name="OnDrop" 	  file="MainWnd.xml.lua" func="OnDrop" />
-									</eventlist>
 								</obj>
 							</children>
 						</obj>
@@ -237,7 +229,6 @@
 							</children>
 						</obj>	
 					</children>
-					
 				</obj>
 				<obj id="MainWnd.Info" class="TextObject">
 					<attr>
@@ -265,11 +256,11 @@
             <width>875</width>
             <height>515</height>
             
+            <topmost>0</topmost>
             <visible>1</visible>
             <enable>1</enable>
             <maxbox>1</maxbox>
             <minbox>1</minbox>
-            <enabledrop>1</enabledrop>
             <minwidth>500</minwidth>
             <minheight>300</minheight>
 			<sysmenu>1</sysmenu>

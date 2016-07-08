@@ -48,6 +48,8 @@ function OnCloseBtnClick(self)
 			if not Helper.Setting.GetExitType() then
 				--退出
 				StatUtil.Exit()
+			else
+				Helper.Tray.Show()
 			end
 		end
 	end

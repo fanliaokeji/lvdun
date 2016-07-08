@@ -31,6 +31,15 @@
 								<height>father.height</height>	<!-- Container的初始高度为1 -->
 							</attr>
 						</obj>
+						<obj id="DefaultNoImgShow" class="TextureObject">
+							<attr>
+								<left>(father.width-274)/2</left>
+								<top>(father.height-228)/2</top>
+								<width>274</width>
+								<height>228</height>
+								<texture>mainwnddefaultshow</texture>
+							</attr>
+						</obj>
 						<obj id="Container.ScrollBar" class="ScrollBar">
 							<attr>
 								<left>father.width - 10</left>

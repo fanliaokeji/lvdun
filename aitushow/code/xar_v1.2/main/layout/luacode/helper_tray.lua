@@ -56,7 +56,7 @@ function Tray.Update(strText)
 	trayobj:SetIcon(strImagePath, strText or "快看")
 end
 
-function Tray.Init(hostwnd)
+function Tray.Init(hostwnd, needshow)
 	if not hostwnd then
 		LOG("Tray.Init: hostwnd = nil")
 		return
@@ -93,16 +93,29 @@ function Tray.Init(hostwnd)
 	end
 	Tray.TrayObject:Attach(OnTrayEvent)
 	Tray.Update()
-	Tray.TrayObject:Show()
+	if needshow then
+		Tray.Show()
+	else
+		Tray.Hide()
+	end
 	if type(Tray.fnEventInit) == "function" then
 		Tray.fnEventInit()
 	end
 end
 
 function Tray.Hide()
+	Tray.bHide = true
 	local TrayObject = Tray.TrayObject
 	if TrayObject then
 		TrayObject:Hide()
+	end
+end
+
+function Tray.Show()
+	Tray.bHide = false
+	local TrayObject = Tray.TrayObject
+	if TrayObject then
+		TrayObject:Show()
 	end
 end
 

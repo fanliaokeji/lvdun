@@ -53,6 +53,8 @@ function OnShowWindow(self, bShow)
 	if bShow then
 		SendShowUI()
 		Helper.Tray.HostWnd = self
+		Helper.Tray.Hide()
+		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\use", tipUtil:GetCurrentUTCTime())
 	end
 end
 

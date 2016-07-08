@@ -180,6 +180,8 @@ end
 function StatUtil.SendStartupStat()
 	--记录启动时间
 	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
+	--启动时间写入注册表
+	Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\laststartuputc", tipUtil:GetCurrentUTCTime())
 	--快看心跳上报
 	SetTimer(function(item, id)
 		StatUtil.SendKKStat(10)
@@ -189,6 +191,13 @@ function StatUtil.SendStartupStat()
 		StatUtil.SendStat({
 			strEC = "startup",
 			strEA = StatUtil.GetMainVer(),
+			strEL = StatUtil.GetInstallSrc(),
+			strEV = 1,
+		}) 
+		--启动来源
+		StatUtil.SendStat({
+			strEC = "launch",
+			strEA = tostring(GetSStartFrom()),
 			strEL = StatUtil.GetInstallSrc(),
 			strEV = 1,
 		}) 
@@ -229,10 +238,12 @@ end
 
 function GetSStartFrom()
 	local cmdString = tostring(tipUtil:GetCommandLine())
-	return string.match(string.lower(cmdString), "/sstartfrom%s*(%S+)") or ""
+	return string.match(string.lower(cmdString), "/sstartfrom%s*(%S+)") or "rawexefile"
 end
 
 function StatUtil.Exit(bForce)
+	--退出时检查1次关联
+	Helper.CheckAssociate(true)
 	--隐藏所有窗口
 	StatUtil.HideAllWindow()
 	--先把托盘干掉
@@ -244,7 +255,7 @@ function StatUtil.Exit(bForce)
 	--退出上报
 	StatUtil.SendStat({
 		strEC = "exit",
-		strEA = (Helper.Setting.IsSysBoot() and "1_" or "0_")..tostring(GetSStartFrom()),
+		strEA = Helper.Setting.IsSysBoot() and "1" or "0",
 		strEL = Helper.Setting.GetExitType() and "1" or "0",
 		strEV = StatUtil.GetUsedTime(),
 	}) 
