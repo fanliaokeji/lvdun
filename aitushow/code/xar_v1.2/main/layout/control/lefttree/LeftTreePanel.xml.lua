@@ -288,11 +288,12 @@ function ResetScrollBarV(objRootCtrl)
 	local fatherctrl = 	objRootCtrl:GetControlObject("ContainerBox")
 	local Container = 	objRootCtrl:GetControlObject("Container")
 	local attr = objRootCtrl:GetAttribute()
-	local _, _, _, cb = Container:GetObjPos()
+	local _, ct, _, cb = Container:GetObjPos()
 	local l, t, r, b = fatherctrl:GetObjPos()
 	
-	if cb > b-t then
-		objScrollBar:SetScrollRange( 0, cb-b+t, true )
+	local oh = cb-ct
+	if oh > b-t then
+		objScrollBar:SetScrollRange( 0, oh-b+t, true )
 		objScrollBar:SetPageSize(b-t, true)
 		objScrollBar:SetVisible(true)
 		objScrollBar:SetChildrenVisible(true)
@@ -300,7 +301,7 @@ function ResetScrollBarV(objRootCtrl)
 		--OnScrollMousePosEvent(objScrollBar)
 		
 		--移动到选中的节点
-		local olddis = cb-b+t
+		local olddis = oh-b+t
 		local newdis = olddis
 		if attr.SelectItem then
 			local sl, st, sr, sb = attr.SelectItem:GetObjPos()
