@@ -173,6 +173,7 @@
 			<event name="OnSize" file="KuaiKan.ImageView.MainWnd.xml.lua" func="Wnd_OnSize"/>
 			<event name="OnClose" file="KuaiKan.ImageView.MainWnd.xml.lua" func="Wnd_OnClose"/>
 			<event name="OnShowWindow" />
+			<event name="OnMove" />
 		</eventlist>
 	</hostwndtemplate>	
 </xlue>

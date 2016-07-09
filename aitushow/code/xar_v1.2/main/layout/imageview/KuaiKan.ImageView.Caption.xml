@@ -51,6 +51,9 @@
 												<image>image.logo</image>
 												<drawmode>1</drawmode>
 											</attr>
+											<eventlist>
+												<event name="OnLButtonDbClick" file="KuaiKan.ImageView.Caption.xml.lua" func="OnLButtonDbClickLogo" />
+											</eventlist>
 										</obj>
 										<obj id="client.caption.title.text" class="TextObject">
 											<attr>

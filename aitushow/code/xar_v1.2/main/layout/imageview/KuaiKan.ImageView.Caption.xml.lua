@@ -14,6 +14,10 @@ function OnSysBtnInitControl(self)
     end
 end
 
+function OnLButtonDbClickLogo(self)
+	local closebtn = self:GetObject("control:client.caption.sysbtn")
+	OnCloseBtnClick(closebtn)
+end
 
 function OnMinisizeBtnClick(self)
 	local objTree = self:GetOwner()

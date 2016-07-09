@@ -121,13 +121,15 @@ end
 function Setting.GetImageWindowConfig()
 	local tRead = UserConfig:Get("setting") or {}
 	local tWindow = tRead["imagewindow"] or {}
-	return tWindow["state"], tWindow["width"], tWindow["height"]
+	return tWindow["state"], tWindow["x"] or 0, tWindow["y"] or 0, tWindow["width"], tWindow["height"]
 end
 
-function Setting.SetImageWindowConfig(state, width, height)
+function Setting.SetImageWindowConfig(state, x, y, width, height)
 	local tRead = UserConfig:Get("setting") or {}
 	tRead["imagewindow"] = tRead["imagewindow"] or {}
 	tRead["imagewindow"]["state"] = state
+	tRead["imagewindow"]["x"] = x
+	tRead["imagewindow"]["y"] = y
 	tRead["imagewindow"]["width"] = width
 	tRead["imagewindow"]["height"] = height
 	UserConfig:Set("setting", tRead)

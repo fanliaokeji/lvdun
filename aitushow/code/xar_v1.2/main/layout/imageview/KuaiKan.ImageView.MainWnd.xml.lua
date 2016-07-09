@@ -1,7 +1,7 @@
 local dragUtil = Helper.APIproxy.LuaDragDropProcessor
 
 function Wnd_OnCreate(self)
-	local state, width, height = Helper.Setting.GetImageWindowConfig()
+	local state, x, y, width, height = Helper.Setting.GetImageWindowConfig()
 	local dftwidth, dftheight = 800, 600
 	if state ~= nil then
 		if state == "max" then
@@ -15,8 +15,8 @@ function Wnd_OnCreate(self)
 			if height < dftheight then
 				height = dftheight
 			end
-			self:Move(0,0, width, height)
-			self:Center()
+			self:Move(x, y, width, height)
+			--self:Center()
 		end
 	else
 		self:Move(0,0, dftwidth, dftheight)
@@ -80,11 +80,25 @@ function Wnd_OnSize(self, _type, width, height)
 			end
 		end
 		if not mainClient:IsFullScreen() then
-			Helper.Setting.SetImageWindowConfig("normal", width, height)
+			local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+			Helper.Setting.SetImageWindowConfig("normal", x, y, width, height)
 		end
 	end
 	local rootObject = tree:GetRootObject()
 	rootObject:SetObjPos(0, 0, width, height)
+end
+
+function OnMove(self)
+	local state = self:GetWindowState()
+	if "max" == state or "min" == state then
+		return
+	end
+	local wndleft,wndtop,wndright,wndbottom = self:GetWindowRect()
+	local wndwidth = wndright - wndleft
+	local wndheight = wndbottom - wndtop
+		
+	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
+	Helper.Setting.SetImageWindowConfig("normal", x, y, wndwidth, wndheight)
 end
 
 function OnInitControl(self)
