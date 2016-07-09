@@ -123,6 +123,7 @@ BOOL CXLUEApplication::IniEnv()
 
 void CXLUEApplication::InternalLoadXAR()
 {
+#ifndef _DEBUG
 	TCHAR szPath[MAX_PATH] = {0};
 	GetModuleFileName(NULL, szPath, MAX_PATH);
 	std::wstring strExePath = szPath;
@@ -141,9 +142,14 @@ void CXLUEApplication::InternalLoadXAR()
 		WideStringToAnsiString(strXarDest,strAnsi);
 		iRet = XLUE_LoadXAR(strAnsi.c_str());
 	}
+#else
+	long iRet = -1;
+#endif
 	if (0 != iRet)
 	{
+#ifndef _DEBUG
 		TSDEBUG4CXX(L"XLFS_MountDir,XLUE_LoadXAR error");
+#endif
 		XLUE_AddXARSearchPath(m_strXarPath.c_str());
 		if (XLUE_XARExist("main"))
 		{
