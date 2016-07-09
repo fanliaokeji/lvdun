@@ -297,7 +297,7 @@ function ImagePool:OnDirChange(oldFilePath, newFilePath, eventType)
 		LOG("OnDirChange DeleteFileInfo oldFilePath: ", oldFilePath)
 		self:DeleteFileInfo(oldFilePath)
 	elseif eventType == 3 then -- 文件被旋转、编辑等
-		self:UpdateFileInfo(oldFilePath)
+		-- self:UpdateFileInfo(oldFilePath)
 	elseif eventType == 5 then -- 重命名(当前尚未对重命名的文件进行重新排序)
 		self:RenameFileInfo(oldFilePath, newFilePath)
 	end
