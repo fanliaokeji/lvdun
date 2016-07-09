@@ -179,7 +179,7 @@
 			<bitmap id="toolbar.shangyizhang.normal"   imagelist="toolbar.shangyizhang" index="1" />
 			<bitmap id="toolbar.shangyizhang.hover"   imagelist="toolbar.shangyizhang" index="2" />
 			<bitmap id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="3" />
-			<bitmap id="toolbar.shangyizhang.down"   imagelist="toolbar.shangyizhang" index="4" />
+			<bitmap id="toolbar.shangyizhang.disable"   imagelist="toolbar.shangyizhang" index="4" />
 		<imagelist id="toolbar.suoxiao" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\suoxiao.png" />
 			<bitmap id="toolbar.suoxiao.normal"   imagelist="toolbar.suoxiao" index="1" />
 			<bitmap id="toolbar.suoxiao.hover"   imagelist="toolbar.suoxiao" index="2" />
