@@ -246,6 +246,40 @@ function OnMove(self)
 	UserConfig:Set("iMainWindowPosDY", y+wndheight)
 end
 
+local dragUtil = Helper.APIproxy.LuaDragDropProcessor
+function OnDragEnter(self, IDataObject, keyState, x, y)	
+	return dragUtil.OnDragEnter( IDataObject, keyState, x, y )
+end
+
+function OnDragQuery(self, IDataObject, keyState, x, y)	
+	return dragUtil.OnDragQuery( IDataObject, keyState, x, y );
+end
+
+function OnDragOver(self, IDataObject, keyState, x, y)
+	return dragUtil.OnDragOver( IDataObject, keyState, x, y );
+end
+
+function OnDragLeave(self)
+	return dragUtil.OnDragLeave();
+end
+
+function OnDrop(self, IDataObject, keyState, x, y)
+	local dropAccept,disposed, send_to_next, tfilenames = dragUtil.OnDrop( IDataObject, keyState, x, y );
+	if #tfilenames <= 0 then
+		return
+	end
+	local filePath = tfilenames[1]
+	if not Helper.tipUtil:IsCanHandleFileCheckByExt(filePath) then
+		return
+	end
+	if not ImagePool.curFolder then
+		return
+	end
+	Helper.tipUtil:CopyFileTo(filePath, ImagePool.curFolder)
+	-- ImagePool:OnDirChange(filePath, _, 1)
+	return dropAccept,disposed, send_to_next
+end
+
 function OnClickLeftRotateButton(self)
 	local ThumbnailContainerObj = self:GetOwner():GetUIObject("ThumbnailContainerObj")
 	local attr = ThumbnailContainerObj:GetAttribute()
