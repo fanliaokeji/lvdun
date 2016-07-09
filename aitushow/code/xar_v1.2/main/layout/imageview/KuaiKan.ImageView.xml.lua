@@ -174,6 +174,24 @@ function SaveImageFile(self, fnCallback, newFilePath)
 	self:SetWaitingPanelText("正在保存旋转后的文件，请稍等...")
 end
 
+local function RoateUpdateFileList(listViewObj, filepath)
+	local ChangedDirPathPath = Helper.APIproxy.GetParentPath(filepath)
+	local tipUtil = Helper.APIproxy.GetTipUtil()
+	local fileList = tipUtil:GetFiles(ChangedDirPathPath)
+	if fileList then
+		for _, v in ipairs(fileList) do
+			if v.FilePath == filepath then
+				local ItemObj = listViewObj:GetItemById(filepath)
+				if ItemObj and ItemObj.Obj then
+					ItemObj.UserData.LastWriteTime = v.LastWriteTime
+					ItemObj.Obj:UpdateThumnails(true)
+				end
+				break
+			end
+		end
+	end
+end
+
 --CallBack必定会被调用， 必须传1个存在的函数
 function HandleRotateExit(self, CallBack)
 	local attr = self:GetAttribute()
@@ -209,11 +227,11 @@ function HandleRotateExit(self, CallBack)
 		end
 		local fnCoverCallBack = 
 			function()
-				CallBack()
 				--self:UpdateFileList(true)
+				RoateUpdateFileList(self:GetControlObject("client.filelistview"), attr.CurDocItem.FilePath)
 				--通知主界面
-				--local parentDir = Helper.APIproxy.GetParentPath(attr.CurDocItem.FilePath)
-				--ImagePool:SetFolder(parentDir, true)
+				ImagePool:UpdateFileInfo(attr.CurDocItem.FilePath)
+				CallBack()
 			end
 		if RotateSaveAlert == "coverold" then 
 			if bCoverCopy then 
@@ -947,9 +965,9 @@ function OnInitControl(self)
 					LOG("KuaikanLog not in list")
 					
 				end
-			elseif eventType == 3 then--覆盖原图时触发	
+			--[[elseif eventType == 3 then--覆盖原图时触发	
+				local tipUtil = Helper.APIproxy.GetTipUtil()
 				local function OnTimer()
-					local tipUtil = Helper.APIproxy.GetTipUtil()
 					local fileList = tipUtil:GetFiles(ChangedDirPathPath)
 					if fileList then
 						for _, v in ipairs(fileList) do
@@ -964,7 +982,7 @@ function OnInitControl(self)
 						end
 					end
 				end
-				SetOnceTimer(OnTimer, 300)
+				SetOnceTimer(OnTimer, 300)]]--
 			end
 		end
 	end
