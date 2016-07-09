@@ -510,7 +510,10 @@ function OnImagePoolSortFinished(self)
 	if not attr.pageManager or not attr.pageManager.bInit then
 		return
 	end
-	
+	if attr.pageManager.selectedObj then
+		attr.pageManager.selectedObj:Select(false)
+		attr.pageManager.selectedObj = nil--add by wangwei
+	end
 	local scrollPos = self:GetControlObject("Container.ScrollBar"):GetScrollPos()
 	attr.pageManager:ShowThumbnailByScrollPos(scrollPos)
 end
