@@ -189,15 +189,6 @@ function OnDestroy(self)
 	end
 end
 
-
-
-
-
-
-
-
-
-
 function InsertItem(self, data, bUpdateView)
 	local attr = self:GetAttribute()
 	if type(data) ~= "table" then

@@ -210,10 +210,10 @@ function HandleRotateExit(self, CallBack)
 		local fnCoverCallBack = 
 			function()
 				CallBack()
-				self:UpdateFileList(true)
+				--self:UpdateFileList(true)
 				--通知主界面
-				local parentDir = Helper.APIproxy.GetParentPath(attr.CurDocItem.FilePath)
-				ImagePool:SetFolder(parentDir, true)
+				--local parentDir = Helper.APIproxy.GetParentPath(attr.CurDocItem.FilePath)
+				--ImagePool:SetFolder(parentDir, true)
 			end
 		if RotateSaveAlert == "coverold" then 
 			if bCoverCopy then 
@@ -590,7 +590,7 @@ function NextFile(self, bMust)
 	
 	if filePath then
 		local tipobj = self:GetObject("firstorlasttip")
-		if bLastFile then
+		if bLastFile and not bMust then
 			if tipobj and tipobj:GetVisible() then
 				tipobj:SetVisible(false)
 				tipobj:SetChildrenVisible(false)
@@ -947,6 +947,24 @@ function OnInitControl(self)
 					LOG("KuaikanLog not in list")
 					
 				end
+			elseif eventType == 3 then--覆盖原图时触发	
+				local function OnTimer()
+					local tipUtil = Helper.APIproxy.GetTipUtil()
+					local fileList = tipUtil:GetFiles(ChangedDirPathPath)
+					if fileList then
+						for _, v in ipairs(fileList) do
+							if v.FilePath == oldFilePath then
+								local ItemObj = listViewObj:GetItemById(oldFilePath)
+								if ItemObj and ItemObj.Obj then
+									ItemObj.UserData.LastWriteTime = v.LastWriteTime
+									ItemObj.Obj:UpdateThumnails(true)
+								end
+								break
+							end
+						end
+					end
+				end
+				SetOnceTimer(OnTimer, 300)
 			end
 		end
 	end
