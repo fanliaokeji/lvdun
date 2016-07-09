@@ -199,7 +199,7 @@ function ImagePool:IsInCurFolder(sPath)
 end
 
 function ImagePool:GetThumbFileName(fileInfo)
-	return Helper.tipUtil:GetMd5Str(fileInfo.FileName..fileInfo.LastWriteTime)
+	return Helper.tipUtil:GetMd5Str(fileInfo.FilePath..fileInfo.LastWriteTime)
 end
 
 --按照现有的排序方式进行插入
@@ -254,6 +254,20 @@ function ImagePool:DeleteFileInfo(sFilePath)
 	self:DispatchEvent("OnDeleteFile", info, index)
 end
 
+function ImagePool:UpdateFileInfo(sFilePath)
+	local oldInfo, index = self:GetPicInfo(sFilePath)
+	if not oldInfo then
+		LOG("UpdateFileInfo Can not find file: sFilePath: ", sFilePath)
+		return
+	end
+	
+	local newInfo = Helper.tipUtil:GetFileInfoByPath(sFilePath)
+	self.tPictures[index] = newInfo
+	--异步更新
+	LOG("UpdateFileInfo index: ", index)
+	self:QueryThumbByRange(index, index)
+end
+
 function ImagePool:RenameFileInfo(sOldPath, sNewPath)
 	local info, index = self:GetPicInfo(sOldPath)
 	if not info then
@@ -274,9 +288,7 @@ function ImagePool:OnDirChange(oldFilePath, newFilePath, eventType)
 		return
 	end
 	
-	if eventType == 5 then -- 重命名(当前尚未对重命名的文件进行重新排序)
-		self:RenameFileInfo(oldFilePath, newFilePath)
-	elseif eventType == 1 then -- 创建新的
+	if eventType == 1 then     -- 创建新的
 		--要根据现有的排序方式将新创建的文件插入到合适的位置
 		if Helper.tipUtil:IsCanHandleFileCheckByExt(oldFilePath) then
 			self:AddFileInfo(oldFilePath)
@@ -284,6 +296,10 @@ function ImagePool:OnDirChange(oldFilePath, newFilePath, eventType)
 	elseif eventType == 2 then -- 删除
 		LOG("OnDirChange DeleteFileInfo oldFilePath: ", oldFilePath)
 		self:DeleteFileInfo(oldFilePath)
+	elseif eventType == 3 then -- 文件被旋转、编辑等
+		self:UpdateFileInfo(oldFilePath)
+	elseif eventType == 5 then -- 重命名(当前尚未对重命名的文件进行重新排序)
+		self:RenameFileInfo(oldFilePath, newFilePath)
 	end
 end
 
