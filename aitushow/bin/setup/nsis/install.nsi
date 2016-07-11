@@ -98,23 +98,23 @@ Function GetJPString
 	Push $1
 	Push $2
 	Push $3
-	StrCpy $1 "meitu"
+	StrCpy $1 "1"
 	ClearErrors
 	ReadRegStr $0 HKCU "Software\Meitu\KanKan" "AppPath"
 	IfErrors 0 +2
-	StrCpy $1 "null"
+	StrCpy $1 "0"
 	
-	StrCpy $2 "2345"
+	StrCpy $2 "1"
 	ClearErrors
 	ReadRegStr $0 HKLM "SOFTWARE\2345Pic" "Path"
 	IfErrors 0 +2
-	StrCpy $2 "null"
+	StrCpy $2 "0"
 	
-	StrCpy $3 "isee"
+	StrCpy $3 "1"
 	ClearErrors
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\iSeeÍ¼Æ¬×¨¼Ò" "UninstallString"
 	IfErrors 0 +2
-	StrCpy $3 "null"
+	StrCpy $3 "0"
 	
 	StrCpy $0 "$1_$2_$3"
 	Pop $3
