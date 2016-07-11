@@ -34,16 +34,22 @@
 						<height>20</height>
 						<image>image.logo</image>
 					</attr>	
+					<eventlist>
+						<event name="OnLButtonDbClick" file="TitleCtrlEx.xml.lua" func="OnClickCloseBtn" />
+					</eventlist>	
 				</obj>
 				<obj id="FrameWnd.Title.TitleText" class="TextObject">
 					<attr>
 						<left>34</left>
 						<top>8</top>
-						<width>father.width - 30 - 12*7</width>
+						<width>100</width>
 						<height>father.height - 8</height>
 						<textcolor>system.white</textcolor>
 						<text>快看</text>
 					</attr>	
+					<eventlist>
+						<event name="OnLButtonDbClick" file="TitleCtrlEx.xml.lua" func="OnClickCloseBtn" />
+					</eventlist>	
 				</obj>
 				<obj id="FrameWnd.Title.Setting" class="TipAddin.Button">
 					<attr>
