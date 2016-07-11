@@ -268,6 +268,7 @@
 		<bitmap id="default_icon.raw" path="bitmap\default_icon\raw.png" />
 		<bitmap id="default_icon.sgi" path="bitmap\default_icon\sgi.png" />
 		<bitmap id="default_icon.targa" path="bitmap\default_icon\targa.png" />
+		<bitmap id="default_icon.tga" path="bitmap\default_icon\targa.png" />
 		<bitmap id="default_icon.tiff" path="bitmap\default_icon\tiff.png" />
 		<bitmap id="default_icon.tif" path="bitmap\default_icon\tiff.png" />
 		<bitmap id="default_icon.wbmp" path="bitmap\default_icon\wbmp.png" />
