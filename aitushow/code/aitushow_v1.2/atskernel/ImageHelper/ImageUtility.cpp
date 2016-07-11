@@ -7,7 +7,7 @@
 
 //#define  CanHandleFileExt	L".jpg;.jpeg;.jpe;.png;.bmp;.gif;.tiff;.tif;.psd;.ico;.nef;.cr2;.crw;.arw;.dng;.pef;.srf;.raf;.orf;.rw2;.pcx;.pef;.dcr;.tga;.wmf;.jbg;.hdr;.jpc;.wbm;.pgx;.ras;.mng;.ska;"				// 可以处理的文件后缀名
 //1版本先支持这些，后面的版本再改
-#define  CanHandleFileExt   L".jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;.ras;"
+#define  CanHandleFileExt   L".jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;.ras;"
 #define  CanSetToWallPaperFileExt	L".jpg;.jpeg;.png;.bmp;"		// 可以设为壁纸的文件后缀名
 #define  CanSuperBatchFileExt	L".jpg;.jpeg;.png;.bmp;"			// 可以做高级批处理的文件后缀名
 #define  CanBatchRotateFileExt	L".jpg;.jpeg;.png;.bmp;"			// 可以批量左右旋的文件后缀名
