@@ -15,7 +15,7 @@ local SpecialExtsCount = {
 function Update(self)
 	local ckboxobj
 	local bcheckall = true
-	for i = 3, 22 do
+	for i = 3, 21 do
 		ckboxobj = self:GetObject("chebox"..i)
 		if tipUtil:IsAssociated("."..string.lower(ckboxobj:GetAttribute().Text)) then
 			ckboxobj:SetCheck(true, true)
@@ -24,7 +24,7 @@ function Update(self)
 			ckboxobj:SetCheck(false, true)
 		end
 	end
-	local checkall = self:GetObject("chebox24")
+	local checkall = self:GetObject("chebox23")
 	if bcheckall then
 		checkall:SetCheck(true, true)
 	else
@@ -40,7 +40,7 @@ function Apply(self)
 	attr.AllowCallApply = false
 	local ckboxattr
 	local strExtsDo, strExtsUnDo, NeedReport, count = "", "", false, 0
-	for i = 3, 22 do
+	for i = 3, 21 do
 		ckboxattr = self:GetObject("chebox"..i):GetAttribute()
 		if ckboxattr.Select then
 			if not NeedReport and not tipUtil:IsAssociated("."..string.lower(ckboxattr.Text)) then
@@ -67,12 +67,12 @@ function Apply(self)
 	end
 end
 
-function chebox24OnSelect(self, event, ischeck)
+function chebox23OnSelect(self, event, ischeck)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	attr.AllowCallApply = true
 	local objcheckbox
-	for i = 3, 22 do
+	for i = 3, 21 do
 		objcheckbox = owner:GetControlObject("chebox"..i)
 		if objcheckbox then
 			objcheckbox:SetCheck(ischeck, true)
@@ -81,10 +81,10 @@ function chebox24OnSelect(self, event, ischeck)
 end
 
 function FileAssoPanelOnInitControl(self)
-	local checkall = self:GetObject("chebox24")
+	local checkall = self:GetObject("chebox23")
 	local attr = self:GetAttribute()
 	local objcheckbox
-	for i = 3, 22 do
+	for i = 3, 21 do
 		objcheckbox = self:GetObject("chebox"..i)
 		objcheckbox:AttachListener("OnSelect", 
 			false, 
@@ -95,7 +95,7 @@ function FileAssoPanelOnInitControl(self)
 					return
 				end
 				local ckbox_attr
-				for j = 3, 22 do
+				for j = 3, 21 do
 					ckbox_attr = self:GetObject("chebox"..j):GetAttribute()
 					if not ckbox_attr.Select then
 						return

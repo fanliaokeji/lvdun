@@ -219,7 +219,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>HDR</Text>
+			<Text>CR2</Text>
 			<left>26</left>
 			<width>83</width>
 			<top>149</top>
@@ -233,7 +233,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>CR2</Text>
+			<Text>NEF</Text>
 			<left>159</left>
 			<width>83</width>
 			<top>149</top>
@@ -247,7 +247,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>NEF</Text>
+			<Text>ARW</Text>
 			<left>292</left>
 			<width>83</width>
 			<top>149</top>
@@ -261,7 +261,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>ARW</Text>
+			<Text>DNG</Text>
 			<left>26</left>
 			<width>83</width>
 			<top>175</top>
@@ -275,7 +275,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>DNG</Text>
+			<Text>SRF</Text>
 			<left>159</left>
 			<width>83</width>
 			<top>175</top>
@@ -289,7 +289,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>SRF</Text>
+			<Text>RAF</Text>
 			<left>292</left>
 			<width>83</width>
 			<top>175</top>
@@ -303,22 +303,8 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>RAF</Text>
-			<left>26</left>
-			<width>83</width>
-			<top>201</top>
-			<CheckNormal>setting_check.normal</CheckNormal>
-			<UnCheckNormal>setting_uncheck.normal</UnCheckNormal>
-			<UnCheckHover>setting_uncheck.hover</UnCheckHover>
-			<height>20</height>
-		</attr>
-	</obj>
-	<obj id="chebox22" class="CheckBox">
-		<attr>
-			<CheckHover>setting_check.hover</CheckHover>
-			<Select>true</Select>
 			<Text>WMF</Text>
-			<left>159</left>
+			<left>26</left>
 			<width>83</width>
 			<top>201</top>
 			<CheckNormal>setting_check.normal</CheckNormal>
@@ -339,7 +325,7 @@
 			<width>father.width-26-8</width>
 		</attr>
 	</obj>
-	<obj id="chebox24" class="CheckBox">
+	<obj id="chebox23" class="CheckBox">
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
@@ -353,7 +339,7 @@
 			<height>20</height>
 		</attr>
 		<eventlist>
-			<event name="OnSelect" file="Setting.FileAssoPanel.xml.lua" func="chebox24OnSelect" />
+			<event name="OnSelect" file="Setting.FileAssoPanel.xml.lua" func="chebox23OnSelect" />
 		</eventlist>
 	</obj>
 	</children>
