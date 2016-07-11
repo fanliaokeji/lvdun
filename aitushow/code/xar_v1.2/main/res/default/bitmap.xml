@@ -272,6 +272,7 @@
 		<bitmap id="default_icon.tiff" path="bitmap\default_icon\tiff.png" />
 		<bitmap id="default_icon.tif" path="bitmap\default_icon\tiff.png" />
 		<bitmap id="default_icon.wbmp" path="bitmap\default_icon\wbmp.png" />
+		<bitmap id="default_icon.wbm" path="bitmap\default_icon\wbmp.png" />
 		<bitmap id="default_icon.webp" path="bitmap\default_icon\webp.png" />
 		<bitmap id="default_icon.xbm" path="bitmap\default_icon\xbm.png" />
 		<bitmap id="default_icon.xpm" path="bitmap\default_icon\xpm.png" />
