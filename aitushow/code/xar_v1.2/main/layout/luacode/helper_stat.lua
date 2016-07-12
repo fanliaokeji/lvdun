@@ -244,6 +244,9 @@ end
 function StatUtil.Exit(bForce)
 	--退出时检查1次关联
 	Helper.CheckAssociate(true)
+	if Helper.AssociateUpdateFlag then
+		tipUtil:AssociateUpdateDesktop()
+	end
 	--隐藏所有窗口
 	StatUtil.HideAllWindow()
 	--先把托盘干掉

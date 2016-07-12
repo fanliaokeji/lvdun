@@ -55,6 +55,7 @@ function Apply(self)
 	--第三个参数为true则不刷新， 保证只刷新1次
 	tipUtil:SetAssociate(strExtsUnDo, false, strExtsDo ~= "")
 	tipUtil:SetAssociate(strExtsDo, true)
+	Helper.AssociateUpdateFlag = false
 	Helper.Setting.SetAssociateConfig(strExtsDo)
 	if NeedReport then
 		--抢关联上报

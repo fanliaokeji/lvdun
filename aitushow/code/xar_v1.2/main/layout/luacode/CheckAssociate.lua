@@ -26,17 +26,25 @@ function CheckAssociate(notneedshowtip)
 			strEL = tostring(count),
 			strEV = 1,
 		}) 
-		tipUtil:SetAssociate(lose, true)
+		tipUtil:SetAssociate(lose, true, true)
 		local tray = Helper.Tray.TrayObject
 		if not notneedshowtip and tray and not Helper.Tray.bHide then
 			tray:ShowNotifyIconTip(true, "文件关联提醒\n快看已为您关联了图片文件格式，您可通过快看直接打开各类图片，可点击此处进行修改。")
+			tipUtil:AssociateUpdateDesktop()
+		else
+			--设置刷新标记， 在退出时刷新
+			Helper.AssociateUpdateFlag = true
 		end
 	end
-	SetTimer(function()
+end
+
+--注册托盘初始化事件
+Helper.Tray.fnEventInit = 
+	function()
+		CheckAssociate()
+		SetTimer(function()
 			CheckAssociate(true)
 		end, 600*1000)
-end
---注册托盘初始化事件
-Helper.Tray.fnEventInit = CheckAssociate
+	end
 --设成全局
 Helper.CheckAssociate = CheckAssociate
