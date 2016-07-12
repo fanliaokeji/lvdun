@@ -221,18 +221,23 @@ Function un.UNSD_TimerFun
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
 	${else}
-		Call un.GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call un.RefreshIcon
-			Sleep 200
-			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			Call un.RefreshIcon
-			Sleep 200
-		${EndIf}
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NewGetOSVersionInfo(t .R2)"
+		;2 前<后，1 前 > 后， 0 相等 
+		${VersionCompare} "$R2" "6.3" $R3
+		${If} $R3 == 2
+			Call un.GetPinPath
+			${If} $0 != "" 
+			${AndIf} $0 != 0
+				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				Call un.RefreshIcon
+				Sleep 200
+				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				StrCpy $R0 "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				Call un.RefreshIcon
+				Sleep 200
+			${EndIf}
+		${Endif}
 	${Endif}
 	;开始进度条
     GetFunctionAddress $0 un.DoUninstall
@@ -250,7 +255,7 @@ Function un.UNSD_TimerFun
 		${UnSetSysBoot}
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2

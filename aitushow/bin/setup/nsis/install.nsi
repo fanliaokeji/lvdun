@@ -278,24 +278,29 @@ Function CmdSilentInstall
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
-		Call GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 500
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
-			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-		
-			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
-			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
-			Call RefreshIcon
-			Sleep 200
-			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-		${EndIf}
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NewGetOSVersionInfo(t .R2)"
+		;2 前<后，1 前 > 后， 0 相等 
+		${VersionCompare} "$R2" "6.3" $R3
+		${If} $R3 == 2
+			Call GetPinPath
+			${If} $0 != "" 
+			${AndIf} $0 != 0
+				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				Call RefreshIcon
+				Sleep 500
+				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			
+				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				Sleep 1000
+				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+				Call RefreshIcon
+				Sleep 200
+				ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			${EndIf}
+		${Endif}
 	${Endif}
 	;桌面
 	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
@@ -320,7 +325,7 @@ Function CmdSilentInstall
 		;初次安装自动关联
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 		;修改设置项,不修改关联配置,只在初次安装的时候做
 		StrCpy $Bool_assoc 1
 		${NSISLOG} "CmdSilentInstall Bool_Sysstup = $Bool_Sysstup, Bool_assoc = $Bool_assoc"
@@ -1016,24 +1021,29 @@ Function NSD_TimerFun
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call '$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b true, t "$STARTMENU\${SHORTCUT_NAME}.lnk")'
 	${else}
-		Call GetPinPath
-		${If} $0 != "" 
-		${AndIf} $0 != 0	
-			ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-			Call RefreshIcon
-			Sleep 500
-			CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
-			ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
-		
-			ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
-			Sleep 1000
-			CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
-			StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
-			Call RefreshIcon
-			Sleep 200
-			ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
-		${EndIf}
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NewGetOSVersionInfo(t .R2)"
+		;2 前<后，1 前 > 后， 0 相等 
+		${VersionCompare} "$R2" "6.3" $R3
+		${If} $R3 == 2
+			Call GetPinPath
+			${If} $0 != "" 
+			${AndIf} $0 != 0	
+				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				Call RefreshIcon
+				Sleep 500
+				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+			
+				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				Sleep 1000
+				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
+				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
+				Call RefreshIcon
+				Sleep 200
+				ExecShell startpin "$STARTMENU\${SHORTCUT_NAME}.lnk" "/sstartfrom startbar"
+			${EndIf}
+		${Endif}
 	${Endif}
 	
 	;开始菜单程序
@@ -1142,11 +1152,11 @@ Function onLastClose
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1
@@ -1165,11 +1175,11 @@ Function OnClick_FreeUse
 	SetOutPath "$TEMP\${PRODUCT_NAME}"
 	${If} $Bool_assoc == 1
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.hdr;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1
