@@ -176,6 +176,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	//文件关联
 	{"IsAssociated", IsAssociated},
 	{"SetAssociate", SetAssociate},
+	{"AssociateUpdateDesktop", AssociateUpdateDesktop},
 	
 	{"CloseSingletonMutex", CloseSingletonMutex},
 
@@ -4439,6 +4440,12 @@ int LuaAPIUtil::SetAssociate(lua_State* pLuaState)
 			}
 		}
 	}
+	return 0;
+}
+
+int LuaAPIUtil::AssociateUpdateDesktop(lua_State* pLuaState)
+{
+	FileAssociation::Instance()->Update();
 	return 0;
 }
 

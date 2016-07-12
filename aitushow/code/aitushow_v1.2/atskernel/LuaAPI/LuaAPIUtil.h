@@ -197,6 +197,7 @@ public:
 	
 	static int IsAssociated(lua_State* pLuaState);
 	static int SetAssociate(lua_State* pLuaState);
+	static int AssociateUpdateDesktop(lua_State* pLuaState);
 
 	static int FSetKeyboardHook(lua_State* pLuaState);
 	static int FDelKeyboardHook(lua_State* pLuaState);
