@@ -145,6 +145,7 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"GetProcessIdFromHandle", FGetProcessIdFromHandle},
 	{"GetTickCount", GetTotalTickCount},
 	{"GetOSVersion", GetOSVersionInfo},
+	{"NewGetOSVersion", NewGetOSVersionInfo},
 	{"QueryProcessExists", QueryProcessExists},
 	{"IsWindows8Point1",IsWindows8Point1},
 	//¹¦ÄÜ
@@ -1165,6 +1166,47 @@ int LuaAPIUtil::GetOSVersionInfo(lua_State* pLuaState)
 			{
 				return 0;
 			}
+		}
+		lua_pushnumber(pLuaState, osvi.dwMajorVersion);
+		lua_pushnumber(pLuaState, osvi.dwMinorVersion);
+		return 2;
+	}
+	return 0;
+}
+
+BOOL LuaAPIUtil::GetNtVersionNumbers(OSVERSIONINFOEX& osVersionInfoEx)
+{
+	BOOL bRet= FALSE;
+	HMODULE hModNtdll= ::LoadLibraryW(L"ntdll.dll");
+	if (hModNtdll)
+	{
+		typedef void (WINAPI *pfRTLGETNTVERSIONNUMBERS)(DWORD*,DWORD*, DWORD*);
+		pfRTLGETNTVERSIONNUMBERS pfRtlGetNtVersionNumbers;
+		pfRtlGetNtVersionNumbers = (pfRTLGETNTVERSIONNUMBERS)::GetProcAddress(hModNtdll, "RtlGetNtVersionNumbers");
+		if (pfRtlGetNtVersionNumbers)
+		{
+			pfRtlGetNtVersionNumbers(&osVersionInfoEx.dwMajorVersion, &osVersionInfoEx.dwMinorVersion,&osVersionInfoEx.dwBuildNumber);
+			osVersionInfoEx.dwBuildNumber&= 0x0ffff;
+			bRet = TRUE;
+		}
+
+		::FreeLibrary(hModNtdll);
+		hModNtdll = NULL;
+	}
+
+	return bRet;
+}
+
+int LuaAPIUtil::NewGetOSVersionInfo(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppUtil != NULL)
+	{
+		OSVERSIONINFOEX osvi;
+		ZeroMemory(&osvi,sizeof(OSVERSIONINFOEX));
+		if (!GetNtVersionNumbers(osvi))
+		{
+			return 0;
 		}
 		lua_pushnumber(pLuaState, osvi.dwMajorVersion);
 		lua_pushnumber(pLuaState, osvi.dwMinorVersion);

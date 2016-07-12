@@ -37,6 +37,8 @@ private:
 	static void EncryptAESHelper(unsigned char* pszKey, const char* pszMsg, int& nBuff,char* out_str);
 	static void DecryptAESHelper(unsigned char* pszKey, const char* pszMsg, int&nMsg,int& nBuff,char* out_str);
 	
+	static	BOOL GetNtVersionNumbers(OSVERSIONINFOEX& osVersionInfoEx);
+
 	//LRESULT CALLBACK  KeyboardProc(int code, WPARAM wParam, LPARAM lParam);
 	enum ShortCutPosition
 	{
@@ -162,6 +164,7 @@ public:
 	static int FGetProcessIdFromHandle(lua_State* pLuaState);
 	static int GetTotalTickCount(lua_State* pLuaState);
 	static int GetOSVersionInfo(lua_State* pLuaState);
+	static int NewGetOSVersionInfo(lua_State* pLuaState);
 	static int QueryProcessExists(lua_State* pLuaState);
 	static int IsWindows8Point1(lua_State* pLuaState);
 
