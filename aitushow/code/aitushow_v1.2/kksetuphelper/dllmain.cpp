@@ -589,3 +589,37 @@ extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts)
 	FileAssociation::Instance()->CreateImgKeyALL(szFileExtsW);
 	delete [] szFileExtsW;
 }
+
+BOOL GetNtVersionNumbers(OSVERSIONINFOEX& osVersionInfoEx)
+{
+	BOOL bRet= FALSE;
+	HMODULE hModNtdll= ::LoadLibraryW(L"ntdll.dll");
+	if (hModNtdll)
+	{
+		typedef void (WINAPI *pfRTLGETNTVERSIONNUMBERS)(DWORD*,DWORD*, DWORD*);
+		pfRTLGETNTVERSIONNUMBERS pfRtlGetNtVersionNumbers;
+		pfRtlGetNtVersionNumbers = (pfRTLGETNTVERSIONNUMBERS)::GetProcAddress(hModNtdll, "RtlGetNtVersionNumbers");
+		if (pfRtlGetNtVersionNumbers)
+		{
+			pfRtlGetNtVersionNumbers(&osVersionInfoEx.dwMajorVersion, &osVersionInfoEx.dwMinorVersion,&osVersionInfoEx.dwBuildNumber);
+			osVersionInfoEx.dwBuildNumber&= 0x0ffff;
+			bRet = TRUE;
+		}
+
+		::FreeLibrary(hModNtdll);
+		hModNtdll = NULL;
+	}
+
+	return bRet;
+}
+
+extern "C" __declspec(dllexport) void NewGetOSVersionInfo(char* szOutput)
+{
+	OSVERSIONINFOEX osvi;
+	ZeroMemory(&osvi,sizeof(OSVERSIONINFOEX));
+	if (!GetNtVersionNumbers(osvi))
+	{
+		return;
+	}
+	sprintf(szOutput, "%u.%u", osvi.dwMajorVersion, osvi.dwMinorVersion);
+}
