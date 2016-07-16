@@ -30,7 +30,7 @@ public:
 	int DetachListener(DWORD userData1, const void* pfun);
 	void CloseSingletonMutex();
 	bool HandleSingleton();
-
+	bool Associate();
 	DECLARE_WND_CLASS(LUA_MSG_WND_CALSS)
 	BEGIN_MSG_MAP(LuaMsgWindow)
 		MESSAGE_HANDLER(WM_COPYDATA, OnCopyData)

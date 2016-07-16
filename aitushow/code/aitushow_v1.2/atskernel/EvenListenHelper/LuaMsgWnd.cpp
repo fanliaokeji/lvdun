@@ -26,9 +26,30 @@ LuaMsgWindow::~LuaMsgWindow(void)
 	TSAUTO();	
 }
 
+bool LuaMsgWindow::Associate()
+{
+	LPWSTR lpstrCmdLine = ::GetCommandLineW();
+	int nNumArgs = 0;
+	LPWSTR *szArgList = CommandLineToArgvW(lpstrCmdLine, &nNumArgs);
+	if (NULL != szArgList && 2 >= nNumArgs)
+	{
+		if (wcsicmp(szArgList[1],L"/setassociate") == 0)
+		{
+			//do somthing
+			return true;
+		}
+	}
+	return false;
+
+}
+
 bool LuaMsgWindow::HandleSingleton()
 {
 	TSAUTO();
+	if (Associate())
+	{
+		return true;
+	}
 #define APP_DD_MAGIC 0x0802
 	LPWSTR lpstrCmdLine = ::GetCommandLineW();
 	COPYDATASTRUCT cds = {0};
