@@ -582,11 +582,11 @@ extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL 
 	delete [] szFileExtsW;
 }
 
-extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts)
+extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts, BOOL bDo)
 {
 	TSERROR4CXX("CreateImgKey, szFileExts = "<<szFileExts);
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
-	FileAssociation::Instance()->CreateImgKeyALL(szFileExtsW);
+	FileAssociation::Instance()->CreateImgKeyALL(szFileExtsW, bDo);
 	delete [] szFileExtsW;
 }
 

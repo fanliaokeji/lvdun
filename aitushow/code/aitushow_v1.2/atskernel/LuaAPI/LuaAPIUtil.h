@@ -263,7 +263,8 @@ public:
 	static int SetDesktopWallpaper(lua_State* luaState);
 	static int FolderDialog(lua_State* luaState);
 	static int FileDialog(lua_State* luaState);
-
+	
+	static int GetProcessElevation(lua_State* pLuaState);
 private:
 	static XLLRTGlobalAPI sm_LuaMemberFunctions[];
 };

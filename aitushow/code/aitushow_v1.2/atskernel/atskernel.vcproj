@@ -358,6 +358,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Utility\FileAssociate.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Utility\FileAssociation.h"
 				>
 			</File>

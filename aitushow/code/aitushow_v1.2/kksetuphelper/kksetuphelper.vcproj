@@ -201,10 +201,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\kksetuphelper.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -231,6 +227,18 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\atskernel\Utility\FileAssociate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\atskernel\Utility\FileAssociation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\kksetuphelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -254,11 +262,11 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\atskernel\ReadMe.txt"
+			RelativePath=".\ReadMe.txt"
 			>
 		</File>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath="..\atskernel\ReadMe.txt"
 			>
 		</File>
 	</Files>

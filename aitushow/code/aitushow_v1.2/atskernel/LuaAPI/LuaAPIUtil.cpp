@@ -243,7 +243,8 @@ XLLRTGlobalAPI LuaAPIUtil::sm_LuaMemberFunctions[] =
 	{"SetDesktopWallpaper", SetDesktopWallpaper},
 	{"FolderDialog", FolderDialog},
 	{"FileDialog", FileDialog},
-
+	
+	{"GetProcessElevation", GetProcessElevation},
 	{NULL, NULL}
 };
 
@@ -4457,7 +4458,15 @@ int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
 		}
 		else{
 			UINT flag = FileAssociation::Instance()->Associated(pszDataW);
-			bRetlua = (int)((flag&AssociateType::ProgID) != 0 && (flag&AssociateType::RootKeyExist) != 0);
+			if (FileAssociationWin10::IsWin10()){
+				UINT flag2 = FileAssociationWin10::Associated(pszDataW);
+				bRetlua = (int)((flag&AssociateType::RootKeyExist) != 0 && 
+					((flag2&AssociateType::CrrentUserIsMeWin10) != 0 || (flag2&AssociateType::ProgIDIsMEWin10) != 0));
+			}
+			else{
+				bRetlua = (int)((flag&AssociateType::ProgID) != 0 && (flag&AssociateType::RootKeyExist) != 0);
+			}
+			
 			TSDEBUG4CXX("IsAssociated, flag = "<<flag<<", bRetlua = "<<bRetlua);
 		}
 		lua_pushboolean(pLuaState, (int )bRetlua);
@@ -4470,16 +4479,25 @@ int LuaAPIUtil::SetAssociate(lua_State* pLuaState)
 	LuaAPIUtil** ppUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
 	if (ppUtil != NULL)
 	{
-		const char* pszData = lua_tostring(pLuaState, 2);
-		BOOL bDo = lua_toboolean(pLuaState, 3);
+		const char* pszDataDo = lua_tostring(pLuaState, 2);
+		const char* pszDataUnDo = lua_tostring(pLuaState, 3);
 		BOOL bNoUpdate = lua_toboolean(pLuaState, 4);
 		BOOL bIsAdmin = lua_toboolean(pLuaState, 5);
-		WCHAR* pszDataW = _bstr_t(pszData);
-		if(_tcsicmp(pszDataW, L"") != 0){
-			FileAssociation::Instance()->AssociateAll(pszDataW, bDo, bIsAdmin);
-			if (!bNoUpdate){
-				FileAssociation::Instance()->Update();
-			}
+		WCHAR pszDataDoW[MAX_PATH]= {0},pszDataUnDoW[MAX_PATH] = {0};  
+		wcscpy(pszDataDoW, (WCHAR*)_bstr_t(pszDataDo));
+		wcscpy(pszDataUnDoW, (WCHAR*)_bstr_t(pszDataUnDo));
+		if (!bIsAdmin){
+			FileAssociationWarpper::SetAssociate1(pszDataDoW, pszDataUnDoW, (DWORD)bNoUpdate);
+			return 0;
+		}
+		if(_tcsicmp(pszDataUnDoW, L"") != 0){
+			FileAssociation::Instance()->AssociateAll(pszDataUnDoW, false, true);
+		}
+		if(_tcsicmp(pszDataDoW, L"") != 0){
+			FileAssociation::Instance()->AssociateAll(pszDataDoW, true, true);
+		}
+		if (!bNoUpdate){
+			FileAssociation::Instance()->Update();
 		}
 	}
 	return 0;
@@ -5915,5 +5933,66 @@ int LuaAPIUtil::FileDialog(lua_State* luaState)
 		strPath = ultra::_T2UTF(dlg.m_szFileName);
 	}
 	lua_pushstring(luaState, strPath.c_str());
+	return 1;
+}
+
+int LuaAPIUtil::GetProcessElevation(lua_State* pLuaState)
+{
+	LuaAPIUtil** ppTipWndUtil = (LuaAPIUtil **)luaL_checkudata(pLuaState, 1, API_UTIL_CLASS);
+	if (ppTipWndUtil != NULL)
+	{
+		BOOL bResult = FALSE;
+		TOKEN_ELEVATION_TYPE ElevationType;
+		BOOL bIsAdmin = FALSE;
+		HANDLE hToken = NULL;
+		DWORD dwSize;
+		if (OpenProcessToken(GetCurrentProcess(),TOKEN_QUERY,&hToken))
+		{
+			if (GetTokenInformation(hToken,TokenElevationType,&ElevationType,sizeof(TOKEN_ELEVATION_TYPE),&dwSize))
+			{
+				if (ElevationType == TokenElevationTypeLimited)
+				{
+					BYTE adminSID[SECURITY_MAX_SID_SIZE];
+					dwSize = sizeof(adminSID);
+					::CreateWellKnownSid(WinBuiltinAdministratorsSid,NULL,adminSID,&dwSize);
+
+					HANDLE hUnfilterToken = NULL;
+
+					GetTokenInformation(hToken,TokenLinkedToken,(LPVOID)&hUnfilterToken,sizeof(HANDLE),&dwSize);
+					if (CheckTokenMembership(hUnfilterToken,&adminSID,&bIsAdmin))
+						bResult = TRUE;
+					CloseHandle(hUnfilterToken);
+				}
+				else
+				{
+					bIsAdmin = IsUserAnAdmin();
+					bResult = TRUE;
+				}
+			}
+			else
+			{
+				TSDEBUG4CXX(L"get token elevation type error = " <<::GetLastError());
+			}
+			CloseHandle(hToken);
+		}
+		else
+		{
+			TSDEBUG4CXX(L"open process token error = " <<::GetLastError());
+		}
+		if (bResult)
+		{
+			lua_pushboolean(pLuaState, bResult);
+			lua_pushinteger(pLuaState, (int)ElevationType);
+			lua_pushboolean(pLuaState, bIsAdmin);
+			return 3;
+		}
+		else
+		{
+			lua_pushboolean(pLuaState, bResult);
+			return 1;
+		}
+
+	}
+	lua_pushnil(pLuaState);
 	return 1;
 }
