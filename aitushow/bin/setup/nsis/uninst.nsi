@@ -254,8 +254,10 @@ Function un.UNSD_TimerFun
 		StrCpy $Bool_Sysstup 0
 		${UnSetSysBoot}
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
-		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+		;先取消关联再删除key
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
 	${EndIf}
 
 	IfFileExists "$DESKTOP\${SHORTCUT_NAME}.lnk" 0 +2

@@ -215,6 +215,8 @@ Function DoInstall
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
 	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+	;写入文件关联root项
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 FunctionEnd
 
 Function GetCmdLine
@@ -272,7 +274,7 @@ Function CmdSilentInstall
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
 	${if} $2 == 2
-		CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+		;;;;CreateShortCut "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
 		CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
@@ -285,15 +287,16 @@ Function CmdSilentInstall
 			Call GetPinPath
 			${If} $0 != "" 
 			${AndIf} $0 != 0
-				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-				Call RefreshIcon
-				Sleep 500
-				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
-				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
+				;;;;ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				;;;;StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				;;;;Call RefreshIcon
+				;;;;Sleep 500
+				;;;;CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
+				;;;;ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 				Sleep 1000
+				SetOutPath "$INSTDIR\program"
 				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 				Call RefreshIcon
@@ -303,7 +306,7 @@ Function CmdSilentInstall
 		${Endif}
 	${Endif}
 	;桌面
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
+	;;;;CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
 	${RefreshShellIcons}
 	;静默安装根据命令行开机启动
 	Call GetCmdLine
@@ -1032,11 +1035,13 @@ Function NSD_TimerFun
 				StrCpy $R0 "$0\TaskBar\${SHORTCUT_NAME}.lnk"
 				Call RefreshIcon
 				Sleep 500
+				SetOutPath "$INSTDIR\program"
 				CreateShortCut "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom toolbar"
 				ExecShell taskbarpin "$INSTDIR\program\${SHORTCUT_NAME}.lnk" "/sstartfrom toolbar"
 			
 				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
 				Sleep 1000
+				SetOutPath "$INSTDIR\program"
 				CreateShortCut "$STARTMENU\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startbar" "$INSTDIR\res\shortcut.ico"
 				StrCpy $R0 "$STARTMENU\${SHORTCUT_NAME}.lnk" 
 				Call RefreshIcon
@@ -1052,7 +1057,7 @@ Function NSD_TimerFun
 	CreateShortCut "$SMPROGRAMS\快看图\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
 	CreateShortCut "$SMPROGRAMS\快看图\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;桌面
-	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop"
+	CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom desktop" "$INSTDIR\res\shortcut.ico"
 	${RefreshShellIcons}
 	
 	;最后才显示安装完成界面
@@ -1154,9 +1159,8 @@ Function onLastClose
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
-		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1
@@ -1177,9 +1181,8 @@ Function OnClick_FreeUse
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b true)"
 	${Else}
-		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +3
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociate(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKey(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;')"
 	${EndIf}
 	;修改设置项
 	${If} $Bool_assoc != 1
