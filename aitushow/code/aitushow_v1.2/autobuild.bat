@@ -16,7 +16,8 @@ if not %errorlevel%==0 (
 	echo rebuild %sln% failed
 	goto done
 )
-Call %~dp0..\xar_v1.2\pack\pack.bat
+Call "%~dp0rebase\rebase.bat"
+Call "%~dp0..\xar_v1.2\pack\pack.bat"
 cd /d "%basedir:~1,-1%Release"
 call :printversion "%cd%\kuaikantu.exe" kuaikantu.exe
 for /r %%i in (*.dll) do (
