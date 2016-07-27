@@ -60,7 +60,7 @@ function OnCreate(self)
 		LeftPanel:Update(lastPath)
 	end
 	local SliderCtrl = objtree:GetUIObject("MainWnd.SliderCtrl")
-	local lastZoomPercent = UserConfig:Get("ThumbnailZoom", 10)
+	local lastZoomPercent = UserConfig:Get("ThumbnailZoom", 30)
 	SliderCtrl:SetValue(lastZoomPercent)
 	
 	local thumbnailContainer = objtree:GetUIObject("ThumbnailContainerObj")
