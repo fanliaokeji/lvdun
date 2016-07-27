@@ -509,7 +509,7 @@ function LoadImageFileImpl(self, filePath, fref)
 	self:ShowErrorIcon(false)
 	
 	local normalToolbar = self:GetControlObject("client.toolbarnew")
-	normalToolbar:EnableToolbarItem({"preFile", "nextFile", "del"}, true)
+	normalToolbar:EnableToolbarItem({"preFile", "nextFile", "del", "opendir"}, true)
 end
 
 function ShowErrorIcon(self, bShow)
@@ -835,7 +835,7 @@ function Reset(self)
 	self:UpdateTitle()
 	
 	local normalToolbar = self:GetControlObject("client.toolbarnew")
-	normalToolbar:EnableToolbarItem({"src", "max", "min", "preFile", "nextFile", "leftrotate", "rightrotate", "del"}, false)
+	normalToolbar:EnableToolbarItem({"src", "max", "min", "preFile", "nextFile", "leftrotate", "rightrotate", "del", "opendir"}, false)
 end
 
 function OnPosChange(self)
@@ -1022,7 +1022,6 @@ function ResetViewObj(self)
 			normalToolbar:EnableToolbarItem({"leftrotate", "rightrotate"}, true)
 		else 
 			viewObj = objFactory:CreateUIObject("client.view", "Kuaikan.ImageView.View.Gif")
-			
 			normalToolbar:EnableToolbarItem({"leftrotate", "rightrotate"}, false)
 		end
 		viewObj:AttachListener("OnScaleRatioChanged", true, View_OnScaleRatioChanged)
@@ -1040,9 +1039,7 @@ function ResetViewObj(self)
 		viewObj:ResetDoc(attr.CurDocItem.DocObj)
 	end
 	
-	
 	if attr.CurDocItem.DocObj then
-		
 		normalToolbar:EnableToolbarItem({"src", "max", "min"}, true)
 		if attr.CurDocItem.DocObj:GetDocType() ~= 2 then 
 			normalToolbar:EnableToolbarItem({"leftrotate", "rightrotate"}, true)
@@ -1412,6 +1409,80 @@ function NormalToolbar_OnBtnClick(self, eventName, itemID)
 		owner:RightRotate()
 	elseif itemID == "btn.del" then 
 		owner:DeleteFile()
+	elseif itemID == "btn.opendir" then 
+		--打开所在目录
+		if owner_attr and owner_attr.CurDocItem.FilePath then
+			local dir = Helper.APIproxy.GetParentPath(owner_attr.CurDocItem.FilePath)
+			local tipUtil = XLGetObject("API.Util")
+			if dir and tipUtil:QueryFileExists(dir) then
+				HideThisShowMainWnd(dir)
+			end
+		end
+	end
+end
+
+function HideThisShowMainWnd(dir)
+	local MainHostWnd = Helper.Selector.select("", "", "MainWnd.Instance")
+	local ImgHostWnd = Helper.Selector.select("", "", "Kuaikan.MainWnd.Instance")
+	if ImgHostWnd and ImgHostWnd:GetWindowState() ~= "hide" then
+		Helper.Listener.LastShowWnd = ImgHostWnd
+		ImgHostWnd:Show(0)
+	else
+		Helper.Listener.LastShowWnd = nil
+	end
+	if not MainHostWnd then
+		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\sLastPath", dir)
+		MainHostWnd = Helper:CreateModelessWnd("MainWnd","MainWndTree")
+	else
+		local ArsEdtCtl = Helper.Selector.select("", "MainWnd.AddressEditCtrl", "MainWnd.Instance")
+		if ArsEdtCtl then
+			ArsEdtCtl:SetPath(dir)
+		end
+	end
+	if MainHostWnd then
+		MainHostWnd:BringWindowToTop(true)
+	end
+	local tipUtil = XLGetObject("API.Util")
+	local strDesktopPath = Helper.PathHelper.GetRealPath("桌面")
+	local bRemind, nLastUTC = UserConfig:Get("NoLongerRemind_CreateDesktopIcon"), UserConfig:Get("LastUTC_CreateDesktopIcon")
+	local TodayNotDo = true
+	if type(nLastUTC) == "number" then
+		local _, _, nDayLast = tipUtil:FormatCrtTime(nLastUTC)
+		local _, _, nDayNow = tipUtil:FormatCrtTime(tipUtil:GetCurrentUTCTime() or 0)
+		if nDayLast == nDayNow then
+			TodayNotDo = false
+		end
+	end
+	if TodayNotDo and bRemind ~= true and strDesktopPath and tipUtil:QueryFileExists(strDesktopPath) then
+		local strDesktopIconPath = tipUtil:PathCombine(strDesktopPath, "快看.lnk")
+		local strDeskAllUser = tipUtil:GetSpecialFolderPathEx(25)
+		local AllUserNotHave = true
+		if strDeskAllUser then
+			strDeskAllUserIconPath = tipUtil:PathCombine(strDeskAllUser, "快看.lnk")
+			if tipUtil:QueryFileExists(strDesktopIconPath) then
+				AllUserNotHave = false
+			end
+		end
+		if strDesktopIconPath and not tipUtil:QueryFileExists(strDesktopIconPath) and AllUserNotHave then
+			local strExePath = tipUtil:GetModuleExeName()
+			local strIconPath = string.gsub(tostring(strExePath), "program\\[^\\]+$", "res\\shortcut.ico")
+			SetOnceTimer(
+				function()
+					if strExePath and strIconPath and tipUtil:QueryFileExists(strExePath) and tipUtil:QueryFileExists(strIconPath) then
+						local MSG = Helper.MessageBox
+						local nRet, bCheck = MSG.MessageBox("为方便您管理图片，是否需要在桌面创建快捷方式？", MainHostWnd, false, false, true)
+						if nRet == MSG.ID_YES then
+							tipUtil:CreateShortCutLinkEx("快看", strExePath, strDesktopPath, strIconPath, "/sstartfrom desktop", "")
+						end
+						if bCheck then
+							UserConfig:Set("NoLongerRemind_CreateDesktopIcon", true)
+						end
+						UserConfig:Set("LastUTC_CreateDesktopIcon", tipUtil:GetCurrentUTCTime())
+					end
+				end,
+				300
+			)
+		end
 	end
 end
 

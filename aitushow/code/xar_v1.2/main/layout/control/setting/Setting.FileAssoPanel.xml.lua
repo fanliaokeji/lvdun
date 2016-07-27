@@ -32,6 +32,49 @@ function Update(self)
 	end
 end
 
+function IsUACOS()
+	local bRet = true
+	local iMax, iMin = tipUtil:GetOSVersion()
+	if type(iMax) == "number" and iMax <= 5 then
+		bRet = false
+	end
+	return bRet
+end
+
+function IsUserAdmin()
+	local bRet = false
+	if type(tipUtil.GetProcessElevation) == "function" then
+		local bResult, iElevation, bAdmin = tipUtil:GetProcessElevation()
+		local iMax, iMin = tipUtil:GetOSVersion()
+		if (bResult and iElevation == 2 and bAdmin) or not bResult then
+			bRet = true
+		elseif type(iMax) == "number" and iMax >= 6 then
+			if bResult and bAdmin and iElevation == 1 then
+				bRet = true
+			end
+		end
+	elseif not IsUACOS() then
+		bRet = true
+	end
+	return bRet
+end
+XLSetGlobal("IsUserAdmin", IsUserAdmin)
+
+function ChangeApplyButtonImg(self)
+	if IsUserAdmin() then
+		return
+	end
+	local apply = self:GetObject("control:apply")
+	if apply then
+		local attr = apply:GetAttribute()
+		attr.NormalBkgID = "setting_apply_admin.normal"
+		attr.HoverBkgID = "setting_apply_admin.hover"
+		attr.DownBkgID = "setting_apply_admin.down"
+		attr.DisableBkgID = "setting_apply_admin.normal"
+		apply:Updata()
+	end
+end
+
 function Apply(self)
 	local attr = self:GetAttribute()
 	if not attr.AllowCallApply then
@@ -52,9 +95,7 @@ function Apply(self)
 			strExtsUnDo = strExtsUnDo..(SpecialExts[ckboxattr.Text] or "."..string.lower(ckboxattr.Text)..";")
 		end
 	end
-	--第三个参数为true则不刷新， 保证只刷新1次
-	tipUtil:SetAssociate(strExtsUnDo, false, strExtsDo ~= "")
-	tipUtil:SetAssociate(strExtsDo, true)
+	tipUtil:SetAssociate(strExtsDo, strExtsUnDo, false, IsUserAdmin())
 	Helper.AssociateUpdateFlag = false
 	Helper.Setting.SetAssociateConfig(strExtsDo)
 	if NeedReport then
@@ -72,6 +113,7 @@ function chebox23OnSelect(self, event, ischeck)
 	local owner = self:GetOwnerControl()
 	local attr = owner:GetAttribute()
 	attr.AllowCallApply = true
+	ChangeApplyButtonImg(owner)
 	local objcheckbox
 	for i = 3, 21 do
 		objcheckbox = owner:GetControlObject("chebox"..i)
@@ -91,6 +133,7 @@ function FileAssoPanelOnInitControl(self)
 			false, 
 			function(_self, event, ischeck)
 				attr.AllowCallApply = true
+				ChangeApplyButtonImg(self)
 				if not ischeck then
 					checkall:SetCheck(false, true)
 					return

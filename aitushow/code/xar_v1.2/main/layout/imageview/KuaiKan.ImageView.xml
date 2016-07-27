@@ -61,8 +61,8 @@
 						<width>father.width</width>
 						<height>father.height</height>
 						<filltype>Monochrome</filltype>
-						<srccolor>F5F5F5</srccolor>
-						<destcolor>F5F5F5</destcolor>
+						<srccolor>E1E1E1</srccolor>
+						<destcolor>E1E1E1</destcolor>
 					</attr>	
 					<children>
 						<obj id="client.caption" class="Kuaikan.ImageView.Caption">

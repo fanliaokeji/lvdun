@@ -13,8 +13,15 @@ MessageBox.ID_NOSAVE 		= 0x05
 MessageBox.ID_CHECK			= 0x10
 MessageBox.ID_UNCHECK		= 0x20
 
-function MessageBox.MessageBox(strText, objHostWnd, bHideBtns)
-	return Helper:CreateModalWnd("MessageBoxWnd","MessageBoxWndTree", objHostWnd, {strText, bHideBtns})
+function MessageBox.MessageBox(strText, objHostWnd, bHideBtns, bHideIcons, hasCheckBox)
+	local nRet = Helper:CreateModalWnd("MessageBoxWnd","MessageBoxWndTree", objHostWnd, {strText, bHideBtns, bHideIcons, hasCheckBox})
+	local bithigh = math.floor(nRet/0x10)*0x10
+	local bitlow = math.fmod(nRet, 0x10)
+	local bCheck = false
+	if bithigh == MessageBox.ID_CHECK then
+		bCheck = true
+	end
+	return bitlow, bCheck
 end
 
 function MessageBox.MessageBoxEx(objHostWnd)

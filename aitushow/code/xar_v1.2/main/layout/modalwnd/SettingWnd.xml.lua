@@ -19,6 +19,7 @@ function OnCreate(self)
 	local w, h = r-l, b-t
 	local _l, _t, _r, _b = self:GetWindowRect()
 	local sw, sh = _r - _l, _b - _t
+	self:SetMaxTrackSize(sw, sh)
 	local new_l = l + math.floor((w-sw)/2)
 	local new_t = t + math.floor((h-sh)/2)
 	if new_l < 0 then

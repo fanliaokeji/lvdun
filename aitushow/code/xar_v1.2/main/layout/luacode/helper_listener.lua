@@ -45,7 +45,7 @@ function Listener.OnCommandLine(tParam)
 	end
 	local strCmd = tostring(tParam[1])
 	--打开本地文件
-	strCmd = string.gsub(string.lower(strCmd), "^[\"\']?[^%.]+%.exe[\"\']?", "")
+	strCmd = string.gsub(string.lower(strCmd), "^[\"\']?.+%.exe[\"\']?", "")
 	strCmd = tostring(strCmd)
 	LOG("tostring(tParam[1]) = "..tostring(tParam[1])..", strCmd = "..tostring(strCmd))
 	local filepath = string.match(strCmd, "\"([^\"]+)\"[^\"]*$")

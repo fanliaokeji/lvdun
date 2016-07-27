@@ -275,6 +275,12 @@ function ResetAngle(self)
 end
 
 function OnLButtonDbClick(self)
+	StatUtil.SendStat({
+			strEC = "mainclient",
+			strEA = tostring(StatUtil.GetMainVer()).."_"..tostring(StatUtil.GetInstallSrc()),
+			strEL = "dbclickimg",
+			strEV = 1,
+		}) 
 	local imgctrl = Helper.Selector.select("", "mainwnd.client", "Kuaikan.MainWnd.Instance")
 	if not imgctrl then
 		Helper:CreateModelessWnd("Kuaikan.MainWnd","Kuaikan.MainObjTree")

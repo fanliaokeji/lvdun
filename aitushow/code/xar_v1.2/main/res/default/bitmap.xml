@@ -139,6 +139,10 @@
 			<texture id="setting_apply.normal"   imagelist="setting_apply" index="1" />
 			<texture id="setting_apply.hover"   imagelist="setting_apply" index="2" />
 			<texture id="setting_apply.down"   imagelist="setting_apply" index="3" />
+		<imagelist id="setting_apply_admin" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_apply_admin.png" />
+			<texture id="setting_apply_admin.normal"   imagelist="setting_apply_admin" index="1" />
+			<texture id="setting_apply_admin.hover"   imagelist="setting_apply_admin" index="2" />
+			<texture id="setting_apply_admin.down"   imagelist="setting_apply_admin" index="3" />
 		<imagelist id="setting_cancel" vertical="0" splitter="1" varyblock="1" image="bitmap\setting\setting_cancel.png" />
 			<texture id="setting_cancel.normal"   imagelist="setting_cancel" index="1" />
 			<texture id="setting_cancel.hover"   imagelist="setting_cancel" index="2" />
@@ -210,6 +214,11 @@
 			<bitmap id="toolbar.shiping.hover"   imagelist="toolbar.shiping" index="2" />
 			<bitmap id="toolbar.shiping.down"   imagelist="toolbar.shiping" index="3" />
 			<bitmap id="toolbar.shiping.disable"   imagelist="toolbar.shiping" index="4" />
+		<imagelist id="toolbar.opendir" vertical="0" splitter="1" varyblock="1" image="bitmap\toolbar\opendir.png" />
+			<bitmap id="toolbar.opendir.normal"   imagelist="toolbar.opendir" index="1" />
+			<bitmap id="toolbar.opendir.hover"   imagelist="toolbar.opendir" index="2" />
+			<bitmap id="toolbar.opendir.down"   imagelist="toolbar.opendir" index="3" />
+			<bitmap id="toolbar.opendir.disable"   imagelist="toolbar.opendir" index="4" />
 			
 		<!--对话框-->
 		<bitmap id="messagebox.icon"  path="bitmap\messagebox\icon.png" />

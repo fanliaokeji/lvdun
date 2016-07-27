@@ -28,9 +28,9 @@
 					<children>
 						<obj id="client.bkg" class="TextureObject">
 							<attr>
-								<left>(father.width-507)/2</left>
+								<left>(father.width-583)/2</left>
 								<top>5</top>
-								<width>507</width>
+								<width>583</width>
 								<height>47</height>
 								<texture>toolbar.bkg</texture>
 							</attr>
@@ -264,6 +264,36 @@
 										<IconLeftPos>0</IconLeftPos>
 										<IconTopPos>0</IconTopPos>
 										<IconWidth>37</IconWidth>
+										<IconHeight>30</IconHeight>
+									</attr>
+									<eventlist>
+										<event name="OnButtonClick" file="KuaiKan.ImageView.Toolbar.xml.lua" func="OnBtnClick" />
+									</eventlist>
+								</obj>
+								
+								<obj id="btn.opendir" class="Kuaikan.ButtonEx">
+									<attr>
+										<left>56+51*8</left>
+										<top>9</top>
+										<width>62</width>
+										<height>30</height>
+										<TipText>打开图片所在目录</TipText>
+										<TipPosIsTopMid>true</TipPosIsTopMid>
+										<Enable>false</Enable>
+										<BkgTextureID_Normal></BkgTextureID_Normal>
+										<BkgTextureID_Hover></BkgTextureID_Hover>
+										<BkgTextureID_Down></BkgTextureID_Down>
+										<BkgTextureID_Disable></BkgTextureID_Disable>
+										<BkgTextureID_FocusNormal></BkgTextureID_FocusNormal>
+										<BkgTextureID_FocusHover></BkgTextureID_FocusHover>
+										<BkgTextureID_FocusDown></BkgTextureID_FocusDown>
+										<IconBitmapID>toolbar.opendir.normal</IconBitmapID>
+										<IconBitmapID_Hover>toolbar.opendir.hover</IconBitmapID_Hover>
+										<IconBitmapID_Down>toolbar.opendir.down</IconBitmapID_Down>
+										<IconBitmapID_Disable>toolbar.opendir.disable</IconBitmapID_Disable>
+										<IconLeftPos>0</IconLeftPos>
+										<IconTopPos>0</IconTopPos>
+										<IconWidth>62</IconWidth>
 										<IconHeight>30</IconHeight>
 									</attr>
 									<eventlist>
