@@ -9,45 +9,29 @@
 //support img ext
 static char *szImgExt[] = {
 	//"unknow",
-	"bmp",
-	"ico",
-	"jpeg",
 	"jpg",
-	"jng",
-	"koala",
-	"lbm",
-	"iff",
-	"mng",
-	"pbm",
-	"pbmraw",
-	"pcd",
-	"pcx",
-	"pgm",
-	"pgmraw",
+	"jpeg",
+	"jpe",
+	"bmp",
 	"png",
-	"ppm",
-	"ppmraw",
-	"ras",
-	"targa",
-	"tiff",
-	"wbmp",
-	"psd",
-	"cut",
-	"xbm",
-	"xpm",
-	"dds",
 	"gif",
-	//"hdr",
-	"faxg3",
-	"sgi",
-	"exr",
-	"j2k",
-	"jp2",
-	"pfm",
-	"pict",
-	//"raw",
-	"webp",
-	"jxr"
+	"tiff",
+	"tif",
+	"psd",
+	"ico",
+	"pcx",
+	"tga",
+	"wbm",
+	"ras",
+	"mng",
+	"cr2",
+	"nef",
+	"arw",
+	"dng",
+	"srf",
+	"raf",
+	"wmf",
+	"ras"
 };
 
 inline bool IsSupportExt(const char *szExt)
@@ -74,6 +58,8 @@ inline FREE_IMAGE_FORMAT ConverStrExtToFIF(const char *szExt)
 	if (strcmp(szExt,"jpg") == 0)
 		return FIF_JPEG;
 	if (strcmp(szExt,"jpeg") == 0)
+		return FIF_JPEG;
+	if (strcmp(szExt,"jpe") == 0)
 		return FIF_JPEG;
 	if (strcmp(szExt,"jng") == 0)
 		return FIF_JNG;
