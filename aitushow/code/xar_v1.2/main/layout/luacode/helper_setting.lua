@@ -135,3 +135,28 @@ function Setting.SetImageWindowConfig(state, x, y, width, height)
 	UserConfig:Set("setting", tRead)
 	
 end
+
+function Setting.GetMainWindowConfig()
+	local tRead = UserConfig:Get("setting") or {}
+	local tWindow = tRead["mainwindow"] or {}
+	return tWindow["x"] or UserConfig:Get("iMainWindowPosX"), 
+			tWindow["y"] or UserConfig:Get("iMainWindowPosY"), 
+			tWindow["dx"] or UserConfig:Get("iMainWindowPosDX"), 
+			tWindow["dy"] or UserConfig:Get("iMainWindowPosDY")
+end
+
+function Setting.SetMainWindowConfig(x, y, dx, dy)
+	local tRead = UserConfig:Get("setting") or {}
+	tRead["mainwindow"] = tRead["mainwindow"] or {}
+	tRead["mainwindow"]["x"] = x
+	tRead["mainwindow"]["y"] = y
+	tRead["mainwindow"]["dx"] = dx
+	tRead["mainwindow"]["dy"] = dy
+	UserConfig:Set("setting", tRead)
+	if UserConfig:Get("iMainWindowPosX") then
+		UserConfig:Set("iMainWindowPosX", nil)
+		UserConfig:Set("iMainWindowPosY", nil)
+		UserConfig:Set("iMainWindowPosDX", nil)
+		UserConfig:Set("iMainWindowPosDY", nil)
+	end
+end

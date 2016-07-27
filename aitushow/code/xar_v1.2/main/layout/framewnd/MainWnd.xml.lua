@@ -18,11 +18,7 @@ function OnCreate(self)
 	-- local workleft, worktop, workright, workbottom = Helper.tipUtil:GetWorkArea()
 	-- local workWidth = workright - workleft
 	-- local workHeigth = workbottom - worktop
-	
-	local iWindowPosX = UserConfig:Get("iMainWindowPosX")
-	local iWindowPosY = UserConfig:Get("iMainWindowPosY")
-	local iWindowPosDX = UserConfig:Get("iMainWindowPosDX")
-	local iWindowPosDY = UserConfig:Get("iMainWindowPosDY")
+	local iWindowPosX, iWindowPosY, iWindowPosDX, iWindowPosDY = Helper.Setting.GetMainWindowConfig()
 	
 	local workleft, worktop, workright, workbottom = Helper.tipUtil:GetWorkArea()
 		
@@ -222,11 +218,7 @@ function OnSize(self, _type, width, height)
 		return
 	end
 	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
-	
-	UserConfig:Set("iMainWindowPosX", x)
-	UserConfig:Set("iMainWindowPosY", y)
-	UserConfig:Set("iMainWindowPosDX", x+width)
-	UserConfig:Set("iMainWindowPosDY", y+height)
+	Helper.Setting.SetMainWindowConfig(x, y, x+width, y+height)
 end
 
 function OnMove(self)
@@ -239,11 +231,7 @@ function OnMove(self)
 	local wndheight = wndbottom - wndtop
 		
 	local x, y = self:HostWndPtToScreenPt(self:TreePtToHostWndPt(0, 0))
-	
-	UserConfig:Set("iMainWindowPosX", x)
-	UserConfig:Set("iMainWindowPosY", y)
-	UserConfig:Set("iMainWindowPosDX", x+wndwidth)
-	UserConfig:Set("iMainWindowPosDY", y+wndheight)
+	Helper.Setting.SetMainWindowConfig(x, y, x+wndwidth, y+wndheight)
 end
 
 local dragUtil = Helper.APIproxy.LuaDragDropProcessor
