@@ -268,8 +268,8 @@ Function CmdSilentInstall
 	SetOutPath "$INSTDIR\program"
 	;开始菜单程序
 	CreateDirectory "$SMPROGRAMS\快看图"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
-	CreateShortCut "$SMPROGRAMS\${SHORTCUT_NAME}\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
+	CreateShortCut "$SMPROGRAMS\快看图\${SHORTCUT_NAME}.lnk" "$INSTDIR\program\${EXE_NAME}.exe" "/sstartfrom startmenuprograms" "$INSTDIR\res\shortcut.ico"
+	CreateShortCut "$SMPROGRAMS\快看图\卸载${SHORTCUT_NAME}.lnk" "$INSTDIR\uninst.exe"
 	;锁定到任务栏
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} "$R0" "6.0" $2
