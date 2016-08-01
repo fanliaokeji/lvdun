@@ -1328,7 +1328,7 @@ function FullScreenSwitch(self)
 		
 		
 		local captionObj = self:GetCaption()
-		captionObj:SetObjPos2(1,1,"father.width-2",35)
+		captionObj:SetObjPos2(0,0,"father.width",33)
 		captionObj:ShowContent(true)
 		
 		
@@ -1341,9 +1341,9 @@ function FullScreenSwitch(self)
 		--设置背景色
 		local viewBkgObj = self:GetControlObject("client.bkg")
 		viewBkgObj:SetAlpha(255)
-		viewBkgObj:SetSrcColor("RGBA(255,255,255,255)")
-		viewBkgObj:SetDestColor("RGBA(255,255,255,255)")
-		self:GetControlObject("client.view.bkg"):SetObjPos2(1, 36, "father.width-2", "father.height-36")
+		viewBkgObj:SetSrcColor("E1E1E1")
+		viewBkgObj:SetDestColor("E1E1E1")
+		self:GetControlObject("client.view.bkg"):SetObjPos2(0, 33, "father.width", "father.height-33")
 		self:GetControlObject("client.bkg"):SetAlpha(255)
 		
 		--[[调整列表位置
