@@ -374,7 +374,7 @@ extern "C" __declspec(dllexport) void Send2KKAnyHttpStat(CHAR *op, CHAR *cid, CH
 		}
 		szMac[strlen(szMac)] = szPid[i];
 	}*/
-	std::string str = "http://stat.feitwo.com:8082/c?peerid=";
+	std::string str = "http://stat.ggxpc.com:8082/c?peerid=";
 	str += szPid;
 	str += "&appid=1001&proid=15";
 	str += "&op=";
