@@ -33,8 +33,8 @@ RequestExecutionLevel admin
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductName" "快看"
 VIAddVersionKey /LANG=2052 "Comments" ""
-VIAddVersionKey /LANG=2052 "CompanyName" "深圳市立升行塑胶有限公司"
-VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2016-2018 深圳市立升行塑胶有限公司"
+VIAddVersionKey /LANG=2052 "CompanyName" "深圳市飞享科技有限公司"
+VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2016-2018 深圳市飞享科技有限公司"
 VIAddVersionKey /LANG=2052 "FileDescription" "快看安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
