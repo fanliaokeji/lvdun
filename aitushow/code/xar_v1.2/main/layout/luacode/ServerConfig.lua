@@ -6,7 +6,7 @@ local ServerConfig = ObjectBase:New()
 XLSetGlobal("ServerConfig", ServerConfig)
 
 ServerConfig.tConfig = nil--服务器上的serverConfig.dat下载完毕后，加载到这里面
-ServerConfig.sConfigUrl = "http://dl.feitwo.com/kuaikan/update/1.0/kkserverconfig.dat"
+ServerConfig.sConfigUrl = "http://dl.ggxpc.com/kuaikan/update/1.0/kkserverconfig.dat"
 ServerConfig.sConfigSavePath = Helper:GetUserDataDir().."\\kuaikan\\kkserverconfig.dat"
 
 --远程配置加载完毕后，发事件通知监听者，由监听者决定下一步作何动作
