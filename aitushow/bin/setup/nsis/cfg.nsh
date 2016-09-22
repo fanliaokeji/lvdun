@@ -3,7 +3,7 @@
 !define MUI_UNICON "..\images\uninst\uninst.ico"
 
 !define INSTALL_CHANNELID "0001"
-!define PRODUCT_NAME "kuaikan"
+!define PRODUCT_NAME "kuaikantu"
 !define EXE_NAME "kuaikantu"
 !define SHORTCUT_NAME "快看"
 !define PRODUCT_VERSION "1.0.0.${BuildNum}"
@@ -12,12 +12,12 @@
 !define EM_OUTFILE_NAME "kuaikantusetupv${BuildNum}_${INSTALL_CHANNELID}.exe"
 
 !define EM_BrandingText "${PRODUCT_NAME}${PRODUCT_VERSION}"
-!define PRODUCT_PUBLISHER "kuaikan"
+!define PRODUCT_PUBLISHER "kuaikantu"
 !define PRODUCT_WEB_SITE ""
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${EXE_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define PRODUCT_MAININFO_FORSELF "Software\kuaikan"
+!define PRODUCT_MAININFO_FORSELF "Software\kuaikantu"
 
 ;设置软件压缩类型
 SetCompressor /SOLID lzma
@@ -44,7 +44,7 @@ VIAddVersionKey /LANG=2052 "OriginalFilename" ${EM_OUTFILE_NAME}
 ;应用程序显示名字
 Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 
-InstallDir "$PROGRAMFILES\kuaikan"
+InstallDir "$PROGRAMFILES\kuaikantu"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 !macro _NSISLOG strParam
@@ -160,7 +160,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 	Push $0
 	Push $1
 	Push $2
-	ReadRegStr $0 HKCU "Software\kuaikan" "statpeerid"
+	ReadRegStr $0 HKCU "Software\kuaikantu" "statpeerid"
 	ReadRegStr $1 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_MAININFO_FORSELF}" "PeerId"
 	${If} $1 != ""
 	${OrIf} $1 != 0
@@ -190,11 +190,11 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		push $2
 		push $3
 		;干掉老的开机启动
-		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "kuaikan"
+		DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "kuaikantu"
 		;判断lpath是否存在
 		StrCpy $1 "true"
 		ClearErrors
-		ReadRegStr $0 HKCU "Software\kuaikan" "lpath"
+		ReadRegStr $0 HKCU "Software\kuaikantu" "lpath"
 		IfErrors 0 +3
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot error')"
 		StrCpy $1 "false"
@@ -212,7 +212,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot para 1 = $1')"
 		;设置/取消开机启动
 		${If} $Bool_Sysstup == 1
-			WriteRegDWORD HKCU "Software\kuaikan" "setboot" 1
+			WriteRegDWORD HKCU "Software\kuaikantu" "setboot" 1
 			${If} $1 != "false"
 				;文件存在
 				push $0
@@ -244,7 +244,7 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 							System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NsisTSLOG(t '_SetSysBoot can not rmdir because is instdir ')"
 						${EndIf}
 					${EndIf}
-					WriteRegStr HKCU "Software\kuaikan" "lpath" "$INSTDIR\program\myfixar.exe"
+					WriteRegStr HKCU "Software\kuaikantu" "lpath" "$INSTDIR\program\myfixar.exe"
 					WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
 					Goto realend
 				hasfind:
@@ -256,15 +256,15 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 				realend:
 			${Else}
 				;文件不存在
-				WriteRegStr HKCU "Software\kuaikan" "lpath" "$INSTDIR\program\myfixar.exe"
+				WriteRegStr HKCU "Software\kuaikantu" "lpath" "$INSTDIR\program\myfixar.exe"
 				WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "myfixar" '"$INSTDIR\program\myfixar.exe" /sstartfrom sysboot /embedding'
 			${EndIf}
 		${Else}
 			${If} "${strCallFlag}" == "un."
-				DeleteRegKey HKCU "Software\kuaikan"
+				DeleteRegKey HKCU "Software\kuaikantu"
 			${Else}
-				DeleteRegValue HKCU "Software\kuaikan" "lpath"
-				DeleteRegValue HKCU "Software\kuaikan" "setboot"
+				DeleteRegValue HKCU "Software\kuaikantu" "lpath"
+				DeleteRegValue HKCU "Software\kuaikantu" "setboot"
 			${EndIf}
 			${If} $1 != "false"
 				;lpath存在
@@ -315,8 +315,8 @@ InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 	!define UnSetSysBoot 'Call un.InstSetSysBoot'
 	!define SetSysBoot 'Call InstSetSysBoot'
 !else
-	!define SetSysBoot "WriteRegStr HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan '$\"$INSTDIR\program\${EXE_NAME}.exe$\" /sstartfrom sysboot /embedding'"
-	!define UnSetSysBoot "DeleteRegValue HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikan"
+	!define SetSysBoot "WriteRegStr HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikantu '$\"$INSTDIR\program\${EXE_NAME}.exe$\" /sstartfrom sysboot /embedding'"
+	!define UnSetSysBoot "DeleteRegValue HKCU SOFTWARE\Microsoft\Windows\CurrentVersion\Run kuaikantu"
 !endif
 
 !macro _GetParent strCallFlag

@@ -10,6 +10,10 @@ Var Hwnd_Welcome
 Var ck_xieyi
 Var Bool_Xieyi
 
+Var Bool_Bind360
+Var ck_bind360
+Var Lbl_bind360
+
 Var ck_sysstup
 Var Lbl_sysstup
 Var Bool_Sysstup
@@ -668,6 +672,17 @@ Function OnClick_CheckXieyi
 	ShowWindow $ck_xieyi ${SW_SHOW}
 FunctionEnd
 
+Function OnClick_Bind360
+	${IF} $Bool_Bind360 == 1
+        IntOp $Bool_Bind360 $Bool_Bind360 - 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\btn_uncheck.bmp $ck_bind360
+    ${ELSE}
+        IntOp $Bool_Bind360 $Bool_Bind360 + 1
+        SkinBtn::Set /IMGID=$PLUGINSDIR\btn_check.bmp $ck_bind360
+    ${EndIf}
+	ShowWindow $ck_bind360 ${SW_HIDE}
+	ShowWindow $ck_bind360 ${SW_SHOW}
+FunctionEnd
 
 Function OnClick_CheckSysstup
 	${IF} $Bool_Sysstup == 1
@@ -701,7 +716,7 @@ Function OnClick_BrowseButton
 	Pop $R1 ; last part "ProgramName"
 	${If} $R1 == 0
 	${Orif} $R1 == ""
-		StrCpy $R1 "kuaikan"
+		StrCpy $R1 "kuaikantu"
 	${EndIf}
 
 	nsDialogs::SelectFolderDialog "请选择 $R0 安装的文件夹:" "$R0"
@@ -751,6 +766,8 @@ FunctionEnd
 
 Function onClickZidingyi
 	;HideWindow
+	ShowWindow $ck_bind360 ${SW_HIDE}
+	ShowWindow $Lbl_bind360 ${SW_HIDE}
 	ShowWindow $Btn_Next ${SW_HIDE}
 	ShowWindow $Btn_Agreement ${SW_HIDE}
 	ShowWindow $ck_xieyi ${SW_HIDE}
@@ -778,6 +795,8 @@ Function OnClick_Return
 	ShowWindow $Btn_Agreement 1
 	ShowWindow $ck_xieyi 1
 	ShowWindow $Btn_Zidingyi 1
+	ShowWindow $ck_bind360 1
+	ShowWindow $Lbl_bind360 1
 	
 	
 	ShowWindow $Edit_BrowserBg ${SW_HIDE}
@@ -937,9 +956,12 @@ Function WelcomePage
 	;勾选同意协议
 	${CreateButton} 32 345 13 13 "btn_check.bmp" OnClick_CheckXieyi $ck_xieyi
 	StrCpy $Bool_Xieyi 1
+	StrCpy $Bool_Bind360 1
 	;用户协议
 	${CreateButton} 163 345 78 14 "btn_agreement.bmp" onClickAgreement $Btn_Agreement
-	
+	;捆绑360
+	${CreateButton} 352 345 13 13 "btn_check.bmp" OnClick_Bind360 $ck_bind360
+	${CreateLabel} 372 341 116 18 "安装360安全套装" "FFFFFF" $Handle_Font OnClick_Bind360 $Lbl_bind360
 	
 	;最小化
 	${CreateButton} 488 3 22 22 "btn_min.bmp" onClickZuixiaohua $Btn_Zuixiaohua
@@ -997,6 +1019,14 @@ Function WelcomePage
 	${NSD_FreeImage} $ImageHandle
 	;ShowWindow $HWNDPARENT ${SW_HIDE}
 	BringToFront
+FunctionEnd
+
+Function DoBind360
+	${If} $Bool_Bind360 == 1
+		System::Call 'Urlmon.DLL::URLDownloadToFile(i0, t"http://dl.360safe.com/pclianmeng/c/13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", t"$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", i0,i0)i.s'
+		IfFileExists "$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe" 0 +2
+			ExecShell open "$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe" "" SW_SHOWNORMAL
+	${EndIf}
 FunctionEnd
 
 Var Handle_Loading
@@ -1086,10 +1116,6 @@ Function InstallationMainFun
 	Call CloseExe
 	SendMessage $PB_ProgressBar ${PBM_SETPOS} 2 0
 	Sleep 100
-    SendMessage $PB_ProgressBar ${PBM_SETPOS} 4 0
-	Sleep 100
-	SendMessage $PB_ProgressBar ${PBM_SETPOS} 7 0
-    Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 14 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 27 0
@@ -1099,7 +1125,7 @@ Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
-    Sleep 100
+    Call DoBind360
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
 	Sleep 1000
 FunctionEnd

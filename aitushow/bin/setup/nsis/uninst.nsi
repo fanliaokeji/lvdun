@@ -44,7 +44,7 @@ UninstPage custom un.MyUnstall
 Name "${SHORTCUT_NAME} ${PRODUCT_VERSION}"
 
 
-InstallDir "$PROGRAMFILES\kuaikan"
+InstallDir "$PROGRAMFILES\kuaikantu"
 InstallDirRegKey HKLM "${PRODUCT_UNINST_KEY}" "UninstallString"
 
 Section MainSetup
