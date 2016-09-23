@@ -511,7 +511,7 @@ void FileAssociation::CreateImgKeyALL(std::wstring strFileExts, BOOL bDo){
 std::wstring FileAssociation::GetIconPath(const std::wstring& strFileExt){
 	RegTool rt;
 	std::wstring strInstDir = L"";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"InstDir", &strInstDir);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"InstDir", &strInstDir);
 	if (strInstDir.length() == 0){
 		return L"";
 	}
@@ -525,7 +525,7 @@ std::wstring FileAssociation::GetIconPath(const std::wstring& strFileExt){
 std::wstring FileAssociation::GetCommandOpenPath(){
 	RegTool rt;
 	std::wstring strExePath = L"";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"Path", &strExePath);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"Path", &strExePath);
 	WCHAR strCmd[MAX_PATH] = {0};
 	swprintf(strCmd, L"\"%s\" \"%%1\" /sstartfrom LocalFile", strExePath.c_str());
 	return strCmd;
@@ -535,9 +535,9 @@ void FileAssociationWarpper::SetAssociate2(){
 	std::wstring strDo = L"", strUnDo = L"";
 	DWORD dwNoUpdate = -1;
 	RegTool rt;
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateDo", &strDo);
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateUnDo", &strUnDo);
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"NoUpdate", &dwNoUpdate);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateDo", &strDo);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateUnDo", &strUnDo);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"NoUpdate", &dwNoUpdate);
 	if (strDo != L""){
 		FileAssociation::Instance()->AssociateAll(strDo, true, true);
 	}
@@ -550,11 +550,11 @@ void FileAssociationWarpper::SetAssociate2(){
 };
 void FileAssociationWarpper::SetAssociate1(const wchar_t* szDo, const wchar_t* szUnDo, DWORD NoUpdate){
 	RegTool rt;
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateDo", szDo);
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateUnDo", szUnDo);
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"NoUpdate", (DWORD)NoUpdate);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateDo", szDo);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateUnDo", szUnDo);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"NoUpdate", (DWORD)NoUpdate);
 	std::wstring strDirPath = L"-1";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"InstDir", &strDirPath);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"InstDir", &strDirPath);
 	if (strDirPath != L"-1" && PathFileExists(strDirPath.c_str())){
 		WCHAR szDest[MAX_PATH] = {0};
 		ZeroMemory(szDest, MAX_PATH);
