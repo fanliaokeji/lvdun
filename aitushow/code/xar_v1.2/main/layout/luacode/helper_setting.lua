@@ -20,7 +20,7 @@ end
 function Setting.IsSysBoot()
 	local bRet = false
 	for _, hkey in ipairs({"HKEY_CURRENT_USER", "HKEY_LOCAL_MACHINE"}) do
-		local strRet = tipUtil:QueryRegValue(hkey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikan")
+		local strRet = tipUtil:QueryRegValue(hkey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikantu")
 		if IsRealString(strRet) then
 			local strRealPath = string.match(strRet, "[\"']([^\"']*)[\"']") or strRet
 			if IsRealString(strRealPath) and tipUtil:QueryFileExists(strRealPath) then
@@ -57,14 +57,14 @@ function Setting.SetSysBoot(isDo)
 	tRead["sysboot"] = isDo
 	UserConfig:Set("setting", tRead)
 	if not isDo then
-		tipUtil:DeleteRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\kuaikan")
+		tipUtil:DeleteRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\kuaikantu")
 		return
 	end
-	local strExePath = tipUtil:QueryRegValue("HKEY_LOCAL_MACHINE", "Software\\kuaikan", "Path")
+	local strExePath = tipUtil:QueryRegValue("HKEY_LOCAL_MACHINE", "Software\\kuaikantu", "Path")
 	if not IsRealString(strExePath) or not tipUtil:QueryFileExists(strExePath) then
 		return
 	end
-	tipUtil:SetRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikan", "\""..strExePath.."\" /sstartfrom sysboot /embedding")
+	tipUtil:SetRegValue("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", "kuaikantu", "\""..strExePath.."\" /sstartfrom sysboot /embedding")
 end
 
 function Setting.SetDelRemind(nValue)

@@ -1431,7 +1431,7 @@ function HideThisShowMainWnd(dir)
 		Helper.Listener.LastShowWnd = nil
 	end
 	if not MainHostWnd then
-		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\sLastPath", dir)
+		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikantu\\sLastPath", dir)
 		MainHostWnd = Helper:CreateModelessWnd("MainWnd","MainWndTree")
 	else
 		local ArsEdtCtl = Helper.Selector.select("", "MainWnd.AddressEditCtrl", "MainWnd.Instance")

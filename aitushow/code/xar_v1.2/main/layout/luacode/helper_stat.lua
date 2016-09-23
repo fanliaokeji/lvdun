@@ -19,7 +19,7 @@ function RegQueryValue(sPath)
 end
 
 function IsCurPeerIDStatAllowed()
-	local statPeerID = RegQueryValue("HKEY_CURRENT_USER\\Software\\kuaikan\\statpeerid")
+	local statPeerID = RegQueryValue("HKEY_CURRENT_USER\\Software\\kuaikantu\\statpeerid")
 	LOG("IsCurPeerIDStatAllowed statPeerID : "..tostring(statPeerID))
 	if not IsRealString(statPeerID) then
 		statPeerID = defaultStatPeerid
@@ -38,7 +38,7 @@ function IsCurPeerIDStatAllowed()
 end
 
 function GetPeerID()
-	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\kuaikan\\PeerId")
+	local strPeerID = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\kuaikantu\\PeerId")
 	if IsRealString(strPeerID) then
 		return strPeerID
 	end
@@ -48,7 +48,7 @@ function GetPeerID()
 		return ""
 	end
 	
-	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\kuaikan\\PeerId", strRandPeerID)
+	RegSetValue("HKEY_LOCAL_MACHINE\\Software\\kuaikantu\\PeerId", strRandPeerID)
 	return strRandPeerID
 end
 
@@ -67,7 +67,7 @@ end
 
 --渠道
 function StatUtil.GetInstallSrc()
-	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\kuaikan\\InstallSource")
+	local strInstallSrc = RegQueryValue("HKEY_LOCAL_MACHINE\\Software\\kuaikantu\\InstallSource")
 	if not IsNilString(strInstallSrc) then
 		return tostring(strInstallSrc)
 	end
@@ -181,7 +181,7 @@ function StatUtil.SendStartupStat()
 	--记录启动时间
 	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
 	--启动时间写入注册表
-	Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\laststartuputc", tipUtil:GetCurrentUTCTime())
+	Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikantu\\laststartuputc", tipUtil:GetCurrentUTCTime())
 	--快看心跳上报
 	SetTimer(function(item, id)
 		StatUtil.SendKKStat(10)

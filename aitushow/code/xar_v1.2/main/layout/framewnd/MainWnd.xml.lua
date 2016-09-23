@@ -2,11 +2,11 @@ local Helper = XLGetGlobal("Helper")
 local PathHelper = Helper.PathHelper
 
 
-local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosX"
-local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosY"
-local iWindowPosDXReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDX"
-local iWindowPosDYReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\iWindowPosDY"
-local sLastPathReg = "HKEY_CURRENT_USER\\Software\\kuaikan\\sLastPath"
+local iWindowPosXReg = "HKEY_CURRENT_USER\\Software\\kuaikantu\\iWindowPosX"
+local iWindowPosYReg = "HKEY_CURRENT_USER\\Software\\kuaikantu\\iWindowPosY"
+local iWindowPosDXReg = "HKEY_CURRENT_USER\\Software\\kuaikantu\\iWindowPosDX"
+local iWindowPosDYReg = "HKEY_CURRENT_USER\\Software\\kuaikantu\\iWindowPosDY"
+local sLastPathReg = "HKEY_CURRENT_USER\\Software\\kuaikantu\\sLastPath"
 
 function OnCreate(self)
 	local objtree = self:GetBindUIObjectTree()
@@ -128,7 +128,7 @@ function OnShowWindow(self, bVisible)
 		SendShowUI()
 		Helper.Tray.HostWnd = self
 		Helper.Tray.Show()
-		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikan\\use", Helper.tipUtil:GetCurrentUTCTime())
+		Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikantu\\use", Helper.tipUtil:GetCurrentUTCTime())
 	end
 end
 
