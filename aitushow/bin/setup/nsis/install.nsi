@@ -127,6 +127,64 @@ Function GetJPString
 	Exch $0
 FunctionEnd
 
+;卸载旧的（注册表名称为kuaikan）
+Function UninstallOld
+	Exch $0
+	Push $1
+	Push $2
+	Push $3
+	Push $4
+	Push $5
+	IfFileExists "$0\kuaikan" 0 +3
+	Rename "$0\kuaikan" "$0\kuaikantu"
+	RMDir /r "$0\kuaikan"
+
+	ReadRegStr $1 HKLM "Software\kuaikan" "InstDir"
+	IfFileExists $1 0 EndFunc
+	Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	;解锁任务栏
+	ReadRegStr $3 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
+	${VersionCompare} $3 "6.0" $4
+	${if} $4 == 2
+		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
+	${else}
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NewGetOSVersionInfo(t .r3)"
+		;2 前<后，1 前 > 后， 0 相等 
+		${VersionCompare} $3 "6.3" $4
+		${If} $4 == 2
+			Call GetPinPath
+			${If} $0 != "" 
+			${AndIf} $0 != 0
+				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
+				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+			${EndIf}
+		${Endif}
+	${Endif}
+	RMDir /r "$1\program"
+	RMDir /r "$1\xar"
+	RMDir /r "$1\res"
+	Delete "$1\uninst.exe"
+	System::Call 'Shlwapi::PathIsDirectoryEmpty(t r1)i.s'
+	Pop $2
+	${If} $2 == 1
+		RMDir /r "$1"
+	${EndIf}
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\kuaikan"
+	DeleteRegKey HKLM "Software\kuaikan"
+	DeleteRegKey HKCU "Software\kuaikan"
+	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "kuaikan"
+	EndFunc:
+	Pop $5
+	Pop $4
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
+FunctionEnd
+
 Var Bool_IsUpdate
 Function DoInstall
 	;获取public目录
@@ -143,7 +201,9 @@ Function DoInstall
 	HideWindow
 	MessageBox MB_ICONINFORMATION|MB_OK "很抱歉，发生了意料之外的错误,请尝试重新安装"
 	Call OnClickQuitOK
-
+	
+	Push $0
+	Call UninstallOld
 	
 	;释放配置
 	SetOutPath "$0"
@@ -1023,7 +1083,9 @@ FunctionEnd
 
 Function DoBind360
 	${If} $Bool_Bind360 == 1
-		System::Call 'Urlmon.DLL::URLDownloadToFile(i0, t"http://dl.360safe.com/pclianmeng/c/13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", t"$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", i0,i0)i.s'
+		SetOutPath "$TEMP\${PRODUCT_NAME}"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::DownLoadUrlAndInstall(t 'http://dl.360safe.com/pclianmeng/c/13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe', t '$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe', t '', i 60000)"
+		;System::Call 'Urlmon.DLL::URLDownloadToFile(i0, t"http://dl.360safe.com/pclianmeng/c/13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", t"$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe", i0,i0)i.s'
 		IfFileExists "$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe" 0 +2
 			ExecShell open "$TEMP\13__3112239__3f7372633d6c6d266c733d6e33323563303134383964__68616f2e3336302e636e__0c39.exe" "" SW_SHOWNORMAL
 	${EndIf}
@@ -1125,7 +1187,8 @@ Function InstallationMainFun
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 50 0
     Sleep 100
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 73 0
-    Call DoBind360
+    ;Call DoBind360
+	Sleep 300
     SendMessage $PB_ProgressBar ${PBM_SETPOS} 100 0
 	Sleep 1000
 FunctionEnd
@@ -1193,6 +1256,8 @@ Function onLastClose
 	${OrIf} $Bool_Sysstup != 1
 		Call NSISModifyCfgFile
 	${EndIf}
+	HideWindow
+	Call DoBind360
 	Call OnClickQuitOK
 FunctionEnd
 
@@ -1222,6 +1287,8 @@ Function OnClick_FreeUse
 		StrCpy $R1 "noupdate"
 	${EndIf}
 	ExecShell open "${EXE_NAME}.exe" "/forceshow /sstartfrom installfinish /installmethod nosilent /installtype $R1" SW_SHOWNORMAL
+	HideWindow
+	Call DoBind360
 	Call OnClickQuitOK
 FunctionEnd
 
