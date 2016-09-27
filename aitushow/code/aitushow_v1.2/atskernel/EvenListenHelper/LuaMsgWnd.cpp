@@ -32,7 +32,7 @@ bool LuaMsgWindow::Associate()
 	LPWSTR lpstrCmdLine = ::GetCommandLineW();
 	int nNumArgs = 0;
 	LPWSTR *szArgList = CommandLineToArgvW(lpstrCmdLine, &nNumArgs);
-	if (NULL != szArgList && 2 >= nNumArgs)
+	if (NULL != szArgList && nNumArgs >= 2)
 	{
 		if (wcsicmp(szArgList[1],L"/setassociate") == 0)
 		{
