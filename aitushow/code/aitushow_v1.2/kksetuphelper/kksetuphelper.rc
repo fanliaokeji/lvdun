@@ -75,7 +75,7 @@ BEGIN
             VALUE "InternalName", "kksetuphelper"
             VALUE "LegalCopyright", "Copyright (c) 2016-2018 深圳市飞享科技有限公司"
             VALUE "OriginalFilename", "kksetuphelper.dll"
-            VALUE "ProductName", "快看"
+            VALUE "ProductName", "快看图"
             VALUE "ProductVersion", "1, 0, 0, 14"
         END
     END
