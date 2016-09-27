@@ -1454,11 +1454,11 @@ function HideThisShowMainWnd(dir)
 		end
 	end
 	if TodayNotDo and bRemind ~= true and strDesktopPath and tipUtil:QueryFileExists(strDesktopPath) then
-		local strDesktopIconPath = tipUtil:PathCombine(strDesktopPath, "快看.lnk")
+		local strDesktopIconPath = tipUtil:PathCombine(strDesktopPath, "快看图.lnk")
 		local strDeskAllUser = tipUtil:GetSpecialFolderPathEx(25)
 		local AllUserNotHave = true
 		if strDeskAllUser then
-			strDeskAllUserIconPath = tipUtil:PathCombine(strDeskAllUser, "快看.lnk")
+			strDeskAllUserIconPath = tipUtil:PathCombine(strDeskAllUser, "快看图.lnk")
 			if tipUtil:QueryFileExists(strDesktopIconPath) then
 				AllUserNotHave = false
 			end
@@ -1472,7 +1472,7 @@ function HideThisShowMainWnd(dir)
 						local MSG = Helper.MessageBox
 						local nRet, bCheck = MSG.MessageBox("为方便您管理图片，是否需要在桌面创建快捷方式？", MainHostWnd, false, false, true)
 						if nRet == MSG.ID_YES then
-							tipUtil:CreateShortCutLinkEx("快看", strExePath, strDesktopPath, strIconPath, "/sstartfrom desktop", "")
+							tipUtil:CreateShortCutLinkEx("快看图", strExePath, strDesktopPath, strIconPath, "/sstartfrom desktop", "")
 						end
 						if bCheck then
 							UserConfig:Set("NoLongerRemind_CreateDesktopIcon", true)

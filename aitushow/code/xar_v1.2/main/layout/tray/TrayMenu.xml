@@ -6,7 +6,7 @@
 		<children>
 			<obj id="openkuaikan" class="MenuItemObject" templateid="menu.context.item">
 				<attr>
-					<Text>打开快看</Text>
+					<Text>打开快看图</Text>
 				</attr>
 				<eventlist>
 					<event name="OnSelect" file="TrayMenu.xml.lua" function="OnSelect_Open" />

@@ -145,7 +145,7 @@
 
 	<hostwndtemplate id="Kuaikan.MainWnd" class="FrameHostWnd">
 		<attr> 
-			<title>快看</title>
+			<title>快看图</title>
 			<enable>1</enable>
 			<left>200</left> 
 			<top>100</top>

@@ -29,7 +29,7 @@ function CheckAssociate(notneedshowtip)
 		tipUtil:SetAssociate(lose, "", true, true)
 		local tray = Helper.Tray.TrayObject
 		if not notneedshowtip and tray and not Helper.Tray.bHide then
-			tray:ShowNotifyIconTip(true, "文件关联提醒\n快看已为您关联了图片文件格式，您可通过快看直接打开各类图片，可点击此处进行修改。")
+			tray:ShowNotifyIconTip(true, "文件关联提醒\n快看图已为您关联了图片文件格式，您可通过快看图直接打开各类图片，可点击此处进行修改。")
 			tipUtil:AssociateUpdateDesktop()
 		else
 			--设置刷新标记， 在退出时刷新

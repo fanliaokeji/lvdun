@@ -53,7 +53,7 @@ function Tray.Update(strText)
 	local trayobj = Tray.TrayObject
 	trayobj:ShowNotifyIconTip(false)
 	local strImagePath = __document .. "\\..\\..\\..\\..\\..\\res\\shortcut.ico"
-	trayobj:SetIcon(strImagePath, strText or "快看")
+	trayobj:SetIcon(strImagePath, strText or "快看图")
 end
 
 function Tray.Init(hostwnd, needshow)

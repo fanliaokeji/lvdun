@@ -51,7 +51,7 @@
 		<attr>
 			<CheckHover>setting_check.hover</CheckHover>
 			<Select>true</Select>
-			<Text>开机时启动快看</Text>
+			<Text>开机时启动快看图</Text>
 			<left>26</left>
 			<width>150</width>
 			<top>45</top>

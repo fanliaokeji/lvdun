@@ -143,7 +143,7 @@ function StatUtil.SendStat(tStat)
 	StatUtil.AsynSend(strUrl)
 end
 
---上报到快看
+--上报到快看图
 function StatUtil.SendKKStat(nOPeration)
 	local strCID = GetPeerID()
 	local strChannelID = StatUtil.GetInstallSrc()
@@ -182,7 +182,7 @@ function StatUtil.SendStartupStat()
 	StatUtil.StartTime = tipUtil:GetCurrentUTCTime()
 	--启动时间写入注册表
 	Helper:SetRegValue("HKEY_CURRENT_USER\\Software\\kuaikantu\\laststartuputc", tipUtil:GetCurrentUTCTime())
-	--快看心跳上报
+	--快看图心跳上报
 	SetTimer(function(item, id)
 		StatUtil.SendKKStat(10)
 	end, 2*60*1000)
@@ -201,7 +201,7 @@ function StatUtil.SendStartupStat()
 			strEL = StatUtil.GetInstallSrc(),
 			strEV = 1,
 		}) 
-		--快看启动上报
+		--快看图启动上报
 		StatUtil.SendKKStat(2)
 		local needUTC = StatUtil.Get2DayNeedTime()
 		LOG("SendStartupStat, needUTC = "..tostring(needUTC))
