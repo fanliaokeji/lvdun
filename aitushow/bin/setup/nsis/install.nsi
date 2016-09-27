@@ -141,15 +141,15 @@ Function UninstallOld
 
 	ReadRegStr $1 HKLM "Software\kuaikan" "InstDir"
 	IfFileExists $1 0 EndFunc
-	Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
+	Delete "$DESKTOP\快看.lnk"
 	;解锁任务栏
 	ReadRegStr $3 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentVersion"
 	${VersionCompare} $3 "6.0" $4
 	${if} $4 == 2
-		Delete "$QUICKLAUNCH\${SHORTCUT_NAME}.lnk"
+		Delete "$QUICKLAUNCH\快看.lnk"
 		SetOutPath "$TEMP\${PRODUCT_NAME}"
 		IfFileExists "$TEMP\${PRODUCT_NAME}\kksetuphelper.dll" 0 +2
-		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b 0, t '$STARTMENU\${SHORTCUT_NAME}.lnk')"
+		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::PinToStartMenu4XP(b 0, t '$STARTMENU\快看.lnk')"
 	${else}
 		System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::NewGetOSVersionInfo(t .r3)"
 		;2 前<后，1 前 > 后， 0 相等 
@@ -158,11 +158,14 @@ Function UninstallOld
 			Call GetPinPath
 			${If} $0 != "" 
 			${AndIf} $0 != 0
-				ExecShell taskbarunpin "$0\TaskBar\${SHORTCUT_NAME}.lnk"
-				ExecShell startunpin "$0\StartMenu\${SHORTCUT_NAME}.lnk"
+				ExecShell taskbarunpin "$0\TaskBar\快看.lnk"
+				ExecShell startunpin "$0\StartMenu\快看.lnk"
 			${EndIf}
 		${Endif}
 	${Endif}
+	Delete "$STARTMENU\快看.lnk"
+	Delete "$SMPROGRAMS\快看图\快看.lnk"
+	Delete "$SMPROGRAMS\快看图\卸载快看.lnk"
 	RMDir /r "$1\program"
 	RMDir /r "$1\xar"
 	RMDir /r "$1\res"
@@ -176,6 +179,9 @@ Function UninstallOld
 	DeleteRegKey HKLM "Software\kuaikan"
 	DeleteRegKey HKCU "Software\kuaikan"
 	DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "kuaikan"
+	;先取消关联再删除key
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::SetAssociateOld(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
+	System::Call "$TEMP\${PRODUCT_NAME}\kksetuphelper::CreateImgKeyOld(t '.jpg;.jpeg;.jpe;.bmp;.png;.gif;.tiff;.tif;.psd;.ico;.pcx;.tga;.wbm;.ras;.mng;.cr2;.nef;.arw;.dng;.srf;.raf;.wmf;', b 0)"
 	EndFunc:
 	Pop $5
 	Pop $4
@@ -1334,7 +1340,7 @@ Function LoadingPage
 	ShowWindow $Btn_FreeUse ${SW_HIDE}
 	;勾选开机启动
 	${CreateButton} 32 345 13 13 "btn_check.bmp" OnClick_CheckSysstup $ck_sysstup
-	${CreateLabel} 52 341 116 18 "开机自动启动快看" "FFFFFF" $Handle_Font OnClick_CheckSysstup $Lbl_sysstup
+	${CreateLabel} 52 341 136 18 "开机自动启动快看图" "FFFFFF" $Handle_Font OnClick_CheckSysstup $Lbl_sysstup
 	;勾选自动关联
 	${CreateButton} 226 345 13 13 "btn_check.bmp" OnClick_CheckAssoc $ck_assoc
 	${CreateLabel} 246 341 116 18 "自动关联图片格式" "FFFFFF" $Handle_Font OnClick_CheckAssoc $Lbl_assoc

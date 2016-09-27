@@ -5,7 +5,7 @@
 !define INSTALL_CHANNELID "0001"
 !define PRODUCT_NAME "kuaikantu"
 !define EXE_NAME "kuaikantu"
-!define SHORTCUT_NAME "快看"
+!define SHORTCUT_NAME "快看图"
 !define PRODUCT_VERSION "1.0.0.${BuildNum}"
 !define NeedSpace 15
 ;!define TEXTCOLOR "4D4D4D"
@@ -31,11 +31,11 @@ SetFont 宋体 9
 RequestExecutionLevel admin
 
 VIProductVersion ${PRODUCT_VERSION}
-VIAddVersionKey /LANG=2052 "ProductName" "快看"
+VIAddVersionKey /LANG=2052 "ProductName" "快看图"
 VIAddVersionKey /LANG=2052 "Comments" ""
 VIAddVersionKey /LANG=2052 "CompanyName" "深圳市飞享科技有限公司"
 VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyright (c) 2016-2018 深圳市飞享科技有限公司"
-VIAddVersionKey /LANG=2052 "FileDescription" "快看安装程序"
+VIAddVersionKey /LANG=2052 "FileDescription" "快看图安装程序"
 VIAddVersionKey /LANG=2052 "FileVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "ProductVersion" ${PRODUCT_VERSION}
 VIAddVersionKey /LANG=2052 "OriginalFilename" ${EM_OUTFILE_NAME}

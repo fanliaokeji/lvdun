@@ -335,7 +335,7 @@ Function un.FirstMsgBox
 	;标题
 	StrCpy $3 4
 	IntOp $3 $3 + $Int_FontOffset
-	${NSD_CreateLabel} 12 $3 80 20 "快看 卸载"
+	${NSD_CreateLabel} 12 $3 80 20 "快看图 卸载"
 	Pop $0
     SetCtlColors $0 "FFFFFF" transparent ;背景设成透明
 	SendMessage $0 ${WM_SETFONT} $Handle_Font 0
