@@ -14,7 +14,7 @@
 #include <fstream>
 #pragma comment(lib, "Wininet.lib")
 #include "..\XLUEApplication.h"
-#include "../Utility/FileAssociation.h"
+#include "../Utility/FileAssociationNew.h"
 
 LuaMsgWindow::LuaMsgWindow(void)
 {
@@ -36,7 +36,7 @@ bool LuaMsgWindow::Associate()
 	{
 		if (wcsicmp(szArgList[1],L"/setassociate") == 0)
 		{
-			FileAssociationWarpper::SetAssociate2();
+			FileAssociationNewWarpper::SetAssociate2();
 			//do somthing
 			return true;
 		}

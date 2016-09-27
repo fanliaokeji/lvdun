@@ -231,7 +231,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\atskernel\Utility\FileAssociateNew.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\atskernel\Utility\FileAssociation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\atskernel\Utility\FileAssociationNew.h"
 				>
 			</File>
 			<File
@@ -262,11 +270,11 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath="..\atskernel\ReadMe.txt"
 			>
 		</File>
 		<File
-			RelativePath="..\atskernel\ReadMe.txt"
+			RelativePath=".\ReadMe.txt"
 			>
 		</File>
 	</Files>

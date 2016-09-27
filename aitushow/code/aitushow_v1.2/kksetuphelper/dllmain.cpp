@@ -11,7 +11,7 @@
 #include <tlhelp32.h>
 #include <atlstr.h>
 #include "..\atskernel\Utility\PeeIdHelper.h"
-#include "..\atskernel\Utility\FileAssociation.h"
+#include "..\atskernel\Utility\FileAssociationNew.h"
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -624,12 +624,29 @@ extern "C" __declspec(dllexport) void SetAssociate(const char* szFileExts, BOOL 
 {
 	TSERROR4CXX("SetAssociate, bDo = "<<bDo<<", szFileExts = "<<szFileExts);
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
+	FileAssociationNew::Instance()->AssociateAll(szFileExtsW, bDo, TRUE);
+	FileAssociationNew::Instance()->Update();
+	delete [] szFileExtsW;
+}
+
+extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts, BOOL bDo)
+{
+	TSERROR4CXX("CreateImgKey, szFileExts = "<<szFileExts);
+	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
+	FileAssociationNew::Instance()->CreateImgKeyALL(szFileExtsW, bDo);
+	delete [] szFileExtsW;
+}
+
+extern "C" __declspec(dllexport) void SetAssociateOld(const char* szFileExts, BOOL bDo)
+{
+	TSERROR4CXX("SetAssociate, bDo = "<<bDo<<", szFileExts = "<<szFileExts);
+	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);
 	FileAssociation::Instance()->AssociateAll(szFileExtsW, bDo, TRUE);
 	FileAssociation::Instance()->Update();
 	delete [] szFileExtsW;
 }
 
-extern "C" __declspec(dllexport) void CreateImgKey(const char* szFileExts, BOOL bDo)
+extern "C" __declspec(dllexport) void CreateImgKeyOld(const char* szFileExts, BOOL bDo)
 {
 	TSERROR4CXX("CreateImgKey, szFileExts = "<<szFileExts);
 	WCHAR* szFileExtsW = AnsiToUnicode(szFileExts);

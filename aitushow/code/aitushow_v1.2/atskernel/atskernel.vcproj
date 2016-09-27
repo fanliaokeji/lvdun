@@ -362,7 +362,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Utility\FileAssociateNew.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Utility\FileAssociation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility\FileAssociationNew.h"
 				>
 			</File>
 			<File

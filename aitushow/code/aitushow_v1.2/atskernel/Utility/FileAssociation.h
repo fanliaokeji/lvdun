@@ -33,6 +33,12 @@ class RegTool{
 	ATL::CRegKey m_key;
 };
 
+#include <AccCtrl.h>
+#include <AclAPI.h>
+namespace RegSecurity{
+	BOOL SetRegSecurity(LPCSTR lpszRegPath, LPCSTR lpszAccessDesireds);
+};
+
 typedef enum tagAssociateType{
 	None								=	0X0000000,
 	ProgID								=	0X0000001,
@@ -119,11 +125,4 @@ public:
 namespace FileAssociationWarpper{
 	void SetAssociate2();
 	void SetAssociate1(const wchar_t* szDo, const wchar_t* szUnDo, DWORD NoUpdate);
-};
-
-#include <AccCtrl.h>
-#include <AclAPI.h>
-
-namespace RegSecurity{
-	BOOL SetRegSecurity(LPCSTR lpszRegPath, LPCSTR lpszAccessDesireds);
 };

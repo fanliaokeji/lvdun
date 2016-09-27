@@ -80,6 +80,278 @@ void RegTool::SetRegValue(HKEY hk, const wchar_t* szRegPath, const wchar_t* szKe
 	m_key.SetDWORDValue(szKey, value);
 }
 
+void FreeProcessUserSID(PSID psid)
+{
+	::HeapFree(::GetProcessHeap(), 0, (LPVOID)psid);
+}
+
+BOOL EnablePrivilegeHelper(HANDLE hProcess, LPCTSTR lpszName, BOOL fEnable)
+{
+	// Enabling the debug privilege allows the application to see
+	// information about service applications
+	BOOL fOk = FALSE;    // Assume function fails
+	HANDLE hToken;
+
+	// Try to open this process's access token
+	if (OpenProcessToken(hProcess, TOKEN_ADJUST_PRIVILEGES, &hToken)) 
+	{
+		// Attempt to modify the "Debug" privilege
+		TOKEN_PRIVILEGES tp;
+		tp.PrivilegeCount = 1;
+		LookupPrivilegeValue(NULL, lpszName, &tp.Privileges[0].Luid);
+
+		tp.Privileges[0].Attributes = fEnable ? SE_PRIVILEGE_ENABLED : 0;
+		AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL);
+
+		fOk = (GetLastError() == ERROR_SUCCESS);
+		CloseHandle(hToken);
+	}
+	return(fOk);
+}
+
+BOOL GetProcessUserSidAndAttribute(PSID *ppsid, DWORD *pdwAttribute)
+{
+	if (NULL == ppsid || NULL == pdwAttribute) return FALSE;
+
+	BOOL bRet = FALSE;
+
+	BOOL bSuc = TRUE;
+	DWORD dwLastError = ERROR_SUCCESS;
+
+	HANDLE hProcessToken = NULL;
+	bSuc = ::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, &hProcessToken);
+	dwLastError = ::GetLastError();
+
+	//////////////////////////////////////////////////////////////////////////
+	if (bSuc && hProcessToken)
+	{
+		BYTE *pBuffer = NULL;
+		DWORD cbBuffer = 0;
+		DWORD cbBufferUsed = 0;
+		bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
+		dwLastError = ::GetLastError();
+		if (ERROR_INSUFFICIENT_BUFFER == dwLastError)
+		{
+			pBuffer = new BYTE[cbBufferUsed];
+			cbBuffer = cbBufferUsed;
+			cbBufferUsed = 0;
+			bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
+			dwLastError = ::GetLastError();
+			if (bSuc)
+			{
+				TOKEN_USER *pTokenUser = (TOKEN_USER *)pBuffer;
+				DWORD dwLength = ::GetLengthSid(pTokenUser->User.Sid);
+				*ppsid = (PSID)::HeapAlloc(::GetProcessHeap(), HEAP_ZERO_MEMORY, dwLength);
+				if (*ppsid)
+				{
+					if (::CopySid(dwLength, *ppsid, pTokenUser->User.Sid))
+					{
+						*pdwAttribute = pTokenUser->User.Attributes;
+						bRet = TRUE;
+					}
+					else
+					{
+						::HeapFree(::GetProcessHeap(), 0, (LPVOID)*ppsid);
+					}
+				}
+			}
+
+			delete [] pBuffer;
+			pBuffer = NULL;
+			cbBuffer = 0;
+			cbBufferUsed = 0;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	::CloseHandle(hProcessToken);
+	hProcessToken = NULL;
+
+	return bRet;
+}
+
+BOOL GetCurrentUserSIDHelper(PSID *ppSID)
+{
+	BOOL bSuc = FALSE;
+
+	if (ppSID)
+	{
+		PSID psid = NULL;
+		DWORD dwAttribute = 0;
+		if (GetProcessUserSidAndAttribute(&psid, &dwAttribute))
+		{
+			*ppSID = psid;
+			bSuc = TRUE;
+		}
+	}
+
+	return bSuc;
+}
+
+BOOL SetNamedSecurityInfoHelper(LPSTR pszObjectName, SE_OBJECT_TYPE emObjectType, LPSTR pszAccessDesireds)
+{
+	typedef struct {
+		const char* name;
+		int desired;
+		ACCESS_MODE mode;
+	}RegAccessPermission, *RegAccessPermissionPtr;
+
+	static RegAccessPermission filelookup[]= {
+		{"ALL_ACCESS", FILE_ALL_ACCESS, SET_ACCESS},
+		{"READ", FILE_READ_DATA, SET_ACCESS},
+		{"WRITE", FILE_WRITE_DATA|FILE_APPEND_DATA, SET_ACCESS},
+		{"~READ", FILE_READ_DATA, DENY_ACCESS},
+		{"~WRITE", FILE_WRITE_DATA|FILE_APPEND_DATA, DENY_ACCESS},
+		{NULL, 0},
+	};
+
+	static RegAccessPermission reglookup[]= {
+		{"ALL_ACCESS", KEY_ALL_ACCESS, SET_ACCESS},
+		{"READ", KEY_QUERY_VALUE|KEY_ENUMERATE_SUB_KEYS, SET_ACCESS},
+		{"WRITE", KEY_SET_VALUE, SET_ACCESS},
+		{"~READ", KEY_QUERY_VALUE|KEY_ENUMERATE_SUB_KEYS, DENY_ACCESS},
+		{"~WRITE", KEY_SET_VALUE, DENY_ACCESS},
+		{NULL, 0},
+	};
+
+	static RegAccessPermission nulllookup[]= {{NULL, 0}};
+
+	const RegAccessPermissionPtr lookup = (emObjectType == SE_FILE_OBJECT) ? filelookup : (emObjectType == SE_REGISTRY_KEY) ? reglookup : nulllookup;
+	if (pszObjectName && *pszObjectName && 
+		pszAccessDesireds && *pszAccessDesireds)
+	{
+		BOOL bSuccess = EnablePrivilegeHelper(::GetCurrentProcess(), SE_DEBUG_NAME, TRUE);
+		if (TRUE)
+		{
+			PSID pSID = NULL;
+			PSECURITY_DESCRIPTOR pSecurityDescriptor = NULL;
+			PACL pNewDAcl = NULL;
+			PEXPLICIT_ACCESS pDAclEntries = NULL;
+
+			__try
+			{
+				bSuccess = GetCurrentUserSIDHelper(&pSID);
+				if (!bSuccess) __leave;
+
+				PACL pOldDAcl = NULL;
+				DWORD dwRetCode = ERROR_SUCCESS;
+				if (ERROR_SUCCESS != dwRetCode) __leave;
+
+				pDAclEntries = (PEXPLICIT_ACCESS)::LocalAlloc(0, sizeof(EXPLICIT_ACCESS) * 10);
+				if (!pDAclEntries) __leave;
+
+				int cNumbersOfEntries = 0;
+				const char* szAcessDesired = strtok(pszAccessDesireds, "|");
+				BOOL bAcessDesiredExisted;
+				while (szAcessDesired && *szAcessDesired)
+				{
+					bAcessDesiredExisted = FALSE;
+					for (int i =0; lookup[i].name; ++i)
+					{
+						if (stricmp(szAcessDesired, lookup[i].name) == 0)
+						{
+							bAcessDesiredExisted = TRUE;
+							BOOL bAccessModeExisted = FALSE;
+							for (int cnt = 0; cnt < cNumbersOfEntries; ++cnt)
+							{
+								EXPLICIT_ACCESS& ea = pDAclEntries[cnt];
+								if (ea.grfAccessMode == lookup[i].mode)
+								{
+									bAccessModeExisted = TRUE;
+									ea.grfAccessPermissions |= lookup[i].desired;
+									break;
+								}
+							}
+
+							if (!bAccessModeExisted)
+							{
+								EXPLICIT_ACCESS& ea = pDAclEntries[cNumbersOfEntries];
+								SecureZeroMemory(&ea, sizeof(EXPLICIT_ACCESS));
+								ea.grfAccessPermissions = lookup[i].desired;
+								ea.grfAccessMode = lookup[i].mode;
+								ea.grfInheritance= SUB_CONTAINERS_AND_OBJECTS_INHERIT;
+								ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+								ea.Trustee.ptstrName = (LPTSTR)pSID;
+								++cNumbersOfEntries;
+							}
+
+							break;
+						}
+					}
+
+					if (!bAcessDesiredExisted) __leave;
+
+					szAcessDesired = strtok(NULL, "|");
+				}
+
+				if (cNumbersOfEntries > 0)
+				{
+					dwRetCode = ::SetEntriesInAcl(cNumbersOfEntries, pDAclEntries, NULL, &pNewDAcl);
+					if (ERROR_SUCCESS != dwRetCode) __leave;
+
+					dwRetCode = ::SetNamedSecurityInfoA(
+						pszObjectName, emObjectType, 
+						DACL_SECURITY_INFORMATION,
+						NULL, NULL, pNewDAcl, NULL);
+
+					if (ERROR_SUCCESS == dwRetCode)
+					{
+						return TRUE;
+					}
+				}
+			}
+			__finally
+			{
+				if (pSID)
+				{
+					FreeProcessUserSID(pSID);
+				}
+
+				if (pSecurityDescriptor)
+					::LocalFree(pSecurityDescriptor);
+
+				if (pNewDAcl)
+					::LocalFree(pNewDAcl);
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL RegSecurity::SetRegSecurity(LPCSTR lpszRegPath, LPCSTR lpszAccessDesireds)
+{
+	static struct {
+		const char* name;
+		const char* replace;
+	}lookup[]= {
+		{"HKEY_CLASSES_ROOT", "CLASSES_ROOT"},
+		{"HKEY_CURRENT_USER", "CURRENT_USER"},
+		{"HKEY_LOCAL_MACHINE", "MACHINE"},
+		{"HKEY_USERS", "USERS"},
+		{"HKEY_CURRENT_CONFIG", "CONFIG"},
+		{0, 0},
+	};
+
+	if (lpszRegPath && *lpszRegPath &&
+		lpszAccessDesireds && *lpszAccessDesireds)
+	{
+		for (int i = 0; lookup[i].name; ++i)
+		{
+			if (::StrCmpNIA(lpszRegPath, lookup[i].name, strlen(lookup[i].name)) == 0)
+			{
+				char szNewRegPath[MAX_PATH + 1] = {0};
+				::StrCatA(szNewRegPath, lookup[i].replace);
+				::StrCatA(szNewRegPath, lpszRegPath + strlen(lookup[i].name));
+
+				return SetNamedSecurityInfoHelper(szNewRegPath, SE_REGISTRY_KEY, (LPSTR)lpszAccessDesireds);
+
+			}
+		}
+	}
+	return FALSE;
+}
+
 BOOL FileAssociation::IsVistaOrHigher(){
 	OSVERSIONINFOEX osvi = { sizeof(OSVERSIONINFOEX) };
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
@@ -511,7 +783,7 @@ void FileAssociation::CreateImgKeyALL(std::wstring strFileExts, BOOL bDo){
 std::wstring FileAssociation::GetIconPath(const std::wstring& strFileExt){
 	RegTool rt;
 	std::wstring strInstDir = L"";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"InstDir", &strInstDir);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"InstDir", &strInstDir);
 	if (strInstDir.length() == 0){
 		return L"";
 	}
@@ -525,7 +797,7 @@ std::wstring FileAssociation::GetIconPath(const std::wstring& strFileExt){
 std::wstring FileAssociation::GetCommandOpenPath(){
 	RegTool rt;
 	std::wstring strExePath = L"";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"Path", &strExePath);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"Path", &strExePath);
 	WCHAR strCmd[MAX_PATH] = {0};
 	swprintf(strCmd, L"\"%s\" \"%%1\" /sstartfrom LocalFile", strExePath.c_str());
 	return strCmd;
@@ -535,9 +807,9 @@ void FileAssociationWarpper::SetAssociate2(){
 	std::wstring strDo = L"", strUnDo = L"";
 	DWORD dwNoUpdate = -1;
 	RegTool rt;
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateDo", &strDo);
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateUnDo", &strUnDo);
-	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"NoUpdate", &dwNoUpdate);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateDo", &strDo);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateUnDo", &strUnDo);
+	rt.QueryRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"NoUpdate", &dwNoUpdate);
 	if (strDo != L""){
 		FileAssociation::Instance()->AssociateAll(strDo, true, true);
 	}
@@ -550,11 +822,11 @@ void FileAssociationWarpper::SetAssociate2(){
 };
 void FileAssociationWarpper::SetAssociate1(const wchar_t* szDo, const wchar_t* szUnDo, DWORD NoUpdate){
 	RegTool rt;
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateDo", szDo);
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"AssociateUnDo", szUnDo);
-	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikantu", L"NoUpdate", (DWORD)NoUpdate);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateDo", szDo);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"AssociateUnDo", szUnDo);
+	rt.SetRegValue(HKEY_CURRENT_USER, L"Software\\kuaikan", L"NoUpdate", (DWORD)NoUpdate);
 	std::wstring strDirPath = L"-1";
-	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikantu", L"InstDir", &strDirPath);
+	rt.QueryRegValue(HKEY_LOCAL_MACHINE, L"Software\\kuaikan", L"InstDir", &strDirPath);
 	if (strDirPath != L"-1" && PathFileExists(strDirPath.c_str())){
 		WCHAR szDest[MAX_PATH] = {0};
 		ZeroMemory(szDest, MAX_PATH);
@@ -562,275 +834,3 @@ void FileAssociationWarpper::SetAssociate1(const wchar_t* szDo, const wchar_t* s
 		ShellExecute(NULL, L"runas", szDest, L"/setassociate", NULL, SW_HIDE);
 	}
 };
-
-void FreeProcessUserSID(PSID psid)
-{
-	::HeapFree(::GetProcessHeap(), 0, (LPVOID)psid);
-}
-
-BOOL EnablePrivilegeHelper(HANDLE hProcess, LPCTSTR lpszName, BOOL fEnable)
-{
-	// Enabling the debug privilege allows the application to see
-	// information about service applications
-	BOOL fOk = FALSE;    // Assume function fails
-	HANDLE hToken;
-
-	// Try to open this process's access token
-	if (OpenProcessToken(hProcess, TOKEN_ADJUST_PRIVILEGES, &hToken)) 
-	{
-		// Attempt to modify the "Debug" privilege
-		TOKEN_PRIVILEGES tp;
-		tp.PrivilegeCount = 1;
-		LookupPrivilegeValue(NULL, lpszName, &tp.Privileges[0].Luid);
-
-		tp.Privileges[0].Attributes = fEnable ? SE_PRIVILEGE_ENABLED : 0;
-		AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(tp), NULL, NULL);
-
-		fOk = (GetLastError() == ERROR_SUCCESS);
-		CloseHandle(hToken);
-	}
-	return(fOk);
-}
-
-BOOL GetProcessUserSidAndAttribute(PSID *ppsid, DWORD *pdwAttribute)
-{
-	if (NULL == ppsid || NULL == pdwAttribute) return FALSE;
-
-	BOOL bRet = FALSE;
-
-	BOOL bSuc = TRUE;
-	DWORD dwLastError = ERROR_SUCCESS;
-
-	HANDLE hProcessToken = NULL;
-	bSuc = ::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, &hProcessToken);
-	dwLastError = ::GetLastError();
-
-	//////////////////////////////////////////////////////////////////////////
-	if (bSuc && hProcessToken)
-	{
-		BYTE *pBuffer = NULL;
-		DWORD cbBuffer = 0;
-		DWORD cbBufferUsed = 0;
-		bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
-		dwLastError = ::GetLastError();
-		if (ERROR_INSUFFICIENT_BUFFER == dwLastError)
-		{
-			pBuffer = new BYTE[cbBufferUsed];
-			cbBuffer = cbBufferUsed;
-			cbBufferUsed = 0;
-			bSuc = ::GetTokenInformation(hProcessToken, ::TokenUser, pBuffer, cbBuffer, &cbBufferUsed);
-			dwLastError = ::GetLastError();
-			if (bSuc)
-			{
-				TOKEN_USER *pTokenUser = (TOKEN_USER *)pBuffer;
-				DWORD dwLength = ::GetLengthSid(pTokenUser->User.Sid);
-				*ppsid = (PSID)::HeapAlloc(::GetProcessHeap(), HEAP_ZERO_MEMORY, dwLength);
-				if (*ppsid)
-				{
-					if (::CopySid(dwLength, *ppsid, pTokenUser->User.Sid))
-					{
-						*pdwAttribute = pTokenUser->User.Attributes;
-						bRet = TRUE;
-					}
-					else
-					{
-						::HeapFree(::GetProcessHeap(), 0, (LPVOID)*ppsid);
-					}
-				}
-			}
-
-			delete [] pBuffer;
-			pBuffer = NULL;
-			cbBuffer = 0;
-			cbBufferUsed = 0;
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-
-	::CloseHandle(hProcessToken);
-	hProcessToken = NULL;
-
-	return bRet;
-}
-
-BOOL GetCurrentUserSIDHelper(PSID *ppSID)
-{
-	BOOL bSuc = FALSE;
-
-	if (ppSID)
-	{
-		PSID psid = NULL;
-		DWORD dwAttribute = 0;
-		if (GetProcessUserSidAndAttribute(&psid, &dwAttribute))
-		{
-			*ppSID = psid;
-			bSuc = TRUE;
-		}
-	}
-
-	return bSuc;
-}
-
-BOOL SetNamedSecurityInfoHelper(LPSTR pszObjectName, SE_OBJECT_TYPE emObjectType, LPSTR pszAccessDesireds)
-{
-	typedef struct {
-		const char* name;
-		int desired;
-		ACCESS_MODE mode;
-	}RegAccessPermission, *RegAccessPermissionPtr;
-
-	static RegAccessPermission filelookup[]= {
-		{"ALL_ACCESS", FILE_ALL_ACCESS, SET_ACCESS},
-		{"READ", FILE_READ_DATA, SET_ACCESS},
-		{"WRITE", FILE_WRITE_DATA|FILE_APPEND_DATA, SET_ACCESS},
-		{"~READ", FILE_READ_DATA, DENY_ACCESS},
-		{"~WRITE", FILE_WRITE_DATA|FILE_APPEND_DATA, DENY_ACCESS},
-		{NULL, 0},
-	};
-
-	static RegAccessPermission reglookup[]= {
-		{"ALL_ACCESS", KEY_ALL_ACCESS, SET_ACCESS},
-		{"READ", KEY_QUERY_VALUE|KEY_ENUMERATE_SUB_KEYS, SET_ACCESS},
-		{"WRITE", KEY_SET_VALUE, SET_ACCESS},
-		{"~READ", KEY_QUERY_VALUE|KEY_ENUMERATE_SUB_KEYS, DENY_ACCESS},
-		{"~WRITE", KEY_SET_VALUE, DENY_ACCESS},
-		{NULL, 0},
-	};
-
-	static RegAccessPermission nulllookup[]= {{NULL, 0}};
-
-	const RegAccessPermissionPtr lookup = (emObjectType == SE_FILE_OBJECT) ? filelookup : (emObjectType == SE_REGISTRY_KEY) ? reglookup : nulllookup;
-	if (pszObjectName && *pszObjectName && 
-		pszAccessDesireds && *pszAccessDesireds)
-	{
-		BOOL bSuccess = EnablePrivilegeHelper(::GetCurrentProcess(), SE_DEBUG_NAME, TRUE);
-		if (TRUE)
-		{
-			PSID pSID = NULL;
-			PSECURITY_DESCRIPTOR pSecurityDescriptor = NULL;
-			PACL pNewDAcl = NULL;
-			PEXPLICIT_ACCESS pDAclEntries = NULL;
-
-			__try
-			{
-				bSuccess = GetCurrentUserSIDHelper(&pSID);
-				if (!bSuccess) __leave;
-
-				PACL pOldDAcl = NULL;
-				DWORD dwRetCode = ERROR_SUCCESS;
-				if (ERROR_SUCCESS != dwRetCode) __leave;
-
-				pDAclEntries = (PEXPLICIT_ACCESS)::LocalAlloc(0, sizeof(EXPLICIT_ACCESS) * 10);
-				if (!pDAclEntries) __leave;
-
-				int cNumbersOfEntries = 0;
-				const char* szAcessDesired = strtok(pszAccessDesireds, "|");
-				BOOL bAcessDesiredExisted;
-				while (szAcessDesired && *szAcessDesired)
-				{
-					bAcessDesiredExisted = FALSE;
-					for (int i =0; lookup[i].name; ++i)
-					{
-						if (stricmp(szAcessDesired, lookup[i].name) == 0)
-						{
-							bAcessDesiredExisted = TRUE;
-							BOOL bAccessModeExisted = FALSE;
-							for (int cnt = 0; cnt < cNumbersOfEntries; ++cnt)
-							{
-								EXPLICIT_ACCESS& ea = pDAclEntries[cnt];
-								if (ea.grfAccessMode == lookup[i].mode)
-								{
-									bAccessModeExisted = TRUE;
-									ea.grfAccessPermissions |= lookup[i].desired;
-									break;
-								}
-							}
-
-							if (!bAccessModeExisted)
-							{
-								EXPLICIT_ACCESS& ea = pDAclEntries[cNumbersOfEntries];
-								SecureZeroMemory(&ea, sizeof(EXPLICIT_ACCESS));
-								ea.grfAccessPermissions = lookup[i].desired;
-								ea.grfAccessMode = lookup[i].mode;
-								ea.grfInheritance= SUB_CONTAINERS_AND_OBJECTS_INHERIT;
-								ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
-								ea.Trustee.ptstrName = (LPTSTR)pSID;
-								++cNumbersOfEntries;
-							}
-
-							break;
-						}
-					}
-
-					if (!bAcessDesiredExisted) __leave;
-
-					szAcessDesired = strtok(NULL, "|");
-				}
-
-				if (cNumbersOfEntries > 0)
-				{
-					dwRetCode = ::SetEntriesInAcl(cNumbersOfEntries, pDAclEntries, NULL, &pNewDAcl);
-					if (ERROR_SUCCESS != dwRetCode) __leave;
-
-					dwRetCode = ::SetNamedSecurityInfoA(
-						pszObjectName, emObjectType, 
-						DACL_SECURITY_INFORMATION,
-						NULL, NULL, pNewDAcl, NULL);
-
-					if (ERROR_SUCCESS == dwRetCode)
-					{
-						return TRUE;
-					}
-				}
-			}
-			__finally
-			{
-				if (pSID)
-				{
-					FreeProcessUserSID(pSID);
-				}
-
-				if (pSecurityDescriptor)
-					::LocalFree(pSecurityDescriptor);
-
-				if (pNewDAcl)
-					::LocalFree(pNewDAcl);
-			}
-		}
-	}
-
-	return FALSE;
-}
-
-BOOL RegSecurity::SetRegSecurity(LPCSTR lpszRegPath, LPCSTR lpszAccessDesireds)
-{
-	static struct {
-		const char* name;
-		const char* replace;
-	}lookup[]= {
-		{"HKEY_CLASSES_ROOT", "CLASSES_ROOT"},
-		{"HKEY_CURRENT_USER", "CURRENT_USER"},
-		{"HKEY_LOCAL_MACHINE", "MACHINE"},
-		{"HKEY_USERS", "USERS"},
-		{"HKEY_CURRENT_CONFIG", "CONFIG"},
-		{0, 0},
-	};
-
-	if (lpszRegPath && *lpszRegPath &&
-		lpszAccessDesireds && *lpszAccessDesireds)
-	{
-		for (int i = 0; lookup[i].name; ++i)
-		{
-			if (::StrCmpNIA(lpszRegPath, lookup[i].name, strlen(lookup[i].name)) == 0)
-			{
-				char szNewRegPath[MAX_PATH + 1] = {0};
-				::StrCatA(szNewRegPath, lookup[i].replace);
-				::StrCatA(szNewRegPath, lpszRegPath + strlen(lookup[i].name));
-
-				return SetNamedSecurityInfoHelper(szNewRegPath, SE_REGISTRY_KEY, (LPSTR)lpszAccessDesireds);
-
-			}
-		}
-	}
-	return FALSE;
-}

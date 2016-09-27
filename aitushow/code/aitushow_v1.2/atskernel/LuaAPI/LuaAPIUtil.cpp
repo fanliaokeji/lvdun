@@ -10,7 +10,7 @@
 #include "../Utility/PeeIdHelper.h"
 #include "../Utility/AES.h"
 #include "../Utility/base64.h"
-#include "../Utility/FileAssociation.h"
+#include "../Utility/FileAssociationNew.h"
 #include <comdef.h>
 #include "../XLUEApplication.h"
 #include "../EvenListenHelper/LuaMsgWnd.h"
@@ -4457,9 +4457,9 @@ int LuaAPIUtil::IsAssociated(lua_State* pLuaState)
 			bRetlua = 0;
 		}
 		else{
-			UINT flag = FileAssociation::Instance()->Associated(pszDataW);
-			if (FileAssociationWin10::IsWin10()){
-				UINT flag2 = FileAssociationWin10::Associated(pszDataW);
+			UINT flag = FileAssociationNew::Instance()->Associated(pszDataW);
+			if (FileAssociationNewWin10::IsWin10()){
+				UINT flag2 = FileAssociationNewWin10::Associated(pszDataW);
 				bRetlua = (int)((flag&AssociateType::RootKeyExist) != 0 && 
 					((flag2&AssociateType::CrrentUserIsMeWin10) != 0 || (flag2&AssociateType::ProgIDIsMEWin10) != 0));
 			}
@@ -4487,17 +4487,17 @@ int LuaAPIUtil::SetAssociate(lua_State* pLuaState)
 		wcscpy(pszDataDoW, (WCHAR*)_bstr_t(pszDataDo));
 		wcscpy(pszDataUnDoW, (WCHAR*)_bstr_t(pszDataUnDo));
 		if (!bIsAdmin){
-			FileAssociationWarpper::SetAssociate1(pszDataDoW, pszDataUnDoW, (DWORD)bNoUpdate);
+			FileAssociationNewWarpper::SetAssociate1(pszDataDoW, pszDataUnDoW, (DWORD)bNoUpdate);
 			return 0;
 		}
 		if(_tcsicmp(pszDataUnDoW, L"") != 0){
-			FileAssociation::Instance()->AssociateAll(pszDataUnDoW, false, true);
+			FileAssociationNew::Instance()->AssociateAll(pszDataUnDoW, false, true);
 		}
 		if(_tcsicmp(pszDataDoW, L"") != 0){
-			FileAssociation::Instance()->AssociateAll(pszDataDoW, true, true);
+			FileAssociationNew::Instance()->AssociateAll(pszDataDoW, true, true);
 		}
 		if (!bNoUpdate){
-			FileAssociation::Instance()->Update();
+			FileAssociationNew::Instance()->Update();
 		}
 	}
 	return 0;
@@ -4505,7 +4505,7 @@ int LuaAPIUtil::SetAssociate(lua_State* pLuaState)
 
 int LuaAPIUtil::AssociateUpdateDesktop(lua_State* pLuaState)
 {
-	FileAssociation::Instance()->Update();
+	FileAssociationNew::Instance()->Update();
 	return 0;
 }
 
