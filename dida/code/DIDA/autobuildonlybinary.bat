@@ -62,6 +62,7 @@ set build_date=%date:~0,10%
 set build_date=%build_date:/=-%
 set build_time=%time:~0,8%
 set build_time=%build_time::=-%
+set build_time=%build_time: =%
 set bin_path=%1
 set bin_path=%bin_path:\=\\%
 set bin_path=%bin_path:~1,-1%
