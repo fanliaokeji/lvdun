@@ -1716,9 +1716,6 @@ Function LoadingPage
     GetFunctionAddress $0 NSD_TimerFun
     nsDialogs::CreateTimer $0 1
 	
-	GetFunctionAddress $0 NSD_TimerFun
-    nsDialogs::CreateTimer $0 1
-	
 	;完成时"免费使用"按钮
 	${NSD_CreateButton} 177 247 125 30 ""
  	Pop	$Btn_FreeUse
